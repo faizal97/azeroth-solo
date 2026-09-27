@@ -280,7 +280,7 @@
           const el = spriteEl(art('hero', looks(m)), pos, 'idle friend', h('div', { class: 'np' }, h('span', { style: { color: '#aaaaff' } }, m.name.split('-')[0]), h('div', { class: 'hpb' }, h('i', { style: { width: Math.round(((m.hp == null ? E.statsFor(m).maxHp : m.hp) / E.statsFor(m).maxHp) * 100) + '%' } }))));
           sc.append(el);
         });
-        const near = B.onlineIn(S, P.place, new Date()).filter((b) => !inParty.has(b.id)).slice(0, S.wparty ? 2 : 3);
+        const near = B.onlineIn(S, P.place, new Date()).filter((b) => !inParty.has(b.id) && B.factionOf(b) === G.myFaction()).slice(0, S.wparty ? 2 : 3);
         const SLOTS = [{ l: 27, b: 36, w: 11 }, { l: 45, b: 40, w: 10 }, { l: 62, b: 35, w: 11 }];
         near.forEach((b, i) => {
           const el = spriteEl(art('hero', looks(b)), SLOTS[i], 'walker small', h('div', { class: 'np', style: { fontSize: '9px' } }, h('span', { class: 'cls-' + b.cls }, b.name)));
@@ -515,7 +515,7 @@
     }
     if (place.npcs.length) b.append(here); else b.append(h('div', { class: 'people' }, 'No one to talk to here.'));
     const partyIds = new Set(((S.wparty && S.wparty.members) || []).map((m) => m.bot.id));
-    const near = B.onlineIn(S, P.place, new Date()).filter((x) => !partyIds.has(x.id));
+    const near = B.onlineIn(S, P.place, new Date()).filter((x) => !partyIds.has(x.id) && B.factionOf(x) === G.myFaction());
     if (near.length) {
       const chips = h('div', { class: 'chips' });
       for (const x of near.slice(0, 12)) chips.append(h('button', { class: 'chip', onclick: () => confirmInvite(x) }, h('span', { class: 'cls-' + x.cls }, x.name), h('small', null, `${x.level} ${raceClass(x)}`)));
@@ -581,7 +581,7 @@
   function travelTab(b, place) {
     const P = G.S.player;
     const roads = h('div', { class: 'chips' });
-    for (const to in place.links) roads.append(h('button', { class: 'chip', onclick: () => G.travelTo(to) }, D.PLACES[to].name, h('small', null, (place.via && place.via[to] ? place.via[to] + ' · ' : '') + place.links[to] + 's')));
+    for (const to in place.links) { const foe = G.enemyTown(to); roads.append(h('button', { class: 'chip', disabled: foe, onclick: () => G.travelTo(to) }, D.PLACES[to].name, h('small', { style: foe ? { color: '#ff6a5a' } : null }, foe ? 'Enemy town' : (place.via && place.via[to] ? place.via[to] + ' · ' : '') + place.links[to] + 's'))); }
     const hs = (P.hearthAt || 0) - now();
     roads.append(h('button', { class: 'chip gold', onclick: () => G.hearth(), disabled: hs > 0 || P.place === P.bind }, 'Hearthstone', h('small', null, hs > 0 ? Math.ceil(hs / 60000) + 'm' : D.PLACES[P.bind].name)));
     b.append(roads, h('button', { class: 'btn alt wide', onclick: () => openMap() }, 'Open map'));
@@ -1115,12 +1115,19 @@
     westfall: { furlbrow_farm: [250, 60], saldean_farm: [170, 110], sentinel_hill: [190, 225], jangolode_mine: [70, 150], molsen_farm: [260, 300], the_longshore: [50, 320], dagger_hills: [150, 355], gold_coast_quarry: [42, 92], moonbrook: [205, 285], the_dead_acre: [298, 362] },
     barrens: { far_watch: [290, 90], crossroads: [175, 175], forgotten_pools: [90, 150], stagnant_oasis: [230, 290], razormane_grounds: [270, 205], thorn_hill: [110, 330], sludge_fen: [215, 62], lushwater_oasis: [155, 262], baeldun_digsite: [52, 368] },
     redridge: { three_corners: [40, 300], lakeshire: [140, 205], lake_everstill: [195, 262], redridge_canyons: [70, 120], althers_mill: [160, 92], renders_valley: [262, 335], stonewatch_keep: [285, 205], galardell_valley: [272, 80] },
+    ashenvale: { astranaar: [110, 190], splintertree_post: [290, 185], the_zoram_strand: [30, 150], mystral_lake: [180, 270], thistlefur_village: [120, 70], the_howling_vale: [205, 118], satyrnaar: [292, 70], felfire_hill: [305, 300] },
     duskwood: { darkshire: [170, 200], brightwood_grove: [90, 130], raven_hill_cemetery: [45, 245], the_hushed_bank: [250, 110], vulgol_ogre_mound: [285, 250], tranquil_gardens: [215, 300], the_rotting_orchard: [150, 365] },
     hillsbrad: { tarren_mill: [220, 110], hillsbrad_fields: [160, 220], azurelode_mine: [85, 300], durnholde_keep: [265, 290], alterac_foothills: [210, 40], growless_cave: [110, 60], pyrewood_village: [40, 150] },
     stonetalon: { malakajin: [250, 362], webwinder_path: [205, 285], grimtotem_post: [300, 290], sun_rock_retreat: [160, 200], charred_vale: [55, 235], windshear_crag: [265, 150], cragpool_lake: [215, 60], mirkfallon_lake: [110, 100] },
     dunmorogh: { ironforge: [170, 70], kharanos: [175, 210], grizzled_den: [190, 325], frostmane_hold: [62, 165], amberstill_ranch: [292, 205], anvilmar: [78, 330], coldridge_cave: [34, 262] },
   };
   const MAP_BG = {
+    ashenvale: `<defs><radialGradient id="mapa" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#3a4f5a"/><stop offset="1" stop-color="#1c2430"/></radialGradient></defs>
+        <rect width="340" height="400" rx="6" fill="url(#mapa)"/>
+        <path d="M0 0 H22 C12 120 30 220 14 400 H0Z" fill="#2f5f7f" opacity=".85"/>
+        <ellipse cx="110" cy="195" rx="34" ry="22" fill="#3d6f9a" opacity=".6"/><ellipse cx="180" cy="275" rx="30" ry="16" fill="#3d6f9a" opacity=".7"/>
+        <ellipse cx="305" cy="300" rx="26" ry="20" fill="#3a6a2a" opacity=".5"/>
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e8e0f8" opacity=".85">Ashenvale · contested</text>`,
     duskwood: `<defs><radialGradient id="mapd" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#2e3a4a"/><stop offset="1" stop-color="#12161e"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapd)"/>
         <circle cx="300" cy="40" r="18" fill="#d8dde8" opacity=".5"/>
@@ -1219,10 +1226,10 @@
       for (const p in MAP) {
         const [x, y] = MAP[p]; const pl = D.PLACES[p];
         const here = p === cur;
-        const adj = cur && D.PLACES[cur].links[p];
+        const adj = cur && D.PLACES[cur].links[p] && !G.enemyTown(p);
         const seenP = P.visited[p];
         nodes.push(`<g data-go="${p}" style="cursor:${adj ? 'pointer' : 'default'}">
-          <circle cx="${x}" cy="${y}" r="${here ? 13 : 10}" fill="${here ? '#f0c75e' : seenP ? '#6b8f3a' : '#3a4a2a'}" stroke="#1a1208" stroke-width="3"/>
+          <circle cx="${x}" cy="${y}" r="${here ? 13 : 10}" fill="${here ? '#f0c75e' : G.enemyTown(p) ? '#8a2a22' : seenP ? '#6b8f3a' : '#3a4a2a'}" stroke="#1a1208" stroke-width="3"/>
           ${here ? `<circle cx="${x}" cy="${y}" r="19" fill="none" stroke="#f0c75e" stroke-width="2" opacity=".6"/>` : ''}
           ${qPlaces.has(p) ? `<text x="${x + 12}" y="${y - 8}" font-family="Marcellus SC, serif" font-size="20" fill="#ffd100" stroke="#000" stroke-width="1">!</text>` : ''}
           <text x="${x}" y="${y + 26}" text-anchor="middle" font-family="Alegreya Sans, sans-serif" font-weight="800" font-size="13" fill="${adj || here ? '#f3e6c6' : '#a89a7a'}" stroke="#120c05" stroke-width="3" paint-order="stroke">${esc(pl.name)}</text>
@@ -1240,7 +1247,7 @@
         else if (to !== cur) toast('Too far. Travel through the places next to you.');
       });
       const far = h('div', { class: 'chips' });
-      for (const a in MAP) for (const c in D.PLACES[a].links) if (!MAP[c]) far.append(h('button', { class: 'chip gold', onclick: () => { if (cur === a) { G.travelTo(c); closeSheet(); } else toast(`Go to ${D.PLACES[a].name} first.`); } }, `${D.PLACES[a].name} → ${D.PLACES[c].name}`, h('small', null, ((D.PLACES[a].via || {})[c] || 'Road') + ' · ' + D.PLACES[a].links[c] + 's')));
+      for (const a in MAP) for (const c in D.PLACES[a].links) if (!MAP[c] && !G.enemyTown(a) && !G.enemyTown(c)) far.append(h('button', { class: 'chip gold', onclick: () => { if (cur === a) { G.travelTo(c); closeSheet(); } else toast(`Go to ${D.PLACES[a].name} first.`); } }, `${D.PLACES[a].name} → ${D.PLACES[c].name}`, h('small', null, ((D.PLACES[a].via || {})[c] || 'Road') + ' · ' + D.PLACES[a].links[c] + 's')));
       if (far.childNodes.length) b.append(far);
       b.append(m, h('div', { style: { color: 'var(--muted)', fontSize: '13px' } }, 'Gold: you are here. ! marks places your quests need. Level ranges are coloured by difficulty.'));
     });
@@ -1372,6 +1379,10 @@
       madame_eva: 'The cards told me you would come. They did not say whether you would leave.', sirra: 'The history of Duskwood is written in blood and moonlight.', trelayne: 'Welcome to the Scarlet Raven. Keep the door shut, the wolves are out.', gavin: 'Silver edges bite worgen best. Take a look.',
       darthalia: 'The Dark Lady wants Hillsbrad. We will give it to her, one farm at a time.', lydon: 'Every plague needs a test. And every test needs subjects.', krusk: 'Lok\'tar. Tarren Mill needs blades, not talk.', dalar: 'Arugal made those worgen. He must answer for it.',
       marla: 'Rest in Tarren Mill. The dead do not sleep, but you still may.', dogran: 'Orc steel, Forsaken edge.',
+      raene: 'Ashenvale bleeds. Demons, satyrs, and orcs with axes. We need every blade.', shindrell: 'The wolves of this forest are no ordinary wolves.', thenysil: 'Elune watch over you. The Deeps are darker than the sea.',
+      orendil: 'The furbolgs were friends once. Something poisons their hearts.', kimlya: 'Rest, traveller. Astranaar is safe while the lake guards us.', aeolynn: 'Kaldorei steel, sharp as moonlight.',
+      senani: 'Splintertree holds, for now. The elves attack every night.', ertog: 'The Warsong need wood, and the forest fights back. Pick up an axe.', mitsuwa: 'The spirits of this forest are angry. I do not blame them.',
+      kaylisk: 'Sit. Eat. The next night elf raid is not for an hour.', burkrum: 'Orc steel. Better than elf twigs.',
       crafts_alliance: 'Every trade starts with a pick, a knife or a needle. Which will it be?', crafts_horde: 'Strong arms gather, clever hands craft. Choose your trade.',
       mentor_alliance: 'Helping the new ones through the dungeons is how heroes are made. Your marks are good here.', mentor_horde: 'The strong carry the weak through the fire. The Horde remembers. Spend your marks well.',
       denalan: 'The timberlings have been acting so oddly...', saelienne: 'Welcome to Darnassus, child of the stars.', mydrannul: 'Fine Kaldorei steel. Look, but do not touch.',

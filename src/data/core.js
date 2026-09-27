@@ -350,6 +350,7 @@
     { id: 'wailing', name: '%s the Dreamwalker', need: { clear: 'wailing_caverns' }, how: 'Clear Wailing Caverns' },
     { id: 'stockade', name: 'Warden %s', need: { clear: 'stockade' }, how: 'Clear the Stockade' },
     { id: 'shadowfang', name: '%s the Wolfslayer', need: { clear: 'shadowfang' }, how: 'Clear Shadowfang Keep' },
+    { id: 'blackfathom', name: '%s of the Deeps', need: { clear: 'blackfathom' }, how: 'Clear Blackfathom Deeps' },
     { id: 'artisan', name: 'Artisan %s', need: { craft: 150 }, how: 'Reach 150 in a crafting profession' },
   ];
   // ---- quest reward families

@@ -19,7 +19,7 @@ It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sp
 
 > **Unofficial, non-commercial fan project.** Not affiliated with, endorsed by or sponsored by Blizzard Entertainment. World of Warcraft, Warcraft and Azeroth are trademarks or registered trademarks of Blizzard Entertainment, Inc. No Blizzard assets are used: all art (hand-written SVG), music (composed synth) and code in this repository are original. The game is free and will stay free.
 
-## What's in it (v4.0)
+## What's in it (v4.1)
 
 - **Both factions, all 8 classic races.** Human, Dwarf, Gnome, Night Elf, Orc, Troll, Tauren, Undead, each with its own starting zone, and racial traits (one active, two passive).
 - **Talents** from level 10: three trees per class.
@@ -27,8 +27,8 @@ It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sp
 - **Cities.** A bank and auction house in every capital, Stormwind included; daily bounty boards, Help Wanted, Mentor Marks, heirlooms and titles.
 - **9 classes, any race can be any class.** Warrior, Paladin, Hunter, Rogue, Priest, Shaman, Mage, Warlock, Druid. Pets for Hunters and Warlocks, Bear Form for Druids, seals for Paladins, totems for Shamans.
 - **Levels 1–30.** Starting zones, then Westfall and the Barrens, Redridge and Stonetalon, then Duskwood and Hillsbrad, with about 350 quests, named rares and unique drops.
-- **Dungeons and elites with a group of simulated players.** Ragefire Chasm, The Deadmines, Wailing Caverns, The Stockade, Shadowfang Keep, and open-world elites such as Hogger, Bellygrub, XT:9, Stitches and Big Samras, with roles, threat, wipes and need/greed rolls. Groups are synced to the dungeon's level; you choose the pull pace, mark the kill order and pick a boss plan.
-- **World PvP (War Mode).** Enemy players show up nearby; some pass by, some attack, and you can strike first. Guards help in towns. +10% XP and gold, and Honor.
+- **Dungeons and elites with a group of simulated players.** Ragefire Chasm, The Deadmines, Wailing Caverns, The Stockade, Shadowfang Keep, Blackfathom Deeps, and open-world elites such as Hogger, Bellygrub, XT:9, Stitches, Big Samras and Sharptalon, with roles, threat, wipes and need/greed rolls. Groups are synced to the dungeon's level; you choose the pull pace, mark the kill order and pick a boss plan.
+- **World PvP (War Mode).** Enemy players show up nearby; some pass by, some attack, and you can strike first. Guards help in towns. Ashenvale is contested: both factions quest there, each from its own town, and enemy players are more common. +10% XP and gold, and Honor.
 - **A living server.** Players online by time of day, general and LFG chat, guilds, a welcome-back digest of what happened while you were away.
 - **Story cutscenes** at key levels and a first-time lore intro for every dungeon, replayable in the Theater.
 - **Optional on-device AI chat** (Android): a small local model can write bot chat and banter ahead of time. Off by default; the game never lets it decide anything.

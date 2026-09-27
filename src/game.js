@@ -344,10 +344,11 @@
     if (npc === 'allison') return ['tough_bread', 'fresh_bread', 'moist_cornbread', 'mutton_chop', 'spring_water', 'ice_milk', 'melon_juice', 'sweet_nectar'].map(G.copyItem);
     if (npc === 'heather' || npc === 'boorand') return ['fresh_bread', 'moist_cornbread', 'mutton_chop', 'ice_milk', 'melon_juice', 'sweet_nectar'].map(G.copyItem);
     if (npc === 'brianna' || npc === 'jayka') return ['moist_cornbread', 'mutton_chop', 'wild_hog_shank', 'melon_juice', 'sweet_nectar', 'morning_glory_dew'].map(G.copyItem);
+    if (npc === 'kimlya' || npc === 'kaylisk') return ['wild_hog_shank', 'roasted_boar', 'moonberry_juice', 'morning_glory_dew', 'sparkling_water'].map(G.copyItem);
     if (npc === 'trelayne' || npc === 'marla') return ['mutton_chop', 'wild_hog_shank', 'roasted_boar', 'sweet_nectar', 'morning_glory_dew', 'sparkling_water'].map(G.copyItem);
     if (npc === 'renee' || npc === 'norman') return ['tough_bread', 'tirisfal_pumpkin', 'spring_water', 'ice_milk'].map(G.copyItem);
     if (npc === 'keldamyr' || npc === 'saelienne') return ['tough_bread', 'fresh_bread', 'spring_water', 'moonberry_juice'].map(G.copyItem);
-    if (npc === 'corina' || npc === 'grawn' || npc === 'bruuk' || npc === 'ilyenia' || npc === 'mydrannul' || npc === 'kaplak' || npc === 'rahauro' || npc === 'mahnott' || npc === 'etu' || npc === 'gerard' || npc === 'abigail' || npc === 'lewis' || npc === 'nargal' || npc === 'thurman' || npc === 'verner' || npc === 'krond' || npc === 'gavin' || npc === 'dogran') {
+    if (npc === 'corina' || npc === 'grawn' || npc === 'bruuk' || npc === 'ilyenia' || npc === 'mydrannul' || npc === 'kaplak' || npc === 'rahauro' || npc === 'mahnott' || npc === 'etu' || npc === 'gerard' || npc === 'abigail' || npc === 'lewis' || npc === 'nargal' || npc === 'thurman' || npc === 'verner' || npc === 'krond' || npc === 'gavin' || npc === 'dogran' || npc === 'aeolynn' || npc === 'burkrum') {
       if (!G.S.flags.corina || G.S.flags.corinaLvl !== G.S.player.level) {
         const L = G.S.player.level;
         G.S.flags.corina = Object.keys(D.WEAPON_BASES).map((w) => { const it = G.genGear('weapon', Math.max(2, L), 1, { wtype: w }); it.cost = it.sell * 5; return it; });
@@ -616,6 +617,16 @@
   };
 
   // ============================================================ travel / hearth / gather / rest
+  // v4.1 contested zones: a town belongs to a faction (its own `faction`, or its region's when the region is not contested).
+  // Enemy towns are closed: the guards would kill you on sight, so you can't travel into them.
+  G.myFaction = () => (D.RACES[G.S.player.race] || {}).faction || 'alliance';
+  G.placeFaction = function (id) {
+    const p = D.PLACES[id]; if (!p) return null;
+    if (p.faction) return p.faction;
+    const f = (D.REGIONS[p.region] || {}).faction;
+    return (p.safe || p.city) && f && f !== 'contested' ? f : null;
+  };
+  G.enemyTown = (id) => { const f = G.placeFaction(id); return !!f && f !== G.myFaction(); };
   G.travelTo = function (dest) {
     const S = G.S, P = S.player;
     if (G.fight || S.run) return toast('You can\'t travel right now.');
@@ -623,6 +634,7 @@
     const from = D.PLACES[P.place];
     const secs = from.links[dest];
     if (!secs) return;
+    if (G.enemyTown(dest)) return toast(`${D.PLACES[dest].name} is an enemy town. The guards would kill you on sight.`);
     P.travel = { to: dest, from: P.place, start: now(), end: now() + secs * 1000 };
     stopActions();
     emit('change');
@@ -1524,7 +1536,10 @@
     if (!p) return 0;
     if (p.danger != null) return p.danger;
     if (p.city || p.lvl[0] <= 3) return 0;
-    return p.safe ? 0.08 : 1;
+    if (p.safe) return 0.08;
+    // contested zones see more enemy players, and the other faction's own zones more still
+    const f = (D.REGIONS[p.region] || {}).faction;
+    return f === 'contested' ? 1.5 : f && f !== G.myFaction() ? 1.8 : 1;
   };
   G.setWarMode = function (on) {
     const f = G.S.flags; f.warMode = !!on; f.warModeAsked = true;
@@ -1750,10 +1765,12 @@
   const DESERTER = 10 * 60000;
   const reach = {};
   G.reachableRegions = function (from) {
-    if (reach[from]) return reach[from];
+    const key = from + ':' + G.myFaction();
+    if (reach[key]) return reach[key];
     const seen = new Set([from]), q = [from], regions = new Set();
-    while (q.length) { const k = q.shift(); regions.add(D.PLACES[k].region); for (const to in (D.PLACES[k].links || {})) if (D.PLACES[to] && !seen.has(to)) { seen.add(to); q.push(to); } }
-    return (reach[from] = regions);
+    // roads through enemy towns are closed
+    while (q.length) { const k = q.shift(); regions.add(D.PLACES[k].region); for (const to in (D.PLACES[k].links || {})) if (D.PLACES[to] && !seen.has(to) && !G.enemyTown(to)) { seen.add(to); q.push(to); } }
+    return (reach[key] = regions);
   };
   G.activityBlock = function (act) {
     const S = G.S, P = S.player, A = D.ACTIVITIES[act];

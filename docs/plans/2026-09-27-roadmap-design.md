@@ -98,7 +98,7 @@ Enemy-faction bots sometimes attack you, even in friendly zones.
 
 v4 ships in three steps:
 1. **v4.0 (shipped):** level cap 30. Duskwood (Alliance, Darkshire, Stitches elite) and Hillsbrad Foothills (Horde, Tarren Mill, Big Samras elite), with Pyrewood Village in Silverpine and **Shadowfang Keep**. 18 class abilities at 26 and 28, and the missing racial icons.
-2. **v4.1:** Ashenvale, the first **contested** zone. Astranaar (Alliance) and Splintertree Post (Horde) are both there, plus **Blackfathom Deeps**.
+2. **v4.1 (shipped):** Ashenvale, the first **contested** zone. Astranaar (Alliance) and Splintertree Post (Horde) are both there, plus **Blackfathom Deeps**.
 3. **v4.2:** Wetlands (Menethil Harbor) and story Chapter 3 at 30.
 
 Contested-zone rules (proposed; he can overrule):

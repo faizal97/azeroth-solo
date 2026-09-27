@@ -87,6 +87,8 @@
     // v2.0: from 10 most players move on to Westfall or the Barrens
     // v3: from 18 most players move on again, to Redridge or Stonetalon
     const next = bot.level >= 24 && D.REGIONS.duskwood ? (B.factionOf(bot) === 'horde' ? 'hillsbrad' : 'duskwood') : bot.level >= 18 && D.REGIONS.redridge ? (B.factionOf(bot) === 'horde' ? 'stonetalon' : 'redridge') : B.factionOf(bot) === 'horde' ? 'barrens' : 'westfall';
+    // v4.1: from 22 some players quest in contested Ashenvale instead
+    if (bot.level >= 22 && D.REGIONS.ashenvale && hash(bot.id * 23, Math.floor(slot / 6)) < 0.25) return 'ashenvale';
     if (bot.level >= 10 && D.REGIONS[next] && hash(bot.id * 19, Math.floor(slot / 6)) < 0.75) return next;
     if (bot.level >= 10 && mine.length > 1 && hash(bot.id * 13, Math.floor(slot / 6)) < 0.35) {
       const others = mine.filter((r) => r !== home);
@@ -100,9 +102,9 @@
     const region = B.regionFor(bot, slot);
     const options = Object.keys(D.PLACES).filter((p) => {
       const P = D.PLACES[p];
-      return P.region === region && !P.city && bot.level >= P.lvl[0] - 1 && bot.level <= P.lvl[1] + 1;
+      return P.region === region && !P.city && bot.level >= P.lvl[0] - 1 && bot.level <= P.lvl[1] + 1 && (!P.faction || P.faction === B.factionOf(bot));
     });
-    const towns = TOWNS[region];
+    const towns = region === 'ashenvale' ? [B.factionOf(bot) === 'horde' ? 'splintertree_post' : 'astranaar'] : TOWNS[region];
     if (!options.length) return towns[0];
     // town visits now and then
     if (bot.level >= 5 && hash(bot.id * 7, slot) < 0.18) return towns[Math.floor(hash(bot.id * 3, slot) * towns.length)];
@@ -360,7 +362,7 @@
       if (b.level >= 6) B.post(S, 'lfg', b, sloppy(b, ai || pick(c.horde ? LFG_HORDE : LFG)(c)));
     }
     if (due('say', 16, 38)) {
-      const near = B.onlineIn(S, S.player.place, date);
+      const near = B.onlineIn(S, S.player.place, date).filter((b) => B.factionOf(b) === B.factionOf(S.player));
       if (near.length && !D.PLACES[S.player.place].safe || near.length > 2) { const b = pick(near.length ? near : [onl()]); B.post(S, 'say', b, sloppy(b, pick(SAY_NEAR)(c))); }
     }
     if (S.player.guild != null && S.player.guild >= 0 && due('guild', 30, 70)) {
@@ -380,7 +382,7 @@
     const t = lower(text);
     const date = new Date(now);
     S.pending = S.pending || [];
-    let near = ch === 'say' ? B.onlineIn(S, S.player.place, date) : ch === 'guild' ? S.bots.filter((b) => b.guild === S.player.guild && B.isOnline(b, date)) : ch === 'party' && S.group ? S.group.members.map((id) => S.bots.find((b) => b.id === id)).filter(Boolean) : S.bots.filter((b) => B.isOnline(b, date));
+    let near = ch === 'say' ? B.onlineIn(S, S.player.place, date).filter((b) => B.factionOf(b) === B.factionOf(S.player)) : ch === 'guild' ? S.bots.filter((b) => b.guild === S.player.guild && B.isOnline(b, date)) : ch === 'party' && S.group ? S.group.members.map((id) => S.bots.find((b) => b.id === id)).filter(Boolean) : S.bots.filter((b) => B.isOnline(b, date));
     if (ch === 'whisper') { const w = S.bots.find((b) => b.name === S.lastWhisper); near = w ? [w] : []; }
     if (!near.length) return;
     const say = (txt, delay, who) => { const b = who || pick(near); S.pending.push({ at: now + (delay || 1500 + Math.random() * 4000), bot: b.id, ch: ch === 'whisper' ? 'whisper' : ch, text: sloppy(b, txt) }); };

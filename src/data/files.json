@@ -13,6 +13,7 @@
   "zones/stonetalon.js",
   "zones/duskwood.js",
   "zones/hillsbrad.js",
+  "zones/ashenvale.js",
   "professions.js",
   "finalize.js"
 ]

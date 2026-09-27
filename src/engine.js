@@ -561,6 +561,13 @@
       }
       return;
     }
+    if (sp.kind === 'kelris') {
+      if (sp.phase === 0 && pct < 0.5) {
+        sp.phase = 1; say(C, m, 'Sleep... and dream of the old gods!', 'monster');
+        E.addEnemy(C, E.mobUnit('twilight_acolyte', m.level - 2, (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
+      }
+      return;
+    }
     if (sp.kind === 'thredd') {
       if (sp.phase === 0 && pct < 0.5) {
         sp.phase = 1; say(C, m, 'To me, brothers! Show them what the Stockade taught us!', 'monster');
