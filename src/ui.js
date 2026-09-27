@@ -1115,10 +1115,22 @@
     westfall: { furlbrow_farm: [250, 60], saldean_farm: [170, 110], sentinel_hill: [190, 225], jangolode_mine: [70, 150], molsen_farm: [260, 300], the_longshore: [50, 320], dagger_hills: [150, 355], gold_coast_quarry: [42, 92], moonbrook: [205, 285], the_dead_acre: [298, 362] },
     barrens: { far_watch: [290, 90], crossroads: [175, 175], forgotten_pools: [90, 150], stagnant_oasis: [230, 290], razormane_grounds: [270, 205], thorn_hill: [110, 330], sludge_fen: [215, 62], lushwater_oasis: [155, 262], baeldun_digsite: [52, 368] },
     redridge: { three_corners: [40, 300], lakeshire: [140, 205], lake_everstill: [195, 262], redridge_canyons: [70, 120], althers_mill: [160, 92], renders_valley: [262, 335], stonewatch_keep: [285, 205], galardell_valley: [272, 80] },
+    duskwood: { darkshire: [170, 200], brightwood_grove: [90, 130], raven_hill_cemetery: [45, 245], the_hushed_bank: [250, 110], vulgol_ogre_mound: [285, 250], tranquil_gardens: [215, 300], the_rotting_orchard: [150, 365] },
+    hillsbrad: { tarren_mill: [220, 110], hillsbrad_fields: [160, 220], azurelode_mine: [85, 300], durnholde_keep: [265, 290], alterac_foothills: [210, 40], growless_cave: [110, 60], pyrewood_village: [40, 150] },
     stonetalon: { malakajin: [250, 362], webwinder_path: [205, 285], grimtotem_post: [300, 290], sun_rock_retreat: [160, 200], charred_vale: [55, 235], windshear_crag: [265, 150], cragpool_lake: [215, 60], mirkfallon_lake: [110, 100] },
     dunmorogh: { ironforge: [170, 70], kharanos: [175, 210], grizzled_den: [190, 325], frostmane_hold: [62, 165], amberstill_ranch: [292, 205], anvilmar: [78, 330], coldridge_cave: [34, 262] },
   };
   const MAP_BG = {
+    duskwood: `<defs><radialGradient id="mapd" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#2e3a4a"/><stop offset="1" stop-color="#12161e"/></radialGradient></defs>
+        <rect width="340" height="400" rx="6" fill="url(#mapd)"/>
+        <circle cx="300" cy="40" r="18" fill="#d8dde8" opacity=".5"/>
+        <path d="M250 110 C230 160 250 200 285 250" stroke="#2a4a6a" stroke-width="10" fill="none" opacity=".7"/>
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#dfe6f2" opacity=".85">Duskwood</text>`,
+    hillsbrad: `<defs><radialGradient id="maph" cx="50%" cy="50%" r="75%"><stop offset="0" stop-color="#5e8a4a"/><stop offset="1" stop-color="#2e4a26"/></radialGradient></defs>
+        <rect width="340" height="400" rx="6" fill="url(#maph)"/>
+        <path d="M0 0 H340 V70 C260 50 180 80 100 50 C60 40 20 60 0 50Z" fill="#e8eef2" opacity=".55"/>
+        <path d="M0 110 C20 140 30 160 40 150 L0 200Z" fill="#23301e" opacity=".8"/>
+        <text x="170" y="390" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f0f4e0" opacity=".85">Hillsbrad Foothills</text>`,
     redridge: `<defs><radialGradient id="mapr" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#a0643a"/><stop offset="1" stop-color="#5a3420"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapr)"/>
         <path d="M120 230 C160 215 220 240 250 262 C230 292 175 300 140 280 C120 265 110 245 120 230Z" fill="#3d6fa0" opacity=".85"/>
@@ -1356,6 +1368,10 @@
       solomon: 'Lakeshire has begged Stormwind for help for months. You are the first to answer.', marris: 'The orcs hold Stonewatch and the gnolls hold the hills. Pick a fight, any fight.',
       oslow: 'This bridge will be finished one day. If the murlocs let me.', darcy: 'Sit, eat. Nothing fixes a bad day like a bowl of goulash.', brianna: 'Welcome to the Lakeshire Inn. Mind the fish smell.',
       verner: 'Blades and mail, forged by the lake.', thelwater: 'The Stockade is in chaos. Every prisoner we ever caught is loose in there.',
+      ebonlocke: 'Darkshire stands, no thanks to Stormwind. We watch the woods every night.', althea: 'The Night Watch takes anyone who can hold a sword. Can you?', abercrombie: 'Heh heh. A visitor. Come in, come in. Mind the smell.',
+      madame_eva: 'The cards told me you would come. They did not say whether you would leave.', sirra: 'The history of Duskwood is written in blood and moonlight.', trelayne: 'Welcome to the Scarlet Raven. Keep the door shut, the wolves are out.', gavin: 'Silver edges bite worgen best. Take a look.',
+      darthalia: 'The Dark Lady wants Hillsbrad. We will give it to her, one farm at a time.', lydon: 'Every plague needs a test. And every test needs subjects.', krusk: 'Lok\'tar. Tarren Mill needs blades, not talk.', dalar: 'Arugal made those worgen. He must answer for it.',
+      marla: 'Rest in Tarren Mill. The dead do not sleep, but you still may.', dogran: 'Orc steel, Forsaken edge.',
       crafts_alliance: 'Every trade starts with a pick, a knife or a needle. Which will it be?', crafts_horde: 'Strong arms gather, clever hands craft. Choose your trade.',
       mentor_alliance: 'Helping the new ones through the dungeons is how heroes are made. Your marks are good here.', mentor_horde: 'The strong carry the weak through the fire. The Horde remembers. Spend your marks well.',
       denalan: 'The timberlings have been acting so oddly...', saelienne: 'Welcome to Darnassus, child of the stars.', mydrannul: 'Fine Kaldorei steel. Look, but do not touch.',

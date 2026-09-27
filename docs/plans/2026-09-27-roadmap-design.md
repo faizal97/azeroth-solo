@@ -94,6 +94,18 @@ Enemy-faction bots sometimes attack you, even in friendly zones.
 - **Data:** the danger rating is a field in each zone's data file (after the data refactor).
 - **Crossing into enemy zones** opens with the contested zones (v4 onward); until then factions cannot reach each other's areas.
 
+## v4 plan and contested zones (planned 2026-09-27, while he was away)
+
+v4 ships in three steps:
+1. **v4.0 (shipped):** level cap 30. Duskwood (Alliance, Darkshire, Stitches elite) and Hillsbrad Foothills (Horde, Tarren Mill, Big Samras elite), with Pyrewood Village in Silverpine and **Shadowfang Keep**. 18 class abilities at 26 and 28, and the missing racial icons.
+2. **v4.1:** Ashenvale, the first **contested** zone. Astranaar (Alliance) and Splintertree Post (Horde) are both there, plus **Blackfathom Deeps**.
+3. **v4.2:** Wetlands (Menethil Harbor) and story Chapter 3 at 30.
+
+Contested-zone rules (proposed; he can overrule):
+- Roads connect the two faction networks for the first time. Ashenvale joins the Barrens (Horde) to Darkshore and Teldrassil (Alliance, by boat).
+- **Enemy towns stay closed:** you can't enter an enemy hub or capital ("the guards would kill you on sight"). Routes and the group finder's "be there" check go around them. So the Stockade stays Alliance-only and Shadowfang Keep stays Horde-only, while Blackfathom Deeps (in Ashenvale) is open to both.
+- **Danger:** world PvP ambushes are more frequent in contested zones, and more frequent still in the other faction's zones.
+
 ## Group finder rules (agreed 2026-09-27)
 
 - **Be there:** any faction may run any dungeon or world elite, but you queue from its zone. Places with no road from where you are stay hidden; they appear when roads between the factions open in the contested zones.

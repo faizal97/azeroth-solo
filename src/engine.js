@@ -549,6 +549,18 @@
       if (sp.phase === 2 && pct < 0.33) { sp.phase = 3; stomp(C, m, 'Mr. Smite stomps the deck!'); say(C, m, 'D\'ah! Now you\'re making me angry!', 'monster'); }
       return;
     }
+    if (sp.kind === 'arugal') {
+      // calls a worgen at half health; a shadow bolt at someone every 12 sec
+      if (sp.phase < 1 && pct < 0.5) {
+        sp.phase++; say(C, m, 'You, too, shall serve!', 'monster');
+        E.addEnemy(C, E.mobUnit('shadowfang_moonwalker', m.level - 2, (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
+      }
+      if (sp.t <= 0) {
+        sp.t = 12; const a = allies[rint(0, allies.length - 1)];
+        if (a) { ev(C, { type: 'emote', uid: m.uid, text: 'Arugal hurls a bolt of shadow!' }); dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * 0.9, { school: 'shadow', ab: 'shadow_bolt' }); }
+      }
+      return;
+    }
     if (sp.kind === 'thredd') {
       if (sp.phase === 0 && pct < 0.5) {
         sp.phase = 1; say(C, m, 'To me, brothers! Show them what the Stockade taught us!', 'monster');

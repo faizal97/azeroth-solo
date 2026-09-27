@@ -11,6 +11,8 @@
   "zones/barrens.js",
   "zones/redridge.js",
   "zones/stonetalon.js",
+  "zones/duskwood.js",
+  "zones/hillsbrad.js",
   "professions.js",
   "finalize.js"
 ]
