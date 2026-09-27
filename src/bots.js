@@ -220,7 +220,7 @@
     { q: /reset talents/, a: () => ['no talents till 10', 'you dont have talents yet mate'] },
     { q: /mount/, a: () => ['40', 'lvl 40 and like 90g', '40, start saving now'] },
     { q: /bags/, a: () => ['check the AH in stormwind', 'tailors will sell you linen bags', 'i can make linen bags, pst'] },
-    { q: /cooking/, a: () => ['innkeeper area in goldshire', 'there is a cook in the inn'] },
+    { q: /cooking/, a: () => ['innkeeper area in town', 'there is a cook in the inn'] },
     { q: /indo/, a: () => ['hadir', 'ada bang', 'wkwkwk ada', 'me'] },
     { q: /lag/, a: () => ['no', 'fine here', 'yes'] },
     { q: /mana/, a: () => ['drink between pulls', 'spirit gear', 'sit and drink my friend'] },
@@ -263,7 +263,7 @@
     () => 'gn guys',
   ];
   const WHISPER = [
-    () => 'hey can you help me kill Garrick? he keeps killing me',
+    (c) => `hey can you help me kill ${c ? c.namedMob : 'this rare'}? it keeps killing me`,
     () => 'u want to group?',
     () => 'nice gear lol',
     () => 'can i have 1 silver pls',
@@ -282,14 +282,17 @@
         }
       }
     }
-    for (const k in D.NPCS) if (lower(D.NPCS[k].name).includes(n)) return 'check the abbey or goldshire';
+    for (const k in D.NPCS) if (lower(D.NPCS[k].name).includes(n)) return 'check the nearest town, they hang around the inn';
     return 'no idea';
   };
 
   function ctx(S) {
     const P = D.PLACES[S.player.place] || D.PLACES.northshire_abbey;
     const mobs = (P.mobs || []).map((m) => m[0]);
-    const namedAll = ['garrick_padfoot', 'princess', 'hogger'];
+    // named mobs players ask about come from the zone you are in, never another faction's
+    const region = P.region || 'elwynn';
+    const namedAll = [...new Set(Object.values(D.PLACES).filter((p) => (p.region || 'elwynn') === region).flatMap((p) => Object.keys(p.named || {})).concat(Object.values(D.QUESTS).flatMap((q) => q.objs.filter((o) => o.type === 'kill' && D.MOBS[o.mob] && D.MOBS[o.mob].named).map((o) => o.mob))).filter((k) => { const pl = Object.values(D.PLACES).find((p) => (p.named || {})[k] || (p.mobs || []).some((m) => m[0] === k)); return !pl || (pl.region || 'elwynn') === region; }))];
+    if (!namedAll.length) namedAll.push(region === 'elwynn' ? 'hogger' : Object.keys(D.MOBS).find((k) => D.MOBS[k].named) || 'hogger');
     const q = Object.keys(S.player.quests || {});
     const npc = q.length ? D.NPCS[D.QUESTS[q[0]].turnin].name : pick(Object.values(D.NPCS)).name;
     const affix = pick(D.AFFIXES).name;
@@ -364,7 +367,7 @@
     }
     if (due('whisper', 200, 480)) {
       const b = onl();
-      const text = pick(WHISPER)();
+      const text = pick(WHISPER)(c);
       if (!(text.includes('guild') && S.player.guild >= 0)) B.post(S, 'whisper', b, text);
     }
   };
