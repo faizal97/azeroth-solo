@@ -32,7 +32,7 @@ Agreed 2026-09-27. A single-player fake MMO: a vanilla WoW campaign from 1 to 60
 | v4 (shipped as app v4.0.0–v4.2.0) | Duskwood + Wetlands (20–30) · **Horde:** Hillsbrad Foothills; Ashenvale (contested) | Shadowfang Keep; Blackfathom Deeps; story Chapter 3 at 30 |
 | v5 | Stranglethorn Vale + Arathi Highlands (30–40, contested from here) | Mount at 40; Scarlet Monastery; Gurubashi Arena event; story Chapter 4 at 40 |
 | v6 (shipped) | Tanaris + Feralas (40–50) | Zul'Farrak; Maraudon; open-world elites (world bosses moved to v9) |
-| v7 | Un'Goro Crater + Burning Steppes (48–55) | Blackrock Depths; story Chapter 5 at 50 |
+| v7 (shipped) | Un'Goro Crater + Burning Steppes (48–55) | Blackrock Depths; story Chapter 5 at 50 |
 | v8 | Western Plaguelands + Winterspring (55–60) | Level cap 60; Scholomance or Stratholme; story Chapter 6 at 60 |
 | v9 | Endgame at 60 | Molten Core and Onyxia (40 bots), the last power step; keystone dungeons; account-wide wardrobe; battlegrounds |
 | v10+ | Our own expansion | Original story, new zones, dungeons and raids, all horizontal (see below) |
@@ -118,7 +118,7 @@ Contested-zone rules (proposed; he can overrule):
 His brief: keep going to 60, then one original "expansion" with 1 raid and 2 dungeons (one Alliance zone, one Horde zone). I chose new zones for the expansion rather than expanding vanilla ones.
 
 1. **v6.0 (shipped):** level cap 50. Tanaris is contested around neutral Gadgetzan (Kregg Keelhaul elite; zeppelin to Nesingwary's camp). Feralas is contested: Feathermoon Stronghold (Alliance) and Camp Mojache (Horde), Lord Shalzaru elite. **Zul'Farrak** (43–47) and **Maraudon** (46–50, gate in Feralas) are open to both. 18 class abilities at 44 and 48. Chapter 5 stays with v7, where Blackrock Depths needs it.
-2. **v7.0:** level cap 55. Un'Goro Crater (neutral Marshal's Refuge, King Mosh elite), the Burning Steppes (Morgan's Vigil and Flame Crest, Volchan elite), **Blackrock Depths** (51–55; Marshal Windsor is its prisoner), and story Chapter 5 at 50, "The Masquerade".
+2. **v7.0 (shipped):** level cap 55. Un'Goro Crater (neutral Marshal's Refuge, King Mosh elite), the Burning Steppes (Morgan's Vigil and Flame Crest, Volchan elite), **Blackrock Depths** (51–55; Marshal Windsor is its prisoner), and story Chapter 5 at 50, "The Masquerade". Also fixed: the other faction's quests no longer count as available (they showed up as "quests nearby" in contested zones).
 3. **v8.0:** level cap 60. The Western Plaguelands (Chillwind Camp and the Bulwark, Araj the Summoner elite) and Winterspring (neutral Everlook), **Scholomance** and **Stratholme**, and Chapter 6 at 60, "The Brood Mother".
 4. **Expansion (after v8):** an original story with two new zones (one Alliance, one Horde), a dungeon in each, and one raid; horizontal progression at 60.
 

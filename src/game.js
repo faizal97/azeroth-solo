@@ -356,6 +356,8 @@
     if (npc === 'allison') return ['tough_bread', 'fresh_bread', 'moist_cornbread', 'mutton_chop', 'spring_water', 'ice_milk', 'melon_juice', 'sweet_nectar'].map(G.copyItem);
     if (npc === 'heather' || npc === 'boorand') return ['fresh_bread', 'moist_cornbread', 'mutton_chop', 'ice_milk', 'melon_juice', 'sweet_nectar'].map(G.copyItem);
     if (npc === 'brianna' || npc === 'jayka') return ['moist_cornbread', 'mutton_chop', 'wild_hog_shank', 'melon_juice', 'sweet_nectar', 'morning_glory_dew'].map(G.copyItem);
+    if (npc === 'quartermaster_hudson' || npc === 'quartermaster_lauren' || npc === 'innkeeper_everlook') return ['cured_ham_steak', 'sweet_roll_60', 'morning_glory_60', 'spring_water_60'].map(G.copyItem);
+    if (npc === 'quixxil' || npc === 'innkeeper_ashmorn' || npc === 'innkeeper_bruk') return ['smoked_desert_dumplings', 'cured_ham_steak', 'sweet_nectar_45', 'morning_glory_60'].map(G.copyItem);
     if (npc === 'innkeeper_fizzgrimble' || npc === 'innkeeper_shyria' || npc === 'innkeeper_greul') return ['hardened_mushroom', 'smoked_desert_dumplings', 'moonberry_cordial', 'sweet_nectar_45'].map(G.copyItem);
     if (npc === 'innkeeper_taruga' || npc === 'innkeeper_adegwa') return ['spiced_jungle_meat', 'hardened_mushroom', 'bubbling_water', 'moonberry_cordial'].map(G.copyItem);
     if (npc === 'corporal_bluth' || npc === 'innkeeper_thulbek') return ['roasted_boar', 'spiced_jungle_meat', 'morning_glory_dew', 'sparkling_water', 'bubbling_water'].map(G.copyItem);
@@ -364,7 +366,7 @@
     if (npc === 'trelayne' || npc === 'marla') return ['mutton_chop', 'wild_hog_shank', 'roasted_boar', 'sweet_nectar', 'morning_glory_dew', 'sparkling_water'].map(G.copyItem);
     if (npc === 'renee' || npc === 'norman') return ['tough_bread', 'tirisfal_pumpkin', 'spring_water', 'ice_milk'].map(G.copyItem);
     if (npc === 'keldamyr' || npc === 'saelienne') return ['tough_bread', 'fresh_bread', 'spring_water', 'moonberry_juice'].map(G.copyItem);
-    if (npc === 'corina' || npc === 'grawn' || npc === 'bruuk' || npc === 'ilyenia' || npc === 'mydrannul' || npc === 'kaplak' || npc === 'rahauro' || npc === 'mahnott' || npc === 'etu' || npc === 'gerard' || npc === 'abigail' || npc === 'lewis' || npc === 'nargal' || npc === 'thurman' || npc === 'verner' || npc === 'krond' || npc === 'gavin' || npc === 'dogran' || npc === 'aeolynn' || npc === 'burkrum' || npc === 'murndan' || npc === 'uthok' || npc === 'urda' || npc === 'blizrik' || npc === 'vivianna' || npc === 'krueg') {
+    if (npc === 'corina' || npc === 'grawn' || npc === 'bruuk' || npc === 'ilyenia' || npc === 'mydrannul' || npc === 'kaplak' || npc === 'rahauro' || npc === 'mahnott' || npc === 'etu' || npc === 'gerard' || npc === 'abigail' || npc === 'lewis' || npc === 'nargal' || npc === 'thurman' || npc === 'verner' || npc === 'krond' || npc === 'gavin' || npc === 'dogran' || npc === 'aeolynn' || npc === 'burkrum' || npc === 'murndan' || npc === 'uthok' || npc === 'urda' || npc === 'blizrik' || npc === 'vivianna' || npc === 'krueg' || npc === 'shul_kar') {
       if (!G.S.flags.corina || G.S.flags.corinaLvl !== G.S.player.level) {
         const L = G.S.player.level;
         G.S.flags.corina = Object.keys(D.WEAPON_BASES).map((w) => { const it = G.genGear('weapon', Math.max(2, L), 1, { wtype: w }); it.cost = it.sell * 5; return it; });
@@ -788,6 +790,7 @@
     if (P.quests[qid]) return G.questComplete(qid) ? 'complete' : 'active';
     const Q = D.QUESTS[qid];
     if ((Q.pre || []).some((p) => !P.done[p])) return 'locked';
+    if (Q.faction && Q.faction !== G.myFaction()) return 'locked'; // the other faction's quest (v7: contested hubs)
     if (P.level < Q.lvl - 2) return 'low';
     return 'available';
   };

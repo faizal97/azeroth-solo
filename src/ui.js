@@ -34,7 +34,7 @@
     if (cache[k]) return cache[k];
     let svg = '';
     try {
-      if (kind === 'story') svg = window.ART && ART.story ? (/^(stormwind_keep|blackrock_mountain|westfall|azeroth_dawn|shadow_court)$/.test(arg) ? ART.story.scene(arg) : ART.story.actor(arg)) : '';
+      if (kind === 'story') svg = window.ART && ART.story ? (((ART.story.keys || {}).scenes || []).includes(arg) ? ART.story.scene(arg) : ART.story.actor(arg)) : '';
       else if (window.ART && ART[kind]) svg = ART[kind](arg);
     } catch (e) { svg = ''; }
     if (!svg) svg = placeholder(kind);
@@ -1125,6 +1125,9 @@
     barrens: { far_watch: [290, 90], crossroads: [175, 175], forgotten_pools: [90, 150], stagnant_oasis: [230, 290], razormane_grounds: [270, 205], thorn_hill: [110, 330], sludge_fen: [215, 62], lushwater_oasis: [155, 262], baeldun_digsite: [52, 368] },
     redridge: { three_corners: [40, 300], lakeshire: [140, 205], lake_everstill: [195, 262], redridge_canyons: [70, 120], althers_mill: [160, 92], renders_valley: [262, 335], stonewatch_keep: [285, 205], galardell_valley: [272, 80] },
     tanaris: { gadgetzan: [170, 80], waterspring_field: [250, 150], thistleshrub_valley: [60, 200], lost_rigger_cove: [45, 360], noxious_lair: [285, 60], eastmoon_ruins: [260, 260], dunemaul_compound: [210, 340], zul_farrak_gate: [80, 90] },
+    ungoro: { marshals_refuge: [240, 60], the_slithering_scar: [300, 150], golakka_hot_springs: [70, 150], fire_plume_ridge: [170, 190], terror_run: [270, 250], lakkari_tar_pits: [200, 320], the_marshlands: [70, 300] },
+    steppes: { blackrock_mountain: [50, 170], terror_wing_path: [90, 60], flame_crest: [220, 60], blackrock_stronghold: [160, 150], dreadmaul_rock: [270, 190], ruins_of_thaurissan: [120, 280], morgans_vigil: [280, 310] },
+    plaguelands: { hearthglen: [190, 60], stratholme_gate: [305, 45], the_bulwark: [40, 200], felstone_field: [110, 220], dalson_tears: [190, 170], andorhal: [180, 290], the_writhing_haunt: [270, 290], chillwind_camp: [100, 340], caer_darrow: [250, 360] },
     feralas: { feathermoon_stronghold: [45, 170], camp_mojache: [270, 170], frayfeather_highlands: [150, 90], woodpaw_hills: [230, 80], gordunni_outpost: [180, 260], the_forgotten_coast: [60, 300], lower_wilds: [300, 290], maraudon_gate: [240, 20] },
     arathi: { refuge_pointe: [170, 180], hammerfall: [300, 150], highland_plains: [110, 200], drywhisker_gorge: [290, 250], witherbark_village: [70, 310], stromgarde_keep: [120, 300], boulderfist_hall: [285, 340], circle_of_west_binding: [160, 90] },
     stranglethorn: { rebel_camp: [170, 45], grom_gol: [40, 250], nesingwary_camp: [150, 150], lake_nazferiti: [235, 185], zuuldaia_ruins: [55, 150], kurzen_compound: [285, 90], venture_base_camp: [270, 285], balia_mah_ruins: [120, 330], zul_kunda: [205, 365] },
@@ -1140,6 +1143,20 @@
         <rect width="340" height="400" rx="6" fill="url(#maptn)"/>
         <path d="M0 330 C40 320 60 380 40 400 H0Z" fill="#3a7a9a" opacity=".8"/>
         <text x="170" y="390" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#4a3010" opacity=".85">Tanaris · contested</text>`,
+    ungoro: `<defs><radialGradient id="mapug" cx="50%" cy="48%" r="72%"><stop offset="0" stop-color="#5a8a3a"/><stop offset="1" stop-color="#23401c"/></radialGradient></defs>
+        <rect width="340" height="400" rx="6" fill="url(#mapug)"/>
+        <path d="M0 0 H340 V400 H0Z M170 30 C300 30 330 200 300 330 C250 400 90 400 40 330 C10 200 40 30 170 30Z" fill="#5a4a36" fill-rule="evenodd" opacity=".75"/>
+        <path d="M150 170 L170 140 L190 170 Z" fill="#c0502a" opacity=".85"/>
+        <text x="170" y="392" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f0e8d0" opacity=".85">Un'Goro Crater · contested</text>`,
+    steppes: `<defs><radialGradient id="mapbs" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#6a3a28"/><stop offset="1" stop-color="#2a1610"/></radialGradient></defs>
+        <rect width="340" height="400" rx="6" fill="url(#mapbs)"/>
+        <path d="M0 110 L60 90 L100 140 L70 230 L0 240Z" fill="#1a1210" opacity=".8"/>
+        <path d="M130 200 C170 220 200 240 250 230" stroke="#e06a20" stroke-width="3" fill="none" opacity=".6"/>
+        <text x="170" y="392" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f8d0a0" opacity=".85">Burning Steppes · contested</text>`,
+    plaguelands: `<defs><radialGradient id="mapwp" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#7a7a4a"/><stop offset="1" stop-color="#3a3a24"/></radialGradient></defs>
+        <rect width="340" height="400" rx="6" fill="url(#mapwp)"/>
+        <ellipse cx="250" cy="372" rx="70" ry="22" fill="#3a5a6a" opacity=".85"/>
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e8e8c8" opacity=".85">Western Plaguelands · contested</text>`,
     feralas: `<defs><radialGradient id="mapfr" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#3a6a3a"/><stop offset="1" stop-color="#1c341c"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapfr)"/>
         <path d="M0 0 H30 C20 150 40 260 20 400 H0Z" fill="#3d5f7a" opacity=".85"/>
@@ -1420,6 +1437,11 @@
       noggenfogger: 'Welcome to Gadgetzan, where everything has a price and the water costs extra.', bilgewhizzle: 'Bandits, pirates, bugs. My water towers have more enemies than friends.', sprinkle: 'Water is life out here. Help me keep it flowing.', fizzledowser: 'Fascinating desert! Dangerous, but fascinating.', innkeeper_fizzgrimble: 'Rooms, drinks, sand in everything. Welcome.', blizrik: 'Guns, blades and bombs. No refunds.',
       shandris: 'Feathermoon holds the coast. Elune gives us strength.', latronicus: 'The forest is vast and old. So are its dangers.', innkeeper_shyria: 'Rest under the moon, friend.', vivianna: 'Moonsteel blades, light and deadly.',
       hadoken: 'The hunt in Feralas is the greatest in Kalimdor.', orwin: 'Mojache is a camp of hunters. Bring me proof of yours.', innkeeper_greul: 'Eat, drink, sleep. The forest will wait.', krueg: 'Heavy weapons for heavy work.',
+      marshal_yeager: "Welcome to the Refuge. Watch the sky, the pterrordax take anyone who wanders.", williden: 'Un\'Goro is older than any of us. Old and hungry.', spraggle: 'I lost my tools and my nerve out there. You can have the nerve.', larion: 'The crater is full of wonders. Most of them bite.', quixxil: 'Supplies! Priced for the end of the world, which this place looks like.',
+      marshal_maxwell: 'Morgan\'s Vigil stands between the Blackrock orcs and Redridge. We will not fall back.', oralius: 'The black dragonflight hatches in these hills. Burn every egg you find.', helendis: 'My wife is at Morgan\'s Vigil. I fight so she never has to.', innkeeper_ashmorn: 'Food, drink, and a bed that isn\'t on fire. Mostly.',
+      gorzeeki: 'Everything in the Steppes is hot, sharp or angry. Perfect for my work.', thal_kaur: 'The Warchief watches the mountain. So do I.', innkeeper_bruk: 'Rest. The ash gets in everything, even the ale.', shul_kar: 'Steel forged in the Steppes. Nothing else survives the heat.',
+      commander_ashlam: 'The Scourge never sleeps, and neither does Chillwind Camp.', argent_officer_a: 'The Argent Dawn counts every fallen undead. Help us raise the count.', alchemist_arbington: 'Bring me samples. The plague can be cured, I know it.', quartermaster_hudson: 'Supplies for the living. Take what you need.',
+      high_executor_derrington: 'The Bulwark holds for the Dark Lady. The Scourge will not pass.', argent_officer_h: 'Horde or Alliance, the Argent Dawn stands against the dead.', apothecary_dithers: 'A new plague needs new ingredients. Fetch them.', quartermaster_lauren: 'Gear for the front. It\'s all the front out here.',
       captain_nials: 'Arathor will rise again. Until then, we hold Refuge Pointe.', sergeant_maclear: 'The highlands are full of things that want you dead. Pick one.', shards: 'I scout Stromgarde. The Syndicate never sleeps.', innkeeper_taruga: 'Supplies for the road, soldier.',
       drum_fel: 'Hammerfall stands. Arathi will be the Horde\'s.', tor_gan: 'The hunt in these highlands is good.', gorn: 'The earth here is bound and angry. Help me free it.', innkeeper_adegwa: 'Rest in Hammerfall, the walls are thick.', urda: 'Orc steel. The best in the highlands.',
       barnil: 'Welcome to the Rebel Camp. We left Kurzen when he lost his mind.', lieutenant_doren: 'Stormwind forgot us out here. Kurzen did not.', sergeant_yohwa: 'Watch the trees. Everything in this jungle bites.', corporal_bluth: 'Supplies are thin, but they are yours for a price.',

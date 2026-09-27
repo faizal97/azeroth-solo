@@ -44,7 +44,7 @@
   H('brd_golem_core', { name: 'The Golem Lord', lvl: 54, giver: 'gorzeeki', turnin: 'gorzeeki', dungeon: 'blackrock_depths', text: "Argelmach makes the Dark Iron golems. Bring me the core he carries. I have plans for it.",
     objs: [{ type: 'collect', item: 'argelmach_core', n: 1 }], reward: { choice: ['fam_back_rare55'] } });
   Object.assign(D.DUNGEONS, {
-    blackrock_depths: { name: 'Blackrock Depths', minLvl: 51, par: 540, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.8 }, pulls: [
+    blackrock_depths: { name: 'Blackrock Depths', minLvl: 51, par: 570, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.3 }, pulls: [
       { scene: 'brd_prison', label: 'The detention block', mobs: ['anvilrage_warden', 'anvilrage_warden'] },
       { scene: 'brd_prison', label: 'High Interrogator Gerstahn', mobs: ['high_interrogator_gerstahn'], boss: true },
       { scene: 'brd_prison', label: 'Lord Roccor', mobs: ['lord_roccor'], boss: true },
