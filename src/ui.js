@@ -1115,6 +1115,7 @@
     westfall: { furlbrow_farm: [250, 60], saldean_farm: [170, 110], sentinel_hill: [190, 225], jangolode_mine: [70, 150], molsen_farm: [260, 300], the_longshore: [50, 320], dagger_hills: [150, 355], gold_coast_quarry: [42, 92], moonbrook: [205, 285], the_dead_acre: [298, 362] },
     barrens: { far_watch: [290, 90], crossroads: [175, 175], forgotten_pools: [90, 150], stagnant_oasis: [230, 290], razormane_grounds: [270, 205], thorn_hill: [110, 330], sludge_fen: [215, 62], lushwater_oasis: [155, 262], baeldun_digsite: [52, 368] },
     redridge: { three_corners: [40, 300], lakeshire: [140, 205], lake_everstill: [195, 262], redridge_canyons: [70, 120], althers_mill: [160, 92], renders_valley: [262, 335], stonewatch_keep: [285, 205], galardell_valley: [272, 80] },
+    stranglethorn: { rebel_camp: [170, 45], grom_gol: [40, 250], nesingwary_camp: [150, 150], lake_nazferiti: [235, 185], zuuldaia_ruins: [55, 150], kurzen_compound: [285, 90], venture_base_camp: [270, 285], balia_mah_ruins: [120, 330], zul_kunda: [205, 365] },
     wetlands: { menethil_harbor: [60, 250], bluegill_marsh: [70, 130], whelgars_excavation: [170, 300], saltspray_glen: [140, 60], dun_modr: [230, 160], angerfang_encampment: [295, 280] },
     ashenvale: { astranaar: [110, 190], splintertree_post: [290, 185], the_zoram_strand: [30, 150], mystral_lake: [180, 270], thistlefur_village: [120, 70], the_howling_vale: [205, 118], satyrnaar: [292, 70], felfire_hill: [305, 300] },
     duskwood: { darkshire: [170, 200], brightwood_grove: [90, 130], raven_hill_cemetery: [45, 245], the_hushed_bank: [250, 110], vulgol_ogre_mound: [285, 250], tranquil_gardens: [215, 300], the_rotting_orchard: [150, 365] },
@@ -1123,6 +1124,11 @@
     dunmorogh: { ironforge: [170, 70], kharanos: [175, 210], grizzled_den: [190, 325], frostmane_hold: [62, 165], amberstill_ranch: [292, 205], anvilmar: [78, 330], coldridge_cave: [34, 262] },
   };
   const MAP_BG = {
+    stranglethorn: `<defs><radialGradient id="mapv" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#3f6a2c"/><stop offset="1" stop-color="#1c3314"/></radialGradient></defs>
+        <rect width="340" height="400" rx="6" fill="url(#mapv)"/>
+        <path d="M0 0 H24 C14 120 34 260 16 400 H0Z" fill="#2f6a8a" opacity=".85"/>
+        <ellipse cx="235" cy="185" rx="36" ry="22" fill="#3d7a8a" opacity=".7"/>
+        <text x="170" y="390" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f0f8e0" opacity=".85">Stranglethorn Vale · contested</text>`,
     wetlands: `<defs><radialGradient id="mapl" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#5a6a4a"/><stop offset="1" stop-color="#2c3424"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapl)"/>
         <path d="M0 0 H30 C20 120 40 220 20 400 H0Z" fill="#3d5f7a" opacity=".85"/>
@@ -1386,6 +1392,9 @@
       madame_eva: 'The cards told me you would come. They did not say whether you would leave.', sirra: 'The history of Duskwood is written in blood and moonlight.', trelayne: 'Welcome to the Scarlet Raven. Keep the door shut, the wolves are out.', gavin: 'Silver edges bite worgen best. Take a look.',
       darthalia: 'The Dark Lady wants Hillsbrad. We will give it to her, one farm at a time.', lydon: 'Every plague needs a test. And every test needs subjects.', krusk: 'Lok\'tar. Tarren Mill needs blades, not talk.', dalar: 'Arugal made those worgen. He must answer for it.',
       marla: 'Rest in Tarren Mill. The dead do not sleep, but you still may.', dogran: 'Orc steel, Forsaken edge.',
+      barnil: 'Welcome to the Rebel Camp. We left Kurzen when he lost his mind.', lieutenant_doren: 'Stormwind forgot us out here. Kurzen did not.', sergeant_yohwa: 'Watch the trees. Everything in this jungle bites.', corporal_bluth: 'Supplies are thin, but they are yours for a price.',
+      nimboya: 'Da Darkspear got old enemies in dis jungle, mon.', commander_aggro: "Grom'gol stands for the Horde. Keep it standing.", kin_weelay: 'Da loa whisper in dis jungle. Listen close.', innkeeper_thulbek: 'Rest. The jungle will still be here.', uthok: 'Blades for the jungle. Sharp and heavy.',
+      nesingwary: 'Ah, a fellow hunter! The finest game in the world lives in this jungle.', ajeck: 'Tigers first. Prove your aim.', erlgadin: 'The raptors are cunning. Mind your flanks.',
       stoutfist: 'Menethil holds the only road north. Keep it open and I will keep you fed.', glorin: 'The Dark Iron and the Dragonmaw both. Busy times for a mountaineer.', rethiel: 'The marsh is sick. The murlocs are only the symptom.',
       whelgar: 'History under every stone! And raptors on top of it.', helbrek: 'Rain again. Sit by the fire.', murndan: 'Dwarven steel and Menethil tar. Built to last.',
       raene: 'Ashenvale bleeds. Demons, satyrs, and orcs with axes. We need every blade.', shindrell: 'The wolves of this forest are no ordinary wolves.', thenysil: 'Elune watch over you. The Deeps are darker than the sea.',

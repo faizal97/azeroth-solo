@@ -15,6 +15,9 @@
   "zones/hillsbrad.js",
   "zones/ashenvale.js",
   "zones/wetlands.js",
+  "zones/stranglethorn.js",
+  "zones/gnomeregan.js",
+  "zones/razorfen.js",
   "professions.js",
   "finalize.js"
 ]

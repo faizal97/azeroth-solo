@@ -85,6 +85,17 @@ for (const [cls, trees] of Object.entries(D.TALENTS || {})) {
 for (const [role, m] of Object.entries(D.TALENT_BOT || {})) for (const [cls, ids] of Object.entries(m)) for (const id of ids) if (!(D.TALENTS[cls] || []).some((t) => t.id === id)) err(`bot talents ${role}/${cls}: unknown tree '${id}'`);
 if (D.XP_TO_LEVEL.length <= D.LEVEL_CAP) err(`XP_TO_LEVEL stops before the level cap (${D.LEVEL_CAP})`);
 
+// no data file may redefine a key an earlier file added (a quest, item or mob with the same id silently replaces the first one)
+{
+  const ctx = { localStorage: globalThis.localStorage }; ctx.globalThis = ctx; ctx.window = undefined; vm.createContext(ctx);
+  const TABLES = ['MOBS', 'PLACES', 'NPCS', 'QUESTS', 'ITEMS', 'ACTIVITIES', 'DUNGEONS', 'RECIPES'];
+  for (const f of require(path.join(ROOT, 'src/data/files.json'))) {
+    const before = {}; for (const t of TABLES) before[t] = Object.assign({}, (ctx.D || {})[t] || {});
+    vm.runInContext(fs.readFileSync(path.join(ROOT, 'src/data', f), 'utf8'), ctx);
+    for (const t of TABLES) for (const k in ((ctx.D || {})[t] || {})) if (before[t][k] && before[t][k] !== ctx.D[t][k]) err(`${f}: redefines ${t}.${k}, which an earlier file defines`);
+  }
+}
+
 const n = (t) => Object.keys(D[t]).length;
 console.log(`data: ${n('REGIONS')} zones, ${n('PLACES')} places, ${n('MOBS')} mobs, ${n('QUESTS')} quests, ${n('ITEMS')} items` + (warn.length ? ` · ${warn.length} warnings` : ''));
 if (process.argv.includes('-v')) warn.forEach((w) => console.log('  warn:', w));

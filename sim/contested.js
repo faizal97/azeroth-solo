@@ -18,6 +18,10 @@ for (const [race, home, mine, theirs] of [['human', 'goldshire', 'astranaar', 's
   ok(G.dangerOf(race === 'human' ? 'far_watch' : 'crystal_lake') === 1.8, race + ' danger in enemy zones');
   const other = race === 'human' ? ['durotar', 'barrens', 'hillsbrad'] : ['elwynn', 'westfall', 'duskwood'];
   ok(other.every((r) => !reach.has(r)), race + ' cannot walk into the other faction\'s zones: ' + [...reach].filter((r) => other.includes(r)));
+  ok(reach.has('stranglethorn'), race + ' reaches Stranglethorn');
+  ok(!G.enemyTown('nesingwary_camp'), race + ' may use the neutral camp');
+  ok(G.enemyTown(race === 'human' ? 'grom_gol' : 'rebel_camp'), race + ' enemy Stranglethorn town');
+  ok(G.activityBlock(race === 'human' ? 'razorfen_kraul' : 'gnomeregan') === 'hidden' && G.activityBlock(race === 'human' ? 'gnomeregan' : 'razorfen_kraul') !== 'hidden', race + ' dungeon visibility for the level-30 dungeons');
   console.log(`${race}: reaches ${[...reach].sort().join(', ')}`);
 }
 // bots: none stands in an enemy town, and both factions quest in Ashenvale

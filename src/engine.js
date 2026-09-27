@@ -150,7 +150,7 @@
     return baseUnit({
       side: 'enemy', kind: 'mob', key, name: M.name, level: L, elite: !!(M.elite || M.boss), boss: !!M.boss,
       maxHp: hp, hp, res: 0, maxRes: 0, resType: null, dmg: [a * dm, b * dm], swingSpeed: 2.0,
-      armor: L * 20, dodge: 5, crit: 5, special: M.special ? { kind: M.special, t: 6, phase: 0 } : null,
+      armor: L * 20, dodge: 5, crit: 5, special: M.special ? { kind: M.special, t: 6, phase: 0, text: M.specialText || null, summon: M.summon || null } : null,
       swingT: rnd(1.4, 2.2),
     });
   };
@@ -476,8 +476,10 @@
     }
     if (ab.shield && tgt) {
       const amt = Math.round((ab.shield.base + ab.shield.perLvl * L + ab.shield.coef * u.st.sp) * (1 + (tmOf(u).shield[abId] || 0) / 100));
-      addAura(C, tgt, { id: 'pw_shield', until: C.t + ab.shield.dur, absorb: amt });
-      addAura(C, tgt, { id: 'weakened_soul', until: C.t + ab.weakened });
+      // every absorb lives in one 'pw_shield' aura (the damage code reads that id); it shows the name and icon of what cast it
+      const own = abId !== 'pw_shield' ? { name: ab.name, icon: abId } : { name: null, icon: null };
+      addAura(C, tgt, Object.assign({ id: 'pw_shield', until: C.t + ab.shield.dur, absorb: amt }, own));
+      if (ab.weakened) addAura(C, tgt, { id: 'weakened_soul', until: C.t + ab.weakened });
       // shield threat counts like a heal
       for (const e of alive(foes(C, u))) e.threat[u.uid] = (e.threat[u.uid] || 0) + (amt * 0.5) / Math.max(1, alive(foes(C, u)).length);
     }
@@ -562,9 +564,18 @@
       return;
     }
     if (sp.kind === 'kelris') {
+      // one add at half health (the boss's `summon` mob)
       if (sp.phase === 0 && pct < 0.5) {
-        sp.phase = 1; say(C, m, 'Sleep... and dream of the old gods!', 'monster');
-        E.addEnemy(C, E.mobUnit('twilight_acolyte', m.level - 2, (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
+        sp.phase = 1; if (sp.text) ev(C, { type: 'emote', uid: m.uid, text: sp.text }); else say(C, m, 'Sleep... and dream of the old gods!', 'monster');
+        E.addEnemy(C, E.mobUnit(sp.summon || 'twilight_acolyte', m.level - 2, (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
+      }
+      return;
+    }
+    if (sp.kind === 'thermaplugg') {
+      // a leper gnome joins at 66% and at 33%
+      if (sp.phase < 2 && pct < (sp.phase === 0 ? 0.66 : 0.33)) {
+        sp.phase++; say(C, m, sp.phase === 1 ? 'Usurpers! Gnomeregan is mine!' : 'My machines are the future!', 'monster');
+        E.addEnemy(C, E.mobUnit('gnomeregan_leper', m.level - 2, (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
       }
       return;
     }
@@ -587,20 +598,20 @@
     if (sp.kind === 'slam' || sp.kind === 'hogger') {
       sp.t = sp.kind === 'hogger' ? 9 : 8;
       if (tgt && !tgt.dead) {
-        ev(C, { type: 'emote', uid: m.uid, text: sp.kind === 'hogger' ? `${m.name} lunges!` : `${m.name} slams the ground!` });
+        ev(C, { type: 'emote', uid: m.uid, text: sp.text || (sp.kind === 'hogger' ? `${m.name} lunges!` : `${m.name} slams the ground!`) });
         dealDamage(C, m, tgt, rnd(m.dmg[0], m.dmg[1]) * 2.1, { school: 'physical', ab: 'slam' });
       }
     } else if (sp.kind === 'whirl') {
       sp.t = 12;
-      ev(C, { type: 'emote', uid: m.uid, text: `${m.name === 'XT:9' ? 'XT:9' : 'The Shredder'} whirls its saw blades!` });
+      ev(C, { type: 'emote', uid: m.uid, text: sp.text || `${m.name === 'XT:9' ? 'XT:9' : 'The Shredder'} whirls its saw blades!` });
       for (const a of allies) dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * 0.7, { school: 'physical', ab: 'whirl' });
     } else if (sp.kind === 'molten') {
       sp.t = 10;
       const a = allies[rint(0, allies.length - 1)];
-      if (a) { ev(C, { type: 'emote', uid: m.uid, text: `${m.name} splashes molten metal!` }); dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * 1.4, { school: 'fire', ab: 'molten' }); }
+      if (a) { ev(C, { type: 'emote', uid: m.uid, text: sp.text || `${m.name} splashes molten metal!` }); dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * 1.4, { school: 'fire', ab: 'molten' }); }
     } else if (sp.kind === 'cook') {
       sp.t = 15;
-      ev(C, { type: 'emote', uid: m.uid, text: 'Cookie eats some of his cooking.' });
+      ev(C, { type: 'emote', uid: m.uid, text: sp.text || 'Cookie eats some of his cooking.' });
       heal(C, m, m, m.maxHp * 0.08, {});
     }
   }

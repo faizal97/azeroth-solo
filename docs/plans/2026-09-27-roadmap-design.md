@@ -106,6 +106,13 @@ Contested-zone rules (proposed; he can overrule):
 - **Enemy towns stay closed:** you can't enter an enemy hub or capital ("the guards would kill you on sight"). Routes and the group finder's "be there" check go around them. So the Stockade stays Alliance-only and Shadowfang Keep stays Horde-only, while Blackfathom Deeps (in Ashenvale) is open to both.
 - **Danger:** world PvP ambushes are more frequent in contested zones, and more frequent still in the other faction's zones.
 
+## v5 plan (2026-09-27)
+
+1. **v5.0 (shipped):** level cap 35. Northern Stranglethorn Vale is contested: Rebel Camp (Alliance), Grom'gol (Horde) and Nesingwary's Expedition (both). There's a dungeon per faction, Gnomeregan (Alliance) and Razorfen Kraul (Horde), plus 18 class abilities at 32 and 34.
+2. **v5.1:** level cap 40. Arathi Highlands is contested: Refuge Pointe and Hammerfall. Also the Scarlet Monastery (reachable by both), the **mount at 40**, and story Chapter 4.
+3. **v5.2:** southern Stranglethorn (Booty Bay) and the Gurubashi Arena event.
+4. **Open:** Expert professions (skill 225, iron/mithril/silk/kingsblood) for the 30s.
+
 ## Group finder rules (agreed 2026-09-27)
 
 - **Be there:** any faction may run any dungeon or world elite, but you queue from its zone. Places with no road from where you are stay hidden; they appear when roads between the factions open in the contested zones.

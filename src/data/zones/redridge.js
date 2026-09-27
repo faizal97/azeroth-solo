@@ -10,7 +10,7 @@
   D.item('gnoll_paw', { name: 'Redridge Gnoll Paw', slot: 'quest', q: 1, icon: 'claw' });
   D.item('poacher_bow', { name: "Poacher's Bowstring", slot: 'quest', q: 1, icon: 'bow' });
   D.item('mystic_totem', { name: 'Mystic Bone Charm', slot: 'quest', q: 1, icon: 'voodoo_doll' });
-  D.item('murloc_fin', { name: 'Flesheater Fin', slot: 'quest', q: 1, icon: 'fin' });
+  D.item('rr_murloc_fin', { name: 'Flesheater Fin', slot: 'quest', q: 1, icon: 'fin' });
   D.item('tidecaller_pearl', { name: 'Tidecaller Pearl', slot: 'quest', q: 1, icon: 'ring' });
   D.item('blackrock_medallion', { name: 'Blackrock Medallion', slot: 'quest', q: 1, icon: 'coin' });
   D.item('blackrock_orders', { name: 'Blackrock Battle Orders', slot: 'quest', q: 1, icon: 'journal' });
@@ -55,8 +55,8 @@
     redridge_mystic: { name: 'Redridge Mystic', lvl: [20, 21], family: 'humanoid', drops: [['gnoll_mane', 0.35], ['linen_cloth', 0.3]], qdrops: [['mystic_totem', 0.5]], aggro: 'The bones say you die!' },
     shadowhide_warrior: { name: 'Shadowhide Warrior', lvl: [22, 23], family: 'humanoid', hpMult: 1.1, drops: [['gnoll_mane', 0.4], ['linen_cloth', 0.3]], qdrops: [['shadowhide_pendant', 0.5]], aggro: 'Shadowhide rule these hills!' },
     shadowhide_darkweaver: { name: 'Shadowhide Darkweaver', lvl: [23, 24], family: 'humanoid', drops: [['gnoll_mane', 0.35], ['linen_cloth', 0.3]], qdrops: [['shadowhide_pendant', 0.5]], aggro: 'Darkness takes you!' },
-    murloc_flesheater: { name: 'Murloc Flesheater', lvl: [19, 20], family: 'humanoid', drops: [['murloc_eye', 0.4]], qdrops: [['murloc_fin', 0.55]], aggro: 'Mrglglglgl!' },
-    murloc_tidecaller: { name: 'Murloc Tidecaller', lvl: [20, 21], family: 'humanoid', drops: [['murloc_eye', 0.4]], qdrops: [['tidecaller_pearl', 0.45], ['murloc_fin', 0.3]], aggro: 'Mrrgll! Mrrrgll!' },
+    murloc_flesheater: { name: 'Murloc Flesheater', lvl: [19, 20], family: 'humanoid', drops: [['murloc_eye', 0.4]], qdrops: [['rr_murloc_fin', 0.55]], aggro: 'Mrglglglgl!' },
+    murloc_tidecaller: { name: 'Murloc Tidecaller', lvl: [20, 21], family: 'humanoid', drops: [['murloc_eye', 0.4]], qdrops: [['tidecaller_pearl', 0.45], ['rr_murloc_fin', 0.3]], aggro: 'Mrrgll! Mrrrgll!' },
     tarantula: { name: 'Tarantula', lvl: [18, 19], family: 'beast', drops: [['ruined_pelt', 0.25]], qdrops: [['tarantula_silk', 0.55]] },
     great_goretusk: { name: 'Great Goretusk', lvl: [18, 19], family: 'beast', hpMult: 1.1, drops: [['ruined_pelt', 0.4]], qdrops: [['goretusk_flank', 0.55]] },
     blackrock_outrunner: { name: 'Blackrock Outrunner', lvl: [21, 22], family: 'humanoid', drops: [['thieves_coin', 0.45], ['linen_cloth', 0.3]], qdrops: [['blackrock_medallion', 0.5]], aggro: 'For the Blackrock!' },
@@ -118,12 +118,12 @@
       objs: [{ type: 'collect', item: 'tarantula_silk', n: 8 }], reward: { money: 900 } },
     mongrels: { name: 'The Gnoll Menace', lvl: 19, giver: 'marris', turnin: 'marris', text: 'Gnolls come down from the canyons every night. Kill 12 mongrels.',
       objs: [{ type: 'kill', mob: 'redridge_mongrel', n: 12 }], reward: { choice: ['fam_wrist22'] } },
-    gnoll_paws: { name: 'Paws for Proof', lvl: 19, giver: 'solomon', turnin: 'solomon', text: 'The town pays a bounty on gnolls. Bring me 10 paws.',
+    rr_gnoll_paws: { name: 'Paws for Proof', lvl: 19, giver: 'solomon', turnin: 'solomon', text: 'The town pays a bounty on gnolls. Bring me 10 paws.',
       objs: [{ type: 'collect', item: 'gnoll_paw', n: 10 }], reward: { money: 1000 } },
-    poachers: { name: 'Poachers', lvl: 20, giver: 'marris', turnin: 'marris', pre: ['mongrels'], text: 'The poachers are killing every deer in the hills. Kill 10 and bring me 5 bowstrings.',
+    rr_poachers: { name: 'Poachers', lvl: 20, giver: 'marris', turnin: 'marris', pre: ['mongrels'], text: 'The poachers are killing every deer in the hills. Kill 10 and bring me 5 bowstrings.',
       objs: [{ type: 'kill', mob: 'redridge_poacher', n: 10 }, { type: 'collect', item: 'poacher_bow', n: 5 }], reward: { choice: ['fam_weapon22'] } },
     murloc_fins: { name: 'Murlocs in the Lake', lvl: 19, giver: 'oslow', turnin: 'oslow', text: 'Murlocs keep dragging my workers off the bridge. Bring me 10 fins.',
-      objs: [{ type: 'collect', item: 'murloc_fin', n: 10 }], reward: { choice: ['fam_back23'] } },
+      objs: [{ type: 'collect', item: 'rr_murloc_fin', n: 10 }], reward: { choice: ['fam_back23'] } },
     tidecallers: { name: 'The Tidecallers', lvl: 20, giver: 'solomon', turnin: 'solomon', pre: ['murloc_fins'], text: 'The murloc tidecallers stir up storms on the lake. Kill 10.',
       objs: [{ type: 'kill', mob: 'murloc_tidecaller', n: 10 }], reward: { money: 1100 } },
     tidecaller_pearls: { name: 'Pearls of Everstill', lvl: 20, giver: 'darcy', turnin: 'darcy', text: 'They say the tidecallers keep pearls from the lake bed. I would love a necklace. Bring me 5.',

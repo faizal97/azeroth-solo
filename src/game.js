@@ -93,6 +93,18 @@
     S.pending = []; S.chatTimers = {};
     if (S.run && S.run.phase === 'fight') S.run.phase = 'rest', S.run.restUntil = now() + 3000;
     try { G.refreshHeirlooms(); } catch (e) { /* older save */ }
+    // v5: v3.0–v4.2 reused three ids from earlier zones (Redridge's quests 'poachers' and 'gnoll_paws', and its murloc
+    // fins). They have their own ids now. A Redridge-level Alliance character's copies move to the new ids.
+    { const Pp = S.player, alliance = (D.RACES[Pp.race] || {}).faction !== 'horde';
+      if (alliance && Pp.level >= 18) {
+        for (const [o, nw] of [['poachers', 'rr_poachers'], ['gnoll_paws', 'rr_gnoll_paws']]) {
+          if (Pp.quests && Pp.quests[o] && !Pp.quests[nw]) { Pp.quests[nw] = Pp.quests[o]; delete Pp.quests[o]; }
+          if (Pp.done && Pp.done[o] && Pp.level >= 20) Pp.done[nw] = true;
+        }
+        if (Pp.quests && Pp.quests.murloc_fins) for (const b of (Pp.bags || [])) if (b.item.id === 'murloc_fin' && b.item.name === 'Flesheater Fin') b.item = G.copyItem('rr_murloc_fin');
+      }
+      if (Pp.done && Pp.done.poachers && alliance) delete Pp.done.poachers; // the Alliance never had Mulgore's quest
+    }
     // v3: stacks saved before a material changed slot (linen was junk) take the item's current slot and icon
     for (const b of (S.player.bags || []).concat(S.player.bank || [])) { const base = D.ITEMS[b.item.id]; if (base && base.slot === 'mat' && b.item.slot !== 'mat') { b.item.slot = 'mat'; b.item.icon = base.icon; } }
     return G.catchUp();
@@ -344,12 +356,13 @@
     if (npc === 'allison') return ['tough_bread', 'fresh_bread', 'moist_cornbread', 'mutton_chop', 'spring_water', 'ice_milk', 'melon_juice', 'sweet_nectar'].map(G.copyItem);
     if (npc === 'heather' || npc === 'boorand') return ['fresh_bread', 'moist_cornbread', 'mutton_chop', 'ice_milk', 'melon_juice', 'sweet_nectar'].map(G.copyItem);
     if (npc === 'brianna' || npc === 'jayka') return ['moist_cornbread', 'mutton_chop', 'wild_hog_shank', 'melon_juice', 'sweet_nectar', 'morning_glory_dew'].map(G.copyItem);
+    if (npc === 'corporal_bluth' || npc === 'innkeeper_thulbek') return ['roasted_boar', 'spiced_jungle_meat', 'morning_glory_dew', 'sparkling_water', 'bubbling_water'].map(G.copyItem);
     if (npc === 'helbrek') return ['wild_hog_shank', 'roasted_boar', 'melon_juice', 'morning_glory_dew', 'sparkling_water', 'thunder_ale'].map(G.copyItem);
     if (npc === 'kimlya' || npc === 'kaylisk') return ['wild_hog_shank', 'roasted_boar', 'moonberry_juice', 'morning_glory_dew', 'sparkling_water'].map(G.copyItem);
     if (npc === 'trelayne' || npc === 'marla') return ['mutton_chop', 'wild_hog_shank', 'roasted_boar', 'sweet_nectar', 'morning_glory_dew', 'sparkling_water'].map(G.copyItem);
     if (npc === 'renee' || npc === 'norman') return ['tough_bread', 'tirisfal_pumpkin', 'spring_water', 'ice_milk'].map(G.copyItem);
     if (npc === 'keldamyr' || npc === 'saelienne') return ['tough_bread', 'fresh_bread', 'spring_water', 'moonberry_juice'].map(G.copyItem);
-    if (npc === 'corina' || npc === 'grawn' || npc === 'bruuk' || npc === 'ilyenia' || npc === 'mydrannul' || npc === 'kaplak' || npc === 'rahauro' || npc === 'mahnott' || npc === 'etu' || npc === 'gerard' || npc === 'abigail' || npc === 'lewis' || npc === 'nargal' || npc === 'thurman' || npc === 'verner' || npc === 'krond' || npc === 'gavin' || npc === 'dogran' || npc === 'aeolynn' || npc === 'burkrum' || npc === 'murndan') {
+    if (npc === 'corina' || npc === 'grawn' || npc === 'bruuk' || npc === 'ilyenia' || npc === 'mydrannul' || npc === 'kaplak' || npc === 'rahauro' || npc === 'mahnott' || npc === 'etu' || npc === 'gerard' || npc === 'abigail' || npc === 'lewis' || npc === 'nargal' || npc === 'thurman' || npc === 'verner' || npc === 'krond' || npc === 'gavin' || npc === 'dogran' || npc === 'aeolynn' || npc === 'burkrum' || npc === 'murndan' || npc === 'uthok') {
       if (!G.S.flags.corina || G.S.flags.corinaLvl !== G.S.player.level) {
         const L = G.S.player.level;
         G.S.flags.corina = Object.keys(D.WEAPON_BASES).map((w) => { const it = G.genGear('weapon', Math.max(2, L), 1, { wtype: w }); it.cost = it.sell * 5; return it; });
