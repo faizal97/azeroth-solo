@@ -5,20 +5,20 @@
   const D = root.D;
   D.zone('westfall', { name: 'Westfall', faction: 'alliance' });
   // items
-  D.item('cruel_barb', { name: 'Cruel Barb', slot: 'weapon', wtype: 'sword', q: 3, lvl: 10, dmg: [13, 23], speed: 2.4, stats: { str: 5 }, icon: 'sword', sell: 900, look: ['weapon', 'cruel_barb'], source: 'Edwin VanCleef, The Deadmines' });
-  D.item('cape_brotherhood', { name: 'Cape of the Brotherhood', slot: 'back', q: 3, lvl: 10, armor: 18, stats: { agi: 4, sta: 2 }, icon: 'cloak', sell: 600, look: ['back', 'cape_brotherhood'], source: 'Edwin VanCleef, The Deadmines' });
-  D.item('smites_hammer', { name: "Smite's Mighty Hammer", slot: 'weapon', wtype: 'mace', q: 3, lvl: 10, dmg: [14, 24], speed: 2.8, stats: { str: 6, sta: 3 }, icon: 'mace', sell: 1000, look: ['weapon', 'smites_hammer'], source: 'Mr. Smite, The Deadmines' });
-  D.item('thiefs_blade', { name: "Thief's Blade", slot: 'weapon', wtype: 'sword', q: 3, lvl: 10, dmg: [10, 18], speed: 1.9, stats: { agi: 5 }, icon: 'sword', sell: 850, look: ['weapon', 'thiefs_blade'], source: 'Mr. Smite, The Deadmines' });
-  D.item('cookies_rod', { name: "Cookie's Stirring Rod", slot: 'weapon', wtype: 'staff', q: 3, lvl: 10, dmg: [15, 23], speed: 3, stats: { int: 6, spi: 4 }, sp: 10, icon: 'staff', sell: 900, look: ['weapon', 'cookies_rod'], source: 'Cookie, The Deadmines' });
-  D.item('cookies_tenderizer', { name: "Cookie's Tenderizer", slot: 'weapon', wtype: 'mace', q: 3, lvl: 10, dmg: [11, 20], speed: 2.5, stats: { sta: 3, spi: 3 }, sp: 7, icon: 'mace', sell: 900, look: ['weapon', 'cookies_tenderizer'], source: 'Cookie, The Deadmines' });
-  D.item('smelting_pants', { name: 'Smelting Pants', slot: 'legs', atype: 'mail', q: 3, lvl: 10, armor: 110, stats: { str: 4, sta: 4 }, icon: 'legs', sell: 700, look: ['legs', 'smelting_pants'], source: 'Gilnid, The Deadmines' });
-  D.item('buzzer_blade', { name: 'Buzzer Blade', slot: 'weapon', wtype: 'dagger', q: 3, lvl: 10, dmg: [8, 15], speed: 1.7, stats: { agi: 3, sta: 2 }, icon: 'dagger', sell: 800, look: ['weapon', 'buzzer_blade'], source: "Sneed's Shredder, The Deadmines" });
-  D.item('gold_gloves', { name: 'Gold-flecked Gloves', slot: 'hands', atype: 'cloth', q: 3, lvl: 10, armor: 12, stats: { int: 4, spi: 3 }, sp: 4, icon: 'gloves', sell: 500, source: "Sneed's Shredder, The Deadmines" });
-  D.item('lavish_ring', { name: 'Lavishly Jeweled Ring', slot: 'finger', q: 3, lvl: 10, stats: { int: 3, spi: 3, sta: 2 }, icon: 'ring', sell: 700, source: 'Gilnid, The Deadmines' });
-  D.item('foreman_belt', { name: "Foreman's Girdle", slot: 'waist', atype: 'mail', q: 3, lvl: 10, armor: 60, stats: { sta: 5 }, icon: 'belt', sell: 500, source: "Rhahk'Zor, The Deadmines" });
-  D.item('emberstone_staff', { name: 'Emberstone Staff', slot: 'weapon', wtype: 'staff', q: 3, lvl: 10, dmg: [17, 26], speed: 3.1, stats: { int: 5, sta: 3 }, sp: 12, icon: 'staff', sell: 1000, look: ['weapon', 'emberstone_staff'], source: 'Mr. Smite, The Deadmines' });
-  D.item('corsair_shirt', { name: "Corsair's Overshirt", slot: 'chest', atype: 'cloth', q: 3, lvl: 10, armor: 28, stats: { int: 5, spi: 4 }, sp: 5, icon: 'chest_cloth', sell: 700, look: ['chest', 'corsair_shirt'], source: 'Cookie, The Deadmines' });
-  D.item('miners_bracers', { name: "Miner's Revenge Bracers", slot: 'wrist', atype: 'mail', q: 3, lvl: 10, armor: 50, stats: { str: 3, sta: 3 }, icon: 'bracers', sell: 500, source: "Rhahk'Zor, The Deadmines" });
+  D.item('cruel_barb', { name: 'Cruel Barb', slot: 'weapon', wtype: 'sword', q: 3, lvl: 21, dmg: [24, 42], speed: 2.4, stats: { str: 8 }, icon: 'sword', sell: 1980, look: ['weapon', 'cruel_barb'], source: 'Edwin VanCleef, The Deadmines' });
+  D.item('cape_brotherhood', { name: 'Cape of the Brotherhood', slot: 'back', q: 3, lvl: 21, armor: 34, stats: { agi: 6, sta: 3 }, icon: 'cloak', sell: 1320, look: ['back', 'cape_brotherhood'], source: 'Edwin VanCleef, The Deadmines' });
+  D.item('smites_hammer', { name: "Smite's Mighty Hammer", slot: 'weapon', wtype: 'mace', q: 3, lvl: 20, dmg: [24, 42], speed: 2.8, stats: { str: 10, sta: 5 }, icon: 'mace', sell: 2200, look: ['weapon', 'smites_hammer'], source: 'Mr. Smite, The Deadmines' });
+  D.item('thiefs_blade', { name: "Thief's Blade", slot: 'weapon', wtype: 'sword', q: 3, lvl: 20, dmg: [17, 31], speed: 1.9, stats: { agi: 8 }, icon: 'sword', sell: 1870, look: ['weapon', 'thiefs_blade'], source: 'Mr. Smite, The Deadmines' });
+  D.item('cookies_rod', { name: "Cookie's Stirring Rod", slot: 'weapon', wtype: 'staff', q: 3, lvl: 20, dmg: [26, 40], speed: 3, stats: { int: 10, spi: 6 }, sp: 16, icon: 'staff', sell: 1980, look: ['weapon', 'cookies_rod'], source: 'Cookie, The Deadmines' });
+  D.item('cookies_tenderizer', { name: "Cookie's Tenderizer", slot: 'weapon', wtype: 'mace', q: 3, lvl: 20, dmg: [19, 35], speed: 2.5, stats: { sta: 5, spi: 5 }, sp: 11, icon: 'mace', sell: 1980, look: ['weapon', 'cookies_tenderizer'], source: 'Cookie, The Deadmines' });
+  D.item('smelting_pants', { name: 'Smelting Pants', slot: 'legs', atype: 'mail', q: 3, lvl: 19, armor: 192, stats: { str: 6, sta: 6 }, icon: 'legs', sell: 1540, look: ['legs', 'smelting_pants'], source: 'Gilnid, The Deadmines' });
+  D.item('buzzer_blade', { name: 'Buzzer Blade', slot: 'weapon', wtype: 'dagger', q: 3, lvl: 19, dmg: [13, 25], speed: 1.7, stats: { agi: 5, sta: 3 }, icon: 'dagger', sell: 1760, look: ['weapon', 'buzzer_blade'], source: "Sneed's Shredder, The Deadmines" });
+  D.item('gold_gloves', { name: 'Gold-flecked Gloves', slot: 'hands', atype: 'cloth', q: 3, lvl: 19, armor: 21, stats: { int: 6, spi: 5 }, sp: 6, icon: 'gloves', sell: 1100, source: "Sneed's Shredder, The Deadmines" });
+  D.item('lavish_ring', { name: 'Lavishly Jeweled Ring', slot: 'finger', q: 3, lvl: 19, stats: { int: 5, spi: 5, sta: 3 }, icon: 'ring', sell: 1540, source: 'Gilnid, The Deadmines' });
+  D.item('foreman_belt', { name: "Foreman's Girdle", slot: 'waist', atype: 'mail', q: 3, lvl: 18, armor: 100, stats: { sta: 8 }, icon: 'belt', sell: 1100, source: "Rhahk'Zor, The Deadmines" });
+  D.item('emberstone_staff', { name: 'Emberstone Staff', slot: 'weapon', wtype: 'staff', q: 3, lvl: 20, dmg: [30, 45], speed: 3.1, stats: { int: 8, sta: 5 }, sp: 19, icon: 'staff', sell: 2200, look: ['weapon', 'emberstone_staff'], source: 'Mr. Smite, The Deadmines' });
+  D.item('corsair_shirt', { name: "Corsair's Overshirt", slot: 'chest', atype: 'cloth', q: 3, lvl: 20, armor: 51, stats: { int: 8, spi: 6 }, sp: 8, icon: 'chest_cloth', sell: 1540, look: ['chest', 'corsair_shirt'], source: 'Cookie, The Deadmines' });
+  D.item('miners_bracers', { name: "Miner's Revenge Bracers", slot: 'wrist', atype: 'mail', q: 3, lvl: 18, armor: 83, stats: { str: 5, sta: 5 }, icon: 'bracers', sell: 1100, source: "Rhahk'Zor, The Deadmines" });
   D.item('handful_oats', { name: 'Handful of Oats', slot: 'quest', q: 1, icon: 'seed' });
   D.item('goretusk_liver', { name: 'Goretusk Liver', slot: 'quest', q: 1, icon: 'meat' });
   D.item('vulture_meat', { name: 'Stringy Vulture Meat', slot: 'quest', q: 1, icon: 'meat' });
@@ -34,16 +34,16 @@
 
   // creatures
   Object.assign(D.MOBS, {
-    defias_miner: { name: 'Defias Miner', lvl: [10, 11], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.4]] },
-    defias_pirate: { name: 'Defias Pirate', lvl: [11, 11], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.4]] },
-    goblin_engineer: { name: 'Goblin Engineer', lvl: [10, 11], family: 'humanoid', drops: [['thieves_coin', 0.5]] },
-    rhahkzor: { name: "Rhahk'Zor", lvl: [11, 11], family: 'giant', boss: true, special: 'slam', aggro: 'VanCleef pay big for your heads!', loot: ['foreman_belt', 'miners_bracers', 'defias_belt'] },
-    sneed_shredder: { name: "Sneed's Shredder", lvl: [11, 11], family: 'mechanical', boss: true, special: 'whirl', loot: ['buzzer_blade', 'gold_gloves', 'defias_boots'] },
-    gilnid: { name: 'Gilnid', lvl: [11, 11], family: 'humanoid', boss: true, special: 'molten', aggro: 'Anyone want to take a break? Well too bad! Get to work you oafs!', loot: ['smelting_pants', 'lavish_ring', 'defias_leggings'] },
-    mr_smite: { name: 'Mr. Smite', lvl: [12, 12], family: 'humanoid', boss: true, special: 'smite', aggro: "We're under attack! Avast, ye swabs! Repel the invaders!", loot: ['smites_hammer', 'thiefs_blade', 'emberstone_staff'] },
-    cookie: { name: 'Cookie', lvl: [12, 12], family: 'murloc', boss: true, special: 'cook', aggro: 'Mrrglrrgl... blub!', loot: ['cookies_rod', 'cookies_tenderizer', 'corsair_shirt'] },
-    vancleef: { name: 'Edwin VanCleef', lvl: [12, 12], family: 'humanoid', boss: true, special: 'vancleef', aggro: 'None may challenge the Brotherhood!', loot: ['cruel_barb', 'cape_brotherhood', 'defias_armor'], qdrops: [['vancleef_head', 1]] },
-    blackguard: { name: 'Blackguard', lvl: [11, 11], family: 'humanoid', sprite: 'defias_pirate', drops: [] },
+    defias_miner: { name: 'Defias Miner', lvl: [17, 18], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.4]] },
+    defias_pirate: { name: 'Defias Pirate', lvl: [18, 19], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.4]] },
+    goblin_engineer: { name: 'Goblin Engineer', lvl: [17, 18], family: 'humanoid', drops: [['thieves_coin', 0.5]] },
+    rhahkzor: { name: "Rhahk'Zor", lvl: [18, 18], family: 'giant', boss: true, special: 'slam', aggro: 'VanCleef pay big for your heads!', loot: ['foreman_belt', 'miners_bracers', 'defias_belt'] },
+    sneed_shredder: { name: "Sneed's Shredder", lvl: [19, 19], family: 'mechanical', boss: true, special: 'whirl', loot: ['buzzer_blade', 'gold_gloves', 'defias_boots'] },
+    gilnid: { name: 'Gilnid', lvl: [19, 19], family: 'humanoid', boss: true, special: 'molten', aggro: 'Anyone want to take a break? Well too bad! Get to work you oafs!', loot: ['smelting_pants', 'lavish_ring', 'defias_leggings'] },
+    mr_smite: { name: 'Mr. Smite', lvl: [20, 20], family: 'humanoid', boss: true, special: 'smite', aggro: "We're under attack! Avast, ye swabs! Repel the invaders!", loot: ['smites_hammer', 'thiefs_blade', 'emberstone_staff'] },
+    cookie: { name: 'Cookie', lvl: [20, 20], family: 'murloc', boss: true, special: 'cook', aggro: 'Mrrglrrgl... blub!', loot: ['cookies_rod', 'cookies_tenderizer', 'corsair_shirt'] },
+    vancleef: { name: 'Edwin VanCleef', lvl: [21, 21], family: 'humanoid', boss: true, special: 'vancleef', aggro: 'None may challenge the Brotherhood!', loot: ['cruel_barb', 'cape_brotherhood', 'defias_armor'], qdrops: [['vancleef_head', 1], ['unsent_letter', 1]] },
+    blackguard: { name: 'Blackguard', lvl: [19, 19], family: 'humanoid', sprite: 'defias_pirate', drops: [] },
     young_goretusk: { name: 'Young Goretusk', lvl: [10, 11], family: 'beast', drops: [['boar_tusk', 0.4], ['ruined_pelt', 0.3]], qdrops: [['goretusk_liver', 0.55]] },
     goretusk: { name: 'Goretusk', lvl: [12, 13], family: 'beast', hpMult: 1.1, drops: [['boar_tusk', 0.45], ['ruined_pelt', 0.35]], qdrops: [['goretusk_liver', 0.55], ['goretusk_snout', 0.55]] },
     fleshripper: { name: 'Fleshripper', lvl: [10, 11], family: 'beast', drops: [['wolf_fang', 0.3]], qdrops: [['vulture_meat', 0.6], ['fleshripper_talon', 0.5]] },
@@ -134,16 +134,17 @@
 
   // dungeons
   Object.assign(D.DUNGEONS, {
-    deadmines: { name: 'The Deadmines', minLvl: 8, size: 5, trashMult: { hp: 2.2, dmg: 1.55 }, bossMult: { hp: 10, dmg: 3.2 }, pulls: [{ scene: 'deadmines_mine', label: 'Mine tunnel', mobs: ['defias_miner', 'defias_miner'] }, { scene: 'deadmines_mine', label: 'Mine tunnel', mobs: ['defias_miner', 'goblin_engineer'] }, { scene: 'deadmines_mine', label: "Rhahk'Zor", mobs: ['rhahkzor'], boss: true }, { scene: 'deadmines_mine', label: 'Lumber mill', mobs: ['goblin_engineer', 'goblin_engineer', 'defias_miner'] }, { scene: 'deadmines_mine', label: "Sneed's Shredder", mobs: ['sneed_shredder'], boss: true }, { scene: 'deadmines_mine', label: 'Foundry', mobs: ['goblin_engineer', 'defias_miner'] }, { scene: 'deadmines_mine', label: 'Gilnid', mobs: ['gilnid'], boss: true }, { scene: 'deadmines_ship', label: 'The cove', mobs: ['defias_pirate', 'defias_pirate'] }, { scene: 'deadmines_ship', label: 'The cove', mobs: ['defias_pirate', 'defias_pirate', 'defias_pirate'] }, { scene: 'deadmines_ship', label: 'Mr. Smite', mobs: ['mr_smite'], boss: true }, { scene: 'deadmines_ship', label: 'Cookie', mobs: ['cookie'], boss: true }, { scene: 'deadmines_ship', label: 'Edwin VanCleef', mobs: ['vancleef'], boss: true }] },
+    deadmines: { name: 'The Deadmines', minLvl: 17, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.8 }, pulls: [{ scene: 'deadmines_mine', label: 'Mine tunnel', mobs: ['defias_miner', 'defias_miner'] }, { scene: 'deadmines_mine', label: 'Mine tunnel', mobs: ['defias_miner', 'goblin_engineer'] }, { scene: 'deadmines_mine', label: "Rhahk'Zor", mobs: ['rhahkzor'], boss: true }, { scene: 'deadmines_mine', label: 'Lumber mill', mobs: ['goblin_engineer', 'goblin_engineer', 'defias_miner'] }, { scene: 'deadmines_mine', label: "Sneed's Shredder", mobs: ['sneed_shredder'], boss: true }, { scene: 'deadmines_mine', label: 'Foundry', mobs: ['goblin_engineer', 'defias_miner'] }, { scene: 'deadmines_mine', label: 'Gilnid', mobs: ['gilnid'], boss: true }, { scene: 'deadmines_ship', label: 'The cove', mobs: ['defias_pirate', 'defias_pirate'] }, { scene: 'deadmines_ship', label: 'The cove', mobs: ['defias_pirate', 'defias_pirate', 'defias_pirate'] }, { scene: 'deadmines_ship', label: 'Mr. Smite', mobs: ['mr_smite'], boss: true }, { scene: 'deadmines_ship', label: 'Cookie', mobs: ['cookie'], boss: true }, { scene: 'deadmines_ship', label: 'Edwin VanCleef', mobs: ['vancleef'], boss: true }] },
   });
 
   // group finder
   Object.assign(D.ACTIVITIES, {
-    deadmines: { name: 'The Deadmines', dungeon: 'deadmines', size: 5, minLvl: 8, maxLvl: 12, desc: 'Dungeon. 5 players. Scaled for level 10.' },
+    deadmines: { name: 'The Deadmines', dungeon: 'deadmines', where: 'moonbrook', size: 5, minLvl: 17, maxLvl: 21, desc: 'Dungeon under Moonbrook. 5 players.' },
   });
 
 
   // ---- levels 15-20 (v2.1): the Gold Coast Quarry, Moonbrook and the Dead Acre
+  D.item('unsent_letter', { name: 'An Unsent Letter', slot: 'quest', q: 1, icon: 'journal' });
   D.item('quarry_ore', { name: 'Gold Coast Ore', slot: 'quest', q: 1, icon: 'dust' });
   D.item('defias_ledger', { name: 'Quarry Ledger', slot: 'quest', q: 1, icon: 'journal' });
   D.item('furlbrow_deed', { name: "Furlbrow's Deed", slot: 'quest', q: 1, icon: 'journal' });
@@ -209,6 +210,8 @@
       objs: [{ type: 'kill', mob: 'defias_highwayman', n: 10 }], reward: { choice: ['fam_waist19'] } },
     dead_acre_sweep: { name: 'Sweep the Dead Acre', lvl: 20, giver: 'gryan', turnin: 'gryan', pre: ['harvest_reapers'], text: 'End the golem threat for good: 8 harvest reapers and 8 rusty golems.',
       objs: [{ type: 'kill', mob: 'harvest_reaper', n: 8 }, { type: 'kill', mob: 'rusty_harvest_golem', n: 8 }], reward: { choice: ['fam_chest18'] } },
+    unsent_letter_q: { name: 'The Unsent Letter', lvl: 20, giver: 'gryan', turnin: 'gryan', pre: ['defias_letter_q'], dungeon: 'deadmines', text: "The sealed letter names VanCleef's ship in the Deadmines. End him, and bring me whatever he carries. Take friends: the group finder can help.",
+      objs: [{ type: 'collect', item: 'unsent_letter', n: 1 }], reward: { choice: ['fam_back_rare20'] } },
     brashclaw_q: { name: 'Sergeant Brashclaw', lvl: 19, giver: 'galiaan', turnin: 'galiaan', text: 'A gnoll called Sergeant Brashclaw leads raids from the Dead Acre. He is rarely seen. Bring me his war banner.',
       objs: [{ type: 'collect', item: 'brashclaw_banner', n: 1 }], reward: { choice: ['fam_ring_rare20'] } },
   });

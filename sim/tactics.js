@@ -5,9 +5,13 @@ require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'
 const { G, D } = globalThis;
 let t = Date.now(); Date.now = () => t;
 const N = +(process.env.N || 12), ACT = process.env.ACT || 'deadmines';
+if (process.env.RR) G.REST_REGEN = +process.env.RR;
+const DG = D.DUNGEONS[D.ACTIVITIES[ACT].dungeon];
+if (process.env.TM) DG.trashMult = { hp: DG.trashMult.hp, dmg: +process.env.TM };
+if (process.env.BM) DG.bossMult = { hp: DG.bossMult.hp, dmg: +process.env.BM };
 function clear(pace, plan, cls) {
   G.newGame({ name: 'T', cls, race: 'human' });
-  const S = G.S, P = S.player; P.level = 10; P.equip = G.botChar({ name: 'x', cls, race: 'human', level: 10, skill: 0.6 }).equip; P.hp = null; P.res = null;
+  const S = G.S, P = S.player; const LV = +(process.env.LV || 10); P.level = LV; P.equip = G.botChar({ name: 'x', cls, race: 'human', level: LV, skill: 0.6 }).equip; P.hp = null; P.res = null;
   S.flags.warModeAsked = true;
   G.queueFor(ACT); G.acceptPop(); const R = S.run; R.pace = pace; if (plan) R.bossPlan = plan;
   const t0 = t; let guard = 0;

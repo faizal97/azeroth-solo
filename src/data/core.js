@@ -221,10 +221,10 @@
   D.item('militia_dagger', { name: 'Militia Dagger', slot: 'weapon', wtype: 'dagger', q: 2, lvl: 9, dmg: [6, 11], speed: 1.6, stats: { agi: 3 }, icon: 'dagger', sell: 170, look: ['weapon', 'militia_dagger'], source: 'Quest: Wanted: Hogger' });
   D.item('militia_staff', { name: 'Militia Quarterstaff', slot: 'weapon', wtype: 'staff', q: 2, lvl: 9, dmg: [13, 20], speed: 3, stats: { int: 4, spi: 3 }, sp: 6, icon: 'staff', sell: 190, look: ['weapon', 'militia_staff'], source: 'Quest: Wanted: Hogger' });
   D.item('militia_hammer', { name: 'Militia Warhammer', slot: 'weapon', wtype: 'mace', q: 2, lvl: 9, dmg: [8, 15], speed: 2.3, stats: { int: 2, spi: 2 }, sp: 4, icon: 'mace', sell: 180, look: ['weapon', 'militia_hammer'], source: 'Quest: Wanted: Hogger' });
-  D.item('defias_armor', { name: 'Blackened Defias Armor', slot: 'chest', atype: 'leather', q: 3, lvl: 10, armor: 62, stats: { agi: 5, sta: 3 }, icon: 'chest_leather', sell: 700, look: ['chest', 'defias_armor'], set: 'defias', source: 'Edwin VanCleef, The Deadmines' });
-  D.item('defias_leggings', { name: 'Blackened Defias Leggings', slot: 'legs', atype: 'leather', q: 3, lvl: 10, armor: 55, stats: { agi: 4, sta: 3 }, icon: 'legs', sell: 700, look: ['legs', 'defias_leggings'], set: 'defias', source: 'Gilnid, The Deadmines' });
-  D.item('defias_boots', { name: 'Blackened Defias Boots', slot: 'feet', atype: 'leather', q: 3, lvl: 10, armor: 40, stats: { agi: 3, sta: 3 }, icon: 'boots', sell: 600, set: 'defias', source: "Sneed's Shredder, The Deadmines" });
-  D.item('defias_belt', { name: 'Blackened Defias Belt', slot: 'waist', atype: 'leather', q: 3, lvl: 10, armor: 30, stats: { agi: 3, sta: 2 }, icon: 'belt', sell: 500, set: 'defias', source: "Rhahk'Zor, The Deadmines" });
+  D.item('defias_armor', { name: 'Blackened Defias Armor', slot: 'chest', atype: 'leather', q: 3, lvl: 21, armor: 119, stats: { agi: 8, sta: 5 }, icon: 'chest_leather', sell: 1540, look: ['chest', 'defias_armor'], set: 'defias', source: 'Edwin VanCleef, The Deadmines' });
+  D.item('defias_leggings', { name: 'Blackened Defias Leggings', slot: 'legs', atype: 'leather', q: 3, lvl: 19, armor: 96, stats: { agi: 6, sta: 5 }, icon: 'legs', sell: 1540, look: ['legs', 'defias_leggings'], set: 'defias', source: 'Gilnid, The Deadmines' });
+  D.item('defias_boots', { name: 'Blackened Defias Boots', slot: 'feet', atype: 'leather', q: 3, lvl: 19, armor: 70, stats: { agi: 5, sta: 5 }, icon: 'boots', sell: 1320, set: 'defias', source: "Sneed's Shredder, The Deadmines" });
+  D.item('defias_belt', { name: 'Blackened Defias Belt', slot: 'waist', atype: 'leather', q: 3, lvl: 18, armor: 50, stats: { agi: 5, sta: 3 }, icon: 'belt', sell: 1100, set: 'defias', source: "Rhahk'Zor, The Deadmines" });
   D.item('troll_tusk', { name: 'Frostmane Tusk', slot: 'junk', q: 0, icon: 'claw', sell: 11 });
   D.item('trogg_stone', { name: 'Rockjaw Pebble', slot: 'junk', q: 0, icon: 'dust', sell: 3 });
   D.item('thunder_ale', { name: 'Thunder Ale', slot: 'drink', q: 1, lvl: 5, restore: 436, icon: 'keg', sell: 6, cost: 25 });
@@ -309,7 +309,7 @@
     fam_feet17: { slot: 'feet', lvl: 16, q: 2 }, fam_wrist17: { slot: 'wrist', lvl: 17, q: 2 }, fam_weapon17: { slot: 'weapon', lvl: 17, q: 2 },
     fam_chest18: { slot: 'chest', lvl: 18, q: 2 }, fam_legs18: { slot: 'legs', lvl: 18, q: 2 }, fam_back19: { slot: 'back', lvl: 19, q: 2 },
     fam_waist19: { slot: 'waist', lvl: 19, q: 2 }, fam_hands19: { slot: 'hands', lvl: 19, q: 2 }, fam_weapon20: { slot: 'weapon', lvl: 20, q: 2 },
-    fam_ring_rare20: { slot: 'finger', lvl: 20, q: 3 },
+    fam_ring_rare20: { slot: 'finger', lvl: 20, q: 3 }, fam_back_rare20: { slot: 'back', lvl: 21, q: 3 },
   };
 
   // ---- filled by the zone files

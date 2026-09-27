@@ -24,7 +24,7 @@ It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sp
 - **Both factions, all 8 classic races.** Human, Dwarf, Gnome, Night Elf, Orc, Troll, Tauren, Undead, each with its own starting zone, and racial traits (one active, two passive).
 - **9 classes, any race can be any class.** Warrior, Paladin, Hunter, Rogue, Priest, Shaman, Mage, Warlock, Druid. Pets for Hunters and Warlocks, Bear Form for Druids, seals for Paladins, totems for Shamans.
 - **Levels 1–20.** Starting zones, then Westfall and the Barrens, with about 210 quests, named rares and unique drops.
-- **Dungeons and elites with a group of simulated players.** Ragefire Chasm, The Deadmines, and open-world elites such as Hogger, with roles, threat, wipes and need/greed rolls. Groups are synced to the dungeon's level; you choose the pull pace, mark the kill order and pick a boss plan.
+- **Dungeons and elites with a group of simulated players.** Ragefire Chasm, The Deadmines, Wailing Caverns, and open-world elites such as Hogger, with roles, threat, wipes and need/greed rolls. Groups are synced to the dungeon's level; you choose the pull pace, mark the kill order and pick a boss plan.
 - **World PvP (War Mode).** Enemy players show up nearby; some pass by, some attack, and you can strike first. Guards help in towns. +10% XP and gold, and Honor.
 - **A living server.** Players online by time of day, general and LFG chat, guilds, a welcome-back digest of what happened while you were away.
 - **Story cutscenes** at key levels and a first-time lore intro for every dungeon, replayable in the Theater.

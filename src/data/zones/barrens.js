@@ -177,4 +177,58 @@
     baeldun_orders_q: { name: 'Orders from Ironforge', lvl: 20, giver: 'thork', turnin: 'thork', pre: ['baeldun_soldiers'], text: 'A soldier carries orders from Ironforge. Bring them to me.',
       objs: [{ type: 'collect', item: 'baeldun_orders', n: 1 }], reward: { choice: ['fam_weapon20'] } },
   });
+
+  // ---- Wailing Caverns (v2.1): a 5-player dungeon under the Lushwater caves, levels 17-21
+  D.item('serpentbloom', { name: 'Serpentbloom', slot: 'quest', q: 1, icon: 'seed' });
+  D.item('deviate_hide', { name: 'Deviate Hide', slot: 'quest', q: 1, icon: 'pelt' });
+  D.item('belt_of_the_fang', { name: 'Belt of the Fang', slot: 'waist', atype: 'leather', q: 3, lvl: 20, armor: 58, stats: { agi: 6, sta: 4 }, icon: 'belt', sell: 1500 });
+  D.item('fangdrip_runners', { name: 'Fangdrip Runners', slot: 'feet', atype: 'leather', q: 3, lvl: 20, armor: 72, stats: { agi: 5, sta: 5 }, icon: 'boots', sell: 1500 });
+  D.item('serpent_gloves', { name: 'Serpent Gloves', slot: 'hands', atype: 'cloth', q: 3, lvl: 20, armor: 22, stats: { int: 6, spi: 4 }, sp: 9, icon: 'gloves', sell: 1400 });
+  D.item('cobrahn_grasp', { name: "Cobrahn's Grasp", slot: 'waist', atype: 'mail', q: 3, lvl: 20, armor: 115, stats: { str: 6, sta: 5 }, icon: 'belt', sell: 1500 });
+  D.item('leggings_of_the_fang', { name: 'Leggings of the Fang', slot: 'legs', atype: 'leather', q: 3, lvl: 20, armor: 110, stats: { agi: 7, sta: 6 }, icon: 'legs', sell: 1800 });
+  D.item('robe_moccasin', { name: 'Robe of the Moccasin', slot: 'chest', atype: 'cloth', q: 3, lvl: 20, armor: 44, stats: { int: 8, spi: 6 }, sp: 11, icon: 'chest_cloth', sell: 1800 });
+  D.item('kresh_back', { name: "Kresh's Back", slot: 'back', q: 3, lvl: 20, armor: 34, stats: { sta: 8 }, icon: 'cloak', sell: 1500 });
+  D.item('turtle_scale_bracers', { name: 'Turtle Scale Bracers', slot: 'wrist', atype: 'mail', q: 3, lvl: 20, armor: 74, stats: { str: 4, sta: 5 }, icon: 'bracers', sell: 1300 });
+  D.item('stinging_viper', { name: 'Stinging Viper', slot: 'weapon', wtype: 'mace', q: 3, lvl: 21, dmg: [23, 40], speed: 2.4, stats: { str: 6, sta: 4 }, icon: 'mace', sell: 2000 });
+  D.item('lizardscale_cloak', { name: 'Glowing Lizardscale Cloak', slot: 'back', q: 3, lvl: 21, armor: 34, stats: { agi: 6, sta: 4 }, icon: 'cloak', sell: 1600 });
+  D.item('mutant_scale_breastplate', { name: 'Mutant Scale Breastplate', slot: 'chest', atype: 'mail', q: 3, lvl: 21, armor: 250, stats: { str: 8, sta: 8 }, icon: 'chest_mail', sell: 2200 });
+  D.item('staff_of_the_deviate', { name: 'Staff of the Deviate', slot: 'weapon', wtype: 'staff', q: 3, lvl: 21, dmg: [36, 55], speed: 3.1, stats: { int: 8, spi: 6 }, sp: 15, icon: 'staff', sell: 2200 });
+  D.item('band_of_the_fang', { name: 'Band of the Fang', slot: 'finger', q: 3, lvl: 21, stats: { int: 4, agi: 4, sta: 4 }, icon: 'ring', sell: 1800 });
+  Object.assign(D.MOBS, {
+    druid_of_the_fang: { name: 'Druid of the Fang', lvl: [18, 19], family: 'humanoid', drops: [['linen_cloth', 0.4], ['thieves_coin', 0.35]], qdrops: [['serpentbloom', 0.5]], aggro: 'The Nightmare will take you!' },
+    deviate_ravager: { name: 'Deviate Ravager', lvl: [18, 19], family: 'beast', drops: [['ruined_pelt', 0.4]], qdrops: [['deviate_hide', 0.5]] },
+    deviate_viper: { name: 'Deviate Viper', lvl: [17, 18], family: 'beast', drops: [['ruined_pelt', 0.35]], qdrops: [['deviate_hide', 0.5]] },
+    lady_anacondra: { name: 'Lady Anacondra', lvl: [20, 20], family: 'humanoid', boss: true, aggro: 'None can stand against the Serpent Lords!', loot: ['belt_of_the_fang', 'fangdrip_runners', 'serpent_gloves'] },
+    kresh: { name: 'Kresh', lvl: [20, 20], family: 'beast', boss: true, loot: ['kresh_back', 'turtle_scale_bracers'] },
+    lord_cobrahn: { name: 'Lord Cobrahn', lvl: [20, 20], family: 'humanoid', boss: true, aggro: 'You will never wake the dreamer!', loot: ['cobrahn_grasp', 'leggings_of_the_fang', 'robe_moccasin'] },
+    lord_pythas: { name: 'Lord Pythas', lvl: [21, 21], family: 'humanoid', boss: true, aggro: 'The coils of death will crush you!', loot: ['stinging_viper', 'lizardscale_cloak'] },
+    mutanus: { name: 'Mutanus the Devourer', lvl: [21, 21], family: 'murloc', boss: true, aggro: 'Naralex dreams... and I feed.', loot: ['mutant_scale_breastplate', 'staff_of_the_deviate', 'band_of_the_fang'] },
+  });
+  Object.assign(D.DUNGEONS, {
+    wailing_caverns: { name: 'Wailing Caverns', minLvl: 17, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.8 }, pulls: [
+      { scene: 'wailing_caverns', label: 'The mouth of the caves', mobs: ['deviate_viper', 'deviate_viper'] },
+      { scene: 'wailing_caverns', label: 'Fungal grotto', mobs: ['druid_of_the_fang', 'deviate_ravager'] },
+      { scene: 'wailing_caverns', label: 'Lady Anacondra', mobs: ['lady_anacondra', 'druid_of_the_fang'], boss: true },
+      { scene: 'wailing_caverns', label: 'Deviate den', mobs: ['deviate_ravager', 'deviate_ravager', 'deviate_viper'] },
+      { scene: 'wailing_caverns', label: 'Kresh', mobs: ['kresh'], boss: true },
+      { scene: 'wailing_caverns_deep', label: 'Serpent lair', mobs: ['druid_of_the_fang', 'druid_of_the_fang'] },
+      { scene: 'wailing_caverns_deep', label: 'Lord Cobrahn', mobs: ['lord_cobrahn', 'deviate_viper'], boss: true },
+      { scene: 'wailing_caverns_deep', label: 'The waterfall', mobs: ['deviate_ravager', 'druid_of_the_fang', 'deviate_viper'] },
+      { scene: 'wailing_caverns_deep', label: 'Lord Pythas', mobs: ['lord_pythas', 'druid_of_the_fang'], boss: true },
+      { scene: 'wailing_caverns_deep', label: 'Dreamer\'s rest', mobs: ['druid_of_the_fang', 'deviate_ravager'] },
+      { scene: 'wailing_caverns_deep', label: 'Mutanus the Devourer', mobs: ['mutanus'], boss: true }] },
+  });
+  Object.assign(D.ACTIVITIES, {
+    wailing_caverns: { name: 'Wailing Caverns', dungeon: 'wailing_caverns', where: 'lushwater_oasis', size: 5, minLvl: 17, maxLvl: 21, desc: 'Dungeon in the Barrens. 5 players.', boss: 'mutanus' },
+  });
+  Object.assign(D.QUESTS, {
+    wc_serpentbloom: { name: 'Serpentbloom', lvl: 18, giver: 'helbrim', turnin: 'helbrim', dungeon: 'wailing_caverns', text: 'A rare flower grows only in the Wailing Caverns, and the Druids of the Fang guard it. Bring me 8 serpentbloom.',
+      objs: [{ type: 'collect', item: 'serpentbloom', n: 8 }], reward: { choice: ['fam_hands19'] } },
+    wc_deviate_hides: { name: 'Deviate Hides', lvl: 19, giver: 'sergra', turnin: 'sergra', dungeon: 'wailing_caverns', text: 'The beasts in the caverns are twisted into something new. Their hides are strong. Bring me 8.',
+      objs: [{ type: 'collect', item: 'deviate_hide', n: 8 }], reward: { choice: ['fam_chest18'] } },
+    wc_leaders: { name: 'Leaders of the Fang', lvl: 21, giver: 'thork', turnin: 'thork', dungeon: 'wailing_caverns', text: 'Four druids went into the caverns to heal the land and came out as the Fang. Kill three of their leaders: Anacondra, Cobrahn and Pythas.',
+      objs: [{ type: 'kill', mob: 'lady_anacondra', n: 1 }, { type: 'kill', mob: 'lord_cobrahn', n: 1 }, { type: 'kill', mob: 'lord_pythas', n: 1 }], reward: { choice: ['fam_back_rare20'] } },
+    wc_mutanus: { name: 'The Devourer', lvl: 21, giver: 'thork', turnin: 'thork', pre: ['wc_leaders'], dungeon: 'wailing_caverns', text: 'Something feeds on the dreams of the druid Naralex, deep in the caverns. Kill it.',
+      objs: [{ type: 'kill', mob: 'mutanus', n: 1 }], reward: { choice: ['fam_weapon20'] } },
+  });
 })(typeof window !== 'undefined' ? window : globalThis);

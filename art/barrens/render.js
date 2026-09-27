@@ -11,10 +11,11 @@ const RSVG = '/opt/homebrew/bin/rsvg-convert';
 fs.mkdirSync(OUT, { recursive: true });
 const SRC = fs.readFileSync(path.join(ROOT, 'src/art_barrens.js'), 'utf8');
 
-const SCENES = ['crossroads', 'far_watch', 'forgotten_pools', 'stagnant_oasis', 'razormane_grounds', 'thorn_hill', 'sludge_fen', 'lushwater_oasis', 'baeldun_digsite'];
+const SCENES = ['crossroads', 'far_watch', 'forgotten_pools', 'stagnant_oasis', 'razormane_grounds', 'thorn_hill', 'sludge_fen', 'lushwater_oasis', 'baeldun_digsite', 'wailing_caverns', 'wailing_caverns_deep'];
 const MOBS = ['kolkar_drudge', 'kolkar_wrangler', 'kolkar_stormer', 'barak_kodobane', 'zhevra_runner', 'swiftmane', 'savannah_prowler', 'sunscale_lashtail',
   'oasis_snapjaw', 'stormsnout', 'razormane_quilboar', 'razormane_thornweaver',
-  'venture_mercenary', 'venture_geologist', 'sunscale_scytheclaw', 'oasis_crocolisk', 'takk_the_leaper', 'baeldun_excavator', 'baeldun_soldier'];
+  'venture_mercenary', 'venture_geologist', 'sunscale_scytheclaw', 'oasis_crocolisk', 'takk_the_leaper', 'baeldun_excavator', 'baeldun_soldier',
+  'druid_of_the_fang', 'deviate_ravager', 'deviate_viper', 'lady_anacondra', 'lord_cobrahn', 'kresh', 'lord_pythas', 'mutanus'];
 const problems = [];
 
 // ---- 1. fake-window run (no art.js) ----
@@ -107,15 +108,18 @@ sheets.push(sheet('scenes', scenes, 400, 240, 2, '#000'));
 sheets.push(sheet('mobs', mobs, 128, 128, 4, '#c8b07a'));
 sheets.push(sheet('mobs_110', mobs, 110, 110, 8, '#c8b07a'));
 sheets.push(sheet('mobs_56', mobs, 56, 56, 10, '#c8b07a'));
-const NEWM = MOBS.slice(12), NEWS = SCENES.slice(6);
+const NEWM = MOBS.slice(19), NEWS = SCENES.slice(9);
 sheets.push(sheet('new_scenes', scenes.filter(([k]) => NEWS.includes(k)), 400, 240, 1, '#000'));
 sheets.push(sheet('new_mobs', mobs.filter(([k]) => NEWM.includes(k)), 128, 128, 4, '#c8b07a'));
+sheets.push(sheet('new_mobs_56', mobs.filter(([k]) => NEWM.includes(k)), 56, 56, 8, '#1e2a22'));
 const PAIRS = {
   kolkar_drudge: 'stagnant_oasis', kolkar_wrangler: 'far_watch', kolkar_stormer: 'thorn_hill', barak_kodobane: 'thorn_hill',
   zhevra_runner: 'crossroads', swiftmane: 'forgotten_pools', savannah_prowler: 'far_watch', sunscale_lashtail: 'forgotten_pools',
   oasis_snapjaw: 'stagnant_oasis', stormsnout: 'crossroads', razormane_quilboar: 'razormane_grounds', razormane_thornweaver: 'razormane_grounds',
   venture_mercenary: 'sludge_fen', venture_geologist: 'sludge_fen', sunscale_scytheclaw: 'lushwater_oasis', oasis_crocolisk: 'lushwater_oasis',
-  takk_the_leaper: 'lushwater_oasis', baeldun_excavator: 'baeldun_digsite', baeldun_soldier: 'baeldun_digsite'
+  takk_the_leaper: 'lushwater_oasis', baeldun_excavator: 'baeldun_digsite', baeldun_soldier: 'baeldun_digsite',
+  druid_of_the_fang: 'wailing_caverns', deviate_ravager: 'wailing_caverns', deviate_viper: 'wailing_caverns', lady_anacondra: 'wailing_caverns',
+  lord_cobrahn: 'wailing_caverns', kresh: 'wailing_caverns_deep', lord_pythas: 'wailing_caverns_deep', mutanus: 'wailing_caverns_deep'
 };
 const onScene = MOBS.map(m => {
   const hr = ART.hero({ cls: 'warrior' });

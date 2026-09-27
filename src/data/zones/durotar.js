@@ -135,7 +135,7 @@
   // group finder
   Object.assign(D.ACTIVITIES, {
     zalazane: { name: 'Zalazane', where: 'echo_isles', size: 3, minLvl: 8, maxLvl: 12, desc: 'Open-world elite on the Echo Isles. 3 players.', boss: 'zalazane', pulls: [{ scene: 'echo_isles', label: 'Hexed village', mobs: ['hexed_troll', 'voodoo_troll'] }, { scene: 'echo_isles', label: 'Hexed village', mobs: ['hexed_troll', 'hexed_troll'] }, { scene: 'echo_isles', label: 'Zalazane', mobs: ['zalazane'], boss: true }] },
-    ragefire: { name: 'Ragefire Chasm', dungeon: 'ragefire', size: 5, minLvl: 8, maxLvl: 12, desc: 'Dungeon under Orgrimmar. 5 players. Scaled for level 10.', boss: 'taragaman' },
+    ragefire: { name: 'Ragefire Chasm', dungeon: 'ragefire', where: 'orgrimmar', size: 5, minLvl: 8, maxLvl: 12, desc: 'Dungeon under Orgrimmar. 5 players. Scaled for level 10.', boss: 'taragaman' },
   });
 
 })(typeof window !== 'undefined' ? window : globalThis);

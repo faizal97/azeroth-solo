@@ -25,7 +25,7 @@ Agreed 2026-09-27. A single-player fake MMO: a vanilla WoW campaign from 1 to 60
 | v1.9 (shipped) | **Horde:** Mulgore + Thunder Bluff (Tauren), Tirisfal Glades + Undercity (Undead) | Zeppelins between Horde cities |
 | v1.10 (shipped) | **AI chat pack** (optional, on-device) + levels 5–10 quest fill (42 quests) | Uses (agreed): bot chat; party and dungeon banter that reacts to events; the welcome-back story; NPC flavour lines (objectives unchanged); player bios when you tap someone. The model writes words and never decides outcomes. Written by a local model: Gemma 3 1B on phones with 6 GB+ RAM, 270M on 3–6 GB, off below; loaded from iCloud as a separate file; behaviour stays rule-based; templates as fallback; battery guards (pre-generated line bank, quiet moments only, stops under 30% or in battery saver, refills while charging, heat pause, battery meter in Hero) |
 | v2.0 (shipped) | Westfall (Sentinel Hill) · **Horde:** the Barrens (Crossroads), levels 10–15 | Level cap 15; new class abilities at 12 and 14; ~14 quests per zone with a named rare |
-| v2.1 (15–20 shipped; dungeons next) | Westfall + the Barrens 15–20 | Level cap 20; The Deadmines at its real level (17–21); Wailing Caverns; story Chapter 2 at 20; world PvP ambushes (see below) |
+| v2.1 + v2.2 (shipped) | Westfall + the Barrens 15–20 | Level cap 20; The Deadmines at its real level (17–21); Wailing Caverns; story Chapter 2 at 20; world PvP ambushes (see below) |
 | v2.2 | Talents | Talents from 10, one point per level |
 | v2.3 | Stormwind (and the Horde city services) | Stormwind trainers, bank, auction house; Help Wanted + Mentor Marks; daily Roulette |
 | v3 | Redridge Mountains (15–25) · **Horde:** Stonetalon Mountains (15–27) | Professions (gathering + crafting); The Stockade |
@@ -93,6 +93,13 @@ Enemy-faction bots sometimes attack you, even in friendly zones.
 - **Defend the town:** when enemies raid a hub, you get a call to defend. Joining earns Honor even if the guards land the kill.
 - **Data:** the danger rating is a field in each zone's data file (after the data refactor).
 - **Crossing into enemy zones** opens with the contested zones (v4 onward); until then factions cannot reach each other's areas.
+
+## Group finder rules (agreed 2026-09-27)
+
+- **Be there:** any faction may run any dungeon or world elite, but you queue from its zone. Places with no road from where you are stay hidden; they appear when roads between the factions open in the contested zones.
+- **Synced level:** everyone in the group fights at the activity's level (`maxLvl`); your gear is the overgear bonus, and XP follows your real level.
+- **Mixed groups**, and a 10-minute deserter cooldown for leaving early.
+- **Tactics:** pull pace (careful / normal / fast), kill-order marks (skull, cross; the tank holds the skull) and a boss plan (burn the boss / adds first).
 
 ## Daily reasons to log in (agreed 2026-09-27)
 

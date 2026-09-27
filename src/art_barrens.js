@@ -878,6 +878,105 @@
   }
 
   // ============================================================
+  //  WAILING CAVERNS PIECES (caves under the oasis: glowing fungi, purple vines, twisting roots)
+  // ============================================================
+  var WCG = '#8aff6a', WCP = '#c07aff', ROOT = '#5a4630';
+  // outlined stalactites hanging from y (list of [x, w, h])
+  function stalac(c, y, list, col) {
+    var o = '';
+    list.forEach(function (q) {
+      var x = q[0], w = q[1], h = q[2], d = 'M' + pt([x - w, y]) + 'Q' + pt([x - w * 0.45, y + h * 0.55]) + ' ' + pt([x, y + h]) + 'Q' + pt([x + w * 0.35, y + h * 0.5]) + ' ' + pt([x + w, y]) + 'Z';
+      o += body(c, d, col, F('M' + pt([x + w * 0.1, y - 2]) + 'L' + pt([x + w + 2, y - 2]) + 'L' + pt([x + 2, y + h + 2]) + 'Z', dk(col, 0.3), 0.85) + L('M' + pt([x - w * 0.5, y + 2]) + 'Q' + pt([x - w * 0.35, y + h * 0.4]) + ' ' + pt([x - 1, y + h * 0.8]), lt(col, 0.2), 1.2, 0.7), 1.6);
+    });
+    return o;
+  }
+  // flat distant stalactites (no outline)
+  function farDrips(seed, y, col, cnt, maxH) {
+    var r = rng(seed), d = '';
+    for (var i = 0; i < cnt; i++) { var x = -10 + 420 * (i + r() * 0.8) / cnt, w = 4 + r() * 8, h = maxH * (0.35 + r() * 0.65); d += 'M' + pt([x - w, y - 2]) + 'Q' + pt([x - w * 0.3, y + h * 0.5]) + ' ' + pt([x, y + h]) + 'Q' + pt([x + w * 0.3, y + h * 0.5]) + ' ' + pt([x + w, y - 2]) + 'Z'; }
+    return F(d, col);
+  }
+  // twisting root: thick outlined stroke with a thinner root spiralling round it
+  function wcRoot(c, p0, p1, p2, p3, w, col, seed) {
+    col = col || ROOT;
+    var d = 'M' + pt(p0) + 'C' + pt(p1) + ' ' + pt(p2) + ' ' + pt(p3), tw = '', tw2 = '', r = rng(seed || 3), ph = r() * 3;
+    for (var i = 0; i <= 28; i++) {
+      var t = i / 28, q = bez(p0, p1, p2, p3, t), a = Math.sin(t * Math.PI * 5 + ph) * w * 0.55, b = Math.sin(t * Math.PI * 5 + ph + Math.PI) * w * 0.55;
+      tw += (i ? 'L' : 'M') + pt([q[0] + q[2] * a, q[1] + q[3] * a]); tw2 += (i ? 'L' : 'M') + pt([q[0] + q[2] * b, q[1] + q[3] * b]);
+    }
+    var nubs = '';
+    for (var k = 1; k < 4; k++) { var q2 = bez(p0, p1, p2, p3, k / 4 + (r() - 0.5) * 0.1), sg = k % 2 ? 1 : -1, len = w * (1.4 + r()); nubs += 'M' + pt([q2[0], q2[1]]) + 'q' + n(q2[2] * sg * len * 0.6 + 2) + ',' + n(q2[3] * sg * len * 0.6 + 3) + ' ' + n(q2[2] * sg * len) + ',' + n(q2[3] * sg * len + 6); }
+    return L(nubs, OL, w * 0.45 + 3) + L(nubs, dk(col, 0.1), w * 0.45) + L(d, OL, w + 4) + L(d, col, w) + L(tw2, dk(col, 0.35), w * 0.3, 0.9) + L(tw, OL, w * 0.42 + 2.4) + L(tw, lt(col, 0.12), w * 0.42) + L(d, lt(col, 0.28), w * 0.16, 0.6);
+  }
+  // hanging purple vine with leaves and a glowing bulb at the tip
+  function vine(c, x, y, len, seed, col) {
+    col = col || '#7a3aa8';
+    var r = rng(seed || 5), sw = (r() - 0.5) * 16, d = 'M' + pt([x, y]) + 'C' + pt([x + sw, y + len * 0.3]) + ' ' + pt([x - sw, y + len * 0.65]) + ' ' + pt([x + sw * 0.4, y + len]), lv = '';
+    var p0 = [x, y], p1 = [x + sw, y + len * 0.3], p2 = [x - sw, y + len * 0.65], p3 = [x + sw * 0.4, y + len];
+    for (var i = 1; i < 6; i++) {
+      var q = bez(p0, p1, p2, p3, i / 6.4), sg = i % 2 ? 1 : -1, lx = q[0] + sg * 7, ly = q[1] + 3;
+      lv += P('M' + pt([q[0], q[1]]) + 'Q' + pt([q[0] + sg * 4, q[1] - 3]) + ' ' + pt([lx, ly]) + 'Q' + pt([q[0] + sg * 2, q[1] + 4]) + ' ' + pt([q[0], q[1]]) + 'Z', i % 2 ? '#5a8a3a' : '#4a7a34', 1);
+    }
+    return L(d, OL, 4.2) + L(d, col, 2) + lv + C(p3[0], p3[1] + 2, 9, glow(c, WCP, 0.7)) + C(p3[0], p3[1] + 2, 2.8, lt(WCP, 0.4), 1.2);
+  }
+  // cluster of glowing mushrooms (list of [dx, h, capW]) around x,y
+  function shrooms(c, x, y, s, cap, list, stem) {
+    cap = cap || WCG; stem = stem || '#d8dcc0';
+    list = list || [[-10, 12, 7], [0, 20, 10], [9, 9, 6], [15, 14, 5]];
+    var o = C(x, y - 10 * s, 34 * s, glow(c, cap, 0.42)) + E(x, y + 1, 22 * s, 3 * s, '#000', 0, 0.25);
+    list.forEach(function (m) {
+      var mx = x + m[0] * s, h = m[1] * s, w = m[2] * s, cy = y - h;
+      o += P('M' + pt([mx - w * 0.22, y]) + 'C' + pt([mx - w * 0.28, y - h * 0.5]) + ' ' + pt([mx - w * 0.1, y - h * 0.8]) + ' ' + pt([mx - w * 0.12, cy]) + 'L' + pt([mx + w * 0.16, cy]) + 'C' + pt([mx + w * 0.12, y - h * 0.6]) + ' ' + pt([mx + w * 0.3, y - h * 0.3]) + ' ' + pt([mx + w * 0.26, y]) + 'Z', c.cel(stem), 1.3 * Math.max(0.7, s));
+      var cd = 'M' + pt([mx - w, cy + w * 0.12]) + 'C' + pt([mx - w, cy - w * 0.9]) + ' ' + pt([mx + w, cy - w * 0.9]) + ' ' + pt([mx + w, cy + w * 0.12]) + 'Q' + pt([mx, cy - w * 0.12]) + ' ' + pt([mx - w, cy + w * 0.12]) + 'Z';
+      o += body(c, cd, cap, F('M' + pt([mx + w * 0.2, cy - w]) + 'L' + pt([mx + w * 1.2, cy - w]) + 'L' + pt([mx + w * 1.2, cy + w * 0.3]) + 'L' + pt([mx + w * 0.3, cy + w * 0.3]) + 'Z', dk(cap, 0.3), 0.7) + E(mx - w * 0.4, cy - w * 0.36, w * 0.24, w * 0.14, '#ffffff', 0, 0.7) + C(mx + w * 0.1, cy - w * 0.5, w * 0.1, lt(cap, 0.6)), 1.3 * Math.max(0.7, s));
+    });
+    return o;
+  }
+  // giant cave mushroom: curved stem, broad glowing cap with gills and spots
+  function bigShroom(c, x, y, s, cap, lean, stem) {
+    cap = cap || '#9a5ae0'; stem = stem || '#cfd2b4'; lean = lean || 0;
+    var h = 96 * s, tx = x + lean * s, ty = y - h, w = 40 * s, o = E(x, y + 2, 20 * s, 4 * s, '#000', 0, 0.3);
+    var sd = 'M' + pt([x - 8 * s, y]) + 'C' + pt([x - 6 * s, y - h * 0.4]) + ' ' + pt([tx - 10 * s, ty + h * 0.3]) + ' ' + pt([tx - 6 * s, ty]) + 'L' + pt([tx + 6 * s, ty]) + 'C' + pt([tx + 2 * s, ty + h * 0.3]) + ' ' + pt([x + 8 * s, y - h * 0.4]) + ' ' + pt([x + 10 * s, y]) + 'Z';
+    o += body(c, sd, stem, F('M' + pt([x + 2 * s, y + 2]) + 'C' + pt([x + 2 * s, y - h * 0.4]) + ' ' + pt([tx - 2 * s, ty + h * 0.3]) + ' ' + pt([tx + 1 * s, ty - 2]) + 'L' + pt([tx + 20 * s, ty]) + 'L' + pt([x + 20 * s, y + 2]) + 'Z', dk(stem, 0.28), 0.85) +
+      L('M' + pt([x - 4 * s, y - h * 0.2]) + 'l' + n(3 * s) + ',' + n(-6 * s) + 'M' + pt([x - 5 * s, y - h * 0.5]) + 'l' + n(3 * s) + ',' + n(-5 * s), dk(stem, 0.3), 1.2 * s), 2 * s);
+    o += E(tx, ty + 4 * s, w * 0.8, 6 * s, c.cel(dk(cap, 0.45)), 1.6 * s);
+    var gl = '';
+    for (var i = -5; i <= 5; i++) gl += 'M' + pt([tx, ty + 6 * s]) + 'L' + pt([tx + i * w * 0.14, ty + 2 * s]);
+    o += L(gl, dk(cap, 0.65), 1 * s, 0.8);
+    var cd = 'M' + pt([tx - w, ty + 2 * s]) + 'C' + pt([tx - w * 1.02, ty - w * 0.62]) + ' ' + pt([tx - w * 0.4, ty - w * 0.78]) + ' ' + pt([tx, ty - w * 0.78]) + 'C' + pt([tx + w * 0.4, ty - w * 0.78]) + ' ' + pt([tx + w * 1.02, ty - w * 0.62]) + ' ' + pt([tx + w, ty + 2 * s]) + 'C' + pt([tx + w * 0.6, ty - 4 * s]) + ' ' + pt([tx - w * 0.6, ty - 4 * s]) + ' ' + pt([tx - w, ty + 2 * s]) + 'Z';
+    var sp = '';
+    [[-0.55, -0.4, 0.13], [-0.1, -0.6, 0.1], [0.35, -0.45, 0.12], [0.7, -0.2, 0.08], [-0.8, -0.12, 0.07], [0.05, -0.25, 0.07]].forEach(function (q) { sp += E(tx + q[0] * w, ty + q[1] * w, q[2] * w, q[2] * w * 0.7, lt(cap, 0.55), 1 * s); });
+    o += body(c, cd, cap, F('M' + pt([tx + w * 0.25, ty - w]) + 'C' + pt([tx + w * 0.7, ty - w * 0.7]) + ' ' + pt([tx + w * 1.1, ty - w * 0.4]) + ' ' + pt([tx + w * 1.1, ty + 4 * s]) + 'L' + pt([tx + w * 0.3, ty + 4 * s]) + 'Z', dk(cap, 0.3), 0.8) + sp + E(tx - w * 0.5, ty - w * 0.52, w * 0.2, w * 0.08, '#ffffff', 0, 0.6), 2 * s);
+    return C(tx, ty - 6 * s, w * 1.9, glow(c, cap, 0.45)) + o;
+  }
+  // cave waterfall from a ledge into a pool
+  function waterfall(c, x, top, bot, w) {
+    var d = 'M' + pt([x - w * 0.5, top]) + 'C' + pt([x - w * 0.55, top + (bot - top) * 0.4]) + ' ' + pt([x - w * 0.75, bot - 20]) + ' ' + pt([x - w * 0.8, bot]) + 'L' + pt([x + w * 0.8, bot]) + 'C' + pt([x + w * 0.75, bot - 20]) + ' ' + pt([x + w * 0.55, top + (bot - top) * 0.4]) + ' ' + pt([x + w * 0.5, top]) + 'Z';
+    var st = '', r = rng(Math.round(x + top));
+    for (var i = 0; i < 7; i++) { var sx = x + (i / 6 - 0.5) * w * 0.9, k = (i / 6 - 0.5) * 0.4; st += 'M' + pt([sx, top + 4 + r() * 10]) + 'L' + pt([sx + k * w * 0.8, bot - 4 - r() * 20]); }
+    var o = C(x, bot - 10, w * 2.4, glow(c, '#bfffe0', 0.4)) + P(d, c.lg([[0, '#cfffe8'], [0.4, '#7ae8c0'], [1, '#48c8a0']], 0, 0, 1, 0), 1.8);
+    o += '<g clip-path="url(#' + c.clip(d) + ')">' + L(st, '#ffffff', 1.4, 0.7) + F('M' + pt([x + w * 0.15, top]) + 'L' + pt([x + w, top]) + 'L' + pt([x + w, bot]) + 'L' + pt([x + w * 0.3, bot]) + 'Z', '#1a6a5a', 0.3) + '</g>';
+    o += E(x, bot - 2, w * 1.3, 7, '#e8fff4', 0, 0.45) + E(x - w * 0.5, bot - 4, w * 0.5, 5, '#ffffff', 0, 0.5) + E(x + w * 0.5, bot - 3, w * 0.45, 4, '#ffffff', 0, 0.5) + E(x, bot, w * 1.1, 3, '#ffffff', 0, 0.8);
+    return o;
+  }
+  // mossy boulder with a glow rim
+  function mossRock(c, x, y, w, h, col) {
+    col = col || '#3e4640';
+    return rock(c, x, y, w, h, col) + F('M' + pt([x - w * 0.45, y - h * 0.62]) + 'C' + pt([x - w * 0.3, y - h * 1.02]) + ' ' + pt([x + w * 0.1, y - h * 1.04]) + ' ' + pt([x + w * 0.3, y - h * 0.88]) + 'C' + pt([x + w * 0.1, y - h * 0.8]) + ' ' + pt([x - w * 0.2, y - h * 0.78]) + ' ' + pt([x - w * 0.45, y - h * 0.62]) + 'Z', '#5a8a3a', 0.9);
+  }
+  // low mist: soft horizontal band plus a few long faint wisps
+  function mist(c, y, h, col, op, seed) {
+    var o = R(-2, y - h / 2, 404, h, c.lg([[0, col, 0], [0.5, col, op], [1, col, 0]])), r = rng(seed || 9);
+    for (var i = 0; i < 5; i++) o += E(r() * 400, y + (r() - 0.5) * h * 0.5, 40 + r() * 40, 3 + r() * 3, col, 0, op * 0.8);
+    return o;
+  }
+  function caveFloor(c, y, top, bot, seed) {
+    var o = ground(c, y, top, bot), r = rng(seed);
+    for (var i = 0; i < 9; i++) o += E(r() * 400, y + 10 + r() * 80, 20 + r() * 30, 3 + r() * 4, '#3e6a34', 0, 0.35);
+    return o + pebbles(seed + 1, y + 10, 236, '#0e140e', 18) + cracks(seed + 2, y + 30, 238, '#0e1410', 8);
+  }
+
+  // ============================================================
   //  SCENES
   // ============================================================
   var SCENES = {
@@ -1047,6 +1146,71 @@
       o += crate(c, 386, 200, 0.9) + crate(c, 374, 206, 0.8) + barrel(c, 206, 176, 0.7, '#6a5a44');
       o += tufts(c, [[16, 236, 1], [390, 238, 1], [160, 236, 0.8]], TUFT);
       return o + vignette(c);
+    },
+    // Wailing Caverns: the cave network under the oasis (dungeon: party left, enemies right, lower-middle kept open)
+    wailing_caverns: function (c) {
+      var st = '#343c36', o = R(0, 0, 400, 240, c.lg([[0, '#0c1410'], [0.5, '#1a2820'], [1, '#0e1610']]));
+      o += C(200, 118, 170, glow(c, '#3a8a5a', 0.3));
+      // far wall + the passage leading deeper
+      o += F('M-4,156 C30,122 58,116 88,100 C118,84 150,96 178,88 C214,78 248,90 282,82 C322,74 362,98 404,92 L404,164 L-4,164 Z', '#223028');
+      o += E(214, 128, 34, 30, '#070c09') + E(214, 136, 22, 18, glow(c, '#7affb0', 0.5));
+      o += F('M170,158 C176,124 192,100 214,98 C236,100 252,124 258,158 Z', '#101a14', 0.5);
+      o += farDrips(301, 60, '#1a241e', 22, 30);
+      // back-wall glows: fungus on the far ledges
+      o += shrooms(c, 118, 150, 0.6, WCG) + shrooms(c, 300, 146, 0.55, WCP, [[-8, 10, 6], [2, 16, 8], [10, 8, 5]]);
+      // side walls framing the chamber
+      o += body(c, 'M-4,-4 L84,-4 C70,24 86,52 66,78 C50,100 64,124 44,146 C30,160 14,164 -4,166 Z', st, F('M40,-4 L90,-4 C76,24 90,52 70,80 C56,102 68,126 48,148 L20,166 L50,166 C64,130 58,104 70,80 Z', dk(st, 0.3), 0.8) + E(20, 60, 16, 30, lt(st, 0.08), 0, 0.5), 2.2);
+      o += body(c, 'M404,-4 L318,-4 C334,26 318,50 338,76 C354,98 340,124 360,144 C372,156 388,160 404,162 Z', st, F('M404,-4 L360,-4 C372,30 360,60 380,90 C392,110 384,140 404,150 Z', dk(st, 0.3), 0.8) + E(344, 40, 10, 22, lt(st, 0.08), 0, 0.5), 2.2);
+      // ceiling with stalactites
+      o += body(c, 'M-4,-4 L404,-4 L404,30 C384,40 364,26 344,34 C318,44 300,26 276,32 C250,38 236,22 212,26 C188,30 168,18 146,28 C122,38 104,24 84,30 C60,38 40,22 18,32 L-4,38 Z', '#2a322c', F('M-4,20 C60,30 120,16 200,22 C280,28 340,16 404,22 L404,34 C340,30 280,40 200,32 C120,26 60,40 -4,32 Z', '#1a201c', 0.7), 2);
+      o += stalac(c, 28, [[104, 7, 26], [150, 6, 20], [232, 8, 30], [286, 6, 18], [60, 6, 22], [338, 7, 24]], '#2e3630');
+      // twisting roots through the rock
+      o += wcRoot(c, [70, -6], [96, 30], [52, 64], [74, 110], 7, ROOT, 11) + wcRoot(c, [334, -6], [310, 40], [352, 70], [330, 118], 7, '#4e3c2a', 13) + wcRoot(c, [180, 20], [186, 40], [172, 52], [178, 70], 3.6, ROOT, 15);
+      o += vine(c, 126, 28, 52, 21) + vine(c, 160, 22, 34, 23) + vine(c, 250, 28, 60, 25) + vine(c, 300, 26, 40, 27) + vine(c, 40, 30, 70, 29) + vine(c, 372, 26, 64, 31);
+      // floor
+      o += caveFloor(c, 158, '#26382a', '#101812', 41);
+      o += pool(c, 206, 168, 78, 9, '#5ad8a8', '#14463e', '#1e2e22') + E(206, 160, 70, 14, glow(c, '#8affc8', 0.5));
+      o += E(170, 169, 8, 1.8, '#7ab85a', 0, 0.8) + E(236, 167, 10, 2, '#7ab85a', 0, 0.8);
+      o += mossRock(c, 120, 176, 30, 16) + mossRock(c, 296, 174, 34, 18) + mossRock(c, 32, 176, 40, 26, '#343c36') + mossRock(c, 376, 176, 44, 28, '#343c36');
+      o += shrooms(c, 46, 162, 1, WCG) + shrooms(c, 360, 160, 0.95, WCG, [[-12, 10, 6], [-2, 18, 9], [8, 12, 7], [15, 7, 4]]) + shrooms(c, 138, 170, 0.6, WCP, [[-6, 10, 6], [4, 14, 7]]);
+      o += mist(c, 164, 22, '#aef0cc', 0.22, 71) + mist(c, 200, 30, '#aef0cc', 0.12, 73);
+      // foreground corners (outside the fight band)
+      o += wcRoot(c, [-8, 208], [20, 196], [40, 224], [70, 244], 8, '#4e3c2a', 17) + wcRoot(c, [408, 204], [380, 196], [364, 222], [336, 244], 8, '#4e3c2a', 19);
+      o += shrooms(c, 18, 238, 1.2, WCG, [[-8, 14, 8], [4, 22, 11], [14, 10, 6]]) + shrooms(c, 386, 240, 1.15, WCP, [[-12, 10, 6], [-2, 20, 10], [10, 14, 7]]);
+      return o + R(0, 0, 400, 240, c.lg([[0, '#000', 0.4], [0.3, '#000', 0], [0.8, '#000', 0], [1, '#000', 0.35]])) + vignette(c, '#aaffcc', '#000000');
+    },
+    // the deeper grotto: tall chamber, a waterfall into a glowing pool, giant mushrooms, purple light
+    wailing_caverns_deep: function (c) {
+      var st = '#2e2c3a', o = R(0, 0, 400, 240, c.lg([[0, '#0c0a14'], [0.5, '#1e1a2e'], [1, '#0e1210']]));
+      o += C(90, 70, 150, glow(c, '#9a4ae0', 0.45)) + C(320, 64, 140, glow(c, '#b05af0', 0.4)) + C(204, 150, 150, glow(c, '#4ae0a0', 0.4));
+      // far chamber wall, layered, lit purple
+      o += F('M-4,150 C20,110 40,70 70,56 C100,42 130,60 150,52 C180,40 230,42 260,54 C290,66 320,40 350,50 C380,60 390,100 404,120 L404,160 L-4,160 Z', '#2a2440');
+      o += F('M-4,156 C30,126 60,110 100,104 C140,98 170,112 200,108 C240,102 270,110 300,104 C340,98 370,120 404,128 L404,164 L-4,164 Z', '#1e1c2e');
+      o += farDrips(401, 40, '#221e34', 18, 40);
+      // ledge + waterfall
+      o += body(c, 'M128,-4 L286,-4 C276,20 262,40 248,58 C240,68 226,72 206,70 C186,72 172,68 164,58 C150,40 136,20 128,-4 Z', '#2e2a3c', F('M232,-4 L290,-4 C280,24 262,48 246,64 L222,72 C240,50 252,24 232,-4 Z', '#1e1a2a', 0.85) + F('M166,58 C178,68 234,68 246,58 L250,64 C238,76 176,76 162,64 Z', '#4e7a3a', 0.8) + L('M150,20 Q170,30 186,26 M226,30 Q244,24 262,24', '#1e1a2a', 1.6, 0.7), 2.2);
+      o += waterfall(c, 206, 64, 154, 30);
+      o += stalac(c, 50, [[176, 5, 14], [236, 5, 12]], '#3a3448');
+      // high ceiling
+      o += body(c, 'M-4,-4 L404,-4 L404,20 C380,28 360,16 336,22 C300,32 280,14 250,18 C220,22 200,8 170,16 C140,24 120,10 90,18 C60,26 30,12 -4,24 Z', '#221e2c', '', 2);
+      o += stalac(c, 16, [[40, 7, 30], [124, 6, 24], [300, 8, 34], [360, 6, 22], [210, 5, 14]], '#2a2636');
+      o += vine(c, 140, 16, 58, 41) + vine(c, 270, 18, 50, 43) + vine(c, 320, 20, 74, 45) + vine(c, 80, 18, 44, 47);
+      // pool
+      o += caveFloor(c, 160, '#24302c', '#0e1412', 61);
+      o += E(204, 166, 142, 20, '#1a2a22', 0, 0.8);
+      o += pool(c, 204, 162, 128, 13, '#6affc4', '#127060', '#1a2a22') + E(204, 154, 120, 22, glow(c, '#8affd0', 0.55));
+      o += L('M120,164 Q150,160 176,164 M232,166 Q262,162 290,166 M160,170 Q190,168 214,171', '#e0fff0', 1.2, 0.7);
+      o += mist(c, 160, 24, '#c8fff0', 0.24, 75);
+      // giant mushrooms at the sides + mid-size ones on the far bank
+      o += bigShroom(c, 118, 156, 0.46, '#5ad890', 6) + bigShroom(c, 300, 154, 0.5, '#c07aff', -8);
+      o += bigShroom(c, 34, 176, 1.02, '#a45af0', 12) + bigShroom(c, 372, 174, 1.08, '#4ad89a', -14, '#d8d4bc');
+      o += vine(c, 14, 64, 40, 49) + vine(c, 72, 70, 30, 51) + vine(c, 334, 66, 36, 53) + vine(c, 396, 60, 44, 55);
+      o += wcRoot(c, [-8, 120], [16, 110], [10, 150], [30, 170], 6, '#4a3a2e', 57) + wcRoot(c, [408, 116], [392, 112], [396, 146], [372, 168], 6, '#4a3a2e', 59);
+      o += mossRock(c, 150, 180, 26, 12, '#34303e') + mossRock(c, 268, 178, 30, 14, '#34303e');
+      o += shrooms(c, 88, 180, 0.8, WCG, [[-8, 10, 6], [2, 16, 8], [10, 8, 5]]) + shrooms(c, 318, 178, 0.8, WCP, [[-8, 12, 6], [2, 18, 9], [11, 9, 5]]);
+      o += mist(c, 204, 30, '#d0b8ff', 0.12, 77);
+      o += shrooms(c, 16, 240, 1.2, WCP, [[-8, 14, 8], [4, 22, 11], [14, 10, 6]]) + shrooms(c, 388, 240, 1.1, WCG, [[-12, 10, 6], [-2, 20, 10], [10, 14, 7]]);
+      return o + R(0, 0, 400, 240, c.lg([[0, '#000', 0.35], [0.3, '#000', 0], [0.8, '#000', 0], [1, '#000', 0.35]])) + vignette(c, '#e0c8ff', '#000000');
     }
   };
 
@@ -1461,6 +1625,176 @@
   }
 
   // ============================================================
+  //  WAILING CAVERNS MOB PIECES (Druids of the Fang, deviate beasts)
+  // ============================================================
+  function vglow(c, x, y, r, col, a) { return C(x, y, r, glow(c, col, a == null ? 0.7 : a)); }
+  // green nightmare-lightning arc
+  function garc(d, w) { return L(d, '#8aff6a', (w || 1) * 3.6, 0.55) + L(d, '#f4ffe8', (w || 1) * 1.3); }
+  // ---- night elf head in profile, facing left: long ear swept back, glowing eyes ----
+  function nelfHead(c, x, y, o) {
+    var sk = o.skin, eye = o.eye || '#9cff5a', f = o.female, s = '';
+    var d = f ? 'M' + pt([x + 9, y - 6]) + 'C' + pt([x + 8, y - 13]) + ' ' + pt([x - 2, y - 15]) + ' ' + pt([x - 8, y - 10]) + 'L' + pt([x - 10, y - 4]) + 'L' + pt([x - 13, y + 2]) + 'L' + pt([x - 10, y + 4]) + 'L' + pt([x - 10.5, y + 7]) + 'L' + pt([x - 8.5, y + 8]) + 'C' + pt([x - 8.5, y + 11]) + ' ' + pt([x - 6, y + 13]) + ' ' + pt([x - 3, y + 13]) + 'C' + pt([x + 3, y + 12]) + ' ' + pt([x + 7, y + 8]) + ' ' + pt([x + 9, y + 3]) + 'Z'
+      : 'M' + pt([x + 9, y - 6]) + 'C' + pt([x + 8, y - 13]) + ' ' + pt([x - 2, y - 15]) + ' ' + pt([x - 8, y - 10]) + 'L' + pt([x - 10, y - 4]) + 'L' + pt([x - 15, y + 2]) + 'L' + pt([x - 10, y + 4]) + 'L' + pt([x - 11, y + 7]) + 'L' + pt([x - 9, y + 8]) + 'C' + pt([x - 9, y + 11]) + ' ' + pt([x - 7, y + 14]) + ' ' + pt([x - 4, y + 15]) + 'C' + pt([x + 2, y + 13]) + ' ' + pt([x + 7, y + 9]) + ' ' + pt([x + 9, y + 3]) + 'Z';
+    s += body(c, d, sk, F('M' + pt([x + 2, y - 18]) + 'L' + pt([x + 14, y - 18]) + 'L' + pt([x + 14, y + 18]) + 'L' + pt([x + 1, y + 18]) + 'C' + pt([x + 5, y + 8]) + ' ' + pt([x + 5, y - 6]) + ' ' + pt([x + 2, y - 18]) + 'Z', dk(sk, 0.25), 0.8) +
+      L('M' + pt([x - 7, y + 5]) + 'L' + pt([x - 1, y + 9]), dk(sk, 0.3), 1.1) + (o.scales ? L('M' + pt([x - 2, y + 2]) + 'q2,2 4,0 M' + pt([x, y + 6]) + 'q2,2 4,0 M' + pt([x + 3, y - 1]) + 'q2,2 4,0', o.scales, 1.2) : ''), 2);
+    if (o.beard) s += P('M' + pt([x - 9, y + 9]) + 'C' + pt([x - 10, y + 16]) + ' ' + pt([x - 8, y + 22]) + ' ' + pt([x - 5, y + 27]) + 'C' + pt([x - 3, y + 20]) + ' ' + pt([x + 1, y + 16]) + ' ' + pt([x + 4, y + 12]) + 'C' + pt([x, y + 14]) + ' ' + pt([x - 5, y + 13]) + ' ' + pt([x - 9, y + 9]) + 'Z', c.cel(o.hair || '#2e8a6a'), 1.5);
+    if (o.fangs) s += P('M' + pt([x - 11, y + 7]) + 'L' + pt([x - 3, y + 7]) + 'L' + pt([x - 5, y + 11]) + 'L' + pt([x - 9, y + 11]) + 'Z', '#4a1420', 1.2) + P('M' + pt([x - 10, y + 7]) + 'L' + pt([x - 9.4, y + 11]) + 'L' + pt([x - 8.4, y + 7]) + 'Z M' + pt([x - 6, y + 7]) + 'L' + pt([x - 5.6, y + 10.4]) + 'L' + pt([x - 4.6, y + 7]) + 'Z', '#f4f0dc', 0.7);
+    else s += L('M' + pt([x - 10.5, y + 7.4]) + 'L' + pt([x - 6, y + 7.8]), f ? '#6a2a5a' : OL, 1.2);
+    // glowing eye
+    s += vglow(c, x - 5, y - 2, 8, eye, 0.85) + P('M' + pt([x - 8.4, y - 1.6]) + 'Q' + pt([x - 5.4, y - 4.4]) + ' ' + pt([x - 1.4, y - 2.8]) + 'Q' + pt([x - 4.6, y]) + ' ' + pt([x - 8.4, y - 1.6]) + 'Z', lt(eye, 0.55), 1.1);
+    if (o.slit) s += E(x - 4.8, y - 2.2, 0.6, 1.4, OL);
+    s += f ? L('M' + pt([x - 9, y - 4.6]) + 'Q' + pt([x - 5, y - 6.6]) + ' ' + pt([x - 1, y - 5.4]), OL, 1.4) + L('M' + pt([x - 1.4, y - 2.8]) + 'l1.6,-1.2', OL, 1)
+      : L('M' + pt([x - 10, y - 5.6]) + 'L' + pt([x - 1, y - 7.2]), OL, 2);
+    // long upswept brow
+    s += L('M' + pt([x - 2, y - 7]) + 'Q' + pt([x + 3, y - 9]) + ' ' + pt([x + 7, y - 13]), OL, 3) + L('M' + pt([x - 2, y - 7]) + 'Q' + pt([x + 3, y - 9]) + ' ' + pt([x + 7, y - 13]), o.hair || '#2e8a6a', 1.4);
+    return s;
+  }
+  function nelfEar(c, x, y, sk, k) {
+    k = k || 1;
+    var d = 'M' + pt([x + 3, y - 1]) + 'C' + pt([x + 12 * k, y - 7 * k]) + ' ' + pt([x + 22 * k, y - 14 * k]) + ' ' + pt([x + 31 * k, y - 22 * k]) + 'C' + pt([x + 25 * k, y - 10 * k]) + ' ' + pt([x + 16 * k, y - 1]) + ' ' + pt([x + 5, y + 6]) + 'Z';
+    return body(c, d, sk, L('M' + pt([x + 6, y + 1]) + 'C' + pt([x + 14 * k, y - 5 * k]) + ' ' + pt([x + 20 * k, y - 10 * k]) + ' ' + pt([x + 26 * k, y - 16 * k]), dk(sk, 0.3), 1.2), 1.8);
+  }
+  // snake-head hood: cape behind the head (back part) and the snake skull over the brow (top part)
+  function hoodBack(c, x, y, col) {
+    return body(c, 'M' + pt([x - 2, y - 14]) + 'C' + pt([x + 12, y - 16]) + ' ' + pt([x + 18, y - 4]) + ' ' + pt([x + 17, y + 8]) + 'C' + pt([x + 19, y + 16]) + ' ' + pt([x + 24, y + 22]) + ' ' + pt([x + 28, y + 28]) + 'L' + pt([x + 2, y + 26]) + 'C' + pt([x + 4, y + 18]) + ' ' + pt([x + 2, y + 12]) + ' ' + pt([x - 2, y + 8]) + 'Z', dk(col, 0.2),
+      L('M' + pt([x + 6, y - 6]) + 'q2.5,3 5,0 M' + pt([x + 8, y + 2]) + 'q2.5,3 5,0 M' + pt([x + 10, y + 10]) + 'q2.5,3 5,0 M' + pt([x + 12, y + 18]) + 'q2.5,3 5,0', dk(col, 0.45), 1.1), 2);
+  }
+  function hoodTop(c, x, y, o) {
+    var col = o.hood, bel = o.hoodBelly || '#dcd490', s = '';
+    if (o.crest) [[4, -18, -1.9], [9, -16, -1.4], [13, -11, -0.9], [16, -5, -0.4]].forEach(function (q) {
+      var a = q[2], bx = x + q[0], by = y + q[1], len = 9, ex = bx + Math.cos(a) * len, ey = by + Math.sin(a) * len;
+      s += P(pd([[bx - 3, by + 1], [ex, ey], [bx + 3, by + 1]], true), c.cel(o.crest), 1.3);
+    });
+    var d = 'M' + pt([x + 13, y - 3]) + 'C' + pt([x + 13, y - 14]) + ' ' + pt([x + 4, y - 20]) + ' ' + pt([x - 4, y - 19]) + 'C' + pt([x - 12, y - 18]) + ' ' + pt([x - 20, y - 15]) + ' ' + pt([x - 26, y - 11]) + 'C' + pt([x - 29, y - 9]) + ' ' + pt([x - 29, y - 4]) + ' ' + pt([x - 25, y - 3]) +
+      'C' + pt([x - 19, y - 4]) + ' ' + pt([x - 13, y - 5]) + ' ' + pt([x - 9, y - 5]) + 'C' + pt([x - 4, y - 8]) + ' ' + pt([x + 5, y - 8]) + ' ' + pt([x + 13, y - 3]) + 'Z';
+    s += body(c, d, col, F('M' + pt([x + 2, y - 22]) + 'L' + pt([x + 16, y - 22]) + 'L' + pt([x + 16, y]) + 'L' + pt([x + 4, y]) + 'C' + pt([x + 6, y - 8]) + ' ' + pt([x + 5, y - 16]) + ' ' + pt([x + 2, y - 22]) + 'Z', dk(col, 0.28), 0.8) +
+      F('M' + pt([x - 27, y - 4]) + 'C' + pt([x - 20, y - 6]) + ' ' + pt([x - 13, y - 7]) + ' ' + pt([x - 8, y - 7]) + 'L' + pt([x - 8, y - 4]) + 'L' + pt([x - 27, y - 2]) + 'Z', bel, 0.95) +
+      L('M' + pt([x - 2, y - 15]) + 'q2.5,3 5,0 M' + pt([x + 4, y - 12]) + 'q2.5,3 5,0 M' + pt([x - 8, y - 13]) + 'q2.5,3 5,0 M' + pt([x + 1, y - 9]) + 'q2.5,3 5,0', dk(col, 0.4), 1.1), 2);
+    // snake eye + brow ridge, nostril, fangs hanging over the face
+    s += L('M' + pt([x - 20, y - 13]) + 'L' + pt([x - 10, y - 15]), OL, 2) + E(x - 14, y - 11.6, 2.8, 2, o.hoodEye || '#ffd040', 1) + E(x - 14, y - 11.6, 0.6, 1.6, OL) + C(x - 25, y - 8, 0.9, OL);
+    s += P('M' + pt([x - 24, y - 3.4]) + 'C' + pt([x - 24, y]) + ' ' + pt([x - 23, y + 2]) + ' ' + pt([x - 21.4, y + 3.6]) + 'C' + pt([x - 21.6, y + 1]) + ' ' + pt([x - 21.4, y - 1.4]) + ' ' + pt([x - 21, y - 3.6]) + 'Z', '#f4f0dc', 1) +
+      P('M' + pt([x - 17, y - 4]) + 'C' + pt([x - 17, y - 1.4]) + ' ' + pt([x - 16.4, y]) + ' ' + pt([x - 15.2, y + 1]) + 'C' + pt([x - 15.2, y - 1]) + ' ' + pt([x - 15, y - 2.6]) + ' ' + pt([x - 14.6, y - 4.2]) + 'Z', '#f4f0dc', 1);
+    return s;
+  }
+  // snake-topped staff: gnarled wood, a serpent coiled round the head, rearing left with a nightmare glow
+  function snakeStaff(c, p, o) {
+    o = o || {};
+    var top = [p[0] - 4, p[1] - 44], bot = [p[0] + 5, p[1] + 48], x = top[0], y = top[1], sc = o.col || '#5a9a3a', band = o.band || '#2a4a1e';
+    var s = staff(top, bot, '#5a3a22', 3.8) + L('M' + pt([x + 1, y + 30]) + 'l2,4 M' + pt([x + 3, y + 60]) + 'l-2,4', OL, 1.4);
+    var coil = '';
+    for (var i = 0; i <= 20; i++) { var t = i / 20, yy = y + 34 - t * 32, xx = x + (bot[0] - top[0]) * (yy - y) / (bot[1] - top[1]) + Math.sin(t * Math.PI * 3) * 6; coil += (i ? 'L' : 'M') + pt([xx, yy]); }
+    var neck = 'M' + pt([x, y + 2]) + 'C' + pt([x + 2, y - 6]) + ' ' + pt([x - 2, y - 12]) + ' ' + pt([x - 8, y - 14]);
+    s += L(coil, OL, 7.4) + L(coil, sc, 3.6) + L(coil, band, 3.6, 0.9).replace('stroke-linecap="round"', 'stroke-dasharray="2.4 5"') + L(neck, OL, 7.8) + L(neck, sc, 4.2);
+    s += snakeHead(c, x - 9, y - 15, 0.36, { col: sc, eye: o.eye || '#b8ff5a', open: true, tongue: false });
+    if (o.orb) s += vglow(c, x - 19, y - 11, 22, o.orb, 0.85) + C(x - 19, y - 11, o.orbR || 2.6, c.rg([[0, '#ffffff'], [0.5, lt(o.orb, 0.5)], [1, o.orb]]), 1.2);
+    return s;
+  }
+  // snake head in profile facing left (k = scale)
+  function snakeHead(c, x, y, k, o) {
+    var col = o.col, bel = o.belly || '#dcd490', s = '';
+    function Q(dx, dy) { return pt([x + dx * k, y + dy * k]); }
+    if (o.open) {
+      s += P('M' + Q(-21, 0) + 'L' + Q(-8, 1) + 'L' + Q(6, 5) + 'L' + Q(-6, 12) + 'L' + Q(-20, 12) + 'Z', '#5a1420', 2 * k);
+      s += body(c, 'M' + Q(6, 5) + 'C' + Q(4, 12) + ' ' + Q(-8, 16) + ' ' + Q(-19, 15) + 'C' + Q(-23, 14) + ' ' + Q(-23, 11) + ' ' + Q(-20, 10) + 'L' + Q(-6, 9) + 'Z', col, F('M' + Q(-24, 13) + 'L' + Q(8, 8) + 'L' + Q(8, 18) + 'L' + Q(-24, 18) + 'Z', bel, 0.9), 2 * k);
+      s += P('M' + Q(-19, 10) + 'L' + Q(-18, 7) + 'L' + Q(-16.6, 10) + 'Z M' + Q(-13, 9.6) + 'L' + Q(-12.2, 7) + 'L' + Q(-11, 9.4) + 'Z', '#f4f0dc', 0.8 * k);
+      if (o.tongue !== false) { var tg = 'M' + Q(-12, 8) + 'C' + Q(-18, 8) + ' ' + Q(-22, 7) + ' ' + Q(-27, 7) + 'M' + Q(-27, 7) + 'L' + Q(-31, 3.6) + 'M' + Q(-27, 7) + 'L' + Q(-31, 10); s += L(tg, OL, 3.4 * k) + L(tg, '#e0304a', 1.6 * k); }
+    }
+    var hd = 'M' + Q(10, 4) + 'C' + Q(12, -8) + ' ' + Q(2, -14) + ' ' + Q(-6, -13) + 'C' + Q(-14, -12) + ' ' + Q(-21, -9) + ' ' + Q(-25, -4) + 'C' + Q(-26, -2) + ' ' + Q(-25, 1) + ' ' + Q(-21, 1) + 'L' + Q(-8, 2) + 'C' + Q(-2, 3) + ' ' + Q(4, 5) + ' ' + Q(10, 6) + 'Z';
+    s += body(c, hd, col, F('M' + Q(0, -16) + 'L' + Q(14, -16) + 'L' + Q(14, 8) + 'L' + Q(2, 8) + 'C' + Q(5, 0) + ' ' + Q(4, -8) + ' ' + Q(0, -16) + 'Z', dk(col, 0.28), 0.8) +
+      F('M' + Q(-26, -1) + 'C' + Q(-18, -1) + ' ' + Q(-6, 0) + ' ' + Q(10, 4) + 'L' + Q(10, 8) + 'L' + Q(-26, 8) + 'Z', bel, 0.9) + (o.band ? L('M' + Q(-2, -13) + 'L' + Q(-4, 4) + 'M' + Q(6, -10) + 'L' + Q(4, 5), o.band, 3 * k) : '') +
+      L('M' + Q(-14, -8) + 'q' + n(2.5 * k) + ',' + n(3 * k) + ' ' + n(5 * k) + ',0 M' + Q(-4, -9) + 'q' + n(2.5 * k) + ',' + n(3 * k) + ' ' + n(5 * k) + ',0', dk(col, 0.4), 1.1 * k), 2 * Math.max(0.55, k));
+    if (o.open) s += P('M' + Q(-20, 0.6) + 'C' + Q(-20, 4) + ' ' + Q(-19, 7) + ' ' + Q(-17.4, 9) + 'C' + Q(-17.4, 6) + ' ' + Q(-17.2, 3) + ' ' + Q(-16.6, 0.8) + 'Z M' + Q(-12, 1.4) + 'C' + Q(-12, 4) + ' ' + Q(-11.4, 6) + ' ' + Q(-10.2, 7.4) + 'C' + Q(-10.2, 5) + ' ' + Q(-10, 3) + ' ' + Q(-9.4, 1.6) + 'Z', '#f4f0dc', 0.9 * k);
+    var ex = x - 9 * k, ey = y - 6 * k;
+    s += vglow(c, ex, ey, 9 * k, o.eye || '#b8ff5a', 0.8) + E(ex, ey, 3.2 * k, 2.6 * k, lt(o.eye || '#b8ff5a', 0.3), 1.2 * k) + E(ex, ey, 0.8 * k, 2.2 * k, OL);
+    s += L('M' + Q(-15, -9.6) + 'L' + Q(-4, -11), OL, 2.2 * k) + C(x - 22 * k, y - 4 * k, 0.9 * k, OL);
+    return s;
+  }
+  // serpent body tube along chained cubics (tapering w0 -> w1): outline, underside shade, belly strip, cross bands, highlight
+  function tube(c, segs, w0, w1, col, o) {
+    o = o || {};
+    var q = [], steps = o.steps || 12;
+    segs.forEach(function (sg, si) { for (var i = si ? 1 : 0; i <= steps; i++) q.push(bez(sg[0], sg[1], sg[2], sg[3], i / steps)); });
+    var N = q.length, lf = [], rt = [], ws = [], sd = o.side || 1;
+    q.forEach(function (p, i) { var w = (w0 + (w1 - w0) * i / (N - 1)) / 2; ws.push(w); lf.push([p[0] + p[2] * w, p[1] + p[3] * w]); rt.push([p[0] - p[2] * w, p[1] - p[3] * w]); });
+    function off(a, b) { var r = []; q.forEach(function (p, i) { r.push([p[0] + p[2] * ws[i] * sd * a, p[1] + p[3] * ws[i] * sd * b]); }); return r; }
+    function strip(a, b) { return pd(off(a, a).concat(off(b, b).reverse()), true); }
+    var outline = pd(lf.concat(rt.slice().reverse()), true), inner = '';
+    if (o.band) { var every = o.bandEvery || 4, bd = ''; for (var i = o.bandStart || 2; i < N - 1; i += every) bd += pd([lf[i], lf[i + 1], rt[i + 1], rt[i]], true); inner += F(bd, o.band, 0.95); }
+    inner += F(strip(0.15, 1.05), dk(col, 0.26), 0.8);
+    if (o.belly) inner += F(strip(0.45, 1.05), o.belly, 0.92);
+    var hl = off(-0.5, -0.5);
+    inner += L(pd(hl), lt(col, 0.3), Math.max(1, (w0 + w1) * 0.06), 0.8);
+    return F(outline, col) + '<g clip-path="url(#' + c.clip(outline) + ')">' + inner + '</g>' + '<path d="' + outline + '" fill="none" stroke="' + OL + '" stroke-width="' + n(o.sw || 2.4) + '" stroke-linejoin="round"/>';
+  }
+  // cobra hood flare centred on the neck top (x,y)
+  function cobraHood(c, x, y, w, h, col, mark, edge) {
+    var d = 'M' + pt([x, y + h * 0.55]) + 'C' + pt([x - w * 0.34, y + h * 0.4]) + ' ' + pt([x - w * 0.56, y + h * 0.08]) + ' ' + pt([x - w * 0.5, y - h * 0.22]) + 'C' + pt([x - w * 0.44, y - h * 0.46]) + ' ' + pt([x - w * 0.18, y - h * 0.5]) + ' ' + pt([x, y - h * 0.44]) +
+      'C' + pt([x + w * 0.18, y - h * 0.5]) + ' ' + pt([x + w * 0.44, y - h * 0.46]) + ' ' + pt([x + w * 0.5, y - h * 0.22]) + 'C' + pt([x + w * 0.56, y + h * 0.08]) + ' ' + pt([x + w * 0.34, y + h * 0.4]) + ' ' + pt([x, y + h * 0.55]) + 'Z';
+    var rib = '';
+    [-0.36, -0.2, 0.2, 0.36].forEach(function (k) { rib += 'M' + pt([x + k * w * 0.3, y + h * 0.4]) + 'Q' + pt([x + k * w * 1.1, y]) + ' ' + pt([x + k * w * 0.9, y - h * 0.38]); });
+    var inner = F('M' + pt([x + w * 0.1, y - h]) + 'L' + pt([x + w, y - h]) + 'L' + pt([x + w, y + h]) + 'L' + pt([x + w * 0.1, y + h]) + 'Z', dk(col, 0.25), 0.8) + L(rib, dk(col, 0.35), 1.3) +
+      (mark ? E(x - w * 0.24, y - h * 0.06, w * 0.09, h * 0.1, mark, 1.2) + E(x + w * 0.24, y - h * 0.06, w * 0.09, h * 0.1, mark, 1.2) + E(x - w * 0.24, y - h * 0.06, w * 0.035, h * 0.045, OL) + E(x + w * 0.24, y - h * 0.06, w * 0.035, h * 0.045, OL) : '');
+    var s = body(c, d, col, inner, 2.2);
+    if (edge) s += L(d, edge, 1.4, 0.9);
+    return s;
+  }
+  // scale-arc texture over a box
+  function scaleTex(x0, y0, x1, y1, col, dx, dy) {
+    dx = dx || 6; dy = dy || 5;
+    var d = '', row = 0;
+    for (var y = y0; y < y1; y += dy, row++) for (var x = x0 + (row % 2) * dx / 2; x < x1; x += dx) d += 'M' + pt([x, y]) + 'q' + n(dx / 2) + ',' + n(dy * 0.7) + ' ' + n(dx) + ',0';
+    return L(d, col, 1);
+  }
+  // ---- Druid of the Fang rig (night elf in a serpent-scale robe, facing left) ----
+  function fangDruid(c, o) {
+    var sk = o.skin || '#8a6ab8', rb = o.robe || '#3f7040', tr = o.trim || '#7a4e2a', bel = o.belly || '#d8cc84', hx = o.hx || 56, hy = o.hy || 26, s = shadow(c, 64, o.shadowR || 30);
+    if (o.back) s += o.back(c);
+    if (o.hood) s += hoodBack(c, hx, hy, o.hood);
+    if (o.hairBack) s += o.hairBack(c, hx, hy);
+    var far = o.far || [[78, 48], [88, 62], [90, 76]];
+    if (o.wFarBack) s += o.wFarBack(c, far[2]);
+    s += limb(pd(far.slice(0, 2)), dk(rb, 0.22), 8.5) + limb(pd(far.slice(1)), dk(rb, 0.22), 8);
+    s += hand(far[2], c.cel(dk(sk, 0.1)));
+    if (o.wFar) s += o.wFar(c, far[2]);
+    if (!o.noFeet) s += boot(78, 121, o.boots || '#3a2a1a') + boot(54, 121, o.boots || '#3a2a1a');
+    var rd = o.robeD || 'M48,42 C54,37 74,37 80,42 L84,66 L94,110 L90,116 L84,112 L78,117 L72,113 L66,118 L60,113 L54,118 L48,113 L42,117 L36,110 L44,66 Z';
+    s += body(c, rd, rb, scaleTex(30, 44, 100, 120, dk(rb, 0.32)) + F('M53,40 L63,40 L65,120 L51,120 Z', bel, 0.95) + L('M52,50 L64,50 M52,58 L64,58 M52,66 L64,66 M52,82 L65,82 M51,92 L65,92 M51,102 L65,102 M51,112 L65,112', dk(bel, 0.35), 1.1) +
+      F('M70,36 L102,36 L102,122 L78,122 C80,92 76,60 70,36 Z', dk(rb, 0.3), 0.8) + (o.chest ? o.chest(c) : ''));
+    s += P('M43,68 L85,68 L86,75 L42,75 Z', c.cel(tr), 2) + E(58, 71.4, 4.4, 3.4, c.cel(o.buckle || '#d6a53c'), 1.4) + C(56.6, 71, 0.9, OL);
+    // scale mantle over the shoulders, jagged hem
+    var md = 'M42,44 C48,36 78,35 86,43 L88,54 L83,52 L79,57 L74,53 L69,58 L64,53 L59,58 L54,53 L49,57 L44,52 L40,54 Z';
+    s += body(c, md, o.mantle || o.hood || '#5a8a3a', scaleTex(38, 40, 92, 58, dk(o.mantle || o.hood || '#5a8a3a', 0.4), 5, 4) + F('M70,34 L92,34 L92,60 L74,60 Z', dk(o.mantle || o.hood || '#5a8a3a', 0.28), 0.8));
+    s += R(hx - 3, hy + 9, 10, 8, c.cel(sk), 2);
+    s += nelfHead(c, hx, hy, o);
+    if (o.hood) s += hoodTop(c, hx, hy, o);
+    if (o.crown) s += o.crown(c, hx, hy);
+    s += nelfEar(c, hx + 3, hy - 1, sk, o.earK);
+    var near = o.near || [[48, 48], [40, 62], [34, 72]];
+    if (o.wNear) s += o.wNear(c, near[2]);
+    s += limb(pd(near.slice(0, 2)), rb, 9) + limb(pd(near.slice(1)), rb, 8.5);
+    var a = near[1], b = near[2], dx = b[0] - a[0], dy = b[1] - a[1], ln = Math.sqrt(dx * dx + dy * dy) || 1, ux = dx / ln, uy = dy / ln, px = -uy * 6.4, py = ux * 6.4, cx0 = b[0] - ux * 7, cy0 = b[1] - uy * 7;
+    s += P(pd([[cx0 + px * 0.7, cy0 + py * 0.7], [cx0 + ux * 4 + px, cy0 + uy * 4 + py], [cx0 + ux * 4 - px, cy0 + uy * 4 - py], [cx0 - px * 0.7, cy0 - py * 0.7]], true), c.cel(tr), 1.6);
+    s += hand(near[2], c.cel(sk));
+    if (o.wNearFront) s += o.wNearFront(c, near[2]);
+    if (o.top) s += o.top(c);
+    return o.tf ? G(s, o.tf) : s;
+  }
+  // storm cloud puff around a hand, with little bolts
+  function handStorm(c, p, k) {
+    k = k || 1;
+    return vglow(c, p[0], p[1], 24 * k, '#9fd4ff', 0.55) + stormcloud(c, p[0], p[1] - 2 * k, 0.3 * k, '#6e7690') + spark(p[0] - 10 * k, p[1] + 8 * k, 0.9 * k, '#9fe0ff') + spark(p[0] + 9 * k, p[1] + 7 * k, 0.7 * k, '#9fe0ff') + arc('M' + pt([p[0] - 4 * k, p[1] + 4 * k]) + 'L' + pt([p[0] - 1 * k, p[1] + 10 * k]) + 'L' + pt([p[0] - 4 * k, p[1] + 12 * k]) + 'L' + pt([p[0] - 1 * k, p[1] + 18 * k]), 0.7 * k);
+  }
+  // murloc-ish fin: spines from base points to tips with a webbed membrane
+  function finFan(c, pts, col, spine) {
+    var mem = 'M' + pt(pts[0][0]);
+    pts.forEach(function (q) { mem += 'L' + pt(q[1]); });
+    mem += 'L' + pt(pts[pts.length - 1][0]) + 'Z';
+    var sp = '';
+    pts.forEach(function (q) { sp += 'M' + pt(q[0]) + 'L' + pt(q[1]); });
+    return P(mem, c.cel(col), 2) + L(sp, OL, 3) + L(sp, spine || '#e0d8c0', 1.4);
+  }
+
+  // ============================================================
   //  MOBS
   // ============================================================
   var MOBS = {
@@ -1621,6 +1955,153 @@
         near: [[44, 62], [38, 76], [44, 86]],
         wNear: function (c, p) { return rifle(c, p, 30, 0.95); }
       });
+    },
+    // ---------------- Wailing Caverns ----------------
+    druid_of_the_fang: function (c) {
+      return fangDruid(c, {
+        skin: '#8a6ab8', robe: '#3f7040', hood: '#5a8a3a', hoodBelly: '#dcd490', eye: '#9cff5a', hair: '#2e8a6a', trim: '#6a4424',
+        far: [[78, 48], [88, 62], [94, 72]],
+        wFar: function (c, p) { return vglow(c, p[0], p[1], 14, WCG, 0.7) + C(p[0] + 1, p[1] - 5, 2, lt(WCG, 0.5), 0.8); },
+        wNear: function (c, p) { return snakeStaff(c, p, { col: '#6aa040', band: '#2a4a1e', orb: WCG }); },
+        tf: at(1.02, 64, 122)
+      });
+    },
+    deviate_ravager: function (c) {
+      var col = '#5a9a40', pur = '#7a3aa8', sp = '';
+      [[44, 56, -2.2, 10], [52, 51, -1.95, 13], [61, 49, -1.7, 15], [70, 49, -1.45, 15], [79, 52, -1.2, 13], [90, 56, -1.0, 12], [99, 53, -0.8, 12], [107, 48, -0.6, 11], [114, 41, -0.4, 9], [36, 42, -2.5, 9], [42, 38, -2.2, 8]].forEach(function (q) {
+        var a = q[2], bx = q[0], by = q[1] + 3, len = q[3], px = -Math.sin(a) * 3.4, py = Math.cos(a) * 3.4, tx = bx + Math.cos(a) * len, ty = by + Math.sin(a) * len;
+        sp += P(pd([[bx + px, by + py], [tx, ty], [bx - px, by - py]], true), c.cel('#d8c8e8'), 1.4) + F(pd([[bx + (tx - bx) * 0.5 + px * 0.5, by + (ty - by) * 0.5 + py * 0.5], [tx, ty], [bx + (tx - bx) * 0.5 - px * 0.5, by + (ty - by) * 0.5 - py * 0.5]], true), pur);
+      });
+      var r = raptor(c, {
+        col: col, stripe: pur, belly: '#c8dc8a', crest: '#9a4ad0', eye: '#d8ff5a', bigCrest: true, talons: true, sickleK: 1.5,
+        bodyMark: function () { return C(58, 64, 3.4, '#b88ae0', 1.2) + C(70, 70, 2.4, '#b88ae0', 1) + C(80, 62, 2.8, '#b88ae0', 1.1) + C(66, 58, 1.6, '#d8b8f4'); },
+        headMark: function () { return C(30, 44, 2, '#b88ae0', 1); }
+      });
+      return G(C(52, 54, 44, glow(c, '#b86af0', 0.3)) + sp + r + vglow(c, 23, 37.4, 9, '#d8ff5a', 0.9) + C(23, 37.4, 1.4, '#ffffff'), at(1.02, 64, 122));
+    },
+    deviate_viper: function (c) {
+      var col = '#5aa03a', band = '#6a2a8a', bel = '#dcd890', s = shadow(c, 80, 44);
+      s += C(40, 44, 44, glow(c, '#b86af0', 0.25));
+      // ground coils: back halves, then front halves
+      s += tube(c, [[[46, 110], [48, 98], [116, 98], [118, 110]]], 15, 15, dk(col, 0.12), { band: dk(band, 0.1), bandEvery: 3, side: -1 });
+      s += tube(c, [[[56, 100], [58, 90], [110, 90], [112, 100]]], 13, 13, dk(col, 0.06), { band: dk(band, 0.05), bandEvery: 3, side: -1 });
+      s += tube(c, [[[118, 110], [120, 100], [128, 98], [124, 88]]], 11, 3, col, { band: band, bandEvery: 3, belly: bel });
+      s += tube(c, [[[118, 110], [118, 124], [46, 124], [46, 110]]], 15, 15, col, { band: band, bandEvery: 3, belly: bel, side: -1, steps: 16 });
+      s += tube(c, [[[112, 100], [112, 111], [58, 111], [56, 100]]], 13, 13, col, { band: band, bandEvery: 3, belly: bel, side: -1, steps: 16 });
+      // cobra hood, then the rearing neck and head
+      s += cobraHood(c, 42, 50, 50, 50, dk(col, 0.05), '#e0c040', null);
+      s += tube(c, [[[62, 104], [48, 96], [52, 76], [44, 62]], [[44, 62], [40, 54], [38, 48], [36, 44]]], 17, 12, col, { band: band, bandEvery: 3, belly: bel, side: 1, steps: 10 });
+      s += snakeHead(c, 34, 40, 1.05, { col: col, belly: bel, eye: '#d8ff5a', open: true, band: dk(col, 0.2) });
+      return G(s, 'matrix(0.96,0,0,0.96,4.6,4.9)');
+    },
+    lady_anacondra: function (c) {
+      var gold = '#e0b040', hair = '#2a9a86';
+      return fangDruid(c, {
+        female: true, skin: '#b49ad8', robe: '#23704e', mantle: '#1e5a40', belly: '#d8b850', trim: '#8a3ab0', buckle: gold, eye: '#9cff5a', hair: hair, hy: 31, noFeet: true,
+        robeD: 'M49,44 C55,39 73,39 79,44 L82,66 C86,88 94,104 106,110 C114,114 122,114 126,112 L124,121 L34,121 L38,108 L45,66 Z',
+        back: function (c) { return C(60, 60, 66, glow(c, '#7aff5a', 0.32)) + cobraHood(c, 66, 38, 62, 52, '#1e5a40', '#b86af0', gold); },
+        hairBack: function (c, x, y) { return body(c, 'M' + pt([x - 6, y - 12]) + 'C' + pt([x + 10, y - 18]) + ' ' + pt([x + 18, y - 4]) + ' ' + pt([x + 18, y + 12]) + 'C' + pt([x + 20, y + 30]) + ' ' + pt([x + 30, y + 44]) + ' ' + pt([x + 36, y + 58]) + 'C' + pt([x + 22, y + 52]) + ' ' + pt([x + 10, y + 36]) + ' ' + pt([x + 4, y + 16]) + 'Z', hair, L('M' + pt([x + 10, y - 4]) + 'C' + pt([x + 14, y + 14]) + ' ' + pt([x + 20, y + 32]) + ' ' + pt([x + 30, y + 50]), lt(hair, 0.25), 1.2), 2); },
+        chest: function () { return L('M50,40 L58,56 L66,40', gold, 1.6) + L('M56,40 L57,120 M62,40 L64,120', gold, 1.2, 0.9) + L('M40,108 L124,114', gold, 1.4, 0.8); },
+        crown: function (c, x, y) {
+          var s = '';
+          [[-6, -13, -2.0, 8], [0, -15, -1.65, 10], [6, -14, -1.3, 8]].forEach(function (q) { var a = q[2], bx = x + q[0], by = y + q[1]; s += P(pd([[bx - 2.4, by + 1.6], [bx + Math.cos(a) * q[3], by + Math.sin(a) * q[3]], [bx + 2.4, by + 1.2]], true), c.cel(gold), 1.3); });
+          s += P('M' + pt([x - 10, y - 9]) + 'C' + pt([x - 4, y - 14]) + ' ' + pt([x + 6, y - 14]) + ' ' + pt([x + 11, y - 9]) + 'L' + pt([x + 11, y - 5]) + 'C' + pt([x + 6, y - 9]) + ' ' + pt([x - 4, y - 9]) + ' ' + pt([x - 10, y - 5]) + 'Z', c.cel(gold), 1.6);
+          var sn = 'M' + pt([x - 8, y - 9]) + 'C' + pt([x - 13, y - 13]) + ' ' + pt([x - 9, y - 17]) + ' ' + pt([x - 13, y - 20]);
+          s += L(sn, OL, 5.4) + L(sn, gold, 2.8) + P(pd([[x - 11, y - 18.6], [x - 19, y - 21], [x - 12, y - 24]], true), c.cel(gold), 1.2) + C(x - 14, y - 21.4, 0.9, '#3aff6a');
+          return s + vglow(c, x, y - 10, 7, '#3aff8a', 0.8) + C(x, y - 10.6, 2, '#3aff8a', 1);
+        },
+        near: [[48, 48], [36, 52], [22, 48]],
+        wNearFront: function (c, p) {
+          var x = p[0], y = p[1];
+          return vglow(c, x - 2, y, 20, WCG, 0.8) + garc('M' + pt([x - 4, y]) + 'L' + pt([x - 10, y - 6]) + 'L' + pt([x - 8, y - 10]) + 'L' + pt([x - 16, y - 16]) + 'L' + pt([x - 20, y - 26])) +
+            garc('M' + pt([x - 4, y + 1]) + 'L' + pt([x - 12, y + 2]) + 'L' + pt([x - 11, y + 6]) + 'L' + pt([x - 21, y + 8])) + garc('M' + pt([x - 3, y + 3]) + 'L' + pt([x - 7, y + 12]) + 'L' + pt([x - 11, y + 13]) + 'L' + pt([x - 14, y + 22]), 0.8) + C(x - 3, y, 3, '#f4ffe8');
+        },
+        far: [[76, 48], [90, 40], [100, 28]],
+        wFar: function (c, p) { return vglow(c, p[0], p[1] - 4, 16, WCG, 0.8) + garc('M' + pt([p[0] - 6, p[1] - 4]) + 'Q' + pt([p[0], p[1] - 14]) + ' ' + pt([p[0] + 6, p[1] - 4]), 0.7) + C(p[0], p[1] - 6, 2.4, '#f4ffe8'); },
+        tf: at(1.0, 64, 122)
+      });
+    },
+    lord_cobrahn: function (c) {
+      var sk = '#8e70c0', col = '#7a9a30', band = '#34461a', bel = '#e0d890', s = shadow(c, 76, 48);
+      function claws(p, a) { var d = ''; [-0.5, 0, 0.5].forEach(function (k) { var b = a + k, bx = p[0] + Math.cos(b) * 3.4, by = p[1] + Math.sin(b) * 3.4; d += 'M' + pt([bx, by]) + 'L' + pt([bx + Math.cos(b) * 5, by + Math.sin(b) * 5]); }); return L(d, OL, 3.6) + L(d, '#f4ecd6', 1.6); }
+      s += C(60, 56, 64, glow(c, '#b8ff5a', 0.28));
+      // tail coils behind, then the snake lower body from the waist
+      s += tube(c, [[[52, 112], [54, 100], [116, 98], [118, 110]]], 16, 16, dk(col, 0.14), { band: dk(band, 0.1), bandEvery: 3, side: -1 });
+      s += cobraHood(c, 62, 36, 56, 52, col, '#e0c040', null);
+      var far = [[78, 48], [90, 40], [96, 28]];
+      s += limb(pd(far.slice(0, 2)), dk(sk, 0.12), 8) + limb(pd(far.slice(1)), dk(sk, 0.12), 7) + hand(far[2], c.cel(dk(sk, 0.12))) + claws(far[2], -1.9) + vglow(c, far[2][0], far[2][1] - 4, 14, WCG, 0.6);
+      s += tube(c, [[[64, 76], [62, 92], [48, 102], [54, 114]], [[54, 114], [60, 124], [104, 124], [114, 114]], [[114, 114], [122, 106], [126, 96], [118, 86]]], 26, 4, col, { band: band, bandEvery: 4, belly: bel, side: 1, steps: 12 });
+      // torso: bare nelf chest under an open scale vest
+      var td = 'M46,44 C52,38 76,38 82,44 L82,70 C76,78 52,78 46,70 Z';
+      s += body(c, td, sk, F('M70,36 L90,36 L90,80 L72,80 C76,64 74,50 70,36 Z', dk(sk, 0.25), 0.8) + L('M52,52 Q58,56 64,52 M54,62 L62,62', dk(sk, 0.3), 1.2) + scaleTex(58, 60, 84, 78, '#5a7a2a', 5, 4));
+      s += body(c, 'M44,46 C46,40 54,38 56,42 L54,76 L44,72 Z', '#4e6a24', scaleTex(40, 40, 58, 78, dk('#4e6a24', 0.35), 5, 4), 1.8) + body(c, 'M76,40 C82,38 88,42 86,48 L84,74 L72,78 Z', '#4e6a24', scaleTex(70, 36, 90, 80, dk('#4e6a24', 0.35), 5, 4), 1.8);
+      s += P('M42,68 L86,68 L88,82 L82,80 L78,86 L72,81 L66,87 L60,81 L54,87 L48,81 L42,84 Z', c.cel('#6a4424'), 2) + E(62, 72, 4, 3, c.cel('#d6a53c'), 1.3);
+      s += R(53, 34, 10, 9, c.cel(sk), 2);
+      s += nelfHead(c, 56, 26, { skin: sk, eye: '#e0ff40', hair: '#3a6a2a', fangs: true, slit: true, scales: '#5a8a2a' });
+      s += nelfEar(c, 59, 25, sk, 0.9);
+      var near = [[48, 48], [36, 58], [22, 56]];
+      s += limb(pd(near.slice(0, 2)), sk, 8.5) + limb(pd(near.slice(1)), sk, 8) + L('M40,52 q2,3 4,0 M36,56 q2,3 4,0', '#5a8a2a', 1.2) + hand(near[2], c.cel(sk)) + claws(near[2], Math.PI + 0.1);
+      return G(s, at(1.02, 64, 122));
+    },
+    kresh: function (c) {
+      var t = turtle(c, { shell: '#4a5234', skin: '#7c8266', moss: '#5e8e34', spike: '#bcb48e', rim: '#8a8458', eye: '#ffb030' });
+      var s = C(70, 70, 70, glow(c, '#8aff6a', 0.18)) + t;
+      // hanging moss off the rim, cracks and barnacles on the shell
+      s += L('M40,58 L52,64 L50,72 M104,56 L96,64 M72,86 L80,94 L76,100', dk('#4a5234', 0.5), 1.4, 0.9);
+      [[34, 104, 10], [48, 108, 8], [66, 110, 12], [86, 110, 9], [104, 108, 11], [120, 104, 7]].forEach(function (m) { s += P('M' + (m[0] - 4) + ',' + m[1] + ' C' + (m[0] - 5) + ',' + (m[1] + m[2] * 0.6) + ' ' + (m[0] - 1) + ',' + (m[1] + m[2] * 0.8) + ' ' + m[0] + ',' + (m[1] + m[2]) + ' C' + (m[0] + 1) + ',' + (m[1] + m[2] * 0.7) + ' ' + (m[0] + 4) + ',' + (m[1] + m[2] * 0.4) + ' ' + (m[0] + 4) + ',' + m[1] + ' Z', c.cel('#5e8e34'), 1.2); });
+      [[56, 80], [96, 88], [84, 58], [110, 80]].forEach(function (b) { s += C(b[0], b[1], 2.6, c.cel('#d8d0b0'), 1.2) + C(b[0], b[1], 0.9, OL); });
+      // fungus grove growing on the shell
+      s += shrooms(c, 62, 50, 0.9, WCG, [[-8, 10, 6], [1, 17, 8], [9, 8, 5]]) + shrooms(c, 98, 54, 0.85, WCP, [[-6, 12, 6], [4, 20, 9], [12, 9, 5]]) + shrooms(c, 40, 72, 0.6, WCP, [[-4, 10, 6], [5, 7, 4]]);
+      s += L('M80,46 C84,40 78,34 84,28', OL, 3.4) + L('M80,46 C84,40 78,34 84,28', '#5a8a3a', 1.6) + P('M84,28 Q90,26 90,32 Q86,32 84,28 Z', '#5a9a3a', 1);
+      return G(s, 'matrix(1.04,0,0,1.06,' + n(-64 * 0.04) + ',' + n(-122 * 0.06) + ')');
+    },
+    lord_pythas: function (c) {
+      return fangDruid(c, {
+        skin: '#7a5aa8', robe: '#1e4a30', mantle: '#2a4a26', hood: '#2e5a2a', hoodBelly: '#c8c878', crest: '#9ac040', beard: true, hair: '#4ab89a', eye: '#b8ff6a', trim: '#3a2a1a', belly: '#9aa860', buckle: '#8ab8ff',
+        back: function (c) { return C(60, 56, 64, glow(c, '#6aa8ff', 0.26)); },
+        chest: function () { return L('M44,96 L92,100 M40,104 L94,108', '#8ab8ff', 1.2, 0.6); },
+        far: [[78, 46], [90, 40], [98, 26]],
+        wFar: function (c, p) { return handStorm(c, [p[0] + 2, p[1] - 6], 1.3) + vglow(c, p[0], p[1], 12, '#bfe8ff', 0.6); },
+        wNear: function (c, p) { return snakeStaff(c, p, { col: '#4a7a2e', band: '#1e3014', orb: '#9fe8ff', orbR: 4, eye: '#9aff6a' }) + handStorm(c, [p[0] - 10, p[1] + 10], 1.15); },
+        tf: at(1.05, 64, 122)
+      });
+    },
+    mutanus: function (c) {
+      var col = '#7e8c76', dcol = dk(col, 0.3), bel = '#b8bc98', fin = '#6a4a7a', eye = '#e4ff5a', s = E(66, 122, 58, 7, c.rg([[0, '#000', 0.5], [0.7, '#000', 0.25], [1, '#000', 0]]));
+      s += C(64, 60, 70, glow(c, '#9aff5a', 0.22));
+      // back legs + far arm
+      s += limb('M92,104 L100,116', dcol, 13) + P('M92,116 L110,116 L114,122 L88,122 Z', c.cel(dcol), 1.8);
+      s += limb('M96,70 L110,84 L112,96', dcol, 10) + L('M108,96 l-2,6 M112,97 l0,6 M115,95 l3,5', OL, 3.4) + L('M108,96 l-2,6 M112,97 l0,6 M115,95 l3,5', '#efe8cc', 1.4);
+      // dorsal fin crest along the head and back
+      s += finFan(c, [[[44, 22], [36, 9]], [[54, 17], [52, 5]], [[64, 15], [68, 4]], [[76, 16], [86, 6]], [[88, 21], [102, 12]], [[100, 30], [116, 22]], [[108, 42], [124, 38]]], fin);
+      // bloated body
+      var bd = 'M24,72 C18,42 38,16 66,16 C98,16 122,38 122,72 C124,98 110,118 82,120 L50,120 C28,118 20,98 24,72 Z';
+      var warts = '';
+      [[90, 40, 3.4], [104, 60, 2.6], [82, 28, 2], [110, 80, 3], [96, 100, 2.4], [74, 46, 1.8], [100, 50, 1.6]].forEach(function (w) { warts += C(w[0], w[1], w[2], '#9a6ab0', 1) + C(w[0] - w[2] * 0.3, w[1] - w[2] * 0.3, w[2] * 0.35, '#d8b8f0'); });
+      s += body(c, bd, col, F('M90,14 C112,24 126,48 126,72 C126,100 110,120 84,122 L100,122 L130,122 L130,10 Z', dcol, 0.8) + F('M30,92 C40,112 70,120 96,114 C88,104 70,98 56,92 C46,88 36,88 30,92 Z', bel, 0.9) +
+        L('M44,100 Q52,104 60,102 M50,108 Q60,112 70,110 M62,114 Q72,116 82,114', dk(bel, 0.3), 1.2) + warts + F('M40,30 C50,20 64,18 74,20 C62,24 50,28 44,36 Z', lt(col, 0.25), 0.6), 2.6);
+      // cheek fin
+      s += finFan(c, [[[74, 50], [92, 40]], [[74, 54], [96, 50]], [[74, 58], [94, 62]]], fin);
+      // gaping maw: interior, lower jaw with teeth, upper jaw with teeth
+      s += P('M58,52 C40,50 16,54 6,62 C4,72 6,84 10,92 C24,94 44,90 62,82 Z', '#3a0e18', 2.2) + E(26, 76, 12, 6, '#a03048', 0, 0.85) + E(22, 74, 4, 2, '#d86a80', 0, 0.7);
+      var lj = 'M64,80 C50,90 28,94 8,90 C2,94 4,106 16,108 C34,110 56,102 68,90 Z';
+      s += body(c, lj, col, F('M4,98 C20,106 44,106 70,90 L72,112 L4,112 Z', bel, 0.9) + F('M50,92 L72,86 L72,112 L56,112 Z', dcol, 0.6), 2.4);
+      var lt_ = '';
+      [[12, 90, 6], [19, 91, 8], [27, 91, 5], [34, 90, 9], [42, 88, 6], [50, 85, 8], [57, 82, 5]].forEach(function (q) { lt_ += 'M' + pt([q[0] - 2.6, q[1] + 1]) + 'L' + pt([q[0] + 0.6, q[1] - q[2]]) + 'L' + pt([q[0] + 2.6, q[1] + 1]) + 'Z'; });
+      s += P(lt_, c.cel('#efe8cc'), 1.2);
+      var uj = 'M62,56 C46,44 22,48 6,58 C2,62 4,66 8,66 C24,62 44,60 60,64 Z';
+      s += body(c, uj, col, F('M4,62 C22,58 44,58 62,62 L62,68 L4,68 Z', dk(col, 0.2), 0.7) + L('M18,54 l2,-2 M28,51 l2,-2', OL, 1.4), 2.4);
+      var ut = '';
+      [[9, 64, 7], [15, 63, 10], [22, 62, 6], [28, 61, 11], [35, 61, 7], [42, 61, 9], [49, 62, 6], [55, 63, 8]].forEach(function (q) { ut += 'M' + pt([q[0] - 2.6, q[1] - 1]) + 'L' + pt([q[0] - 0.4, q[1] + q[2]]) + 'L' + pt([q[0] + 2.6, q[1] - 1]) + 'Z'; });
+      s += P(ut, c.cel('#efe8cc'), 1.2);
+      s += L('M22,72 C22,78 24,84 23,88 M40,70 C41,76 40,82 42,86', '#c8e0c0', 1.2, 0.7);
+      // mutated glowing eyes
+      [[40, 36, 8], [58, 30, 5.5], [26, 46, 4]].forEach(function (e) { s += vglow(c, e[0], e[1], e[2] * 2.4, eye, 0.8) + C(e[0], e[1], e[2], c.cel(dk(col, 0.2)), 2) + C(e[0] - 0.6, e[1], e[2] * 0.72, lt(eye, 0.2), 1.2) + E(e[0] - 1.4, e[1], e[2] * 0.2, e[2] * 0.5, OL) + C(e[0] - e[2] * 0.3, e[1] - e[2] * 0.35, e[2] * 0.18, '#ffffff'); });
+      s += L('M30,28 L48,30', OL, 3) + L('M52,22 L64,26', OL, 2.4);
+      // near stubby arm with claws, near leg with webbed foot
+      s += limb('M74,86 L56,100 L42,108', col, 12) + L('M40,104 l-8,-2 M40,108 l-8,2 M42,112 l-4,6', OL, 4) + L('M40,104 l-8,-2 M40,108 l-8,2 M42,112 l-4,6', '#efe8cc', 1.8);
+      s += limb('M62,108 L56,116', col, 14) + P('M44,116 L66,116 L68,122 L40,122 Z', c.cel(col), 1.8) + L('M48,122 L46,118 M54,122 L53,117 M60,122 L60,117', OL, 1.2);
+      return s;
     }
   };
 

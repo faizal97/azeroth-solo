@@ -1205,17 +1205,23 @@
   G.role = function () { const P = G.S.player; return P.role || D.CLASSES[P.cls].role; };
   G.roles = function () { const C = D.CLASSES[G.S.player.cls]; return C.roles || [C.role]; };
   G.setRole = function (r) { if (G.roles().includes(r) && !G.S.queue && !G.S.run) { G.S.player.role = r; emit('change'); } };
-  // Group finder rules: world elites belong to their zone and faction (queue from that zone);
-  // dungeons are open to both factions from anywhere, like Classic. Leaving a run early = deserter.
+  // Group finder rules (2026-09-27): any faction may run any dungeon or elite, but only from its zone:
+  // you have to be there. Places you have no road to yet stay hidden (the factions' roads meet in later zones).
+  // Leaving a run early = deserter.
   const DESERTER = 10 * 60000;
-  G.activityFaction = (act) => { const A = D.ACTIVITIES[act]; return A.where ? D.REGIONS[D.PLACES[A.where].region].faction : null; };
+  const reach = {};
+  G.reachableRegions = function (from) {
+    if (reach[from]) return reach[from];
+    const seen = new Set([from]), q = [from], regions = new Set();
+    while (q.length) { const k = q.shift(); regions.add(D.PLACES[k].region); for (const to in (D.PLACES[k].links || {})) if (D.PLACES[to] && !seen.has(to)) { seen.add(to); q.push(to); } }
+    return (reach[from] = regions);
+  };
   G.activityBlock = function (act) {
     const S = G.S, P = S.player, A = D.ACTIVITIES[act];
-    const myF = (D.RACES[P.race] || {}).faction || 'alliance';
-    const f = G.activityFaction(act);
-    if (f && f !== myF) return 'hidden';
+    const region = A.where && D.PLACES[A.where].region;
+    if (region && !G.reachableRegions(P.place).has(region)) return 'hidden';
     if (P.level < A.minLvl) return `Requires level ${A.minLvl}`;
-    if (A.where && D.PLACES[A.where].region !== (D.PLACES[P.place] || {}).region) return `Go to ${D.REGIONS[D.PLACES[A.where].region].name} to join`;
+    if (region && region !== (D.PLACES[P.place] || {}).region) return `Go to ${D.REGIONS[region].name} to join`;
     if ((S.flags.deserterUntil || 0) > now()) return `Deserter: ${Math.ceil((S.flags.deserterUntil - now()) / 60000)} min`;
     return null;
   };
@@ -1346,7 +1352,7 @@
     pu.target = (enemies.find((e) => e.mark === 'skull') || enemies[0]).uid;
     // a careless tank sometimes pulls the next pack too
     const tb = S.group.members.find((m) => m.role === 'tank' && !m.gone);
-    if (tb && !pull.boss && R.idx + 1 < R.pulls.length && !R.pulls[R.idx + 1].boss && Math.random() < ((R.pace || 'normal') === 'fast' ? 0.45 : 0.28 * (1 - tb.bot.skill) * PACE[R.pace || 'normal'].extra)) {
+    if (tb && !pull.boss && R.idx + 1 < R.pulls.length && !R.pulls[R.idx + 1].boss && Math.random() < ((R.pace || 'normal') === 'fast' ? 0.3 : 0.28 * (1 - tb.bot.skill) * PACE[R.pace || 'normal'].extra)) {
       G.fight.extraAt = { t: rnd(4, 8), mobs: R.pulls[R.idx + 1].mobs.slice(0, 1) };
     }
     R.phase = 'fight';
@@ -1491,9 +1497,11 @@
     const P = S.player;
     if (P.hp == null) P.hp = v.maxHp;
     if (R.phase === 'rest') {
-      P.hp = Math.min(v.maxHp, P.hp + v.maxHp * 0.12);
-      if (v.resType === 'mana') P.res = Math.min(v.maxRes, P.res + v.maxRes * 0.12);
-      for (const m of S.group.members) { if (m.hp != null) { const st = E.statsFor(m); m.hp = Math.min(st.maxHp, m.hp + st.maxHp * 0.12); if (m.res != null && D.CLASSES[m.cls].resource === 'mana') m.res = Math.min(st.maxMana, m.res + st.maxMana * 0.12); } }
+      // resting between pulls: slow enough that the pull pace matters (careful waits, fast goes in low)
+      const RR = G.REST_REGEN;
+      P.hp = Math.min(v.maxHp, P.hp + v.maxHp * RR);
+      if (v.resType === 'mana') P.res = Math.min(v.maxRes, P.res + v.maxRes * RR);
+      for (const m of S.group.members) { if (m.hp != null) { const st = E.statsFor(m); m.hp = Math.min(st.maxHp, m.hp + st.maxHp * RR); if (m.res != null && D.CLASSES[m.cls].resource === 'mana') m.res = Math.min(st.maxMana, m.res + st.maxMana * RR); } }
       // replace leavers
       const missing = S.group.members.filter((m) => m.gone && !m.replacing);
       for (const m of missing) {
@@ -1513,7 +1521,7 @@
       // bot tank pulls on its own when rested; player tank pulls manually
       const pace = PACE[R.pace || 'normal'];
       const topped = !pace.hp || (P.hp >= v.maxHp * pace.hp && (v.resType !== 'mana' || P.res >= v.maxRes * pace.mana) && S.group.members.every((m) => { if (m.gone || m.hp == null) return true; const st = E.statsFor(m); return m.hp >= st.maxHp * pace.hp && (D.CLASSES[m.cls].resource !== 'mana' || m.res == null || m.res >= st.maxMana * pace.mana); }));
-      if (G.role() !== 'tank' && t >= R.restUntil && topped && !waiting && !R.rolls.some((r) => !r.done && !r.player)) G.runPull();
+      if (G.role() !== 'tank' && t >= R.restUntil && (topped || t >= R.restUntil + 25000) && !waiting && !R.rolls.some((r) => !r.done && !r.player)) G.runPull();
       emit('runTick');
     } else if (R.phase === 'wipe' && t >= R.restUntil) {
       R.phase = 'rest'; R.restUntil = t + 6000;
@@ -1523,7 +1531,8 @@
   }
   // ---------- tactics: pull pace, kill-order marks, boss plan
   // careful: rest to full, the tank never grabs an extra pack; fast: short rests, more extra packs.
-  const PACE = { careful: { rest: 1.6, hp: 0.95, mana: 0.9, extra: 0 }, normal: { rest: 1, hp: 0, mana: 0, extra: 1 }, fast: { rest: 0.25, hp: 0, mana: 0, extra: 2.2 } };
+  G.REST_REGEN = 0.05; // share of health/mana regained per second while resting in a dungeon (tuned in sim/tactics.js)
+  const PACE = { careful: { rest: 1.6, hp: 0.95, mana: 0.9, extra: 0 }, normal: { rest: 1, hp: 0, mana: 0, extra: 1 }, fast: { rest: 0.35, hp: 0, mana: 0, extra: 2.2 } };
   G.setPace = function (p) { const R = G.S.run; if (R && PACE[p]) { R.pace = p; sys(`Pull pace: ${p}.`); emit('runUpdate'); } };
   G.setBossPlan = function (p) { const R = G.S.run; if (R) { R.bossPlan = p; sys(p === 'adds' ? 'Boss plan: kill the adds first.' : 'Boss plan: burn the boss.'); emit('runUpdate'); } };
   const NEXT_MARK = { undefined: 'skull', skull: 'cross', cross: undefined };
