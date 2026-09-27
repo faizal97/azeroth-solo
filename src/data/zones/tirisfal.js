@@ -41,7 +41,7 @@
     agamand_mills: { name: 'Agamand Mills', zone: 'Tirisfal Glades', region: 'tirisfal', scene: 'agamand_mills', lvl: [6, 8], mobs: [['darkhound', 5], ['greater_duskbat', 4], ['rattlecage_skeleton', 2]], pool: 10, npcs: [], links: { brill: 14 } },
     garrens_haunt: { name: "Garren's Haunt", zone: 'Tirisfal Glades', region: 'tirisfal', scene: 'garrens_haunt', lvl: [7, 11], mobs: [['rot_hide_gnoll', 5], ['rot_hide_mongrel', 4]], named: { maggot_eye: 180 }, pool: 9, npcs: [], links: { brill: 16 } },
     scarlet_watch_post: { name: 'Scarlet Watch Post', zone: 'Tirisfal Glades', region: 'tirisfal', scene: 'scarlet_watch_post', lvl: [8, 10], mobs: [['scarlet_convert', 5], ['scarlet_warrior', 5]], named: { captain_perrine: 150 }, pool: 10, npcs: [], links: { brill: 18 } },
-    undercity: { name: 'Undercity', zone: 'Undercity', region: 'tirisfal', scene: 'undercity', lvl: [1, 60], safe: true, inn: true, city: true, mobs: [], pool: 0, npcs: ['norman', 'abigail'], vendor: 'norman', gearVendor: 'abigail', links: { brill: 20, orgrimmar: 60 }, via: { orgrimmar: 'Zeppelin' } },
+    undercity: { name: 'Undercity', zone: 'Undercity', region: 'tirisfal', scene: 'undercity', lvl: [1, 60], safe: true, inn: true, city: true, mobs: [], pool: 0, npcs: ['norman', 'abigail', 'mentor_horde'], vendor: 'norman', gearVendor: 'abigail', links: { brill: 20, orgrimmar: 60 }, via: { orgrimmar: 'Zeppelin' } },
   });
 
   // people

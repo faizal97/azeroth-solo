@@ -8,7 +8,7 @@
   D.LEVEL_CAP = 20;
   D.XP_TO_LEVEL = [0, 400, 900, 1400, 2100, 2800, 3600, 4500, 5400, 6500, 8000, 9600, 11200, 12900, 14600, 16400, 17000, 18000, 19000, 20000, 21400];
 
-  D.QUALITY = [{ name: 'Poor', color: '#9d9d9d' }, { name: 'Common', color: '#ffffff' }, { name: 'Uncommon', color: '#1eff00' }, { name: 'Rare', color: '#0070dd' }, { name: 'Epic', color: '#a335ee' }];
+  D.QUALITY = [{ name: 'Poor', color: '#9d9d9d' }, { name: 'Common', color: '#ffffff' }, { name: 'Uncommon', color: '#1eff00' }, { name: 'Rare', color: '#0070dd' }, { name: 'Epic', color: '#a335ee' }, { name: 'Heirloom', color: '#e6cc80' }];
 
   D.CHANNELS = {
     say: { label: 'Say', color: '#ffffff' },
@@ -281,6 +281,31 @@
   D.SLOT_LABEL = { weapon: 'Main Hand', ranged: 'Ranged', chest: 'Chest', legs: 'Legs', feet: 'Feet', hands: 'Hands', wrist: 'Wrist', waist: 'Waist', back: 'Back', finger: 'Finger' };
   D.SLOT_ICON = { chest: null, legs: 'legs', feet: 'boots', hands: 'gloves', wrist: 'bracers', waist: 'belt', back: 'cloak', finger: 'ring' };
 
+  // ---- Help Wanted rewards (v2.3): Mentor Marks buy account-wide heirlooms that scale with your level
+  // Each heirloom piece also gives +5% experience (up to 3 pieces). base: the item's shape at level 1.
+  D.HEIRLOOMS = {
+    heirloom_blade: { name: 'Veteran\'s Blade', slot: 'weapon', wtype: 'sword', speed: 2.4, stat: ['str', 'agi'], cost: 60, icon: 'sword' },
+    heirloom_hammer: { name: 'Veteran\'s Hammer', slot: 'weapon', wtype: 'mace', speed: 2.6, stat: ['str', 'sta'], cost: 60, icon: 'mace' },
+    heirloom_staff: { name: 'Veteran\'s Staff', slot: 'weapon', wtype: 'staff', speed: 3.0, stat: ['int', 'spi'], sp: true, cost: 60, icon: 'staff' },
+    heirloom_dagger: { name: 'Veteran\'s Dirk', slot: 'weapon', wtype: 'dagger', speed: 1.7, stat: ['agi', 'sta'], cost: 60, icon: 'dagger' },
+    heirloom_bow: { name: 'Veteran\'s Longbow', slot: 'ranged', wtype: 'bow', speed: 2.8, stat: ['agi', 'sta'], cost: 50, icon: 'bow' },
+    heirloom_cloak: { name: 'Veteran\'s Cloak', slot: 'back', stat: ['sta', 'agi'], cost: 40, icon: 'cloak' },
+    heirloom_ring: { name: 'Veteran\'s Band', slot: 'finger', stat: ['sta', 'int'], cost: 40, icon: 'ring' },
+  };
+  // Titles show next to your name. `need` is checked against your records (see G.titleUnlocked).
+  D.TITLES = [
+    { id: 'mentor', name: '%s the Mentor', need: { mentor: 5 }, how: 'Help 5 groups through Help Wanted' },
+    { id: 'guide', name: '%s the Guide', need: { mentor: 25 }, how: 'Help 25 groups through Help Wanted' },
+    { id: 'flawless', name: '%s the Flawless', need: { flawless: 10 }, how: 'Clear dungeons without a wipe 10 times' },
+    { id: 'swift', name: '%s the Swift', need: { speed: 10 }, how: 'Beat par time 10 times' },
+    { id: 'pvp1', name: 'Private %s', horde: 'Scout %s', need: { honor: 100 }, how: 'Earn 100 Honor' },
+    { id: 'pvp2', name: 'Corporal %s', horde: 'Grunt %s', need: { honor: 500 }, how: 'Earn 500 Honor' },
+    { id: 'pvp3', name: 'Sergeant %s', horde: 'Sergeant %s', need: { honor: 1500 }, how: 'Earn 1500 Honor' },
+    { id: 'pvp4', name: 'Knight %s', horde: 'Stone Guard %s', need: { honor: 4000 }, how: 'Earn 4000 Honor' },
+    { id: 'defender', name: '%s, Defender of the Realm', horde: '%s, Defender of the Horde', need: { kills: 50 }, how: 'Defeat 50 enemy players' },
+    { id: 'deadmines', name: '%s of Westfall', need: { clear: 'deadmines' }, how: 'Clear the Deadmines' },
+    { id: 'wailing', name: '%s the Dreamwalker', need: { clear: 'wailing_caverns' }, how: 'Clear Wailing Caverns' },
+  ];
   // ---- quest reward families
   D.REWARD_FAMILIES = {
     fam_chest: { slot: 'chest', lvl: 2, q: 1 },

@@ -92,6 +92,7 @@
     G.fight = null; G.pUnit = null;
     S.pending = []; S.chatTimers = {};
     if (S.run && S.run.phase === 'fight') S.run.phase = 'rest', S.run.restUntil = now() + 3000;
+    try { G.refreshHeirlooms(); } catch (e) { /* older save */ }
     return G.catchUp();
   };
   G.exportSave = function () { G.save(); return btoa(unescape(encodeURIComponent(JSON.stringify(G.S)))); };
@@ -467,7 +468,7 @@
     if (P.level >= D.LEVEL_CAP || amount <= 0) return 0;
     let bonus = 0;
     if (fromKill && P.rested > 0) { bonus = Math.min(amount, Math.round(P.rested)); P.rested -= bonus; }
-    amount = Math.round(amount * G.warBonus());
+    amount = Math.round(amount * G.warBonus() * (1 + G.heirloomXpBonus() / 100));
     const total = amount + bonus;
     P.xp += total;
     B.post(G.S, 'combat', null, bonus ? `You gain ${total} experience. (+${bonus} exp Rested bonus)` : `You gain ${total} experience.`);
@@ -484,6 +485,7 @@
     const P = G.S.player;
     P.hp = null; P.res = D.CLASSES[P.cls].resource === 'rage' ? 0 : null;
     if (G.fight && G.pUnit) { G.pUnit.level = P.level; E.recalc(G.pUnit); G.pUnit.hp = G.pUnit.maxHp; if (G.pUnit.resType === 'mana') G.pUnit.res = G.pUnit.maxRes; }
+    G.refreshHeirlooms();
     sys(`Congratulations, you have reached level ${P.level}!`);
     const learned = D.CLASSES[P.cls].abilities.filter((a) => D.ABILITIES[a].lvl === P.level);
     for (const a of learned) sys(`You have learned a new ability: ${D.ABILITIES[a].name}.`);
@@ -1038,6 +1040,135 @@
   }
 
 
+
+  // ============================================================ Help Wanted, Mentor Marks, heirlooms, titles, Roulette (v2.3)
+  // Account-wide: Mentor Marks and unlocked heirlooms are shared by every character on this phone.
+  const ACCOUNT_KEY = 'azsolo.account';
+  G.account = function () { let a = null; try { a = JSON.parse(ls.get(ACCOUNT_KEY) || 'null'); } catch (e) { a = null; } return Object.assign({ marks: 0, heirlooms: [] }, a || {}); };
+  G.saveAccount = (a) => ls.set(ACCOUNT_KEY, JSON.stringify(a));
+  G.addMarks = function (n, why) { const a = G.account(); a.marks += n; G.saveAccount(a); loot(`+${n} Mentor Marks${why ? ' (' + why + ')' : ''}. You have ${a.marks}.`); };
+  // Heirlooms: stats follow the wearer's level, so an alt can wear the same piece from 1 to the cap.
+  G.makeHeirloom = function (id, level) {
+    const H = D.HEIRLOOMS[id], L = Math.max(1, level);
+    const it = { id, name: H.name, slot: H.slot, q: 5, lvl: 1, icon: H.icon, heirloom: true, sell: 0, stats: {} };
+    it.stats[H.stat[0]] = Math.max(1, Math.round(1 + L * 0.42)); it.stats[H.stat[1]] = Math.max(1, Math.round(L * 0.3));
+    // same damage curve as random gear, at rare quality
+    if (H.wtype) { it.wtype = H.wtype; it.speed = H.speed; const dps = (1.6 + L * 0.45) * 1.22 * (H.wtype === 'staff' ? 1.35 : 1); it.dmg = [Math.max(1, Math.round(dps * H.speed * 0.7)), Math.max(2, Math.round(dps * H.speed * 1.3))]; }
+    else if (H.slot === 'back') it.armor = Math.round((D.SLOT_ARMOR.back || 3) * (L + 2) * 1.1);
+    if (H.sp) it.sp = Math.round(L * 0.5);
+    it.source = 'Heirloom: follows your level. +5% experience.';
+    return it;
+  };
+  G.refreshHeirlooms = function () {
+    const P = G.S.player;
+    for (const s of Object.keys(P.equip || {})) { const it = P.equip[s]; if (it && it.heirloom) P.equip[s] = G.makeHeirloom(it.id, P.level); }
+    for (const b of P.bags) if (b.item && b.item.heirloom) b.item = G.makeHeirloom(b.item.id, P.level);
+  };
+  G.heirloomXpBonus = function () { let n = 0; for (const s in (G.S.player.equip || {})) if (G.S.player.equip[s] && G.S.player.equip[s].heirloom) n++; return Math.min(3, n) * 5; };
+  G.buyHeirloom = function (id) {
+    const a = G.account(), H = D.HEIRLOOMS[id]; if (!H) return;
+    const owned = a.heirlooms.includes(id);
+    if (!owned) { if (a.marks < H.cost) return toast(`You need ${H.cost} Mentor Marks.`); a.marks -= H.cost; a.heirlooms.push(id); G.saveAccount(a); }
+    if (G.S.player.bags.length >= 16) return toast('Inventory is full.');
+    G.addItem(G.makeHeirloom(id, G.S.player.level), 1);
+    loot(owned ? `You take a copy of ${B.link(H.name, 5)}.` : `You bought ${B.link(H.name, 5)} for ${H.cost} Mentor Marks. Every character can take a copy.`);
+    emit('change');
+  };
+  // Titles
+  G.records = function () {
+    const P = G.S.player, cx = P.codex || {}; const pv = G.pvpStats();
+    let flawless = 0, speed = 0; for (const k in cx) { flawless += cx[k].flawless || 0; speed += cx[k].speed || 0; }
+    return { mentor: P.mentorRuns || 0, flawless, speed, honor: pv.honor, kills: pv.kills, clears: cx };
+  };
+  G.titleUnlocked = function (t) {
+    const r = G.records(), n = t.need;
+    if (n.clear) return !!(r.clears[n.clear] && r.clears[n.clear].clears);
+    return Object.keys(n).every((k) => (r[k] || 0) >= n[k]);
+  };
+  G.titleName = function (t, name) { const horde = (D.RACES[G.S.player.race] || {}).faction === 'horde'; return (horde && t.horde ? t.horde : t.name).replace('%s', name); };
+  G.setTitle = function (id) { const t = D.TITLES.find((x) => x.id === id); if (id && (!t || !G.titleUnlocked(t))) return; G.S.player.title = id || null; emit('change'); G.save(); };
+  G.displayName = function () { const P = G.S.player, t = P.title && D.TITLES.find((x) => x.id === P.title); return t ? G.titleName(t, P.name) : P.name; };
+  // Help Wanted: bot groups ask for a helper in the group finder. The group summons you, so you can
+  // answer from anywhere. You are synced to the dungeon and may join mid-run.
+  const HW_GAP = [8 * 60000, 18 * 60000], HW_LIFE = 12 * 60000;
+  G.helpWantedFor = function (act) {
+    const P = G.S.player, A = D.ACTIVITIES[act], cx = (P.codex || {})[act];
+    return !!(A.dungeon && P.level >= A.minLvl && (P.level >= A.maxLvl || (cx && cx.clears)));
+  };
+  function helpWantedTick() {
+    const S = G.S, P = S.player, f = S.flags, t = now();
+    S.helpWanted = (S.helpWanted || []).filter((r) => r.expires > t);
+    if ((f.nextHelpWanted || 0) > t) return;
+    f.nextHelpWanted = t + rnd(HW_GAP[0], HW_GAP[1]);
+    const acts = Object.keys(D.ACTIVITIES).filter((k) => G.helpWantedFor(k) && G.activityBlock(k) !== 'hidden');
+    if (!acts.length || S.helpWanted.length >= 2) return;
+    const act = pick(acts), A = D.ACTIVITIES[act], Dg = D.DUNGEONS[A.dungeon];
+    const bossIdx = Dg.pulls.map((p, i) => (p.boss ? i : -1)).filter((i) => i > 0);
+    const stuck = Math.random() < 0.55 && bossIdx.length ? pick(bossIdx) : 0;
+    const role = pick(G.roles());
+    const firstTimers = Math.random() < 0.6;
+    const myF = (D.RACES[P.race] || {}).faction || 'alliance';
+    const poster = pick(S.bots.filter((b) => B.factionOf(b) === myF)) || S.bots[0];
+    const req = { id: 'hw' + t, act, role, startIdx: stuck, firstTimers, poster: poster.id, posterName: poster.name, expires: t + HW_LIFE };
+    S.helpWanted.push(req);
+    const what = stuck ? `stuck on ${Dg.pulls[stuck].label}` : 'full run';
+    B.post(S, 'lfg', poster, `LF1M ${role} ${A.name}, ${what}${firstTimers ? ', first time here pls be patient' : ''}`);
+    emit('chat'); emit('helpWanted', req);
+  }
+  G.joinHelpWanted = function (id) {
+    const S = G.S, req = (S.helpWanted || []).find((r) => r.id === id);
+    if (!req) return toast('That group already found someone.');
+    if (S.run || S.queue || G.fight) return toast('Leave your current group first.');
+    if ((S.flags.deserterUntil || 0) > now()) return toast('You are a Deserter for a few more minutes.');
+    S.helpWanted = S.helpWanted.filter((r) => r !== req);
+    if (S.wparty) disbandParty('You left your party to help another group.');
+    if (G.roles().includes(req.role)) S.player.role = req.role;
+    stopActions();
+    const grp = formGroup(req.act, { firstTimers: req.firstTimers });
+    sys(`${req.posterName}'s group summons you to ${D.ACTIVITIES[req.act].name}.`);
+    grp.members.forEach((m, i) => S.pending.push({ at: now() + 900 + i * 1400, bot: m.bot.id, ch: 'party', text: pick(i === 0 ? ['ty for coming!!', 'thank you so much', 'yay a helper', 'omg ty'] : ['hi', 'ty', 'hello', 'o/']), fromName: m.name }));
+    startRun(req.act);
+    const R = S.run; R.help = { firstTimers: req.firstTimers, stuck: !!req.startIdx }; R.idx = req.startIdx || 0; R.noSpeed = !!req.startIdx;
+    if (req.startIdx) sys(`They wiped here twice. Next: ${R.pulls[R.idx].label}.`);
+    emit('change');
+  };
+  // Daily Roulette: once a day, a random dungeon you can do, with bonus rewards. The group summons you.
+  const today = () => new Date(now()).toISOString().slice(0, 10);
+  G.rouletteReady = () => G.S.flags.rouletteDay !== today();
+  G.rouletteOptions = () => Object.keys(D.ACTIVITIES).filter((k) => { const A = D.ACTIVITIES[k]; return A.dungeon && G.S.player.level >= A.minLvl && G.activityBlock(k) !== 'hidden'; });
+  G.startRoulette = function () {
+    const S = G.S;
+    if (!G.rouletteReady()) return toast('You did the Roulette today. It resets at midnight.');
+    if (S.run || S.queue || G.fight) return toast('Leave your current group first.');
+    if ((S.flags.deserterUntil || 0) > now()) return toast('You are a Deserter for a few more minutes.');
+    const opts = G.rouletteOptions(); if (!opts.length) return toast(`Dungeons open at level ${Math.min(...Object.values(D.ACTIVITIES).filter((a) => a.dungeon).map((a) => a.minLvl))}.`);
+    const act = pick(opts);
+    if (S.wparty) disbandParty('You left your party for the Roulette.');
+    stopActions();
+    formGroup(act);
+    sys(`Dungeon Roulette: ${D.ACTIVITIES[act].name}! Your group summons you.`);
+    startRun(act);
+    S.run.roulette = true;
+    emit('change');
+  };
+  // extra rewards when a helped or Roulette run ends
+  function helpRewards(R) {
+    const S = G.S, P = S.player, L = G.syncLevel(R.act);
+    if (R.help) {
+      const n = 10 + (R.help.firstTimers ? 5 : 0) + (R.wipes ? 0 : 5) + (R.help.stuck ? 3 : 0);
+      P.mentorRuns = (P.mentorRuns || 0) + 1;
+      G.addMarks(n, R.help.firstTimers ? 'you helped first-timers' : 'you helped a group');
+      P.money += L * 100; loot(`The group thanks you with ${G.moneyText(L * 100)}.`);
+    }
+    if (R.roulette) {
+      S.flags.rouletteDay = today();
+      G.addMarks(15, 'daily Roulette');
+      const A = D.ACTIVITIES[R.act], Dg = D.DUNGEONS[A.dungeon];
+      const blues = []; for (const pl of Dg.pulls) for (const k of pl.mobs) for (const id of (D.MOBS[k].loot || [])) if (!blues.includes(id)) blues.push(id);
+      if (blues.length && P.bags.length < 16) { const it = G.copyItem(pick(blues)); G.addItem(it, 1); loot(`Roulette bonus: ${B.link(it.name, it.q)}.`); }
+      P.money += L * 150; loot(`Roulette bonus: ${G.moneyText(L * 150)}.`);
+    }
+  }
   // ============================================================ world PvP: ambushes (War Mode)
   // Enemy players sometimes attack you. Danger per place: 0 in capitals and starting valleys, very rare in
   // hub towns (guards fight for you), low in questing zones. Contested zones (later) set place.danger higher.
@@ -1343,7 +1474,7 @@
     const talents = G.autoTalents(b.cls, b.role || (D.CLASSES[b.cls] || {}).role || 'dps', b.level, Math.abs(b.id || 0));
     return { name: b.name + (b.realm ? '-' + b.realm.replace(' ', '') : ''), cls: b.cls, race: b.race || 'human', level: b.level, equip, role: b.role, hp: null, res: null, auras: [], bot: b, talents };
   };
-  function formGroup(act) {
+  function formGroup(act, opts) {
     const S = G.S, A = D.ACTIVITIES[act];
     const roles = A.size === 3 ? ['tank', 'healer', 'dps'] : ['tank', 'healer', 'dps', 'dps', 'dps'];
     const mine = G.role();
@@ -1354,6 +1485,7 @@
     // everyone fights at the activity's level
     const cap = A.maxLvl || D.LEVEL_CAP;
     for (const m of members) m.syncLevel = cap;
+    if (opts && opts.firstTimers) for (const m of members) { m.bot.skill = Math.min(m.bot.skill, 0.25 + Math.random() * 0.2); m.level = Math.max(A.minLvl, Math.min(m.level, A.minLvl + 1)); }
     S.player.syncLevel = cap;
     S.group = { act, members };
     return S.group;
@@ -1642,7 +1774,7 @@
     if (!Dg) return;
     R.finishedAt = now();
     const secs = G.runClock(), L = G.syncLevel(R.act);
-    const speed = Dg.par && secs <= Dg.par, flawless = !R.wipes; // flawless = the group never wiped
+    const speed = !R.noSpeed && Dg.par && secs <= Dg.par, flawless = !R.wipes; // flawless = the group never wiped
     const cx = (P.codex = P.codex || {})[R.act] = Object.assign({ clears: 0, flawless: 0, speed: 0, best: null }, (P.codex || {})[R.act]);
     cx.clears++; if (flawless) cx.flawless++; if (speed) cx.speed++; if (cx.best == null || secs < cx.best) cx.best = Math.round(secs);
     R.bonus = { secs: Math.round(secs), par: Dg.par, speed, flawless };
@@ -1659,6 +1791,7 @@
       loot(`Flawless clear (no wipes): ${B.link(it.name, it.q)} and ${G.moneyText(L * 200)}.`);
     }
     if (!speed && !flawless) sys(`Cleared in ${fmtClock(secs)} (par ${fmtClock(Dg.par)}). No bonus this time.`);
+    helpRewards(R);
     emit('lootGain', { items: 1 });
   }
   const fmtClock = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
@@ -1737,6 +1870,7 @@
       worldTick();
       partyTick();
       ambushTick();
+      helpWantedTick();
       runTick();
       rollsTick();
       const before = S.chat.length;

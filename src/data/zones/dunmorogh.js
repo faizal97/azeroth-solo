@@ -46,11 +46,12 @@
     grizzled_den: { name: 'The Grizzled Den', zone: 'Dun Morogh', region: 'dunmorogh', scene: 'grizzled_den', lvl: [5, 8], mobs: [['young_wendigo', 6], ['wendigo', 4], ['crag_boar', 3]], named: { old_icebeard: 150 }, pool: 10, npcs: [], links: { kharanos: 14 } },
     frostmane_hold: { name: 'Frostmane Hold', zone: 'Dun Morogh', region: 'dunmorogh', scene: 'frostmane_hold', lvl: [7, 10], mobs: [['frostmane_troll', 5], ['frostmane_headhunter', 4], ['frostmane_seer', 3]], pool: 10, npcs: [], links: { kharanos: 16 } },
     amberstill_ranch: { name: 'Amberstill Ranch', zone: 'Dun Morogh', region: 'dunmorogh', scene: 'amberstill_ranch', lvl: [8, 11], mobs: [['elder_crag_boar', 5], ['ice_claw_bear', 4], ['snow_leopard', 4], ['leper_gnome', 3]], named: { vagash: 180 }, pool: 11, npcs: ['rudra'], links: { kharanos: 18 } },
-    ironforge: { name: 'Ironforge', zone: 'Ironforge', region: 'dunmorogh', scene: 'ironforge', lvl: [1, 60], safe: true, inn: true, city: true, mobs: [], pool: 0, npcs: ['firebrew', 'overspark', 'bruuk'], vendor: 'firebrew', gearVendor: 'bruuk', links: { kharanos: 20, goldshire: 45 }, via: { goldshire: 'Deeprun Tram' } },
+    ironforge: { name: 'Ironforge', zone: 'Ironforge', region: 'dunmorogh', scene: 'ironforge', lvl: [1, 60], safe: true, inn: true, city: true, mobs: [], pool: 0, npcs: ['firebrew', 'overspark', 'bruuk', 'mentor_alliance'], vendor: 'firebrew', gearVendor: 'bruuk', links: { kharanos: 20, goldshire: 45 }, via: { goldshire: 'Deeprun Tram' } },
   });
 
   // people
   Object.assign(D.NPCS, {
+    mentor_alliance: { name: 'Quartermaster Aldwin', title: 'Mentor Quartermaster' },
     sten: { name: 'Sten Stoutarm', title: 'Coldridge Guard' },
     balir: { name: 'Balir Frosthammer', title: 'Mountaineer' },
     talin: { name: 'Talin Keeneye', title: 'Hunter' },

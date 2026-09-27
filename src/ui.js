@@ -178,7 +178,7 @@
     const pf = h('div', { class: 'uf' },
       h('div', { class: 'portrait' }, h('div', { class: 'pclip' }, img(art('portrait', looks(P)))), h('span', { class: 'lvl tnum', id: 'pf-lvl' }, P.level)),
       h('div', { class: 'uf-body' },
-        h('div', { class: 'uf-name cls-' + P.cls }, P.name),
+        h('div', { class: 'uf-name cls-' + P.cls }, G.displayName()),
         (els.pHp = barEl('hp')), (els.pRes = barEl(D.CLASSES[P.cls].resource)),
         (els.pXp = h('div', { class: 'bar thin xp' }, h('i', { class: 'rest' }), h('i', { class: 'fill' }))),
         (els.pBuffs = h('div', { class: 'buffs' }))));
@@ -1227,6 +1227,20 @@
       const P = G.S.player;
       const place = D.PLACES[P.place];
       b.append(h('p', { style: { margin: 0, color: 'var(--text)' } }, (window.AI && AI.npcLine(npc)) || greeting(npc)));
+      if (npc === 'mentor_alliance' || npc === 'mentor_horde') {
+        const acc = G.account();
+        b.append(h('div', { class: 'sec-h' }, 'Heirlooms', h('small', null, `${acc.marks} Mentor Marks · shared by all your characters`)));
+        const list = h('div', { class: 'list' });
+        for (const id in D.HEIRLOOMS) {
+          const H = D.HEIRLOOMS[id], it = G.makeHeirloom(id, P.level), owned = acc.heirlooms.includes(id);
+          const stats = Object.entries(it.stats).map(([k, v]) => `+${v} ${k}`).join(', ') + (it.dmg ? ` · ${it.dmg[0]}–${it.dmg[1]} dmg` : '') + (it.armor ? ` · ${it.armor} armor` : '') + (it.sp ? ` · +${it.sp} spell power` : '');
+          list.append(h('button', { class: 'row', onclick: () => { G.buyHeirloom(id); ui.sheetFn(); } },
+            h('div', { class: 'ic' }, img(art('icon', H.icon))),
+            h('div', { class: 't' }, h('b', { style: { color: D.QUALITY[5].color } }, H.name), h('small', { style: { whiteSpace: 'normal' } }, `At your level: ${stats}. Grows with you. +5% experience.`)),
+            h('div', { class: 'r' }, owned ? 'Copy' : `${H.cost} ✦`)));
+        }
+        b.append(list, h('p', { class: 'ai-note' }, 'Earn Mentor Marks by answering Help Wanted in the group finder and from the daily Roulette.'));
+      }
       for (const { qid, st } of qs) {
         const Q = D.QUESTS[qid];
         b.append(h('button', { class: 'row', onclick: () => openSheet('quest', Q.name, N.name, (bb) => { bb.append(...questDetail(qid, npc)); bb.append(h('button', { class: 'btn alt', onclick: () => openNpc(npc) }, 'Back')); }) },
@@ -1236,7 +1250,7 @@
       }
       if (place.vendor === npc || place.gearVendor === npc) b.append(h('button', { class: 'btn wide', onclick: () => openVendor(npc) }, 'Browse goods'));
       if (npc === 'farley') b.append(h('button', { class: 'btn alt wide', disabled: P.bind === P.place, onclick: () => { G.bindHere(); ui.sheetFn(); } }, P.bind === P.place ? 'This inn is your home' : 'Make this inn your home'));
-      if (!qs.length && place.vendor !== npc && npc !== 'farley' && place.gearVendor !== npc) b.append(h('p', { style: { color: 'var(--muted)' } }, 'Nothing for you right now. Come back when you have grown stronger.'));
+      if (!qs.length && place.vendor !== npc && npc !== 'farley' && place.gearVendor !== npc && npc !== 'mentor_alliance' && npc !== 'mentor_horde') b.append(h('p', { style: { color: 'var(--muted)' } }, 'Nothing for you right now. Come back when you have grown stronger.'));
     });
   }
   window.UI_GREETING = (npc) => greeting(npc);
@@ -1276,6 +1290,7 @@
       salma: 'Mind the pie, it is hot!', thork: 'Lok\'tar. The Crossroads needs every blade it can get.', sergra: 'The Barrens test every hunter. Most fail.',
       helbrim: 'Samples, samples. The Barrens are full of interesting poisons.', zargh: 'Hungry? Everything here is edible if you cook it long enough.',
       boorand: 'Rest your feet, traveller. The Barrens are wide.', nargal: 'Need a weapon? The centaurs will not ask before they charge.', kargal: 'Far Watch sees everything that comes out of the Barrens.',
+      mentor_alliance: 'Helping the new ones through the dungeons is how heroes are made. Your marks are good here.', mentor_horde: 'The strong carry the weak through the fire. The Horde remembers. Spend your marks well.',
       denalan: 'The timberlings have been acting so oddly...', saelienne: 'Welcome to Darnassus, child of the stars.', mydrannul: 'Fine Kaldorei steel. Look, but do not touch.',
     })[npc] || 'Hello.';
   }
@@ -1385,12 +1400,19 @@
         abl.append(h('div', { class: 'row' + (known ? '' : ' off') }, h('div', { class: 'ic' }, img(abIcon(id))), h('div', { class: 't' }, h('b', null, ab.name), h('small', { style: { whiteSpace: 'normal' } }, known ? t.d : `Learned at level ${ab.lvl}`)), h('div', { class: 'r' }, t.cost)));
       }
       b.append(abl);
+      const titles = D.TITLES.filter(G.titleUnlocked);
+      b.append(h('div', { class: 'sec-h' }, 'Title', h('small', null, `${titles.length}/${D.TITLES.length} unlocked · ${G.account().marks} Mentor Marks`)));
+      const tchips = h('div', { class: 'chips' }, h('button', { class: 'chip' + (!P.title ? ' gold' : ''), onclick: () => { G.setTitle(null); ui.sheetFn(); } }, 'None'));
+      for (const t of titles) tchips.append(h('button', { class: 'chip' + (P.title === t.id ? ' gold' : ''), onclick: () => { G.setTitle(t.id); ui.sheetFn(); } }, G.titleName(t, P.name)));
+      b.append(tchips);
+      const nextT = D.TITLES.filter((t) => !G.titleUnlocked(t)).slice(0, 3);
+      if (nextT.length) b.append(h('p', { class: 'ai-note' }, 'Still to earn: ' + nextT.map((t) => `${G.titleName(t, P.name)} (${t.how.toLowerCase()})`).join(' · ') + '.'));
       const pv = G.pvpStats();
       b.append(h('div', { class: 'sec-h' }, 'War Mode', h('small', null, G.S.flags.warMode ? '+10% experience and gold' : 'off')),
         h('div', { class: 'ai-box' }, h('div', { class: 'ai-row' }, h('span', null, 'Honor'), h('b', { class: 'tnum' }, String(pv.honor))),
           h('div', { class: 'ai-row' }, h('span', null, 'Enemy players defeated'), h('b', { class: 'tnum' }, `${pv.kills} · died ${pv.deaths} · escaped ${pv.escapes}`))),
         h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { G.setWarMode(!G.S.flags.warMode); ui.sheetFn(); } }, 'War Mode: ' + (G.S.flags.warMode ? 'On' : 'Off'))),
-        h('p', { class: 'ai-note' }, P.level < 6 ? 'Enemy players start showing up from level 6.' : 'Enemy players show up now and then. Towns are rare and guarded; capitals and starting valleys are safe. Honor will buy PvP looks and titles in a later update.'));
+        h('p', { class: 'ai-note' }, P.level < 6 ? 'Enemy players start showing up from level 6.' : 'Enemy players show up now and then. Towns are rare and guarded; capitals and starting valleys are safe. Honor unlocks PvP titles (see Title above).'));
       b.append(h('div', { class: 'sec-h' }, 'Party invites'), h('div', { class: 'btn-row' },
         h('button', { class: 'btn alt', onclick: () => { G.setInvites(!!G.S.flags.noInvites); ui.sheetFn(); } }, 'Invites from nearby players: ' + (G.S.flags.noInvites ? 'Off' : 'On'))));
       if (window.SND) {
@@ -1515,6 +1537,26 @@
   function groupTab(b) {
     const S = G.S, P = S.player;
     if (S.run) { b.append(h('p', null, `You are in a group for ${S.run.name}.`), h('button', { class: 'btn alt wide', onclick: () => { G.leaveGroup(); ui.sheetFn(); } }, 'Leave group')); return; }
+    // Help Wanted: groups that need a helper; they summon you
+    const hw = (S.helpWanted || []).filter((r) => r.expires > Date.now());
+    b.append(h('div', { class: 'sec-h' }, 'Help Wanted', h('small', null, `Mentor Marks: ${G.account().marks}`)));
+    if (!hw.length) b.append(h('div', { class: 'people' }, 'No group needs help right now. Groups post here now and then for dungeons you have cleared or outlevelled. They summon you, wherever you are.'));
+    for (const r of hw) {
+      const A = D.ACTIVITIES[r.act], Dg = D.DUNGEONS[A.dungeon];
+      const marks = `${10 + (r.firstTimers ? 5 : 0) + (r.startIdx ? 3 : 0)}–${15 + (r.firstTimers ? 5 : 0) + (r.startIdx ? 3 : 0)} Marks`;
+      b.append(h('div', { class: 'row hw', style: { gridTemplateColumns: '34px 1fr auto' } },
+        h('div', { class: 'ic mob' }, img(mobArt(A.boss || 'vancleef'))),
+        h('div', { class: 't' }, h('b', null, `${A.name} needs a ${r.role === 'dps' ? 'damage dealer' : r.role}`),
+          h('small', { style: { whiteSpace: 'normal' } }, `${r.posterName}: ${r.startIdx ? 'stuck on ' + Dg.pulls[r.startIdx].label : 'full run'}${r.firstTimers ? ' · first-timers' : ''} · ${marks} · ${Math.ceil((r.expires - Date.now()) / 60000)} min left`)),
+        h('button', { class: 'chip gold', disabled: !!S.queue, onclick: () => { closeSheet(); G.joinHelpWanted(r.id); renderAll(); } }, 'Help')));
+    }
+    // Daily Roulette
+    const rr = G.rouletteReady(), ropts = G.rouletteOptions();
+    b.append(h('div', { class: 'sec-h' }, 'Dungeon Roulette', h('small', null, rr ? 'once a day' : 'done today')),
+      h('div', { class: 'row', style: { gridTemplateColumns: '1fr auto' } },
+        h('div', { class: 't' }, h('b', null, 'A random dungeon, with bonus rewards'), h('small', { style: { whiteSpace: 'normal' } }, ropts.length ? `+15 Mentor Marks, a bonus blue and gold on top of the usual loot. From: ${ropts.map((k) => D.ACTIVITIES[k].name).join(', ')}.` : 'Reach a dungeon\'s level to join.')),
+        h('button', { class: 'chip gold', disabled: !rr || !ropts.length || !!S.queue, onclick: () => { closeSheet(); G.startRoulette(); renderAll(); } }, rr ? 'Go' : 'Tomorrow')));
+    b.append(h('div', { class: 'sec-h' }, 'Group Finder', h('small', null, 'queue from the zone')));
     for (const k in D.ACTIVITIES) {
       const A = D.ACTIVITIES[k];
       const why = G.activityBlock(k);
@@ -1782,6 +1824,7 @@
     G.on('error', (t) => toast(t));
     G.on('pop', (q) => { renderNavDots(); showPop(q); });
     G.on('invite', showInvite);
+    G.on('helpWanted', (r) => toast(`Help Wanted: a group in ${D.ACTIVITIES[r.act].name} needs a ${r.role === 'dps' ? 'damage dealer' : r.role}. See Social → Group Finder.`, true));
     // wait for a calm moment: no fight, no run, no other dialog, no cutscene
     const introWhenCalm = () => { if (!G.S) return; if (G.fight || G.S.run || G.paused || document.querySelector('.dialog')) return setTimeout(introWhenCalm, 3000); showWarModeIntro(); };
     G.on('warModeIntro', introWhenCalm);
