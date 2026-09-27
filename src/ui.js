@@ -62,12 +62,41 @@
   function auraList(u) {
     const C = G.fight, out = [];
     if (u && C) {
-      for (const a of u.auras) { const left = a.until - C.t; if (left > 0) out.push(Object.assign(auraInfo(a, u), { left })); }
-      if (u.stunUntil > C.t) out.push({ id: 'stun', icon: 'hammer_justice', name: 'Stunned', debuff: true, left: u.stunUntil - C.t });
+      for (const a of u.auras) { const left = a.until - C.t; if (left > 0) out.push(Object.assign(auraInfo(a, u), { left, raw: a, unit: u })); }
+      if (u.stunUntil > C.t) out.push({ id: 'stun', icon: 'hammer_justice', name: 'Stunned', debuff: true, left: u.stunUntil - C.t, raw: { id: 'stun' }, unit: u });
     } else if (!C && G.S) {
-      for (const a of (G.S.player.auras || [])) { const left = (a.until - Date.now()) / 1000; if (left > 0) out.push(Object.assign(auraInfo(a, null), { left })); }
+      for (const a of (G.S.player.auras || [])) { const left = (a.until - Date.now()) / 1000; if (left > 0) out.push(Object.assign(auraInfo(a, null), { left, raw: a })); }
     }
     return out.sort((x, y) => (x.debuff - y.debuff) || (x.left - y.left));
+  }
+  const STAT_WORD = { ap: 'attack power', sp: 'spell power', armor: 'armor', str: 'Strength', agi: 'Agility', sta: 'Stamina', int: 'Intellect', spi: 'Spirit', dodge: '% dodge', haste: '% attack and cast speed', rap: 'ranged attack power' };
+  const SCHOOL = (x) => (x && x !== 'physical' ? x[0].toUpperCase() + x.slice(1) + ' ' : '');
+  function auraEffects(a) {
+    const r = a.raw || {}, out = [];
+    if (r.id === 'stun') out.push("Can't move, attack or cast.");
+    if (r.stats) for (const k in r.stats) if (r.stats[k]) out.push(`${r.stats[k] > 0 ? '+' : ''}${Math.round(r.stats[k])}${STAT_WORD[k] && STAT_WORD[k][0] === '%' ? '' : ' '}${STAT_WORD[k] || k}`);
+    if (r.dot) out.push(`Takes ${Math.round(r.dot)} ${SCHOOL(r.school)}damage every ${r.every} sec.`);
+    if (r.hot) out.push(`Heals ${Math.round(r.hot)} every ${r.every} sec.`);
+    if (r.slow) out.push(`Attacks ${r.slow}% slower.`);
+    if (r.absorb) out.push(`Absorbs ${Math.round(r.absorb)} more damage.`);
+    if (r.thorns) out.push(`Deals ${r.thorns.dmg} damage to each melee attacker${r.thorns.charges ? ` (${r.thorns.charges} left)` : ''}.`);
+    if (r.seal) out.push(`Each weapon hit deals ${Math.round(r.seal)} extra ${SCHOOL(r.sealSchool || 'holy')}damage.`);
+    if (r.immune) out.push('Immune to all damage.');
+    if (r.id === 'weakened_soul') out.push("Can't receive Power Word: Shield yet.");
+    if (r.id === 'hunters_mark') out.push('Takes 10% more damage from the hunter and their pet.');
+    if (r.bear || r.id === 'bear') out.push('Bear Form: much more armor and health, attacks use rage.');
+    if (r.id === 'momentum') out.push('Built by pulling again quickly. Resting resets it.');
+    if (!out.length) { const ab = D.ABILITIES[a.icon]; if (ab && ab.desc) out.push(ab.desc.replace(/\{[a-z]+\}/g, '').replace(/\s+([.,])/g, '$1')); }
+    return out;
+  }
+  function showAura(a, box) {
+    const cur = (box && box._list && box._list.find((x) => x.id === a.id)) || a;
+    const src = cur.raw && cur.raw.src != null && G.fight && G.fight.units[cur.raw.src];
+    const left = cur.left > 86400 ? 'Lasts until you cancel it.' : `${fmtLeft(cur.left)}${cur.left >= 60 ? '' : ' sec'} left.`;
+    showDialog(h('div', { class: 'tooltip' },
+      h('div', { class: 'nm', style: { color: a.debuff ? '#ff6a5a' : '#5fd46a' } }, img(abIcon(a.icon)), ' ', a.name, h('small', { class: 'dim' }, a.debuff ? '  debuff' : '  buff')),
+      ...auraEffects(cur).map((t) => h('div', { style: { color: '#ffd100' } }, t)),
+      h('div', { class: 'dim' }, left + (src ? ` From ${src.kind === 'player' ? 'you' : src.name}.` : ''))), true);
   }
   const fmtLeft = (s) => (s > 86400 ? '' : s >= 3600 ? Math.floor(s / 3600) + 'h' : s >= 60 ? Math.floor(s / 60) + 'm' : Math.ceil(s) + '');
   // (re)build a strip only when the set of auras changes; otherwise just tick the timers
@@ -78,7 +107,7 @@
     if (box.dataset.k !== key) {
       box.dataset.k = key; box.innerHTML = '';
       for (const a of list) {
-        const chip = h('span', { class: 'au ' + (a.debuff ? 'de' : 'bu'), onclick: (e) => { e.stopPropagation(); const cur = box._list && box._list.find((x) => x.id === a.id); toast(cur && cur.left > 86400 ? `${a.name} (until you cancel it)` : `${a.name}${a.debuff ? ' (debuff)' : ''} · ${cur ? fmtLeft(cur.left) + (cur.left >= 60 ? '' : 's') : ''} left`, true); } }, img(abIcon(a.icon)), h('b', { class: 'tnum' }));
+        const chip = h('span', { class: 'au ' + (a.debuff ? 'de' : 'bu'), onclick: (e) => { e.stopPropagation(); showAura(a, box); } }, img(abIcon(a.icon)), h('b', { class: 'tnum' }));
         box.append(chip);
       }
     }

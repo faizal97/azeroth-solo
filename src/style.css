@@ -376,3 +376,4 @@ img { max-width: 100%; display: block; }
 .score .mom { color: #ffd84a; font-weight: 700; } .score .dim { font-size: 11px; }
 .score.done { flex-direction: column; align-items: flex-start; padding: 8px 10px; border: 1px solid var(--edge-hi); border-radius: 8px; background: #1a130b; }
 .score.done div { display: flex; gap: 12px; }
+.tooltip .nm img { width: 22px; height: 22px; vertical-align: middle; border-radius: 3px; }
