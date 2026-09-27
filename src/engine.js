@@ -11,9 +11,11 @@
 
   // ------------------------------------------------------------- character stats
   // char: {name, cls, level, equip:{slot:item}}; extra: additive stats from auras
+  // A synced character (group finder) fights at syncLevel; its gear stays, which is the overgear bonus.
+  E.levelOf = (char) => (char.syncLevel ? Math.min(char.level, char.syncLevel) : char.level);
   E.statsFor = function (char, extra) {
     const C = D.CLASSES[char.cls];
-    const L = char.level;
+    const L = E.levelOf(char);
     const s = { armor: C.baseArmor + L * 2, sp: 0, ap: 0, dodge: 0, haste: 0 };
     for (const k of ['str', 'agi', 'sta', 'int', 'spi']) s[k] = Math.round(C.base[k] + C.gain[k] * (L - 1));
     const add = (st) => { if (st) for (const k in st) s[k] = (s[k] || 0) + st[k]; };
@@ -76,7 +78,7 @@
   // Player or bot. char carries hp/res between fights; persistent auras use epoch ms (until).
   E.charUnit = function (char, side, kind, nowMs) {
     const C = D.CLASSES[char.cls];
-    const u = baseUnit({ side, kind, char, name: char.name, cls: char.cls, level: char.level, resType: C.resource, role: char.role || C.role, race: char.race || (char.bot && char.bot.race) || 'human' });
+    const u = baseUnit({ side, kind, char, name: char.name, cls: char.cls, level: E.levelOf(char), resType: C.resource, role: char.role || C.role, race: char.race || (char.bot && char.bot.race) || 'human' });
     for (const a of (char.auras || [])) {
       const left = (a.until - nowMs) / 1000;
       if (left > 0) u.auras.push({ id: a.id, until: left, stats: a.stats, src: null, persistent: true, seal: a.seal, sealSchool: a.sealSchool, thorns: a.thorns });
@@ -561,6 +563,9 @@
   function focusTarget(C, u) {
     // works for either side: 'u' is the unit asking (an ally by default)
     const mine = u ? friends(C, u) : C.allies, theirs = u ? foes(C, u) : C.enemies;
+    // kill order marks come first: skull, then cross
+    const marked = alive(theirs).filter((x) => x.mark).sort((x, y) => (x.mark === 'skull' ? 0 : 1) - (y.mark === 'skull' ? 0 : 1));
+    if (marked.length) return marked[0];
     const tank = alive(mine).find((x) => x.role === 'tank');
     const t = tank && C.units[tank.target];
     if (t && !t.dead) return t;
@@ -627,8 +632,11 @@
       const loose = en.find((e) => e.target && e.target !== u.uid && C.units[e.target] && C.units[e.target].role !== 'tank');
       if (loose && has('taunt') && Math.random() < 0.4 + 0.6 * (b.skill || 0.5) && try_('taunt', loose)) return;
       if (loose && Math.random() < 0.5) u.target = loose.uid;
+      // with a kill order, the tank holds the skull so the group's damage lands where it has threat
+      const skull = en.find((e) => e.mark === 'skull');
+      if (skull && !loose) u.target = skull.uid;
       tgt = C.units[u.target];
-      if (!tgt || tgt.dead) { tgt = en[0]; u.target = tgt.uid; }
+      if (!tgt || tgt.dead) { tgt = skull || en[0]; u.target = tgt.uid; }
       if (u.cls === 'druid') {
         if (!u.form && has('bear_form') && try_('bear_form')) return;
         if (u.form === 'bear') {

@@ -112,7 +112,7 @@
 
   // group finder
   Object.assign(D.ACTIVITIES, {
-    vagash: { name: 'Protecting the Herd: Vagash', where: 'amberstill_ranch', size: 3, minLvl: 8, desc: 'Open-world elite in Dun Morogh. 3 players.', boss: 'vagash', pulls: [{ scene: 'amberstill_ranch', label: 'The ranch', mobs: ['snow_leopard', 'snow_leopard'] }, { scene: 'amberstill_ranch', label: 'The ranch', mobs: ['ice_claw_bear', 'elder_crag_boar'] }, { scene: 'amberstill_ranch', label: 'Vagash', mobs: ['vagash'], boss: true }] },
+    vagash: { name: 'Protecting the Herd: Vagash', where: 'amberstill_ranch', size: 3, minLvl: 8, maxLvl: 12, desc: 'Open-world elite in Dun Morogh. 3 players.', boss: 'vagash', pulls: [{ scene: 'amberstill_ranch', label: 'The ranch', mobs: ['snow_leopard', 'snow_leopard'] }, { scene: 'amberstill_ranch', label: 'The ranch', mobs: ['ice_claw_bear', 'elder_crag_boar'] }, { scene: 'amberstill_ranch', label: 'Vagash', mobs: ['vagash'], boss: true }] },
   });
 
 })(typeof window !== 'undefined' ? window : globalThis);

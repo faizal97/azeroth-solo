@@ -139,7 +139,7 @@
 
   // group finder
   Object.assign(D.ACTIVITIES, {
-    deadmines: { name: 'The Deadmines', dungeon: 'deadmines', size: 5, minLvl: 8, desc: 'Dungeon. 5 players. Scaled for level 10.' },
+    deadmines: { name: 'The Deadmines', dungeon: 'deadmines', size: 5, minLvl: 8, maxLvl: 12, desc: 'Dungeon. 5 players. Scaled for level 10.' },
   });
 
 

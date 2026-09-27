@@ -4,14 +4,28 @@ A single-player "MMO" for Android, set in the world of classic Warcraft. Every o
 
 It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sprites, real combat maths, gear, quests and dungeons.
 
+<p align="center">
+  <img src="docs/screenshots/02_goldshire.jpg" width="24%" alt="Goldshire with other players and General chat">
+  <img src="docs/screenshots/04_deadmines_fight.jpg" width="24%" alt="A Deadmines pull with a simulated party">
+  <img src="docs/screenshots/05_westfall_foe_reaper.jpg" width="24%" alt="Westfall: Molsen Farm with the rare Foe Reaper 4000">
+  <img src="docs/screenshots/06_crossroads.jpg" width="24%" alt="The Crossroads in the Barrens">
+</p>
+<p align="center">
+  <img src="docs/screenshots/01_create.jpg" width="24%" alt="Character creation: any race, any class">
+  <img src="docs/screenshots/p4_pvp_fight.jpg" width="24%" alt="World PvP: an enemy player in Westfall">
+  <img src="docs/screenshots/t2_bossplan.jpg" width="24%" alt="Dungeon tactics: pull pace, kill order and boss plan">
+  <img src="docs/screenshots/au1_warlock_dots.jpg" width="24%" alt="Buffs and debuffs with time left">
+</p>
+
 > **Unofficial, non-commercial fan project.** Not affiliated with, endorsed by or sponsored by Blizzard Entertainment. World of Warcraft, Warcraft and Azeroth are trademarks or registered trademarks of Blizzard Entertainment, Inc. No Blizzard assets are used: all art (hand-written SVG), music (composed synth) and code in this repository are original. The game is free and will stay free.
 
-## What's in it (v2.0)
+## What's in it (v2.1)
 
 - **Both factions, all 8 classic races.** Human, Dwarf, Gnome, Night Elf, Orc, Troll, Tauren, Undead, each with its own starting zone, and racial traits (one active, two passive).
 - **9 classes, any race can be any class.** Warrior, Paladin, Hunter, Rogue, Priest, Shaman, Mage, Warlock, Druid. Pets for Hunters and Warlocks, Bear Form for Druids, seals for Paladins, totems for Shamans.
-- **Levels 1–15.** Starting zones, then Westfall and the Barrens, with about 150 quests, named rares and unique drops.
-- **Dungeons and elites with a group of simulated players.** Ragefire Chasm, The Deadmines, and open-world elites such as Hogger, with roles, threat, wipes and need/greed rolls.
+- **Levels 1–20.** Starting zones, then Westfall and the Barrens, with about 210 quests, named rares and unique drops.
+- **Dungeons and elites with a group of simulated players.** Ragefire Chasm, The Deadmines, and open-world elites such as Hogger, with roles, threat, wipes and need/greed rolls. Groups are synced to the dungeon's level; you choose the pull pace, mark the kill order and pick a boss plan.
+- **World PvP (War Mode).** Enemy players show up nearby; some pass by, some attack, and you can strike first. Guards help in towns. +10% XP and gold, and Honor.
 - **A living server.** Players online by time of day, general and LFG chat, guilds, a welcome-back digest of what happened while you were away.
 - **Story cutscenes** at key levels and a first-time lore intro for every dungeon, replayable in the Theater.
 - **Optional on-device AI chat** (Android): a small local model can write bot chat and banter ahead of time. Off by default; the game never lets it decide anything.

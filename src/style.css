@@ -57,8 +57,18 @@ img { max-width: 100%; display: block; }
 .bar.rage > i { background: linear-gradient(#e64a3e, var(--rage) 55%, #8d1a13); }
 .bar.energy > i { background: linear-gradient(#fff08a, var(--energy) 55%, #a58d10); }
 .bar.xp > i.fill { background: var(--xp); }
-.buffs { display: flex; gap: 2px; height: 14px; }
-.buffs img { width: 14px; height: 14px; border: 1px solid #000; }
+.buffs { display: flex; flex-wrap: wrap; gap: 3px; min-height: 0; margin-top: 2px; }
+/* one buff/debuff: icon, green (buff) or red (debuff) border, seconds left underneath; flashes in the last 3 sec */
+.au { position: relative; width: 20px; display: inline-flex; flex-direction: column; align-items: center; cursor: pointer; }
+.au img { width: 20px; height: 20px; border: 1.5px solid #3fbf4f; border-radius: 3px; box-sizing: border-box; }
+.au.de img { border-color: #e0402f; }
+.au b { font: 700 9px/1 var(--body); color: #fff; text-shadow: 0 0 2px #000, 0 0 2px #000; margin-top: 1px; }
+.au.soon { animation: auBlink .5s steps(2) infinite; }
+@keyframes auBlink { 50% { opacity: .35; } }
+.tbuffs { justify-content: flex-end; }
+.rowbuffs { grid-column: 1 / -1; }
+.rowbuffs .au, .rowbuffs .au img { width: 16px; }
+.rowbuffs .au img { height: 16px; }
 .cps { display: flex; gap: 3px; justify-content: flex-end; height: 6px; }
 .cps i { width: 6px; height: 6px; border-radius: 50%; background: #3a1510; border: 1px solid #000; }
 .cps i.on { background: #ff3b24; box-shadow: 0 0 4px #ff3b24; }
@@ -349,3 +359,10 @@ img { max-width: 100%; display: block; }
 .foe-h { color: #ff6a5a; }
 .sprite.foe .np span { text-shadow: 0 0 4px #000, 0 0 2px #000; }
 .mcard.foe-card { border-color: #a8352a; background: linear-gradient(#3a1410, #1e0a08); }
+
+/* dungeon tactics */
+.chip .mk { font-weight: 900; margin-right: 4px; }
+.chip.mark-skull { border-color: #e0402f; } .chip.mark-skull .mk { color: #ff6a5a; }
+.chip.mark-cross { border-color: #d8b048; } .chip.mark-cross .mk { color: #ffd84a; }
+.markbtn { display: inline-block; min-width: 26px; margin-left: 8px; padding: 2px 6px; border: 1px solid var(--edge-hi); border-radius: 6px; text-align: center; font-weight: 900; color: #ffd84a; background: #1a130b; }
+.np .mk { color: #ff6a5a; font-weight: 900; }

@@ -122,7 +122,7 @@
 
   // group finder
   Object.assign(D.ACTIVITIES, {
-    hogger: { name: 'Wanted: Hogger', where: 'forests_edge', size: 3, minLvl: 8, desc: 'Open-world elite in Elwynn. 3 players.', boss: 'hogger', pulls: [{ scene: 'forests_edge', label: 'Riverpaw camp', mobs: ['riverpaw_gnoll', 'riverpaw_gnoll'] }, { scene: 'forests_edge', label: 'Riverpaw camp', mobs: ['riverpaw_gnoll', 'riverpaw_gnoll'] }, { scene: 'forests_edge', label: 'Hogger', mobs: ['hogger'], boss: true }] },
+    hogger: { name: 'Wanted: Hogger', where: 'forests_edge', size: 3, minLvl: 8, maxLvl: 12, desc: 'Open-world elite in Elwynn. 3 players.', boss: 'hogger', pulls: [{ scene: 'forests_edge', label: 'Riverpaw camp', mobs: ['riverpaw_gnoll', 'riverpaw_gnoll'] }, { scene: 'forests_edge', label: 'Riverpaw camp', mobs: ['riverpaw_gnoll', 'riverpaw_gnoll'] }, { scene: 'forests_edge', label: 'Hogger', mobs: ['hogger'], boss: true }] },
   });
 
 })(typeof window !== 'undefined' ? window : globalThis);

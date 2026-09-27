@@ -44,6 +44,45 @@
   const mobArt = (key) => art('mob', (D.MOBS[key] && D.MOBS[key].sprite) || key);
   const looks = (c) => { const s = c.bot || c; const o = { cls: c.cls, race: s.race || c.race || 'human', skin: s.skin || 0, hair: s.hair || 0, gender: s.gender || 'm' }; const g = G.gearLooks(c); if (g) o.gear = g; return o; };
   const abIcon = (id) => art('icon', (D.ABILITIES[id] && D.ABILITIES[id].icon) || id);
+  // ---------- buffs and debuffs with time left, for any unit (or the player out of combat)
+  const AURA_ALIAS = { weakened_soul: 'pw_shield', seal: 'seal_righteousness', stoneskin: 'stoneskin_totem', rockbiter: 'rockbiter_weapon', chilled: 'frost_armor', bear: 'bear_form', fireball_burn: 'fireball', stun: 'hammer_justice', searing_totem: 'searing_totem' };
+  const AURA_NAME = { weakened_soul: 'Weakened Soul', chilled: 'Chilled', stun: 'Stunned', fireball_burn: 'Burning', seal: 'Seal' };
+  const DEBUFF_IDS = new Set(['weakened_soul', 'hunters_mark', 'chilled', 'stun']);
+  function auraInfo(a, u) {
+    let base = a.id.replace(/_slow$/, '');
+    if (a.id === 'rockbiter' && a.sealSchool === 'fire') base = 'flametongue_weapon';
+    const ab = D.ABILITIES[AURA_ALIAS[base] || base];
+    const hostile = a.src != null && G.fight && G.fight.units[a.src] && u && G.fight.units[a.src].side !== u.side;
+    const debuff = DEBUFF_IDS.has(a.id) || !!a.slow || (a.dot != null && (hostile || (u && u.side === 'enemy'))) || (hostile && !a.hot && !a.stats);
+    return { id: a.id, icon: AURA_ALIAS[base] || base, name: AURA_NAME[a.id] || (ab ? ab.name : a.id.replace(/_/g, ' ')), debuff };
+  }
+  // in a fight 'until' is fight seconds; out of combat the player's buffs use wall-clock ms
+  function auraList(u) {
+    const C = G.fight, out = [];
+    if (u && C) {
+      for (const a of u.auras) { const left = a.until - C.t; if (left > 0) out.push(Object.assign(auraInfo(a, u), { left })); }
+      if (u.stunUntil > C.t) out.push({ id: 'stun', icon: 'hammer_justice', name: 'Stunned', debuff: true, left: u.stunUntil - C.t });
+    } else if (!C && G.S) {
+      for (const a of (G.S.player.auras || [])) { const left = (a.until - Date.now()) / 1000; if (left > 0) out.push(Object.assign(auraInfo(a, null), { left })); }
+    }
+    return out.sort((x, y) => (x.debuff - y.debuff) || (x.left - y.left));
+  }
+  const fmtLeft = (s) => (s >= 3600 ? Math.floor(s / 3600) + 'h' : s >= 60 ? Math.floor(s / 60) + 'm' : Math.ceil(s) + '');
+  // (re)build a strip only when the set of auras changes; otherwise just tick the timers
+  function paintAuras(box, list, max) {
+    if (!box) return;
+    list = list.slice(0, max || 10);
+    const key = list.map((a) => a.id).join(',');
+    if (box.dataset.k !== key) {
+      box.dataset.k = key; box.innerHTML = '';
+      for (const a of list) {
+        const chip = h('span', { class: 'au ' + (a.debuff ? 'de' : 'bu'), onclick: (e) => { e.stopPropagation(); const cur = box._list && box._list.find((x) => x.id === a.id); toast(`${a.name}${a.debuff ? ' (debuff)' : ''} · ${cur ? fmtLeft(cur.left) + (cur.left >= 60 ? '' : 's') : ''} left`, true); } }, img(abIcon(a.icon)), h('b', { class: 'tnum' }));
+        box.append(chip);
+      }
+    }
+    box._list = list;
+    list.forEach((a, i) => { const c = box.children[i]; if (!c) return; c.lastChild.textContent = fmtLeft(a.left); c.classList.toggle('soon', a.left < 3); });
+  }
   const img = (src, cls) => h('img', { src, class: cls, alt: '', draggable: 'false' });
 
   // ------------------------------------------------------------ formatting
@@ -145,7 +184,8 @@
     tf.append(h('div', { class: 'uf-body' },
       h('div', { class: 'uf-name', style: { textAlign: 'right', color: isMob ? '#ff5b4b' : u.kind === 'pet' ? '#9fd6ff' : 'var(--c-' + u.cls + ')' } }, u.name),
       (els.tHp = barEl('hp')),
-      (els.tCp = h('div', { class: 'cps' }))), port);
+      (els.tCp = h('div', { class: 'cps' })),
+      (els.tBuffs = h('div', { class: 'buffs tbuffs' }))), port);
   }
 
   // ============================================================ scene
@@ -190,7 +230,7 @@
       C.enemies.forEach((u, i) => {
         const pos = Object.assign({}, POS_EN[i] || POS_EN[4]);
         if (u.boss && i === 0) pos.w = 36;
-        const np = h('div', { class: 'np' }, h('span', { style: { color: conColor(u.level) } }, u.boss ? '' : u.level + ' '), h('span', { style: { color: '#ff6a5a' } }, u.name), h('div', { class: 'hpb' }, h('i')));
+        const np = h('div', { class: 'np' }, h('span', { class: 'mk' }, ''), h('span', { style: { color: conColor(u.level) } }, u.boss ? '' : u.level + ' '), h('span', { style: { color: '#ff6a5a' } }, u.name), h('div', { class: 'hpb' }, h('i')));
         const isChar = u.kind !== 'mob';
         const el = spriteEl(isChar ? art('hero', looks(u.char)) : mobArt(u.key), isChar ? Object.assign(pos, { w: Math.min(pos.w, 26) }) : pos, 'idle' + (isChar ? ' flip' : '') + (u.dead ? ' dead' : ''), np);
         el.addEventListener('click', () => { G.setTarget(u.uid); renderTarget(); markTargets(); });
@@ -521,7 +561,7 @@
       const bar = h('div', { class: 'bar hp', 'data-pf': u ? u.uid : '' }, h('i', { style: { width: Math.max(0, hp / st.maxHp * 100) + '%' } }), h('b', { class: 'tnum' }, Math.round(hp)));
       pf.append(h('button', { class: 'pfr' + (u && u.dead ? ' dead' : '') + (C && u && C.allyTarget === u.uid ? ' sel' : ''), onclick: () => { if (u) { G.setTarget(u.uid); renderTarget(); markTargets(); } } },
         h('div', { class: 'portrait' }, h('div', { class: 'pclip' }, img(art('portrait', looks(m))))),
-        h('div', { class: 'uf-body' }, h('div', { class: 'uf-name cls-' + m.cls }, `${m.name}  ${m.level}`), bar),
+        h('div', { class: 'uf-body' }, h('div', { class: 'uf-name cls-' + m.cls }, `${m.name}  ${m.level}`), bar, u ? h('div', { class: 'buffs rowbuffs', 'data-au': u.uid }) : null),
         h('div', { class: 'role' }, m.role === 'tank' ? 'TANK' : m.role === 'healer' ? 'HEAL' : 'DPS')));
     }
     const left = Math.max(0, S.wparty.until - Date.now());
@@ -564,11 +604,29 @@
       list.append(h('button', { class: 'row' + (u.dead ? ' off' : ''), onclick: () => { G.setTarget(u.uid); renderTarget(); markTargets(); } },
         h('div', { class: 'ic mob' }, img(u.kind === 'mob' ? mobArt(u.key) : art('portrait', looks(u.char)))),
         h('div', { class: 't' }, h('b', null, h('span', { style: { color: conColor(u.level) } }, u.level + ' '), u.name), h('small', null, u.dead ? 'Dead' : (u.kind !== 'mob' ? `${(D.RACES[u.race] || {}).name || ''} ${D.CLASSES[u.cls].name} · ` : '') + (tgt ? 'Attacking ' + (tgt.kind === 'player' ? 'you' : tgt.name) : ''))),
-        h('div', { class: 'r tnum', 'data-hp': u.uid }, '')));
+        h('div', { class: 'r tnum', 'data-hp': u.uid }, ''),
+        h('div', { class: 'buffs rowbuffs', 'data-au': u.uid })));
     }
     p.append(h('div', { class: 'sec-h' }, 'In combat', h('small', null, 'tap an enemy to target it')), list);
     p.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => G.flee() }, 'Run away')));
     tracker(p);
+  }
+  const MARK_SYM = { skull: '☠', cross: '✖' };
+  function tacticsBlock(p, R) {
+    const pace = R.pace || 'normal';
+    const chip = (label, on, fn, sub) => h('button', { class: 'chip' + (on ? ' gold' : ''), onclick: () => { fn(); renderPanel(); } }, label, sub ? h('small', null, sub) : null);
+    p.append(h('div', { class: 'sec-h' }, 'Tactics', h('small', null, pace === 'careful' ? 'rest to full, no extra packs' : pace === 'fast' ? 'short rests, more extra packs' : 'standard rests')),
+      h('div', { class: 'chips' }, chip('Careful', pace === 'careful', () => G.setPace('careful')), chip('Normal', pace === 'normal', () => G.setPace('normal')), chip('Fast', pace === 'fast', () => G.setPace('fast'))));
+    const pull = R.pulls[R.idx]; if (!pull) return;
+    const marks = (R.marks && R.marks[R.idx]) || {};
+    const next = h('div', { class: 'chips' });
+    pull.mobs.forEach((k, i) => next.append(h('button', { class: 'chip mark-' + (marks[i] || 'none'), onclick: () => { G.cycleMark(i); renderPanel(); } }, h('span', { class: 'mk' }, MARK_SYM[marks[i]] || '·'), D.MOBS[k].name)));
+    p.append(h('div', { class: 'sec-h' }, 'Next: ' + pull.label, h('small', null, 'tap to mark: ☠ first, ✖ second')), next);
+    if (pull.boss) {
+      const bp = R.bossPlan;
+      p.append(h('div', { class: 'sec-h' }, 'Boss plan', h('small', null, bp ? '' : 'the group improvises')),
+        h('div', { class: 'chips' }, chip('Burn the boss', bp === 'boss', () => G.setBossPlan('boss')), chip('Adds first', bp === 'adds', () => G.setBossPlan('adds'))));
+    }
   }
   function runPanel(p) {
     const S = G.S, R = S.run, C = G.fight;
@@ -584,10 +642,11 @@
       const u = units ? units.find((x) => (m.me ? x.kind === 'player' : x.memberRef === m.char)) : null;
       const row = h('button', { class: 'pfr' + (u && u.dead ? ' dead' : '') + (C && u && C.allyTarget === u.uid ? ' sel' : ''), onclick: () => { if (u) { G.setTarget(u.uid); renderTarget(); markTargets(); renderPanel(); } } },
         h('div', { class: 'portrait' }, h('div', { class: 'pclip' }, img(art('portrait', looks(m.me ? S.player : m.char.bot || m.char))))),
-        h('div', { class: 'uf-body' }, h('div', { class: 'uf-name cls-' + m.cls }, m.gone ? m.name + ' (left)' : m.name), h('div', { class: 'bar hp', 'data-pf': u ? u.uid : '' }, h('i'), h('b', { class: 'tnum' }))),
+        h('div', { class: 'uf-body' }, h('div', { class: 'uf-name cls-' + m.cls }, m.gone ? m.name + ' (left)' : m.name), h('div', { class: 'bar hp', 'data-pf': u ? u.uid : '' }, h('i'), h('b', { class: 'tnum' })), u ? h('div', { class: 'buffs rowbuffs', 'data-au': u.uid }) : null),
         h('div', { class: 'role' }, m.role === 'tank' ? 'TANK' : m.role === 'healer' ? 'HEAL' : 'DPS'));
       pf.append(row);
     });
+    if (!C && R.phase === 'rest') tacticsBlock(p, R); // decide before the pull, above the party list
     p.append(h('div', { class: 'sec-h' }, 'Party', h('small', null, C && G.role() === 'healer' ? 'tap someone to heal them' : '')), pf);
     if (C) {
       const list = h('div', { class: 'list' });
@@ -596,9 +655,10 @@
         list.append(h('button', { class: 'row' + (u.dead ? ' off' : ''), onclick: () => { G.setTarget(u.uid); renderTarget(); markTargets(); } },
           h('div', { class: 'ic mob' }, img(mobArt(u.key))),
           h('div', { class: 't' }, h('b', null, u.name), h('small', null, u.dead ? 'Dead' : tgt ? 'Attacking ' + (tgt.kind === 'player' ? 'YOU' : tgt.name.split('-')[0]) : '')),
-          h('div', { class: 'r tnum', 'data-hp': u.uid }, '')));
+          h('div', { class: 'r' }, h('span', { class: 'tnum', 'data-hp': u.uid }, ''), h('span', { class: 'markbtn', 'data-mk': u.uid, onclick: (e) => { e.stopPropagation(); G.cycleUnitMark(u.uid); } }, MARK_SYM[u.mark] || '◎')),
+          h('div', { class: 'buffs rowbuffs', 'data-au': u.uid })));
       }
-      p.append(h('div', { class: 'sec-h' }, 'Enemies'), list);
+      p.append(h('div', { class: 'sec-h' }, 'Enemies', h('small', null, 'tap ◎ to mark kill order')), list);
     } else {
       const row = h('div', { class: 'btn-row' });
       if (R.phase === 'rest') row.append(h('button', { class: 'btn', onclick: () => G.runReady() }, G.role() === 'tank' ? 'Pull' : 'Ready'));
@@ -725,12 +785,7 @@
     const C = G.fight;
     // buffs
     if (els.pBuffs) {
-      const auras = C && G.pUnit ? G.pUnit.auras.filter((a) => a.stats || a.absorb || a.hot) : (P.auras || []);
-      const key = auras.map((a) => a.id).join(',');
-      if (els.pBuffs.dataset.k !== key) {
-        els.pBuffs.dataset.k = key; els.pBuffs.innerHTML = '';
-        for (const a of auras.slice(0, 8)) els.pBuffs.append(img(abIcon(a.id === 'weakened_soul' ? 'pw_shield' : a.id)));
-      }
+      paintAuras(els.pBuffs, auraList(C && G.pUnit ? G.pUnit : null), 10);
     }
     // target
     if (C && G.pUnit) {
@@ -738,6 +793,8 @@
       if (tid !== els.tUid) renderTarget();
       const t = C.units[tid];
       if (t && els.tHp) setBar(els.tHp, t.hp, t.maxHp, Math.round((t.hp / t.maxHp) * 100) + '%');
+      if (t && els.tBuffs) paintAuras(els.tBuffs, auraList(t), 8);
+      document.querySelectorAll('[data-au]').forEach((d) => { const u = C.units[d.dataset.au]; if (u) paintAuras(d, u.dead ? [] : auraList(u), 6); });
       if (els.tCp) {
         const n = G.pUnit.cls === 'rogue' && G.pUnit.cpTarget === G.pUnit.target ? G.pUnit.cp : -1;
         if (els.tCp.dataset.n != n) { els.tCp.dataset.n = n; els.tCp.innerHTML = n < 0 ? '' : [0, 1, 2, 3, 4].map((i) => `<i class="${i < n ? 'on' : ''}"></i>`).join(''); }
@@ -749,8 +806,10 @@
         const hp = el.querySelector('.hpb i');
         if (hp) hp.style.width = Math.max(0, (u.hp / u.maxHp) * 100) + '%';
         el.classList.toggle('casting', !!u.cast);
+        const mk = el.querySelector('.np .mk'); if (mk) { const sym = MARK_SYM[u.mark] || ''; if (mk.textContent !== sym) mk.textContent = sym ? sym + ' ' : ''; }
         if (u.dead && !el.classList.contains('dead')) el.classList.add('dead');
       }
+      document.querySelectorAll('[data-mk]').forEach((d) => { const u = C.units[d.dataset.mk]; if (u) { const sym = MARK_SYM[u.mark] || '◎'; if (d.textContent !== sym) d.textContent = sym; } });
       document.querySelectorAll('[data-hp]').forEach((d) => { const u = C.units[d.dataset.hp]; if (u) d.textContent = u.dead ? '' : Math.round((u.hp / u.maxHp) * 100) + '%'; });
       document.querySelectorAll('[data-pf]').forEach((d) => { const u = C.units[d.dataset.pf]; if (u) setBar(d, u.hp, u.maxHp, Math.round(u.hp)); });
       // cast bar
@@ -1372,12 +1431,14 @@
     if (S.run) { b.append(h('p', null, `You are in a group for ${S.run.name}.`), h('button', { class: 'btn alt wide', onclick: () => { G.leaveGroup(); ui.sheetFn(); } }, 'Leave group')); return; }
     for (const k in D.ACTIVITIES) {
       const A = D.ACTIVITIES[k];
+      const why = G.activityBlock(k);
+      if (why === 'hidden') continue; // the other faction's world elites
       const queued = S.queue && S.queue.act === k;
-      const lowLvl = P.level < A.minLvl;
+      const synced = !why && P.level > A.maxLvl ? ` · you are synced to level ${A.maxLvl}` : '';
       b.append(h('div', { class: 'row', style: { gridTemplateColumns: '34px 1fr auto' } },
         h('div', { class: 'ic mob' }, img(mobArt(A.boss || 'vancleef'))),
-        h('div', { class: 't' }, h('b', null, A.name), h('small', null, lowLvl ? `Requires level ${A.minLvl}` : A.desc)),
-        queued ? h('button', { class: 'chip', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave') : h('button', { class: 'chip gold', disabled: lowLvl || !!S.queue, onclick: () => { G.queueFor(k); ui.sheetFn(); } }, 'Queue')));
+        h('div', { class: 't' }, h('b', null, A.name, h('span', { style: { color: 'var(--muted)', fontWeight: 400 } }, `  ${A.minLvl}–${A.maxLvl}`)), h('small', { style: why ? { color: '#ff8a6a' } : null }, why || A.desc + synced)),
+        queued ? h('button', { class: 'chip', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave') : h('button', { class: 'chip gold', disabled: !!why || !!S.queue, onclick: () => { G.queueFor(k); ui.sheetFn(); } }, 'Queue')));
     }
     if (G.roles().length > 1) {
       const rr = h('div', { class: 'btn-row' });

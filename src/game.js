@@ -127,7 +127,7 @@
       S.world = {};
       if (S.queue) { S.queue = null; }
       if (S.run && away > 600000) {
-        P.place = S.run.returnTo || 'goldshire'; S.run = null; S.group = null;
+        P.place = S.run.returnTo || 'goldshire'; S.run = null; S.group = null; delete P.syncLevel;
         sys('Your group disbanded while you were away.');
       }
       if (P.guild >= 0) {
@@ -1205,10 +1205,26 @@
   G.role = function () { const P = G.S.player; return P.role || D.CLASSES[P.cls].role; };
   G.roles = function () { const C = D.CLASSES[G.S.player.cls]; return C.roles || [C.role]; };
   G.setRole = function (r) { if (G.roles().includes(r) && !G.S.queue && !G.S.run) { G.S.player.role = r; emit('change'); } };
+  // Group finder rules: world elites belong to their zone and faction (queue from that zone);
+  // dungeons are open to both factions from anywhere, like Classic. Leaving a run early = deserter.
+  const DESERTER = 10 * 60000;
+  G.activityFaction = (act) => { const A = D.ACTIVITIES[act]; return A.where ? D.REGIONS[D.PLACES[A.where].region].faction : null; };
+  G.activityBlock = function (act) {
+    const S = G.S, P = S.player, A = D.ACTIVITIES[act];
+    const myF = (D.RACES[P.race] || {}).faction || 'alliance';
+    const f = G.activityFaction(act);
+    if (f && f !== myF) return 'hidden';
+    if (P.level < A.minLvl) return `Requires level ${A.minLvl}`;
+    if (A.where && D.PLACES[A.where].region !== (D.PLACES[P.place] || {}).region) return `Go to ${D.REGIONS[D.PLACES[A.where].region].name} to join`;
+    if ((S.flags.deserterUntil || 0) > now()) return `Deserter: ${Math.ceil((S.flags.deserterUntil - now()) / 60000)} min`;
+    return null;
+  };
+  G.syncLevel = (act) => Math.min(G.S.player.level, D.ACTIVITIES[act].maxLvl || D.LEVEL_CAP);
   G.queueFor = function (act) {
     const S = G.S, A = D.ACTIVITIES[act];
+    const why = G.activityBlock(act);
+    if (why) return toast(why === 'hidden' ? 'Only for the other faction.' : why + '.');
     if (S.wparty) disbandParty('You left your party to use the group finder.');
-    if (S.player.level < A.minLvl) return toast(`You need to be level ${A.minLvl}.`);
     if (S.run || S.group) return toast('Leave your current group first.');
     const role = G.role();
     const wait = role === 'tank' ? rnd(4, 12) : role === 'healer' ? rnd(8, 20) : rnd(25, 70);
@@ -1218,20 +1234,23 @@
   };
   G.leaveQueue = function () { G.S.queue = null; sys('You left the queue.'); emit('change'); };
   const OTHER_REALMS = ['Stormrage', 'Silvermoon', 'Argent Dawn', 'Kirin Tor', 'Bronzebeard', 'Moonglade'];
-  function recruit(role, lvl, used) {
+  function recruit(role, lvl, used, usedCls) {
     const S = G.S, date = new Date();
     const want = role === 'tank' ? ['warrior', 'warrior', 'paladin'].concat(lvl >= 10 ? ['druid'] : []) : role === 'healer' ? ['priest', 'priest', 'paladin', 'druid', 'shaman'] : ['mage', 'rogue', 'rogue', 'mage', 'warrior', 'warlock', 'warlock', 'hunter', 'hunter', 'druid', 'shaman'];
     const myF = (D.RACES[S.player.race] || {}).faction || 'alliance';
-    let pool = S.bots.filter((b) => B.isOnline(b, date) && B.factionOf(b) === myF && want.includes(b.cls) && b.level >= lvl - 1 && !used.has(b.id));
+    let pool = S.bots.filter((b) => B.isOnline(b, date) && B.factionOf(b) === myF && want.includes(b.cls) && b.level >= lvl - 1 && b.level <= lvl + 3 && !used.has(b.id));
+    // prefer classes the group does not have yet
+    if (usedCls) { const fresh = pool.filter((b) => !usedCls.has(b.cls)); if (fresh.length) pool = fresh; }
     let b;
     if (pool.length) b = JSON.parse(JSON.stringify(pick(pool)));
     else {
       const nb = B.makeBot(S.nextBotId++, new Set(S.bots.map((x) => x.name)), { level: clamp(lvl + rint(-1, 1), 8, D.LEVEL_CAP) });
-      nb.cls = pick(want); nb.realm = pick(OTHER_REALMS);
+      const freshCls = usedCls ? want.filter((c) => !usedCls.has(c)) : want;
+      nb.cls = pick(freshCls.length ? freshCls : want); nb.realm = pick(OTHER_REALMS);
       nb.race = myF === 'horde' ? pick(['orc', 'troll', 'tauren', 'undead']) : pick(['human', 'dwarf', 'gnome', 'nightelf']);
       b = nb;
     }
-    used.add(b.id);
+    used.add(b.id); if (usedCls) usedCls.add(b.cls);
     b.role = role;
     b.level = clamp(Math.max(b.level, lvl - 1), 1, D.LEVEL_CAP);
     return b;
@@ -1256,9 +1275,13 @@
     const roles = A.size === 3 ? ['tank', 'healer', 'dps'] : ['tank', 'healer', 'dps', 'dps', 'dps'];
     const mine = G.role();
     roles.splice(roles.indexOf(mine), 1);
-    const used = new Set();
-    const lvl = S.player.level;
-    const members = roles.map((r) => G.botChar(recruit(r, lvl, used)));
+    const used = new Set(), usedCls = new Set([S.player.cls]);
+    const lvl = G.syncLevel(act);
+    const members = roles.map((r) => G.botChar(recruit(r, lvl, used, usedCls)));
+    // everyone fights at the activity's level
+    const cap = A.maxLvl || D.LEVEL_CAP;
+    for (const m of members) m.syncLevel = cap;
+    S.player.syncLevel = cap;
     S.group = { act, members };
     return S.group;
   }
@@ -1309,19 +1332,21 @@
       allies.push(u);
     }
     const mult = pull.boss ? (R.bossMult || { hp: 1, dmg: 1 }) : (R.mult || { hp: 1, dmg: 1 });
-    const enemies = pull.mobs.map((k) => {
+    const marks = (R.marks && R.marks[R.idx]) || {};
+    const enemies = pull.mobs.map((k, i) => {
       const M = D.MOBS[k];
       const u = E.mobUnit(k, null, M.boss ? mult : (R.mult || { hp: 1, dmg: 1 }));
+      if (marks[i]) u.mark = marks[i];
       return u;
     });
     const tank = allies.find((a) => a.role === 'tank') || pu;
     G.pUnit = pu;
     G.fight = E.fight(allies, enemies, { puller: tank, dungeonMult: R.mult });
     G.fight.kind = 'run';
-    pu.target = enemies[0].uid;
+    pu.target = (enemies.find((e) => e.mark === 'skull') || enemies[0]).uid;
     // a careless tank sometimes pulls the next pack too
     const tb = S.group.members.find((m) => m.role === 'tank' && !m.gone);
-    if (tb && !pull.boss && R.idx + 1 < R.pulls.length && !R.pulls[R.idx + 1].boss && Math.random() < 0.28 * (1 - tb.bot.skill)) {
+    if (tb && !pull.boss && R.idx + 1 < R.pulls.length && !R.pulls[R.idx + 1].boss && Math.random() < ((R.pace || 'normal') === 'fast' ? 0.45 : 0.28 * (1 - tb.bot.skill) * PACE[R.pace || 'normal'].extra)) {
       G.fight.extraAt = { t: rnd(4, 8), mobs: R.pulls[R.idx + 1].mobs.slice(0, 1) };
     }
     R.phase = 'fight';
@@ -1375,7 +1400,7 @@
         R.phase = 'done';
         sys(`${R.name} complete!`);
         S.group.members.filter((m) => !m.gone).forEach((m, i) => S.pending.push({ at: now() + 2000 + i * 1600, bot: m.bot.id, ch: 'party', text: B.partyLine(m.bot, 'bye'), fromName: m.name }));
-      } else { R.phase = 'rest'; R.restUntil = now() + 6500; }
+      } else { R.phase = 'rest'; R.restUntil = now() + 6500 * (PACE[R.pace || 'normal'].rest); }
     } else {
       R.wipes++;
       R.phase = 'wipe'; R.restUntil = now() + 12000;
@@ -1477,7 +1502,8 @@
       }
       for (const m of S.group.members.filter((x) => x.gone && x.replacing && t >= x.replacing)) {
         const used = new Set(S.group.members.map((x) => x.bot.id));
-        const nb = G.botChar(recruit(m.role, P.level, used));
+        const nb = G.botChar(recruit(m.role, G.syncLevel(R.act), used, new Set(S.group.members.filter((x) => !x.gone).map((x) => x.cls).concat([P.cls]))));
+        nb.syncLevel = D.ACTIVITIES[R.act].maxLvl || D.LEVEL_CAP;
         const i = S.group.members.indexOf(m);
         S.group.members[i] = nb;
         sys(`${nb.name} has joined the group.`);
@@ -1485,13 +1511,42 @@
       }
       const waiting = S.group.members.some((m) => m.gone);
       // bot tank pulls on its own when rested; player tank pulls manually
-      if (G.role() !== 'tank' && t >= R.restUntil && !waiting && !R.rolls.some((r) => !r.done && !r.player)) G.runPull();
+      const pace = PACE[R.pace || 'normal'];
+      const topped = !pace.hp || (P.hp >= v.maxHp * pace.hp && (v.resType !== 'mana' || P.res >= v.maxRes * pace.mana) && S.group.members.every((m) => { if (m.gone || m.hp == null) return true; const st = E.statsFor(m); return m.hp >= st.maxHp * pace.hp && (D.CLASSES[m.cls].resource !== 'mana' || m.res == null || m.res >= st.maxMana * pace.mana); }));
+      if (G.role() !== 'tank' && t >= R.restUntil && topped && !waiting && !R.rolls.some((r) => !r.done && !r.player)) G.runPull();
       emit('runTick');
     } else if (R.phase === 'wipe' && t >= R.restUntil) {
       R.phase = 'rest'; R.restUntil = t + 6000;
       P.hp = Math.round(v.maxHp * 0.5); P.res = v.resType === 'mana' ? Math.round(v.maxRes * 0.5) : 0;
       emit('runUpdate');
     }
+  }
+  // ---------- tactics: pull pace, kill-order marks, boss plan
+  // careful: rest to full, the tank never grabs an extra pack; fast: short rests, more extra packs.
+  const PACE = { careful: { rest: 1.6, hp: 0.95, mana: 0.9, extra: 0 }, normal: { rest: 1, hp: 0, mana: 0, extra: 1 }, fast: { rest: 0.25, hp: 0, mana: 0, extra: 2.2 } };
+  G.setPace = function (p) { const R = G.S.run; if (R && PACE[p]) { R.pace = p; sys(`Pull pace: ${p}.`); emit('runUpdate'); } };
+  G.setBossPlan = function (p) { const R = G.S.run; if (R) { R.bossPlan = p; sys(p === 'adds' ? 'Boss plan: kill the adds first.' : 'Boss plan: burn the boss.'); emit('runUpdate'); } };
+  const NEXT_MARK = { undefined: 'skull', skull: 'cross', cross: undefined };
+  // mark an enemy of the next pull (before it starts), or a live enemy in the fight
+  G.cycleMark = function (i) {
+    const R = G.S.run; if (!R) return;
+    R.marks = R.marks || {}; const m = R.marks[R.idx] || (R.marks[R.idx] = {});
+    const nx = NEXT_MARK[m[i]]; if (nx === 'skull') for (const k in m) if (m[k] === 'skull') delete m[k];
+    if (nx) m[i] = nx; else delete m[i];
+    emit('runUpdate');
+  };
+  G.cycleUnitMark = function (uid) {
+    const C = G.fight; if (!C) return; const u = C.units[uid]; if (!u || u.side !== 'enemy') return;
+    const nx = NEXT_MARK[u.mark]; if (nx === 'skull') for (const e of C.enemies) if (e.mark === 'skull') e.mark = undefined;
+    u.mark = nx; emit('target');
+  };
+  function applyBossPlan(C) {
+    const R = G.S.run; if (!R || !R.bossPlan) return;
+    const boss = C.enemies.find((e) => !e.dead && D.MOBS[e.key] && D.MOBS[e.key].boss);
+    if (!boss) return;
+    const adds = C.enemies.filter((e) => !e.dead && e !== boss);
+    if (R.bossPlan === 'adds' && adds.length) { for (const a of adds) if (!a.mark) a.mark = 'skull'; if (!boss.mark || boss.mark === 'skull') boss.mark = adds.some((a) => a.mark === 'skull') ? 'cross' : 'skull'; }
+    else if (R.bossPlan === 'boss') { boss.mark = 'skull'; }
   }
   G.runReady = function () { const R = G.S.run; if (R && R.phase === 'rest') { if (G.role() === 'tank') G.runPull(); else R.restUntil = Math.min(R.restUntil, now()); } };
   G.leaveGroup = function () {
@@ -1501,10 +1556,12 @@
       if (S.run.phase !== 'done' && S.group) {
         const m = S.group.members.find((x) => !x.gone);
         if (m) partySay(m, pick(['wait what', 'bye then', 'k', 'rip']));
+        S.flags.deserterUntil = now() + DESERTER;
+        sys('You left before the end: Deserter for 10 minutes.');
       }
       S.player.place = S.run.returnTo || 'goldshire';
     }
-    S.run = null; S.group = null;
+    S.run = null; S.group = null; delete S.player.syncLevel;
     sys('You left the group.');
     S.player.hp = S.player.hp == null ? null : S.player.hp;
     emit('change'); emit('runUpdate');
@@ -1539,6 +1596,7 @@
       const C = G.fight;
       if (C) {
         E.tick(C, 0.1);
+        if (C.kind === 'run') applyBossPlan(C);
         if (C.addAt && C.t >= C.addAt.t) {
           const mu = E.mobUnit(C.addAt.inst.key, C.addAt.inst.level); mu.inst = C.addAt.inst;
           E.addEnemy(C, mu); C.addAt = null;

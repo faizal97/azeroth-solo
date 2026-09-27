@@ -108,7 +108,7 @@
 
   // group finder
   Object.assign(D.ACTIVITIES, {
-    arrachea: { name: "Arra'chea", where: 'golden_plains', size: 3, minLvl: 8, desc: 'Open-world elite in Mulgore. 3 players.', boss: 'arrachea', pulls: [{ scene: 'golden_plains', label: 'The plains', mobs: ['prairie_stalker', 'prairie_stalker'] }, { scene: 'golden_plains', label: 'The plains', mobs: ['adult_plainstrider', 'swoop'] }, { scene: 'golden_plains', label: "Arra'chea", mobs: ['arrachea'], boss: true }] },
+    arrachea: { name: "Arra'chea", where: 'golden_plains', size: 3, minLvl: 8, maxLvl: 12, desc: 'Open-world elite in Mulgore. 3 players.', boss: 'arrachea', pulls: [{ scene: 'golden_plains', label: 'The plains', mobs: ['prairie_stalker', 'prairie_stalker'] }, { scene: 'golden_plains', label: 'The plains', mobs: ['adult_plainstrider', 'swoop'] }, { scene: 'golden_plains', label: "Arra'chea", mobs: ['arrachea'], boss: true }] },
   });
 
 })(typeof window !== 'undefined' ? window : globalThis);

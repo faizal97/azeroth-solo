@@ -103,7 +103,7 @@
 
   // group finder
   Object.assign(D.ACTIVITIES, {
-    maggot_eye: { name: 'Maggot Eye', where: 'garrens_haunt', size: 3, minLvl: 8, desc: 'Open-world elite in Tirisfal. 3 players.', boss: 'maggot_eye', pulls: [{ scene: 'garrens_haunt', label: "Garren's Haunt", mobs: ['rot_hide_gnoll', 'rot_hide_mongrel'] }, { scene: 'garrens_haunt', label: "Garren's Haunt", mobs: ['rot_hide_mongrel', 'rot_hide_mongrel'] }, { scene: 'garrens_haunt', label: 'Maggot Eye', mobs: ['maggot_eye'], boss: true }] },
+    maggot_eye: { name: 'Maggot Eye', where: 'garrens_haunt', size: 3, minLvl: 8, maxLvl: 12, desc: 'Open-world elite in Tirisfal. 3 players.', boss: 'maggot_eye', pulls: [{ scene: 'garrens_haunt', label: "Garren's Haunt", mobs: ['rot_hide_gnoll', 'rot_hide_mongrel'] }, { scene: 'garrens_haunt', label: "Garren's Haunt", mobs: ['rot_hide_mongrel', 'rot_hide_mongrel'] }, { scene: 'garrens_haunt', label: 'Maggot Eye', mobs: ['maggot_eye'], boss: true }] },
   });
 
 })(typeof window !== 'undefined' ? window : globalThis);
