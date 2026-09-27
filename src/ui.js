@@ -221,6 +221,8 @@
 
   // ============================================================ scene
   const POS_ALLY = [{ l: 3, b: 4, w: 25 }, { l: 20, b: 16, w: 19 }, { l: 1, b: 29, w: 17 }, { l: 22, b: 33, w: 15 }, { l: 10, b: 43, w: 13 }];
+  // raids (10 players plus pets): a denser formation, front line first
+  const POS_RAID = [{ l: 2, b: 3, w: 21 }, { l: 17, b: 10, w: 17 }, { l: 30, b: 4, w: 16 }, { l: 0, b: 22, w: 15 }, { l: 13, b: 25, w: 14 }, { l: 26, b: 20, w: 14 }, { l: 37, b: 27, w: 12 }, { l: 4, b: 38, w: 12 }, { l: 16, b: 40, w: 11 }, { l: 27, b: 37, w: 11 }, { l: 37, b: 44, w: 10 }, { l: 8, b: 50, w: 10 }, { l: 20, b: 52, w: 9 }, { l: 31, b: 52, w: 9 }];
   const POS_EN = [{ r: 3, b: 4, w: 30 }, { r: 26, b: 15, w: 23 }, { r: 6, b: 28, w: 20 }, { r: 28, b: 34, w: 17 }, { r: 15, b: 44, w: 14 }];
   function sceneKey() {
     const S = G.S;
@@ -251,7 +253,7 @@
     const C = G.fight;
     if (C) {
       C.allies.forEach((u, i) => {
-        const pos = POS_ALLY[i] || POS_ALLY[4];
+        const pos = C.allies.length > 7 ? (POS_RAID[i] || POS_RAID[POS_RAID.length - 1]) : (POS_ALLY[i] || POS_ALLY[4]);
         const np = C.allies.length > 1 ? h('div', { class: 'np' }, h('span', { class: 'cls-' + u.cls }, u.kind === 'player' ? '' : u.name.split('-')[0]), h('div', { class: 'hpb' }, h('i'))) : null;
         const src = u.kind === 'pet' ? petArt(u) : u.form === 'bear' ? art('pet', 'bear_form') : art('hero', looks(u.char));
         const el = spriteEl(src, u.kind === 'pet' && u.key === 'imp' ? Object.assign({}, pos, { w: pos.w * 0.7 }) : pos, 'friend idle' + (u.dead ? ' dead' : '') + (u.kind === 'pet' && u.key === 'beast' ? ' flip' : ''), np);
@@ -1128,6 +1130,10 @@
     ungoro: { marshals_refuge: [240, 60], the_slithering_scar: [300, 150], golakka_hot_springs: [70, 150], fire_plume_ridge: [170, 190], terror_run: [270, 250], lakkari_tar_pits: [200, 320], the_marshlands: [70, 300] },
     steppes: { blackrock_mountain: [50, 170], terror_wing_path: [90, 60], flame_crest: [220, 60], blackrock_stronghold: [160, 150], dreadmaul_rock: [270, 190], ruins_of_thaurissan: [120, 280], morgans_vigil: [280, 310] },
     plaguelands: { hearthglen: [190, 60], stratholme_gate: [305, 45], the_bulwark: [40, 200], felstone_field: [110, 220], dalson_tears: [190, 170], andorhal: [180, 290], the_writhing_haunt: [270, 290], chillwind_camp: [100, 340], caer_darrow: [250, 360] },
+    winterspring: { everlook: [230, 200], frostsaber_rock: [140, 150], ice_thistle_hills: [60, 90], lake_keltheril: [150, 250], winterfall_village: [280, 110], frostwhisper_gorge: [280, 300], mazthoril: [200, 340] },
+    tidewatch: { brightwater_landing: [60, 330], saltmarsh_shallows: [60, 220], kelpwood: [120, 110], drowned_orchards: [180, 290], archive_steps: [290, 330], sael_anor_outskirts: [240, 170] },
+    skullreef: { bloodtide_landing: [280, 330], coralbone_beach: [290, 220], screaming_grotto: [230, 110], sunken_pier: [160, 300], loas_rest: [110, 180], temple_steps: [50, 290] },
+    stormveil: { drowned_causeway: [170, 260], tidecrown_gate: [170, 110] },
     feralas: { feathermoon_stronghold: [45, 170], camp_mojache: [270, 170], frayfeather_highlands: [150, 90], woodpaw_hills: [230, 80], gordunni_outpost: [180, 260], the_forgotten_coast: [60, 300], lower_wilds: [300, 290], maraudon_gate: [240, 20] },
     arathi: { refuge_pointe: [170, 180], hammerfall: [300, 150], highland_plains: [110, 200], drywhisker_gorge: [290, 250], witherbark_village: [70, 310], stromgarde_keep: [120, 300], boulderfist_hall: [285, 340], circle_of_west_binding: [160, 90] },
     stranglethorn: { rebel_camp: [170, 45], grom_gol: [40, 250], nesingwary_camp: [150, 150], lake_nazferiti: [235, 185], zuuldaia_ruins: [55, 150], kurzen_compound: [285, 90], venture_base_camp: [270, 285], balia_mah_ruins: [120, 330], zul_kunda: [205, 365] },
@@ -1157,6 +1163,22 @@
         <rect width="340" height="400" rx="6" fill="url(#mapwp)"/>
         <ellipse cx="250" cy="372" rx="70" ry="22" fill="#3a5a6a" opacity=".85"/>
         <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e8e8c8" opacity=".85">Western Plaguelands · contested</text>`,
+    winterspring: `<defs><radialGradient id="mapwsp" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#e8f0f8"/><stop offset="1" stop-color="#9aaec4"/></radialGradient></defs>
+        <rect width="340" height="400" rx="6" fill="url(#mapwsp)"/>
+        <ellipse cx="150" cy="255" rx="50" ry="24" fill="#8ab4d0" opacity=".8"/>
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#2a3a50" opacity=".85">Winterspring · contested</text>`,
+    tidewatch: `<defs><radialGradient id="maptw" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#5a9a7a"/><stop offset="1" stop-color="#244a40"/></radialGradient></defs>
+        <rect width="340" height="400" rx="6" fill="#2a5a7a"/>
+        <path d="M20 380 C0 250 30 90 110 60 C200 30 300 90 320 200 C330 300 300 370 240 390 Z" fill="url(#maptw)"/>
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e8f4f0" opacity=".85">Tidewatch Coast · Alliance</text>`,
+    skullreef: `<defs><radialGradient id="mapsr" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#8a9a5a"/><stop offset="1" stop-color="#3a4a2a"/></radialGradient></defs>
+        <rect width="340" height="400" rx="6" fill="#2a5a7a"/>
+        <path d="M30 330 C20 240 60 150 120 140 C140 80 220 70 260 110 C320 150 330 260 310 340 C280 390 90 390 30 330 Z" fill="url(#mapsr)"/>
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f0f0d8" opacity=".85">Skullreef Isles · Horde</text>`,
+    stormveil: `<defs><radialGradient id="mapsv" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#3a6a8a"/><stop offset="1" stop-color="#10283a"/></radialGradient></defs>
+        <rect width="340" height="400" rx="6" fill="url(#mapsv)"/>
+        <path d="M160 400 L160 130 L180 130 L180 400 Z" fill="#6a7a80" opacity=".8"/>
+        <text x="170" y="390" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#d8ecf4" opacity=".85">The Stormveil Reach · contested</text>`,
     feralas: `<defs><radialGradient id="mapfr" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#3a6a3a"/><stop offset="1" stop-color="#1c341c"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapfr)"/>
         <path d="M0 0 H30 C20 150 40 260 20 400 H0Z" fill="#3d5f7a" opacity=".85"/>
@@ -1437,6 +1459,9 @@
       noggenfogger: 'Welcome to Gadgetzan, where everything has a price and the water costs extra.', bilgewhizzle: 'Bandits, pirates, bugs. My water towers have more enemies than friends.', sprinkle: 'Water is life out here. Help me keep it flowing.', fizzledowser: 'Fascinating desert! Dangerous, but fascinating.', innkeeper_fizzgrimble: 'Rooms, drinks, sand in everything. Welcome.', blizrik: 'Guns, blades and bombs. No refunds.',
       shandris: 'Feathermoon holds the coast. Elune gives us strength.', latronicus: 'The forest is vast and old. So are its dangers.', innkeeper_shyria: 'Rest under the moon, friend.', vivianna: 'Moonsteel blades, light and deadly.',
       hadoken: 'The hunt in Feralas is the greatest in Kalimdor.', orwin: 'Mojache is a camp of hunters. Bring me proof of yours.', innkeeper_greul: 'Eat, drink, sleep. The forest will wait.', krueg: 'Heavy weapons for heavy work.',
+      donova_snowden: 'The Winterfall were a peaceful tribe. Something poisoned them.', witch_doctor_mauari: 'Cold magic, strong magic. Mauari has work for you.', umi_rumplesnicker: 'Have you seen a yeti? Aren\'t they wonderful? Please kill some.', malyfous_darkhammer: 'Bring me good materials and I\'ll make you something worth wearing.', haleh: 'The blue dragonflight watches Winterspring. Not all of us stayed loyal.', innkeeper_everlook: 'Welcome to Everlook. Warm beds, hot food, cold prices.', xizzer_fizzbolt: 'Weapons for the cold. Guaranteed not to freeze. Mostly.',
+      admiral_vane: 'Kul Tiras charts every sea. This island was never on any chart.', lyssa_moonquill: 'Highborne built this place. I want to know what they became.', sergeant_tamsin: 'Keep your blade dry and your back to the landing.', quartermaster_brenn: 'Supplies from Menethil. What\'s left of them.', armorer_hale: 'Kul Tiran steel. It holds an edge in salt water.',
+      shadow_hunter_zulkesh: 'Our ancestors knew this reef. Now it knows us again.', deathstalker_voss: 'The drowned are not Scourge. That makes them interesting.', hexxer_mazu: 'The loa is screaming, mon. Mazu can hear it.', trader_gikkix: 'Everything\'s for sale on the reef. Even the reef.', armorer_krosh: 'Blades for the Horde. Sharp, heavy, and cheap enough.',
       marshal_yeager: "Welcome to the Refuge. Watch the sky, the pterrordax take anyone who wanders.", williden: 'Un\'Goro is older than any of us. Old and hungry.', spraggle: 'I lost my tools and my nerve out there. You can have the nerve.', larion: 'The crater is full of wonders. Most of them bite.', quixxil: 'Supplies! Priced for the end of the world, which this place looks like.',
       marshal_maxwell: 'Morgan\'s Vigil stands between the Blackrock orcs and Redridge. We will not fall back.', oralius: 'The black dragonflight hatches in these hills. Burn every egg you find.', helendis: 'My wife is at Morgan\'s Vigil. I fight so she never has to.', innkeeper_ashmorn: 'Food, drink, and a bed that isn\'t on fire. Mostly.',
       gorzeeki: 'Everything in the Steppes is hot, sharp or angry. Perfect for my work.', thal_kaur: 'The Warchief watches the mountain. So do I.', innkeeper_bruk: 'Rest. The ash gets in everything, even the ale.', shul_kar: 'Steel forged in the Steppes. Nothing else survives the heat.',
@@ -1957,7 +1982,7 @@
       art, heroUrl: art('hero', looks(P)), name: P.name, zone: startPlace.zone,
       startScene: startPlace.scene, hereScene: D.PLACES[P.place].scene,
       setMusic: (m) => { ui.csMusic = m; G.paused = !!m || !!(window.CS && CS.playing); },
-    }).then(() => { G.paused = false; P.story = P.story || {}; P.story[id] = true; G.save(); });
+    }).then(() => { G.paused = false; P.story = P.story || {}; P.story[id] = true; G.save(); if (ch.then && CS.byId(ch.then) && !CS.unlocked().has(ch.then)) ui.pendingChapter = ch.then; });
   }
   function openTheater() {
     openSheet('theater', 'Theater', 'Replay the story chapters you have reached', (b) => {

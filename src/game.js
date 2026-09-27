@@ -356,7 +356,7 @@
     if (npc === 'allison') return ['tough_bread', 'fresh_bread', 'moist_cornbread', 'mutton_chop', 'spring_water', 'ice_milk', 'melon_juice', 'sweet_nectar'].map(G.copyItem);
     if (npc === 'heather' || npc === 'boorand') return ['fresh_bread', 'moist_cornbread', 'mutton_chop', 'ice_milk', 'melon_juice', 'sweet_nectar'].map(G.copyItem);
     if (npc === 'brianna' || npc === 'jayka') return ['moist_cornbread', 'mutton_chop', 'wild_hog_shank', 'melon_juice', 'sweet_nectar', 'morning_glory_dew'].map(G.copyItem);
-    if (npc === 'quartermaster_hudson' || npc === 'quartermaster_lauren' || npc === 'innkeeper_everlook') return ['cured_ham_steak', 'sweet_roll_60', 'morning_glory_60', 'spring_water_60'].map(G.copyItem);
+    if (npc === 'quartermaster_hudson' || npc === 'quartermaster_lauren' || npc === 'innkeeper_everlook' || npc === 'quartermaster_brenn' || npc === 'trader_gikkix') return ['cured_ham_steak', 'sweet_roll_60', 'morning_glory_60', 'spring_water_60'].map(G.copyItem);
     if (npc === 'quixxil' || npc === 'innkeeper_ashmorn' || npc === 'innkeeper_bruk') return ['smoked_desert_dumplings', 'cured_ham_steak', 'sweet_nectar_45', 'morning_glory_60'].map(G.copyItem);
     if (npc === 'innkeeper_fizzgrimble' || npc === 'innkeeper_shyria' || npc === 'innkeeper_greul') return ['hardened_mushroom', 'smoked_desert_dumplings', 'moonberry_cordial', 'sweet_nectar_45'].map(G.copyItem);
     if (npc === 'innkeeper_taruga' || npc === 'innkeeper_adegwa') return ['spiced_jungle_meat', 'hardened_mushroom', 'bubbling_water', 'moonberry_cordial'].map(G.copyItem);
@@ -366,7 +366,7 @@
     if (npc === 'trelayne' || npc === 'marla') return ['mutton_chop', 'wild_hog_shank', 'roasted_boar', 'sweet_nectar', 'morning_glory_dew', 'sparkling_water'].map(G.copyItem);
     if (npc === 'renee' || npc === 'norman') return ['tough_bread', 'tirisfal_pumpkin', 'spring_water', 'ice_milk'].map(G.copyItem);
     if (npc === 'keldamyr' || npc === 'saelienne') return ['tough_bread', 'fresh_bread', 'spring_water', 'moonberry_juice'].map(G.copyItem);
-    if (npc === 'corina' || npc === 'grawn' || npc === 'bruuk' || npc === 'ilyenia' || npc === 'mydrannul' || npc === 'kaplak' || npc === 'rahauro' || npc === 'mahnott' || npc === 'etu' || npc === 'gerard' || npc === 'abigail' || npc === 'lewis' || npc === 'nargal' || npc === 'thurman' || npc === 'verner' || npc === 'krond' || npc === 'gavin' || npc === 'dogran' || npc === 'aeolynn' || npc === 'burkrum' || npc === 'murndan' || npc === 'uthok' || npc === 'urda' || npc === 'blizrik' || npc === 'vivianna' || npc === 'krueg' || npc === 'shul_kar') {
+    if (npc === 'corina' || npc === 'grawn' || npc === 'bruuk' || npc === 'ilyenia' || npc === 'mydrannul' || npc === 'kaplak' || npc === 'rahauro' || npc === 'mahnott' || npc === 'etu' || npc === 'gerard' || npc === 'abigail' || npc === 'lewis' || npc === 'nargal' || npc === 'thurman' || npc === 'verner' || npc === 'krond' || npc === 'gavin' || npc === 'dogran' || npc === 'aeolynn' || npc === 'burkrum' || npc === 'murndan' || npc === 'uthok' || npc === 'urda' || npc === 'blizrik' || npc === 'vivianna' || npc === 'krueg' || npc === 'shul_kar' || npc === 'xizzer_fizzbolt' || npc === 'armorer_hale' || npc === 'armorer_krosh') {
       if (!G.S.flags.corina || G.S.flags.corinaLvl !== G.S.player.level) {
         const L = G.S.player.level;
         G.S.flags.corina = Object.keys(D.WEAPON_BASES).map((w) => { const it = G.genGear('weapon', Math.max(2, L), 1, { wtype: w }); it.cost = it.sell * 5; return it; });
@@ -1883,7 +1883,7 @@
   };
   function formGroup(act, opts) {
     const S = G.S, A = D.ACTIVITIES[act];
-    const roles = A.size === 3 ? ['tank', 'healer', 'dps'] : ['tank', 'healer', 'dps', 'dps', 'dps'];
+    const roles = A.size === 3 ? ['tank', 'healer', 'dps'] : A.size === 10 ? ['tank', 'tank', 'healer', 'healer', 'healer', 'dps', 'dps', 'dps', 'dps', 'dps'] : ['tank', 'healer', 'dps', 'dps', 'dps'];
     const mine = G.role();
     roles.splice(roles.indexOf(mine), 1);
     const used = new Set(), usedCls = new Set([S.player.cls]);

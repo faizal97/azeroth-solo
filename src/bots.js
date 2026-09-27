@@ -88,6 +88,8 @@
     // v3: from 18 most players move on again, to Redridge or Stonetalon
     const next = bot.level >= 24 && D.REGIONS.duskwood ? (B.factionOf(bot) === 'horde' ? 'hillsbrad' : D.REGIONS.wetlands && hash(bot.id * 29, Math.floor(slot / 6)) < 0.45 ? 'wetlands' : 'duskwood') : bot.level >= 18 && D.REGIONS.redridge ? (B.factionOf(bot) === 'horde' ? 'stonetalon' : 'redridge') : B.factionOf(bot) === 'horde' ? 'barrens' : 'westfall';
     // v8: from 55 the Plaguelands, from 57 Winterspring; v7: from 50 Un'Goro, from 52 the Burning Steppes
+    // expansion: at 60 most players are on the Stormveil Isle, each on their own faction's side
+    if (bot.level >= 60 && D.REGIONS.tidewatch && hash(bot.id * 61, Math.floor(slot / 6)) < 0.55) return hash(bot.id * 67, Math.floor(slot / 6)) < 0.2 ? 'stormveil' : B.factionOf(bot) === 'horde' ? 'skullreef' : 'tidewatch';
     if (bot.level >= 57 && D.REGIONS.winterspring && hash(bot.id * 59, Math.floor(slot / 6)) < 0.4) return 'winterspring';
     if (bot.level >= 55 && D.REGIONS.plaguelands && hash(bot.id * 53, Math.floor(slot / 6)) < 0.7) return 'plaguelands';
     if (bot.level >= 52 && D.REGIONS.steppes && hash(bot.id * 51, Math.floor(slot / 6)) < 0.6) return 'steppes';
@@ -108,7 +110,7 @@
     }
     return home;
   };
-  const TOWNS = { elwynn: ['goldshire', 'stormwind'], dunmorogh: ['kharanos', 'ironforge'], teldrassil: ['dolanaar', 'darnassus'], durotar: ['razor_hill', 'orgrimmar'], mulgore: ['bloodhoof_village', 'thunder_bluff'], tirisfal: ['brill', 'undercity'], westfall: ['sentinel_hill'], barrens: ['crossroads'], redridge: ['lakeshire'], stonetalon: ['sun_rock_retreat'], duskwood: ['darkshire'], hillsbrad: ['tarren_mill'], wetlands: ['menethil_harbor'] };
+  const TOWNS = { elwynn: ['goldshire', 'stormwind'], dunmorogh: ['kharanos', 'ironforge'], teldrassil: ['dolanaar', 'darnassus'], durotar: ['razor_hill', 'orgrimmar'], mulgore: ['bloodhoof_village', 'thunder_bluff'], tirisfal: ['brill', 'undercity'], westfall: ['sentinel_hill'], barrens: ['crossroads'], redridge: ['lakeshire'], stonetalon: ['sun_rock_retreat'], duskwood: ['darkshire'], hillsbrad: ['tarren_mill'], wetlands: ['menethil_harbor'], tidewatch: ['brightwater_landing'], skullreef: ['bloodtide_landing'] };
   B.placeFor = function (bot, date) {
     const slot = Math.floor(date.getTime() / 600000); // 10-minute windows
     const region = B.regionFor(bot, slot);
@@ -116,7 +118,7 @@
       const P = D.PLACES[p];
       return P.region === region && !P.city && bot.level >= P.lvl[0] - 1 && bot.level <= P.lvl[1] + 1 && (!P.faction || P.faction === B.factionOf(bot));
     });
-    const CT = { ashenvale: { alliance: 'astranaar', horde: 'splintertree_post' }, stranglethorn: { alliance: 'rebel_camp', horde: 'grom_gol' }, arathi: { alliance: 'refuge_pointe', horde: 'hammerfall' }, tanaris: { alliance: 'gadgetzan', horde: 'gadgetzan' }, feralas: { alliance: 'feathermoon_stronghold', horde: 'camp_mojache' }, ungoro: { alliance: 'marshals_refuge', horde: 'marshals_refuge' }, steppes: { alliance: 'morgans_vigil', horde: 'flame_crest' }, plaguelands: { alliance: 'chillwind_camp', horde: 'the_bulwark' }, winterspring: { alliance: 'everlook', horde: 'everlook' } };
+    const CT = { ashenvale: { alliance: 'astranaar', horde: 'splintertree_post' }, stranglethorn: { alliance: 'rebel_camp', horde: 'grom_gol' }, arathi: { alliance: 'refuge_pointe', horde: 'hammerfall' }, tanaris: { alliance: 'gadgetzan', horde: 'gadgetzan' }, feralas: { alliance: 'feathermoon_stronghold', horde: 'camp_mojache' }, ungoro: { alliance: 'marshals_refuge', horde: 'marshals_refuge' }, steppes: { alliance: 'morgans_vigil', horde: 'flame_crest' }, plaguelands: { alliance: 'chillwind_camp', horde: 'the_bulwark' }, winterspring: { alliance: 'everlook', horde: 'everlook' }, stormveil: { alliance: 'brightwater_landing', horde: 'bloodtide_landing' } };
     const towns = CT[region] ? [CT[region][B.factionOf(bot)], ...(region === 'stranglethorn' ? ['nesingwary_camp'] : [])] : TOWNS[region];
     if (!options.length) return towns[0];
     // town visits now and then

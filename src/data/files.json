@@ -23,7 +23,7 @@
   "zones/tanaris.js",
   "zones/zulfarrak.js",
   "zones/feralas.js",
-  "zones/maraudon.js", "zones/ungoro.js", "zones/steppes.js", "zones/brd.js",
+  "zones/maraudon.js", "zones/ungoro.js", "zones/steppes.js", "zones/brd.js", "zones/plaguelands.js", "zones/scholomance.js", "zones/stratholme.js", "zones/winterspring.js",
   "professions.js",
   "finalize.js"
 ]

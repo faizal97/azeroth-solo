@@ -5,7 +5,7 @@
   root.D = D;
 
   D.REALM = 'Starlight';
-  D.LEVEL_CAP = 55;
+  D.LEVEL_CAP = 60;
   D.XP_TO_LEVEL = [0, 400, 900, 1400, 2100, 2800, 3600, 4500, 5400, 6500, 8000, 9600, 11200, 12900, 14600, 16400, 17000, 18000, 19000, 20000, 21400, 21800, 22400, 23000, 23600, 24400, 25000, 25600, 26200, 26800, 27600, 28400, 29200, 30000, 30800, 31600, 32400, 33200, 34000, 34800, 35600, 36400, 37200, 38000, 38800, 39600, 40600, 41600, 42600, 43600, 44600, 45800, 47000, 48200, 49400, 50600, 52000, 53400, 54800, 56200, 57600];
 
   D.QUALITY = [{ name: 'Poor', color: '#9d9d9d' }, { name: 'Common', color: '#ffffff' }, { name: 'Uncommon', color: '#1eff00' }, { name: 'Rare', color: '#0070dd' }, { name: 'Epic', color: '#a335ee' }, { name: 'Heirloom', color: '#e6cc80' }];
@@ -459,6 +459,11 @@
     { id: 'zulfarrak', name: '%s the Sandbreaker', need: { clear: 'zul_farrak' }, how: "Clear Zul'Farrak" },
     { id: 'maraudon', name: '%s of the Earthen Ring', need: { clear: 'maraudon' }, how: 'Clear Maraudon' },
     { id: 'brd', name: '%s, Bane of the Dark Iron', need: { clear: 'blackrock_depths' }, how: 'Clear Blackrock Depths' },
+    { id: 'scholomance', name: 'Headmaster %s', need: { clear: 'scholomance' }, how: 'Clear Scholomance' },
+    { id: 'stratholme', name: '%s the Argent', need: { clear: 'stratholme' }, how: 'Clear Stratholme' },
+    { id: 'sunken_archive', name: '%s the Lorebound', need: { clear: 'sunken_archive' }, how: 'Clear the Sunken Archive' },
+    { id: 'shalzua', name: '%s, Loa-Breaker', need: { clear: 'shalzua_temple' }, how: "Clear the Temple of Shal'zua" },
+    { id: 'tidecrown', name: '%s of the Drowned Crown', need: { clear: 'tidecrown_citadel' }, how: 'Clear the Tidecrown Citadel' },
     { id: 'scarlet', name: '%s the Crusader\'s Bane', need: { clear: 'sm_cathedral' }, how: 'Clear the Scarlet Monastery Cathedral' },
     { id: 'rider', name: '%s the Rider', need: { riding: 1 }, how: 'Learn to ride' },
     { id: 'gnomeregan', name: '%s, Liberator of Gnomeregan', need: { clear: 'gnomeregan' }, how: 'Clear Gnomeregan' },

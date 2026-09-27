@@ -4,15 +4,15 @@
   const D = root.D;
   D.zone('winterspring', { name: 'Winterspring', faction: 'contested' });
   D.item('winterfall_beads', { name: 'Winterfall Spirit Beads', slot: 'quest', q: 1, icon: 'seed' });
-  D.item('frostsaber_pelt', { name: 'Frostsaber Pelt', slot: 'quest', q: 1, icon: 'hide' });
-  D.item('yeti_fur', { name: 'Thick Yeti Fur', slot: 'quest', q: 1, icon: 'hide' });
+  D.item('frostsaber_pelt', { name: 'Frostsaber Pelt', slot: 'quest', q: 1, icon: 'pelt' });
+  D.item('thick_yeti_fur', { name: 'Thick Yeti Fur', slot: 'quest', q: 1, icon: 'pelt' });
   D.item('chimaera_horn', { name: 'Chimaera Horn', slot: 'quest', q: 1, icon: 'claw' });
   D.item('highborne_essence', { name: 'Highborne Essence', slot: 'quest', q: 1, icon: 'dust' });
-  D.item('cobalt_scale', { name: 'Cobalt Scale', slot: 'quest', q: 1, icon: 'scale' });
+  D.item('cobalt_scale', { name: 'Cobalt Scale', slot: 'quest', q: 1, icon: 'fin' });
   D.item('snowpaw_heart', { name: "Grizzle Snowpaw's Heart", slot: 'quest', q: 1, icon: 'zombie_brain' });
   D.item('rakshiri_fang', { name: "Rak'shiri's Fang", slot: 'quest', q: 1, icon: 'claw' });
   D.item('snowpaw_band', { name: 'Snowpaw Band', slot: 'finger', q: 3, lvl: 59, stats: { sta: 14, agi: 12 }, icon: 'ring', sell: 12400, source: 'Grizzle Snowpaw, Winterfall Village' });
-  D.item('rakshiri_claws', { name: "Rak'shiri's Claws", slot: 'weapon', wtype: 'fist', q: 3, lvl: 60, dmg: [60, 112], speed: 2.0, stats: { agi: 18, sta: 12 }, icon: 'claw', sell: 13400 });
+  D.item('rakshiri_claws', { name: "Rak'shiri's Claws", slot: 'weapon', wtype: 'dagger', q: 3, lvl: 60, dmg: [60, 112], speed: 2.0, stats: { agi: 18, sta: 12 }, icon: 'claw', sell: 13400 });
   D.item('rakshiri_hide', { name: 'Frostsaber Hide Tunic', slot: 'chest', atype: 'leather', q: 3, lvl: 60, armor: 270, stats: { agi: 23, sta: 17 }, icon: 'chest_leather', sell: 13200 });
   D.item('rakshiri_mantle', { name: 'Everfrost Mantle', slot: 'back', q: 3, lvl: 60, armor: 82, stats: { int: 15, spi: 12 }, sp: 16, icon: 'cloak', sell: 12800 });
 
@@ -20,7 +20,7 @@
     winterfall_ursa: { name: 'Winterfall Ursa', lvl: [57, 58], family: 'humanoid', hpMult: 1.1, drops: [['thieves_coin', 0.45], ['linen_cloth', 0.3]], qdrops: [['winterfall_beads', 0.45]] },
     winterfall_shaman: { name: 'Winterfall Shaman', lvl: [57, 58], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.35]], qdrops: [['winterfall_beads', 0.45]], aggro: 'Winterfall... not... share!' },
     frostsaber_stalker: { name: 'Frostsaber Stalker', lvl: [57, 58], family: 'beast', drops: [['light_leather', 0.3]], qdrops: [['frostsaber_pelt', 0.55]] },
-    ice_thistle_yeti: { name: 'Ice Thistle Yeti', lvl: [58, 59], family: 'beast', hpMult: 1.2, drops: [['light_leather', 0.35]], qdrops: [['yeti_fur', 0.55]] },
+    ice_thistle_yeti: { name: 'Ice Thistle Yeti', lvl: [58, 59], family: 'beast', hpMult: 1.2, drops: [['light_leather', 0.35]], qdrops: [['thick_yeti_fur', 0.55]] },
     chillwind_chimaera: { name: 'Chillwind Chimaera', lvl: [58, 59], family: 'beast', drops: [['light_leather', 0.3]], qdrops: [['chimaera_horn', 0.5]] },
     highborne_apparition: { name: 'Highborne Apparition', lvl: [58, 59], family: 'undead', drops: [['thieves_coin', 0.4]], qdrops: [['highborne_essence', 0.5]], aggro: 'Who disturbs the lake?' },
     cobalt_scalebane: { name: 'Cobalt Scalebane', lvl: [59, 60], family: 'dragonkin', hpMult: 1.2, drops: [['thieves_coin', 0.55]], qdrops: [['cobalt_scale', 0.5]], aggro: 'Mazthoril is forbidden to you!' },
@@ -73,7 +73,7 @@
   Q('ws_yetis', { name: 'Are We There, Yeti?', lvl: 58, giver: 'umi_rumplesnicker', turnin: 'umi_rumplesnicker', text: 'I love yetis. I also need 10 fewer of them in the Ice Thistle Hills. Complicated.',
     objs: [{ type: 'kill', mob: 'ice_thistle_yeti', n: 10 }], reward: { choice: ['fam_legs58'] } });
   Q('ws_yeti_fur', { name: 'Thick Yeti Fur', lvl: 59, giver: 'umi_rumplesnicker', turnin: 'umi_rumplesnicker', pre: ['ws_yetis'], text: 'Bring me 8 thick yeti furs. For science. And a very warm coat.',
-    objs: [{ type: 'collect', item: 'yeti_fur', n: 8 }], reward: { money: 8200 } });
+    objs: [{ type: 'collect', item: 'thick_yeti_fur', n: 8 }], reward: { money: 8200 } });
   Q('ws_chimaera', { name: 'Chillwind Horns', lvl: 58, giver: 'witch_doctor_mauari', turnin: 'witch_doctor_mauari', text: 'The chimaera of Frostwhisper Gorge have horns full of cold magic. Kill 10 and bring me 5 horns.',
     objs: [{ type: 'kill', mob: 'chillwind_chimaera', n: 10 }, { type: 'collect', item: 'chimaera_horn', n: 5 }], reward: { choice: ['fam_chest58'] } });
   Q('ws_gorge', { name: 'Frostwhisper Gorge', lvl: 59, giver: 'witch_doctor_mauari', turnin: 'witch_doctor_mauari', pre: ['ws_chimaera'], text: 'The gorge must be quiet for my ritual. 8 yetis and 8 chimaera.',

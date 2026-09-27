@@ -33,7 +33,7 @@ Agreed 2026-09-27. A single-player fake MMO: a vanilla WoW campaign from 1 to 60
 | v5 | Stranglethorn Vale + Arathi Highlands (30–40, contested from here) | Mount at 40; Scarlet Monastery; Gurubashi Arena event; story Chapter 4 at 40 |
 | v6 (shipped) | Tanaris + Feralas (40–50) | Zul'Farrak; Maraudon; open-world elites (world bosses moved to v9) |
 | v7 (shipped) | Un'Goro Crater + Burning Steppes (48–55) | Blackrock Depths; story Chapter 5 at 50 |
-| v8 | Western Plaguelands + Winterspring (55–60) | Level cap 60; Scholomance or Stratholme; story Chapter 6 at 60 |
+| v8 (shipped) | Western Plaguelands + Winterspring (55–60) | Level cap 60; Scholomance and Stratholme; story Chapter 6 at 60 |
 | v9 | Endgame at 60 | Molten Core and Onyxia (40 bots), the last power step; keystone dungeons; account-wide wardrobe; battlegrounds |
 | v10+ | Our own expansion | Original story, new zones, dungeons and raids, all horizontal (see below) |
 
@@ -119,8 +119,14 @@ His brief: keep going to 60, then one original "expansion" with 1 raid and 2 dun
 
 1. **v6.0 (shipped):** level cap 50. Tanaris is contested around neutral Gadgetzan (Kregg Keelhaul elite; zeppelin to Nesingwary's camp). Feralas is contested: Feathermoon Stronghold (Alliance) and Camp Mojache (Horde), Lord Shalzaru elite. **Zul'Farrak** (43–47) and **Maraudon** (46–50, gate in Feralas) are open to both. 18 class abilities at 44 and 48. Chapter 5 stays with v7, where Blackrock Depths needs it.
 2. **v7.0 (shipped):** level cap 55. Un'Goro Crater (neutral Marshal's Refuge, King Mosh elite), the Burning Steppes (Morgan's Vigil and Flame Crest, Volchan elite), **Blackrock Depths** (51–55; Marshal Windsor is its prisoner), and story Chapter 5 at 50, "The Masquerade". Also fixed: the other faction's quests no longer count as available (they showed up as "quests nearby" in contested zones).
-3. **v8.0:** level cap 60. The Western Plaguelands (Chillwind Camp and the Bulwark, Araj the Summoner elite) and Winterspring (neutral Everlook), **Scholomance** and **Stratholme**, and Chapter 6 at 60, "The Brood Mother".
-4. **Expansion (after v8):** an original story with two new zones (one Alliance, one Horde), a dungeon in each, and one raid; horizontal progression at 60.
+3. **v8.0 (shipped):** level cap 60. The Western Plaguelands (Chillwind Camp and the Bulwark, Araj the Summoner elite) and Winterspring (neutral Everlook), **Scholomance** and **Stratholme**, and Chapter 6 at 60, "The Brood Mother".
+4. **Expansion (after v8): "The Drowned Crown"** (my design, 2026-09-28). Original story, all at level 60.
+   - **Story.** Chapter 6 ends with Onyxia unmasked; the storm she raises as she flees tears the sea open, and the **Stormveil Isle** rises. It is the Highborne city of Sael'anor, sunk in the Sundering. Its prince, **Aeldran Tidecrown**, bargained with a sea spirit, **Nal'veshra the Deepmother**, to keep his court alive under the waves. The drowned troll tribe of the Wavebreakers, who served the sea loa Shal'zua, rose with it; the Deepmother swallowed their loa. A prologue cutscene ("The Drowned Crown") plays right after Chapter 6.
+   - **Alliance zone: the Tidewatch Coast.** Brightwater Landing, the Kul Tiran expedition; ship from Menethil Harbor. 13 quests, the rare Old Brinescale, and the elite Warden Ithrael. Dungeon: **The Sunken Archive** (4 bosses; Lady Vessaria the Tidescribe), Alliance-only.
+   - **Horde zone: the Skullreef Isles.** Bloodtide Landing, Darkspear and Forsaken; ship from Grom'gol. 13 quests, the rare Captain Saltbones, and the elite Krag'vesh. Dungeon: **Temple of Shal'zua** (4 bosses; the Avatar of Shal'zua), Horde-only.
+   - **Raid: the Tidecrown Citadel**, 10 players, both factions, entered from the contested Stormveil Reach causeway. Bosses: Commander Serathis, the Twin Tides, the Coralheart Colossus, Prince Aeldran and Nal'veshra. Epic (purple) drops, titles, and a lore intro.
+   - **Engine:** 10-player groups (2 tanks, 3 healers, 5 DPS) and a raid formation in the fight scene. Balance: the raid averages about 0.7 wipes a run at normal pace and 1.1 at fast.
+   - Chapters can wait for a zone (`needs`) and chain (`then`).
 
 ## Group finder rules (agreed 2026-09-27)
 

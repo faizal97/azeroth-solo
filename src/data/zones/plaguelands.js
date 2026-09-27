@@ -4,7 +4,7 @@
   const D = root.D;
   D.zone('plaguelands', { name: 'Western Plaguelands', faction: 'contested' });
   D.item('plaguehound_fang', { name: 'Plaguehound Fang', slot: 'quest', q: 1, icon: 'claw' });
-  D.item('ghoul_flesh', { name: 'Diseased Flesh', slot: 'quest', q: 1, icon: 'rotting_flesh' });
+  D.item('ghoul_flesh', { name: 'Diseased Flesh', slot: 'quest', q: 1, icon: 'rib' });
   D.item('executioner_axe', { name: "Executioner's Axe Head", slot: 'quest', q: 1, icon: 'axe' });
   D.item('warder_skull', { name: 'Warder Skull', slot: 'quest', q: 1, icon: 'head' });
   D.item('scarlet_badge_wp', { name: 'Hearthglen Badge', slot: 'quest', q: 1, icon: 'coin' });
