@@ -87,6 +87,14 @@
     // v2.0: from 10 most players move on to Westfall or the Barrens
     // v3: from 18 most players move on again, to Redridge or Stonetalon
     const next = bot.level >= 24 && D.REGIONS.duskwood ? (B.factionOf(bot) === 'horde' ? 'hillsbrad' : D.REGIONS.wetlands && hash(bot.id * 29, Math.floor(slot / 6)) < 0.45 ? 'wetlands' : 'duskwood') : bot.level >= 18 && D.REGIONS.redridge ? (B.factionOf(bot) === 'horde' ? 'stonetalon' : 'redridge') : B.factionOf(bot) === 'horde' ? 'barrens' : 'westfall';
+    // v8: from 55 the Plaguelands, from 57 Winterspring; v7: from 50 Un'Goro, from 52 the Burning Steppes
+    if (bot.level >= 57 && D.REGIONS.winterspring && hash(bot.id * 59, Math.floor(slot / 6)) < 0.4) return 'winterspring';
+    if (bot.level >= 55 && D.REGIONS.plaguelands && hash(bot.id * 53, Math.floor(slot / 6)) < 0.7) return 'plaguelands';
+    if (bot.level >= 52 && D.REGIONS.steppes && hash(bot.id * 51, Math.floor(slot / 6)) < 0.6) return 'steppes';
+    if (bot.level >= 50 && D.REGIONS.ungoro && hash(bot.id * 47, Math.floor(slot / 6)) < 0.7) return 'ungoro';
+    // v6: from 40 Tanaris, from 45 Feralas
+    if (bot.level >= 45 && D.REGIONS.feralas && hash(bot.id * 41, Math.floor(slot / 6)) < 0.7) return 'feralas';
+    if (bot.level >= 40 && D.REGIONS.tanaris && hash(bot.id * 43, Math.floor(slot / 6)) < 0.7) return 'tanaris';
     // v5.1: from 35 half of them are in Arathi
     if (bot.level >= 35 && D.REGIONS.arathi && hash(bot.id * 37, Math.floor(slot / 6)) < 0.5) return 'arathi';
     // v5: from 30 most players go to contested Stranglethorn
@@ -108,7 +116,7 @@
       const P = D.PLACES[p];
       return P.region === region && !P.city && bot.level >= P.lvl[0] - 1 && bot.level <= P.lvl[1] + 1 && (!P.faction || P.faction === B.factionOf(bot));
     });
-    const CT = { ashenvale: { alliance: 'astranaar', horde: 'splintertree_post' }, stranglethorn: { alliance: 'rebel_camp', horde: 'grom_gol' }, arathi: { alliance: 'refuge_pointe', horde: 'hammerfall' } };
+    const CT = { ashenvale: { alliance: 'astranaar', horde: 'splintertree_post' }, stranglethorn: { alliance: 'rebel_camp', horde: 'grom_gol' }, arathi: { alliance: 'refuge_pointe', horde: 'hammerfall' }, tanaris: { alliance: 'gadgetzan', horde: 'gadgetzan' }, feralas: { alliance: 'feathermoon_stronghold', horde: 'camp_mojache' }, ungoro: { alliance: 'marshals_refuge', horde: 'marshals_refuge' }, steppes: { alliance: 'morgans_vigil', horde: 'flame_crest' }, plaguelands: { alliance: 'chillwind_camp', horde: 'the_bulwark' }, winterspring: { alliance: 'everlook', horde: 'everlook' } };
     const towns = CT[region] ? [CT[region][B.factionOf(bot)], ...(region === 'stranglethorn' ? ['nesingwary_camp'] : [])] : TOWNS[region];
     if (!options.length) return towns[0];
     // town visits now and then

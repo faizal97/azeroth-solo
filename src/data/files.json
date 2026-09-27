@@ -20,6 +20,10 @@
   "zones/razorfen.js",
   "zones/arathi.js",
   "zones/scarlet.js",
+  "zones/tanaris.js",
+  "zones/zulfarrak.js",
+  "zones/feralas.js",
+  "zones/maraudon.js",
   "professions.js",
   "finalize.js"
 ]

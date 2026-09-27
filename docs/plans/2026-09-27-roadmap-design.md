@@ -31,7 +31,7 @@ Agreed 2026-09-27. A single-player fake MMO: a vanilla WoW campaign from 1 to 60
 | v3 (shipped as app v2.6.0 + v3.0.0) | Redridge Mountains (18–25) · **Horde:** Stonetalon Mountains (18–25) | Professions (shipped first, as app v2.6.0): Mining, Herbalism, Skinning, Blacksmithing, Alchemy, Leatherworking, Tailoring; two per character, skill to 150 (Apprentice 75, Journeyman 150; Expert 225 with the 30s zones); nodes in every wild place, skinning on loot, potions (combat, 2 min cooldown), elixirs, sharpening stones, armour kits, bags (4 slots), rare plans from bosses and rares, trade goods on the auction house. Then (v3.0.0) level cap 25, Redridge (Lakeshire hub, Bellygrub elite) and Stonetalon (Sun Rock hub, XT:9 elite), ~34 quests each, The Stockade (6 bosses, 22–25, lore intro), 18 class abilities at 20 and 24. The Horde gets its 20s dungeon (Shadowfang Keep) in v4 |
 | v4 (shipped as app v4.0.0–v4.2.0) | Duskwood + Wetlands (20–30) · **Horde:** Hillsbrad Foothills; Ashenvale (contested) | Shadowfang Keep; Blackfathom Deeps; story Chapter 3 at 30 |
 | v5 | Stranglethorn Vale + Arathi Highlands (30–40, contested from here) | Mount at 40; Scarlet Monastery; Gurubashi Arena event; story Chapter 4 at 40 |
-| v6 | Tanaris + Feralas (40–50) | Zul'Farrak; Maraudon; world bosses |
+| v6 (shipped) | Tanaris + Feralas (40–50) | Zul'Farrak; Maraudon; open-world elites (world bosses moved to v9) |
 | v7 | Un'Goro Crater + Burning Steppes (48–55) | Blackrock Depths; story Chapter 5 at 50 |
 | v8 | Western Plaguelands + Winterspring (55–60) | Level cap 60; Scholomance or Stratholme; story Chapter 6 at 60 |
 | v9 | Endgame at 60 | Molten Core and Onyxia (40 bots), the last power step; keystone dungeons; account-wide wardrobe; battlegrounds |
@@ -112,6 +112,15 @@ Contested-zone rules (proposed; he can overrule):
 2. **v5.1 (shipped):** level cap 40. Mount (his choice, classic-style): riding 40g + racial mount 10g at a capital's stablemaster, roads 40% faster (boats and flights unchanged). Arathi Highlands is contested: Refuge Pointe and Hammerfall. Also the Scarlet Monastery (reachable by both), the **mount at 40**, and story Chapter 4.
 3. **v5.2:** southern Stranglethorn (Booty Bay) and the Gurubashi Arena event.
 4. **Open:** Expert professions (skill 225, iron/mithril/silk/kingsblood) for the 30s.
+
+## v6–v8 and the expansion (2026-09-28, planned and built while he slept)
+
+His brief: keep going to 60, then one original "expansion" with 1 raid and 2 dungeons (one Alliance zone, one Horde zone). I chose new zones for the expansion rather than expanding vanilla ones.
+
+1. **v6.0 (shipped):** level cap 50. Tanaris is contested around neutral Gadgetzan (Kregg Keelhaul elite; zeppelin to Nesingwary's camp). Feralas is contested: Feathermoon Stronghold (Alliance) and Camp Mojache (Horde), Lord Shalzaru elite. **Zul'Farrak** (43–47) and **Maraudon** (46–50, gate in Feralas) are open to both. 18 class abilities at 44 and 48. Chapter 5 stays with v7, where Blackrock Depths needs it.
+2. **v7.0:** level cap 55. Un'Goro Crater (neutral Marshal's Refuge, King Mosh elite), the Burning Steppes (Morgan's Vigil and Flame Crest, Volchan elite), **Blackrock Depths** (51–55; Marshal Windsor is its prisoner), and story Chapter 5 at 50, "The Masquerade".
+3. **v8.0:** level cap 60. The Western Plaguelands (Chillwind Camp and the Bulwark, Araj the Summoner elite) and Winterspring (neutral Everlook), **Scholomance** and **Stratholme**, and Chapter 6 at 60, "The Brood Mother".
+4. **Expansion (after v8):** an original story with two new zones (one Alliance, one Horde), a dungeon in each, and one raid; horizontal progression at 60.
 
 ## Group finder rules (agreed 2026-09-27)
 

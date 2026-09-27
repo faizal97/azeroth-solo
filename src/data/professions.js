@@ -227,7 +227,7 @@
     stable_alliance: { name: 'Stablemaster Rowan', title: 'Riding Trainer' },
     stable_horde: { name: 'Stablemaster Ogunaro', title: 'Riding Trainer' },
   });
-  const TRAIN = { crafts_alliance: ['stormwind', 'ironforge', 'darnassus', 'sentinel_hill', 'lakeshire', 'darkshire', 'astranaar', 'menethil_harbor', 'rebel_camp', 'refuge_pointe'], crafts_horde: ['orgrimmar', 'thunder_bluff', 'undercity', 'crossroads', 'sun_rock_retreat', 'tarren_mill', 'splintertree_post', 'grom_gol', 'hammerfall'] };
+  const TRAIN = { crafts_alliance: ['stormwind', 'ironforge', 'darnassus', 'sentinel_hill', 'lakeshire', 'darkshire', 'astranaar', 'menethil_harbor', 'rebel_camp', 'refuge_pointe', 'gadgetzan', 'feathermoon_stronghold'], crafts_horde: ['orgrimmar', 'thunder_bluff', 'undercity', 'crossroads', 'sun_rock_retreat', 'tarren_mill', 'splintertree_post', 'grom_gol', 'hammerfall', 'gadgetzan', 'camp_mojache', 'marshals_refuge', 'flame_crest', 'the_bulwark', 'everlook'] };
   for (const npc in TRAIN) for (const p of TRAIN[npc]) if (D.PLACES[p] && !D.PLACES[p].npcs.includes(npc)) D.PLACES[p].npcs.push(npc);
   D.PROF_TRAINERS = TRAIN;
   // riding trainers in the capitals (v5.1)

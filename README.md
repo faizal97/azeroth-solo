@@ -19,7 +19,7 @@ It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sp
 
 > **Unofficial, non-commercial fan project.** Not affiliated with, endorsed by or sponsored by Blizzard Entertainment. World of Warcraft, Warcraft and Azeroth are trademarks or registered trademarks of Blizzard Entertainment, Inc. No Blizzard assets are used: all art (hand-written SVG), music (composed synth) and code in this repository are original. The game is free and will stay free.
 
-## What's in it (v5.1)
+## What's in it (v6)
 
 - **Both factions, all 8 classic races.** Human, Dwarf, Gnome, Night Elf, Orc, Troll, Tauren, Undead, each with its own starting zone, and racial traits (one active, two passive).
 - **Talents** from level 10: three trees per class.
@@ -27,8 +27,8 @@ It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sp
 - **Professions.** Mining, Herbalism, Skinning, Blacksmithing, Alchemy, Leatherworking and Tailoring: gather in the wild, craft gear, potions, elixirs and bags, and trade on the auction house.
 - **Cities.** A bank and auction house in every capital, Stormwind included; daily bounty boards, Help Wanted, Mentor Marks, heirlooms and titles.
 - **9 classes, any race can be any class.** Warrior, Paladin, Hunter, Rogue, Priest, Shaman, Mage, Warlock, Druid. Pets for Hunters and Warlocks, Bear Form for Druids, seals for Paladins, totems for Shamans.
-- **Levels 1–40.** Starting zones, then Westfall and the Barrens, Redridge and Stonetalon, then Duskwood, the Wetlands and Hillsbrad, and contested Ashenvale, Stranglethorn Vale and the Arathi Highlands, with about 500 quests, named rares and unique drops.
-- **Dungeons and elites with a group of simulated players.** Ragefire Chasm, The Deadmines, Wailing Caverns, The Stockade, Shadowfang Keep, Blackfathom Deeps, Gnomeregan, Razorfen Kraul, the Scarlet Monastery (Library and Cathedral), and open-world elites such as Hogger, Bellygrub, XT:9, Stitches, Big Samras, Sharptalon, the Razormaw Matriarch and King Bangalash, with roles, threat, wipes and need/greed rolls. Groups are synced to the dungeon's level; you choose the pull pace, mark the kill order and pick a boss plan.
+- **Levels 1–50.** Starting zones, then Westfall and the Barrens, Redridge and Stonetalon, then Duskwood, the Wetlands and Hillsbrad, and contested Ashenvale, Stranglethorn Vale, the Arathi Highlands, Feralas and Tanaris (neutral Gadgetzan), with about 580 quests, named rares and unique drops.
+- **Dungeons and elites with a group of simulated players.** Ragefire Chasm, The Deadmines, Wailing Caverns, The Stockade, Shadowfang Keep, Blackfathom Deeps, Gnomeregan, Razorfen Kraul, the Scarlet Monastery (Library and Cathedral), Zul'Farrak, Maraudon, and open-world elites such as Hogger, Bellygrub, XT:9, Stitches, Big Samras, Sharptalon, the Razormaw Matriarch, King Bangalash, Kregg Keelhaul and Lord Shalzaru, with roles, threat, wipes and need/greed rolls. Groups are synced to the dungeon's level; you choose the pull pace, mark the kill order and pick a boss plan.
 - **World PvP (War Mode).** Enemy players show up nearby; some pass by, some attack, and you can strike first. Guards help in towns. Ashenvale is contested: both factions quest there, each from its own town, and enemy players are more common. +10% XP and gold, and Honor.
 - **A living server.** Players online by time of day, general and LFG chat, guilds, a welcome-back digest of what happened while you were away.
 - **Story cutscenes** at key levels and a first-time lore intro for every dungeon, replayable in the Theater.
