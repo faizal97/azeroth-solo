@@ -47,7 +47,7 @@
     northshire_abbey: { name: 'Northshire Abbey', zone: 'Northshire Valley', scene: 'northshire_abbey', lvl: [1, 2], mobs: [['young_wolf', 5], ['kobold_vermin', 5]], pool: 9, npcs: ['mcbride', 'willem', 'eagan', 'danil'], vendor: 'danil', links: { echo_ridge: 10, northshire_vineyards: 12, goldshire: 30 }, region: 'elwynn' },
     echo_ridge: { name: 'Echo Ridge Mine', zone: 'Northshire Valley', scene: 'echo_ridge', lvl: [3, 4], mobs: [['kobold_worker', 8], ['kobold_vermin', 2]], pool: 8, npcs: [], links: { northshire_abbey: 10, northshire_vineyards: 14 }, region: 'elwynn' },
     northshire_vineyards: { name: 'Northshire Vineyards', zone: 'Northshire Valley', scene: 'vineyards', lvl: [3, 5], mobs: [['defias_thug', 10]], named: { garrick_padfoot: 90 }, pool: 8, npcs: ['milly'], gather: { item: 'grape_crate', label: 'Crate of Grapes', quest: 'millys_harvest' }, links: { northshire_abbey: 12, echo_ridge: 14 }, region: 'elwynn' },
-    goldshire: { name: 'Goldshire', zone: 'Elwynn Forest', scene: 'goldshire', lvl: [5, 10], safe: true, inn: true, mobs: [], pool: 0, npcs: ['dughan', 'remy', 'pestle', 'farley', 'corina'], vendor: 'farley', gearVendor: 'corina', links: { northshire_abbey: 30, fargodeep: 16, crystal_lake: 18, brackwell: 20, forests_edge: 24, ironforge: 45, darnassus: 60, furlbrow_farm: 30 }, via: { ironforge: 'Deeprun Tram', darnassus: "Boat to Rut'theran" }, region: 'elwynn' },
+    goldshire: { name: 'Goldshire', zone: 'Elwynn Forest', scene: 'goldshire', lvl: [5, 10], safe: true, inn: true, mobs: [], pool: 0, npcs: ['dughan', 'remy', 'pestle', 'farley', 'corina'], vendor: 'farley', gearVendor: 'corina', links: { stormwind_gate: 25, northshire_abbey: 30, fargodeep: 16, crystal_lake: 18, brackwell: 20, forests_edge: 24, darnassus: 60, furlbrow_farm: 30 }, via: { darnassus: "Boat to Rut'theran" }, region: 'elwynn' },
     fargodeep: { name: 'Fargodeep Mine', zone: 'Elwynn Forest', scene: 'fargodeep', lvl: [5, 7], mobs: [['kobold_laborer', 6], ['kobold_tunneler', 4], ['mangy_wolf', 3]], pool: 9, npcs: [], links: { goldshire: 16, brackwell: 14 }, region: 'elwynn' },
     crystal_lake: { name: 'Crystal Lake', zone: 'Elwynn Forest', scene: 'crystal_lake', lvl: [7, 9], mobs: [['murloc_streamrunner', 5], ['murloc_forager', 3], ['young_forest_bear', 3], ['prowler', 3]], pool: 10, npcs: ['thomas'], links: { goldshire: 18, forests_edge: 16 }, region: 'elwynn' },
     brackwell: { name: 'Brackwell Pumpkin Patch', zone: 'Elwynn Forest', scene: 'brackwell', lvl: [8, 10], mobs: [['defias_bandit', 8], ['prowler', 2]], named: { princess: 120 }, pool: 9, npcs: ['ma_stonefield'], links: { goldshire: 20, fargodeep: 14 }, region: 'elwynn' },
@@ -125,4 +125,15 @@
     hogger: { name: 'Wanted: Hogger', where: 'forests_edge', size: 3, minLvl: 8, maxLvl: 12, desc: 'Open-world elite in Elwynn. 3 players.', boss: 'hogger', pulls: [{ scene: 'forests_edge', label: 'Riverpaw camp', mobs: ['riverpaw_gnoll', 'riverpaw_gnoll'] }, { scene: 'forests_edge', label: 'Riverpaw camp', mobs: ['riverpaw_gnoll', 'riverpaw_gnoll'] }, { scene: 'forests_edge', label: 'Hogger', mobs: ['hogger'], boss: true }] },
   });
 
+
+  // ---- Stormwind City (v2.3): the Alliance capital. The Deeprun Tram runs here from Ironforge.
+  Object.assign(D.PLACES, {
+    stormwind_gate: { name: 'Valley of Heroes', zone: 'Stormwind City', region: 'elwynn', scene: 'stormwind_gate', lvl: [1, 60], safe: true, city: true, mobs: [], pool: 0, npcs: [], links: { goldshire: 25, stormwind: 8 } },
+    stormwind: { name: 'Trade District', zone: 'Stormwind City', region: 'elwynn', scene: 'stormwind', lvl: [1, 60], safe: true, inn: true, city: true, mobs: [], pool: 0, npcs: ['allison', 'mentor_alliance', 'thurman'], vendor: 'allison', gearVendor: 'thurman',
+      links: { stormwind_gate: 8, stormwind_bank: 6, ironforge: 40 }, via: { ironforge: 'Deeprun Tram' } },
+    stormwind_bank: { name: 'Bank and Auction House', zone: 'Stormwind City', region: 'elwynn', scene: 'stormwind_bank', lvl: [1, 60], safe: true, city: true, mobs: [], pool: 0, npcs: ['banker_alliance', 'auctioneer_alliance'], links: { stormwind: 6 } },
+  });
+  Object.assign(D.NPCS, {
+    allison: { name: 'Innkeeper Allison', title: 'Innkeeper' }, thurman: { name: 'Thurman Schneider', title: 'Weaponsmith' },
+  });
 })(typeof window !== 'undefined' ? window : globalThis);

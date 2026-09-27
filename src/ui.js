@@ -508,6 +508,23 @@
       for (const x of near.slice(0, 12)) chips.append(h('button', { class: 'chip', onclick: () => confirmInvite(x) }, h('span', { class: 'cls-' + x.cls }, x.name), h('small', null, `${x.level} ${raceClass(x)}`)));
       b.append(h('div', { class: 'sec-h' }, 'Players here', h('small', null, `${near.length} nearby · tap to invite`)), chips);
     }
+    // hub bounty board: 3 daily + 1 weekly, rotating with the real date
+    if (G.isHub(P.place)) {
+      const bs = G.bounties(P.place);
+      if (bs.length) {
+        b.append(h('div', { class: 'sec-h' }, 'Bounty Board', h('small', null, 'new every day · weekly on Monday')));
+        const list = h('div', { class: 'list' });
+        for (const bb of bs) {
+          const st = G.bountyState(bb), rec = (P.bounty || {})[bb.id];
+          const label = st === 'available' ? 'Take' : st === 'complete' ? 'Turn in' : st === 'done' ? 'Done' : `${rec.prog}/${bb.n}`;
+          list.append(h('button', { class: 'row' + (st === 'done' ? ' off' : ''), onclick: () => { if (st === 'available') G.acceptBounty(bb); else if (st === 'complete') G.turnInBounty(bb); renderPanel(); } },
+            h('div', { class: 'ic mob' }, img(mobArt(bb.mob))),
+            h('div', { class: 't' }, h('b', null, `${bb.weekly ? 'Weekly: ' : ''}${bb.n} ${D.MOBS[bb.mob].name}`), h('small', { style: { whiteSpace: 'normal' } }, `${bb.xp} XP · ${G.moneyText(bb.money)} · ${bb.marks} Mentor Marks${bb.weekly ? ' · a green item' : ''}`)),
+            h('div', { class: 'r' }, h('span', { class: st === 'complete' ? 'pill ready' : 'pill' }, label))));
+        }
+        b.append(list);
+      }
+    }
     const foe = G.intruderHere();
     if (foe) b.append(h('div', { class: 'sec-h foe-h' }, 'Enemy player', h('small', null, 'tap to attack')),
       h('div', { class: 'chips' }, h('button', { class: 'chip foe', onclick: () => confirmAttack(foe) }, h('span', null, '⚔ ' + foe.name), h('small', null, `${foe.level} ${D.CLASSES[foe.cls].name}`))));
@@ -1064,7 +1081,7 @@
 
   // ---------- map
   const MAPS = {
-    elwynn: { northshire_vineyards: [120, 60], northshire_abbey: [215, 88], echo_ridge: [300, 52], goldshire: [150, 228], fargodeep: [110, 330], brackwell: [215, 352], crystal_lake: [270, 250], forests_edge: [42, 300] },
+    elwynn: { stormwind_bank: [58, 20], stormwind: [95, 40], stormwind_gate: [135, 130], northshire_vineyards: [120, 60], northshire_abbey: [215, 88], echo_ridge: [300, 52], goldshire: [150, 228], fargodeep: [110, 330], brackwell: [215, 352], crystal_lake: [270, 250], forests_edge: [42, 300] },
     mulgore: { thunder_bluff: [110, 70], bloodhoof_village: [175, 205], camp_narache: [220, 340], brambleblade_ravine: [300, 300], palemane_rock: [70, 250], venture_mine: [290, 120], golden_plains: [180, 110] },
     tirisfal: { undercity: [285, 110], brill: [200, 180], deathknell: [60, 300], night_web_hollow: [40, 225], agamand_mills: [150, 90], garrens_haunt: [210, 60], scarlet_watch_post: [300, 250] },
     durotar: { orgrimmar: [150, 52], thunder_ridge: [80, 130], razor_hill: [200, 215], tiragarde_keep: [292, 185], echo_isles: [268, 325], valley_of_trials: [140, 300], burning_blade_coven: [62, 336] },
@@ -1227,6 +1244,8 @@
       const P = G.S.player;
       const place = D.PLACES[P.place];
       b.append(h('p', { style: { margin: 0, color: 'var(--text)' } }, (window.AI && AI.npcLine(npc)) || greeting(npc)));
+      if (/^banker_/.test(npc)) b.append(h('button', { class: 'btn wide', onclick: () => openBank() }, 'Open your bank'));
+      if (/^auctioneer_/.test(npc)) b.append(h('button', { class: 'btn wide', onclick: () => openAuction() }, 'Browse the auction house'));
       if (npc === 'mentor_alliance' || npc === 'mentor_horde') {
         const acc = G.account();
         b.append(h('div', { class: 'sec-h' }, 'Heirlooms', h('small', null, `${acc.marks} Mentor Marks · shared by all your characters`)));
@@ -1250,7 +1269,7 @@
       }
       if (place.vendor === npc || place.gearVendor === npc) b.append(h('button', { class: 'btn wide', onclick: () => openVendor(npc) }, 'Browse goods'));
       if (npc === 'farley') b.append(h('button', { class: 'btn alt wide', disabled: P.bind === P.place, onclick: () => { G.bindHere(); ui.sheetFn(); } }, P.bind === P.place ? 'This inn is your home' : 'Make this inn your home'));
-      if (!qs.length && place.vendor !== npc && npc !== 'farley' && place.gearVendor !== npc && npc !== 'mentor_alliance' && npc !== 'mentor_horde') b.append(h('p', { style: { color: 'var(--muted)' } }, 'Nothing for you right now. Come back when you have grown stronger.'));
+      if (!qs.length && place.vendor !== npc && npc !== 'farley' && place.gearVendor !== npc && !/^(mentor|banker|auctioneer)_/.test(npc)) b.append(h('p', { style: { color: 'var(--muted)' } }, 'Nothing for you right now. Come back when you have grown stronger.'));
     });
   }
   window.UI_GREETING = (npc) => greeting(npc);
@@ -1290,6 +1309,8 @@
       salma: 'Mind the pie, it is hot!', thork: 'Lok\'tar. The Crossroads needs every blade it can get.', sergra: 'The Barrens test every hunter. Most fail.',
       helbrim: 'Samples, samples. The Barrens are full of interesting poisons.', zargh: 'Hungry? Everything here is edible if you cook it long enough.',
       boorand: 'Rest your feet, traveller. The Barrens are wide.', nargal: 'Need a weapon? The centaurs will not ask before they charge.', kargal: 'Far Watch sees everything that comes out of the Barrens.',
+      allison: 'Welcome to the Gilded Rose. Stormwind\'s finest beds.', thurman: 'Stormwind steel. The best the Alliance can buy.',
+      banker_alliance: 'Your valuables are safe with us.', banker_horde: 'Store what you cannot carry. Nothing leaves this vault without you.', auctioneer_alliance: 'Buying or selling? Every adventurer on the realm trades through this house.', auctioneer_horde: 'Buy low, sell high. The Horde trades here.',
       mentor_alliance: 'Helping the new ones through the dungeons is how heroes are made. Your marks are good here.', mentor_horde: 'The strong carry the weak through the fire. The Horde remembers. Spend your marks well.',
       denalan: 'The timberlings have been acting so oddly...', saelienne: 'Welcome to Darnassus, child of the stars.', mydrannul: 'Fine Kaldorei steel. Look, but do not touch.',
     })[npc] || 'Hello.';
@@ -1471,6 +1492,46 @@
     b.append(h('p', { class: 'ai-note' }, 'Writes chat, banter, greetings and bios ahead of time, only when you are not fighting. Stops under 30% battery, in battery saver or when the phone is warm. The game never lets it decide anything.'));
   }
   if (window.AI) AI.onChange = () => { if (ui.sheet === 'hero' && ui.sheetFn && !document.querySelector('.dialog')) ui.sheetFn(); };
+  // ---------- bank and auction house
+  const itemRow = (it, n, right, onclick, sub) => h('button', { class: 'row', onclick },
+    h('div', { class: 'ic' }, itemIcon(it)), h('div', { class: 't' }, h('b', { style: { color: (D.QUALITY[it.q || 1] || D.QUALITY[1]).color } }, it.name + (n > 1 ? ` ×${n}` : '')), h('small', null, sub || (it.lvl ? `Level ${it.lvl} ${D.SLOT_LABEL[it.slot] || it.slot}` : ''))), h('div', { class: 'r tnum' }, right || ''));
+  function openBank() {
+    openSheet('bank', 'Bank', `${G.BANK_SLOTS} slots · tap to move`, (b, title) => {
+      const P = G.S.player; P.bank = P.bank || [];
+      title.querySelector('small').textContent = `${P.bank.length}/${G.BANK_SLOTS} in the bank · ${P.bags.length}/16 in your bags · tap to move`;
+      b.append(h('div', { class: 'sec-h' }, 'In the bank', h('small', null, 'tap to take')));
+      const bank = h('div', { class: 'list' }); P.bank.forEach((x, i) => bank.append(itemRow(x.item, x.n, '↑', () => { G.bankWithdraw(i); ui.sheetFn(); })));
+      if (!P.bank.length) bank.append(h('div', { class: 'people' }, 'Empty. Keep gear sets, quest leftovers and heirlooms here.'));
+      b.append(bank, h('div', { class: 'sec-h' }, 'Your bags', h('small', null, 'tap to store')));
+      const bags = h('div', { class: 'list' }); P.bags.forEach((x, i) => bags.append(itemRow(x.item, x.n, '↓', () => { G.bankDeposit(i); ui.sheetFn(); })));
+      b.append(bags);
+    });
+  }
+  function openAuction() {
+    ui.ahTab = ui.ahTab || 'browse';
+    openSheet('auction', 'Auction House', ' ', (b, title) => {
+      const P = G.S.player, S = G.S;
+      title.querySelector('small').textContent = `Your money: ${G.moneyText(P.money)}`;
+      const tab = (id, label) => h('button', { class: 'chip' + (ui.ahTab === id ? ' gold' : ''), onclick: () => { ui.ahTab = id; ui.sheetFn(); } }, label);
+      b.append(h('div', { class: 'chips' }, tab('browse', 'Browse'), tab('sell', 'Sell'), tab('mine', `My auctions (${((S.ah && S.ah.mine) || []).length})`)));
+      const list = h('div', { class: 'list' });
+      if (ui.ahTab === 'browse') {
+        for (const l of G.ahListings()) list.append(itemRow(l.item, 1, G.moneyText(l.price), () => showDialog([h('h3', null, `Buy ${l.item.name}?`), compareBlock ? compareBlock(l.item) : null, h('p', null, `From ${l.seller} for ${G.moneyText(l.price)}.`),
+          h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); G.ahBuy(l.id); ui.sheetFn(); } }, 'Buy'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true), `Level ${l.item.lvl} ${D.SLOT_LABEL[l.item.slot]} · ${l.seller}` + (G.isUpgrade(l.item) ? ' · ▲ upgrade' : '')));
+        b.append(h('p', { class: 'ai-note' }, 'Listings from other players on the realm. New ones arrive every half hour.'));
+      } else if (ui.ahTab === 'sell') {
+        P.bags.forEach((x, i) => { if (!D.GEAR_SLOTS.includes(x.item.slot) || x.item.heirloom) return; const v = G.ahValue(x.item);
+          list.append(itemRow(x.item, x.n, G.moneyText(v), () => showDialog([h('h3', null, `Sell ${x.item.name}`), h('p', null, `Players usually pay about ${G.moneyText(v)}. Lower prices sell faster; much higher ones may not sell at all. The house takes 5%.`),
+            h('div', { class: 'btn-row' }, ...[0.8, 1, 1.3, 1.6].map((f) => h('button', { class: 'btn' + (f === 1 ? '' : ' alt'), onclick: () => { closeDialog(); G.ahPost(i, Math.round(v * f)); ui.sheetFn(); } }, G.moneyText(Math.round(v * f))))),
+            h('button', { class: 'btn alt wide', onclick: closeDialog }, 'Cancel')], true), `Vendor pays ${G.moneyText(x.item.sell || 0)}`)); });
+        if (!list.children.length) list.append(h('div', { class: 'people' }, 'No gear in your bags to sell.'));
+      } else {
+        ((S.ah && S.ah.mine) || []).forEach((a, i) => list.append(itemRow(a.item, 1, G.moneyText(a.price), () => showDialog([h('h3', null, `Cancel your auction of ${a.item.name}?`), h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); G.ahCancel(i); ui.sheetFn(); } }, 'Cancel auction'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Keep'))], true), `Posted ${Math.max(1, Math.round((Date.now() - a.postedAt) / 60000))} min ago · ${Math.max(0, Math.round((a.expires - Date.now()) / 3600000))}h left`)));
+        if (!list.children.length) list.append(h('div', { class: 'people' }, 'You have no auctions. Post gear from the Sell tab; it sells while you play or while you are away.'));
+      }
+      b.append(list);
+    });
+  }
   // ---------- talents: three trees, tap a talent to spend a point
   const talentText = (t, rank) => t.desc.replace('{v}', String(Math.round(t.fx[0].v * Math.max(1, rank) * 100) / 100));
   function openTalents() {

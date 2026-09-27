@@ -761,6 +761,281 @@
     return o;
   }
 
+  // ---- Stormwind City pieces: the Trade District, the bank / auction hall, the Valley of Heroes gate ----
+  // white stone, blue slate roofs, blue-and-gold lion banners, clear daylight. Most pieces are drawn at unit
+  // scale around a base point and placed with G(piece, at(s, x, y)), so distant copies get thinner outlines.
+  var SWS = '#ebe5d6', SWR = '#3a62b4', SWI = '#34343e', SWP = '#f2e8cf', SWB = '#5a3a24', SWST = '#d4d0c6';
+  function circD(x, y, r) { return 'M' + pt([x - r, y]) + 'a' + n(r) + ',' + n(r) + ' 0 1,0 ' + n(2 * r) + ',0a' + n(r) + ',' + n(r) + ' 0 1,0 ' + n(-2 * r) + ',0Z'; }
+  // round-topped opening; x,y = top-left of its box
+  function archD(x, y, w, h) { var r = w / 2; return 'M' + pt([x, y + h]) + 'L' + pt([x, y + r]) + 'A' + n(r) + ',' + n(r) + ' 0 0 1 ' + pt([x + w, y + r]) + 'L' + pt([x + w, y + h]) + 'Z'; }
+  // masonry courses (and staggered joints when brick > 0) over a box
+  function courses(x0, x1, y0, y1, step, col, w, op, brick) {
+    var d = '', row = 0;
+    for (var y = y1 - step; y > y0 + 0.5; y -= step, row++) {
+      d += 'M' + pt([x0, y]) + 'L' + pt([x1, y]);
+      if (brick) for (var x = x0 + (row % 2 ? brick / 2 : brick); x < x1 - 1; x += brick) d += 'M' + pt([x, y]) + 'l0,' + n(step);
+    }
+    return d ? L(d, col, w || 0.9, op == null ? 0.7 : op) : '';
+  }
+  function swSky(c) { return sky(c, '#3f7cc8', '#98c2e6', '#e8eef0') + sun(c, 348, 40, 10, '#fff4cc'); }
+  function swHaze(c, y) { return R(0, 0, 400, y, c.lg([[0, '#e6eef8', 0], [0.55, '#e6eef8', 0.12], [1, '#e6eef8', 0.36]])); }
+  // hanging lion banner: rod, blue cloth with gold trim, swallowtail hem, gold crest
+  function swHangBanner(c, x, y, w, h, sw) {
+    sw = sw || 1.6;
+    var hw = w / 2, d = pd([[x - hw, y], [x + hw, y], [x + hw, y + h], [x, y + h - w * 0.45], [x - hw, y + h]], true);
+    var trim = 'M' + pt([x - hw, y + h * 0.1]) + 'L' + pt([x + hw, y + h * 0.1]) + 'M' + pt([x - hw * 0.7, y + h * 0.1]) + 'L' + pt([x - hw * 0.7, y + h - w * 0.2]) + 'M' + pt([x + hw * 0.7, y + h * 0.1]) + 'L' + pt([x + hw * 0.7, y + h - w * 0.2]);
+    return L('M' + pt([x - hw - 2, y]) + 'L' + pt([x + hw + 2, y]), OL, sw * 1.9) + C(x - hw - 2, y, sw * 1.1, SW_GOLD) + C(x + hw + 2, y, sw * 1.1, SW_GOLD) +
+      body(c, d, SW_BLUE, F(pd([[x + hw * 0.3, y - 1], [x + hw + 1, y - 1], [x + hw + 1, y + h + 1], [x + hw * 0.3, y + h]], true), dk(SW_BLUE, 0.32), 0.6) + L(trim, SW_GOLD, Math.max(0.6, w * 0.07)), sw) +
+      lionCrest(c, x, y + h * 0.42, w * 0.3);
+  }
+  // tower: stone shaft, corbel ring, blue cone roof, gold finial
+  function swTower(c, x, y, w, h, rh, o) {
+    o = o || {};
+    var st = o.stone || SWS, rf = o.roof || SWR, sw = o.sw || 1.8, top = y - h, hw = w / 2, out = '';
+    out += body(c, pd([[x - hw, y], [x - hw, top], [x + hw, top], [x + hw, y]], true), st,
+      courses(x - hw, x + hw, top, y, 9, dk(st, 0.2), 0.8, 0.6, w > 20 ? 10 : 0) + F(pd([[x + hw * 0.35, top - 2], [x + hw + 2, top - 2], [x + hw + 2, y + 2], [x + hw * 0.35, y + 2]], true), dk(st, 0.2), 0.75), sw);
+    if (!o.noWin) { out += P(archD(x - 2.4, top + h * 0.18, 4.8, 9), '#2a3656', sw * 0.6); if (h > 56) out += P(archD(x - 2.4, top + h * 0.5, 4.8, 9), '#2a3656', sw * 0.6); }
+    out += R(x - hw - 2.5, top - 4, w + 5, 5, c.cel(dk(st, 0.05)), sw * 0.8);
+    var rb = top - 3, tip = rb - rh, rw = hw + 5, tl = '';
+    for (var i = 1; i < 4; i++) { var ty = rb - rh * i / 4, tw = rw * (1 - i / 4); tl += 'M' + pt([x - tw, ty]) + 'L' + pt([x + tw, ty]); }
+    out += body(c, pd([[x - rw, rb], [x, tip], [x + rw, rb]], true), rf, F(pd([[x + 1, tip - 2], [x + rw + 3, rb + 2], [x + 1, rb + 2]], true), dk(rf, 0.3), 0.75) + L(tl, dk(rf, 0.35), 0.9, 0.8), sw);
+    var fin = 'M' + pt([x, tip]) + 'L' + pt([x, tip - 8]);
+    return out + L(fin, OL, 2.6) + L(fin, SW_GOLD, 1.1) + C(x, tip - 8.5, 1.8, SW_GOLD, 0.9);
+  }
+  // Stormwind Keep: long hall with merlons, three central towers rising behind it, two corner towers
+  function swKeep(c, x, y, o) {
+    o = o || {};
+    var st = o.stone || '#dedbd2', q = { stone: st, roof: o.roof || '#4a6ebc', sw: 1.5 }, out = '';
+    out += swTower(c, x - 30, y - 30, 16, 50, 34, q) + swTower(c, x + 30, y - 30, 16, 50, 34, q) + swTower(c, x, y - 40, 24, 60, 48, q);
+    var win = '';
+    for (var i = -3; i <= 3; i++) if (i) win += P(archD(x + i * 12 - 3, y - 36, 6, 14), '#2a3656', 1.1);
+    out += body(c, pd([[x - 50, y], [x - 50, y - 44], [x + 50, y - 44], [x + 50, y]], true), st, courses(x - 50, x + 50, y - 44, y, 8, dk(st, 0.2), 0.7, 0.6, 12) + F(pd([[x + 16, y - 46], [x + 52, y - 46], [x + 52, y + 2], [x + 16, y + 2]], true), dk(st, 0.18), 0.7), 1.5);
+    for (var m = 0; m < 11; m++) out += R(x - 50 + m * 9.5, y - 49, 5, 6, c.cel(st), 1.1);
+    out += win + swHangBanner(c, x, y - 44, 10, 26, 1.2);
+    return out + swTower(c, x - 58, y, 14, 48, 22, q) + swTower(c, x + 58, y, 14, 48, 22, q);
+  }
+  // Cathedral of Light: gabled facade with a rose window, lean-to aisles, a tall spire behind
+  function swCathedral(c, x, y, o) {
+    o = o || {};
+    var st = o.stone || '#e4e1d8', rf = o.roof || '#4a6ebc', out = '';
+    out += swTower(c, x, y - 60, 16, 44, 72, { stone: st, roof: rf, sw: 1.5 });
+    [-1, 1].forEach(function (k) {
+      var x0 = x + k * 16, x1 = x + k * 38, lo = Math.min(x0, x1), hi = Math.max(x0, x1);
+      out += body(c, pd([[x0, y], [x0, y - 42], [x1, y - 34], [x1, y]], true), st, courses(lo, hi, y - 42, y, 8, dk(st, 0.2), 0.7, 0.6) + (k > 0 ? F(pd([[x0, y - 44], [x1 + 2, y - 44], [x1 + 2, y + 2], [x0, y + 2]], true), dk(st, 0.18), 0.7) : ''), 1.5);
+      out += P(pd([[x0, y - 40], [x0, y - 52], [x1 + k * 3, y - 36], [x1 + k * 3, y - 32]], true), c.cel(rf), 1.5);
+      out += P(archD(x + k * 27 - 3, y - 28, 6, 16), '#3a5aa0', 1.1);
+    });
+    out += body(c, pd([[x - 18, y], [x - 18, y - 62], [x, y - 86], [x + 18, y - 62], [x + 18, y]], true), st, courses(x - 18, x + 18, y - 86, y, 8, dk(st, 0.2), 0.7, 0.6, 9) + F(pd([[x + 6, y - 90], [x + 20, y - 90], [x + 20, y + 2], [x + 6, y + 2]], true), dk(st, 0.16), 0.7), 1.6);
+    var sp = '';
+    for (var i = 0; i < 8; i++) { var a = i * PI / 4; sp += 'M' + pt([x, y - 52]) + 'L' + pt([x + Math.cos(a) * 9, y - 52 + Math.sin(a) * 9]); }
+    out += C(x, y - 52, 11, c.cel(dk(st, 0.08)), 1.4) + C(x, y - 52, 9, c.lg([[0, '#a8d8ff'], [0.5, '#4a7ad0'], [1, '#b04a6a']]), 1.2) + L(sp, dk(st, 0.25), 1.2) + C(x, y - 52, 2.4, SW_GOLD, 0.8);
+    out += P(archD(x - 8, y - 26, 16, 26), c.cel('#6a4428'), 1.6) + L('M' + pt([x, y - 18]) + 'L' + pt([x, y]), '#3a2414', 1.1);
+    [-18, 18].forEach(function (dx) { out += P(pd([[x + dx - 3, y - 60], [x + dx, y - 78], [x + dx + 3, y - 60]], true), c.cel(st), 1.2) + C(x + dx, y - 79, 1.4, SW_GOLD, 0.6); });
+    return out;
+  }
+  // far rooftops: pale walls with blue gables, overlapping left to right
+  function swRoofline(c, seed, x0, x1, base, s) {
+    var r = rng(seed), o = '', x = x0, st = '#e2ded6', rf = '#5a7cc4';
+    while (x < x1) {
+      var w = (13 + r() * 10) * s, h = (10 + r() * 12) * s, rh = (9 + r() * 9) * s, cx = x + w / 2, top = base - h;
+      o += P(pd([[x, base], [x, top], [x + w, top], [x + w, base]], true), c.cel(st), 1.1) + R(cx - 1.5 * s, top + h * 0.3, 3 * s, 4 * s, '#3a4a6a');
+      o += P(pd([[x - 2 * s, top + 1], [cx, top - rh], [x + w + 2 * s, top + 1]], true), c.cel(rf), 1.1);
+      x += w * (0.7 + r() * 0.3);
+    }
+    return o;
+  }
+  // hanging shop sign on an iron bracket; kind = mug | anvil | potion | bread | sword (a picture, never lettering)
+  function swSign(c, x, y, kind, flip) {
+    var k = flip ? -1 : 1, bx = x + k * 11, o = '', g = SW_GOLD, sy = y + 9;
+    o += limb('M' + pt([x, y]) + 'L' + pt([x + k * 19, y]), SWI, 1.4) + L('M' + pt([x, y + 8]) + 'L' + pt([x + k * 10, y]), SWI, 1.3);
+    o += L('M' + pt([bx - 5, y]) + 'L' + pt([bx - 5, y + 3]) + 'M' + pt([bx + 5, y]) + 'L' + pt([bx + 5, y + 3]), OL, 1);
+    o += R(bx - 8, y + 3, 16, 13, c.cel('#a8743e'), 1.4, 1.5) + R(bx - 6, y + 5, 12, 9, '#3a2a1e');
+    if (kind === 'mug') o += R(bx - 3, sy - 2, 5, 6, g, 0.7) + L('M' + pt([bx + 2, sy - 1]) + 'q3,0 3,2 q0,2 -3,2', g, 1) + E(bx - 0.5, sy - 2.4, 3, 1.2, '#fff4d8');
+    else if (kind === 'anvil') o += P(pd([[bx - 5, sy - 2], [bx + 5, sy - 2], [bx + 3, sy], [bx + 1, sy], [bx + 2, sy + 3], [bx - 3, sy + 3], [bx - 2, sy], [bx - 3, sy]], true), g, 0.6);
+    else if (kind === 'potion') o += C(bx, sy + 1, 3, '#c04ad0', 0.7) + R(bx - 1, sy - 4, 2, 3, g, 0.5);
+    else if (kind === 'bread') o += E(bx, sy, 5, 2.8, '#e0a850', 0.7) + L('M' + pt([bx - 2, sy - 2]) + 'l1,3 M' + pt([bx + 1, sy - 2]) + 'l1,3', '#8a5a2a', 0.8);
+    else o += L('M' + pt([bx - 4, sy + 4]) + 'L' + pt([bx + 4, sy - 4]), '#e0e4ea', 1.4) + L('M' + pt([bx - 4, sy + 1]) + 'L' + pt([bx - 1, sy + 4]), g, 1.2);
+    return o;
+  }
+  // city house / shop: white stone ground floor, half-timbered upper storey, steep blue slate roof
+  function swHouse(c, x, y, o) {
+    o = o || {};
+    var w = o.w || 34, h1 = o.h1 || 30, h2 = o.h2 || 26, rh = o.rh || 38, st = o.stone || SWS, pl = o.wall || SWP, rf = o.roof || SWR, out = '';
+    var eave = y - h1 - h2, ow = w + 4, rw = ow + 8, rt = eave - rh;
+    out += E(x, y + 2, w + 14, 5, '#000', 0, 0.2);
+    if (o.chimney) out += body(c, pd([[x + w * 0.35, eave - rh * 0.2], [x + w * 0.35, rt + rh * 0.12], [x + w * 0.35 + 10, rt + rh * 0.12], [x + w * 0.35 + 10, eave - rh * 0.1]], true), '#c4bcaa', R(x + w * 0.35 - 2, rt + rh * 0.12 - 1, 14, 4, dk('#c4bcaa', 0.2)), 1.6);
+    // stone ground floor
+    out += body(c, pd([[x - w, y], [x - w, y - h1], [x + w, y - h1], [x + w, y]], true), st, courses(x - w, x + w, y - h1, y, h1 / 3, dk(st, 0.22), 0.9, 0.7, 12) + F(pd([[x + w * 0.5, y - h1 - 2], [x + w + 2, y - h1 - 2], [x + w + 2, y + 2], [x + w * 0.5, y + 2]], true), dk(st, 0.2), 0.75), 2);
+    // timber upper storey, overhanging
+    var nb = o.bays || 3, bm = 'M' + pt([x - ow, y - h1]) + 'L' + pt([x + ow, y - h1]) + 'M' + pt([x - ow, eave]) + 'L' + pt([x + ow, eave]), bw = (2 * ow - 4) / nb;
+    for (var b = 0; b <= nb; b++) bm += 'M' + pt([x - ow + 2 + bw * b, eave]) + 'L' + pt([x - ow + 2 + bw * b, y - h1]);
+    bm += 'M' + pt([x - ow + 2, y - h1]) + 'L' + pt([x - ow + 2 + bw, eave]) + 'M' + pt([x + ow - 2, y - h1]) + 'L' + pt([x + ow - 2 - bw, eave]);
+    out += body(c, pd([[x - ow, y - h1], [x - ow, eave], [x + ow, eave], [x + ow, y - h1]], true), pl, F(pd([[x + w * 0.5, eave - 2], [x + ow + 2, eave - 2], [x + ow + 2, y - h1 + 2], [x + w * 0.5, y - h1 + 2]], true), dk(pl, 0.22), 0.75) + L(bm, SWB, 2.4), 2);
+    var win = o.lit ? '#ffd98a' : '#3a4e78';
+    for (var q = 1; q < nb - 1 || (nb < 3 && q < nb); q++) {
+      var wx = x - ow + 2 + bw * q + bw / 2;
+      if (nb < 3) wx = x;
+      out += R(wx - 5, eave + h2 * 0.2, 10, h2 * 0.5, win, 1.5) + L('M' + pt([wx, eave + h2 * 0.2]) + 'l0,' + n(h2 * 0.5), SWB, 1.1) + R(wx - 7, eave + h2 * 0.7, 14, 4, c.cel('#8a5a32'), 1.2) + C(wx - 3, eave + h2 * 0.7 - 0.5, 2, '#e05a6a', 0.7) + C(wx + 2, eave + h2 * 0.7 - 1, 2, '#f0c848', 0.7);
+      if (nb < 3) break;
+    }
+    // roof: front gable or side slope with a dormer
+    var rd, rs, tl = '';
+    if (o.gable) { rd = pd([[x - rw, eave + 3], [x, rt], [x + rw, eave + 3]], true); rs = F(pd([[x + 1, rt - 2], [x + rw + 3, eave + 5], [x + 1, eave + 5]], true), dk(rf, 0.3), 0.8); }
+    else { rd = pd([[x - rw, eave + 3], [x - rw * 0.55, rt], [x + rw * 0.55, rt], [x + rw, eave + 3]], true); rs = F(pd([[x + rw * 0.25, rt - 2], [x + rw * 0.55 + 1, rt - 2], [x + rw + 3, eave + 5], [x + rw * 0.45, eave + 5]], true), dk(rf, 0.3), 0.8); }
+    for (var t = eave - 3, row = 0; t > rt + 2; t -= 6, row++) { tl += 'M' + pt([x - rw - 2, t]) + 'L' + pt([x + rw + 2, t]); for (var tx = x - rw + (row % 2 ? 3 : 0); tx < x + rw; tx += 7) tl += 'M' + pt([tx, t]) + 'l0,6'; }
+    out += body(c, rd, rf, L(tl, dk(rf, 0.32), 0.8, 0.7) + rs, 2.2);
+    if (o.gable) out += P(archD(x - 4, eave - rh * 0.5, 8, 11), win, 1.3);
+    else out += P(pd([[x - 8, eave - rh * 0.25], [x - 8, eave - rh * 0.55], [x, eave - rh * 0.8], [x + 8, eave - rh * 0.55], [x + 8, eave - rh * 0.25]], true), c.cel(pl), 1.6) + R(x - 4, eave - rh * 0.55, 8, 7, win, 1.1) + P(pd([[x - 11, eave - rh * 0.5], [x, eave - rh * 0.86], [x + 11, eave - rh * 0.5]], true), c.cel(rf), 1.4);
+    // ground floor: arched door + shop window
+    var dx = x + (o.doorX == null ? -w * 0.45 : o.doorX), sx = x + (o.doorX == null ? w * 0.3 : -o.doorX * 0.7);
+    out += P(archD(dx - 7, y - 23, 14, 23), c.cel('#6a4428'), 1.8) + L('M' + pt([dx - 7, y - 9]) + 'l14,0 M' + pt([dx - 7, y - 16]) + 'l14,0', SWI, 1.1) + C(dx + 4, y - 11, 1.1, SW_GOLD);
+    out += P(archD(sx - 11, y - 23, 22, 17), o.lit === 2 ? '#ffd98a' : '#e8c878', 1.6) + L('M' + pt([sx, y - 23]) + 'l0,17 M' + pt([sx - 11, y - 12]) + 'l22,0', SWB, 1.2) + R(sx - 13, y - 7, 26, 3, c.cel(dk(st, 0.1)), 1.2);
+    if (o.awning) out += P(pd([[sx - 15, y - 26], [sx + 15, y - 26], [sx + 17, y - 19], [sx - 17, y - 19]], true), c.cel(o.awning), 1.4) + L('M' + pt([sx - 7, y - 26]) + 'l-1,7 M' + pt([sx, y - 26]) + 'l0,7 M' + pt([sx + 7, y - 26]) + 'l1,7', lt(o.awning, 0.6), 2.2, 0.9);
+    if (o.sign) out += swSign(c, x + (o.flip ? -ow : ow), y - h1 - 5, o.sign, o.flip);
+    if (o.banner != null) out += swHangBanner(c, x + o.banner, eave + 2, 11, h2 + 12, 1.5);
+    return out;
+  }
+  // market stall: counter with goods, two posts, striped scalloped awning
+  function swStall(c, x, y, o) {
+    o = o || {};
+    var c1 = o.c1 || SW_BLUE, c2 = o.c2 || '#f4ecd8', w = 26, out = E(x, y + 2, 32, 4, '#000', 0, 0.22), post = '#7a5030';
+    out += limb('M' + pt([x - w + 4, y - 18]) + 'L' + pt([x - w + 4, y - 55]) + 'M' + pt([x + w - 4, y - 18]) + 'L' + pt([x + w - 4, y - 55]), dk(post, 0.25), 2);
+    // goods on the counter
+    var g = '', r = rng(o.seed || 7);
+    if (o.goods === 'cloth') [[-15, '#b82d31'], [-5, '#3a8a5a'], [5, '#e8c048'], [15, '#6a4ab0']].forEach(function (b) { g += R(x + b[0] - 4.5, y - 29, 9, 9, c.cel(b[1]), 1.2) + E(x + b[0], y - 29, 4.5, 1.6, lt(b[1], 0.3), 1); });
+    else if (o.goods === 'bottles') for (var i = 0; i < 7; i++) { var bx = x - 18 + i * 6, col = ['#c04ad0', '#3aa0d8', '#e05a3a', '#5ac05a'][i % 4]; g += R(bx - 2.2, y - 26, 4.4, 6, col, 1) + R(bx - 1, y - 30, 2, 4, '#e8e0cc', 0.8); }
+    else for (var j = 0; j < 12; j++) { var fx = x - 19 + (j % 6) * 7.6, fy = y - 22 - Math.floor(j / 6) * 5 - (j % 6 > 1 && j % 6 < 4 ? 1 : 0), fc = ['#d84a3a', '#e8a030', '#8ac040', '#e8d050'][Math.floor(r() * 4)]; g += C(fx, fy, 3.2, c.cel(fc), 1); }
+    out += g;
+    out += body(c, pd([[x - w, y], [x - w, y - 18], [x + w, y - 18], [x + w, y]], true), '#9a6a3c', L('M' + pt([x - w, y - 9]) + 'L' + pt([x + w, y - 9]), dk('#9a6a3c', 0.35), 1.1) + F(pd([[x + w * 0.4, y - 20], [x + w + 2, y - 20], [x + w + 2, y + 2], [x + w * 0.4, y + 2]], true), dk('#9a6a3c', 0.3), 0.7), 1.8);
+    var sc = 'M' + pt([x - w + 1, y - 18]) + 'L' + pt([x + w - 1, y - 18]) + 'L' + pt([x + w - 1, y - 12]);
+    for (var k = 0; k < 5; k++) { var ax = x + w - 1 - k * (2 * w - 2) / 5; sc += 'Q' + pt([ax - (w - 1) / 5, y - 6]) + ' ' + pt([ax - (2 * w - 2) / 5, y - 12]); }
+    out += P(sc + 'Z', c.cel(c1), 1.3) + R(x - w - 2, y - 21, 2 * w + 4, 3.5, c.cel('#c89a5c'), 1.4);
+    out += limb('M' + pt([x - w, y]) + 'L' + pt([x - w, y - 47]) + 'M' + pt([x + w, y]) + 'L' + pt([x + w, y - 47]), post, 2.6);
+    // striped awning with a scalloped front edge
+    var ns = 6, aw = pd([[x - w - 6, y - 45], [x - w + 2, y - 60], [x + w - 2, y - 60], [x + w + 6, y - 45]], true), st = '', sl = '';
+    for (var s = 0; s < ns; s++) {
+      var t0 = s / ns, t1 = (s + 1) / ns, tx0 = x - w + 2 + (2 * w - 4) * t0, tx1 = x - w + 2 + (2 * w - 4) * t1, bx0 = x - w - 6 + (2 * w + 12) * t0, bx1 = x - w - 6 + (2 * w + 12) * t1;
+      if (s % 2) st += F(pd([[bx0, y - 44], [tx0, y - 61], [tx1, y - 61], [bx1, y - 44]], true), c1);
+      sl += P('M' + pt([bx0, y - 45]) + 'Q' + pt([(bx0 + bx1) / 2, y - 37]) + ' ' + pt([bx1, y - 45]) + 'Z', s % 2 ? c.cel(c1) : c.cel(c2), 1.3);
+    }
+    out += body(c, aw, c2, st + F(pd([[x - w - 8, y - 50], [x + w + 8, y - 50], [x + w + 8, y - 43], [x - w - 8, y - 43]], true), '#000', 0.12) + F(pd([[x + w * 0.5, y - 62], [x + w + 8, y - 62], [x + w + 8, y - 43], [x + w * 0.6, y - 43]], true), '#000', 0.14), 1.8);
+    return out + sl;
+  }
+  // iron street lamp
+  function swLamp(c, x, y, h) {
+    var top = y - h, o = E(x, y + 1, 7, 2, '#000', 0, 0.25);
+    o += P(pd([[x - 5, y], [x - 3, y - 6], [x + 3, y - 6], [x + 5, y]], true), c.cel('#3a3a44'), 1.4) + limb('M' + pt([x, y - 6]) + 'L' + pt([x, top + 10]), '#3a3a46', 2.2);
+    o += C(x, top + 4, 14, glow(c, '#ffd070', 0.45)) + P(pd([[x - 5, top + 10], [x - 6, top], [x + 6, top], [x + 5, top + 10]], true), '#ffe08a', 1.4) + L('M' + pt([x, top]) + 'L' + pt([x, top + 10]), '#3a3a46', 1);
+    return o + P(pd([[x - 7.5, top], [x, top - 6], [x + 7.5, top]], true), c.cel('#3a3a44'), 1.4) + C(x, top - 7, 1.5, SW_GOLD, 0.6) + R(x - 5.5, top + 9, 11, 2.5, '#3a3a44', 1);
+  }
+  // canal band: far coping, water with ripples, near coping
+  function swCanal(c, y0, y1, seed) {
+    var o = R(-2, y0 - 3, 404, 4, c.cel('#d8d0bc'), 1.2) + R(-2, y0, 404, y1 - y0, c.lg([[0, '#86b2d4'], [1, '#4a78a8']])), r = rng(seed || 3), d = '';
+    for (var i = 0; i < 22; i++) { var yy = y0 + 2 + r() * (y1 - y0 - 3), xx = r() * 400, w = 6 + r() * 8; d += 'M' + pt([xx, yy]) + 'q' + n(w / 2) + ',-1.2 ' + n(w) + ',0'; }
+    return o + L(d, '#e8f4fa', 0.9, 0.6) + R(-2, y1 - 1, 404, 4, c.cel('#e0d8c4'), 1.3);
+  }
+  // paved street: flagstone courses widening toward the viewer, joints converging on (vx, vy)
+  function swStreet(c, y0, vx, vy, top, bot) {
+    var o = R(-2, y0, 404, 242 - y0, c.lg([[0, top || '#dcd3be'], [1, bot || '#bfb398']])), d = '', f = (y0 - vy) / (240 - vy);
+    for (var k = -12; k <= 12; k++) d += 'M' + pt([vx + k * 40 * f, y0]) + 'L' + pt([vx + k * 40, 240]);
+    for (var i = 1; i <= 9; i++) { var y = y0 + (240 - y0) * Math.pow(i / 9, 1.7); d += 'M-2,' + n(y) + 'L402,' + n(y); }
+    return o + L(d, '#948870', 0.9, 0.45);
+  }
+  // column: stepped base, fluted shaft, capital with a gold ring
+  function swPillar(c, x, top, base, w, col) {
+    col = col || '#f2eee4';
+    var hw = w / 2, fl = '', o = E(x, base + 1, w * 0.8, 3, '#000', 0, 0.25);
+    for (var i = 1; i < 4; i++) fl += 'M' + pt([x - hw + w * i / 4, top + 14]) + 'L' + pt([x - hw + w * i / 4, base - 12]);
+    o += body(c, pd([[x - hw, base - 10], [x - hw, top + 12], [x + hw, top + 12], [x + hw, base - 10]], true), col, L(fl, dk(col, 0.22), 1.1, 0.8) + F(pd([[x + hw * 0.3, top], [x + hw + 2, top], [x + hw + 2, base], [x + hw * 0.3, base]], true), dk(col, 0.2), 0.7), 2);
+    o += R(x - hw - 5, base - 10, w + 10, 5, c.cel(dk(col, 0.04)), 1.8) + R(x - hw - 8, base - 5, w + 16, 6, c.cel(dk(col, 0.1)), 1.8);
+    o += R(x - hw - 2, top + 9, w + 4, 4, c.cel(SW_GOLD), 1.4) + R(x - hw - 7, top + 2, w + 14, 7, c.cel(dk(col, 0.04)), 1.8) + R(x - hw - 10, top - 3, w + 20, 5, c.cel(dk(col, 0.1)), 1.8);
+    return o;
+  }
+  // round vault door in a stone ring, gold bolts and a spoked wheel
+  function vaultDoor(c, x, y, r) {
+    var o = C(x, y, r + 8, c.cel('#a49c8c'), 2.2), bolts = '', sp = '', knobs = '';
+    o += R(x - r - 13, y - r * 0.6, 13, 13, c.cel('#5a5c66'), 1.6) + R(x - r - 13, y + r * 0.6 - 13, 13, 13, c.cel('#5a5c66'), 1.6);
+    for (var i = 0; i < 16; i++) { var a = i * PI / 8; bolts += C(x + Math.cos(a) * r * 0.9, y + Math.sin(a) * r * 0.9, 1.7, '#d8b04a', 0.8); }
+    for (var j = 0; j < 6; j++) { var b = j * PI / 3 + PI / 6, p = [x + Math.cos(b) * r * 0.5, y + Math.sin(b) * r * 0.5]; sp += 'M' + pt([x, y]) + 'L' + pt(p); knobs += C(p[0], p[1], 2.8, c.cel(SW_GOLD), 1.2); }
+    o += body(c, circD(x, y, r), '#9ea4ae', F('M' + pt([x + r * 0.2, y - r * 1.1]) + 'L' + pt([x + r * 1.1, y - r * 1.1]) + 'L' + pt([x + r * 1.1, y + r * 1.1]) + 'L' + pt([x - r * 0.6, y + r * 1.1]) + 'Z', '#3a404a', 0.25) + L(circD(x, y, r * 0.8), '#6a707a', 1.6) + bolts, 2.4);
+    o += L(circD(x, y, r * 0.66), SW_GOLD, 2.4) + L(circD(x, y, r * 0.66), OL, 0.6, 0.5) + L(sp, OL, 5) + L(sp, SW_GOLD, 2.6) + knobs + C(x, y, r * 0.26, c.cel(SW_GOLD), 1.6) + lionCrest(c, x, y, r * 0.18);
+    return o;
+  }
+  // stone hero statue on a stepped plinth; kind 0 = knight with a planted sword, 1 = robed mage with a staff
+  function swStatue(c, x, y, kind, flip) {
+    var st = SWST, pl = '#bcb4a4', o = E(x, y + 1, 30, 4, '#000', 0, 0.25), f = '', b = y - 40, sh = dk(st, 0.18);
+    o += body(c, pd([[x - 24, y], [x - 24, y - 10], [x + 24, y - 10], [x + 24, y]], true), pl, F(pd([[x + 8, y - 12], [x + 26, y - 12], [x + 26, y + 2], [x + 8, y + 2]], true), dk(pl, 0.25), 0.7), 1.8);
+    o += body(c, pd([[x - 18, y - 10], [x - 18, y - 34], [x + 18, y - 34], [x + 18, y - 10]], true), pl, R(x - 12, y - 30, 24, 16, 'none', 1) + F(pd([[x + 6, y - 36], [x + 20, y - 36], [x + 20, y - 8], [x + 6, y - 8]], true), dk(pl, 0.25), 0.7), 1.8);
+    o += R(x - 22, y - 40, 44, 6, c.cel(lt(pl, 0.1)), 1.6);
+    if (kind === 1) {
+      f += limb('M' + pt([x + 17, b - 1]) + 'L' + pt([x + 17, b - 104]), dk(st, 0.08), 2.6) + C(x + 17, b - 108, 5, c.cel(st), 1.6) + L('M' + pt([x + 12, b - 104]) + 'q5,-12 10,0', OL, 1.4);
+      f += body(c, 'M' + pt([x - 12, b - 74]) + 'C' + pt([x - 16, b - 50]) + ' ' + pt([x - 20, b - 20]) + ' ' + pt([x - 20, b]) + 'L' + pt([x + 20, b]) + 'C' + pt([x + 20, b - 20]) + ' ' + pt([x + 16, b - 50]) + ' ' + pt([x + 12, b - 74]) + 'Z', st,
+        L('M' + pt([x, b - 50]) + 'L' + pt([x - 1, b]) + 'M' + pt([x - 8, b - 40]) + 'Q' + pt([x - 10, b - 20]) + ' ' + pt([x - 12, b]) + 'M' + pt([x - 13, b - 48]) + 'L' + pt([x + 13, b - 48]), sh, 1.2) + F(pd([[x + 5, b - 76], [x + 22, b - 76], [x + 22, b + 2], [x + 7, b + 2]], true), sh, 0.7), 1.8);
+      f += tube([[x - 12, b - 70], [x - 16, b - 56], [x - 13, b - 44]], 5.5, st) + tube([[x + 12, b - 70], [x + 16, b - 62], [x + 17, b - 56]], 5.5, st) + C(x - 13, b - 43, 3.2, st, 1.5) + C(x + 17, b - 56, 3.2, st, 1.5);
+      f += P('M' + pt([x - 9, b - 76]) + 'C' + pt([x - 11, b - 92]) + ' ' + pt([x + 11, b - 92]) + ' ' + pt([x + 9, b - 76]) + 'Z', c.cel(dk(st, 0.08)), 1.6) + E(x, b - 82, 5, 6, c.cel(st), 1.4) + L('M' + pt([x - 2, b - 80]) + 'q2,6 4,0', sh, 1);
+    } else {
+      f += body(c, 'M' + pt([x - 14, b - 74]) + 'C' + pt([x - 22, b - 44]) + ' ' + pt([x - 24, b - 12]) + ' ' + pt([x - 21, b]) + 'L' + pt([x + 21, b]) + 'C' + pt([x + 24, b - 12]) + ' ' + pt([x + 22, b - 44]) + ' ' + pt([x + 14, b - 74]) + 'Z', dk(st, 0.12), '', 1.8);
+      f += tube([[x - 7, b - 34], [x - 7.5, b - 5]], 9.5, st) + tube([[x + 7, b - 34], [x + 7.5, b - 5]], 9.5, st) + P(pd([[x - 14, b], [x - 13, b - 7], [x - 2, b - 7], [x - 1, b]], true), c.cel(st), 1.4) + P(pd([[x + 1, b], [x + 2, b - 7], [x + 13, b - 7], [x + 14, b]], true), c.cel(st), 1.4) + L('M' + pt([x - 11, b - 20]) + 'l7,0 M' + pt([x + 4, b - 20]) + 'l7,0', sh, 1.2);
+      f += body(c, pd([[x - 13, b - 50], [x + 13, b - 50], [x + 16, b - 22], [x - 16, b - 22]], true), st, L('M' + pt([x, b - 50]) + 'L' + pt([x, b - 22]), sh, 1.2) + F(pd([[x + 5, b - 52], [x + 18, b - 52], [x + 18, b - 20], [x + 6, b - 20]], true), sh, 0.7), 1.8);
+      f += body(c, 'M' + pt([x - 13, b - 50]) + 'C' + pt([x - 15, b - 62]) + ' ' + pt([x - 14, b - 72]) + ' ' + pt([x - 9, b - 76]) + 'L' + pt([x + 9, b - 76]) + 'C' + pt([x + 14, b - 72]) + ' ' + pt([x + 15, b - 62]) + ' ' + pt([x + 13, b - 50]) + 'Z', st, L('M' + pt([x - 8, b - 66]) + 'Q' + pt([x, b - 60]) + ' ' + pt([x + 8, b - 66]), sh, 1.2) + F(pd([[x + 4, b - 78], [x + 16, b - 78], [x + 16, b - 48], [x + 5, b - 48]], true), sh, 0.7), 1.8);
+      f += R(x - 14, b - 53, 28, 5, c.cel(dk(st, 0.08)), 1.4);
+      // sword planted point-down, hands on the pommel
+      f += P(pd([[x - 2.6, b - 48], [x + 2.6, b - 48], [x + 2, b - 6], [x, b - 1], [x - 2, b - 6]], true), c.cel(lt(st, 0.1)), 1.4) + R(x - 10, b - 52, 20, 4, c.cel(st), 1.4) + R(x - 1.8, b - 60, 3.6, 8, st, 1.2);
+      f += tube([[x - 16, b - 70], [x - 14, b - 60], [x - 4, b - 58]], 6, st) + tube([[x + 16, b - 70], [x + 14, b - 60], [x + 4, b - 58]], 6, st) + C(x - 3, b - 58, 3.6, c.cel(st), 1.4) + C(x + 3, b - 58, 3.6, c.cel(st), 1.4) + C(x, b - 63, 2.4, c.cel(st), 1.2);
+      f += E(x - 15, b - 72, 8, 6, c.cel(st), 1.6) + E(x + 15, b - 72, 8, 6, c.cel(st), 1.6);
+      f += R(x - 3, b - 80, 6, 5, st, 1.2) + P('M' + pt([x - 7, b - 78]) + 'C' + pt([x - 8, b - 90]) + ' ' + pt([x + 8, b - 90]) + ' ' + pt([x + 7, b - 78]) + 'Z', c.cel(st), 1.5) + L('M' + pt([x - 5, b - 84]) + 'L' + pt([x + 5, b - 84]), OL, 1.2) + limb('M' + pt([x, b - 88]) + 'Q' + pt([x + 4, b - 96]) + ' ' + pt([x + 10, b - 94]), st, 2.4);
+    }
+    return o + (flip ? G(f, 'matrix(-1,0,0,1,' + n(2 * x) + ',0)') : f);
+  }
+  // Elwynn oak: trunk and a merged, outlined canopy with cel shading
+  function oak(c, x, y, s, col) {
+    col = col || '#4a8a3a';
+    var blobs = [[-26, -58, 22], [0, -80, 28], [26, -60, 22], [-12, -42, 18], [14, -42, 18]], outl = '', fill = '', cd = '', dark = '', lite = '';
+    blobs.forEach(function (b) {
+      var bx = x + b[0] * s, by = y + b[1] * s, r = b[2] * s;
+      outl += C(bx, by, r + 2 * s, OL); fill += C(bx, by, r, col); cd += circD(bx, by, r);
+      dark += C(bx + 6 * s, by + 7 * s, r * 0.8, dk(col, 0.25)); lite += C(bx - 7 * s, by - 8 * s, r * 0.42, lt(col, 0.22));
+    });
+    var o = E(x, y + 1, 30 * s, 5 * s, '#000', 0, 0.22);
+    o += body(c, pd([[x - 7 * s, y], [x - 5 * s, y - 50 * s], [x + 5 * s, y - 50 * s], [x + 8 * s, y]], true), '#6a4a2e', F(pd([[x + 1 * s, y - 52 * s], [x + 9 * s, y - 52 * s], [x + 9 * s, y + 2], [x + 2 * s, y + 2]], true), '#3e2a1a', 0.6), 1.8 * s);
+    return o + outl + fill + '<g clip-path="url(#' + c.clip(cd) + ')">' + dark + lite + '</g>';
+  }
+  function bush(c, x, y, s, col) {
+    col = col || '#4e8a3a';
+    var blobs = [[-12, -8, 10], [0, -13, 12], [12, -8, 10]], outl = '', fill = '', cd = '', dark = '';
+    blobs.forEach(function (b) { var bx = x + b[0] * s, by = y + b[1] * s, r = b[2] * s; outl += C(bx, by, r + 1.6 * s, OL); fill += C(bx, by, r, col); cd += circD(bx, by, r); dark += C(bx + 4 * s, by + 5 * s, r * 0.8, dk(col, 0.25)); });
+    return E(x, y + 1, 22 * s, 3 * s, '#000', 0, 0.2) + outl + fill + '<g clip-path="url(#' + c.clip(cd) + ')">' + dark + '</g>';
+  }
+  // city wall with merlons, masonry and a damp line at the foot
+  function swWall(c, x0, x1, top, base) {
+    var st = '#e2dccd', o = body(c, pd([[x0, base], [x0, top], [x1, top], [x1, base]], true), st, courses(x0, x1, top, base, 9, dk(st, 0.2), 0.8, 0.6, 16) + R(x0, base - 7, x1 - x0, 7, dk(st, 0.2), 0) + R(x0, top, x1 - x0, 4, lt(st, 0.3)), 1.8);
+    for (var x = x0 + 2; x < x1 - 4; x += 13) o += R(x, top - 7, 7, 8, c.cel(st), 1.4);
+    return o;
+  }
+  // the great gatehouse (unit scale, base at y): two tall towers, gate block, open arch with a raised portcullis
+  function swGatehouse(c, x, y) {
+    var st = SWS, o = '', q = { stone: st, sw: 2 };
+    o += swTower(c, x - 54, y, 36, 96, 40, q) + swTower(c, x + 54, y, 36, 96, 40, q);
+    o += body(c, pd([[x - 38, y], [x - 38, y - 96], [x + 38, y - 96], [x + 38, y]], true), st, courses(x - 38, x + 38, y - 96, y, 9, dk(st, 0.2), 0.8, 0.6, 14) + F(pd([[x + 16, y - 98], [x + 40, y - 98], [x + 40, y + 2], [x + 16, y + 2]], true), dk(st, 0.16), 0.6), 2);
+    for (var m = 0; m < 6; m++) o += R(x - 38 + m * 13.4, y - 104, 8, 9, c.cel(st), 1.5);
+    // arch surround with voussoirs, then the bright city beyond
+    var vs = '';
+    for (var i = 0; i <= 8; i++) { var a = PI + i * PI / 8; vs += 'M' + pt([x + Math.cos(a) * 22, y - 50 + Math.sin(a) * 22]) + 'L' + pt([x + Math.cos(a) * 29, y - 50 + Math.sin(a) * 29]); }
+    o += P(archD(x - 29, y - 79, 58, 79), c.cel(dk(st, 0.06)), 2) + L(vs, dk(st, 0.3), 1.1);
+    var op = archD(x - 22, y - 72, 44, 72), inner = R(x - 24, y - 74, 48, 76, c.lg([[0, '#fff6de'], [0.7, '#eadcbc'], [1, '#cdbf9e']]));
+    inner += swRoofline(c, 211, x - 26, x + 26, y - 18, 0.8) + R(x - 24, y - 18, 48, 20, c.lg([[0, '#d8ccb0'], [1, '#bcae90']])) + swHangBanner(c, x - 12, y - 44, 7, 18, 1) + swHangBanner(c, x + 12, y - 44, 7, 18, 1);
+    var bars = '';
+    for (var b2 = -18; b2 <= 18; b2 += 6) bars += 'M' + pt([x + b2, y - 74]) + 'L' + pt([x + b2, y - 60]);
+    inner += L(bars, OL, 3.4) + L(bars, '#4a4a54', 1.6) + L('M' + pt([x - 22, y - 64]) + 'L' + pt([x + 22, y - 64]), '#4a4a54', 2.2);
+    for (var b3 = -18; b3 <= 18; b3 += 6) inner += P(pd([[x + b3 - 1.6, y - 61], [x + b3, y - 56], [x + b3 + 1.6, y - 61]], true), '#4a4a54', 0.8);
+    inner += F(pd([[x - 24, y - 74], [x + 24, y - 74], [x + 24, y - 60], [x - 24, y - 52]], true), '#000', 0.18);
+    o += '<g clip-path="url(#' + c.clip(op) + ')">' + inner + '</g>' + L(op.replace(/Z$/, ''), OL, 2);
+    // crest medallion over the arch, banners on the towers
+    o += C(x, y - 88, 8.5, c.cel(dk(st, 0.08)), 1.8) + C(x, y - 88, 6.5, SW_BLUE, 1) + lionCrest(c, x, y - 88, 5);
+    o += swHangBanner(c, x - 54, y - 88, 20, 52, 1.8) + swHangBanner(c, x + 54, y - 88, 20, 52, 1.8);
+    return o;
+  }
+
   // ============================================================
   //  SCENES
   // ============================================================
@@ -969,6 +1244,118 @@
       o += golemScrap(c, 'head', 68, 232, 0.9) + golemScrap(c, 'arm', 350, 234, 0.9);
       o += tufts(c, [[150, 236, 0.8], [276, 238, 0.8]], '#8a7a58');
       return o + F('M0,0 L400,0 L400,240 L0,240 Z', '#8a9aa8', 0.1) + vignette(c, '#e8e8e0', '#1a1410');
+    },
+    // ---- Stormwind City ----
+    stormwind: function (c) {
+      var o = swSky(c) + cloud(64, 44, 1) + cloud(212, 22, 0.75, 0.9) + cloud(250, 74, 0.5, 0.8);
+      // the cathedral spire (left) and Stormwind Keep (right) over the far rooftops
+      o += G(swCathedral(c, 96, 132), at(0.74, 96, 132)) + G(swKeep(c, 296, 132), at(0.8, 296, 132));
+      o += swRoofline(c, 201, -10, 410, 136, 1) + swHaze(c, 150);
+      // a canal crossing the far end of the street
+      o += swCanal(c, 136, 147, 203);
+      o += swStreet(c, 148, 200, 124);
+      o += P(pd([[160, 149], [160, 144], [186, 143], [186, 149]], true), c.cel('#e6dece'), 1.1) + P(pd([[214, 149], [214, 143], [240, 144], [240, 149]], true), c.cel('#e6dece'), 1.1) + L('M166,148 l0,-4 M172,148 l0,-4 M178,148 l0,-4 M222,148 l0,-4 M228,148 l0,-4 M234,148 l0,-4', '#a89e8a', 1, 0.8);
+      o += pebbles(205, 156, 238, '#aa9e84', 26, 140, 330) + pebbles(207, 160, 238, '#f2ecde', 14, 150, 320);
+      // side streets of shops, back to front
+      o += G(swHouse(c, 146, 151, { gable: 1, bays: 2, lit: 1 }), at(0.42, 146, 151)) + G(swHouse(c, 254, 151, { gable: 1, bays: 2, roof: '#34579e' }), at(0.42, 254, 151));
+      o += G(swLamp(c, 172, 156, 34), at(0.62, 172, 156)) + G(swLamp(c, 228, 156, 34), at(0.62, 228, 156));
+      o += G(swHouse(c, 104, 162, { sign: 'mug', lit: 2, chimney: 1, banner: -16 }), at(0.62, 104, 162));
+      o += G(swHouse(c, 296, 164, { gable: 1, sign: 'potion', flip: 1, awning: '#b8434a', lit: 1 }), at(0.64, 296, 164));
+      o += G(swStall(c, 138, 172, { goods: 'fruit', c1: '#c8424a', seed: 11 }), at(0.6, 138, 172));
+      o += G(swStall(c, 262, 176, { goods: 'cloth', c1: SW_BLUE }), at(0.68, 262, 176));
+      o += G(swHouse(c, 22, 184, { sign: 'anvil', chimney: 1, bays: 4, lit: 1 }), at(1.02, 22, 184));
+      o += G(swHouse(c, 382, 186, { gable: 1, sign: 'bread', flip: 1, banner: -18, lit: 2, rh: 44 }), at(1.06, 382, 186));
+      o += banner(c, 322, 196, 56, 0.9);
+      o += G(swStall(c, 352, 216, { goods: 'bottles', c1: '#6a4ab0', c2: '#f0e4c8' }), at(0.92, 352, 216));
+      // foreground props at the edges
+      o += barrel(c, 10, 212, 1.1) + crate(c, 12, 232, 1.1) + sack(c, 390, 236, 1) + crate(c, 372, 238, 1.05);
+      return o + vignette(c, '#ffffff', '#1e2230');
+    },
+    stormwind_bank: function (c) {
+      var wall0 = '#ede5d3', wall1 = '#cdc2aa', o = R(0, 0, 400, 240, c.lg([[0, wall0], [1, wall1]]));
+      o += courses(0, 400, 34, 132, 12, dk(wall1, 0.2), 0.8, 0.5, 30);
+      // vaulted ceiling with gold ribs
+      var rib = 'M-4,40 Q50,4 100,34 Q150,0 200,26 Q250,0 300,34 Q350,4 404,40';
+      o += P('M-4,-4 L404,-4 L404,40 Q350,4 300,34 Q250,0 200,26 Q150,0 100,34 Q50,4 -4,40 Z', c.lg([[0, '#7a6e5c'], [1, '#a4987f']]), 1.8) + L(rib, SW_GOLD, 2.2, 0.9) + L('M100,-4 L100,30 M300,-4 L300,30 M200,-4 L200,22', '#6a5e4c', 3);
+      // tall stained-glass windows
+      [100, 300].forEach(function (wx) {
+        o += P(archD(wx - 21, 38, 42, 94), c.cel(dk(wall1, 0.12)), 2) + P(archD(wx - 16, 44, 32, 84), c.lg([[0, '#dff2ff'], [0.55, '#7ab8ee'], [1, '#2e62b0']]), 1.6);
+        o += L('M' + wx + ',48 L' + wx + ',128 M' + (wx - 16) + ',84 L' + (wx + 16) + ',84', dk(wall1, 0.3), 2) + lionCrest(c, wx, 64, 6) + C(wx, 106, 26, glow(c, '#ffffff', 0.25));
+      });
+      // the vault: recessed arch and a round steel door
+      o += P(archD(146, 26, 108, 106), c.lg([[0, dk(wall1, 0.22)], [1, dk(wall1, 0.36)]]), 2) + courses(148, 252, 60, 132, 12, dk(wall1, 0.45), 0.8, 0.5, 24);
+      o += vaultDoor(c, 200, 84, 38);
+      // wall sconces either side of the vault
+      [134, 266].forEach(function (sx) { o += C(sx, 84, 22, glow(c, '#ffc060', 0.5)) + limb('M' + (sx - 4) + ',100 L' + sx + ',96 L' + (sx + 4) + ',100', '#4a3a2a', 1.8) + P('M' + (sx - 6) + ',94 L' + (sx + 6) + ',94 L' + (sx + 4) + ',99 L' + (sx - 4) + ',99 Z', c.cel(SW_GOLD), 1.3) + flame(c, sx, 94, 0.6); });
+      // back pillars with banners
+      o += swPillar(c, 46, 30, 136, 24) + swPillar(c, 354, 30, 136, 24);
+      o += swHangBanner(c, 46, 50, 18, 60, 1.6) + swHangBanner(c, 354, 50, 18, 60, 1.6);
+      // the long counter: marble top, dark wood front with gold-framed panels
+      o += R(44, 133, 312, 38, c.lg([[0, '#6e452a'], [1, '#48291a']]), 2);
+      for (var pi = 0; pi < 6; pi++) { var px = 52 + pi * 50.6; o += L(pd([[px, 140], [px + 44, 140], [px + 44, 165], [px, 165]], true), SW_GOLD, 1.4, 0.9); if (pi % 2) o += lionCrest(c, px + 22, 152, 5); else o += C(px + 22, 152, 3.2, SW_GOLD, 1); }
+      o += R(44, 133, 312, 3, SW_GOLD) + R(38, 126, 324, 8, c.lg([[0, '#fbf8f0'], [1, '#d6cfbf']]), 1.8) + L('M60,128 q10,2 20,0 M170,129 q12,2 24,0 M290,128 q10,2 20,0', '#b8aa98', 0.9, 0.7) + R(40, 168, 320, 5, '#3a2416', 1.4);
+      // on the counter: coin stacks, a ledger, scales, a strongbox
+      [[82, 0], [90, 1], [86, 2]].forEach(function (cs, i) { for (var k = 0; k < 3 + i; k++) o += E(cs[0] + i * 1, 125 - k * 2.2 - cs[1] * 0, 4.2, 1.6, c.cel(SW_GOLD), 0.9); });
+      o += P('M132,126 L152,126 L154,121 L134,121 Z', c.cel('#7a2a2a'), 1.3) + L('M143,121 L144,126', '#e8dcc0', 1) + L('M134,122.5 L153,122.5', '#f2e8d2', 0.8);
+      o += limb('M268,126 L268,108', '#8a6a2a', 1.4) + limb('M258,110 L278,110', '#8a6a2a', 1.4) + L('M258,110 L255,118 M258,110 L261,118 M278,110 L275,118 M278,110 L281,118', '#6a5020', 0.8) + E(258, 118, 5, 1.6, c.cel(SW_GOLD), 1) + E(278, 118, 5, 1.6, c.cel(SW_GOLD), 1);
+      o += R(302, 114, 20, 12, c.cel('#6a4428'), 1.4) + R(302, 112, 20, 4, c.cel('#7a5032'), 1.3) + R(310, 116, 4, 5, SW_GOLD, 0.8);
+      // marble floor in perspective, a blue runner down the middle
+      var vy = 118, rows = [171, 177, 185, 196, 211, 231, 258];
+      o += R(0, 171, 400, 69, '#e6dfcf');
+      for (var ri = 0; ri < rows.length - 1; ri++) for (var k = -9; k < 9; k++) {
+        if ((ri + k) % 2 === 0) continue;
+        var ya = rows[ri], yb = rows[ri + 1], fa = (ya - vy) / (240 - vy), fb = (yb - vy) / (240 - vy);
+        o += F(pd([[200 + k * 44 * fa, ya], [200 + (k + 1) * 44 * fa, ya], [200 + (k + 1) * 44 * fb, yb], [200 + k * 44 * fb, yb]], true), '#cfc4ac');
+      }
+      o += R(0, 171, 400, 12, c.lg([[0, '#000', 0.25], [1, '#000', 0]]));
+      o += P('M178,171 L222,171 L254,242 L146,242 Z', c.lg([[0, '#2a58a8'], [1, '#1e4488']]), 1.6) + L('M183,171 L154,242 M217,171 L246,242', SW_GOLD, 1.6);
+      o += E(200, 206, 120, 18, c.rg([[0, '#fff8e0', 0.3], [1, '#fff8e0', 0]]));
+      // front pillars framing the hall
+      o += swPillar(c, 10, -6, 238, 34) + swPillar(c, 390, -6, 238, 34);
+      o += swHangBanner(c, 10, 30, 22, 70, 1.8) + swHangBanner(c, 390, 30, 22, 70, 1.8);
+      // crates of goods for the auction house
+      o += crate(c, 340, 222, 1.25) + crate(c, 366, 230, 1.35) + crate(c, 352, 202, 1.15, '#b8844a') + barrel(c, 318, 232, 1.2) + sack(c, 388, 238, 1.1);
+      o += crate(c, 34, 198, 1) + sack(c, 52, 200, 0.9);
+      return o + vignette(c, '#fff4dc', '#2a1a0a');
+    },
+    stormwind_gate: function (c) {
+      var o = swSky(c) + cloud(70, 34, 1) + cloud(250, 20, 0.7, 0.9) + cloud(380, 64, 0.55, 0.85);
+      // the city beyond the walls
+      o += G(swCathedral(c, 96, 104), at(0.5, 96, 104)) + G(swKeep(c, 312, 102), at(0.56, 312, 102)) + swHaze(c, 110);
+      o += swWall(c, -4, 404, 96, 152) + swTower(c, 28, 152, 26, 78, 30) + swTower(c, 372, 152, 26, 78, 30);
+      o += swGatehouse(c, 200, 152);
+      // the moat, and the long bridge running out toward Elwynn
+      o += R(-2, 150, 404, 56, c.lg([[0, '#7aa6cc'], [0.5, '#5a8ab8'], [1, '#3e6c9c']])) + F('M-2,150 L402,150 L402,158 L-2,158 Z', '#dde6ea', 0.35);
+      var r = rng(221), rp = '';
+      for (var i = 0; i < 26; i++) { var yy = 160 + r() * 42, xx = r() * 400, w = 6 + (yy - 150) * 0.3; rp += 'M' + pt([xx, yy]) + 'q' + n(w / 2) + ',-1.4 ' + n(w) + ',0'; }
+      o += L(rp, '#e8f4fa', 1, 0.6);
+      var ex = function (y) { return 178 - 68 * (y - 152) / 50; };
+      o += P(pd([[178, 152], [222, 152], [400 - ex(206), 206], [ex(206), 206]], true), c.lg([[0, '#e2dac8'], [1, '#cfc4ac']]), 0);
+      var dj = '';
+      for (var k = -5; k <= 5; k++) dj += 'M' + pt([200 + k * 4, 152]) + 'L' + pt([200 + k * 17, 206]);
+      [158, 166, 176, 190].forEach(function (y) { dj += 'M' + pt([ex(y), y]) + 'L' + pt([400 - ex(y), y]); });
+      o += L(dj, '#9a8e76', 0.8, 0.45);
+      [-1, 1].forEach(function (k) {
+        var X = function (y) { return k < 0 ? ex(y) : 400 - ex(y); }, h = function (y) { return 4 + (y - 152) * 0.2; };
+        o += P(pd([[X(152), 152], [X(152), 152 - h(152)], [X(206), 206 - h(206)], [X(206), 206]], true), c.cel('#d8d0be'), 1.6);
+        o += P(pd([[X(152), 152 - h(152)], [X(152) + k * 3, 152 - h(152)], [X(206) + k * 10, 206 - h(206)], [X(206), 206 - h(206)]], true), '#f2ece0', 1.4);
+        // balusters on the inner face
+        var bl = '';
+        for (var t = 0.1; t < 0.95; t += 0.1) { var yb = 152 + 54 * t; bl += 'M' + pt([X(yb), yb - 1]) + 'L' + pt([X(yb), yb - h(yb) + 2]); }
+        o += L(bl, '#a89e8a', 1.2, 0.8);
+      });
+      // hero statues on piers along the bridge, far pair then near pair
+      o += G(swStatue(c, 164, 164, 1, false), at(0.4, 164, 164)) + G(swStatue(c, 236, 164, 0, true), at(0.4, 236, 164));
+      o += G(swStatue(c, 138, 184, 0, false), at(0.62, 138, 184)) + G(swStatue(c, 262, 184, 1, true), at(0.62, 262, 184));
+      // the near bank: Elwynn grass either side of the road
+      o += R(-2, 204, 404, 5, c.cel('#c8bea8'), 1.6) + R(-2, 208, 404, 34, c.lg([[0, '#78a848'], [1, '#4e7a2e']]));
+      o += P(pd([[ex(206), 206], [400 - ex(206), 206], [400 - ex(242), 242], [ex(242), 242]], true), c.lg([[0, '#d6ccb4'], [1, '#bcae90']]), 0);
+      o += L('M' + pt([ex(206), 206]) + 'L' + pt([ex(242), 242]) + 'M' + pt([400 - ex(206), 206]) + 'L' + pt([400 - ex(242), 242]) + 'M' + pt([ex(220), 220]) + 'L' + pt([400 - ex(220), 220]) + 'M' + pt([200, 206]) + 'L200,242', '#9a8e76', 0.9, 0.45);
+      o += grass(223, 210, 238, '#3e6a26', 60, 0.6, 1.5, 1.1, 0, 70) + grass(225, 210, 238, '#3e6a26', 60, 0.6, 1.5, 1.1, 330, 400) + grass(227, 212, 238, '#a8d06a', 24, 0.6, 1.4, 1, 0, 60) + grass(228, 212, 238, '#a8d06a', 24, 0.6, 1.4, 1, 340, 400);
+      o += swLamp(c, 96, 212, 44) + swLamp(c, 304, 212, 44);
+      // Elwynn's forest crowding in at the edges
+      o += oak(c, -10, 226, 1.45, '#3f7e34') + oak(c, 414, 230, 1.5, '#447f36') + bush(c, 34, 236, 1.1) + bush(c, 368, 238, 1.2, '#4a8436');
+      return o + vignette(c, '#ffffff', '#162010');
     }
   };
 

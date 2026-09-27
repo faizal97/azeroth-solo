@@ -11,7 +11,7 @@ if (process.env.TM) DG.trashMult = { hp: DG.trashMult.hp, dmg: +process.env.TM }
 if (process.env.BM) DG.bossMult = { hp: DG.bossMult.hp, dmg: +process.env.BM };
 function clear(pace, plan, cls) {
   G.newGame({ name: 'T', cls, race: 'human' });
-  const S = G.S, P = S.player; const LV = +(process.env.LV || 10); P.level = LV; P.equip = G.botChar({ name: 'x', cls, race: 'human', level: LV, skill: 0.6 }).equip; P.talents = G.autoTalents(cls, 'dps', LV, 0); P.hp = null; P.res = null;
+  const S = G.S, P = S.player; const LV = +(process.env.LV || Math.max(10, D.ACTIVITIES[ACT].minLvl || 10) + 1); P.level = LV; P.equip = G.botChar({ name: 'x', cls, race: 'human', level: LV, skill: 0.6 }).equip; P.talents = G.autoTalents(cls, 'dps', LV, 0); P.hp = null; P.res = null;
   S.flags.warModeAsked = true; P.place = D.ACTIVITIES[ACT].where; // you queue from the dungeon's zone
   G.queueFor(ACT); G.acceptPop(); const R = S.run; R.pace = pace; if (plan) R.bossPlan = plan;
   const t0 = t; let guard = 0;

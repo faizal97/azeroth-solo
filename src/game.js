@@ -333,10 +333,11 @@
     if (npc === 'grosk' || npc === 'gryshka') return ['tough_bread', 'horde_bread', 'spring_water', 'ice_milk'].map(G.copyItem);
     if (npc === 'moodan' || npc === 'kien') return ['tough_bread', 'spring_water'].map(G.copyItem);
     if (npc === 'kauth' || npc === 'pala') return ['tough_bread', 'mulgore_bread', 'spring_water', 'ice_milk'].map(G.copyItem);
+    if (npc === 'allison') return ['tough_bread', 'fresh_bread', 'moist_cornbread', 'mutton_chop', 'spring_water', 'ice_milk', 'melon_juice', 'sweet_nectar'].map(G.copyItem);
     if (npc === 'heather' || npc === 'boorand') return ['fresh_bread', 'moist_cornbread', 'mutton_chop', 'ice_milk', 'melon_juice', 'sweet_nectar'].map(G.copyItem);
     if (npc === 'renee' || npc === 'norman') return ['tough_bread', 'tirisfal_pumpkin', 'spring_water', 'ice_milk'].map(G.copyItem);
     if (npc === 'keldamyr' || npc === 'saelienne') return ['tough_bread', 'fresh_bread', 'spring_water', 'moonberry_juice'].map(G.copyItem);
-    if (npc === 'corina' || npc === 'grawn' || npc === 'bruuk' || npc === 'ilyenia' || npc === 'mydrannul' || npc === 'kaplak' || npc === 'rahauro' || npc === 'mahnott' || npc === 'etu' || npc === 'gerard' || npc === 'abigail' || npc === 'lewis' || npc === 'nargal') {
+    if (npc === 'corina' || npc === 'grawn' || npc === 'bruuk' || npc === 'ilyenia' || npc === 'mydrannul' || npc === 'kaplak' || npc === 'rahauro' || npc === 'mahnott' || npc === 'etu' || npc === 'gerard' || npc === 'abigail' || npc === 'lewis' || npc === 'nargal' || npc === 'thurman') {
       if (!G.S.flags.corina || G.S.flags.corinaLvl !== G.S.player.level) {
         const L = G.S.player.level;
         G.S.flags.corina = Object.keys(D.WEAPON_BASES).map((w) => { const it = G.genGear('weapon', Math.max(2, L), 1, { wtype: w }); it.cost = it.sell * 5; return it; });
@@ -816,7 +817,54 @@
         sys(`${D.MOBS[mobKey].name} slain: ${P.quests[qid].prog[i]}/${o.n}`);
       }
     });
+    bountyKill(mobKey);
     questCheck();
+  }
+
+  // ============================================================ bounty boards (hubs): 3 daily bounties + 1 weekly
+  // Picked from the hub's zone with a seed from the real date, so they change at midnight (weekly on Monday).
+  const dayKey = () => new Date(now()).toISOString().slice(0, 10);
+  const weekKey = () => { const d = new Date(now()); const day = (d.getDay() + 6) % 7; d.setDate(d.getDate() - day); return 'w' + d.toISOString().slice(0, 10); };
+  const seeded = (str) => { let h = 2166136261; for (const c of str) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return ((h >>> 0) % 100000) / 100000; }; };
+  G.isHub = (placeId) => { const p = D.PLACES[placeId]; return !!(p && p.inn && p.safe && !p.city); };
+  G.bounties = function (hub) {
+    const S = G.S, P = S.player, region = D.PLACES[hub].region;
+    const mobs = [];
+    for (const [k, p] of Object.entries(D.PLACES)) if (p.region === region) for (const [m] of (p.mobs || [])) { const M = D.MOBS[m]; if (M && !M.named && !M.elite && M.lvl[1] >= P.level - 4 && M.lvl[0] <= P.level + 2 && !mobs.includes(m)) mobs.push(m); }
+    if (!mobs.length) return [];
+    const make = (key, weekly) => {
+      const r = seeded(hub + key + P.level);
+      const mob = mobs[Math.floor(r() * mobs.length)], n = weekly ? 30 : 8 + Math.floor(r() * 5);
+      const L = Math.max(P.level, D.MOBS[mob].lvl[0]);
+      return { id: `${hub}:${key}:${mob}`, hub, mob, n, weekly, xp: Math.round(G.questXp(L) * (weekly ? 2.5 : 0.7)), money: Math.round(G.questMoney(L) * (weekly ? 4 : 1.2)), marks: weekly ? 10 : 2 };
+    };
+    return [make(dayKey() + 'a'), make(dayKey() + 'b'), make(dayKey() + 'c'), make(weekKey(), true)];
+  };
+  G.bountyState = function (b) { const st = (G.S.player.bounty || {})[b.id]; return st ? (st.done ? 'done' : st.prog >= b.n ? 'complete' : 'active') : 'available'; };
+  G.acceptBounty = function (b) {
+    const P = G.S.player; P.bounty = P.bounty || {};
+    const active = Object.values(P.bounty).filter((x) => !x.done).length;
+    if (active >= 6) return toast('You can hold 6 bounties at a time.');
+    P.bounty[b.id] = { mob: b.mob, n: b.n, prog: 0, done: false, weekly: b.weekly, day: b.weekly ? weekKey() : dayKey(), reward: { xp: b.xp, money: b.money, marks: b.marks } };
+    sys(`Bounty accepted: ${b.n} ${D.MOBS[b.mob].name}.`); emit('change');
+  };
+  G.turnInBounty = function (b) {
+    const P = G.S.player, st = (P.bounty || {})[b.id]; if (!st || st.prog < st.n || st.done) return;
+    st.done = true;
+    P.money += st.reward.money; sys(`Bounty complete: ${D.MOBS[st.mob].name}. You receive ${G.moneyText(st.reward.money)}.`);
+    G.gainXp(st.reward.xp, false);
+    if (st.reward.marks) G.addMarks(st.reward.marks, st.weekly ? 'weekly bounty' : 'bounty');
+    if (st.weekly) { const it = G.genGear(pick(D.GEAR_SLOTS), P.level, 2); G.addItem(it, 1); loot(`Weekly bounty bonus: ${B.link(it.name, it.q)}.`); }
+    emit('questDone', {}); emit('change'); G.save();
+  };
+  function bountyKill(mobKey) {
+    const P = G.S.player; if (!P.bounty) return;
+    // old days' bounties lapse; kills only count toward today's (and this week's)
+    for (const [id, st] of Object.entries(P.bounty)) {
+      if (!st.done && st.day !== (st.weekly ? weekKey() : dayKey())) { delete P.bounty[id]; continue; }
+      if (!st.done && st.mob === mobKey && st.prog < st.n) { st.prog++; if (st.prog === st.n || st.prog % 5 === 0) sys(`Bounty: ${D.MOBS[mobKey].name} ${st.prog}/${st.n}`); }
+    }
+    for (const [id, st] of Object.entries(P.bounty)) if (st.done && st.day !== (st.weekly ? weekKey() : dayKey())) delete P.bounty[id];
   }
 
   // Loot for one kill. Returns list of {item,n} and copper.
@@ -1041,6 +1089,84 @@
 
 
 
+
+  // ============================================================ bank and auction house (capitals)
+  const BANK_SLOTS = 24, AH_CUT = 0.05, AH_LIFE = 24 * 3600000;
+  G.BANK_SLOTS = BANK_SLOTS;
+  G.bankDeposit = function (idx) {
+    const P = G.S.player, b = P.bags[idx]; if (!b) return;
+    P.bank = P.bank || [];
+    if (G.stackable(b.item)) { const st = P.bank.find((x) => x.item.id === b.item.id); if (st) { st.n += b.n; P.bags.splice(idx, 1); emit('change'); return; } }
+    if (P.bank.length >= BANK_SLOTS) return toast('Your bank is full.');
+    P.bank.push(b); P.bags.splice(idx, 1); emit('change');
+  };
+  G.bankWithdraw = function (idx) {
+    const P = G.S.player, b = (P.bank || [])[idx]; if (!b) return;
+    if (P.bags.length >= 16 && !(G.stackable(b.item) && P.bags.some((x) => x.item.id === b.item.id))) return toast('Inventory is full.');
+    P.bank.splice(idx, 1); G.addItem(b.item, b.n); emit('change');
+  };
+  // What other players pay: the vendor price times a factor by quality.
+  G.ahValue = (it) => Math.max(10, Math.round((it.sell || 5) * [2, 3, 6, 9, 14, 0][it.q || 1]));
+  // Listings from other players, refreshed now and then, around your level.
+  function ahRefresh(force) {
+    const S = G.S, P = S.player, t = now();
+    S.ah = S.ah || { listings: [], mine: [], next: 0 };
+    if (!force && t < S.ah.next) return;
+    S.ah.next = t + 30 * 60000;
+    S.ah.listings = S.ah.listings.filter((l) => l.expires > t).slice(-10);
+    const myF = (D.RACES[P.race] || {}).faction || 'alliance';
+    const sellers = S.bots.filter((b) => B.factionOf(b) === myF);
+    while (S.ah.listings.length < 18) {
+      const L = clamp(P.level + rint(-3, 2), 2, D.LEVEL_CAP), q = Math.random() < 0.12 ? 3 : 2;
+      const it = G.genGear(pick(D.GEAR_SLOTS.filter((x) => x !== 'ranged' || Math.random() < 0.4)), L, q);
+      const price = Math.round(G.ahValue(it) * (0.85 + Math.random() * 0.6));
+      S.ah.listings.push({ id: 'ah' + t + '_' + S.ah.listings.length + '_' + rint(0, 9999), item: it, price, seller: pick(sellers).name, expires: t + rnd(6, 24) * 3600000 });
+    }
+  }
+  G.ahListings = function () { ahRefresh(false); return G.S.ah.listings.slice().sort((a, b) => (b.item.lvl || 0) - (a.item.lvl || 0)); };
+  G.ahBuy = function (id) {
+    const S = G.S, P = S.player, l = (S.ah.listings || []).find((x) => x.id === id);
+    if (!l) return toast('Someone else bought it.');
+    if (P.money < l.price) return toast(`You need ${G.moneyText(l.price)}.`);
+    if (P.bags.length >= 16) return toast('Inventory is full.');
+    P.money -= l.price; S.ah.listings = S.ah.listings.filter((x) => x !== l);
+    G.addItem(l.item, 1); loot(`You bought ${B.link(l.item.name, l.item.q)} from ${l.seller} for ${G.moneyText(l.price)}.`);
+    emit('change');
+  };
+  // Your auctions sell over real time; the higher the price over market value, the longer it takes.
+  G.ahPost = function (idx, price) {
+    const S = G.S, P = S.player, b = P.bags[idx]; if (!b) return;
+    if (!D.GEAR_SLOTS.includes(b.item.slot) || b.item.heirloom || b.item.q < 1) return toast('You can only auction gear.');
+    S.ah = S.ah || { listings: [], mine: [], next: 0 };
+    if (S.ah.mine.length >= 8) return toast('You can have 8 auctions at a time.');
+    const v = G.ahValue(b.item), ratio = price / v, t = now();
+    const hours = ratio <= 1.6 ? 0.3 * Math.pow(Math.max(0.3, ratio), 3) * rnd(0.6, 1.6) : null;
+    P.bags.splice(idx, 1);
+    S.ah.mine.push({ item: b.item, price, postedAt: t, sellAt: hours != null ? t + hours * 3600000 : null, expires: t + AH_LIFE });
+    sys(`You posted ${b.item.name} for ${G.moneyText(price)}.`);
+    emit('change');
+  };
+  G.ahCancel = function (i) {
+    const S = G.S, a = S.ah.mine[i]; if (!a) return;
+    if (S.player.bags.length >= 16) return toast('Inventory is full.');
+    S.ah.mine.splice(i, 1); G.addItem(a.item, 1); sys(`You cancelled your auction of ${a.item.name}.`); emit('change');
+  };
+  function ahTick() {
+    const S = G.S; if (!S.ah || !S.ah.mine.length) return;
+    const t = now(), P = S.player;
+    for (const a of S.ah.mine.slice()) {
+      if (a.sellAt && t >= a.sellAt) {
+        const got = Math.round(a.price * (1 - AH_CUT));
+        P.money += got; S.ah.mine = S.ah.mine.filter((x) => x !== a);
+        const buyer = pick(S.bots); loot(`Your auction of ${B.link(a.item.name, a.item.q)} sold to ${buyer.name} for ${G.moneyText(got)} (after the 5% cut).`);
+        emit('lootGain', { money: got });
+      } else if (t >= a.expires) {
+        S.ah.mine = S.ah.mine.filter((x) => x !== a);
+        if (P.bags.length < 16) { P.bags.push({ item: a.item, n: 1 }); sys(`Your auction of ${a.item.name} expired. It is back in your bags.`); }
+        else { P.bank = P.bank || []; P.bank.push({ item: a.item, n: 1 }); sys(`Your auction of ${a.item.name} expired. Your bags were full, so it went to your bank.`); }
+      }
+    }
+  }
   // ============================================================ Help Wanted, Mentor Marks, heirlooms, titles, Roulette (v2.3)
   // Account-wide: Mentor Marks and unlocked heirlooms are shared by every character on this phone.
   const ACCOUNT_KEY = 'azsolo.account';
@@ -1871,6 +1997,7 @@
       partyTick();
       ambushTick();
       helpWantedTick();
+      ahTick();
       runTick();
       rollsTick();
       const before = S.chat.length;

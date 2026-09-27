@@ -12,8 +12,9 @@ fs.mkdirSync(OUT, { recursive: true });
 const SRC = fs.readFileSync(path.join(ROOT, 'src/art_westfall.js'), 'utf8');
 
 const NEW_SCENES = ['gold_coast_quarry', 'moonbrook', 'the_dead_acre'];
+const SW_SCENES = ['stormwind', 'stormwind_bank', 'stormwind_gate'];
 const NEW_MOBS = ['defias_digger', 'defias_overseer', 'defias_knuckleduster', 'defias_highwayman', 'rusty_harvest_golem', 'harvest_reaper', 'sergeant_brashclaw'];
-const SCENES = ['sentinel_hill', 'furlbrow_farm', 'saldean_farm', 'jangolode_mine', 'molsen_farm', 'the_longshore', 'dagger_hills'].concat(NEW_SCENES);
+const SCENES = ['sentinel_hill', 'furlbrow_farm', 'saldean_farm', 'jangolode_mine', 'molsen_farm', 'the_longshore', 'dagger_hills'].concat(NEW_SCENES, SW_SCENES);
 const MOBS = ['young_goretusk', 'goretusk', 'fleshripper', 'harvest_watcher', 'defias_trapper', 'defias_smuggler', 'defias_pathstalker',
   'murloc_coastrunner', 'murloc_tidehunter', 'foe_reaper', 'riverpaw_brute', 'dust_devil'].concat(NEW_MOBS);
 const problems = [];
@@ -145,6 +146,13 @@ const onScene = MOBS.map(m => {
 });
 sheets.push(sheet('onscene', onScene.filter(([k]) => !NEW_MOBS.includes(k)), 400, 240, 2, '#000'));
 sheets.push(sheet('onscene_new', onScene.filter(([k]) => NEW_MOBS.includes(k)), 400, 240, 2, '#000'));
+// Stormwind: each city scene bare, then with the warrior on the left and two other players walking the middle band
+sheets.push(sheet('stormwind', pick(scenes, SW_SCENES), 400, 240, 1, '#000'));
+const swOn = SW_SCENES.map(k => [k, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="400" height="240">${strip(ART.scene(k)).replace(/<\/svg>$/, '')}` +
+  `<svg x="30" y="110" width="120" height="120" viewBox="0 0 128 128">${strip(ART.hero({ cls: 'warrior' }))}` +
+  `<svg x="170" y="118" width="96" height="96" viewBox="0 0 128 128">${strip(ART.hero({ cls: 'mage' }))}` +
+  `<svg x="262" y="124" width="84" height="84" viewBox="0 0 128 128">${strip(ART.hero({ cls: 'priest' }))}</svg>`]);
+sheets.push(sheet('onscene_stormwind', swOn, 400, 240, 1, '#000'));
 
 const size = Buffer.byteLength(SRC);
 console.log('scenes:', SCENES.length, 'mobs:', MOBS.length, 'file bytes:', size, 'packs loaded:', loaded.map(p => p[0]).join(', '));

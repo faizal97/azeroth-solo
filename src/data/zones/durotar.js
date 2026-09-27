@@ -60,12 +60,13 @@
     thunder_ridge: { name: 'Thunder Ridge', zone: 'Durotar', region: 'durotar', scene: 'thunder_ridge', lvl: [6, 8], mobs: [['thunder_lizard', 5], ['dire_mottled_boar', 4], ['scorpid_reaver', 3]], pool: 10, npcs: [], links: { razor_hill: 16 } },
     echo_isles: { name: 'Echo Isles', zone: 'Durotar', region: 'durotar', scene: 'echo_isles', lvl: [8, 11], mobs: [['hexed_troll', 5], ['voodoo_troll', 4], ['durotar_tiger', 2]], named: { zalazane: 180 }, pool: 10, npcs: ['vanira'], links: { razor_hill: 18 } },
     tiragarde_keep: { name: 'Tiragarde Keep', zone: 'Durotar', region: 'durotar', scene: 'tiragarde_keep', lvl: [8, 10], mobs: [['kul_tiras_sailor', 5], ['kul_tiras_marine', 5]], named: { lieutenant_benedict: 150 }, pool: 10, npcs: [], links: { razor_hill: 16 } },
-    orgrimmar: { name: 'Orgrimmar', zone: 'Orgrimmar', region: 'durotar', scene: 'orgrimmar', lvl: [1, 60], safe: true, inn: true, city: true, mobs: [], pool: 0, npcs: ['gryshka', 'rahauro', 'thrall_herald', 'mentor_horde'], vendor: 'gryshka', gearVendor: 'rahauro', links: { razor_hill: 22, thunder_bluff: 60, undercity: 60, crossroads: 40 }, via: { thunder_bluff: 'Wind Rider', undercity: 'Zeppelin', crossroads: 'Wind rider' } },
+    orgrimmar: { name: 'Orgrimmar', zone: 'Orgrimmar', region: 'durotar', scene: 'orgrimmar', lvl: [1, 60], safe: true, inn: true, city: true, mobs: [], pool: 0, npcs: ['gryshka', 'rahauro', 'thrall_herald', 'mentor_horde', 'banker_horde', 'auctioneer_horde'], vendor: 'gryshka', gearVendor: 'rahauro', links: { razor_hill: 22, thunder_bluff: 60, undercity: 60, crossroads: 40 }, via: { thunder_bluff: 'Wind Rider', undercity: 'Zeppelin', crossroads: 'Wind rider' } },
   });
 
   // people
   Object.assign(D.NPCS, {
     mentor_horde: { name: 'Quartermaster Grozka', title: 'Mentor Quartermaster' },
+    banker_horde: { name: 'Banker Karuk', title: 'Banker' }, auctioneer_horde: { name: 'Auctioneer Thathung', title: 'Auctioneer' },
     gornek: { name: 'Gornek', title: 'Valley of Trials' },
     kaltunk: { name: 'Kaltunk', title: 'Grunt' },
     galgar: { name: 'Galgar', title: 'Cook' },

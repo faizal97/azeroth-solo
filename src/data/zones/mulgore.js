@@ -44,7 +44,7 @@
     palemane_rock: { name: 'Palemane Rock', zone: 'Mulgore', region: 'mulgore', scene: 'palemane_rock', lvl: [6, 9], mobs: [['palemane_tanner', 5], ['palemane_poacher', 4], ['prairie_stalker', 2]], pool: 10, npcs: [], links: { bloodhoof_village: 14 } },
     venture_mine: { name: 'The Venture Co. Mine', zone: 'Mulgore', region: 'mulgore', scene: 'venture_mine', lvl: [7, 9], mobs: [['venture_worker', 6], ['venture_supervisor', 4]], pool: 10, npcs: [], links: { bloodhoof_village: 16 } },
     golden_plains: { name: 'The Golden Plains', zone: 'Mulgore', region: 'mulgore', scene: 'golden_plains', lvl: [6, 11], mobs: [['adult_plainstrider', 4], ['swoop', 4], ['prairie_stalker', 3]], named: { snagglespear: 150, mazzranache: 150, arrachea: 180 }, pool: 11, npcs: [], links: { bloodhoof_village: 14 } },
-    thunder_bluff: { name: 'Thunder Bluff', zone: 'Thunder Bluff', region: 'mulgore', scene: 'thunder_bluff', lvl: [1, 60], safe: true, inn: true, city: true, mobs: [], pool: 0, npcs: ['pala', 'etu', 'mentor_horde'], vendor: 'pala', gearVendor: 'etu', links: { bloodhoof_village: 22, orgrimmar: 60, crossroads: 40 }, via: { orgrimmar: 'Wind Rider', crossroads: 'Wind rider' } },
+    thunder_bluff: { name: 'Thunder Bluff', zone: 'Thunder Bluff', region: 'mulgore', scene: 'thunder_bluff', lvl: [1, 60], safe: true, inn: true, city: true, mobs: [], pool: 0, npcs: ['pala', 'etu', 'mentor_horde', 'banker_horde', 'auctioneer_horde'], vendor: 'pala', gearVendor: 'etu', links: { bloodhoof_village: 22, orgrimmar: 60, crossroads: 40 }, via: { orgrimmar: 'Wind Rider', crossroads: 'Wind rider' } },
   });
 
   // people

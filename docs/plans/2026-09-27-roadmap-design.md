@@ -27,7 +27,7 @@ Agreed 2026-09-27. A single-player fake MMO: a vanilla WoW campaign from 1 to 60
 | v2.0 (shipped) | Westfall (Sentinel Hill) · **Horde:** the Barrens (Crossroads), levels 10–15 | Level cap 15; new class abilities at 12 and 14; ~14 quests per zone with a named rare |
 | v2.1 + v2.2 (shipped) | Westfall + the Barrens 15–20 | Level cap 20; The Deadmines at its real level (17–21); Wailing Caverns; story Chapter 2 at 20; world PvP ambushes (see below) |
 | v2.2 (shipped as app v2.3.0) | Talents | Talents from 10, one point per level: 3 trees per class, tiers 1–3 now (deeper tiers with the 30+ updates); bots auto-spec for their role; first reset free, then 1g/5g/10g |
-| v2.3 | Stormwind (and the Horde city services) | Stormwind trainers, bank, auction house; Help Wanted + Mentor Marks; daily Roulette |
+| v2.3 (shipped as app v2.4.0 + v2.5.0) | Stormwind (and the Horde city services) | Stormwind (Valley of Heroes, Trade District, bank); a bank (24 slots) and auction house in every capital; Help Wanted + Mentor Marks + heirlooms; titles; daily Roulette; hub bounty boards (3 daily + 1 weekly). Tram now runs Ironforge–Stormwind |
 | v3 | Redridge Mountains (15–25) · **Horde:** Stonetalon Mountains (15–27) | Professions (gathering + crafting); The Stockade |
 | v4 | Duskwood + Wetlands (20–30) · **Horde:** Hillsbrad Foothills; Ashenvale (contested) | Shadowfang Keep; Blackfathom Deeps; story Chapter 3 at 30 |
 | v5 | Stranglethorn Vale + Arathi Highlands (30–40, contested from here) | Mount at 40; Scarlet Monastery; Gurubashi Arena event; story Chapter 4 at 40 |
