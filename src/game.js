@@ -5,6 +5,7 @@
   const rnd = E.rnd, rint = E.rint, clamp = E.clamp;
   const pick = (a) => a[Math.floor(Math.random() * a.length)];
   const now = () => Date.now();
+  const lower = (t) => String(t).toLowerCase();
   // Characters: one save per character under azsolo.char.<id>, plus an index for the select screen.
   const OLD_KEY = 'azsolo.save.v1', INDEX_KEY = 'azsolo.chars', CHAR_KEY = (id) => 'azsolo.char.' + id;
   G.MAX_CHARS = 10;
@@ -405,6 +406,7 @@
     if (P.level >= D.LEVEL_CAP || amount <= 0) return 0;
     let bonus = 0;
     if (fromKill && P.rested > 0) { bonus = Math.min(amount, Math.round(P.rested)); P.rested -= bonus; }
+    amount = Math.round(amount * G.warBonus());
     const total = amount + bonus;
     P.xp += total;
     B.post(G.S, 'combat', null, bonus ? `You gain ${total} experience. (+${bonus} exp Rested bonus)` : `You gain ${total} experience.`);
@@ -718,7 +720,7 @@
     for (const o of Q.objs) if (o.type === 'collect') G.removeItem(o.item, o.n);
     delete P.quests[qid]; P.done[qid] = true;
     sys(`${Q.name} completed.`);
-    const m = Math.round(((Q.reward.money || 0) + G.questMoney(Q.lvl)) * (1 + racialPassive('questMoneyPct') / 100));
+    const m = Math.round(((Q.reward.money || 0) + G.questMoney(Q.lvl)) * (1 + racialPassive('questMoneyPct') / 100) * G.warBonus());
     P.money += m;
     sys(`Received ${G.moneyText(m)}.`);
     if (it) { G.addItem(JSON.parse(JSON.stringify(it)), 1); loot(`You receive item: ${B.link(it.name, it.q)}.`); }
@@ -769,7 +771,7 @@
   }
   function giveLoot(l) {
     const P = G.S.player;
-    if (l.money) { l.money = Math.round(l.money * (1 + racialPassive('lootMoneyPct') / 100)); P.money += l.money; loot(`You loot ${G.moneyText(l.money)}.`); }
+    if (l.money) { l.money = Math.round(l.money * (1 + racialPassive('lootMoneyPct') / 100) * G.warBonus()); P.money += l.money; loot(`You loot ${G.moneyText(l.money)}.`); }
     let got = 0;
     for (const it of l.items) if (G.addItem(it, 1)) { got++; loot(`You receive loot: ${B.link(it.name, it.q)}.`); }
     if (l.money || got) emit('lootGain', { money: l.money, items: got });
@@ -873,8 +875,9 @@
   G.toggleAuto = function () { if (G.pUnit) G.pUnit.auto = !G.pUnit.auto; };
   G.flee = function () {
     const C = G.fight;
-    if (!C || C.kind !== 'solo') return;
-    if (Math.random() < 0.6) {
+    if (!C || (C.kind !== 'solo' && C.kind !== 'pvp')) return;
+    if (Math.random() < (C.kind === 'pvp' ? 0.45 : 0.6)) {
+      if (C.kind === 'pvp') { const f = G.S.flags; G.S.player.pvp = G.pvpStats(); G.S.player.pvp.escapes++; f.nextAmbush = now() + AMBUSH_GAP; }
       for (const e of C.enemies) { if (e.inst) { e.inst.state = 'alive'; } }
       E.writeBack(C, G.pUnit, now());
       petWriteBack(C);
@@ -965,6 +968,153 @@
     }
     G.fight = null; G.pUnit = null;
     emit('fightEnd', { result });
+    G.save();
+  }
+
+
+  // ============================================================ world PvP: ambushes (War Mode)
+  // Enemy players sometimes attack you. Danger per place: 0 in capitals and starting valleys, very rare in
+  // hub towns (guards fight for you), low in questing zones. Contested zones (later) set place.danger higher.
+  // Ambushers pick fair fights: their level is set by your class so you win ~65-80% of the time (sim/pvp.js).
+  const AMBUSH_MIN_LEVEL = 6, AMBUSH_GAP = 12 * 60000, AMBUSH_AFTER_DEATH = 20 * 60000, AMBUSH_PER_MIN = 1 / 30;
+  G.AMBUSH_OFFSET = { warrior: 0, paladin: 0, hunter: 3, priest: -1, druid: 0, shaman: -1, mage: -2, warlock: 2, rogue: -1 };
+  const WAR_MODE_BONUS = 1.1;
+  G.warBonus = () => (G.S && G.S.flags.warMode ? WAR_MODE_BONUS : 1);
+  G.dangerOf = function (placeId) {
+    const p = D.PLACES[placeId];
+    if (!p) return 0;
+    if (p.danger != null) return p.danger;
+    if (p.city || p.lvl[0] <= 3) return 0;
+    return p.safe ? 0.08 : 1;
+  };
+  G.setWarMode = function (on) {
+    const f = G.S.flags; f.warMode = !!on; f.warModeAsked = true;
+    if (on) f.nextAmbush = Math.max(f.nextAmbush || 0, now() + 3 * 60000);
+    sys(on ? 'War Mode is on. Enemy players may attack you. +10% experience and gold, and Honor for every enemy player you defeat.' : 'War Mode is off.');
+    emit('change');
+  };
+  G.pvpStats = () => Object.assign({ kills: 0, deaths: 0, escapes: 0, honor: 0 }, G.S.player.pvp || {});
+  // An enemy player first shows up nearby (in the scene and under People), like any other player.
+  // Most of them attack after a while if you are still around; some are only passing through.
+  // You can also attack them first, or walk away.
+  function quietNow() {
+    const S = G.S, P = S.player;
+    return !(G.fight || S.run || S.queue || P.travel || P.ghostUntil || G.paused || (S.rolls && S.rolls.length));
+  }
+  function ambushTick() {
+    const S = G.S, P = S.player, f = S.flags;
+    if (P.level >= AMBUSH_MIN_LEVEL && !f.warModeAsked && quietNow() && G.dangerOf(P.place) > 0) { f.warModeAsked = true; emit('warModeIntro'); return; }
+    const it = S.intruder;
+    if (it) {
+      if (!f.warMode || now() >= it.leaveAt) { S.intruder = null; emit('change'); return; }
+      if (it.attackAt && now() >= it.attackAt && P.place === it.place) {
+        const v = G.vitals();
+        if (quietNow() && (P.hp == null || P.hp >= v.maxHp * 0.5)) startAmbush(false);
+        else it.attackAt = now() + 8000; // they wait for a better moment
+      }
+      return;
+    }
+    if (!f.warMode || P.level < AMBUSH_MIN_LEVEL || !quietNow()) return;
+    if (now() < (f.nextAmbush || 0)) return;
+    const danger = G.dangerOf(P.place);
+    if (!danger || Math.random() >= danger * AMBUSH_PER_MIN / 60) return;
+    spawnIntruder();
+  }
+  function spawnIntruder() {
+    const S = G.S, P = S.player, f = S.flags, place = D.PLACES[P.place];
+    const myF = (D.RACES[P.race] || {}).faction || 'alliance';
+    const theirF = myF === 'alliance' ? 'horde' : 'alliance';
+    f.gankers = f.gankers || {};
+    const pool = S.bots.filter((b) => B.factionOf(b) === theirF && !(f.gankers[b.id] > now()));
+    if (!pool.length) return;
+    const b = pick(pool);
+    const level = clamp(P.level + (G.AMBUSH_OFFSET[P.cls] || 0) + rint(0, 1), 1, D.LEVEL_CAP);
+    const hostile = Math.random() < (place.safe ? 0.55 : 0.7);
+    S.intruder = { bot: b.id, name: b.name, race: b.race, cls: b.cls, gender: b.gender, skin: b.skin, hair: b.hair, level, place: P.place,
+      attackAt: hostile ? now() + rnd(25, 60) * 1000 : null, leaveAt: now() + rnd(90, 180) * 1000 };
+    f.gankers[b.id] = now() + 60 * 60000;
+    f.nextAmbush = now() + AMBUSH_GAP * rnd(0.8, 1.5);
+    const R = D.RACES[b.race] || {};
+    sys(`An enemy player is nearby: ${b.name}, level ${level} ${R.name || ''} ${D.CLASSES[b.cls].name}.`);
+    // the zone notices
+    const mates = B.onlineIn(S, P.place, new Date()).filter((x) => B.factionOf(x) === myF);
+    if (mates.length && (place.safe || Math.random() < 0.4)) {
+      const who = theirF === 'horde' ? 'HORDE' : 'ALLIANCE';
+      B.post(S, place.safe ? 'general' : 'say', pick(mates), pick(place.safe ? [`${who} IN ${place.name.toUpperCase()}!!`, `${lower(who)} in ${place.name.toLowerCase()}, careful`, `inc ${lower(who)} near the inn`] : ['watch out, pvp', `${lower(who)} here`, `a ${lower(D.CLASSES[b.cls].name)} is ganking here`]));
+      emit('chat');
+    }
+    emit('intruder', S.intruder);
+    emit('change');
+  }
+  G.intruderHere = () => { const S = G.S; return S && S.intruder && S.intruder.place === S.player.place ? S.intruder : null; };
+  G.attackIntruder = function () {
+    if (!G.intruderHere()) return toast('They are gone.');
+    if (!quietNow()) return toast("You can't do that right now.");
+    startAmbush(true);
+  };
+  function startAmbush(youStarted) {
+    const S = G.S, P = S.player, place = D.PLACES[P.place], it = S.intruder;
+    if (!it) return;
+    S.intruder = null;
+    const myF = (D.RACES[P.race] || {}).faction || 'alliance';
+    const bot = S.bots.find((b) => b.id === it.bot) || { id: it.bot, name: it.name, race: it.race, cls: it.cls, gender: it.gender, skin: it.skin, hair: it.hair, skill: 0.5 };
+    const skill = clamp(0.35 + Math.random() * 0.3, 0.2, 0.7);
+    const ec = G.botChar(Object.assign({}, bot, { level: it.level, skill, role: 'dps' }));
+    ec.role = 'dps';
+    const eu = E.charUnit(ec, 'enemy', 'bot', now());
+    eu.bot = { skill, react: 0.9 - 0.6 * skill }; eu.role = 'dps'; eu.threat = eu.threat || {}; eu.pvpBot = bot.id;
+    stopActions();
+    const pu = E.charUnit(P, 'ally', 'player', now());
+    G.pUnit = pu;
+    const allies = [pu];
+    const pet = G.petUnitFor(pu); if (pet) allies.push(pet);
+    for (const m of ((S.wparty && S.wparty.members) || [])) { const u = E.charUnit(m, 'ally', 'bot', now()); u.bot = { skill: m.bot.skill, react: 0.9 - 0.6 * m.bot.skill }; u.memberRef = m; allies.push(u); }
+    const helpers = [];
+    // town guards join on your side
+    if (place.safe) {
+      for (let i = 0; i < rint(1, 2); i++) {
+        const gc = G.botChar({ id: -1 - i, name: `${place.name} ${myF === 'alliance' ? 'Guard' : 'Grunt'}`, cls: 'warrior', race: myF === 'alliance' ? 'human' : 'orc', gender: 'm', skin: rint(0, 3), hair: rint(0, 4), level: P.level + 4, skill: 0.6, role: 'tank' });
+        const gu = E.charUnit(gc, 'ally', 'bot', now()); gu.bot = { skill: 0.6, react: 0.5 }; gu.role = 'tank'; gu.guard = true; allies.push(gu); helpers.push(gu.name);
+      }
+    }
+    // sometimes a player of your faction nearby jumps in
+    const near = B.onlineIn(S, P.place, new Date()).filter((b) => B.factionOf(b) === myF && b.level >= P.level - 3 && !(S.wparty && S.wparty.members.some((m) => m.bot.id === b.id)));
+    if (near.length && Math.random() < (place.safe ? 0.6 : 0.3)) {
+      const hb = pick(near); const hc = G.botChar(Object.assign({}, hb, { level: Math.min(hb.level, P.level + 2) }));
+      const hu = E.charUnit(hc, 'ally', 'bot', now()); hu.bot = { skill: hb.skill, react: 0.9 - 0.6 * hb.skill }; hu.role = 'dps'; allies.push(hu); helpers.push(hb.name);
+    }
+    G.fight = E.fight(allies, [eu], { soloUid: pu.uid, puller: pu });
+    G.fight.kind = 'pvp';
+    G.fight.pvp = { bot: bot.id, name: bot.name, level: it.level, town: !!place.safe, helpers, youStarted };
+    if (youStarted) eu.swingT = 1.2; // you swing first
+    const R = D.RACES[bot.race] || {};
+    sys(youStarted ? `You attack ${bot.name}!` : `${bot.name} (${R.name || ''} ${D.CLASSES[bot.cls].name}, level ${it.level}) attacks you!`);
+    if (helpers.length) B.post(S, 'combat', null, `${helpers.join(' and ')} ${helpers.length > 1 ? 'join' : 'joins'} the fight!`);
+    emit('fightStart', { fight: G.fight });
+    emit('ambush', G.fight.pvp);
+  }
+  function endPvp(C) {
+    const S = G.S, P = S.player, f = S.flags, info = C.pvp;
+    E.writeBack(C, G.pUnit, now());
+    petWriteBack(C);
+    for (const u of C.allies) if (u.memberRef) { E.writeBack(C, u, now()); if (u.dead) u.memberRef.hp = Math.round(u.maxHp * 0.5); }
+    P.pvp = G.pvpStats();
+    const mates = B.onlineIn(S, P.place, new Date()).filter((b) => B.factionOf(b) === B.factionOf({ race: P.race }));
+    if (C.over === 'win') {
+      const honor = Math.round((10 + 2 * info.level) * (info.town ? 1.5 : 1));
+      P.pvp.kills++; P.pvp.honor += honor;
+      sys(`You defeated ${info.name}. +${honor} Honor.`);
+      if (mates.length && Math.random() < 0.5) B.post(S, 'say', pick(mates), pick(['gj', 'nice', 'ez', 'get rekt lol', 'thx for the help', 'ty']));
+      f.nextAmbush = now() + AMBUSH_GAP * rnd(0.8, 1.5);
+    } else {
+      P.pvp.deaths++; P.deaths++; P.hp = 0;
+      P.ghostUntil = now() + 15000;
+      sys(`${info.name} killed you. Your spirit runs back to your body...`);
+      if (mates.length && Math.random() < 0.4) B.post(S, 'say', pick(mates), pick(['rip', 'gankers smh', 'we will get him', 'u ok?']));
+      f.nextAmbush = now() + AMBUSH_AFTER_DEATH;
+    }
+    G.fight = null; G.pUnit = null;
+    emit('fightEnd', { result: C.over, pvp: true });
     G.save();
   }
 
@@ -1403,7 +1553,7 @@
           else B.post(S, 'party', null, 'extra pack!');
         }
         if (C.events.length) { emit('combat', C.events); C.events.length = 0; }
-        if (C.over) { if (C.kind === 'solo') endSolo(C); else endRunFight(C); }
+        if (C.over) { if (C.kind === 'solo') endSolo(C); else if (C.kind === 'pvp') endPvp(C); else endRunFight(C); }
       }
     }
     worldAcc += dt;
@@ -1413,6 +1563,7 @@
       else if (S.player.travel) S.player.travel = null;
       worldTick();
       partyTick();
+      ambushTick();
       runTick();
       rollsTick();
       const before = S.chat.length;

@@ -78,11 +78,12 @@ Agreed 2026-09-27. The Horde is fully playable. Each faction has its own zones u
 
 The Horde brings Shaman, its own class (Paladin is Alliance-only in Classic). Under the house rule, both factions may get both.
 
-## World PvP ambushes (agreed 2026-09-27, ships with v2.1)
+## World PvP ambushes (agreed 2026-09-27; shipped in v2.0.2)
 
 Enemy-faction bots sometimes attack you, even in friendly zones.
 
 - **Danger per place:** capitals and starting valleys 0. Faction hub towns are very rare, and guards join on your side. Friendly questing zones are low. Contested zones (from v4) are high, and enemy territory is highest.
+- **Enemies arrive first (2026-09-27):** an enemy player shows up in the scene and under People, like any other player, before anything happens. About 70% attack after 25–60 seconds if you're still there (55% in towns); the rest only pass through. You can attack them first, or walk away.
 - **The fight:** an enemy bot of your level ±2, using its real class and abilities. A rare high-level "skull" ganker appears only in dangerous zones. You can fight or try to run, and nearby players of your faction sometimes join.
 - **Rewards:** a kill tally and small trophies; honour ranks come later with battlegrounds. Death is the normal death, with nothing extra.
 - **Guardrails:** a cooldown between ambushes; never during quest turn-ins, dungeons or cutscenes; a War Mode switch in Hero; no camping your corpse.

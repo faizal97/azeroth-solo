@@ -170,7 +170,7 @@
     const puller = (opts && opts.puller) || allies[0];
     for (const e of enemies) { e.threat[puller.uid] = 1; e.target = puller.uid; }
     for (const a of allies) if (!a.target && enemies[0]) a.target = enemies[0].uid;
-    for (const e of enemies) if (D.MOBS[e.key].aggro && Math.random() < 0.8) say(C, e, D.MOBS[e.key].aggro, 'monster');
+    for (const e of enemies) if (D.MOBS[e.key] && D.MOBS[e.key].aggro && Math.random() < 0.8) say(C, e, D.MOBS[e.key].aggro, 'monster');
     return C;
   };
 
@@ -558,11 +558,13 @@
     }
   }
 
-  function focusTarget(C) {
-    const tank = alive(C.allies).find((u) => u.role === 'tank');
+  function focusTarget(C, u) {
+    // works for either side: 'u' is the unit asking (an ally by default)
+    const mine = u ? friends(C, u) : C.allies, theirs = u ? foes(C, u) : C.enemies;
+    const tank = alive(mine).find((x) => x.role === 'tank');
     const t = tank && C.units[tank.target];
     if (t && !t.dead) return t;
-    const en = alive(C.enemies);
+    const en = alive(theirs);
     return en.sort((a, b) => a.hp - b.hp)[0] || null;
   }
   E.focusTarget = focusTarget;
@@ -574,7 +576,7 @@
     if (u.nextThink > C.t) return;
     u.nextThink = C.t + (b.react || 0.6);
     if (b.afkUntil && b.afkUntil > C.t) return;
-    const en = alive(C.enemies);
+    const en = alive(foes(C, u));
     if (!en.length) return;
     const try_ = (id, tgt) => E.use(C, u, id, tgt && tgt.uid) === null;
     const rac = u.race && D.RACIALS[u.race] && D.RACIALS[u.race].active;
@@ -586,7 +588,7 @@
     const has = (id) => D.CLASSES[u.cls].abilities.includes(id) && D.ABILITIES[id].lvl <= u.level;
 
     if (u.role === 'healer') {
-      const allies = alive(C.allies);
+      const allies = alive(friends(C, u));
       const low = allies.slice().sort((a, b2) => a.hp / a.maxHp - b2.hp / b2.maxHp)[0];
       const thr = 0.5 + 0.3 * (b.skill || 0.5);
       const tank = allies.find((a) => a.role === 'tank') || allies[0];
@@ -596,13 +598,13 @@
       if (low && low.hp / low.maxHp < thr && has('healing_wave') && try_('healing_wave', low)) return;
       if (u.cls === 'shaman') {
         if (tank && has('stoneskin_totem') && !auraOf(tank, 'stoneskin') && try_('stoneskin_totem')) return;
-        if (u.res / u.maxRes > 0.7 && Math.random() < 0.4) { const f = focusTarget(C); if (f) try_('lightning_bolt', f); }
+        if (u.res / u.maxRes > 0.7 && Math.random() < 0.4) { const f = focusTarget(C, u); if (f) try_('lightning_bolt', f); }
         return;
       }
       if (tank && tank.hp / tank.maxHp < 0.85 && has('rejuvenation') && !auraOf(tank, 'rejuvenation') && try_('rejuvenation', tank)) return;
       if (u.cls === 'druid') {
         if (has('mark_wild') && !auraOf(u, 'mark_wild') && try_('mark_wild')) return;
-        if (u.res / u.maxRes > 0.7 && Math.random() < 0.4) { const f = focusTarget(C); if (f && has('moonfire') && !auraOf(f, 'moonfire') && try_('moonfire', f)) return; if (f) try_('wrath', f); }
+        if (u.res / u.maxRes > 0.7 && Math.random() < 0.4) { const f = focusTarget(C, u); if (f && has('moonfire') && !auraOf(f, 'moonfire') && try_('moonfire', f)) return; if (f) try_('wrath', f); }
         return;
       }
       if (u.cls === 'paladin') {
@@ -613,7 +615,7 @@
       if (tank && tank.hp / tank.maxHp < 0.9 && has('pw_shield') && !auraOf(tank, 'weakened_soul') && try_('pw_shield', tank)) return;
       if (tank && tank.hp / tank.maxHp < 0.8 && has('renew') && !auraOf(tank, 'renew') && try_('renew', tank)) return;
       if (u.res / u.maxRes > 0.7 && Math.random() < 0.5) {
-        const f = focusTarget(C);
+        const f = focusTarget(C, u);
         if (f && has('sw_pain') && !auraOf(f, 'sw_pain') && try_('sw_pain', f)) return;
         if (f && try_('smite', f)) return;
       }
@@ -650,12 +652,12 @@
       return;
     }
     // dps
-    tgt = focusTarget(C);
+    tgt = focusTarget(C, u);
     if ((b.skill || 0.5) < 0.35 && Math.random() < 0.25) tgt = en[rint(0, en.length - 1)];
     if (!tgt) return;
     u.target = tgt.uid;
     // careful players ease off when they're about to pull aggro
-    const tankU = alive(C.allies).find((a) => a.role === 'tank');
+    const tankU = alive(friends(C, u)).find((a) => a.role === 'tank');
     if (tankU && tgt.target === tankU.uid) {
       const mine = tgt.threat[u.uid] || 0, tk = tgt.threat[tankU.uid] || 0;
       if (mine > tk * 0.9 && Math.random() < (b.skill || 0.5)) { u.auto = false; return; }

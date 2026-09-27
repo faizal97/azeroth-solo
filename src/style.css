@@ -342,3 +342,10 @@ img { max-width: 100%; display: block; }
 .ai-row b{font-weight:600;text-align:right}
 .ai-row.bad b,.ai-note.bad{color:#ff6a5a}
 .ai-note{color:var(--muted);font-size:12px;margin:4px 0 8px}
+
+/* world PvP */
+.chip.foe { border-color: #a8352a; background: linear-gradient(#3a1410, #1e0a08); }
+.chip.foe span { color: #ff6a5a; font-weight: 700; }
+.foe-h { color: #ff6a5a; }
+.sprite.foe .np span { text-shadow: 0 0 4px #000, 0 0 2px #000; }
+.mcard.foe-card { border-color: #a8352a; background: linear-gradient(#3a1410, #1e0a08); }

@@ -191,7 +191,8 @@
         const pos = Object.assign({}, POS_EN[i] || POS_EN[4]);
         if (u.boss && i === 0) pos.w = 36;
         const np = h('div', { class: 'np' }, h('span', { style: { color: conColor(u.level) } }, u.boss ? '' : u.level + ' '), h('span', { style: { color: '#ff6a5a' } }, u.name), h('div', { class: 'hpb' }, h('i')));
-        const el = spriteEl(mobArt(u.key), pos, 'idle' + (u.dead ? ' dead' : ''), np);
+        const isChar = u.kind !== 'mob';
+        const el = spriteEl(isChar ? art('hero', looks(u.char)) : mobArt(u.key), isChar ? Object.assign(pos, { w: Math.min(pos.w, 26) }) : pos, 'idle' + (isChar ? ' flip' : '') + (u.dead ? ' dead' : ''), np);
         el.addEventListener('click', () => { G.setTarget(u.uid); renderTarget(); markTargets(); });
         ui.spriteEls[u.uid] = el; sc.append(el);
       });
@@ -217,6 +218,14 @@
           el.addEventListener('click', () => confirmInvite(b));
           sc.append(el);
         });
+        // an enemy player nearby (War Mode)
+        const foe = G.intruderHere();
+        if (foe) {
+          const el = spriteEl(art('hero', looks(foe)), { l: 36, b: 12, w: 17 }, 'idle flip foe', h('div', { class: 'np', style: { fontSize: '9px' } }, h('span', { style: { color: '#ff5b4b' } }, '⚔ ' + foe.name)));
+          el.classList.add('tappable');
+          el.addEventListener('click', () => confirmAttack(foe));
+          sc.append(el);
+        }
         // a few creatures in view
         const mobs = G.placeMobs().filter((m) => m.state === 'alive').slice(0, 2);
         mobs.forEach((m, i) => {
@@ -396,6 +405,10 @@
     if (!mobs.length) { b.append(h('div', { class: 'people' }, place.safe ? 'No creatures in town. See People for quests and vendors.' : 'Nothing to fight here right now.')); return; }
     const needKeys = questMobKeys();
     const grid = h('div', { class: 'mgrid', id: 'mob-list' });
+    const foe = G.intruderHere();
+    if (foe) grid.append(h('button', { class: 'mcard foe-card', onclick: () => confirmAttack(foe) },
+      h('div', { class: 'ic mob' }, img(art('portrait', looks(foe)))),
+      h('div', { class: 't' }, h('b', null, h('span', { style: { color: conColor(foe.level) } }, foe.level + ' '), foe.name), h('small', { style: { color: '#ff6a5a' } }, `Enemy ${D.CLASSES[foe.cls].name}`))));
     for (const m of mobs.slice().sort((a, c) => rankMob(a) - rankMob(c)).slice(0, 12)) {
       const M = D.MOBS[m.key];
       const alive = m.state === 'alive';
@@ -424,6 +437,9 @@
       for (const x of near.slice(0, 12)) chips.append(h('button', { class: 'chip', onclick: () => confirmInvite(x) }, h('span', { class: 'cls-' + x.cls }, x.name), h('small', null, String(x.level))));
       b.append(h('div', { class: 'sec-h' }, 'Players here', h('small', null, `${near.length} nearby · tap to invite`)), chips);
     }
+    const foe = G.intruderHere();
+    if (foe) b.append(h('div', { class: 'sec-h foe-h' }, 'Enemy player', h('small', null, 'tap to attack')),
+      h('div', { class: 'chips' }, h('button', { class: 'chip foe', onclick: () => confirmAttack(foe) }, h('span', null, '⚔ ' + foe.name), h('small', null, `${foe.level} ${D.CLASSES[foe.cls].name}`))));
   }
   function questsTab(b) {
     const P = G.S.player;
@@ -521,6 +537,18 @@
     showDialog([h('h3', null, `Invite ${b.name}?`), h('p', null, `Level ${b.level} ${(D.RACES[b.race] || D.RACES.human).name} ${D.CLASSES[b.cls].name}`), bio,
       h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); G.invite(b.id); } }, 'Invite'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true);
   }
+  function confirmAttack(foe) {
+    const R = D.RACES[foe.race] || {}, place = D.PLACES[G.S.player.place];
+    showDialog([h('h3', null, `Attack ${foe.name}?`), h('p', null, `Level ${foe.level} ${R.name || ''} ${D.CLASSES[foe.cls].name}, an enemy player.`),
+      h('p', { style: { color: 'var(--muted)', fontSize: '13px' } }, (place.safe ? 'The town guards will fight on your side. ' : '') + 'Win to earn Honor. You get the first strike.'),
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); G.attackIntruder(); } }, 'Attack'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Leave them'))], true);
+  }
+  function showWarModeIntro() {
+    showDialog([h('h3', null, 'War Mode'), h('p', null, 'Turn on War Mode and enemy players will show up in the world. Some pass by, some attack you, and you can attack them too.'),
+      h('p', null, 'While it is on you get +10% experience and gold, and Honor for every enemy player you defeat.'),
+      h('p', { style: { color: 'var(--muted)', fontSize: '13px' } }, 'Capitals and starting valleys stay safe. Guards help you in towns. You can change this any time in Hero.'),
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); G.setWarMode(true); } }, 'Turn on'), h('button', { class: 'btn alt', onclick: () => { closeDialog(); G.setWarMode(false); } }, 'Not now'))]);
+  }
   function showPartyInvite(d) {
     const b = d.bot;
     showDialog([h('h3', null, `${b.name} invites you to a group`), h('p', null, `Level ${b.level} ${(D.RACES[b.race] || D.RACES.human).name} ${D.CLASSES[b.cls].name}, ${d.why}.`),
@@ -534,8 +562,8 @@
     for (const u of C.enemies) {
       const tgt = C.units[u.target];
       list.append(h('button', { class: 'row' + (u.dead ? ' off' : ''), onclick: () => { G.setTarget(u.uid); renderTarget(); markTargets(); } },
-        h('div', { class: 'ic mob' }, img(mobArt(u.key))),
-        h('div', { class: 't' }, h('b', null, h('span', { style: { color: conColor(u.level) } }, u.level + ' '), u.name), h('small', null, u.dead ? 'Dead' : tgt ? 'Attacking ' + (tgt.kind === 'player' ? 'you' : tgt.name) : '')),
+        h('div', { class: 'ic mob' }, img(u.kind === 'mob' ? mobArt(u.key) : art('portrait', looks(u.char)))),
+        h('div', { class: 't' }, h('b', null, h('span', { style: { color: conColor(u.level) } }, u.level + ' '), u.name), h('small', null, u.dead ? 'Dead' : (u.kind !== 'mob' ? `${(D.RACES[u.race] || {}).name || ''} ${D.CLASSES[u.cls].name} · ` : '') + (tgt ? 'Attacking ' + (tgt.kind === 'player' ? 'you' : tgt.name) : ''))),
         h('div', { class: 'r tnum', 'data-hp': u.uid }, '')));
     }
     p.append(h('div', { class: 'sec-h' }, 'In combat', h('small', null, 'tap an enemy to target it')), list);
@@ -1244,6 +1272,12 @@
         abl.append(h('div', { class: 'row' + (known ? '' : ' off') }, h('div', { class: 'ic' }, img(abIcon(id))), h('div', { class: 't' }, h('b', null, ab.name), h('small', { style: { whiteSpace: 'normal' } }, known ? t.d : `Learned at level ${ab.lvl}`)), h('div', { class: 'r' }, t.cost)));
       }
       b.append(abl);
+      const pv = G.pvpStats();
+      b.append(h('div', { class: 'sec-h' }, 'War Mode', h('small', null, G.S.flags.warMode ? '+10% experience and gold' : 'off')),
+        h('div', { class: 'ai-box' }, h('div', { class: 'ai-row' }, h('span', null, 'Honor'), h('b', { class: 'tnum' }, String(pv.honor))),
+          h('div', { class: 'ai-row' }, h('span', null, 'Enemy players defeated'), h('b', { class: 'tnum' }, `${pv.kills} · died ${pv.deaths} · escaped ${pv.escapes}`))),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { G.setWarMode(!G.S.flags.warMode); ui.sheetFn(); } }, 'War Mode: ' + (G.S.flags.warMode ? 'On' : 'Off'))),
+        h('p', { class: 'ai-note' }, P.level < 6 ? 'Enemy players start showing up from level 6.' : 'Enemy players show up now and then. Towns are rare and guarded; capitals and starting valleys are safe. Honor will buy PvP looks and titles in a later update.'));
       b.append(h('div', { class: 'sec-h' }, 'Party invites'), h('div', { class: 'btn-row' },
         h('button', { class: 'btn alt', onclick: () => { G.setInvites(!!G.S.flags.noInvites); ui.sheetFn(); } }, 'Invites from nearby players: ' + (G.S.flags.noInvites ? 'Off' : 'On'))));
       if (window.SND) {
@@ -1601,6 +1635,8 @@
     G.on('error', (t) => toast(t));
     G.on('pop', (q) => { renderNavDots(); showPop(q); });
     G.on('invite', showInvite);
+    G.on('warModeIntro', () => { if (!document.querySelector('.dialog')) showWarModeIntro(); else setTimeout(() => { if (!document.querySelector('.dialog')) showWarModeIntro(); }, 4000); });
+    G.on('intruder', (it) => { toast(`Enemy player nearby: ${it.name}`); snd('error', { gap: 0.4, vol: 0.5 }); renderAll(); });
     G.on('partyInvite', (d) => { if (ui.dialog || (window.CS && CS.playing)) { G.declinePartyInvite(d.bot.id); return; } showPartyInvite(d); });
     G.on('roll', () => renderRolls());
     G.on('questReady', () => { renderNavDots(); renderPanel(); });
