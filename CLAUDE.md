@@ -5,7 +5,12 @@ A single-player fake MMO in World of Warcraft Classic's world: every other "play
 ## Layout
 
 - `src/` is the game, plain browser JS with no framework:
-  - `data.js`: classes, abilities, mobs, zones (`D.PLACES`, grouped by `region`), quests, items, dungeons, activities
+  - `data/`: the game data, loaded in the order in `data/files.json`
+    - `core.js`: classes, races, abilities, gear rules, reward families, shared items (food, junk, starting gear)
+    - `zones/<zone>.js`: one file per zone with everything that lives there (`D.zone(...)`, items, mobs, places, NPCs, quests, dungeons, group-finder activities). Links to other zones sit on the places.
+    - `finalize.js`: derived fields that need the whole world (boss-loot sources)
+    - `data.js` is only the Node entry point that loads these for sims and tools
+  - A new zone = a new `zones/<zone>.js`, added to `files.json`, plus its art pack
   - `engine.js`: combat, DOM-free so it also runs in Node sims
   - `bots.js`: simulated server, chat, catch-up after time away
   - `game.js`: controller for world, quests, loot, group finder, runs and character saves
@@ -22,6 +27,7 @@ A single-player fake MMO in World of Warcraft Classic's world: every other "play
 ## Build and ship
 
 ```bash
+node tools/validate.js   # data check (build.py runs it first and stops on errors)
 python3 build.py      # inlines fonts, CSS, JS, audio → dist/index.html and app/assets/game/index.html
 cd app && JAVA_HOME=/opt/homebrew/opt/openjdk@17 flutter build apk --release
 ```

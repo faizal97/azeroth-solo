@@ -294,7 +294,8 @@
     const namedAll = [...new Set(Object.values(D.PLACES).filter((p) => (p.region || 'elwynn') === region).flatMap((p) => Object.keys(p.named || {})).concat(Object.values(D.QUESTS).flatMap((q) => q.objs.filter((o) => o.type === 'kill' && D.MOBS[o.mob] && D.MOBS[o.mob].named).map((o) => o.mob))).filter((k) => { const pl = Object.values(D.PLACES).find((p) => (p.named || {})[k] || (p.mobs || []).some((m) => m[0] === k)); return !pl || (pl.region || 'elwynn') === region; }))];
     if (!namedAll.length) namedAll.push(region === 'elwynn' ? 'hogger' : Object.keys(D.MOBS).find((k) => D.MOBS[k].named) || 'hogger');
     const q = Object.keys(S.player.quests || {});
-    const npc = q.length ? D.NPCS[D.QUESTS[q[0]].turnin].name : pick(Object.values(D.NPCS)).name;
+    const zoneNpcs = Object.values(D.PLACES).filter((p) => (p.region || 'elwynn') === (P.region || 'elwynn')).flatMap((p) => p.npcs || []);
+    const npc = q.length ? D.NPCS[D.QUESTS[q[0]].turnin].name : D.NPCS[pick(zoneNpcs.length ? zoneNpcs : Object.keys(D.NPCS))].name;
     const affix = pick(D.AFFIXES).name;
     return {
       mobName: mobs.length ? D.MOBS[pick(mobs)].name : 'Kobold', namedMob: D.MOBS[pick(namedAll)].name, questNpc: npc,

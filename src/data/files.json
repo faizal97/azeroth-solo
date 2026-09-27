@@ -1,0 +1,12 @@
+[
+  "core.js",
+  "zones/elwynn.js",
+  "zones/dunmorogh.js",
+  "zones/teldrassil.js",
+  "zones/durotar.js",
+  "zones/mulgore.js",
+  "zones/tirisfal.js",
+  "zones/westfall.js",
+  "zones/barrens.js",
+  "finalize.js"
+]

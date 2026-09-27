@@ -33,7 +33,7 @@ cd app && flutter build apk --release --target-platform android-arm64
 
 Needs Python 3, Flutter, and JDK 17. You can also open `dist/index.html` in a desktop browser to play without Android.
 
-- `src/data.js`: classes, abilities, zones, mobs, quests, items
+- `src/data/`: game data. `core.js` holds classes, abilities and shared items; `zones/<zone>.js` holds each zone's places, mobs, people and quests. `node tools/validate.js` checks every reference (the build runs it too)
 - `src/engine.js`: combat (DOM-free, also runs in Node)
 - `src/bots.js`: the simulated server
 - `src/game.js`, `src/ui.js`: game logic and interface

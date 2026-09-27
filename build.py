@@ -3,7 +3,11 @@
 import os, shutil
 R = os.path.dirname(os.path.abspath(__file__))
 rd = lambda p: open(os.path.join(R, p), encoding='utf-8').read()
-import base64, json, glob, sys
+import base64, json, glob, sys, subprocess
+# the data must check out before anything is built
+if subprocess.run(['node', os.path.join(R, 'tools', 'validate.js')]).returncode != 0:
+    sys.exit('build stopped: fix the data errors above')
+DATA = ['src/data/' + f for f in json.load(open(os.path.join(R, 'src', 'data', 'files.json')))]
 # music ships only once he has listened and approved the track
 APPROVED = set(open(os.path.join(R, 'audio', 'approved.txt')).read().split()) if os.path.exists(os.path.join(R, 'audio', 'approved.txt')) else set()
 aud = {}
@@ -14,7 +18,7 @@ for f in sorted(glob.glob(os.path.join(R, 'audio', 'out', '*.m4a'))):
     aud[n] = 'data:audio/mp4;base64,' + base64.b64encode(open(f, 'rb').read()).decode()
 meta = rd('audio/out/music.json') if os.path.exists(os.path.join(R, 'audio/out/music.json')) else '{}'
 audio_js = 'window.AUDIO_DATA=' + json.dumps(aud) + ';window.AUDIO_META=' + meta + ';'
-js = [f for f in ['src/art.js', 'src/art_durotar.js', 'src/art_mulgore.js', 'src/art_tirisfal.js', 'src/art_westfall.js', 'src/art_barrens.js', 'src/art_icons2.js', 'src/art_story.js', 'src/data.js', 'src/engine.js', 'src/bots.js', 'src/game.js', 'src/sound.js', 'src/cutscene.js', 'src/ai.js', 'src/ui.js'] if os.path.exists(os.path.join(R, f))]
+js = [f for f in ['src/art.js', 'src/art_durotar.js', 'src/art_mulgore.js', 'src/art_tirisfal.js', 'src/art_westfall.js', 'src/art_barrens.js', 'src/art_icons2.js', 'src/art_story.js'] + DATA + ['src/engine.js', 'src/bots.js', 'src/game.js', 'src/sound.js', 'src/cutscene.js', 'src/ai.js', 'src/ui.js'] if os.path.exists(os.path.join(R, f))]
 html = f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
