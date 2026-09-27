@@ -9,7 +9,7 @@ let bad=0;
 for (const race of ['human','dwarf','nightelf','orc','tauren','undead']) { const FROM=+(process.env.FROM||1), TO=+(process.env.TO||10);
   const region = D.PLACES[D.RACES[race].start].region || 'elwynn';
   G.newGame({name:'Sim',cls:'warrior',race}); const P=G.S.player;
-  const done=new Set(process.env.ONLY?['report_gryan','westfall_dunmorogh','westfall_teldrassil','crossroads_durotar','crossroads_mulgore','crossroads_tirisfal']:[]); let lvl=FROM, xp=0, qxp=0, kxp=0, grind=0, worst=0, worstAt=0, log=[];
+  const done=new Set(process.env.ONLY?[...(process.env.PRE||'').split(',').filter(Boolean),'report_gryan','westfall_dunmorogh','westfall_teldrassil','crossroads_durotar','crossroads_mulgore','crossroads_tirisfal']:[]); if(process.env.DONEBELOW) for(const [k,q] of Object.entries(D.QUESTS)) if(q.lvl<+process.env.DONEBELOW) done.add(k); let lvl=FROM, xp=0, qxp=0, kxp=0, grind=0, worst=0, worstAt=0, log=[];
   const gain=(n)=>{ xp+=n; while(lvl<TO && xp>=D.XP_TO_LEVEL[lvl]){ xp-=D.XP_TO_LEVEL[lvl]; lvl++; } };
   while(lvl<TO){
     P.level=lvl; P.done=Object.fromEntries([...done].map(q=>[q,true])); P.quests={};

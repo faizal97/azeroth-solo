@@ -332,7 +332,7 @@
     if (npc === 'grosk' || npc === 'gryshka') return ['tough_bread', 'horde_bread', 'spring_water', 'ice_milk'].map(G.copyItem);
     if (npc === 'moodan' || npc === 'kien') return ['tough_bread', 'spring_water'].map(G.copyItem);
     if (npc === 'kauth' || npc === 'pala') return ['tough_bread', 'mulgore_bread', 'spring_water', 'ice_milk'].map(G.copyItem);
-    if (npc === 'heather' || npc === 'boorand') return ['fresh_bread', 'moist_cornbread', 'ice_milk', 'melon_juice'].map(G.copyItem);
+    if (npc === 'heather' || npc === 'boorand') return ['fresh_bread', 'moist_cornbread', 'mutton_chop', 'ice_milk', 'melon_juice', 'sweet_nectar'].map(G.copyItem);
     if (npc === 'renee' || npc === 'norman') return ['tough_bread', 'tirisfal_pumpkin', 'spring_water', 'ice_milk'].map(G.copyItem);
     if (npc === 'keldamyr' || npc === 'saelienne') return ['tough_bread', 'fresh_bread', 'spring_water', 'moonberry_juice'].map(G.copyItem);
     if (npc === 'corina' || npc === 'grawn' || npc === 'bruuk' || npc === 'ilyenia' || npc === 'mydrannul' || npc === 'kaplak' || npc === 'rahauro' || npc === 'mahnott' || npc === 'etu' || npc === 'gerard' || npc === 'abigail' || npc === 'lewis' || npc === 'nargal') {
@@ -387,7 +387,7 @@
   G.knownAbilities = function () {
     const P = G.S.player;
     const C = D.CLASSES[P.cls];
-    if (G.fight && G.pUnit && G.pUnit.form && C.forms) return C.forms[G.pUnit.form];
+    if (G.fight && G.pUnit && G.pUnit.form && C.forms) return C.forms[G.pUnit.form].filter((a) => D.ABILITIES[a].lvl <= P.level);
     return C.abilities.filter((a) => D.ABILITIES[a].lvl <= P.level);
   };
 

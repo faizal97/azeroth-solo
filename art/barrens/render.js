@@ -11,9 +11,10 @@ const RSVG = '/opt/homebrew/bin/rsvg-convert';
 fs.mkdirSync(OUT, { recursive: true });
 const SRC = fs.readFileSync(path.join(ROOT, 'src/art_barrens.js'), 'utf8');
 
-const SCENES = ['crossroads', 'far_watch', 'forgotten_pools', 'stagnant_oasis', 'razormane_grounds', 'thorn_hill'];
+const SCENES = ['crossroads', 'far_watch', 'forgotten_pools', 'stagnant_oasis', 'razormane_grounds', 'thorn_hill', 'sludge_fen', 'lushwater_oasis', 'baeldun_digsite'];
 const MOBS = ['kolkar_drudge', 'kolkar_wrangler', 'kolkar_stormer', 'barak_kodobane', 'zhevra_runner', 'swiftmane', 'savannah_prowler', 'sunscale_lashtail',
-  'oasis_snapjaw', 'stormsnout', 'razormane_quilboar', 'razormane_thornweaver'];
+  'oasis_snapjaw', 'stormsnout', 'razormane_quilboar', 'razormane_thornweaver',
+  'venture_mercenary', 'venture_geologist', 'sunscale_scytheclaw', 'oasis_crocolisk', 'takk_the_leaper', 'baeldun_excavator', 'baeldun_soldier'];
 const problems = [];
 
 // ---- 1. fake-window run (no art.js) ----
@@ -44,12 +45,12 @@ const window = {};
 vm.createContext(window);
 window.window = window;
 vm.runInContext(fs.readFileSync(path.join(ROOT, 'src/art.js'), 'utf8'), window);
-for (const z of ['art_durotar.js', 'art_mulgore.js', 'art_tirisfal.js']) {
+for (const z of ['art_durotar.js', 'art_mulgore.js', 'art_tirisfal.js', 'art_westfall.js']) {
   const zp = path.join(ROOT, 'src', z);
   if (fs.existsSync(zp)) vm.runInContext(fs.readFileSync(zp, 'utf8'), window); else problems.push('missing pack ' + z);
 }
 // one key from art.js and each earlier pack must render identically before and after this pack loads
-const PROBE = { scenes: ['goldshire', 'razor_hill', 'camp_narache', 'brill'], mobs: ['hogger', 'mottled_boar', 'bristleback_quilboar', 'mindless_zombie'] };
+const PROBE = { scenes: ['goldshire', 'razor_hill', 'camp_narache', 'brill', 'sentinel_hill'], mobs: ['hogger', 'mottled_boar', 'bristleback_quilboar', 'mindless_zombie', 'venture_worker', 'goretusk'] };
 const before = { ns: window.ART.keys.scenes.length, nm: window.ART.keys.mobs.length, s: {}, m: {} };
 PROBE.scenes.forEach(k => { before.s[k] = window.ART.scene(k); });
 PROBE.mobs.forEach(k => { before.m[k] = window.ART.mob(k); });
@@ -105,10 +106,16 @@ const sheets = [];
 sheets.push(sheet('scenes', scenes, 400, 240, 2, '#000'));
 sheets.push(sheet('mobs', mobs, 128, 128, 4, '#c8b07a'));
 sheets.push(sheet('mobs_110', mobs, 110, 110, 8, '#c8b07a'));
+sheets.push(sheet('mobs_56', mobs, 56, 56, 10, '#c8b07a'));
+const NEWM = MOBS.slice(12), NEWS = SCENES.slice(6);
+sheets.push(sheet('new_scenes', scenes.filter(([k]) => NEWS.includes(k)), 400, 240, 1, '#000'));
+sheets.push(sheet('new_mobs', mobs.filter(([k]) => NEWM.includes(k)), 128, 128, 4, '#c8b07a'));
 const PAIRS = {
   kolkar_drudge: 'stagnant_oasis', kolkar_wrangler: 'far_watch', kolkar_stormer: 'thorn_hill', barak_kodobane: 'thorn_hill',
   zhevra_runner: 'crossroads', swiftmane: 'forgotten_pools', savannah_prowler: 'far_watch', sunscale_lashtail: 'forgotten_pools',
-  oasis_snapjaw: 'stagnant_oasis', stormsnout: 'crossroads', razormane_quilboar: 'razormane_grounds', razormane_thornweaver: 'razormane_grounds'
+  oasis_snapjaw: 'stagnant_oasis', stormsnout: 'crossroads', razormane_quilboar: 'razormane_grounds', razormane_thornweaver: 'razormane_grounds',
+  venture_mercenary: 'sludge_fen', venture_geologist: 'sludge_fen', sunscale_scytheclaw: 'lushwater_oasis', oasis_crocolisk: 'lushwater_oasis',
+  takk_the_leaper: 'lushwater_oasis', baeldun_excavator: 'baeldun_digsite', baeldun_soldier: 'baeldun_digsite'
 };
 const onScene = MOBS.map(m => {
   const hr = ART.hero({ cls: 'warrior' });
@@ -118,6 +125,7 @@ const onScene = MOBS.map(m => {
   return [m, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="400" height="240">${body}</svg>`];
 });
 sheets.push(sheet('onscene', onScene, 400, 240, 2, '#000'));
+sheets.push(sheet('new_onscene', onScene.filter(([k]) => NEWM.includes(k)), 400, 240, 2, '#000'));
 
 const size = Buffer.byteLength(SRC);
 console.log('scenes:', SCENES.length, 'mobs:', MOBS.length, 'file bytes:', size);

@@ -1,4 +1,4 @@
-/* art_icons2.js - extra ability icons for Azeroth Solo (16 keys, one or two per class).
+/* art_icons2.js - extra ability icons for Azeroth Solo (34 keys, batch 1 + batch 2, a few per class).
  * Loads AFTER art.js and EXTENDS window.ART: ART.icon handles the keys below and falls through to the previous
  * ART.icon for every other key. Keys are appended to ART.keys.icons. Self-contained: art.js helpers are private,
  * so the few needed here are re-implemented (same maths, same look). Never throws.
@@ -169,6 +169,32 @@
     var d = D`M${ax},${ay} Q${c1x},${c1y} ${bx},${by} Q${c2x},${c2y} ${ax},${ay} Z`;
     return P(d, col || '#fff4e8', 1.8);
   }
+
+  /* ---- batch 2 parts ---- */
+  function leaf(c, x, y, a, s, col) {
+    col = col || '#6ab43a';
+    return G(P('M0,0 C5,-4 5,-13 0,-18 C-5,-13 -5,-4 0,0 Z', c.lg([lt(col, 0.35), col, dk(col, 0.35)], 0, 0, 1, 0), 1.6) + S('M0,-1.5 L0,-15', dk(col, 0.45), 0.9),
+      'translate(' + r1(x) + ',' + r1(y) + ') rotate(' + a + ') scale(' + s + ')');
+  }
+  /* stroked arc of a circle from angle a0 to a1 (degrees, 0 = right, clockwise), outline under a coloured core */
+  function arc(cx, cy, r, a0, a1, col, w, o) {
+    var p0 = [cx + Math.cos(a0 * Math.PI / 180) * r, cy + Math.sin(a0 * Math.PI / 180) * r], p1 = [cx + Math.cos(a1 * Math.PI / 180) * r, cy + Math.sin(a1 * Math.PI / 180) * r];
+    var d = D`M${p0[0]},${p0[1]} A${r},${r} 0 ${Math.abs(a1 - a0) > 180 ? 1 : 0} 1 ${p1[0]},${p1[1]}`;
+    return S(d, OL, w + 2.6, o) + S(d, col, w, o);
+  }
+  /* merged cloud: every puff outlined first, then filled on top so the inner seams vanish */
+  function cloud(c, puffs, col) {
+    var a = '', b = '', f = c.cel(col);
+    puffs.forEach(function (p) { a += C(p[0], p[1], p[2], OL, 0) + C(p[0], p[1], p[2] + 1.3, OL, 0); b += C(p[0], p[1], p[2], f, 0); });
+    return a + b;
+  }
+  function mace(c) {
+    return P('M-2.6,24 L-2.6,-14 L2.6,-14 L2.6,24 Z', c.cel(WOOD), 2) + S('M-2.6,12 L2.6,14 M-2.6,17 L2.6,19 M-2.6,22 L2.6,24', LEATH, 1.6) + C(0, 26, 3.4, c.cel(GOLD), 1.8) +
+      P('M-8,-27 L-16,-22 L-8,-17 Z M8,-27 L16,-22 L8,-17 Z M-4,-29 L0,-38 L4,-29 Z', c.lg(STEEL, 0, 0, 1, 0), 1.8) +
+      C(0, -22, 8.5, c.lg(STEEL, 0.2, 0, 0.8, 1), 2.2) + P('M-6,-15 L6,-15 L4,-11 L-4,-11 Z', c.cel(GOLD), 1.6) + C(-2.5, -25, 2.4, '#ffffff', 0, 0.7);
+  }
+  function stun(x, y, r) { return P(star(x, y, 5, r, r * 0.45), '#ffe23a', 1.4) + F(star(x, y, 5, r * 0.5, r * 0.22), '#fffbd0'); }
+  function drip(x, y, len, s) { return S(D`M${x},${y} L${x},${y + len}`, OL, 4.6 * s) + S(D`M${x},${y} L${x},${y + len}`, '#d8141a', 2.4 * s) + drop(x, y + len + 3 * s, s); }
 
   /* ================= the icons ================= */
   var NEW = {
@@ -357,6 +383,228 @@
         C(32, 36, 12, c.rg([[0, '#fff0b0', 0.6], [1, '#ffc860', 0]]), 0) +
         fistG(c, 32, 32, 0.78, '#e8a840', '#a0661e') +
         P('M8,30 L16,26 L16,34 Z M56,30 L48,26 L48,34 Z', c.cel(st), 1.8));
+    },
+
+    /* ---------- batch 2 ---------- */
+    /* warrior: a clenched fist inside a blood-red rage burst, blood flying */
+    bloodrage: function (c) {
+      return iconWrap(c, ['#b81414', '#200202'],
+        glow(c, 32, 30, 30, '#ff5a3a', 0.8) +
+        burst(c, 32, 28, 31, 14, 12, ['#8a0a0a', '#e8201c', '#ff9a6a']) + rays(32, 28, 12, 20, 31, '#ffc0a8', 1.6, 0.55, 0.26) +
+        fistG(c, 32, 30, 1.12, '#d8a070', '#5a3a22') +
+        S('M22,20 L22,27 M32,19 L32,26', '#b01818', 1.3, 0.8) +
+        drop(10, 44, 1.3) + drop(54, 46, 1.2) + drop(13, 58, 0.9) + drop(52, 12, 0.9) + drop(11, 14, 0.8) + drop(50, 58, 0.8));
+    },
+    /* warrior: crossed swords on a ring of outward steel spikes */
+    retaliation: function (c) {
+      var sp = '', i, g = c.lg(STEEL, 0, 0, 1, 0);
+      for (i = 0; i < 12; i++) {
+        var a = i / 12 * Math.PI * 2 + Math.PI / 12, b = 0.17;
+        sp += P(pl([[32 + Math.cos(a - b) * 17, 32 + Math.sin(a - b) * 17], [32 + Math.cos(a) * 31, 32 + Math.sin(a) * 31], [32 + Math.cos(a + b) * 17, 32 + Math.sin(a + b) * 17]]) + 'Z', g, 1.8);
+      }
+      return iconWrap(c, ['#a8401e', '#1e0604'],
+        glow(c, 32, 32, 30, '#ffa070', 0.6) + sp +
+        C(32, 32, 18.5, c.rg([[0, '#7a3a24'], [1, '#2a0e06']]), 2.4) + ring2(32, 32, 15, 15, '#e0a060', 1.2, 0.7) +
+        wpn(c, 'sword', 19, 47, 45, 0.8) + wpn(c, 'sword', 45, 47, -45, 0.8) +
+        burst(c, 32, 30, 7, 3, 8, ['#ff9a2a', '#ffd060', '#fff6c0']));
+    },
+    /* mage: a pillar of fire slamming into the ground inside a ring of flame */
+    flamestrike: function (c) {
+      var back = '', front = '', i;
+      for (i = 0; i < 10; i++) {
+        var a = i / 10 * Math.PI * 2 + 0.3, x = 32 + Math.cos(a) * 23, y = 51 + Math.sin(a) * 6.5, f = flameC(x, y - 4, 0.36, FIRE);
+        if (Math.sin(a) < 0) back += f; else front += f;
+      }
+      var pil = 'M21,-2 C25,10 19,22 24,34 L25,50 L39,50 L40,34 C45,22 39,10 43,-2 Z';
+      return iconWrap(c, ['#d8581a', '#2a0600'],
+        glow(c, 32, 30, 30, '#ffb040', 0.7) +
+        E(32, 52, 29, 9, '#240600', 0, 0.7) + ring2(32, 51, 23, 6.5, '#ff9a1f', 2.2) + back +
+        P(pil, c.lg([[0, '#d8340c'], [0.28, '#ffa02a'], [0.5, '#fffbd0'], [0.72, '#ffa02a'], [1, '#d8340c']], 0, 0, 1, 0), 2.2) +
+        S('M32,0 L32,44', '#ffffff', 2.4, 0.7) +
+        E(32, 50, 14, 5, c.rg([[0, '#ffffff'], [0.5, '#fff0a0', 0.9], [1, '#ffb040', 0]]), 0) + front);
+    },
+    /* mage: a shimmering blue-violet bubble with an arcane rune inside */
+    mana_shield: function (c) {
+      return iconWrap(c, ['#5040d0', '#070422'],
+        C(32, 32, 28, c.rg([[0, '#8ad8ff', 0.25], [0.6, '#a898ff', 0.2], [0.84, '#d0c0ff', 0.8], [0.94, '#ffffff', 0.95], [1, '#a080ff', 0]]), 0) +
+        ring2(32, 32, 25, 25, '#c8b8ff', 1.6, 0.85) +
+        glow(c, 32, 32, 16, '#8ae8ff', 0.8) +
+        S('M32,15 L44,32 L32,49 L20,32 Z M32,11 L32,53 M24,32 L40,32', OL, 4.4) + S('M32,15 L44,32 L32,49 L20,32 Z M32,11 L32,53 M24,32 L40,32', '#bff4ff', 2) +
+        C(32, 32, 4.2, c.rg([[0, '#ffffff'], [1, '#8ae8ff']]), 1.6) +
+        S('M13,24 A20,20 0 0 1 24,12', '#ffffff', 2.8, 0.85) + S('M50,44 A20,20 0 0 1 44,50', '#ffffff', 2, 0.6) +
+        sparkle(52, 12, 3.6, '#e8f8ff') + sparkle(12, 52, 3, '#e8e0ff'));
+    },
+    /* priest: a big golden cross of light, brighter and larger than lesser heal */
+    heal: function (c) {
+      var cr = 'M25,4 L39,4 L39,25 L60,25 L60,39 L39,39 L39,60 L25,60 L25,39 L4,39 L4,25 L25,25 Z';
+      return iconWrap(c, ['#f4bc3a', '#5a2a02'],
+        glow(c, 32, 32, 32, '#fff4b0', 1) + rays(32, 32, 8, 14, 31, '#ffffff', 2.4, 0.85, Math.PI / 4) +
+        P(cr, c.lg(['#ffffff', '#fff2a0', '#f0a820'], 0.2, 0, 0.8, 1), 2.6) +
+        F('M29.5,8 L34.5,8 L34.5,29.5 L56,29.5 L56,34.5 L34.5,34.5 L34.5,56 L29.5,56 L29.5,34.5 L8,34.5 L8,29.5 L29.5,29.5 Z', '#ffffff', 0.85) +
+        C(32, 32, 13, c.rg([[0, '#ffffff'], [0.5, '#fffbe0', 0.8], [1, '#fff2a0', 0]]), 0) + sparkle(32, 32, 10, '#ffffff') +
+        sparkle(13, 13, 4.5, '#ffffff') + sparkle(51, 13, 4, '#ffffff') + sparkle(51, 51, 4.5, '#ffffff') + sparkle(13, 51, 3.6, '#ffffff'));
+    },
+    /* priest: a shrieking purple face throwing shockwave rings */
+    psychic_scream: function (c) {
+      var head = 'M32,9 C44,9 49,19 48,30 C47,42 41,55 32,57 C23,55 17,42 16,30 C15,19 20,9 32,9 Z';
+      var w = arc(32, 40, 23, -55, 30, '#f0c0ff', 2.4) + arc(32, 40, 23, 150, 235, '#f0c0ff', 2.4) +
+        arc(32, 40, 29, -50, 25, '#d890ff', 2, 0.75) + arc(32, 40, 29, 155, 230, '#d890ff', 2, 0.75);
+      return iconWrap(c, ['#7a2ab0', '#0e0218'],
+        glow(c, 32, 36, 30, '#d080ff', 0.6) + w +
+        P(head, c.cel('#a878d0'), 2.4) + F('M20,26 C20,16 25,12 31,11 C25,15 22,20 22,30 Z', '#ffffff', 0.35) +
+        P('M19,27 C22,22 27,23 29,29 C25,31 21,31 19,27 Z', '#14041e', 1.4) + P('M45,27 C42,22 37,23 35,29 C39,31 43,31 45,27 Z', '#14041e', 1.4) +
+        C(25, 27.5, 1.6, '#ffe0ff', 0) + C(39, 27.5, 1.6, '#ffe0ff', 0) +
+        S('M18,20 L28,24 M46,20 L36,24', OL, 2.4) +
+        E(32, 44, 6.5, 9.5, '#14041e', 2.2) + E(32, 47.5, 4, 4.5, '#8a1a4a', 0) + S('M27,39 L29,41 M37,39 L35,41', '#f4e6ff', 1.2, 0.8));
+    },
+    /* rogue: a jagged open gash across skin, bleeding out */
+    rupture: function (c) {
+      var g = 'M6,20 L14,18 L18,13 L25,22 L31,19 L36,28 L43,26 L48,35 L58,38 L56,45 L46,42 L40,35 L34,38 L28,30 L22,33 L16,25 L8,27 Z';
+      return iconWrap(c, ['#c88262', '#3a0c06'],
+        glow(c, 32, 30, 28, '#ffb098', 0.35) +
+        P(g, '#4a0206', 2.6) + F('M9,23 L16,21 L20,18 L25,26 L31,24 L36,32 L42,30 L47,38 L55,41', '#e8141c', 0) + S('M9,23 L16,21 L20,18 L25,26 L31,24 L36,32 L42,30 L47,38 L55,41', '#ff5a4a', 1.8, 0.9) +
+        S(g, '#f0a090', 1, 0.7) +
+        drip(15, 27, 12, 1) + drip(29, 33, 16, 1.1) + drip(44, 42, 8, 1) + drop(22, 56, 1) + drop(52, 56, 0.9) + drop(8, 50, 0.8));
+    },
+    /* rogue: a fist driving into the lower back, stun stars */
+    kidney_shot: function (c) {
+      var t = 'M8,0 C10,16 18,28 17,40 C16,48 10,54 8,64 L56,64 C54,54 48,48 47,40 C46,28 54,16 56,0 Z';
+      return iconWrap(c, ['#a8742a', '#1a0c02'],
+        glow(c, 40, 38, 24, '#fff0a0', 0.4) +
+        P(t, c.cel('#4a5062'), 2.4) +
+        CG(F('M0,44 L64,44 L64,51 L0,51 Z', '#5a3a22') + S('M0,44 L64,44 M0,51 L64,51', OL, 1.8) + R(28, 43.5, 8, 8, c.cel(GOLD), 1.6) +
+          S('M32,4 L32,42', '#2a2e3a', 1.8, 0.8) + F('M8,0 C10,16 18,28 17,40 L22,40 C22,26 16,14 16,0 Z', '#ffffff', 0.12), c.clip(t)) +
+        burst(c, 42, 38, 11, 4.5, 9, ['#ffb030', '#fff0a0', '#ffffff']) +
+        fistG(c, 55, 38, 1.0, '#d8a878', '#5a3a22', -90) +
+        stun(14, 12, 5.5) + stun(32, 7, 4.5) + stun(48, 13, 5));
+    },
+    /* paladin: a holy sunburst driving a dark wraith out of the frame */
+    exorcism: function (c) {
+      var wr = 'M8,32 C8,24 14,20 20,20 C28,20 32,26 32,34 C32,42 28,46 26,52 L22,48 L20,56 L16,50 L12,60 L10,50 L4,54 C6,46 8,40 8,32 Z';
+      return iconWrap(c, ['#e8b440', '#3a1a04'],
+        F('M40,24 L4,40 L20,64 Z', '#ffffff', 0.25) +
+        rays(42, 22, 16, 10, 34, '#ffffff', 2.4, 0.8) + glow(c, 42, 22, 26, '#fffbe0', 1) +
+        P('M11,24 L7,14 L16,20 Z M28,22 L32,12 L32,26 Z', '#2a0e30', 1.6) +
+        P(wr, c.lg(['#5a2a6a', '#2a0e34', '#0c0410'], 0.8, 0, 0.2, 1), 2.4) +
+        P('M13,30 L19,31 L18,35 L13,33 Z M27,30 L22,31 L23,35 L27,33 Z', '#ff3a4a', 1) +
+        C(34, 30, 2.2, '#2a0e34', 1) + C(36, 40, 1.6, '#2a0e34', 1) + C(38, 24, 1.4, '#2a0e34', 0.8) +
+        burst(c, 42, 22, 14, 6, 12, ['#ffc030', '#fff4b0', '#ffffff']) + sparkle(56, 44, 3.5, '#ffffff'));
+    },
+    /* paladin: a golden aura ring with swords jutting outward from it */
+    retribution_aura: function (c) {
+      var sw = '', i;
+      for (i = 0; i < 4; i++) { var a = i * 90 + 45, rr = a / 180 * Math.PI; sw += wpn(c, 'sword', 32 + Math.sin(rr) * 18, 32 - Math.cos(rr) * 18, a, 0.6); }
+      return iconWrap(c, ['#b8401a', '#1e0404'],
+        glow(c, 32, 32, 30, '#ffd070', 0.7) + sparkle(32, 7, 3.6, '#fff8d0') + sparkle(32, 57, 3.6, '#fff8d0') + sparkle(7, 32, 3.2, '#fff8d0') + sparkle(57, 32, 3.2, '#fff8d0') +
+        ring2(32, 32, 25, 25, '#ffe8a0', 1.2, 0.5) +
+        ring2(32, 32, 12.5, 12.5, '#ffd84a', 4) + S('M22,26 A12.5,12.5 0 0 1 30,19.7', '#ffffff', 1.4, 0.8) + sw +
+        C(32, 32, 7, c.rg([[0, '#ffffff'], [0.55, '#fff2a0'], [1, '#f2b830']]), 1.8));
+    },
+    /* warlock: burning meteors falling out of dark clouds */
+    rain_of_fire: function (c) {
+      var fc = ['#d8300a', '#ff8a1a', '#ffe868'];
+      var met = function (x, y, s) {
+        return G(P('M-5.5,0 C-5.5,-9 -2,-20 1,-30 C2,-20 5.5,-9 5.5,0 C5.5,5 -5.5,5 -5.5,0 Z', c.lg(['#ffe868', '#ff8a1a', '#d8300a', [1, '#d8300a', 0.2]], 0, 1, 0, 0), 1.8) +
+          C(0, 0, 9, c.rg([[0, '#fff0a0', 0.8], [1, '#ff8a1a', 0]]), 0) + C(0, 0, 5.2, c.cel('#6a2a14'), 2) + C(-1.4, -1.4, 2, '#ffd060', 0),
+          'translate(' + x + ',' + y + ') rotate(-24) scale(' + s + ')');
+      };
+      return iconWrap(c, ['#a8340a', '#160200'],
+        glow(c, 32, 40, 28, '#ff9a30', 0.55) +
+        flameC(14, 58, 0.42, fc) + flameC(40, 60, 0.36, fc) + flameC(56, 58, 0.34, fc) +
+        met(20, 40, 1.0) + met(44, 34, 1.05) + met(32, 56, 0.85) + met(55, 52, 0.7) +
+        cloud(c, [[4, 10, 8], [15, 8, 9], [28, 6, 10], [42, 8, 10], [56, 7, 9], [22, 15, 7], [36, 16, 7], [50, 16, 6], [9, 17, 5]], '#4e3a52') +
+        F('M6,4 C14,2 24,2 30,1 L30,6 C22,6 14,7 6,9 Z', '#ffffff', 0.18) +
+        S('M8,22 C16,24 24,24 30,23 M40,24 C46,24 52,23 58,21', '#ff9a50', 1.4, 0.65));
+    },
+    /* warlock: a spiked black-violet breastplate with a burning demonic sigil */
+    demon_armor: function (c) {
+      var pl_ = 'M12,17 L24,11 Q32,16 40,11 L52,17 L54,30 L47,34 L47,54 Q32,61 17,54 L17,34 L10,30 Z';
+      return iconWrap(c, ['#5a1a70', '#08020e'],
+        glow(c, 32, 36, 28, '#b050e0', 0.5) +
+        P('M12,18 L2,6 L18,13 Z M52,18 L62,6 L46,13 Z M22,12 L20,2 L28,13 Z M42,12 L44,2 L36,13 Z', c.lg(['#e6dcc6', '#9a8a78', '#5a4a40']), 1.8) +
+        P(pl_, c.lg(['#6a4a80', '#301840', '#100814'], 0.2, 0, 0.8, 1), 2.6) +
+        CG(F('M10,16 L26,12 L14,44 Z', '#ffffff', 0.14) + S('M17,34 L47,34 M17,45 Q32,50 47,45', '#0a040e', 1.6, 0.9), c.clip(pl_)) +
+        S('M14,19 L24,14 Q32,19 40,14 L50,19', '#c890ff', 1.4, 0.6) +
+        C(32, 36, 15, c.rg([[0, '#ffe0a0', 0.95], [0.45, '#ff4a2a', 0.55], [1, '#ff4a2a', 0]]), 0) +
+        S('M22,22 Q23,32 28,32 M42,22 Q41,32 36,32', OL, 5) + S('M22,22 Q23,32 28,32 M42,22 Q41,32 36,32', '#ffb040', 2.6) +
+        ring2(32, 37, 7.5, 7.5, '#ffb040', 2.6) + P('M32,31 L34.5,37 L32,43 L29.5,37 Z', '#fff4c0', 1.2) +
+        S('M32,45 L32,52', OL, 5) + S('M32,45 L32,52', '#ffb040', 2.6));
+    },
+    /* hunter: a bow loosing a stream of arrows with speed lines */
+    rapid_fire: function (c) {
+      var lim = 'M14,5 C32,18 32,46 14,59';
+      return iconWrap(c, ['#b8761e', '#1e0e02'],
+        glow(c, 40, 32, 26, '#fff0c0', 0.5) +
+        S('M14,5 L20,32 L14,59', '#efe6cf', 1.3, 0.9) +
+        S(lim, OL, 7) + S(lim, WOOD, 4.4) + S('M16,8 C29,20 29,44 16,56', '#c89a60', 1.2, 0.8) + R(21.5, 28, 5, 8, LEATH, 1.6, null, 1.5) +
+        S('M2,20 L22,20 M4,32 L26,32 M2,44 L22,44 M12,26 L30,26 M12,38 L30,38', '#fff4c8', 1.8, 0.55) +
+        arrowG(c, 38, 20, 90, 0.72) + arrowG(c, 44, 32, 90, 0.72) + arrowG(c, 36, 44, 90, 0.72) +
+        sparkle(58, 12, 3, '#fff8d8') + sparkle(58, 52, 3, '#fff8d8'));
+    },
+    /* hunter: a steel jaw trap snapped shut, engulfed in flames */
+    immolation_trap: function (c) {
+      var th = '', i, angs = [192, 214, 236, 257, 283, 304, 326, 348];
+      for (i = 0; i < angs.length; i++) {
+        var a = angs[i] * Math.PI / 180, b = 0.15;
+        th += pl([[32 + Math.cos(a - b) * 17, 47 + Math.sin(a - b) * 17], [32 + Math.cos(a) * 9, 47 + Math.sin(a) * 9], [32 + Math.cos(a + b) * 17, 47 + Math.sin(a + b) * 17]]) + 'Z';
+      }
+      return iconWrap(c, ['#c8440a', '#200400'],
+        glow(c, 32, 32, 30, '#ffb040', 0.75) +
+        flameC(32, 28, 1.3, FIRE) + flameC(10, 40, 0.62, FIRE) + flameC(54, 40, 0.62, FIRE) +
+        E(32, 53, 26, 7, '#1a0600', 0, 0.6) +
+        P(th, c.lg(STEEL, 0, 0, 1, 0), 1.5) +
+        arc(32, 47, 19, 180, 264, '#c2cad3', 3.6) + arc(32, 47, 19, 276, 360, '#c2cad3', 3.6) +
+        S('M14.5,43 A18,18 0 0 1 27,29.5', '#ffffff', 1, 0.8) +
+        P('M8,46 L56,46 L54,54 L10,54 Z', c.lg(STEEL, 0, 0, 0, 1), 2.2) + E(32, 50, 7, 2.4, c.cel('#8a7050'), 1.5) +
+        C(11, 50, 3, c.cel('#7c8793'), 1.5) + C(53, 50, 3, c.cel('#7c8793'), 1.5) +
+        flameC(20, 60, 0.34, FIRE) + flameC(44, 60, 0.34, FIRE) + C(48, 14, 1.4, '#ffe868', 0) + C(16, 18, 1.2, '#ffe868', 0));
+    },
+    /* druid: a sprout curling up into a spiral, a healing glow and green plus sparks */
+    regrowth: function (c) {
+      var st = 'M30,62 C30,50 20,44 22,32 C24,20 42,18 44,28 C46,36 36,38 34,32 C33,28 37,27 38,30';
+      var plus = function (x, y, r) { var d = D`M${x - r},${y} L${x + r},${y} M${x},${y - r} L${x},${y + r}`; return S(d, OL, r * 0.9 + 2.4) + S(d, '#eaffc0', r * 0.9); };
+      return iconWrap(c, ['#3a8a24', '#051202'],
+        C(32, 34, 28, c.rg([[0, '#f4ffd0', 0.9], [0.45, '#a8e060', 0.45], [1, '#6ac030', 0]]), 0) +
+        E(32, 60, 16, 4, '#1a3008', 0, 0.6) +
+        S(st, OL, 6.4) + S(st, '#4a9a24', 3.8) + S('M29,58 C29,50 20,44 21,34', '#b8f080', 1.1, 0.7) +
+        leaf(c, 28, 54, -70, 0.95, '#86c84a') + leaf(c, 32, 50, 65, 0.85, '#5aa032') + leaf(c, 22, 38, -45, 0.7, '#b8e060') +
+        leaf(c, 42, 22, 60, 0.6, '#86c84a') + leaf(c, 24, 24, -20, 0.55, '#5aa032') +
+        plus(50, 46, 5) + plus(12, 16, 4) + plus(52, 12, 3.2) + sparkle(12, 44, 3, '#ffffff'));
+    },
+    /* druid: three wide claw gashes fanning sideways in one sweep (maul is vertical, with a paw) */
+    swipe: function (c) {
+      var gash = function (y0, y1, bow) {
+        var mx = 36, my = (y0 + y1) / 2 + bow;
+        return D`M6,${y0} Q${mx},${my - 5} 60,${y1} Q${mx},${my + 6} 6,${y0} Z`;
+      };
+      var g = gash(28, 10, -4) + gash(32, 32, 0) + gash(36, 54, 4);
+      return iconWrap(c, ['#a8702a', '#1a0c02'],
+        glow(c, 38, 32, 28, '#ffd090', 0.5) +
+        G(F(g, '#c81c1c', 0.9), 'translate(0,2.4)') + P(g, '#fff4e4', 1.8) +
+        S('M4,20 C8,16 12,14 16,13 M4,44 C8,48 12,50 16,51', '#fff0d0', 1.8, 0.5) +
+        drop(30, 44, 0.8) + drop(44, 60, 0.9) + drop(48, 24, 0.7) + drop(20, 22, 0.6));
+    },
+    /* shaman: a jagged ice bolt striking down and bursting into shards */
+    frost_shock: function (c) {
+      var b = pl([[24, 2], [44, 24], [33, 25], [46, 46], [18, 20], [30, 20], [16, 2]]) + 'Z';
+      var sh = '', i, angs = [-120, -80, -40, 0, 40];
+      for (i = 0; i < angs.length; i++) { var rr = angs[i] / 180 * Math.PI, L = i % 2 ? 11 : 13; sh += shard(c, 46 + Math.sin(rr) * L, 50 - Math.cos(rr) * L, angs[i], i % 2 ? 0.42 : 0.52, i % 2 ? '#d8f6ff' : '#9fe0ff'); }
+      return iconWrap(c, ['#2a78c0', '#030c22'],
+        glow(c, 36, 34, 30, '#9fe0ff', 0.7) +
+        E(46, 54, 16, 4.5, '#bfefff', 0, 0.5) + sh +
+        P(b, c.lg(['#ffffff', '#bfefff', '#3a9ae0'], 0, 0, 1, 1), 2.4) + S('M22,6 L38,24 M33,29 L42,41', '#ffffff', 1.4, 0.85) +
+        C(46, 49, 6, c.rg([[0, '#ffffff'], [0.6, '#dff8ff', 0.8], [1, '#9fe0ff', 0]]), 0) + sparkle(46, 49, 5, '#ffffff') +
+        sparkle(10, 34, 3.2, '#e8fbff') + sparkle(54, 12, 3.6, '#e8fbff'));
+    },
+    /* shaman: a flanged mace wreathed in flame */
+    flametongue_weapon: function (c) {
+      return iconWrap(c, ['#c84a0c', '#240400'],
+        glow(c, 40, 24, 30, '#ffb040', 0.8) +
+        G(flameC(0, 0, 1.25, FIRE), 'translate(42,22) rotate(38)') + G(flameC(0, 0, 0.62, FIRE), 'translate(26,40) rotate(38)') +
+        G(flameC(0, 0, 0.5, FIRE), 'translate(18,48) rotate(38)') +
+        G(mace(c), 'translate(26,42) rotate(38) scale(1.1)') +
+        flameC(54, 12, 0.3, FIRE) + flameC(56, 32, 0.28, FIRE) + flameC(30, 12, 0.26, FIRE) +
+        C(10, 30, 1.4, '#ffd060', 0) + C(50, 50, 1.3, '#ffd060', 0) + C(22, 22, 1.1, '#ffe868', 0));
     }
   };
 

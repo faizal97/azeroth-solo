@@ -62,11 +62,11 @@
   Object.assign(D.PLACES, {
     furlbrow_farm: { name: "Furlbrow's Pumpkin Farm", zone: 'Westfall', region: 'westfall', scene: 'furlbrow_farm', lvl: [10, 11], mobs: [['young_goretusk', 5], ['fleshripper', 4]], pool: 9, npcs: ['furlbrow', 'verna'], links: { goldshire: 30, saldean_farm: 14, sentinel_hill: 20 } },
     saldean_farm: { name: "Saldean's Farm", zone: 'Westfall', region: 'westfall', scene: 'saldean_farm', lvl: [10, 12], mobs: [['harvest_watcher', 5], ['young_goretusk', 3], ['defias_trapper', 3]], pool: 10, npcs: ['saldean', 'salma'], links: { furlbrow_farm: 14, sentinel_hill: 16 } },
-    sentinel_hill: { name: 'Sentinel Hill', zone: 'Westfall', region: 'westfall', scene: 'sentinel_hill', lvl: [10, 15], safe: true, inn: true, mobs: [], pool: 0, npcs: ['gryan', 'danuvin', 'galiaan', 'heather', 'lewis'], vendor: 'heather', gearVendor: 'lewis', links: { furlbrow_farm: 20, saldean_farm: 16, jangolode_mine: 16, molsen_farm: 18, the_longshore: 18, dagger_hills: 20 } },
+    sentinel_hill: { name: 'Sentinel Hill', zone: 'Westfall', region: 'westfall', scene: 'sentinel_hill', lvl: [10, 15], safe: true, inn: true, mobs: [], pool: 0, npcs: ['gryan', 'danuvin', 'galiaan', 'heather', 'lewis'], vendor: 'heather', gearVendor: 'lewis', links: { gold_coast_quarry: 18, moonbrook: 20, the_dead_acre: 22, furlbrow_farm: 20, saldean_farm: 16, jangolode_mine: 16, molsen_farm: 18, the_longshore: 18, dagger_hills: 20 } },
     jangolode_mine: { name: 'Jangolode Mine', zone: 'Westfall', region: 'westfall', scene: 'jangolode_mine', lvl: [11, 13], mobs: [['defias_smuggler', 5], ['defias_trapper', 4]], pool: 10, npcs: [], links: { sentinel_hill: 16 } },
     molsen_farm: { name: 'Molsen Farm', zone: 'Westfall', region: 'westfall', scene: 'molsen_farm', lvl: [12, 14], mobs: [['harvest_watcher', 3], ['goretusk', 4], ['defias_pathstalker', 4]], named: { foe_reaper: 300 }, pool: 10, npcs: [], links: { sentinel_hill: 18 } },
-    the_longshore: { name: 'The Longshore', zone: 'Westfall', region: 'westfall', scene: 'the_longshore', lvl: [11, 15], mobs: [['murloc_coastrunner', 5], ['murloc_tidehunter', 4], ['fleshripper', 2]], pool: 10, npcs: [], links: { sentinel_hill: 18, dagger_hills: 16 } },
-    dagger_hills: { name: 'The Dagger Hills', zone: 'Westfall', region: 'westfall', scene: 'dagger_hills', lvl: [14, 16], mobs: [['riverpaw_brute', 5], ['dust_devil', 4]], pool: 10, npcs: [], links: { sentinel_hill: 20, the_longshore: 16 } },
+    the_longshore: { name: 'The Longshore', zone: 'Westfall', region: 'westfall', scene: 'the_longshore', lvl: [11, 15], mobs: [['murloc_coastrunner', 5], ['murloc_tidehunter', 4], ['fleshripper', 2]], pool: 10, npcs: [], links: { gold_coast_quarry: 16, sentinel_hill: 18, dagger_hills: 16 } },
+    dagger_hills: { name: 'The Dagger Hills', zone: 'Westfall', region: 'westfall', scene: 'dagger_hills', lvl: [14, 16], mobs: [['riverpaw_brute', 5], ['dust_devil', 4]], pool: 10, npcs: [], links: { moonbrook: 16, sentinel_hill: 20, the_longshore: 16 } },
   });
 
   // people
@@ -142,4 +142,74 @@
     deadmines: { name: 'The Deadmines', dungeon: 'deadmines', size: 5, minLvl: 8, desc: 'Dungeon. 5 players. Scaled for level 10.' },
   });
 
+
+  // ---- levels 15-20 (v2.1): the Gold Coast Quarry, Moonbrook and the Dead Acre
+  D.item('quarry_ore', { name: 'Gold Coast Ore', slot: 'quest', q: 1, icon: 'dust' });
+  D.item('defias_ledger', { name: 'Quarry Ledger', slot: 'quest', q: 1, icon: 'journal' });
+  D.item('furlbrow_deed', { name: "Furlbrow's Deed", slot: 'quest', q: 1, icon: 'journal' });
+  D.item('moonbrook_insignia', { name: 'Moonbrook Insignia', slot: 'quest', q: 1, icon: 'coin' });
+  D.item('defias_letter', { name: 'Sealed Defias Letter', slot: 'quest', q: 1, icon: 'journal' });
+  D.item('overseer_whip', { name: 'Overseer Whip', slot: 'quest', q: 1, icon: 'belt' });
+  D.item('golem_oil', { name: 'Golem Oil', slot: 'quest', q: 1, icon: 'venom' });
+  D.item('golem_gear', { name: 'Rusted Golem Gear', slot: 'quest', q: 1, icon: 'coin' });
+  D.item('brashclaw_banner', { name: "Brashclaw's War Banner", slot: 'quest', q: 1, icon: 'bandana' });
+  D.item('brashclaw_cleaver', { name: "Brashclaw's Cleaver", slot: 'weapon', wtype: 'axe', q: 3, lvl: 18, dmg: [24, 37], speed: 2.6, stats: { str: 6, sta: 4 }, icon: 'axe', sell: 1700, source: 'Sergeant Brashclaw, the Dead Acre' });
+  Object.assign(D.MOBS, {
+    defias_digger: { name: 'Defias Digger', lvl: [15, 16], family: 'humanoid', drops: [['thieves_coin', 0.45], ['linen_cloth', 0.35]], qdrops: [['quarry_ore', 0.55], ['furlbrow_deed', 0.2]], aggro: 'Back to work... after I kill you.' },
+    defias_overseer: { name: 'Defias Overseer', lvl: [16, 17], family: 'humanoid', hpMult: 1.1, drops: [['thieves_coin', 0.5], ['linen_cloth', 0.35]], qdrops: [['defias_ledger', 0.5], ['overseer_whip', 0.5]], aggro: 'Nobody slacks on my watch!' },
+    defias_knuckleduster: { name: 'Defias Knuckleduster', lvl: [16, 17], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.35]], qdrops: [['moonbrook_insignia', 0.5]], aggro: 'Put your fists up!' },
+    defias_highwayman: { name: 'Defias Highwayman', lvl: [17, 18], family: 'humanoid', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.35]], qdrops: [['moonbrook_insignia', 0.5], ['defias_letter', 0.15]], aggro: 'Your money or your life. Both, actually.' },
+    rusty_harvest_golem: { name: 'Rusty Harvest Golem', lvl: [17, 18], family: 'mechanical', hpMult: 1.1, drops: [['linen_cloth', 0.15]], qdrops: [['golem_gear', 0.55], ['golem_oil', 0.5]], aggro: 'Harvest... protocol... restored.' },
+    harvest_reaper: { name: 'Harvest Reaper', lvl: [18, 19], family: 'mechanical', hpMult: 1.15, drops: [['linen_cloth', 0.15]], qdrops: [['golem_gear', 0.55], ['golem_oil', 0.5]], aggro: 'Reaping sequence initiated.' },
+    sergeant_brashclaw: { name: 'Sergeant Brashclaw', lvl: [18, 18], family: 'humanoid', named: true, hpMult: 2, dmgMult: 1.3, drops: [['brashclaw_cleaver', 0.35], ['gnoll_mane', 1]], qdrops: [['brashclaw_banner', 1]], aggro: 'Brashclaw takes your bones!' },
+  });
+  Object.assign(D.PLACES, {
+    gold_coast_quarry: { name: 'Gold Coast Quarry', zone: 'Westfall', region: 'westfall', scene: 'gold_coast_quarry', lvl: [15, 17], mobs: [['defias_digger', 5], ['defias_overseer', 4]], pool: 10, npcs: [], links: { sentinel_hill: 18, the_longshore: 16 } },
+    moonbrook: { name: 'Moonbrook', zone: 'Westfall', region: 'westfall', scene: 'moonbrook', lvl: [16, 19], mobs: [['defias_knuckleduster', 5], ['defias_highwayman', 4]], pool: 10, npcs: [], links: { sentinel_hill: 20, the_dead_acre: 16, dagger_hills: 16 } },
+    the_dead_acre: { name: 'The Dead Acre', zone: 'Westfall', region: 'westfall', scene: 'the_dead_acre', lvl: [17, 20], mobs: [['rusty_harvest_golem', 5], ['harvest_reaper', 4]], named: { sergeant_brashclaw: 300 }, pool: 10, npcs: [], links: { moonbrook: 16, sentinel_hill: 22 } },
+  });
+  Object.assign(D.QUESTS, {
+    gold_coast_scout: { name: 'The Gold Coast Quarry', lvl: 15, giver: 'galiaan', turnin: 'galiaan', text: 'The Defias work a quarry on the coast north of the Longshore. Find it.',
+      objs: [{ type: 'visit', place: 'gold_coast_quarry' }], reward: { money: 500 } },
+    quarry_diggers: { name: 'Quarry Diggers', lvl: 15, giver: 'danuvin', turnin: 'danuvin', text: 'Every stone the Defias dig out of the Gold Coast Quarry pays for their war. Kill 12 diggers.',
+      objs: [{ type: 'kill', mob: 'defias_digger', n: 12 }], reward: { choice: ['fam_feet17'] } },
+    gold_coast_ore: { name: 'Gold Coast Ore', lvl: 15, giver: 'lewis', turnin: 'lewis', text: 'The quarry ore is good iron. Bring me 8 and I will forge you something better.',
+      objs: [{ type: 'collect', item: 'quarry_ore', n: 8 }], reward: { choice: ['fam_weapon17'] } },
+    furlbrow_deed_q: { name: "Furlbrow's Deed", lvl: 15, giver: 'furlbrow', turnin: 'furlbrow', text: 'The Defias stole the deed to my farm. One of their diggers at the quarry has it. Please bring it back.',
+      objs: [{ type: 'collect', item: 'furlbrow_deed', n: 1 }], reward: { money: 600 } },
+    quarry_overseers: { name: 'The Overseers', lvl: 16, giver: 'danuvin', turnin: 'danuvin', pre: ['quarry_diggers'], text: 'The overseers keep the diggers working. Kill 10.',
+      objs: [{ type: 'kill', mob: 'defias_overseer', n: 10 }], reward: { choice: ['fam_wrist17'] } },
+    quarry_ledgers: { name: 'The Quarry Ledgers', lvl: 16, giver: 'gryan', turnin: 'gryan', text: 'The overseers keep ledgers of where the ore goes. Bring me 6 and we will follow the money.',
+      objs: [{ type: 'collect', item: 'defias_ledger', n: 6 }], reward: { money: 650 } },
+    moonbrook_scout: { name: 'Moonbrook', lvl: 16, giver: 'gryan', turnin: 'gryan', pre: ['defias_orders'], text: 'The orders point to Moonbrook, the burned town to the south. Scout it and come back.',
+      objs: [{ type: 'visit', place: 'moonbrook' }], reward: { money: 550 } },
+    knuckledusters: { name: 'The Knuckledusters', lvl: 17, giver: 'danuvin', turnin: 'danuvin', text: 'Brawlers guard the streets of Moonbrook. Kill 12 knuckledusters.',
+      objs: [{ type: 'kill', mob: 'defias_knuckleduster', n: 12 }], reward: { choice: ['fam_chest18'] } },
+    moonbrook_insignias: { name: 'Moonbrook Insignias', lvl: 17, giver: 'heather', turnin: 'heather', text: 'Every Defias in Moonbrook wears their insignia. Bring me 10 and the militia will pay a bounty.',
+      objs: [{ type: 'collect', item: 'moonbrook_insignia', n: 10 }], reward: { money: 700 } },
+    dead_acre_scout: { name: 'The Dead Acre', lvl: 17, giver: 'saldean', turnin: 'saldean', text: 'Past Moonbrook lies the Dead Acre, where old harvest golems still walk. See what the Defias are building there.',
+      objs: [{ type: 'visit', place: 'the_dead_acre' }], reward: { money: 550 } },
+    rusty_golems: { name: 'Rust and Ruin', lvl: 17, giver: 'saldean', turnin: 'saldean', text: 'The rusty golems on the Dead Acre trample what little grows there. Smash 12.',
+      objs: [{ type: 'kill', mob: 'rusty_harvest_golem', n: 12 }], reward: { choice: ['fam_hands19'] } },
+    highwaymen: { name: 'The Highwaymen', lvl: 18, giver: 'gryan', turnin: 'gryan', pre: ['moonbrook_scout'], text: 'Highwaymen rob every cart on the road through Moonbrook. Kill 12.',
+      objs: [{ type: 'kill', mob: 'defias_highwayman', n: 12 }], reward: { choice: ['fam_legs18'] } },
+    golem_gears: { name: 'Golem Gears', lvl: 18, giver: 'lewis', turnin: 'lewis', text: 'The golems are built from stolen parts. Bring me 8 gears and we will see who is making them.',
+      objs: [{ type: 'collect', item: 'golem_gear', n: 8 }], reward: { choice: ['fam_waist19'] } },
+    defias_letter_q: { name: 'The Sealed Letter', lvl: 18, giver: 'gryan', turnin: 'gryan', pre: ['highwaymen'], text: "A highwayman carries a sealed letter for the Brotherhood's leader. Take it from them.",
+      objs: [{ type: 'collect', item: 'defias_letter', n: 1 }], reward: { choice: ['fam_weapon20'] } },
+    harvest_reapers: { name: 'The Harvest Reapers', lvl: 19, giver: 'saldean', turnin: 'saldean', pre: ['rusty_golems'], text: "The reapers are the Defias' newest machines. Destroy 10 before they reach the farms.",
+      objs: [{ type: 'kill', mob: 'harvest_reaper', n: 10 }], reward: { choice: ['fam_back19'] } },
+    overseer_whips: { name: 'No More Whips', lvl: 17, giver: 'verna', turnin: 'verna', text: 'My brother works in that quarry now, under the lash. Bring me 8 overseer whips so I can burn them.',
+      objs: [{ type: 'collect', item: 'overseer_whip', n: 8 }], reward: { money: 700 } },
+    moonbrook_patrol: { name: 'Patrolling Moonbrook', lvl: 18, giver: 'danuvin', turnin: 'danuvin', pre: ['knuckledusters'], text: 'Keep Moonbrook off balance: 8 knuckledusters and 6 highwaymen.',
+      objs: [{ type: 'kill', mob: 'defias_knuckleduster', n: 8 }, { type: 'kill', mob: 'defias_highwayman', n: 6 }], reward: { choice: ['fam_hands19'] } },
+    golem_oil_q: { name: 'Oil for the Mill', lvl: 19, giver: 'salma', turnin: 'salma', text: 'The mill wheel squeaks worse than the golems. Their oil will do. Bring me 8 flasks.',
+      objs: [{ type: 'collect', item: 'golem_oil', n: 8 }], reward: { money: 800 } },
+    wanted_highwaymen: { name: 'Wanted: Highwaymen', lvl: 19, giver: 'galiaan', turnin: 'galiaan', pre: ['highwaymen'], text: 'The worst of the highwaymen still ride. Kill 10 more.',
+      objs: [{ type: 'kill', mob: 'defias_highwayman', n: 10 }], reward: { choice: ['fam_waist19'] } },
+    dead_acre_sweep: { name: 'Sweep the Dead Acre', lvl: 20, giver: 'gryan', turnin: 'gryan', pre: ['harvest_reapers'], text: 'End the golem threat for good: 8 harvest reapers and 8 rusty golems.',
+      objs: [{ type: 'kill', mob: 'harvest_reaper', n: 8 }, { type: 'kill', mob: 'rusty_harvest_golem', n: 8 }], reward: { choice: ['fam_chest18'] } },
+    brashclaw_q: { name: 'Sergeant Brashclaw', lvl: 19, giver: 'galiaan', turnin: 'galiaan', text: 'A gnoll called Sergeant Brashclaw leads raids from the Dead Acre. He is rarely seen. Bring me his war banner.',
+      objs: [{ type: 'collect', item: 'brashclaw_banner', n: 1 }], reward: { choice: ['fam_ring_rare20'] } },
+  });
 })(typeof window !== 'undefined' ? window : globalThis);

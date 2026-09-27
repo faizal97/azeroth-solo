@@ -13,7 +13,22 @@ const BASE = fs.readFileSync(path.join(ROOT, 'src/art.js'), 'utf8');
 const SRC = fs.readFileSync(path.join(ROOT, 'src/art_icons2.js'), 'utf8');
 
 const NEW = ['hamstring', 'cleave', 'frost_nova', 'arcane_explosion', 'mind_blast', 'inner_fire', 'backstab', 'garrote',
-  'blessing_might', 'lay_on_hands', 'searing_pain', 'shadow_ward', 'wing_clip', 'multi_shot', 'flame_shock', 'strength_earth'];
+  'blessing_might', 'lay_on_hands', 'searing_pain', 'shadow_ward', 'wing_clip', 'multi_shot', 'flame_shock', 'strength_earth',
+  // batch 2
+  'bloodrage', 'retaliation', 'flamestrike', 'mana_shield', 'heal', 'psychic_scream', 'rupture', 'kidney_shot', 'exorcism',
+  'retribution_aura', 'rain_of_fire', 'demon_armor', 'rapid_fire', 'immolation_trap', 'regrowth', 'swipe', 'frost_shock', 'flametongue_weapon'];
+const NEW2 = NEW.slice(16);
+// each batch-2 icon next to the existing icons it could be confused with
+const COMPARE = [
+  ['bloodrage', 'blessing_might', 'battle_shout', 'gouge'], ['retaliation', 'attack', 'heroic_strike', 'cleave'],
+  ['flamestrike', 'fire_blast', 'fireball', 'flame_shock'], ['mana_shield', 'pw_shield', 'shadow_ward', 'arcane_explosion'],
+  ['heal', 'lesser_heal', 'holy_light', 'smite'], ['psychic_scream', 'mind_blast', 'sw_pain', 'growl'],
+  ['rupture', 'rend', 'garrote', 'hamstring'], ['kidney_shot', 'backstab', 'gouge', 'sinister_strike'],
+  ['exorcism', 'smite', 'judgement', 'holy_light'], ['retribution_aura', 'devotion_aura', 'seal_righteousness', 'blessing_might'],
+  ['rain_of_fire', 'immolate', 'fireball', 'searing_pain'], ['demon_armor', 'demon_skin', 'frost_armor', 'shadow_ward'],
+  ['rapid_fire', 'multi_shot', 'auto_shot', 'arcane_shot'], ['immolation_trap', 'immolate', 'searing_totem', 'flame_shock'],
+  ['regrowth', 'rejuvenation', 'healing_touch', 'thorns'], ['swipe', 'maul', 'rend', 'bear_form'],
+  ['frost_shock', 'frostbolt', 'frost_nova', 'earth_shock'], ['flametongue_weapon', 'rockbiter_weapon', 'flame_shock', 'fire_blast']];
 const OLD = ['heroic_strike', 'thunder_clap', 'fireball', 'frostbolt', 'arcane_missiles', 'sw_pain', 'sinister_strike', 'holy_light',
   'shadow_bolt', 'immolate', 'arcane_shot', 'raptor_strike', 'earth_shock', 'searing_totem', 'stoneskin_totem', 'lightning_bolt'];
 const problems = [];
@@ -73,4 +88,13 @@ sheet('new_128', newItems, 128, 8);
 const mixed = []; for (let i = 0; i < 16; i += 8) { mixed.push(...newItems.slice(i, i + 8), ...oldItems.slice(i, i + 8)); }
 sheet('mixed_64', mixed, 64, 8);
 sheet('mixed_40', mixed, 40, 8);
+// batch 2: alone at 128, all 34 pack icons at 40 (phone action bar size), and the look-alike comparison at 40 and 64
+const new2Items = NEW2.map(k => [k, out[k]]);
+sheet('new2_128', new2Items, 128, 6);
+sheet('all_40', newItems, 40, 9);
+const cmp = [];
+for (const row of COMPARE) for (const k of row) cmp.push([k, out[k] || ART.icon(k)]);
+for (const row of COMPARE) for (const k of row.slice(1)) if (!ART.keys.icons.includes(k)) problems.push('compare: unknown key ' + k);
+sheet('compare_40', cmp, 40, 8);
+sheet('compare_64', cmp, 64, 8);
 console.log(problems.length ? 'PROBLEMS:\n' + problems.join('\n') : 'OK: ' + NEW.length + ' icons, no problems');

@@ -1635,7 +1635,9 @@
     G.on('error', (t) => toast(t));
     G.on('pop', (q) => { renderNavDots(); showPop(q); });
     G.on('invite', showInvite);
-    G.on('warModeIntro', () => { if (!document.querySelector('.dialog')) showWarModeIntro(); else setTimeout(() => { if (!document.querySelector('.dialog')) showWarModeIntro(); }, 4000); });
+    // wait for a calm moment: no fight, no run, no other dialog, no cutscene
+    const introWhenCalm = () => { if (!G.S) return; if (G.fight || G.S.run || G.paused || document.querySelector('.dialog')) return setTimeout(introWhenCalm, 3000); showWarModeIntro(); };
+    G.on('warModeIntro', introWhenCalm);
     G.on('intruder', (it) => { toast(`Enemy player nearby: ${it.name}`); snd('error', { gap: 0.4, vol: 0.5 }); renderAll(); });
     G.on('partyInvite', (d) => { if (ui.dialog || (window.CS && CS.playing)) { G.declinePartyInvite(d.bot.id); return; } showPartyInvite(d); });
     G.on('roll', () => renderRolls());

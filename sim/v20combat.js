@@ -18,4 +18,4 @@ function run(cls,L,pet,n=300){
 }
 // v2.0: every class at 12 and 15 against the new zone mobs (same level)
 const mobs=['defias_pathstalker','harvest_watcher','goretusk','murloc_tidehunter','riverpaw_brute','kolkar_wrangler','oasis_snapjaw','razormane_thornweaver','kolkar_stormer','stormsnout'];
-for (const L of [12,15]) for (const cls of Object.keys(D.CLASSES)) { const out=[]; for (const mob of ['defias_pathstalker','oasis_snapjaw','riverpaw_brute']) { process.env.MOB=mob; out.push(run(cls,L,cls==='hunter'?'beast':cls==='warlock'?'voidwalker':null,120).replace(/^\S+\s+L\d+\s+/,'')); } console.log(cls.padEnd(8),'L'+L,'|',out.join(' | ')); }
+for (const L of (process.env.LV||'12,15').split(',').map(Number)) for (const cls of Object.keys(D.CLASSES)) { const out=[]; for (const mob of (process.env.MOBS||'defias_pathstalker,oasis_snapjaw,riverpaw_brute').split(',')) { process.env.MOB=mob; out.push(run(cls,L,cls==='hunter'?'beast':cls==='warlock'?'voidwalker':null,120).replace(/^\S+\s+L\d+\s+/,'')); } console.log(cls.padEnd(8),'L'+L,'|',out.join(' | ')); }
