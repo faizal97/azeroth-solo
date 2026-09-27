@@ -1350,6 +1350,13 @@
     G.fight = E.fight(allies, enemies, { puller: tank, dungeonMult: R.mult });
     G.fight.kind = 'run';
     pu.target = (enemies.find((e) => e.mark === 'skull') || enemies[0]).uid;
+    // Momentum: pulling again within 5 sec of the last fight stacks a group buff; resting resets it
+    R.momentum = R.lastFightEnd && now() - R.lastFightEnd <= MOMENTUM_WINDOW ? Math.min(MOMENTUM_MAX, (R.momentum || 0) + 1) : 0;
+    if (R.momentum) {
+      const L = G.syncLevel(R.act), m = R.momentum;
+      for (const a of allies) { a.auras.push({ id: 'momentum', until: 600, stats: { haste: 5 * m, ap: Math.round(0.5 * L * m), sp: Math.round(0.4 * L * m) } }); E.recalc(a); }
+      if (m >= 2) sys(`Momentum x${m}: the group hits faster and harder.`);
+    }
     // a careless tank sometimes pulls the next pack too
     const tb = S.group.members.find((m) => m.role === 'tank' && !m.gone);
     if (tb && !pull.boss && R.idx + 1 < R.pulls.length && !R.pulls[R.idx + 1].boss && Math.random() < ((R.pace || 'normal') === 'fast' ? 0.3 : 0.28 * (1 - tb.bot.skill) * PACE[R.pace || 'normal'].extra)) {
@@ -1389,11 +1396,13 @@
         const table = (M.loot || []).slice().sort(() => Math.random() - 0.5);
         const drops = table.slice(0, 2).map(G.copyItem);
         for (const it of drops) addRoll(it);
-        if (!D.ACTIVITIES[R.act].dungeon || Math.random() < 0.25) addRoll(G.genGear(pick(D.GEAR_SLOTS), 10, !D.ACTIVITIES[R.act].dungeon ? 2 : 3));
+        if (!D.ACTIVITIES[R.act].dungeon || Math.random() < 0.25) addRoll(G.genGear(pick(D.GEAR_SLOTS), G.syncLevel(R.act), !D.ACTIVITIES[R.act].dungeon ? 2 : 3));
         if (pull.mobs[0] === 'vancleef' && G.S.player.quests.defias_brotherhood) { G.addItem(G.copyItem('vancleef_head'), 1); loot(`You receive loot: ${B.link("Head of VanCleef")}.`); questCheck(); }
         const talker = pick(S.group.members.filter((m) => !m.gone));
         if (talker) partySay(talker, B.partyLine(talker.bot, 'win'));
       }
+      R.deaths = (R.deaths || 0) + C.allies.filter((u) => u.dead && u.kind !== 'pet').length;
+      R.lastFightEnd = now();
       // rez the fallen
       const healerAlive = C.allies.find((u) => u.role === 'healer' && !u.dead);
       for (const u of C.allies) if (u.dead && u.kind !== 'pet') {
@@ -1405,10 +1414,11 @@
       if (R.idx >= R.pulls.length) {
         R.phase = 'done';
         sys(`${R.name} complete!`);
+        runBonuses(R);
         S.group.members.filter((m) => !m.gone).forEach((m, i) => S.pending.push({ at: now() + 2000 + i * 1600, bot: m.bot.id, ch: 'party', text: B.partyLine(m.bot, 'bye'), fromName: m.name }));
       } else { R.phase = 'rest'; R.restUntil = now() + 6500 * (PACE[R.pace || 'normal'].rest); }
     } else {
-      R.wipes++;
+      R.wipes++; R.momentum = 0;
       R.phase = 'wipe'; R.restUntil = now() + 12000;
       sys('Your party has been defeated. Running back...');
       const alive = S.group.members.filter((m) => !m.gone);
@@ -1557,6 +1567,35 @@
     if (R.bossPlan === 'adds' && adds.length) { for (const a of adds) if (!a.mark) a.mark = 'skull'; if (!boss.mark || boss.mark === 'skull') boss.mark = adds.some((a) => a.mark === 'skull') ? 'cross' : 'skull'; }
     else if (R.bossPlan === 'boss') { boss.mark = 'skull'; }
   }
+  // ---------- dungeon bonuses: beat par time (fast pays), clear flawless (careful pays); a good group can get both
+  const MOMENTUM_WINDOW = 5000, MOMENTUM_MAX = 5;
+  G.runClock = function () { const R = G.S.run; return R ? ((R.finishedAt || now()) - R.started) / 1000 : 0; };
+  function runBonuses(R) {
+    const S = G.S, P = S.player, A = D.ACTIVITIES[R.act], Dg = A.dungeon && D.DUNGEONS[A.dungeon];
+    if (!Dg) return;
+    R.finishedAt = now();
+    const secs = G.runClock(), L = G.syncLevel(R.act);
+    const speed = Dg.par && secs <= Dg.par, flawless = !R.wipes; // flawless = the group never wiped
+    const cx = (P.codex = P.codex || {})[R.act] = Object.assign({ clears: 0, flawless: 0, speed: 0, best: null }, (P.codex || {})[R.act]);
+    cx.clears++; if (flawless) cx.flawless++; if (speed) cx.speed++; if (cx.best == null || secs < cx.best) cx.best = Math.round(secs);
+    R.bonus = { secs: Math.round(secs), par: Dg.par, speed, flawless };
+    if (speed) {
+      // the speed chest: half the time a blue from this dungeon's bosses, otherwise a green
+      const blues = []; for (const pl of Dg.pulls) for (const k of pl.mobs) for (const id of (D.MOBS[k].loot || [])) if (!blues.includes(id)) blues.push(id);
+      const it = Math.random() < 0.5 && blues.length ? G.copyItem(pick(blues)) : G.genGear(pick(D.GEAR_SLOTS), L, 2);
+      G.addItem(it, 1); P.money += L * 150;
+      loot(`Speed bonus (under ${fmtClock(Dg.par)}): ${B.link(it.name, it.q)} and ${G.moneyText(L * 150)}.`);
+    }
+    if (flawless) {
+      const it = G.genGear(pick(D.GEAR_SLOTS), L, 2);
+      G.addItem(it, 1); P.money += L * 200;
+      loot(`Flawless clear (no wipes): ${B.link(it.name, it.q)} and ${G.moneyText(L * 200)}.`);
+    }
+    if (!speed && !flawless) sys(`Cleared in ${fmtClock(secs)} (par ${fmtClock(Dg.par)}). No bonus this time.`);
+    emit('lootGain', { items: 1 });
+  }
+  const fmtClock = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  G.fmtClock = fmtClock;
   G.runReady = function () { const R = G.S.run; if (R && R.phase === 'rest') { if (G.role() === 'tank') G.runPull(); else R.restUntil = Math.min(R.restUntil, now()); } };
   G.leaveGroup = function () {
     const S = G.S;

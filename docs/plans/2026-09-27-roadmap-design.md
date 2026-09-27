@@ -100,6 +100,7 @@ Enemy-faction bots sometimes attack you, even in friendly zones.
 - **Synced level:** everyone in the group fights at the activity's level (`maxLvl`); your gear is the overgear bonus, and XP follows your real level.
 - **Mixed groups**, and a 10-minute deserter cooldown for leaving early.
 - **Tactics:** pull pace (careful / normal / fast), kill-order marks (skull, cross; the tank holds the skull) and a boss plan (burn the boss / adds first).
+- **Pace rewards (2026-09-27):** each dungeon has a par time; beat it for a speed chest (half the time a blue from that dungeon, plus gold). A run with no wipes is Flawless (a green plus gold). Momentum: pulling within 5 sec of the last fight stacks +5% haste and more attack and spell power, up to 5 stacks, and resting resets it. Careful is the reliable Flawless route, Fast the best par-time odds, and a good group can get both. A codex counts clears, speed, flawless and best time per dungeon.
 
 ## Daily reasons to log in (agreed 2026-09-27)
 

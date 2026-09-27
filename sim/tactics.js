@@ -12,7 +12,7 @@ if (process.env.BM) DG.bossMult = { hp: DG.bossMult.hp, dmg: +process.env.BM };
 function clear(pace, plan, cls) {
   G.newGame({ name: 'T', cls, race: 'human' });
   const S = G.S, P = S.player; const LV = +(process.env.LV || 10); P.level = LV; P.equip = G.botChar({ name: 'x', cls, race: 'human', level: LV, skill: 0.6 }).equip; P.hp = null; P.res = null;
-  S.flags.warModeAsked = true;
+  S.flags.warModeAsked = true; P.place = D.ACTIVITIES[ACT].where; // you queue from the dungeon's zone
   G.queueFor(ACT); G.acceptPop(); const R = S.run; R.pace = pace; if (plan) R.bossPlan = plan;
   const t0 = t; let guard = 0;
   while (S.run && S.run.phase !== 'done' && guard++ < 400000) {
@@ -20,10 +20,12 @@ function clear(pace, plan, cls) {
     for (const r of (S.run.rolls || [])) if (!r.done && r.player && r.choice == null) { try { G.roll(S.run.rolls.indexOf(r), 'greed'); } catch (e) {} }
     G.update(0.1); t += 100;
   }
-  return { mins: (t - t0) / 60000, wipes: S.run ? S.run.wipes : 99, done: S.run && S.run.phase === 'done' };
+  const b = S.run && S.run.bonus || {};
+  return { mins: (t - t0) / 60000, wipes: S.run ? S.run.wipes : 99, done: S.run && S.run.phase === 'done', speed: !!b.speed, flawless: !!b.flawless, secs: b.secs };
 }
-for (const [pace, plan] of [['careful', null], ['normal', null], ['fast', null], ['normal', 'boss'], ['normal', 'adds']]) {
-  let m = 0, w = 0, d = 0;
-  for (let i = 0; i < N; i++) { const r = clear(pace, plan, i % 2 ? 'mage' : 'rogue'); m += r.mins; w += r.wipes; d += r.done ? 1 : 0; }
-  console.log(`${ACT} pace ${pace.padEnd(7)} plan ${String(plan || '-').padEnd(4)} · clear ${(m / N).toFixed(1)} min · wipes/run ${(w / N).toFixed(2)} · finished ${d}/${N}`);
+for (const [pace, plan] of (process.env.PACES ? process.env.PACES.split(',').map((p) => [p, null]) : [['careful', null], ['normal', null], ['fast', null], ['normal', 'boss'], ['normal', 'adds']])) {
+  let m = 0, w = 0, d = 0, sp = 0, fl = 0; const clean = [];
+  for (let i = 0; i < N; i++) { const r = clear(pace, plan, i % 2 ? 'mage' : 'rogue'); m += r.mins; w += r.wipes; d += r.done ? 1 : 0; sp += r.speed; fl += r.flawless; if (!r.wipes) clean.push(r.mins); }
+  clean.sort((a, b) => a - b);
+  console.log(`${ACT} pace ${pace.padEnd(7)} plan ${String(plan || '-').padEnd(4)} · clear ${(m / N).toFixed(1)} min · wipes/run ${(w / N).toFixed(2)} · no-wipe median ${clean.length ? clean[clean.length >> 1].toFixed(1) : '-'} min · speed bonus ${sp}/${N} · flawless ${fl}/${N} · finished ${d}/${N}`);
 }

@@ -205,7 +205,7 @@
     mutanus: { name: 'Mutanus the Devourer', lvl: [21, 21], family: 'murloc', boss: true, aggro: 'Naralex dreams... and I feed.', loot: ['mutant_scale_breastplate', 'staff_of_the_deviate', 'band_of_the_fang'] },
   });
   Object.assign(D.DUNGEONS, {
-    wailing_caverns: { name: 'Wailing Caverns', minLvl: 17, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.8 }, pulls: [
+    wailing_caverns: { name: 'Wailing Caverns', minLvl: 17, par: 430, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.8 }, pulls: [
       { scene: 'wailing_caverns', label: 'The mouth of the caves', mobs: ['deviate_viper', 'deviate_viper'] },
       { scene: 'wailing_caverns', label: 'Fungal grotto', mobs: ['druid_of_the_fang', 'deviate_ravager'] },
       { scene: 'wailing_caverns', label: 'Lady Anacondra', mobs: ['lady_anacondra', 'druid_of_the_fang'], boss: true },

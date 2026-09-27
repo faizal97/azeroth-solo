@@ -47,8 +47,8 @@
   const raceClass = (c) => { const r = D.RACES[(c && (c.race || (c.bot && c.bot.race))) || 'human']; return `${r ? r.name : ''} ${D.CLASSES[c.cls].name}`.trim(); };
   const abIcon = (id) => art('icon', (D.ABILITIES[id] && D.ABILITIES[id].icon) || id);
   // ---------- buffs and debuffs with time left, for any unit (or the player out of combat)
-  const AURA_ALIAS = { weakened_soul: 'pw_shield', seal: 'seal_righteousness', stoneskin: 'stoneskin_totem', rockbiter: 'rockbiter_weapon', chilled: 'frost_armor', bear: 'bear_form', fireball_burn: 'fireball', stun: 'hammer_justice', searing_totem: 'searing_totem' };
-  const AURA_NAME = { weakened_soul: 'Weakened Soul', chilled: 'Chilled', stun: 'Stunned', fireball_burn: 'Burning', seal: 'Seal' };
+  const AURA_ALIAS = { momentum: 'rapid_fire', weakened_soul: 'pw_shield', seal: 'seal_righteousness', stoneskin: 'stoneskin_totem', rockbiter: 'rockbiter_weapon', chilled: 'frost_armor', bear: 'bear_form', fireball_burn: 'fireball', stun: 'hammer_justice', searing_totem: 'searing_totem' };
+  const AURA_NAME = { momentum: 'Momentum', weakened_soul: 'Weakened Soul', chilled: 'Chilled', stun: 'Stunned', fireball_burn: 'Burning', seal: 'Seal' };
   const DEBUFF_IDS = new Set(['weakened_soul', 'hunters_mark', 'chilled', 'stun']);
   function auraInfo(a, u) {
     let base = a.id.replace(/_slow$/, '');
@@ -614,10 +614,28 @@
     tracker(p);
   }
   const MARK_SYM = { skull: '☠', cross: '✖' };
+  // the run's scoreboard: clock against par, Momentum, and whether it is still flawless
+  function runScore(p, R) {
+    const A = D.ACTIVITIES[R.act], Dg = A.dungeon && D.DUNGEONS[A.dungeon];
+    if (!Dg || !Dg.par) return;
+    const cx = (G.S.player.codex || {})[R.act];
+    if (R.phase === 'done' && R.bonus) {
+      const b = R.bonus;
+      p.append(h('div', { class: 'score done' },
+        h('div', null, h('span', null, 'Cleared in '), h('b', { class: 'tnum' }, G.fmtClock(b.secs)), h('span', null, ` · par ${G.fmtClock(b.par)}`)),
+        h('div', null, h('span', { class: b.speed ? 'ok' : 'no' }, (b.speed ? '✓' : '✗') + ' Speed bonus'), h('span', { class: b.flawless ? 'ok' : 'no' }, (b.flawless ? '✓' : '✗') + ' Flawless')),
+        cx ? h('small', null, `Best ${G.fmtClock(cx.best)} · ${cx.clears} clears · ${cx.speed} speed · ${cx.flawless} flawless`) : null));
+      return;
+    }
+    p.append(h('div', { class: 'score' },
+      h('span', null, '⏱ ', h('b', { class: 'tnum', 'data-clock': '1' }, G.fmtClock(G.runClock())), ` / par ${G.fmtClock(Dg.par)}`),
+      R.momentum ? h('span', { class: 'mom' }, `Momentum ×${R.momentum}`) : h('span', { class: 'dim' }, 'Pull within 5s to build Momentum'),
+      h('span', { class: R.wipes ? 'no' : 'ok' }, R.wipes ? '✗ Flawless' : '✓ No wipes')));
+  }
   function tacticsBlock(p, R) {
     const pace = R.pace || 'normal';
     const chip = (label, on, fn, sub) => h('button', { class: 'chip' + (on ? ' gold' : ''), onclick: () => { fn(); renderPanel(); } }, label, sub ? h('small', null, sub) : null);
-    p.append(h('div', { class: 'sec-h' }, 'Tactics', h('small', null, pace === 'careful' ? 'rest to full, no extra packs' : pace === 'fast' ? 'short rests, more extra packs' : 'standard rests')),
+    p.append(h('div', { class: 'sec-h' }, 'Tactics', h('small', null, pace === 'careful' ? 'safest: best for a Flawless clear' : pace === 'fast' ? 'builds Momentum: best for par time, more wipes' : 'standard rests')),
       h('div', { class: 'chips' }, chip('Careful', pace === 'careful', () => G.setPace('careful')), chip('Normal', pace === 'normal', () => G.setPace('normal')), chip('Fast', pace === 'fast', () => G.setPace('fast'))));
     const pull = R.pulls[R.idx]; if (!pull) return;
     const marks = (R.marks && R.marks[R.idx]) || {};
@@ -648,6 +666,7 @@
         h('div', { class: 'role' }, m.role === 'tank' ? 'TANK' : m.role === 'healer' ? 'HEAL' : 'DPS'));
       pf.append(row);
     });
+    runScore(p, R);
     if (!C && R.phase === 'rest') tacticsBlock(p, R); // decide before the pull, above the party list
     p.append(h('div', { class: 'sec-h' }, 'Party', h('small', null, C && G.role() === 'healer' ? 'tap someone to heal them' : '')), pf);
     if (C) {
@@ -811,6 +830,7 @@
         const mk = el.querySelector('.np .mk'); if (mk) { const sym = MARK_SYM[u.mark] || ''; if (mk.textContent !== sym) mk.textContent = sym ? sym + ' ' : ''; }
         if (u.dead && !el.classList.contains('dead')) el.classList.add('dead');
       }
+      document.querySelectorAll('[data-clock]').forEach((d) => { if (G.S.run) d.textContent = G.fmtClock(G.runClock()); });
       document.querySelectorAll('[data-mk]').forEach((d) => { const u = C.units[d.dataset.mk]; if (u) { const sym = MARK_SYM[u.mark] || '◎'; if (d.textContent !== sym) d.textContent = sym; } });
       document.querySelectorAll('[data-hp]').forEach((d) => { const u = C.units[d.dataset.hp]; if (u) d.textContent = u.dead ? '' : Math.round((u.hp / u.maxHp) * 100) + '%'; });
       document.querySelectorAll('[data-pf]').forEach((d) => { const u = C.units[d.dataset.pf]; if (u) setBar(d, u.hp, u.maxHp, Math.round(u.hp)); });

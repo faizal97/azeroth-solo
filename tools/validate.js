@@ -63,6 +63,7 @@ for (const [k, A] of Object.entries(D.ACTIVITIES)) {
   if (A.dungeon && !has('DUNGEONS', A.dungeon)) err(`activity ${k}: unknown dungeon '${A.dungeon}'`);
   for (const pl of A.pulls || []) for (const m of pl.mobs) if (!has('MOBS', m)) err(`activity ${k}: unknown mob '${m}'`);
 }
+for (const [k, Dg] of Object.entries(D.DUNGEONS)) if (!(Dg.par > 0)) err(`dungeon ${k}: needs a par time in seconds`);
 for (const [k, Dg] of Object.entries(D.DUNGEONS)) for (const pl of Dg.pulls) for (const m of pl.mobs) if (!has('MOBS', m)) err(`dungeon ${k}: unknown mob '${m}'`);
 if (D.XP_TO_LEVEL.length <= D.LEVEL_CAP) err(`XP_TO_LEVEL stops before the level cap (${D.LEVEL_CAP})`);
 
