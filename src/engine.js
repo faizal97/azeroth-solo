@@ -549,6 +549,13 @@
       if (sp.phase === 2 && pct < 0.33) { sp.phase = 3; stomp(C, m, 'Mr. Smite stomps the deck!'); say(C, m, 'D\'ah! Now you\'re making me angry!', 'monster'); }
       return;
     }
+    if (sp.kind === 'thredd') {
+      if (sp.phase === 0 && pct < 0.5) {
+        sp.phase = 1; say(C, m, 'To me, brothers! Show them what the Stockade taught us!', 'monster');
+        for (let i = 0; i < 2; i++) E.addEnemy(C, E.mobUnit('defias_insurgent', m.level - 1, (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
+      }
+      return;
+    }
     if (sp.kind === 'vancleef') {
       if (sp.phase === 0 && pct < 0.5) {
         sp.phase = 1; say(C, m, 'Lapdogs, all of you!', 'monster');
@@ -561,17 +568,17 @@
     if (sp.kind === 'slam' || sp.kind === 'hogger') {
       sp.t = sp.kind === 'hogger' ? 9 : 8;
       if (tgt && !tgt.dead) {
-        ev(C, { type: 'emote', uid: m.uid, text: sp.kind === 'hogger' ? 'Hogger lunges!' : 'Rhahk\'Zor slams the ground!' });
+        ev(C, { type: 'emote', uid: m.uid, text: sp.kind === 'hogger' ? `${m.name} lunges!` : `${m.name} slams the ground!` });
         dealDamage(C, m, tgt, rnd(m.dmg[0], m.dmg[1]) * 2.1, { school: 'physical', ab: 'slam' });
       }
     } else if (sp.kind === 'whirl') {
       sp.t = 12;
-      ev(C, { type: 'emote', uid: m.uid, text: 'The Shredder whirls its saw blades!' });
+      ev(C, { type: 'emote', uid: m.uid, text: `${m.name === 'XT:9' ? 'XT:9' : 'The Shredder'} whirls its saw blades!` });
       for (const a of allies) dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * 0.7, { school: 'physical', ab: 'whirl' });
     } else if (sp.kind === 'molten') {
       sp.t = 10;
       const a = allies[rint(0, allies.length - 1)];
-      if (a) { ev(C, { type: 'emote', uid: m.uid, text: 'Gilnid splashes molten metal!' }); dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * 1.4, { school: 'fire', ab: 'molten' }); }
+      if (a) { ev(C, { type: 'emote', uid: m.uid, text: `${m.name} splashes molten metal!` }); dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * 1.4, { school: 'fire', ab: 'molten' }); }
     } else if (sp.kind === 'cook') {
       sp.t = 15;
       ev(C, { type: 'emote', uid: m.uid, text: 'Cookie eats some of his cooking.' });

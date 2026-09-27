@@ -225,7 +225,7 @@
     crafts_alliance: { name: 'Artisan Hollis', title: 'Profession Trainer' },
     crafts_horde: { name: 'Artisan Grunna', title: 'Profession Trainer' },
   });
-  const TRAIN = { crafts_alliance: ['stormwind', 'ironforge', 'darnassus', 'sentinel_hill'], crafts_horde: ['orgrimmar', 'thunder_bluff', 'undercity', 'crossroads'] };
+  const TRAIN = { crafts_alliance: ['stormwind', 'ironforge', 'darnassus', 'sentinel_hill', 'lakeshire'], crafts_horde: ['orgrimmar', 'thunder_bluff', 'undercity', 'crossroads', 'sun_rock_retreat'] };
   for (const npc in TRAIN) for (const p of TRAIN[npc]) if (D.PLACES[p] && !D.PLACES[p].npcs.includes(npc)) D.PLACES[p].npcs.push(npc);
   D.PROF_TRAINERS = TRAIN;
 })(typeof window !== 'undefined' ? window : globalThis);
