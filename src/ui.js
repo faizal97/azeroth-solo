@@ -56,7 +56,7 @@
     const ab = D.ABILITIES[AURA_ALIAS[base] || base];
     const hostile = a.src != null && G.fight && G.fight.units[a.src] && u && G.fight.units[a.src].side !== u.side;
     const debuff = DEBUFF_IDS.has(a.id) || !!a.slow || (a.dot != null && (hostile || (u && u.side === 'enemy'))) || (hostile && !a.hot && !a.stats);
-    return { id: a.id, icon: AURA_ALIAS[base] || base, name: AURA_NAME[a.id] || (ab ? ab.name : a.id.replace(/_/g, ' ')), debuff };
+    return { id: a.id, icon: a.icon || AURA_ALIAS[base] || base, name: a.name || AURA_NAME[a.id] || (ab ? ab.name : a.id.replace(/_/g, ' ')), debuff };
   }
   // in a fight 'until' is fight seconds; out of combat the player's buffs use wall-clock ms
   function auraList(u) {
@@ -69,7 +69,7 @@
     }
     return out.sort((x, y) => (x.debuff - y.debuff) || (x.left - y.left));
   }
-  const STAT_WORD = { ap: 'attack power', sp: 'spell power', armor: 'armor', str: 'Strength', agi: 'Agility', sta: 'Stamina', int: 'Intellect', spi: 'Spirit', dodge: '% dodge', haste: '% attack and cast speed', rap: 'ranged attack power' };
+  const STAT_WORD = { wdmg: 'weapon damage', ap: 'attack power', sp: 'spell power', armor: 'armor', str: 'Strength', agi: 'Agility', sta: 'Stamina', int: 'Intellect', spi: 'Spirit', dodge: '% dodge', haste: '% attack and cast speed', rap: 'ranged attack power' };
   const SCHOOL = (x) => (x && x !== 'physical' ? x[0].toUpperCase() + x.slice(1) + ' ' : '');
   function auraEffects(a) {
     const r = a.raw || {}, out = [];
@@ -297,6 +297,12 @@
           el.addEventListener('click', () => confirmAttack(foe));
           sc.append(el);
         }
+        // gathering nodes you can see
+        G.placeNodes().forEach((nd, i) => {
+          const el = spriteEl(art('node', nd.key), [{ l: 31, b: 3, w: 11 }, { l: 49, b: 1, w: 10 }][i], 'node tappable', h('div', { class: 'np', style: { fontSize: '9px' } }, h('span', { style: { color: '#ffd84a' } }, nd.N.name)));
+          el.addEventListener('click', () => G.gatherNode(nd.i));
+          sc.append(el);
+        });
         // a few creatures in view
         const mobs = G.placeMobs().filter((m) => m.state === 'alive').slice(0, 2);
         mobs.forEach((m, i) => {
@@ -472,6 +478,13 @@
     if (place.gather && P.quests[place.gather.quest] && G.questState(place.gather.quest) !== 'complete') {
       const W = G.S.world[P.place]; const n = W ? W.nodes.n : 4;
       b.append(h('button', { class: 'chip gold', disabled: !n, onclick: () => G.gather() }, 'Collect ' + place.gather.label, h('small', null, n ? n + ' nearby' : 'More soon')));
+    }
+    const nodes = G.placeNodes();
+    if (nodes.length) {
+      const row = h('div', { class: 'chips' });
+      for (const nd of nodes) { const p = G.profs()[nd.N.prof], col = G.skillColor(p.skill, G.nodeSk(nd.N));
+        row.append(h('button', { class: 'chip gold', disabled: col < 0, onclick: () => G.gatherNode(nd.i) }, img(art('icon', nd.N.item)), ' ', `${D.PROFESSIONS[nd.N.prof].verb} ${nd.N.name}`, h('small', { style: { color: SKILL_COL[col + 1] } }, col < 0 ? `needs ${nd.N.skill}` : `skill ${p.skill}`))); }
+      b.append(row);
     }
     if (!mobs.length) { b.append(h('div', { class: 'people' }, place.safe ? 'No creatures in town. See People for quests and vendors.' : 'Nothing to fight here right now.')); return; }
     const needKeys = questMobKeys();
@@ -741,8 +754,9 @@
     const known = G.knownAbilities();
     const C = D.CLASSES[P.cls];
     // v2.0: no cap; past 8 buttons the bar wraps to two rows
-    if (G.fight) { const r = G.racial(); return known.concat(r && !(G.pUnit && G.pUnit.form) ? [r] : []); }
-    const extras = ['eat'].concat(C.resource === 'mana' ? ['drink'] : []);
+    const pot = G.S.player.bags.some((b) => b.item.slot === 'potion') ? ['potion'] : [];
+    if (G.fight) { const r = G.racial(); return known.concat(r && !(G.pUnit && G.pUnit.form) ? [r] : [], pot); }
+    const extras = ['eat'].concat(C.resource === 'mana' ? ['drink'] : [], pot);
     const ab = known.filter((a) => a !== 'taunt' && !D.ABILITIES[a].combatOnly);
     return ab.concat(extras);
   }
@@ -759,8 +773,8 @@
       if (!id) { bar.append(h('div', { class: 'ab empty' })); continue; }
       const ab = D.ABILITIES[id];
       const btn = h('button', { class: 'ab', 'aria-label': ab.name }, img(abIcon(id)), h('div', { class: 'cd' }), h('div', { class: 'cdt tnum' }));
-      if (id === 'eat' || id === 'drink') {
-        const n = G.S.player.bags.filter((b) => b.item.slot === (id === 'eat' ? 'food' : 'drink')).reduce((a, b) => a + b.n, 0);
+      if (id === 'eat' || id === 'drink' || id === 'potion') {
+        const n = G.S.player.bags.filter((b) => b.item.slot === (id === 'eat' ? 'food' : id === 'potion' ? 'potion' : 'drink')).reduce((a, b) => a + b.n, 0);
         btn.append(h('span', { class: 'cnt tnum' }, n));
       }
       let pressT = null, long = false;
@@ -777,6 +791,7 @@
     const S = G.S, P = S.player;
     if (id === 'eat') return G.consume('food');
     if (id === 'drink') return G.consume('drink');
+    if (id === 'potion') return G.usePotion(G.pUnit ? (G.pUnit.hp / G.pUnit.maxHp < 0.6 || !G.bestPotion('mana') ? null : 'mana') : null);
     if (G.fight) {
       if (id === 'attack') { G.toggleAuto(); return; }
       const why = G.useAbility(id);
@@ -818,6 +833,7 @@
   }
   function abilityTip(id) {
     if (id === 'attack') return toast('Attack: turns auto-attack on or off.', true);
+    if (id === 'potion') return toast('Potion: drinks your best healing potion (or a mana potion when your health is fine). Works in combat; 2 min cooldown.', true);
     if (id === 'eat' || id === 'drink') return toast(id === 'eat' ? 'Eat: restores health over 18 sec.' : 'Drink: restores mana over 18 sec.', true);
     const t = abilityText(id);
     showDialog(h('div', { class: 'tooltip' },
@@ -921,7 +937,8 @@
       for (const id in els.abs) {
         const btn = els.abs[id];
         let p = 1, left = 0, nores = false, on = false;
-        if (C && G.pUnit && id !== 'eat' && id !== 'drink') {
+        if (id === 'potion') { const lp = ((P.potionAt || 0) - now()) / 1000; if (lp > 0) { p = 1 - lp / 120; left = lp; } }
+        else if (C && G.pUnit && id !== 'eat' && id !== 'drink') {
           const u = G.pUnit, ab = D.ABILITIES[id];
           if (id === 'attack') on = u.auto;
           else {
@@ -930,7 +947,7 @@
             else if (ab.gcd !== false && u.gcdUntil > C.t) p = 1 - (u.gcdUntil - C.t) / (ab.gcdLen || 1.5);
             nores = E.abCost(ab, u) > u.res + 0.01;
           }
-        } else if (id !== 'eat' && id !== 'drink' && id !== 'attack') {
+        } else if (id !== 'eat' && id !== 'drink' && id !== 'attack' && id !== 'potion') {
           nores = E.abCost(D.ABILITIES[id], P) > v.res + 0.01 && D.ABILITIES[id].target !== 'enemy';
         }
         btn.querySelector('.cd').style.setProperty('--p', p);
@@ -1007,6 +1024,15 @@
       if (it.sp) t.append(h('div', { class: 'gr' }, `Equip: Increases damage and healing done by magical spells and effects by up to ${it.sp}.`));
       if (it.lvl > 1) t.append(h('div', { class: it.lvl > P.level ? 'red' : 'st' }, `Requires Level ${it.lvl}`));
     }
+    if (it.slot === 'mat') t.append(h('div', { class: 'st' }, 'Trade Goods'));
+    if (it.heal || it.mana) t.append(h('div', { class: 'gr' }, `Use: Restores ${it.heal ? it.heal[0] + ' to ' + it.heal[1] + ' health' : it.mana[0] + ' to ' + it.mana[1] + ' mana'}. Works in combat. 2 min cooldown shared by all potions.`));
+    if (it.buff) t.append(h('div', { class: 'gr' }, `Use: ${Object.entries(it.buff).map(([k, v]) => `+${v} ${statName[k] || k}`).join(', ')} for 1 hour. One elixir at a time.`));
+    if (it.wdmg) t.append(h('div', { class: 'gr' }, `Use: Your weapon deals +${it.wdmg} damage for 30 min.`));
+    if (it.slot === 'kit') t.append(h('div', { class: 'gr' }, `Use: Permanently adds ${it.kit} armor to your chest, legs, feet or hands gear (the first one without a kit this good).`));
+    if (it.bag) t.append(h('div', { class: 'gr' }, `${it.bag} Slot Bag. Use: equip it to carry ${it.bag} more items (up to ${D.BAG_SLOTS} bags).`));
+    if (it.teaches) { const r = D.RECIPES[it.teaches], mk = D.ITEMS[r.makes]; t.append(h('div', { class: 'gr' }, `Use: Teaches you how to make ${mk.name}. Requires ${D.PROFESSIONS[r.prof].name} (${r.sk[0]}).`)); }
+    if (it.kit && D.GEAR_SLOTS.includes(it.slot)) t.append(h('div', { class: 'gr' }, `Armor kit: +${it.kit} armor`));
+    if (it.crafter) t.append(h('div', { class: 'dim' }, `<Made by ${it.crafter}>`));
     if (it.restore) t.append(h('div', { class: 'gr' }, `Use: Restores ${it.restore} ${it.slot === 'food' ? 'health' : 'mana'} over 18 sec. Must remain seated while ${it.slot === 'food' ? 'eating' : 'drinking'}.`));
     if (it.desc) t.append(h('div', { class: 'gr' }, it.desc));
     const base = D.ITEMS[it.id] || {};
@@ -1245,6 +1271,7 @@
       const place = D.PLACES[P.place];
       b.append(h('p', { style: { margin: 0, color: 'var(--text)' } }, (window.AI && AI.npcLine(npc)) || greeting(npc)));
       if (/^banker_/.test(npc)) b.append(h('button', { class: 'btn wide', onclick: () => openBank() }, 'Open your bank'));
+      if (/^crafts_/.test(npc)) trainerBlock(b);
       if (/^auctioneer_/.test(npc)) b.append(h('button', { class: 'btn wide', onclick: () => openAuction() }, 'Browse the auction house'));
       if (npc === 'mentor_alliance' || npc === 'mentor_horde') {
         const acc = G.account();
@@ -1269,7 +1296,7 @@
       }
       if (place.vendor === npc || place.gearVendor === npc) b.append(h('button', { class: 'btn wide', onclick: () => openVendor(npc) }, 'Browse goods'));
       if (npc === 'farley') b.append(h('button', { class: 'btn alt wide', disabled: P.bind === P.place, onclick: () => { G.bindHere(); ui.sheetFn(); } }, P.bind === P.place ? 'This inn is your home' : 'Make this inn your home'));
-      if (!qs.length && place.vendor !== npc && npc !== 'farley' && place.gearVendor !== npc && !/^(mentor|banker|auctioneer)_/.test(npc)) b.append(h('p', { style: { color: 'var(--muted)' } }, 'Nothing for you right now. Come back when you have grown stronger.'));
+      if (!qs.length && place.vendor !== npc && npc !== 'farley' && place.gearVendor !== npc && !/^(mentor|banker|auctioneer|crafts)_/.test(npc)) b.append(h('p', { style: { color: 'var(--muted)' } }, 'Nothing for you right now. Come back when you have grown stronger.'));
     });
   }
   window.UI_GREETING = (npc) => greeting(npc);
@@ -1311,6 +1338,7 @@
       boorand: 'Rest your feet, traveller. The Barrens are wide.', nargal: 'Need a weapon? The centaurs will not ask before they charge.', kargal: 'Far Watch sees everything that comes out of the Barrens.',
       allison: 'Welcome to the Gilded Rose. Stormwind\'s finest beds.', thurman: 'Stormwind steel. The best the Alliance can buy.',
       banker_alliance: 'Your valuables are safe with us.', banker_horde: 'Store what you cannot carry. Nothing leaves this vault without you.', auctioneer_alliance: 'Buying or selling? Every adventurer on the realm trades through this house.', auctioneer_horde: 'Buy low, sell high. The Horde trades here.',
+      crafts_alliance: 'Every trade starts with a pick, a knife or a needle. Which will it be?', crafts_horde: 'Strong arms gather, clever hands craft. Choose your trade.',
       mentor_alliance: 'Helping the new ones through the dungeons is how heroes are made. Your marks are good here.', mentor_horde: 'The strong carry the weak through the fire. The Horde remembers. Spend your marks well.',
       denalan: 'The timberlings have been acting so oddly...', saelienne: 'Welcome to Darnassus, child of the stars.', mydrannul: 'Fine Kaldorei steel. Look, but do not touch.',
     })[npc] || 'Hello.';
@@ -1342,7 +1370,7 @@
   function bagGrid(onTap) {
     const P = G.S.player;
     const g = h('div', { class: 'bags' });
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < G.bagCap(); i++) {
       const b = P.bags[i];
       if (!b) { g.append(h('div', { class: 'slot' })); continue; }
       const it = b.item;
@@ -1357,7 +1385,8 @@
     ui.bagSel = null;
     openSheet('bags', 'Backpack', null, (b, t) => {
       const P = G.S.player;
-      t.innerHTML = ''; t.append('Backpack', h('small', { html: `${P.bags.length}/16 · ` + moneyHtml(P.money) }));
+      t.innerHTML = ''; t.append('Bags', h('small', { html: `${P.bags.length}/${G.bagCap()} · ` + moneyHtml(P.money) }));
+      if ((P.bagsEq || []).length) b.append(h('div', { class: 'chips' }, ...(P.bagsEq || []).map((bg, i) => h('button', { class: 'chip', onclick: () => { G.unequipBag(i); ui.sheetFn(); } }, img(art('icon', bg.icon)), ' ', bg.name, h('small', null, `+${bg.bag} · tap to take off`)))));
       b.append(bagGrid((i) => { ui.bagSel = ui.bagSel === i ? null : i; ui.sheetFn(); }));
       const sel = P.bags[ui.bagSel];
       if (sel) {
@@ -1365,6 +1394,7 @@
         const acts = h('div', { class: 'btn-row', style: { marginTop: '8px' } });
         if (D.GEAR_SLOTS.includes(it.slot)) acts.append(h('button', { class: 'btn', disabled: !G.canUseItem(it) || it.lvl > P.level, onclick: () => { G.equip(ui.bagSel); ui.bagSel = null; ui.sheetFn(); } }, 'Equip'));
         if (it.slot === 'food' || it.slot === 'drink') acts.append(h('button', { class: 'btn', onclick: () => { G.consume(it.slot); closeSheet(); } }, 'Use'));
+        if (G.usable(it)) acts.append(h('button', { class: 'btn', onclick: () => { G.useItem(ui.bagSel); ui.bagSel = null; ui.sheetFn(); } }, it.slot === 'bag' ? 'Equip bag' : it.slot === 'recipe' ? 'Learn' : 'Use'));
         if (it.id === 'hearthstone') acts.append(h('button', { class: 'btn', onclick: () => { G.hearth(); closeSheet(); } }, 'Use'));
         const vendorHere = D.PLACES[P.place].vendor || D.PLACES[P.place].gearVendor;
         if (vendorHere && !it.noSell && it.slot !== 'quest') acts.append(h('button', { class: 'btn alt', onclick: () => { G.sell(ui.bagSel); ui.bagSel = null; ui.sheetFn(); } }, 'Sell'));
@@ -1385,6 +1415,7 @@
         h('button', { class: 'btn', onclick: () => { if (G.fight) return toast('You are in combat.'); G.logout(); showSelect(); } }, 'Switch character'),
         h('button', { class: 'btn alt', onclick: () => openTheater() }, 'Theater')));
       const tp = G.talentPoints(P);
+      b.append(h('button', { class: 'btn wide alt', onclick: () => openProfessions() }, Object.keys(G.profs()).length ? 'Professions · ' + Object.entries(G.profs()).map(([k, p]) => `${D.PROFESSIONS[k].name} ${p.skill}`).join(', ') : 'Professions (learn from a trainer in a city)'));
       b.append(h('button', { class: 'btn wide' + (tp.free ? '' : ' alt'), onclick: () => openTalents() }, P.level < D.TALENT_START ? `Talents (from level ${D.TALENT_START})` : tp.free ? `Talents · ${tp.free} point${tp.free > 1 ? 's' : ''} to spend` : `Talents · ${tp.spent} spent`));
       b.append(h('div', { class: 'hero-top' }, img(art('hero', looks(P))),
         h('div', { class: 'stats' },
@@ -1493,12 +1524,13 @@
   }
   if (window.AI) AI.onChange = () => { if (ui.sheet === 'hero' && ui.sheetFn && !document.querySelector('.dialog')) ui.sheetFn(); };
   // ---------- bank and auction house
+  const TRADE_LABEL = { mat: 'Trade goods', potion: 'Potion', elixir: 'Elixir', stone: 'Sharpening stone', kit: 'Armor kit', bag: 'Bag', recipe: 'Recipe' };
   const itemRow = (it, n, right, onclick, sub) => h('button', { class: 'row', onclick },
     h('div', { class: 'ic' }, itemIcon(it)), h('div', { class: 't' }, h('b', { style: { color: (D.QUALITY[it.q || 1] || D.QUALITY[1]).color } }, it.name + (n > 1 ? ` ×${n}` : '')), h('small', null, sub || (it.lvl ? `Level ${it.lvl} ${D.SLOT_LABEL[it.slot] || it.slot}` : ''))), h('div', { class: 'r tnum' }, right || ''));
   function openBank() {
     openSheet('bank', 'Bank', `${G.BANK_SLOTS} slots · tap to move`, (b, title) => {
       const P = G.S.player; P.bank = P.bank || [];
-      title.querySelector('small').textContent = `${P.bank.length}/${G.BANK_SLOTS} in the bank · ${P.bags.length}/16 in your bags · tap to move`;
+      title.querySelector('small').textContent = `${P.bank.length}/${G.BANK_SLOTS} in the bank · ${P.bags.length}/${G.bagCap()} in your bags · tap to move`;
       b.append(h('div', { class: 'sec-h' }, 'In the bank', h('small', null, 'tap to take')));
       const bank = h('div', { class: 'list' }); P.bank.forEach((x, i) => bank.append(itemRow(x.item, x.n, '↑', () => { G.bankWithdraw(i); ui.sheetFn(); })));
       if (!P.bank.length) bank.append(h('div', { class: 'people' }, 'Empty. Keep gear sets, quest leftovers and heirlooms here.'));
@@ -1516,20 +1548,72 @@
       b.append(h('div', { class: 'chips' }, tab('browse', 'Browse'), tab('sell', 'Sell'), tab('mine', `My auctions (${((S.ah && S.ah.mine) || []).length})`)));
       const list = h('div', { class: 'list' });
       if (ui.ahTab === 'browse') {
-        for (const l of G.ahListings()) list.append(itemRow(l.item, 1, G.moneyText(l.price), () => showDialog([h('h3', null, `Buy ${l.item.name}?`), compareBlock ? compareBlock(l.item) : null, h('p', null, `From ${l.seller} for ${G.moneyText(l.price)}.`),
-          h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); G.ahBuy(l.id); ui.sheetFn(); } }, 'Buy'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true), `Level ${l.item.lvl} ${D.SLOT_LABEL[l.item.slot]} · ${l.seller}` + (G.isUpgrade(l.item) ? ' · ▲ upgrade' : '')));
+        for (const l of G.ahListings()) list.append(itemRow(l.item, l.n || 1, G.moneyText(l.price), () => showDialog([h('h3', null, `Buy ${l.item.name}?`), compareBlock ? compareBlock(l.item) : null, h('p', null, `From ${l.seller} for ${G.moneyText(l.price)}.`),
+          h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); G.ahBuy(l.id); ui.sheetFn(); } }, 'Buy'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true), (D.GEAR_SLOTS.includes(l.item.slot) ? `Level ${l.item.lvl} ${D.SLOT_LABEL[l.item.slot]} · ${l.seller}` : `${TRADE_LABEL[l.item.slot] || 'Trade goods'} · ${l.seller}`) + (G.isUpgrade(l.item) ? ' · ▲ upgrade' : '')));
         b.append(h('p', { class: 'ai-note' }, 'Listings from other players on the realm. New ones arrive every half hour.'));
       } else if (ui.ahTab === 'sell') {
-        P.bags.forEach((x, i) => { if (!D.GEAR_SLOTS.includes(x.item.slot) || x.item.heirloom) return; const v = G.ahValue(x.item);
+        P.bags.forEach((x, i) => { if (!G.ahTrade(x.item)) return; const v = G.ahValue(x.item) * x.n;
           list.append(itemRow(x.item, x.n, G.moneyText(v), () => showDialog([h('h3', null, `Sell ${x.item.name}`), h('p', null, `Players usually pay about ${G.moneyText(v)}. Lower prices sell faster; much higher ones may not sell at all. The house takes 5%.`),
             h('div', { class: 'btn-row' }, ...[0.8, 1, 1.3, 1.6].map((f) => h('button', { class: 'btn' + (f === 1 ? '' : ' alt'), onclick: () => { closeDialog(); G.ahPost(i, Math.round(v * f)); ui.sheetFn(); } }, G.moneyText(Math.round(v * f))))),
-            h('button', { class: 'btn alt wide', onclick: closeDialog }, 'Cancel')], true), `Vendor pays ${G.moneyText(x.item.sell || 0)}`)); });
-        if (!list.children.length) list.append(h('div', { class: 'people' }, 'No gear in your bags to sell.'));
+            h('button', { class: 'btn alt wide', onclick: closeDialog }, 'Cancel')], true), `Vendor pays ${G.moneyText((x.item.sell || 0) * x.n)}`)); });
+        if (!list.children.length) list.append(h('div', { class: 'people' }, 'Nothing in your bags to sell. Gear, trade goods, potions and bags can go up for auction.'));
       } else {
-        ((S.ah && S.ah.mine) || []).forEach((a, i) => list.append(itemRow(a.item, 1, G.moneyText(a.price), () => showDialog([h('h3', null, `Cancel your auction of ${a.item.name}?`), h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); G.ahCancel(i); ui.sheetFn(); } }, 'Cancel auction'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Keep'))], true), `Posted ${Math.max(1, Math.round((Date.now() - a.postedAt) / 60000))} min ago · ${Math.max(0, Math.round((a.expires - Date.now()) / 3600000))}h left`)));
+        ((S.ah && S.ah.mine) || []).forEach((a, i) => list.append(itemRow(a.item, a.n || 1, G.moneyText(a.price), () => showDialog([h('h3', null, `Cancel your auction of ${a.item.name}?`), h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); G.ahCancel(i); ui.sheetFn(); } }, 'Cancel auction'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Keep'))], true), `Posted ${Math.max(1, Math.round((Date.now() - a.postedAt) / 60000))} min ago · ${Math.max(0, Math.round((a.expires - Date.now()) / 3600000))}h left`)));
         if (!list.children.length) list.append(h('div', { class: 'people' }, 'You have no auctions. Post gear from the Sell tab; it sells while you play or while you are away.'));
       }
       b.append(list);
+    });
+  }
+  // ---------- professions (v3): trainer, then a sheet per profession with its recipes
+  const SKILL_COL = ['#ff4040', '#ff8040', '#ffff00', '#40bf40', '#808080']; // too hard, orange, yellow, green, grey
+  function profBar(p) { return h('div', { class: 'bar thin', style: { marginTop: '4px' } }, h('i', { style: { width: Math.round(p.skill / p.max * 100) + '%', background: '#4f9a4a' } })); }
+  function trainerBlock(b) {
+    const P = G.S.player, profs = G.profs(), n = Object.keys(profs).length;
+    b.append(h('div', { class: 'sec-h' }, 'Professions', h('small', null, `${n}/${D.PROF_MAX} learned`)));
+    const list = h('div', { class: 'list' });
+    for (const id in D.PROFESSIONS) {
+      const Pd = D.PROFESSIONS[id], p = profs[id], R = G.nextRank(id);
+      const sub = p ? `${p.skill}/${p.max} · ` + (R ? (R.ok ? `${R.name} training: ${G.moneyText(R.cost)}` : P.level < R.lvl ? `${R.name} at level ${R.lvl}` : `${R.name} at skill ${R.skill}`) : 'fully trained for now')
+        : (n >= D.PROF_MAX ? 'Unlearn a profession to learn this' : P.level < R.lvl ? `From level ${R.lvl}` : `${Pd.desc} Training: ${G.moneyText(R.cost)}.`);
+      list.append(h('button', { class: 'row', disabled: !R || !R.ok || (!p && n >= D.PROF_MAX), onclick: () => { G.trainProf(id); ui.sheetFn(); } },
+        h('div', { class: 'ic' }, img(art('icon', Pd.icon))),
+        h('div', { class: 't' }, h('b', { style: { color: p ? '#ffd100' : 'var(--text)' } }, Pd.name + (p ? ` (${D.PROF_RANKS[G.profRank(id)].name})` : '')), h('small', { style: { whiteSpace: 'normal' } }, sub)),
+        h('div', { class: 'r' }, R && R.ok && (p || n < D.PROF_MAX) ? 'Train' : '')));
+    }
+    b.append(list, h('p', { class: 'ai-note' }, 'Gatherers find ore and herbs in the Fight tab and on the scene. Skinning happens as you loot beasts. Craft from Hero → Professions. Mining pairs with Blacksmithing, Herbalism with Alchemy, Skinning with Leatherworking; Tailoring uses the cloth humanoids drop.'));
+  }
+  function openProfessions() {
+    ui.profTab = ui.profTab || null;
+    openSheet('profs', 'Professions', ' ', (b, title) => {
+      const P = G.S.player, profs = G.profs(), ids = Object.keys(profs);
+      title.querySelector('small').textContent = ids.length ? `${ids.length}/${D.PROF_MAX} · craft anywhere out of combat` : 'Learn up to two from a profession trainer';
+      if (!ids.length) { b.append(h('p', null, 'You have no professions yet. Profession trainers wait in every capital and in Sentinel Hill and the Crossroads.')); return; }
+      if (!ids.includes(ui.profTab)) ui.profTab = ids.find((k) => D.PROFESSIONS[k].kind === 'craft') || ids.find((k) => k === 'mining') || ids[0];
+      b.append(h('div', { class: 'chips' }, ...ids.map((k) => h('button', { class: 'chip' + (k === ui.profTab ? ' gold' : ''), onclick: () => { ui.profTab = k; ui.sheetFn(); } }, img(art('icon', D.PROFESSIONS[k].icon)), ' ', D.PROFESSIONS[k].name, h('small', null, `${profs[k].skill}/${profs[k].max}`)))));
+      const k = ui.profTab, Pd = D.PROFESSIONS[k], p = profs[k];
+      b.append(h('div', { class: 'people' }, Pd.desc), profBar(p));
+      const recipes = G.recipesFor(k);
+      if (k === 'herbalism' || k === 'skinning') {
+        const rows = k === 'herbalism' ? Object.entries(D.NODES).filter(([, N]) => N.prof === 'herbalism').map(([key, N]) => [N.name, N.skill, G.nodeSk(N), N.item]) : [[1, 10], [15, 50], [20, 100], [25, 125]].map(([l, sk]) => [`Beasts level ${l}`, sk, [sk, sk + 25, sk + 50, sk + 100], D.skinLeather(l)]);
+        const list = h('div', { class: 'list' });
+        for (const [name, need, sk, item] of rows) { const col = G.skillColor(p.skill, sk); list.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', D.ITEMS[item].icon))), h('div', { class: 't' }, h('b', { style: { color: SKILL_COL[col + 1] } }, name), h('small', null, `Needs ${need} · gives ${D.ITEMS[item].name}`)), h('div', { class: 'r' }, '')));
+        }
+        b.append(h('div', { class: 'sec-h' }, k === 'herbalism' ? 'What you can pick' : 'What you can skin', h('small', null, 'orange always raises your skill, yellow often, green rarely, grey never')), list);
+        return;
+      }
+      const list = h('div', { class: 'list' });
+      for (const r of recipes) {
+        const mk = D.ITEMS[r.makes], col = G.skillColor(p.skill, r.sk), can = G.craftable(r.id);
+        const mats = Object.entries(r.mats).map(([m, n]) => `${D.ITEMS[m].name} ${G.countItem(m)}/${n}`).join(' · ');
+        list.append(h('button', { class: 'row', onclick: () => showDialog([itemTip(G.copyItem(r.makes)), h('p', { class: 'ai-note' }, `Needs: ${mats}`),
+          col < 0 ? h('p', { class: 'red' }, `Requires ${Pd.name} ${r.sk[0]}.`) : h('div', { class: 'btn-row' }, h('button', { class: 'btn', disabled: can < 1, onclick: () => { closeDialog(); G.craft(r.id, 1); closeSheet(); } }, 'Create'), h('button', { class: 'btn alt', disabled: can < 2, onclick: () => { closeDialog(); G.craft(r.id, can); closeSheet(); } }, `Create all (${can})`), h('button', { class: 'btn alt', onclick: closeDialog }, 'Close'))], true) },
+          h('div', { class: 'ic' }, itemIcon(mk)),
+          h('div', { class: 't' }, h('b', { style: { color: SKILL_COL[col + 1] } }, mk.name + (r.n > 1 ? ` ×${r.n}` : '')), h('small', { style: { whiteSpace: 'normal' } }, col < 0 ? `Needs skill ${r.sk[0]}` : mats)),
+          h('div', { class: 'r' }, can ? String(can) : '')));
+      }
+      b.append(h('div', { class: 'sec-h' }, k === 'mining' ? 'Smelting' : 'Recipes', h('small', null, 'orange always raises your skill, yellow often, green rarely, grey never')), list);
+      if (k === 'mining') b.append(h('p', { class: 'ai-note' }, 'Ore veins appear in the wild: look in the Fight tab. Copper in the starting zones, tin from about level 10, silver is rare.'));
+      else b.append(h('p', { class: 'ai-note' }, 'Rare plans, patterns and recipes drop from dungeon bosses and named rares. Materials sell on the auction house.'));
     });
   }
   // ---------- talents: three trees, tap a talent to spend a point

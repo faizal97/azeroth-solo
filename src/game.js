@@ -93,6 +93,8 @@
     S.pending = []; S.chatTimers = {};
     if (S.run && S.run.phase === 'fight') S.run.phase = 'rest', S.run.restUntil = now() + 3000;
     try { G.refreshHeirlooms(); } catch (e) { /* older save */ }
+    // v3: stacks saved before a material changed slot (linen was junk) take the item's current slot and icon
+    for (const b of (S.player.bags || []).concat(S.player.bank || [])) { const base = D.ITEMS[b.item.id]; if (base && base.slot === 'mat' && b.item.slot !== 'mat') { b.item.slot = 'mat'; b.item.icon = base.icon; } }
     return G.catchUp();
   };
   G.exportSave = function () { G.save(); return btoa(unescape(encodeURIComponent(JSON.stringify(G.S)))); };
@@ -147,7 +149,7 @@
 
   // ============================================================ items
   G.copyItem = (id) => JSON.parse(JSON.stringify(D.ITEMS[id]));
-  G.stackable = (it) => ['junk', 'quest', 'food', 'drink'].includes(it.slot);
+  G.stackable = (it) => ['junk', 'quest', 'food', 'drink', 'mat', 'potion', 'elixir', 'stone', 'kit'].includes(it.slot);
   G.canUseItem = function (it, cls) {
     cls = cls || G.S.player.cls;
     const C = D.CLASSES[cls];
@@ -259,7 +261,7 @@
       const st = P.bags.find((b) => b.item.id === it.id && b.n < 20);
       if (st) { st.n += n; return true; }
     }
-    if (P.bags.length >= 16) { toast('Inventory is full.'); return false; }
+    if (G.bagsFull()) { toast('Inventory is full.'); return false; }
     P.bags.push({ item: it, n });
     return true;
   };
@@ -303,7 +305,7 @@
     const P = G.S.player;
     if (G.fight) return toast('You are in combat.');
     if (!P.equip[slot]) return;
-    if (P.bags.length >= 16) return toast('Inventory is full.');
+    if (G.bagsFull()) return toast('Inventory is full.');
     P.bags.push({ item: P.equip[slot], n: 1 }); delete P.equip[slot];
     clampVitals(); emit('change');
   };
@@ -325,6 +327,12 @@
     return v;
   };
   G.vendorStock = function (npc) {
+    const base = vendorBase(npc);
+    const pl = D.PLACES[G.S.player.place];
+    if (pl && pl.vendor === npc) return base.concat(['empty_vial', 'coarse_thread', 'small_pouch'].map(G.copyItem));
+    return base;
+  };
+  function vendorBase(npc) {
     if (npc === 'danil') return ['tough_bread', 'spring_water'].map(G.copyItem);
     if (npc === 'farley') return ['tough_bread', 'fresh_bread', 'spring_water', 'ice_milk'].map(G.copyItem);
     if (npc === 'adlin') return ['tough_bread', 'spring_water'].map(G.copyItem);
@@ -574,6 +582,7 @@
     }
     // gather nodes
     if (P.gather && W.nodes.n < 4 && t >= W.nodes.next) { W.nodes.n++; W.nodes.next = t + 20000; }
+    nodesTick(id, W, t);
     // guild offer
     if (S.flags.guildOfferAt && t >= S.flags.guildOfferAt && !S.flags.guildOffer) {
       S.flags.guildOffer = true;
@@ -673,6 +682,8 @@
         P.pet = { type: 'beast', mob: c.mob, name: D.MOBS[c.mob].name, hp: null };
         sys(`You have tamed a ${D.MOBS[c.mob].name}. It fights at your side now.`);
       }
+      if (c.what === 'pgather') finishGather(c);
+      if (c.what === 'craft') finishCraft(c);
       if (c.what === 'gather') {
         const W = placeState(P.place); const pl = D.PLACES[P.place];
         if (W.nodes.n > 0) {
@@ -781,7 +792,7 @@
     const P = G.S.player, Q = D.QUESTS[qid];
     if (!G.questComplete(qid)) return;
     const it = G.rewardItem(qid);
-    if (it && P.bags.length >= 16) return toast('Inventory is full.');
+    if (it && G.bagsFull()) return toast('Inventory is full.');
     for (const o of Q.objs) if (o.type === 'collect') G.removeItem(o.item, o.n);
     delete P.quests[qid]; P.done[qid] = true;
     sys(`${Q.name} completed.`);
@@ -874,6 +885,7 @@
     if (M.family !== 'beast' && Math.random() < 0.75) out.money = Math.round(level * rnd(2.5, 7) * (M.named ? 4 : 1) * (share || 1));
     for (const [id, p] of (M.drops || [])) if (Math.random() < p) out.items.push(G.copyItem(id));
     for (const [id, p] of (M.qdrops || [])) if (neededQuestItem(id) && Math.random() < p) out.items.push(G.copyItem(id));
+    profLoot(mobKey, level, out);
     if (!M.boss) {
       const r = Math.random();
       const q = r < 0.012 ? 3 : r < 0.05 ? 2 : r < 0.1 ? 1 : r < 0.2 ? 0 : -1;
@@ -1102,11 +1114,13 @@
   };
   G.bankWithdraw = function (idx) {
     const P = G.S.player, b = (P.bank || [])[idx]; if (!b) return;
-    if (P.bags.length >= 16 && !(G.stackable(b.item) && P.bags.some((x) => x.item.id === b.item.id))) return toast('Inventory is full.');
+    if (G.bagsFull() && !(G.stackable(b.item) && P.bags.some((x) => x.item.id === b.item.id))) return toast('Inventory is full.');
     P.bank.splice(idx, 1); G.addItem(b.item, b.n); emit('change');
   };
   // What other players pay: the vendor price times a factor by quality.
-  G.ahValue = (it) => Math.max(10, Math.round((it.sell || 5) * [2, 3, 6, 9, 14, 0][it.q || 1]));
+  G.ahValue = (it) => (G.ahTrade(it) && !D.GEAR_SLOTS.includes(it.slot) ? Math.max(4, Math.round((it.sell || 2) * (it.slot === 'recipe' ? 8 : 5))) : Math.max(10, Math.round((it.sell || 5) * [2, 3, 6, 9, 14, 0][it.q || 1])));
+  // what can go on the auction house: gear, trade goods and anything a profession makes
+  G.ahTrade = (it) => !it.heirloom && !it.noSell && (D.GEAR_SLOTS.includes(it.slot) ? it.q >= 1 : ['mat', 'potion', 'elixir', 'stone', 'kit', 'bag', 'recipe'].includes(it.slot));
   // Listings from other players, refreshed now and then, around your level.
   function ahRefresh(force) {
     const S = G.S, P = S.player, t = now();
@@ -1116,7 +1130,14 @@
     S.ah.listings = S.ah.listings.filter((l) => l.expires > t).slice(-10);
     const myF = (D.RACES[P.race] || {}).faction || 'alliance';
     const sellers = S.bots.filter((b) => B.factionOf(b) === myF);
-    while (S.ah.listings.length < 18) {
+    // trade goods from gatherers around your level
+    const L0 = P.level, goods = ['copper_ore', 'copper_bar', 'rough_stone', 'peacebloom', 'silverleaf', 'light_leather', 'linen_cloth', 'linen_bolt'].concat(L0 >= 8 ? ['earthroot', 'mageroyal', 'minor_healing_potion'] : [], L0 >= 12 ? ['tin_ore', 'bronze_bar', 'briarthorn', 'wool_cloth', 'coarse_stone', 'lesser_healing_potion'] : [], L0 >= 16 ? ['silver_ore', 'bruiseweed', 'medium_leather', 'wool_bolt', 'healing_potion', 'linen_bag'] : []);
+    while (S.ah.listings.filter((l) => !D.GEAR_SLOTS.includes(l.item.slot)).length < 8) {
+      const it = G.copyItem(pick(goods)), n = G.stackable(it) ? rint(1, 4) * 5 : 1;
+      const price = Math.round(G.ahValue(it) * n * (0.8 + Math.random() * 0.6));
+      S.ah.listings.push({ id: 'ah' + t + '_g' + S.ah.listings.length + '_' + rint(0, 9999), item: it, n, price, seller: pick(sellers).name, expires: t + rnd(6, 24) * 3600000 });
+    }
+    while (S.ah.listings.length < 26) {
       const L = clamp(P.level + rint(-3, 2), 2, D.LEVEL_CAP), q = Math.random() < 0.12 ? 3 : 2;
       const it = G.genGear(pick(D.GEAR_SLOTS.filter((x) => x !== 'ranged' || Math.random() < 0.4)), L, q);
       const price = Math.round(G.ahValue(it) * (0.85 + Math.random() * 0.6));
@@ -1128,28 +1149,28 @@
     const S = G.S, P = S.player, l = (S.ah.listings || []).find((x) => x.id === id);
     if (!l) return toast('Someone else bought it.');
     if (P.money < l.price) return toast(`You need ${G.moneyText(l.price)}.`);
-    if (P.bags.length >= 16) return toast('Inventory is full.');
+    if (G.bagsFull()) return toast('Inventory is full.');
     P.money -= l.price; S.ah.listings = S.ah.listings.filter((x) => x !== l);
-    G.addItem(l.item, 1); loot(`You bought ${B.link(l.item.name, l.item.q)} from ${l.seller} for ${G.moneyText(l.price)}.`);
+    G.addItem(l.item, l.n || 1); loot(`You bought ${B.link(l.item.name, l.item.q)}${(l.n || 1) > 1 ? ' x' + l.n : ''} from ${l.seller} for ${G.moneyText(l.price)}.`);
     emit('change');
   };
   // Your auctions sell over real time; the higher the price over market value, the longer it takes.
   G.ahPost = function (idx, price) {
     const S = G.S, P = S.player, b = P.bags[idx]; if (!b) return;
-    if (!D.GEAR_SLOTS.includes(b.item.slot) || b.item.heirloom || b.item.q < 1) return toast('You can only auction gear.');
+    if (!G.ahTrade(b.item)) return toast('You can\'t auction that.');
     S.ah = S.ah || { listings: [], mine: [], next: 0 };
     if (S.ah.mine.length >= 8) return toast('You can have 8 auctions at a time.');
-    const v = G.ahValue(b.item), ratio = price / v, t = now();
+    const v = G.ahValue(b.item) * b.n, ratio = price / v, t = now();
     const hours = ratio <= 1.6 ? 0.3 * Math.pow(Math.max(0.3, ratio), 3) * rnd(0.6, 1.6) : null;
     P.bags.splice(idx, 1);
-    S.ah.mine.push({ item: b.item, price, postedAt: t, sellAt: hours != null ? t + hours * 3600000 : null, expires: t + AH_LIFE });
+    S.ah.mine.push({ item: b.item, n: b.n, price, postedAt: t, sellAt: hours != null ? t + hours * 3600000 : null, expires: t + AH_LIFE });
     sys(`You posted ${b.item.name} for ${G.moneyText(price)}.`);
     emit('change');
   };
   G.ahCancel = function (i) {
     const S = G.S, a = S.ah.mine[i]; if (!a) return;
-    if (S.player.bags.length >= 16) return toast('Inventory is full.');
-    S.ah.mine.splice(i, 1); G.addItem(a.item, 1); sys(`You cancelled your auction of ${a.item.name}.`); emit('change');
+    if (G.bagsFull()) return toast('Inventory is full.');
+    S.ah.mine.splice(i, 1); G.addItem(a.item, a.n || 1); sys(`You cancelled your auction of ${a.item.name}.`); emit('change');
   };
   function ahTick() {
     const S = G.S; if (!S.ah || !S.ah.mine.length) return;
@@ -1162,11 +1183,203 @@
         emit('lootGain', { money: got });
       } else if (t >= a.expires) {
         S.ah.mine = S.ah.mine.filter((x) => x !== a);
-        if (P.bags.length < 16) { P.bags.push({ item: a.item, n: 1 }); sys(`Your auction of ${a.item.name} expired. It is back in your bags.`); }
-        else { P.bank = P.bank || []; P.bank.push({ item: a.item, n: 1 }); sys(`Your auction of ${a.item.name} expired. Your bags were full, so it went to your bank.`); }
+        if (!G.bagsFull()) { P.bags.push({ item: a.item, n: a.n || 1 }); sys(`Your auction of ${a.item.name} expired. It is back in your bags.`); }
+        else { P.bank = P.bank || []; P.bank.push({ item: a.item, n: a.n || 1 }); sys(`Your auction of ${a.item.name} expired. Your bags were full, so it went to your bank.`); }
       }
     }
   }
+  // ============================================================ professions (v3): gathering, crafting, bags, consumables
+  // P.prof = { mining: { skill, max, known: [rare recipe ids] } }. Two primary professions. Data in data/professions.js.
+  G.bagCap = function () { const P = G.S.player; return 16 + (P.bagsEq || []).reduce((a, b) => a + (b.bag || 0), 0); };
+  G.bagsFull = () => G.S.player.bags.length >= G.bagCap();
+  G.profs = () => G.S.player.prof || (G.S.player.prof = {});
+  G.hasProf = (id) => !!G.profs()[id];
+  G.profRank = function (id) { const p = G.profs()[id]; return p ? D.PROF_RANKS.findIndex((r) => r.max === p.max) : -1; };
+  G.nextRank = function (id) {
+    const P = G.S.player, p = G.profs()[id], i = p ? G.profRank(id) + 1 : 0, R = D.PROF_RANKS[i];
+    if (!R) return null;
+    return Object.assign({ idx: i, ok: P.level >= R.lvl && (!p || p.skill >= R.skill) }, R);
+  };
+  G.trainProf = function (id) {
+    const P = G.S.player, profs = G.profs(), R = G.nextRank(id);
+    if (!R) return toast('You know all a trainer can teach for now.');
+    if (!profs[id] && Object.keys(profs).length >= D.PROF_MAX) return toast(`You can learn ${D.PROF_MAX} professions. Unlearn one first.`);
+    if (P.level < R.lvl) return toast(`Requires level ${R.lvl}.`);
+    if (profs[id] && profs[id].skill < R.skill) return toast(`Requires ${R.skill} skill in ${D.PROFESSIONS[id].name}.`);
+    if (P.money < R.cost) return toast(`You need ${G.moneyText(R.cost)}.`);
+    P.money -= R.cost;
+    if (!profs[id]) profs[id] = { skill: 1, max: R.max, known: [] }; else profs[id].max = R.max;
+    loot(`You are now a${R.name[0] === 'A' ? 'n' : ''} ${R.name} in ${D.PROFESSIONS[id].name} (skill up to ${R.max}).`);
+    emit('change'); G.save();
+  };
+  G.unlearnProf = function (id) { delete G.profs()[id]; sys(`You unlearned ${D.PROFESSIONS[id].name}.`); emit('change'); G.save(); };
+  // colour of a recipe or node for your skill: 0 orange, 1 yellow, 2 green, 3 grey, -1 too hard
+  G.skillColor = function (skill, sk) { if (skill < sk[0]) return -1; if (skill < sk[1]) return 0; if (skill < sk[2]) return 1; if (skill < sk[3]) return 2; return 3; };
+  const SKILL_CHANCE = [1, 0.75, 0.25, 0];
+  function skillUp(id, color) {
+    const p = G.profs()[id]; if (!p || color < 0 || p.skill >= p.max) return;
+    if (Math.random() >= SKILL_CHANCE[color]) return;
+    p.skill++;
+    sys(`Your skill in ${D.PROFESSIONS[id].name} has increased to ${p.skill}.`);
+    if (p.skill === p.max && G.nextRank(id)) sys(`You have reached ${p.max} in ${D.PROFESSIONS[id].name}. Visit a profession trainer to go further.`);
+  }
+  G.nodeSk = (N) => [N.skill, N.skill + D.GATHER_BANDS[0], N.skill + D.GATHER_BANDS[1], N.skill + D.GATHER_BANDS[2]];
+  // --- gathering nodes: up to 2 per wild place, one respawns every 75–120 s
+  const nodePlace = (pl) => pl && !pl.safe && !pl.city && (pl.mobs || []).length > 0;
+  const nodeKind = (k) => (D.NODES[k].prof === 'mining' ? 'ore' : 'herb');
+  function rollNode(pl, kind) {
+    const L = Math.round(((pl.lvl || [1, 1])[0] + (pl.lvl || [1, 1])[1]) / 2);
+    let list = D.nodeTable(L)[kind].filter((x) => x[1] > 0);
+    // single-player kindness: what spawns is what your skill can gather, when you have that profession
+    const p = G.profs()[kind === 'ore' ? 'mining' : 'herbalism'];
+    if (p) { const can = list.filter((x) => D.NODES[x[0]].skill <= p.skill); if (can.length) list = can; }
+    const tot = list.reduce((a, x) => a + x[1], 0);
+    let r = Math.random() * tot; for (const [k, w] of list) { r -= w; if (r <= 0) return k; }
+    return list[0][0];
+  }
+  // up to 2 ore veins and 2 herbs per wild place; each kind respawns on its own timer
+  function nodesTick(id, W, t) {
+    const pl = D.PLACES[id]; if (!nodePlace(pl)) return;
+    if (!W.pnodes || !W.pnodes.at) W.pnodes = { list: [rollNode(pl, 'ore'), rollNode(pl, 'herb')], at: { ore: t + rnd(60, 100) * 1000, herb: t + rnd(60, 100) * 1000 } };
+    for (const kind of ['ore', 'herb']) {
+      if (W.pnodes.list.filter((k) => nodeKind(k) === kind).length < 2 && t >= W.pnodes.at[kind]) { W.pnodes.list.push(rollNode(pl, kind)); W.pnodes.at[kind] = t + rnd(60, 100) * 1000; }
+      else if (t >= W.pnodes.at[kind]) W.pnodes.at[kind] = t + rnd(60, 100) * 1000;
+    }
+  }
+  // the nodes you can see here (you only notice what your professions look for)
+  G.placeNodes = function () {
+    const P = G.S.player, pl = D.PLACES[P.place]; if (!nodePlace(pl) || G.S.run) return [];
+    const W = placeState(P.place); nodesTick(P.place, W, now());
+    return W.pnodes.list.map((k, i) => ({ i, key: k, N: D.NODES[k] })).filter((x) => G.hasProf(x.N.prof));
+  };
+  G.gatherNode = function (i) {
+    const S = G.S, P = S.player;
+    if (G.fight || S.run || P.travel) return;
+    const W = placeState(P.place), key = W.pnodes && W.pnodes.list[i]; if (!key) return;
+    const N = D.NODES[key], p = G.profs()[N.prof];
+    if (!p) return;
+    if (p.skill < N.skill) return toast(`Requires ${D.PROFESSIONS[N.prof].name} ${N.skill}.`);
+    if (G.bagsFull() && !P.bags.some((b) => b.item.id === N.item && b.n < 20)) return toast('Inventory is full.');
+    stopActions();
+    P.casting = { what: 'pgather', key, label: `${D.PROFESSIONS[N.prof].verb === 'Mine' ? 'Mining' : 'Picking'} ${N.name}`, start: now(), end: now() + 2500 };
+    emit('change');
+  };
+  function finishGather(c) {
+    const P = G.S.player, W = placeState(P.place), list = (W.pnodes || {}).list || [];
+    const i = list.indexOf(c.key); if (i < 0) return sys('Someone else got there first.');
+    list.splice(i, 1); const kd = nodeKind(c.key); if (W.pnodes.at[kd] < now() + 50000) W.pnodes.at[kd] = now() + rnd(60, 100) * 1000;
+    const N = D.NODES[c.key], p = G.profs()[N.prof];
+    const n = rint(N.n[0], N.n[1]);
+    if (G.addItem(G.copyItem(N.item), n)) loot(`You receive item: ${B.link(D.ITEMS[N.item].name, D.ITEMS[N.item].q)}${n > 1 ? ' x' + n : ''}.`);
+    if (N.extra && Math.random() < N.extra[1] && G.addItem(G.copyItem(N.extra[0]), 1)) loot(`You receive item: ${B.link(D.ITEMS[N.extra[0]].name)}.`);
+    skillUp(N.prof, G.skillColor(p.skill, G.nodeSk(N)));
+    emit('lootGain', { items: 1 });
+  }
+  // --- skinning happens as you loot a beast; linen and wool come from humanoids
+  function profLoot(mobKey, level, out) {
+    const M = D.MOBS[mobKey], p = G.profs().skinning;
+    if (M.family === 'beast' && p) {
+      const need = D.skinSkill(level);
+      if (p.skill >= need) {
+        out.items.push(G.copyItem(D.skinLeather(level)));
+        if (Math.random() < 0.35) out.items.push(G.copyItem(D.skinLeather(level)));
+        skillUp('skinning', G.skillColor(p.skill, [need, need + 25, need + 50, need + 100]));
+      } else if (!G.S.flags.skinWarn || now() - G.S.flags.skinWarn > 60000) { G.S.flags.skinWarn = now(); sys(`Requires Skinning ${need} to skin this.`); }
+    }
+    if (M.family === 'humanoid' && level >= 14 && Math.random() < (level >= 18 ? 0.3 : 0.2)) out.items.push(G.copyItem('wool_cloth'));
+    if (M.named && Math.random() < 0.2) out.items.push(G.copyItem(pick(D.RARE_RECIPES)));
+  }
+  G.rareRecipeDrop = () => (Math.random() < 0.1 ? G.copyItem(pick(D.RARE_RECIPES)) : null);
+  // --- crafting: 1.5 s per item, repeats for a batch
+  G.recipesFor = function (prof) {
+    const p = G.profs()[prof]; if (!p) return [];
+    return Object.values(D.RECIPES).filter((r) => r.prof === prof && (!r.rare || (p.known || []).includes(r.id))).sort((a, b) => a.sk[0] - b.sk[0]);
+  };
+  G.craftable = function (rid) { const r = D.RECIPES[rid]; let n = 99; for (const m in r.mats) n = Math.min(n, Math.floor(G.countItem(m) / r.mats[m])); return n; };
+  G.craft = function (rid, count) {
+    const S = G.S, P = S.player, r = D.RECIPES[rid], p = G.profs()[r.prof];
+    if (!p) return;
+    if (G.fight) return toast('You are in combat.');
+    if (p.skill < r.sk[0]) return toast(`Requires ${D.PROFESSIONS[r.prof].name} ${r.sk[0]}.`);
+    if (G.craftable(rid) < 1) return toast('You are missing materials.');
+    if (G.bagsFull() && !(G.stackable(D.ITEMS[r.makes]) && P.bags.some((b) => b.item.id === r.makes && b.n < 20))) return toast('Inventory is full.');
+    stopActions();
+    P.casting = { what: 'craft', rid, left: Math.max(1, Math.min(count || 1, G.craftable(rid))), label: `${D.ITEMS[r.makes].name}`, start: now(), end: now() + 1500 };
+    emit('change');
+  };
+  function finishCraft(c) {
+    const P = G.S.player, r = D.RECIPES[c.rid], p = G.profs()[r.prof];
+    if (!p || G.craftable(c.rid) < 1) return;
+    for (const m in r.mats) G.removeItem(m, r.mats[m]);
+    const it = G.copyItem(r.makes);
+    if (D.GEAR_SLOTS.includes(it.slot)) { it.id = r.makes; it.crafter = P.name; }
+    if (!G.addItem(it, r.n)) { for (const m in r.mats) G.addItem(G.copyItem(m), r.mats[m]); return; }
+    loot(`You create: ${B.link(it.name, it.q)}${r.n > 1 ? ' x' + r.n : ''}.`);
+    skillUp(r.prof, G.skillColor(p.skill, r.sk));
+    G.S.stats = G.S.stats || {}; G.S.stats.crafted = (G.S.stats.crafted || 0) + 1;
+    if (c.left > 1 && G.craftable(c.rid) > 0 && !G.bagsFull()) P.casting = Object.assign({}, c, { left: c.left - 1, start: now(), end: now() + 1500 });
+  }
+  // --- using items: potions (combat too), elixirs, sharpening stones, armour kits, bags, recipes
+  const POTION_CD = 120000;
+  G.potionReady = () => (G.S.player.potionAt || 0) <= now();
+  G.bestPotion = function (kind) {
+    const P = G.S.player;
+    return P.bags.filter((b) => b.item.slot === 'potion' && b.item[kind] && (b.item.lvl || 1) <= P.level).sort((a, c) => c.item[kind][1] - a.item[kind][1])[0];
+  };
+  G.usePotion = function (kind) {
+    const P = G.S.player;
+    if (!G.potionReady()) return toast(`Potions are on cooldown (${Math.ceil(((P.potionAt || 0) - now()) / 1000)} sec).`);
+    const b = kind ? G.bestPotion(kind) : (G.bestPotion('heal') || G.bestPotion('mana')); if (!b) return toast('You have no potions.');
+    const it = b.item, isHeal = !!it.heal, amt = rint((it.heal || it.mana)[0], (it.heal || it.mana)[1]);
+    if (!isHeal && D.CLASSES[P.cls].resource !== 'mana') return toast('You have no mana to restore.');
+    G.removeItem(it.id, 1); P.potionAt = now() + POTION_CD;
+    if (G.fight && G.pUnit) { const u = G.pUnit; if (isHeal) u.hp = Math.min(u.maxHp, u.hp + amt); else u.res = Math.min(u.maxRes, u.res + amt); }
+    else { const v = G.vitals(); if (isHeal) P.hp = Math.min(v.maxHp, P.hp + amt); else P.res = Math.min(v.maxRes, P.res + amt); }
+    emit(isHeal ? 'selfheal' : 'change', amt); sys(`${it.name}: +${amt} ${isHeal ? 'health' : 'mana'}.`); emit('change');
+  };
+  G.usable = (it) => ['potion', 'elixir', 'stone', 'kit', 'bag', 'recipe'].includes(it.slot);
+  G.useItem = function (idx) {
+    const S = G.S, P = S.player, b = P.bags[idx]; if (!b) return;
+    const it = b.item, t = now();
+    if ((it.lvl || 1) > P.level) return toast(`Requires level ${it.lvl}.`);
+    if (it.slot === 'potion') return G.usePotion(it.heal ? 'heal' : 'mana');
+    if (G.fight) return toast('You are in combat.');
+    if (it.slot === 'elixir') {
+      P.auras = (P.auras || []).filter((a) => a.id !== 'elixir');
+      P.auras.push({ id: 'elixir', name: it.name, icon: it.icon, stats: Object.assign({}, it.buff), until: t + 3600000 });
+      G.removeItem(it.id, 1); sys(`You drink the ${it.name}. It lasts an hour.`);
+    } else if (it.slot === 'stone') {
+      if (!P.equip.weapon) return toast('You need a weapon.');
+      P.auras = (P.auras || []).filter((a) => a.id !== 'sharpened');
+      P.auras.push({ id: 'sharpened', name: it.name, icon: it.icon, stats: { wdmg: it.wdmg }, until: t + 1800000 });
+      G.removeItem(it.id, 1); sys(`Your weapon is sharpened: +${it.wdmg} damage for 30 min.`);
+    } else if (it.slot === 'kit') {
+      const slot = ['chest', 'legs', 'feet', 'hands'].find((s) => P.equip[s] && !(P.equip[s].kit >= it.kit));
+      if (!slot) return toast('All your chest, legs, feet and hands gear already has a kit this good.');
+      const g = P.equip[slot]; g.armor = (g.armor || 0) - (g.kit || 0) + it.kit; g.kit = it.kit;
+      G.removeItem(it.id, 1); sys(`${it.name} applied to ${g.name}: +${it.kit} armor.`);
+    } else if (it.slot === 'bag') {
+      P.bagsEq = P.bagsEq || [];
+      if (P.bagsEq.length < D.BAG_SLOTS) { P.bagsEq.push(it); P.bags.splice(idx, 1); sys(`You equip the ${it.name} (+${it.bag} slots).`); }
+      else {
+        const small = P.bagsEq.slice().sort((a, c) => a.bag - c.bag)[0];
+        if (small.bag >= it.bag) return toast('Your bag slots are full of bags this big or bigger.');
+        P.bagsEq[P.bagsEq.indexOf(small)] = it; P.bags[idx] = { item: small, n: 1 }; sys(`You swap your ${small.name} for the ${it.name}.`);
+      }
+    } else if (it.slot === 'recipe') {
+      const r = D.RECIPES[it.teaches], p = G.profs()[r.prof];
+      if (!p) return toast(`Requires ${D.PROFESSIONS[r.prof].name}.`);
+      if (p.skill < r.sk[0]) return toast(`Requires ${D.PROFESSIONS[r.prof].name} ${r.sk[0]}.`);
+      p.known = p.known || []; if (p.known.includes(r.id)) return toast('You already know that.');
+      p.known.push(r.id); G.removeItem(it.id, 1); loot(`You learn how to make ${B.link(D.ITEMS[r.makes].name, D.ITEMS[r.makes].q)}.`);
+    }
+    emit('change'); G.save();
+  };
+  G.unequipBag = function (i) {
+    const P = G.S.player, bag = (P.bagsEq || [])[i]; if (!bag) return;
+    if (P.bags.length + 1 > G.bagCap() - bag.bag) return toast('Empty some space first: your items would not fit.');
+    P.bagsEq.splice(i, 1); P.bags.push({ item: bag, n: 1 }); emit('change');
+  };
   // ============================================================ Help Wanted, Mentor Marks, heirlooms, titles, Roulette (v2.3)
   // Account-wide: Mentor Marks and unlocked heirlooms are shared by every character on this phone.
   const ACCOUNT_KEY = 'azsolo.account';
@@ -1195,7 +1408,7 @@
     const a = G.account(), H = D.HEIRLOOMS[id]; if (!H) return;
     const owned = a.heirlooms.includes(id);
     if (!owned) { if (a.marks < H.cost) return toast(`You need ${H.cost} Mentor Marks.`); a.marks -= H.cost; a.heirlooms.push(id); G.saveAccount(a); }
-    if (G.S.player.bags.length >= 16) return toast('Inventory is full.');
+    if (G.G.bagsFull()) return toast('Inventory is full.');
     G.addItem(G.makeHeirloom(id, G.S.player.level), 1);
     loot(owned ? `You take a copy of ${B.link(H.name, 5)}.` : `You bought ${B.link(H.name, 5)} for ${H.cost} Mentor Marks. Every character can take a copy.`);
     emit('change');
@@ -1291,7 +1504,7 @@
       G.addMarks(15, 'daily Roulette');
       const A = D.ACTIVITIES[R.act], Dg = D.DUNGEONS[A.dungeon];
       const blues = []; for (const pl of Dg.pulls) for (const k of pl.mobs) for (const id of (D.MOBS[k].loot || [])) if (!blues.includes(id)) blues.push(id);
-      if (blues.length && P.bags.length < 16) { const it = G.copyItem(pick(blues)); G.addItem(it, 1); loot(`Roulette bonus: ${B.link(it.name, it.q)}.`); }
+      if (blues.length && !G.bagsFull()) { const it = G.copyItem(pick(blues)); G.addItem(it, 1); loot(`Roulette bonus: ${B.link(it.name, it.q)}.`); }
       P.money += L * 150; loot(`Roulette bonus: ${G.moneyText(L * 150)}.`);
     }
   }
@@ -1712,7 +1925,7 @@
         onKill(e.key);
         G.gainXp(Math.round(G.xpForKill(e.level, true) / size * 1.4), true);
         const l = rollLoot(e.key, e.level, 1 / size);
-        giveLoot({ money: l.money, items: l.items.filter((it) => it.slot === 'junk' || it.slot === 'quest') });
+        giveLoot({ money: l.money, items: l.items.filter((it) => !D.GEAR_SLOTS.includes(it.slot)) });
         const gear = l.items.filter((it) => D.GEAR_SLOTS.includes(it.slot) && it.q >= 2);
         for (const it of gear) addRoll(it);
       }
@@ -1721,6 +1934,7 @@
         const table = (M.loot || []).slice().sort(() => Math.random() - 0.5);
         const drops = table.slice(0, 2).map(G.copyItem);
         for (const it of drops) addRoll(it);
+        const rr = G.rareRecipeDrop(); if (rr) addRoll(rr);
         if (!D.ACTIVITIES[R.act].dungeon || Math.random() < 0.25) addRoll(G.genGear(pick(D.GEAR_SLOTS), G.syncLevel(R.act), !D.ACTIVITIES[R.act].dungeon ? 2 : 3));
         if (pull.mobs[0] === 'vancleef' && G.S.player.quests.defias_brotherhood) { G.addItem(G.copyItem('vancleef_head'), 1); loot(`You receive loot: ${B.link("Head of VanCleef")}.`); questCheck(); }
         const talker = pick(S.group.members.filter((m) => !m.gone));

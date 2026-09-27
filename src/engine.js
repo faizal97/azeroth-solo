@@ -86,7 +86,7 @@
     s.dodgeTotal = 5 + s.agi / 20 + s.dodge;
     let w = weapon || { dmg: [1, 2], speed: 2.0 };
     if (s.bear) { const dps = 2 + L * 0.8; w = { dmg: [dps * 2.5 * 0.8, dps * 2.5 * 1.2], speed: 2.5 }; }
-    s.wMin = w.dmg[0]; s.wMax = w.dmg[1]; s.wSpeed = w.speed;
+    s.wMin = w.dmg[0] + (s.wdmg || 0); s.wMax = w.dmg[1] + (s.wdmg || 0); s.wSpeed = w.speed;
     s.swing = w.speed / (1 + s.haste / 100);
     if (ranged && char.cls === 'hunter') {
       s.rMin = ranged.dmg[0]; s.rMax = ranged.dmg[1]; s.rSpeed = ranged.speed;
@@ -116,7 +116,7 @@
     const u = baseUnit({ side, kind, char, name: char.name, cls: char.cls, level: E.levelOf(char), resType: C.resource, role: char.role || C.role, race: char.race || (char.bot && char.bot.race) || 'human' });
     for (const a of (char.auras || [])) {
       const left = (a.until - nowMs) / 1000;
-      if (left > 0) u.auras.push({ id: a.id, until: left, stats: a.stats, src: null, persistent: true, seal: a.seal, sealSchool: a.sealSchool, thorns: a.thorns });
+      if (left > 0) u.auras.push({ id: a.id, until: left, stats: a.stats, src: null, persistent: true, seal: a.seal, sealSchool: a.sealSchool, thorns: a.thorns, name: a.name, icon: a.icon });
     }
     E.recalc(u, true);
     u.hp = char.hp == null ? u.maxHp : clamp(char.hp, 1, u.maxHp);
@@ -839,7 +839,7 @@
     const ch = u.char;
     ch.hp = u.dead ? 0 : Math.round(u.hp);
     ch.res = u.resType === 'energy' ? 100 : Math.round(u.res);
-    ch.auras = u.auras.filter((a) => a.persistent && a.until > C.t).map((a) => ({ id: a.id, stats: a.stats, until: nowMs + (a.until - C.t) * 1000, seal: a.seal, sealSchool: a.sealSchool, thorns: a.thorns }));
+    ch.auras = u.auras.filter((a) => a.persistent && a.until > C.t).map((a) => ({ id: a.id, stats: a.stats, until: nowMs + (a.until - C.t) * 1000, seal: a.seal, sealSchool: a.sealSchool, thorns: a.thorns, name: a.name, icon: a.icon }));
   };
 
   root.E = E;

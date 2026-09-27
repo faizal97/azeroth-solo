@@ -74,6 +74,7 @@
     attack: { name: 'Attack', icon: 'attack', desc: 'Toggle auto-attack.', auto: true },
     eat: { name: 'Eat', icon: 'bread', desc: 'Eat food out of combat.', consumable: 'food' },
     drink: { name: 'Drink', icon: 'water', desc: 'Drink water out of combat.', consumable: 'drink' },
+    potion: { name: 'Potion', icon: 'potion_red', desc: 'Drink your best potion. Works in combat.', consumable: 'potion' },
     // warrior
     heroic_strike: { name: 'Heroic Strike', cls: 'warrior', lvl: 1, cost: 15, cd: 0, target: 'enemy', dmg: { weapon: true, bonus: [11, 11], perLvl: 1.6 }, threat: 1.5, desc: 'A strong attack that adds {b} damage to a weapon hit.' },
     battle_shout: { name: 'Battle Shout', cls: 'warrior', lvl: 1, cost: 10, cd: 0, target: 'party', buff: { id: 'battle_shout', dur: 120, stats: { ap: 20 }, perLvl: { ap: 2 } }, threat: 5, desc: 'Raises the attack power of your party by {ap}.' },

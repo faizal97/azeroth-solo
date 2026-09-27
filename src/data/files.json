@@ -9,5 +9,6 @@
   "zones/tirisfal.js",
   "zones/westfall.js",
   "zones/barrens.js",
+  "professions.js",
   "finalize.js"
 ]
