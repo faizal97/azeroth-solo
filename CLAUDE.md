@@ -1,0 +1,40 @@
+# Azeroth Solo
+
+A single-player fake MMO in World of Warcraft Classic's world: every other "player" is a simulated bot. It's a personal game for Faizal, played on his **Android** phone. It is not channel content and has nothing to do with the Gaming News vault.
+
+## Layout
+
+- `src/` is the game, plain browser JS with no framework:
+  - `data.js`: classes, abilities, mobs, zones (`D.PLACES`, grouped by `region`), quests, items, dungeons, activities
+  - `engine.js`: combat, DOM-free so it also runs in Node sims
+  - `bots.js`: simulated server, chat, catch-up after time away
+  - `game.js`: controller for world, quests, loot, group finder, runs and character saves
+  - `sound.js`, `cutscene.js`, `ui.js`
+  - `art.js` (`window.ART`) and `art_story.js` (`ART.story`): all art as SVG strings
+  - zone art packs `art_durotar.js`, `art_mulgore.js`, `art_tirisfal.js`, `art_westfall.js`, `art_barrens.js`, plus `art_icons2.js`. Each wraps `ART.scene`/`ART.mob`/`ART.icon` and falls through for other keys; each has a render script in `art/<name>/render.js`
+  - `ai.js`: the optional on-device AI chat pack (line bank + battery guards; the native side is in `app/android/.../MainActivity.kt`)
+- `audio/compose_game.py` composes the music and sound effects; `check.py` runs the loudness, spike and seam checks. Music ships only if listed in `audio/approved.txt`.
+- `art/render.js` and `art/story/render.js` render contact sheets with `rsvg-convert`. Look at the sheets before shipping art.
+- `sim/*.js` are Node balance and playthrough sims (`node sim/group.js`, `node sim/v17.js` …).
+- `docs/plans/2026-09-27-roadmap-design.md` is **the roadmap**. Read it before planning anything.
+- `app/` is the Flutter WebView wrapper that bundles `assets/game/index.html`.
+
+## Build and ship
+
+```bash
+python3 build.py      # inlines fonts, CSS, JS, audio → dist/index.html and app/assets/game/index.html
+cd app && JAVA_HOME=/opt/homebrew/opt/openjdk@17 flutter build apk --release
+```
+
+1. Bump `version:` in `app/pubspec.yaml` for every release.
+2. Copy the APK to `~/Library/Mobile Documents/com~apple~CloudDocs/Azeroth Solo/AzerothSolo-vX.apk`, remove the previous APK there, and confirm `ubiquitousItemIsUploaded` is true.
+3. Faizal installs it from icloud.com → Recents on his phone.
+
+Smoke-test on the emulator (AVD `Medium_Phone_API_36.0`). Its software renderer draws ghost and duplicate layers, which are not real bugs.
+
+## Rules that matter
+
+- Saves: one per character under `azsolo.char.<id>` plus the index `azsolo.chars`. Keep old saves loading; migrate, never break them.
+- Any race can play any class (house rule). Bots are scenery only: no social systems.
+- After 60, progression is horizontal (synced power, collections). Every dungeon and raid ships with a first-entry lore intro.
+- Sprites use z-index 60–96 inside `.scene`, which is isolated. Layers: `.create` 50 < sheets 55 < dialogs 57 < toasts 59 < cutscenes 60.

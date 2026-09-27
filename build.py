@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+"""Inline fonts, CSS and JS into one offline HTML file, and copy it into the Android app."""
+import os, shutil
+R = os.path.dirname(os.path.abspath(__file__))
+rd = lambda p: open(os.path.join(R, p), encoding='utf-8').read()
+import base64, json, glob, sys
+# music ships only once he has listened and approved the track
+APPROVED = set(open(os.path.join(R, 'audio', 'approved.txt')).read().split()) if os.path.exists(os.path.join(R, 'audio', 'approved.txt')) else set()
+aud = {}
+for f in sorted(glob.glob(os.path.join(R, 'audio', 'out', '*.m4a'))):
+    n = os.path.basename(f)[:-4]
+    if n == 'sfx_reel': continue
+    if n.startswith('music_') and n[6:] not in APPROVED: continue
+    aud[n] = 'data:audio/mp4;base64,' + base64.b64encode(open(f, 'rb').read()).decode()
+meta = rd('audio/out/music.json') if os.path.exists(os.path.join(R, 'audio/out/music.json')) else '{}'
+audio_js = 'window.AUDIO_DATA=' + json.dumps(aud) + ';window.AUDIO_META=' + meta + ';'
+js = [f for f in ['src/art.js', 'src/art_durotar.js', 'src/art_mulgore.js', 'src/art_tirisfal.js', 'src/art_westfall.js', 'src/art_barrens.js', 'src/art_icons2.js', 'src/art_story.js', 'src/data.js', 'src/engine.js', 'src/bots.js', 'src/game.js', 'src/sound.js', 'src/cutscene.js', 'src/ai.js', 'src/ui.js'] if os.path.exists(os.path.join(R, f))]
+html = f'''<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0e0b08">
+<title>Azeroth Solo</title>
+<style>{rd('fonts/fonts.local.css')}</style>
+<style>{rd('src/style.css')}</style>
+</head><body><div id="app"></div>
+<script>{audio_js}</script>
+{''.join('<script>' + rd(f) + '</script>' for f in js)}
+</body></html>'''
+os.makedirs(os.path.join(R, 'dist'), exist_ok=True)
+out = os.path.join(R, 'dist', 'index.html')
+open(out, 'w', encoding='utf-8').write(html)
+dst = os.path.join(R, 'app', 'assets', 'game', 'index.html')
+shutil.copy(out, dst)
+print('built', out, round(len(html) / 1024), 'KB;', 'art.js' if 'src/art.js' in js else 'NO ART (placeholders)', '; audio files:', len(aud))

@@ -1,0 +1,21 @@
+{
+ "elwynn": {
+  "bpm": 88,
+  "bars": 16,
+  "key": "D major",
+  "loop_s": 43.6363
+ },
+ "town": {
+  "bpm": 150,
+  "bars": 32,
+  "key": "G major",
+  "meter": "3/4",
+  "loop_s": 38.4
+ },
+ "dungeon": {
+  "bpm": 66,
+  "bars": 12,
+  "key": "D minor",
+  "loop_s": 43.6363
+ }
+}
