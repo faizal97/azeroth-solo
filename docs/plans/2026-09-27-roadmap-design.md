@@ -29,7 +29,7 @@ Agreed 2026-09-27. A single-player fake MMO: a vanilla WoW campaign from 1 to 60
 | v2.2 (shipped as app v2.3.0) | Talents | Talents from 10, one point per level: 3 trees per class, tiers 1–3 now (deeper tiers with the 30+ updates); bots auto-spec for their role; first reset free, then 1g/5g/10g |
 | v2.3 (shipped as app v2.4.0 + v2.5.0) | Stormwind (and the Horde city services) | Stormwind (Valley of Heroes, Trade District, bank); a bank (24 slots) and auction house in every capital; Help Wanted + Mentor Marks + heirlooms; titles; daily Roulette; hub bounty boards (3 daily + 1 weekly). Tram now runs Ironforge–Stormwind |
 | v3 (shipped as app v2.6.0 + v3.0.0) | Redridge Mountains (18–25) · **Horde:** Stonetalon Mountains (18–25) | Professions (shipped first, as app v2.6.0): Mining, Herbalism, Skinning, Blacksmithing, Alchemy, Leatherworking, Tailoring; two per character, skill to 150 (Apprentice 75, Journeyman 150; Expert 225 with the 30s zones); nodes in every wild place, skinning on loot, potions (combat, 2 min cooldown), elixirs, sharpening stones, armour kits, bags (4 slots), rare plans from bosses and rares, trade goods on the auction house. Then (v3.0.0) level cap 25, Redridge (Lakeshire hub, Bellygrub elite) and Stonetalon (Sun Rock hub, XT:9 elite), ~34 quests each, The Stockade (6 bosses, 22–25, lore intro), 18 class abilities at 20 and 24. The Horde gets its 20s dungeon (Shadowfang Keep) in v4 |
-| v4 | Duskwood + Wetlands (20–30) · **Horde:** Hillsbrad Foothills; Ashenvale (contested) | Shadowfang Keep; Blackfathom Deeps; story Chapter 3 at 30 |
+| v4 (shipped as app v4.0.0–v4.2.0) | Duskwood + Wetlands (20–30) · **Horde:** Hillsbrad Foothills; Ashenvale (contested) | Shadowfang Keep; Blackfathom Deeps; story Chapter 3 at 30 |
 | v5 | Stranglethorn Vale + Arathi Highlands (30–40, contested from here) | Mount at 40; Scarlet Monastery; Gurubashi Arena event; story Chapter 4 at 40 |
 | v6 | Tanaris + Feralas (40–50) | Zul'Farrak; Maraudon; world bosses |
 | v7 | Un'Goro Crater + Burning Steppes (48–55) | Blackrock Depths; story Chapter 5 at 50 |
@@ -99,7 +99,7 @@ Enemy-faction bots sometimes attack you, even in friendly zones.
 v4 ships in three steps:
 1. **v4.0 (shipped):** level cap 30. Duskwood (Alliance, Darkshire, Stitches elite) and Hillsbrad Foothills (Horde, Tarren Mill, Big Samras elite), with Pyrewood Village in Silverpine and **Shadowfang Keep**. 18 class abilities at 26 and 28, and the missing racial icons.
 2. **v4.1 (shipped):** Ashenvale, the first **contested** zone. Astranaar (Alliance) and Splintertree Post (Horde) are both there, plus **Blackfathom Deeps**.
-3. **v4.2:** Wetlands (Menethil Harbor) and story Chapter 3 at 30.
+3. **v4.2 (shipped):** Wetlands (Menethil Harbor) and story Chapter 3 at 30.
 
 Contested-zone rules (proposed; he can overrule):
 - Roads connect the two faction networks for the first time. Ashenvale joins the Barrens (Horde) to Darkshore and Teldrassil (Alliance, by boat).

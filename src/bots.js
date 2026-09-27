@@ -86,7 +86,7 @@
     const mine = Object.keys(D.REGIONS).filter((r) => D.REGIONS[r].faction === B.factionOf(bot));
     // v2.0: from 10 most players move on to Westfall or the Barrens
     // v3: from 18 most players move on again, to Redridge or Stonetalon
-    const next = bot.level >= 24 && D.REGIONS.duskwood ? (B.factionOf(bot) === 'horde' ? 'hillsbrad' : 'duskwood') : bot.level >= 18 && D.REGIONS.redridge ? (B.factionOf(bot) === 'horde' ? 'stonetalon' : 'redridge') : B.factionOf(bot) === 'horde' ? 'barrens' : 'westfall';
+    const next = bot.level >= 24 && D.REGIONS.duskwood ? (B.factionOf(bot) === 'horde' ? 'hillsbrad' : D.REGIONS.wetlands && hash(bot.id * 29, Math.floor(slot / 6)) < 0.45 ? 'wetlands' : 'duskwood') : bot.level >= 18 && D.REGIONS.redridge ? (B.factionOf(bot) === 'horde' ? 'stonetalon' : 'redridge') : B.factionOf(bot) === 'horde' ? 'barrens' : 'westfall';
     // v4.1: from 22 some players quest in contested Ashenvale instead
     if (bot.level >= 22 && D.REGIONS.ashenvale && hash(bot.id * 23, Math.floor(slot / 6)) < 0.25) return 'ashenvale';
     if (bot.level >= 10 && D.REGIONS[next] && hash(bot.id * 19, Math.floor(slot / 6)) < 0.75) return next;
@@ -96,7 +96,7 @@
     }
     return home;
   };
-  const TOWNS = { elwynn: ['goldshire', 'stormwind'], dunmorogh: ['kharanos', 'ironforge'], teldrassil: ['dolanaar', 'darnassus'], durotar: ['razor_hill', 'orgrimmar'], mulgore: ['bloodhoof_village', 'thunder_bluff'], tirisfal: ['brill', 'undercity'], westfall: ['sentinel_hill'], barrens: ['crossroads'], redridge: ['lakeshire'], stonetalon: ['sun_rock_retreat'], duskwood: ['darkshire'], hillsbrad: ['tarren_mill'] };
+  const TOWNS = { elwynn: ['goldshire', 'stormwind'], dunmorogh: ['kharanos', 'ironforge'], teldrassil: ['dolanaar', 'darnassus'], durotar: ['razor_hill', 'orgrimmar'], mulgore: ['bloodhoof_village', 'thunder_bluff'], tirisfal: ['brill', 'undercity'], westfall: ['sentinel_hill'], barrens: ['crossroads'], redridge: ['lakeshire'], stonetalon: ['sun_rock_retreat'], duskwood: ['darkshire'], hillsbrad: ['tarren_mill'], wetlands: ['menethil_harbor'] };
   B.placeFor = function (bot, date) {
     const slot = Math.floor(date.getTime() / 600000); // 10-minute windows
     const region = B.regionFor(bot, slot);

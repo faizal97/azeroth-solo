@@ -1115,6 +1115,7 @@
     westfall: { furlbrow_farm: [250, 60], saldean_farm: [170, 110], sentinel_hill: [190, 225], jangolode_mine: [70, 150], molsen_farm: [260, 300], the_longshore: [50, 320], dagger_hills: [150, 355], gold_coast_quarry: [42, 92], moonbrook: [205, 285], the_dead_acre: [298, 362] },
     barrens: { far_watch: [290, 90], crossroads: [175, 175], forgotten_pools: [90, 150], stagnant_oasis: [230, 290], razormane_grounds: [270, 205], thorn_hill: [110, 330], sludge_fen: [215, 62], lushwater_oasis: [155, 262], baeldun_digsite: [52, 368] },
     redridge: { three_corners: [40, 300], lakeshire: [140, 205], lake_everstill: [195, 262], redridge_canyons: [70, 120], althers_mill: [160, 92], renders_valley: [262, 335], stonewatch_keep: [285, 205], galardell_valley: [272, 80] },
+    wetlands: { menethil_harbor: [60, 250], bluegill_marsh: [70, 130], whelgars_excavation: [170, 300], saltspray_glen: [140, 60], dun_modr: [230, 160], angerfang_encampment: [295, 280] },
     ashenvale: { astranaar: [110, 190], splintertree_post: [290, 185], the_zoram_strand: [30, 150], mystral_lake: [180, 270], thistlefur_village: [120, 70], the_howling_vale: [205, 118], satyrnaar: [292, 70], felfire_hill: [305, 300] },
     duskwood: { darkshire: [170, 200], brightwood_grove: [90, 130], raven_hill_cemetery: [45, 245], the_hushed_bank: [250, 110], vulgol_ogre_mound: [285, 250], tranquil_gardens: [215, 300], the_rotting_orchard: [150, 365] },
     hillsbrad: { tarren_mill: [220, 110], hillsbrad_fields: [160, 220], azurelode_mine: [85, 300], durnholde_keep: [265, 290], alterac_foothills: [210, 40], growless_cave: [110, 60], pyrewood_village: [40, 150] },
@@ -1122,6 +1123,12 @@
     dunmorogh: { ironforge: [170, 70], kharanos: [175, 210], grizzled_den: [190, 325], frostmane_hold: [62, 165], amberstill_ranch: [292, 205], anvilmar: [78, 330], coldridge_cave: [34, 262] },
   };
   const MAP_BG = {
+    wetlands: `<defs><radialGradient id="mapl" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#5a6a4a"/><stop offset="1" stop-color="#2c3424"/></radialGradient></defs>
+        <rect width="340" height="400" rx="6" fill="url(#mapl)"/>
+        <path d="M0 0 H30 C20 120 40 220 20 400 H0Z" fill="#3d5f7a" opacity=".85"/>
+        <ellipse cx="80" cy="140" rx="40" ry="28" fill="#3a5a4a" opacity=".6"/>
+        <path d="M340 180 C300 200 290 240 320 300 L340 300Z" fill="#23261f" opacity=".7"/>
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#eef0e0" opacity=".85">Wetlands</text>`,
     ashenvale: `<defs><radialGradient id="mapa" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#3a4f5a"/><stop offset="1" stop-color="#1c2430"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapa)"/>
         <path d="M0 0 H22 C12 120 30 220 14 400 H0Z" fill="#2f5f7f" opacity=".85"/>
@@ -1379,6 +1386,8 @@
       madame_eva: 'The cards told me you would come. They did not say whether you would leave.', sirra: 'The history of Duskwood is written in blood and moonlight.', trelayne: 'Welcome to the Scarlet Raven. Keep the door shut, the wolves are out.', gavin: 'Silver edges bite worgen best. Take a look.',
       darthalia: 'The Dark Lady wants Hillsbrad. We will give it to her, one farm at a time.', lydon: 'Every plague needs a test. And every test needs subjects.', krusk: 'Lok\'tar. Tarren Mill needs blades, not talk.', dalar: 'Arugal made those worgen. He must answer for it.',
       marla: 'Rest in Tarren Mill. The dead do not sleep, but you still may.', dogran: 'Orc steel, Forsaken edge.',
+      stoutfist: 'Menethil holds the only road north. Keep it open and I will keep you fed.', glorin: 'The Dark Iron and the Dragonmaw both. Busy times for a mountaineer.', rethiel: 'The marsh is sick. The murlocs are only the symptom.',
+      whelgar: 'History under every stone! And raptors on top of it.', helbrek: 'Rain again. Sit by the fire.', murndan: 'Dwarven steel and Menethil tar. Built to last.',
       raene: 'Ashenvale bleeds. Demons, satyrs, and orcs with axes. We need every blade.', shindrell: 'The wolves of this forest are no ordinary wolves.', thenysil: 'Elune watch over you. The Deeps are darker than the sea.',
       orendil: 'The furbolgs were friends once. Something poisons their hearts.', kimlya: 'Rest, traveller. Astranaar is safe while the lake guards us.', aeolynn: 'Kaldorei steel, sharp as moonlight.',
       senani: 'Splintertree holds, for now. The elves attack every night.', ertog: 'The Warsong need wood, and the forest fights back. Pick up an axe.', mitsuwa: 'The spirits of this forest are angry. I do not blame them.',
@@ -1937,6 +1946,8 @@
     const rep = G.load(id);
     if (!rep) return toast('That character could not be loaded.');
     start(); if (rep.away > 120000) showAway(rep);
+    // a chapter added in an update after you passed its level plays the next time you come in
+    if (window.CS) { const seen = CS.unlocked(); const ch = CS.CHAPTERS.find((c) => c.shots && c.level > 1 && c.level <= G.S.player.level && !seen.has(c.id)); if (ch) ui.pendingChapter = ch.id; }
   }
   function confirmDeleteChar(c, after) {
     const input = h('input', { type: 'text', placeholder: 'Type DELETE', style: { minHeight: '44px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', borderRadius: '3px', padding: '0 10px', width: '100%', fontSize: '16px' } });
