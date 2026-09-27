@@ -377,3 +377,10 @@ img { max-width: 100%; display: block; }
 .score.done { flex-direction: column; align-items: flex-start; padding: 8px 10px; border: 1px solid var(--edge-hi); border-radius: 8px; background: #1a130b; }
 .score.done div { display: flex; gap: 12px; }
 .tooltip .nm img { width: 22px; height: 22px; vertical-align: middle; border-radius: 3px; }
+
+/* talents */
+.chip img { width: 18px; height: 18px; vertical-align: middle; border-radius: 3px; }
+.row.talent .rank { font-weight: 800; color: var(--muted); }
+.row.talent.has .rank { color: #5fd46a; } .row.talent.max .rank { color: #ffd84a; }
+.row.talent.has { border-color: #3f7f3f; } .row.talent.max { border-color: #b08a2a; }
+.row.talent .next { color: #9fd6ff; }

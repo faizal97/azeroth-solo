@@ -11,6 +11,34 @@
 
   // ------------------------------------------------------------- character stats
   // char: {name, cls, level, equip:{slot:item}}; extra: additive stats from auras
+  // ---------- talents: every talent is data (src/data/talents.js); merge a character's into one mods object
+  const TM_CACHE = new Map();
+  const EMPTY_TM = { stat: {}, pct: {}, crit: 0, spellCrit: 0, dodge: 0, haste: 0, school: {}, heal: 0, abilDmg: {}, abilHeal: {}, dot: {}, hot: {}, abilCost: {}, abilCd: {}, abilCast: {}, buff: {}, shield: {}, taken: 0, threat: 0, pet: 0 };
+  E.talentMods = function (char) {
+    const tl = char && char.talents;
+    if (!tl || !D.TALENTS || !D.TALENTS[char.cls]) return EMPTY_TM;
+    const sig = char.cls + JSON.stringify(tl);
+    let m = TM_CACHE.get(sig);
+    if (m) return m;
+    m = JSON.parse(JSON.stringify(EMPTY_TM));
+    for (const tree of D.TALENTS[char.cls]) for (const t of tree.talents) {
+      const r = tl[t.id] || 0; if (!r) continue;
+      for (const fx of t.fx) {
+        const v = fx.v * r;
+        if (fx.k === 'stat') m.stat[fx.stat] = (m.stat[fx.stat] || 0) + v;
+        else if (fx.k === 'pct') m.pct[fx.stat] = (m.pct[fx.stat] || 0) + v;
+        else if (fx.k === 'school') m.school[fx.school] = (m.school[fx.school] || 0) + v;
+        else if (fx.ab) for (const a of fx.ab) m[fx.k][a] = (m[fx.k][a] || 0) + v;
+        else m[fx.k] += v;
+      }
+    }
+    if (TM_CACHE.size > 500) TM_CACHE.clear();
+    TM_CACHE.set(sig, m);
+    return m;
+  };
+  const tmOf = (u) => E.talentMods(u && (u.char || u));
+  const abPct = (tbl, id) => (tbl[id] || 0) + (tbl['*'] || 0);
+  E.abPct = abPct;
   // A synced character (group finder) fights at syncLevel; its gear stays, which is the overgear bonus.
   E.levelOf = (char) => (char.syncLevel ? Math.min(char.level, char.syncLevel) : char.level);
   E.statsFor = function (char, extra) {
@@ -30,6 +58,11 @@
     }
     const ranged = (char.equip || {}).ranged;
     add(extra);
+    const TM = E.talentMods(char);
+    add(TM.stat);
+    for (const k of ['str', 'agi', 'sta', 'int', 'spi']) if (TM.pct[k]) s[k] = Math.round(s[k] * (1 + TM.pct[k] / 100));
+    if (TM.pct.armor) s.armor = Math.round(s.armor * (1 + TM.pct.armor / 100));
+    s.dodge += TM.dodge; s.haste += TM.haste;
     const RP = (D.RACIALS[char.race || (char.bot && char.bot.race) || 'human'] || {}).passives || {};
     if (RP.spiPct) s.spi = Math.round(s.spi * (1 + RP.spiPct / 100));
     if (RP.intPct) s.int = Math.round(s.int * (1 + RP.intPct / 100));
@@ -37,7 +70,9 @@
     if (s.bear) { s.sta = Math.round(s.sta * 1.25); s.armor = Math.round(s.armor * 2.8); }
     s.maxHp = Math.max(20, C.baseHp + s.sta * 10 + (L - 1) * C.hpPerLvl);
     if (RP.hpPct) s.maxHp = Math.round(s.maxHp * (1 + RP.hpPct / 100));
+    if (TM.pct.hp) s.maxHp = Math.round(s.maxHp * (1 + TM.pct.hp / 100));
     s.maxMana = C.resource === 'mana' ? Math.max(50, C.baseMana + s.int * 15 + (L - 1) * C.manaPerLvl) : 0;
+    if (TM.pct.mana) s.maxMana = Math.round(s.maxMana * (1 + TM.pct.mana / 100));
     let ap;
     if (char.cls === 'warrior') ap = 3 * L + 2 * s.str - 20;
     else if (char.cls === 'rogue' || char.cls === 'hunter') ap = 2 * L + s.str + s.agi - 20;
@@ -46,8 +81,8 @@
     else if (char.cls === 'druid' && s.bear) ap = 3 * L + 2 * s.str - 20;
     else ap = s.str - 10;
     s.apTotal = Math.max(0, ap + s.ap);
-    s.crit = 5 + s.agi / 20;
-    s.spellCrit = 5 + s.int / 60;
+    s.crit = 5 + s.agi / 20 + TM.crit;
+    s.spellCrit = 5 + s.int / 60 + TM.spellCrit;
     s.dodgeTotal = 5 + s.agi / 20 + s.dodge;
     let w = weapon || { dmg: [1, 2], speed: 2.0 };
     if (s.bear) { const dps = 2 + L * 0.8; w = { dmg: [dps * 2.5 * 0.8, dps * 2.5 * 1.2], speed: 2.5 }; }
@@ -219,6 +254,9 @@
     const sRP = src.race && D.RACIALS[src.race] && D.RACIALS[src.race].passives;
     if (sRP && sRP.beastPct && tgt.kind === 'mob' && D.MOBS[tgt.key] && D.MOBS[tgt.key].family === 'beast') amount *= 1 + sRP.beastPct / 100;
     if (src.kind === 'pet' && C.units[src.owner] && C.units[src.owner].race === 'orc') amount *= 1.05;
+    // talents: school and ability damage for the attacker, damage taken for the target
+    if (src.char) { const sm = tmOf(src); amount *= 1 + ((sm.school[o.school || 'physical'] || 0) + (o.ab ? sm.abilDmg[o.ab] || 0 : 0)) / 100; }
+    if (tgt.char) { const tt = tmOf(tgt); if (tt.taken) amount *= 1 - tt.taken / 100; }
     let dmg = Math.max(1, Math.round(amount));
     if (o.school === 'physical' || !o.school) {
       const armor = flat(tgt) ? tgt.armor : tgt.st.armor;
@@ -237,6 +275,7 @@
       let mult = o.threat || 1;
       if (src.role === 'tank') mult *= 1.9;
       if (src.threatMult) mult *= src.threatMult;
+      if (src.char) { const st = tmOf(src).threat; if (st) mult *= 1 + st / 100; }
       tgt.threat[src.uid] = (tgt.threat[src.uid] || 0) + (dmg + absorbed) * mult;
     }
     // rage
@@ -255,6 +294,7 @@
 
   function heal(C, src, tgt, amount, o) {
     if (tgt.dead) return 0;
+    if (src && src.char) { const hm = tmOf(src); amount *= 1 + (hm.heal + (o && o.ab ? hm.abilHeal[o.ab] || 0 : 0)) / 100; }
     const before = tgt.hp;
     tgt.hp = Math.min(tgt.maxHp, tgt.hp + Math.round(amount));
     const done = tgt.hp - before;
@@ -320,7 +360,7 @@
   }
 
   // ------------------------------------------------------------- abilities
-  function abCost(ab, u) { if (ab.shapeshift && u.form) return 0; return Math.round((ab.cost || 0) + (ab.costPerLvl || 0) * (u.level - 1)); }
+  function abCost(ab, u) { if (ab.shapeshift && u.form) return 0; const base = (ab.cost || 0) + (ab.costPerLvl || 0) * ((u.level || E.levelOf(u)) - 1); const off = ab.id ? Math.min(90, abPct(tmOf(u).abilCost, ab.id)) : 0; return Math.round(base * (1 - off / 100)); }
   E.abCost = abCost;
 
   function spellRoll(src, tgt) {
@@ -362,7 +402,7 @@
     if (why) return why;
     if (ab.gcd !== false) u.gcdUntil = C.t + (ab.gcdLen || 1.5);
     if (ab.cast) {
-      const castT = ab.cast / (1 + ((u.st && u.st.haste) || 0) / 100);
+      const castT = Math.max(0.5, ab.cast - (tmOf(u).abilCast[abId] || 0)) / (1 + ((u.st && u.st.haste) || 0) / 100);
       u.cast = { ab: abId, tgt: tgt.uid, start: C.t, end: C.t + castT, channel: ab.channel || 0, ticks: 0, pushed: 0 };
       ev(C, { type: 'castStart', src: u.uid, ab: abId, tgt: tgt.uid, dur: castT });
       return null;
@@ -379,7 +419,7 @@
     const ab = D.ABILITIES[abId];
     const L = u.level;
     u.res -= abCost(ab, u);
-    if (ab.cd) u.cds[abId] = C.t + ab.cd;
+    if (ab.cd) u.cds[abId] = C.t + Math.max(1, ab.cd - (tmOf(u).abilCd[abId] || 0));
     if (u.resType === 'mana' && abCost(ab, u) > 0) u.lastCastT = C.t;
     ev(C, { type: 'ability', src: u.uid, ab: abId, tgt: tgt && tgt.uid });
     if (tgt && tgt.side !== u.side) { tgt.hitBy = tgt.hitBy || {}; tgt.hitBy[u.uid] = true; if (u.side === 'ally') u.target = tgt.uid; }
@@ -422,11 +462,11 @@
       u.cpTarget = tgt.uid; u.cp = Math.min(5, u.cp + ab.cp);
     }
     if (ab.dot && tgt && !tgt.dead) {
-      const per = ab.dot.dmg + ab.dot.perLvl * L + (ab.dot.coef || 0) * u.st.sp;
+      const per = (ab.dot.dmg + ab.dot.perLvl * L + (ab.dot.coef || 0) * u.st.sp) * (1 + (tmOf(u).dot[abId] || 0) / 100);
       addAura(C, tgt, { id: ab.dot.id, until: C.t + ab.dot.ticks * ab.dot.every, every: ab.dot.every, next: C.t + ab.dot.every, dot: per, school: ab.dot.school, src: u.uid, ab: abId });
     }
     if (ab.hot && tgt) {
-      const per = ab.hot.heal + ab.hot.perLvl * L + (ab.hot.coef || 0) * u.st.sp;
+      const per = (ab.hot.heal + ab.hot.perLvl * L + (ab.hot.coef || 0) * u.st.sp) * (1 + (tmOf(u).hot[abId] || 0) / 100);
       addAura(C, tgt, { id: ab.hot.id, until: C.t + ab.hot.ticks * ab.hot.every, every: ab.hot.every, next: C.t + ab.hot.every, hot: per, src: u.uid, ab: abId });
     }
     if (ab.heal && tgt) {
@@ -435,7 +475,7 @@
       heal(C, u, tgt, crit ? amt * 1.5 : amt, { crit, ab: abId });
     }
     if (ab.shield && tgt) {
-      const amt = Math.round(ab.shield.base + ab.shield.perLvl * L + ab.shield.coef * u.st.sp);
+      const amt = Math.round((ab.shield.base + ab.shield.perLvl * L + ab.shield.coef * u.st.sp) * (1 + (tmOf(u).shield[abId] || 0) / 100));
       addAura(C, tgt, { id: 'pw_shield', until: C.t + ab.shield.dur, absorb: amt });
       addAura(C, tgt, { id: 'weakened_soul', until: C.t + ab.weakened });
       // shield threat counts like a heal
@@ -444,13 +484,14 @@
     if (ab.buff) {
       const b = ab.buff;
       const stats = {};
-      for (const k in (b.stats || {})) stats[k] = Math.round((b.stats[k] + ((b.perLvl && b.perLvl[k]) || 0) * L) * 10) / 10;
+      const bp = 1 + (tmOf(u).buff[abId] || 0) / 100;
+      for (const k in (b.stats || {})) stats[k] = Math.round((b.stats[k] + ((b.perLvl && b.perLvl[k]) || 0) * L) * bp * 10) / 10;
       let dur = b.dur;
       if (ab.finisher) dur += (b.perCpDur || 0) * u.cp;
       const who = ab.target === 'party' ? alive(friends(C, u)) : [u];
       const extra = {};
-      if (b.seal) { extra.seal = (b.seal.base + b.seal.perLvl * L) * (u.st.wSpeed / 2.5); extra.sealSchool = b.seal.school || 'holy'; }
-      if (b.thorns) extra.thorns = { dmg: Math.round(b.thorns.base + b.thorns.perLvl * L), charges: b.thorns.charges };
+      if (b.seal) { extra.seal = (b.seal.base + b.seal.perLvl * L) * (u.st.wSpeed / 2.5) * bp; extra.sealSchool = b.seal.school || 'holy'; }
+      if (b.thorns) extra.thorns = { dmg: Math.round((b.thorns.base + b.thorns.perLvl * L) * bp), charges: b.thorns.charges };
       if (b.immune) extra.immune = true;
       for (const w of who) addAura(C, w, Object.assign({ id: b.id, until: C.t + dur, stats: Object.keys(stats).length ? stats : null, persistent: dur >= 60 }, extra));
       if (ab.threat) for (const e of alive(foes(C, u))) e.threat[u.uid] = (e.threat[u.uid] || 0) + ab.threat;

@@ -384,6 +384,67 @@
   }
   G.racial = function () { const R = D.RACIALS[G.S.player.race || 'human']; return R ? R.active : null; };
   const racialPassive = (k) => ((D.RACIALS[G.S.player.race || 'human'] || {}).passives || {})[k] || 0;
+  // ============================================================ talents
+  const RESPEC_COST = [0, 10000, 50000, 100000]; // first reset free, then 1g, 5g, 10g
+  G.talentTree = (cls, id) => (D.TALENTS[cls] || []).find((t) => t.id === id);
+  G.talentInfo = function (cls, id) { for (const tree of (D.TALENTS[cls] || [])) { const t = tree.talents.find((x) => x.id === id); if (t) return { t, tree }; } return null; };
+  G.talentTotal = (lvl) => Math.max(0, lvl - D.TALENT_START + 1);
+  G.treeSpent = function (char, treeId) { const tree = G.talentTree(char.cls, treeId); let n = 0; if (tree) for (const t of tree.talents) n += (char.talents || {})[t.id] || 0; return n; };
+  G.talentPoints = function (char) {
+    char = char || G.S.player;
+    let spent = 0; for (const k in (char.talents || {})) spent += char.talents[k];
+    const total = G.talentTotal(char.level);
+    return { total, spent, free: Math.max(0, total - spent) };
+  };
+  G.canLearnTalent = function (char, id) {
+    const info = G.talentInfo(char.cls, id); if (!info) return 'Unknown talent';
+    const r = (char.talents || {})[id] || 0;
+    if (r >= info.t.ranks) return 'Fully learned';
+    if (G.talentPoints(char).free <= 0) return char.level < D.TALENT_START ? `Talents start at level ${D.TALENT_START}` : 'No talent points left';
+    const need = D.TALENT_TIER_POINTS[info.t.tier];
+    if (G.treeSpent(char, info.tree.id) < need) return `Needs ${need} points in ${info.tree.name}`;
+    return null;
+  };
+  G.learnTalent = function (id) {
+    const P = G.S.player, why = G.canLearnTalent(P, id);
+    if (why) return toast(why);
+    P.talents = P.talents || {}; P.talents[id] = (P.talents[id] || 0) + 1;
+    const { t } = G.talentInfo(P.cls, id);
+    sys(`You learned ${t.name} (rank ${P.talents[id]}/${t.ranks}).`);
+    G.save(); emit('change');
+  };
+  G.respecCost = () => RESPEC_COST[Math.min(RESPEC_COST.length - 1, G.S.flags.respecs || 0)];
+  G.resetTalents = function () {
+    const P = G.S.player, cost = G.respecCost();
+    if (!Object.keys(P.talents || {}).length) return toast('No talents to reset.');
+    if (P.money < cost) return toast(`You need ${G.moneyText(cost)}.`);
+    P.money -= cost; P.talents = {}; G.S.flags.respecs = (G.S.flags.respecs || 0) + 1;
+    sys(cost ? `Talents reset for ${G.moneyText(cost)}.` : 'Talents reset (the first one is free).');
+    G.save(); emit('change');
+  };
+  // Bots spec for their role: fill the main tree tier by tier, spill into the next.
+  G.autoTalents = function (cls, role, level, seed) {
+    const opts = ((D.TALENT_BOT[role] || {})[cls]) || ((D.TALENT_BOT.dps || {})[cls]) || [];
+    if (!opts.length) return {};
+    const main = opts[(seed || 0) % opts.length];
+    const order = [main].concat(opts.filter((x) => x !== main), (D.TALENTS[cls] || []).map((t) => t.id).filter((x) => !opts.includes(x)));
+    const char = { cls, level, talents: {} };
+    let free = G.talentTotal(level);
+    for (const treeId of order) {
+      const tree = G.talentTree(cls, treeId); if (!tree) continue;
+      let progress = true;
+      while (free > 0 && progress) {
+        progress = false;
+        for (const t of tree.talents.slice().sort((a, b) => a.tier - b.tier)) {
+          if (free <= 0) break;
+          if (!G.canLearnTalentFree(char, t, tree)) continue;
+          char.talents[t.id] = (char.talents[t.id] || 0) + 1; free--; progress = true;
+        }
+      }
+    }
+    return char.talents;
+  };
+  G.canLearnTalentFree = (char, t, tree) => ((char.talents[t.id] || 0) < t.ranks) && G.treeSpent(char, tree.id) >= D.TALENT_TIER_POINTS[t.tier];
   G.knownAbilities = function () {
     const P = G.S.player;
     const C = D.CLASSES[P.cls];
@@ -426,6 +487,7 @@
     sys(`Congratulations, you have reached level ${P.level}!`);
     const learned = D.CLASSES[P.cls].abilities.filter((a) => D.ABILITIES[a].lvl === P.level);
     for (const a of learned) sys(`You have learned a new ability: ${D.ABILITIES[a].name}.`);
+    if (P.level >= D.TALENT_START) sys(`You have a new talent point. Open Hero → Talents to spend it.`);
     emit('levelup', { level: P.level, learned });
     // the server notices
     const S = G.S;
@@ -783,6 +845,8 @@
     const P = G.S.player;
     if (!P.pet || P.pet.hp === 0) return null;
     const u = E.petUnit(P.pet.type, P.level, { uid: pu.uid, petName: P.pet.name, mob: P.pet.mob });
+    const pb = E.talentMods(P).pet;
+    if (pb) { u.maxHp = Math.round(u.maxHp * (1 + pb / 100)); u.hp = u.maxHp; u.dmg = u.dmg.map((d) => d * (1 + pb / 100)); }
     if (P.pet.hp != null) u.hp = clamp(P.pet.hp, 1, u.maxHp);
     return u;
   };
@@ -909,7 +973,8 @@
     P.res -= cost;
     if (ab.buff) {
       const stats = {};
-      for (const k in (ab.buff.stats || {})) stats[k] = Math.round((ab.buff.stats[k] + ((ab.buff.perLvl && ab.buff.perLvl[k]) || 0) * P.level) * 10) / 10;
+      const bp = 1 + (E.talentMods(P).buff[abId] || 0) / 100;
+      for (const k in (ab.buff.stats || {})) stats[k] = Math.round((ab.buff.stats[k] + ((ab.buff.perLvl && ab.buff.perLvl[k]) || 0) * P.level) * bp * 10) / 10;
       P.auras = (P.auras || []).filter((a) => a.id !== ab.buff.id);
       const extra = {};
       if (ab.buff.seal) { const w = (P.equip.weapon && P.equip.weapon.speed) || 2; extra.seal = (ab.buff.seal.base + ab.buff.seal.perLvl * P.level) * (w / 2.5); extra.sealSchool = ab.buff.seal.school || 'holy'; }
@@ -919,7 +984,8 @@
     }
     if (ab.heal || ab.hot) {
       const st = G.stats();
-      const amt = ab.heal ? rnd(ab.heal.base[0], ab.heal.base[1]) + ab.heal.perLvl * P.level + ab.heal.coef * st.sp : (ab.hot.heal + ab.hot.perLvl * P.level) * ab.hot.ticks;
+      const tmh = E.talentMods(P);
+      const amt = (ab.heal ? rnd(ab.heal.base[0], ab.heal.base[1]) + ab.heal.perLvl * P.level + ab.heal.coef * st.sp : (ab.hot.heal + ab.hot.perLvl * P.level) * ab.hot.ticks * (1 + (tmh.hot[abId] || 0) / 100)) * (1 + (tmh.heal + (tmh.abilHeal[abId] || 0)) / 100);
       P.hp = Math.min(v.maxHp, P.hp + amt);
       emit('selfheal', Math.round(amt));
     }
@@ -1274,7 +1340,8 @@
       if (Math.random() < 0.35) equip.back = G.copyItem('cape_brotherhood');
     }
     for (const s of ['chest', 'legs', 'feet', 'hands']) equip[s] = G.genGear(s, b.level, s === 'chest' ? q : Math.max(1, q - 1), { atype: C.armorType });
-    return { name: b.name + (b.realm ? '-' + b.realm.replace(' ', '') : ''), cls: b.cls, race: b.race || 'human', level: b.level, equip, role: b.role, hp: null, res: null, auras: [], bot: b };
+    const talents = G.autoTalents(b.cls, b.role || (D.CLASSES[b.cls] || {}).role || 'dps', b.level, Math.abs(b.id || 0));
+    return { name: b.name + (b.realm ? '-' + b.realm.replace(' ', '') : ''), cls: b.cls, race: b.race || 'human', level: b.level, equip, role: b.role, hp: null, res: null, auras: [], bot: b, talents };
   };
   function formGroup(act) {
     const S = G.S, A = D.ACTIVITIES[act];

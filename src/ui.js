@@ -945,6 +945,7 @@
     const q = Object.keys(G.S.player.quests).some((id) => G.questState(id) === 'complete');
     const b = els.nav.querySelector('[data-nav="quests"]'); if (b) b.classList.toggle('dot', q);
     const s = els.nav.querySelector('[data-nav="social"]'); if (s) s.classList.toggle('dot', !!(G.S.queue && G.S.queue.popped));
+    const hb = els.nav.querySelector('[data-nav="hero"]'); if (hb) hb.classList.toggle('dot', G.talentPoints(G.S.player).free > 0);
   }
 
   // ============================================================ sheets / dialogs
@@ -1347,6 +1348,8 @@
       b.append(h('div', { class: 'btn-row' },
         h('button', { class: 'btn', onclick: () => { if (G.fight) return toast('You are in combat.'); G.logout(); showSelect(); } }, 'Switch character'),
         h('button', { class: 'btn alt', onclick: () => openTheater() }, 'Theater')));
+      const tp = G.talentPoints(P);
+      b.append(h('button', { class: 'btn wide' + (tp.free ? '' : ' alt'), onclick: () => openTalents() }, P.level < D.TALENT_START ? `Talents (from level ${D.TALENT_START})` : tp.free ? `Talents · ${tp.free} point${tp.free > 1 ? 's' : ''} to spend` : `Talents · ${tp.spent} spent`));
       b.append(h('div', { class: 'hero-top' }, img(art('hero', looks(P))),
         h('div', { class: 'stats' },
           ...[['Health', v.maxHp], [D.CLASSES[P.cls].resource === 'mana' ? 'Mana' : D.CLASSES[P.cls].resource === 'rage' ? 'Rage' : 'Energy', Math.round(v.maxRes)], ['Strength', st.str], ['Agility', st.agi], ['Stamina', st.sta], ['Intellect', st.int], ['Spirit', st.spi], ['Armor', st.armor], ['Attack Power', Math.round(st.apTotal)], ['Spell Power', st.sp], ['Crit', st.crit.toFixed(1) + '%'], ['Dodge', st.dodgeTotal.toFixed(1) + '%']]
@@ -1446,6 +1449,38 @@
     b.append(h('p', { class: 'ai-note' }, 'Writes chat, banter, greetings and bios ahead of time, only when you are not fighting. Stops under 30% battery, in battery saver or when the phone is warm. The game never lets it decide anything.'));
   }
   if (window.AI) AI.onChange = () => { if (ui.sheet === 'hero' && ui.sheetFn && !document.querySelector('.dialog')) ui.sheetFn(); };
+  // ---------- talents: three trees, tap a talent to spend a point
+  const talentText = (t, rank) => t.desc.replace('{v}', String(Math.round(t.fx[0].v * Math.max(1, rank) * 100) / 100));
+  function openTalents() {
+    ui.talentTree = ui.talentTree || null;
+    openSheet('talents', 'Talents', ' ', (b, title) => {
+      const P = G.S.player, trees = D.TALENTS[P.cls], tp = G.talentPoints(P);
+      if (!ui.talentTree || !trees.some((t) => t.id === ui.talentTree)) ui.talentTree = (trees.slice().sort((x, y) => G.treeSpent(P, y.id) - G.treeSpent(P, x.id))[0] || trees[0]).id;
+      title.querySelector('small').textContent = P.level < D.TALENT_START ? `Your first point comes at level ${D.TALENT_START}` : `${tp.free} to spend · ${tp.spent}/${tp.total} spent · 1 point per level`;
+      const tabs = h('div', { class: 'chips' });
+      for (const tree of trees) tabs.append(h('button', { class: 'chip' + (tree.id === ui.talentTree ? ' gold' : ''), onclick: () => { ui.talentTree = tree.id; ui.sheetFn(); } }, img(abIcon(tree.icon)), ' ', tree.name, h('small', null, String(G.treeSpent(P, tree.id)))));
+      b.append(tabs);
+      const tree = trees.find((t) => t.id === ui.talentTree), spent = G.treeSpent(P, tree.id);
+      for (const tier of [1, 2, 3]) {
+        const need = D.TALENT_TIER_POINTS[tier], open = spent >= need;
+        b.append(h('div', { class: 'sec-h' }, `Tier ${tier}`, h('small', null, open ? (tier > 1 ? 'open' : '') : `needs ${need} points in ${tree.name} (${spent}/${need})`)));
+        const list = h('div', { class: 'list talents' });
+        for (const t of tree.talents.filter((x) => x.tier === tier)) {
+          const r = (P.talents || {})[t.id] || 0, why = G.canLearnTalent(P, t.id);
+          list.append(h('button', { class: 'row talent' + (r ? ' has' : '') + (!open ? ' off' : '') + (r >= t.ranks ? ' max' : ''), onclick: () => { if (why) return toast(why); G.learnTalent(t.id); ui.sheetFn(); if (window.SND) window.SND.play('quest_accept', { vol: 0.5 }); } },
+            h('div', { class: 'ic' }, img(abIcon(t.icon))),
+            h('div', { class: 't' }, h('b', null, t.name),
+              h('small', { style: { whiteSpace: 'normal' } }, r ? talentText(t, r) : talentText(t, 1)),
+              r && r < t.ranks ? h('small', { class: 'next', style: { whiteSpace: 'normal' } }, 'Next rank: ' + talentText(t, r + 1)) : null),
+            h('div', { class: 'r tnum rank' }, `${r}/${t.ranks}`)));
+        }
+        b.append(list);
+      }
+      const cost = G.respecCost();
+      b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', disabled: !tp.spent, onclick: () => showDialog([h('h3', null, 'Reset talents?'), h('p', null, `All ${tp.spent} points come back to spend again. ${cost ? `This costs ${G.moneyText(cost)}.` : 'The first reset is free.'}`),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); G.resetTalents(); ui.sheetFn(); } }, 'Reset'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true) }, cost ? `Reset (${G.moneyText(cost)})` : 'Reset (free)')));
+    });
+  }
   function exportSave() {
     const code = G.exportSave();
     const ta = h('textarea', { readonly: true, style: { width: '100%', height: '120px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', fontSize: '11px' } });

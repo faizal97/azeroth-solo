@@ -65,6 +65,24 @@ for (const [k, A] of Object.entries(D.ACTIVITIES)) {
 }
 for (const [k, Dg] of Object.entries(D.DUNGEONS)) if (!(Dg.par > 0)) err(`dungeon ${k}: needs a par time in seconds`);
 for (const [k, Dg] of Object.entries(D.DUNGEONS)) for (const pl of Dg.pulls) for (const m of pl.mobs) if (!has('MOBS', m)) err(`dungeon ${k}: unknown mob '${m}'`);
+for (const [cls, trees] of Object.entries(D.TALENTS || {})) {
+  if (!D.CLASSES[cls]) err(`talents: unknown class ${cls}`);
+  if (trees.length !== 3) err(`talents ${cls}: needs 3 trees`);
+  const seen = new Set();
+  for (const tree of trees) {
+    let t1 = 0;
+    if (icons.size && !icons.has(tree.icon)) err(`talent tree ${cls}/${tree.id}: no icon '${tree.icon}'`);
+    for (const t of tree.talents) {
+      if (seen.has(t.id)) err(`talent ${cls}/${t.id}: duplicate id`); seen.add(t.id);
+      if (![1, 2, 3].includes(t.tier) || !(t.ranks >= 1)) err(`talent ${cls}/${t.id}: bad tier or ranks`);
+      if (t.tier === 1) t1 += t.ranks;
+      if (icons.size && !icons.has(t.icon)) err(`talent ${cls}/${t.id}: no icon '${t.icon}'`);
+      for (const fx of t.fx) for (const a of fx.ab || []) if (a !== '*' && !has('ABILITIES', a)) err(`talent ${cls}/${t.id}: unknown ability '${a}'`);
+    }
+    if (t1 < D.TALENT_TIER_POINTS[2]) err(`talent tree ${cls}/${tree.id}: tier 1 has only ${t1} ranks, tier 2 needs ${D.TALENT_TIER_POINTS[2]}`);
+  }
+}
+for (const [role, m] of Object.entries(D.TALENT_BOT || {})) for (const [cls, ids] of Object.entries(m)) for (const id of ids) if (!(D.TALENTS[cls] || []).some((t) => t.id === id)) err(`bot talents ${role}/${cls}: unknown tree '${id}'`);
 if (D.XP_TO_LEVEL.length <= D.LEVEL_CAP) err(`XP_TO_LEVEL stops before the level cap (${D.LEVEL_CAP})`);
 
 const n = (t) => Object.keys(D[t]).length;

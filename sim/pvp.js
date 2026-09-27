@@ -12,7 +12,7 @@ for (const cls of Object.keys(D.CLASSES)) {
   for (let k = 0; k < N; k++) {
     G.newGame({ name: 'T', cls, race: cls === 'shaman' ? 'orc' : 'human' });
     const S = G.S, P = S.player;
-    P.level = L; P.equip = G.botChar({ name: 'x', cls, race: P.race, level: L, skill: 0.6, role: 'dps' }).equip; P.hp = null; P.res = null;
+    P.level = L; P.equip = G.botChar({ name: 'x', cls, race: P.race, level: L, skill: 0.6, role: 'dps' }).equip; P.talents = G.autoTalents(cls, ['priest', 'druid'].includes(cls) ? 'healer' : 'dps', L, 0); P.hp = null; P.res = null;
     P.place = P.race === 'orc' ? 'far_watch' : 'saldean_farm';
     Object.assign(S.flags, { warModeAsked: true, warMode: true, nextAmbush: 0 });
     let guard = 0;
