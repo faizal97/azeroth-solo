@@ -43,6 +43,8 @@
   const petArt = (u) => (u.key === 'beast' || u.type === 'beast') ? mobArt(u.mob) : art('pet', u.key || u.type);
   const mobArt = (key) => art('mob', (D.MOBS[key] && D.MOBS[key].sprite) || key);
   const looks = (c) => { const s = c.bot || c; const o = { cls: c.cls, race: s.race || c.race || 'human', skin: s.skin || 0, hair: s.hair || 0, gender: s.gender || 'm' }; const g = G.gearLooks(c); if (g) o.gear = g; return o; };
+  // 'Dwarf Warlock': race and class of any character (player, bot, group member)
+  const raceClass = (c) => { const r = D.RACES[(c && (c.race || (c.bot && c.bot.race))) || 'human']; return `${r ? r.name : ''} ${D.CLASSES[c.cls].name}`.trim(); };
   const abIcon = (id) => art('icon', (D.ABILITIES[id] && D.ABILITIES[id].icon) || id);
   // ---------- buffs and debuffs with time left, for any unit (or the player out of combat)
   const AURA_ALIAS = { weakened_soul: 'pw_shield', seal: 'seal_righteousness', stoneskin: 'stoneskin_totem', rockbiter: 'rockbiter_weapon', chilled: 'frost_armor', bear: 'bear_form', fireball_burn: 'fireball', stun: 'hammer_justice', searing_totem: 'searing_totem' };
@@ -67,7 +69,7 @@
     }
     return out.sort((x, y) => (x.debuff - y.debuff) || (x.left - y.left));
   }
-  const fmtLeft = (s) => (s >= 3600 ? Math.floor(s / 3600) + 'h' : s >= 60 ? Math.floor(s / 60) + 'm' : Math.ceil(s) + '');
+  const fmtLeft = (s) => (s > 86400 ? '' : s >= 3600 ? Math.floor(s / 3600) + 'h' : s >= 60 ? Math.floor(s / 60) + 'm' : Math.ceil(s) + '');
   // (re)build a strip only when the set of auras changes; otherwise just tick the timers
   function paintAuras(box, list, max) {
     if (!box) return;
@@ -76,7 +78,7 @@
     if (box.dataset.k !== key) {
       box.dataset.k = key; box.innerHTML = '';
       for (const a of list) {
-        const chip = h('span', { class: 'au ' + (a.debuff ? 'de' : 'bu'), onclick: (e) => { e.stopPropagation(); const cur = box._list && box._list.find((x) => x.id === a.id); toast(`${a.name}${a.debuff ? ' (debuff)' : ''} · ${cur ? fmtLeft(cur.left) + (cur.left >= 60 ? '' : 's') : ''} left`, true); } }, img(abIcon(a.icon)), h('b', { class: 'tnum' }));
+        const chip = h('span', { class: 'au ' + (a.debuff ? 'de' : 'bu'), onclick: (e) => { e.stopPropagation(); const cur = box._list && box._list.find((x) => x.id === a.id); toast(cur && cur.left > 86400 ? `${a.name} (until you cancel it)` : `${a.name}${a.debuff ? ' (debuff)' : ''} · ${cur ? fmtLeft(cur.left) + (cur.left >= 60 ? '' : 's') : ''} left`, true); } }, img(abIcon(a.icon)), h('b', { class: 'tnum' }));
         box.append(chip);
       }
     }
@@ -182,7 +184,7 @@
       h('div', { class: 'pclip' }, img(isMob ? mobArt(u.key) : u.kind === 'pet' ? petArt(u) : art('portrait', looks(u.char || u)))),
       h('span', { class: 'lvl tnum', style: { color: isMob ? conColor(u.level) : '#fff' } }, u.boss ? '??' : u.level));
     tf.append(h('div', { class: 'uf-body' },
-      h('div', { class: 'uf-name', style: { textAlign: 'right', color: isMob ? '#ff5b4b' : u.kind === 'pet' ? '#9fd6ff' : 'var(--c-' + u.cls + ')' } }, u.name),
+      h('div', { class: 'uf-name', style: { textAlign: 'right', color: isMob ? '#ff5b4b' : u.kind === 'pet' ? '#9fd6ff' : 'var(--c-' + u.cls + ')' } }, u.name, !isMob && u.kind !== 'pet' && u.char ? h('small', { class: 'rc' }, raceClass(u.char)) : null),
       (els.tHp = barEl('hp')),
       (els.tCp = h('div', { class: 'cps' })),
       (els.tBuffs = h('div', { class: 'buffs tbuffs' }))), port);
@@ -474,7 +476,7 @@
     const near = B.onlineIn(S, P.place, new Date()).filter((x) => !partyIds.has(x.id));
     if (near.length) {
       const chips = h('div', { class: 'chips' });
-      for (const x of near.slice(0, 12)) chips.append(h('button', { class: 'chip', onclick: () => confirmInvite(x) }, h('span', { class: 'cls-' + x.cls }, x.name), h('small', null, String(x.level))));
+      for (const x of near.slice(0, 12)) chips.append(h('button', { class: 'chip', onclick: () => confirmInvite(x) }, h('span', { class: 'cls-' + x.cls }, x.name), h('small', null, `${x.level} ${raceClass(x)}`)));
       b.append(h('div', { class: 'sec-h' }, 'Players here', h('small', null, `${near.length} nearby · tap to invite`)), chips);
     }
     const foe = G.intruderHere();
@@ -561,7 +563,7 @@
       const bar = h('div', { class: 'bar hp', 'data-pf': u ? u.uid : '' }, h('i', { style: { width: Math.max(0, hp / st.maxHp * 100) + '%' } }), h('b', { class: 'tnum' }, Math.round(hp)));
       pf.append(h('button', { class: 'pfr' + (u && u.dead ? ' dead' : '') + (C && u && C.allyTarget === u.uid ? ' sel' : ''), onclick: () => { if (u) { G.setTarget(u.uid); renderTarget(); markTargets(); } } },
         h('div', { class: 'portrait' }, h('div', { class: 'pclip' }, img(art('portrait', looks(m))))),
-        h('div', { class: 'uf-body' }, h('div', { class: 'uf-name cls-' + m.cls }, `${m.name}  ${m.level}`), bar, u ? h('div', { class: 'buffs rowbuffs', 'data-au': u.uid }) : null),
+        h('div', { class: 'uf-body' }, h('div', { class: 'uf-name cls-' + m.cls }, m.name, h('small', { class: 'rc' }, `${m.level} ${raceClass(m)}`)), bar, u ? h('div', { class: 'buffs rowbuffs', 'data-au': u.uid }) : null),
         h('div', { class: 'role' }, m.role === 'tank' ? 'TANK' : m.role === 'healer' ? 'HEAL' : 'DPS')));
     }
     const left = Math.max(0, S.wparty.until - Date.now());
@@ -642,7 +644,7 @@
       const u = units ? units.find((x) => (m.me ? x.kind === 'player' : x.memberRef === m.char)) : null;
       const row = h('button', { class: 'pfr' + (u && u.dead ? ' dead' : '') + (C && u && C.allyTarget === u.uid ? ' sel' : ''), onclick: () => { if (u) { G.setTarget(u.uid); renderTarget(); markTargets(); renderPanel(); } } },
         h('div', { class: 'portrait' }, h('div', { class: 'pclip' }, img(art('portrait', looks(m.me ? S.player : m.char.bot || m.char))))),
-        h('div', { class: 'uf-body' }, h('div', { class: 'uf-name cls-' + m.cls }, m.gone ? m.name + ' (left)' : m.name), h('div', { class: 'bar hp', 'data-pf': u ? u.uid : '' }, h('i'), h('b', { class: 'tnum' })), u ? h('div', { class: 'buffs rowbuffs', 'data-au': u.uid }) : null),
+        h('div', { class: 'uf-body' }, h('div', { class: 'uf-name cls-' + m.cls }, m.gone ? m.name + ' (left)' : m.name, h('small', { class: 'rc' }, (m.me ? S.player.level : (m.char.level || '')) + ' ' + raceClass(m.me ? S.player : m.char))), h('div', { class: 'bar hp', 'data-pf': u ? u.uid : '' }, h('i'), h('b', { class: 'tnum' })), u ? h('div', { class: 'buffs rowbuffs', 'data-au': u.uid }) : null),
         h('div', { class: 'role' }, m.role === 'tank' ? 'TANK' : m.role === 'healer' ? 'HEAL' : 'DPS'));
       pf.append(row);
     });

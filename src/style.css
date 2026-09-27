@@ -366,3 +366,5 @@ img { max-width: 100%; display: block; }
 .chip.mark-cross { border-color: #d8b048; } .chip.mark-cross .mk { color: #ffd84a; }
 .markbtn { display: inline-block; min-width: 26px; margin-left: 8px; padding: 2px 6px; border: 1px solid var(--edge-hi); border-radius: 6px; text-align: center; font-weight: 900; color: #ffd84a; background: #1a130b; }
 .np .mk { color: #ff6a5a; font-weight: 900; }
+.uf-name .rc { margin-left: 6px; font: 600 11px var(--body); color: var(--muted); letter-spacing: 0; text-transform: none; }
+.uf.target .uf-name .rc { display: block; margin: 0; }
