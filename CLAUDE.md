@@ -15,8 +15,8 @@ A single-player fake MMO in World of Warcraft Classic's world: every other "play
   - `bots.js`: simulated server, chat, catch-up after time away
   - `game.js`: controller for world, quests, loot, group finder, runs and character saves
   - `sound.js`, `cutscene.js`, `ui.js`
-  - `art.js` (`window.ART`) and `art_story.js` (`ART.story`): all art as SVG strings
-  - zone art packs `art_<zone>.js` (one per zone or dungeon, e.g. `art_durotar.js` … `art_brd.js`) plus icon packs `art_icons2.js`…`art_icons10.js` (`art_icons3.js` also adds `ART.node` for gathering nodes) and `art_mounts.js`. Each wraps `ART.scene`/`ART.mob`/`ART.icon` and falls through for other keys; each has a render script in `art/<name>/render.js`. A new pack must also be added to the list in `build.py`
+  - `art.js` (`window.ART`) and `art_story.js` + `art_story2.js` (`ART.story`): all art as SVG strings
+  - zone art packs `art_<zone>.js` (one per zone or dungeon, e.g. `art_durotar.js` … `art_tidecrown.js`) plus icon packs `art_icons2.js`…`art_icons10.js` (`art_icons3.js` also adds `ART.node` for gathering nodes) and `art_mounts.js`. Each wraps `ART.scene`/`ART.mob`/`ART.icon` and falls through for other keys; each has a render script in `art/<name>/render.js`. A new pack must also be added to the list in `build.py`
   - `data/professions.js` loads after the zones (it adds trainers to hubs and reads place levels)
   - `ai.js`: the optional on-device AI chat pack (line bank + battery guards; the native side is in `app/android/.../MainActivity.kt`)
 - `audio/compose_game.py` composes the music and sound effects; `check.py` runs the loudness, spike and seam checks. Music ships only if listed in `audio/approved.txt`.
