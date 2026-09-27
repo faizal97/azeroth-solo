@@ -109,7 +109,7 @@ Contested-zone rules (proposed; he can overrule):
 ## v5 plan (2026-09-27)
 
 1. **v5.0 (shipped):** level cap 35. Northern Stranglethorn Vale is contested: Rebel Camp (Alliance), Grom'gol (Horde) and Nesingwary's Expedition (both). There's a dungeon per faction, Gnomeregan (Alliance) and Razorfen Kraul (Horde), plus 18 class abilities at 32 and 34.
-2. **v5.1:** level cap 40. Arathi Highlands is contested: Refuge Pointe and Hammerfall. Also the Scarlet Monastery (reachable by both), the **mount at 40**, and story Chapter 4.
+2. **v5.1 (shipped):** level cap 40. Mount (his choice, classic-style): riding 40g + racial mount 10g at a capital's stablemaster, roads 40% faster (boats and flights unchanged). Arathi Highlands is contested: Refuge Pointe and Hammerfall. Also the Scarlet Monastery (reachable by both), the **mount at 40**, and story Chapter 4.
 3. **v5.2:** southern Stranglethorn (Booty Bay) and the Gurubashi Arena event.
 4. **Open:** Expert professions (skill 225, iron/mithril/silk/kingsblood) for the 30s.
 

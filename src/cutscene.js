@@ -143,6 +143,16 @@
         actors: [{ a: 'mob:charlga_razorflank', x: 40, y: 0, w: 34, from: { y: -20, o: 0 }, dur: 2 }],
         lines: [{ t: 0.5, text: 'Their matriarch, Charlga Razorflank, waits on the thorn throne.' }, { t: 5, who: 'Charlga Razorflank', text: 'The thorns will be your grave!' }] },
     ] },
+    { id: 'sm_intro', instance: 'sm_library', also: ['sm_cathedral'], title: 'The Scarlet Monastery', music: 'dungeon', shots: [
+      { bg: 'scene:scarlet_monastery_gate', dur: 9, cam: [[0, 0, 1.15], [0, 2, 1.02]], fx: ['fadein'],
+        lines: [{ t: 0.5, text: 'When the plague took Lordaeron, a few survivors swore to burn out every trace of undeath.' }, { t: 5, text: 'They called themselves the Scarlet Crusade.' }] },
+      { bg: 'scene:sm_library', dur: 10, cam: [[-4, 0, 1.12], [4, 0, 1.12]],
+        actors: [{ a: 'mob:scarlet_monk', x: 56, y: 2, w: 22 }, { a: 'mob:scarlet_chaplain', x: 28, y: 2, w: 20, from: { x: 8, o: 0 }, dur: 2 }],
+        lines: [{ t: 0.5, text: 'Their faith turned to madness. Now they kill anyone they suspect: the living and the dead alike.' }, { t: 5.5, text: 'Their monastery in Tirisfal holds their library, their armory and their cathedral.' }] },
+      { bg: 'scene:sm_cathedral', dur: 10, cam: [[0, 0, 1.0], [0, -2, 1.2]], fx: ['fadeout'],
+        actors: [{ a: 'mob:high_inquisitor_whitemane', x: 40, y: 0, w: 34, from: { y: -20, o: 0 }, dur: 2 }],
+        lines: [{ t: 0.5, text: 'In the cathedral, Commander Mograine and High Inquisitor Whitemane lead them.' }, { t: 5, text: 'The Horde and the Alliance agree on almost nothing. They agree on this.' }] },
+    ] },
     { id: 'ch2', level: 20, title: 'Chapter 2: The Stonemasons\' Revenge', music: 'dungeon', shots: [
       { bg: 'story:stormwind_keep', dur: 10, cam: [[0, 2, 1.18], [0, 0, 1.04]], fx: ['fadein'],
         lines: [{ t: 0.5, text: 'After the Second War, Stormwind lay in ruins. The Stonemasons\' Guild rebuilt it, stone by stone.' }, { t: 5.2, text: 'When the last tower stood, the nobles refused to pay what they owed.' }] },
@@ -178,12 +188,27 @@
         actors: [{ a: 'hero:player', x: 38, y: 2, w: 26, anim: 'breathe' }],
         lines: [{ t: 0.5, text: 'The court says Windsor deserted, {name}. The soldiers who rode with him say otherwise.' }, { t: 5, text: 'The road he took runs through places you will soon walk.' }] },
     ] },
-    { id: 'ch4', level: 40, title: 'Chapter 4: Blackrock Rising', locked: true },
+    { id: 'ch4', level: 40, title: 'Chapter 4: Blackrock Rising', music: 'dungeon', shots: [
+      { bg: 'story:blackrock_mountain', dur: 10, cam: [[0, 0, 1.05], [0, 2, 1.2]], fx: ['fadein', 'embers'],
+        lines: [{ t: 0.5, text: 'Blackrock Mountain burns day and night. Deep inside, the Dark Iron dwarves dig for their master.' }, { t: 5.2, text: 'Somewhere in their prisons, a soldier of Stormwind is still alive: Marshal Windsor.' }] },
+      { bg: 'story:blackrock_mountain', dur: 10, cam: [[0, 2, 1.2], [0, 0, 1.05]], fx: ['embers', 'shake@6'],
+        actors: [{ a: 'story:ragnaros', x: 40, y: 0, w: 40, anim: 'breathe', from: { y: -16, o: 0 }, dur: 2 }],
+        lines: [{ t: 0.5, text: 'Below them all, in a sea of fire, sleeps the Firelord Ragnaros.' }, { t: 5.2, who: 'Ragnaros', text: 'Let them dig. Every stone they break brings my fire closer to the world above.' }] },
+      { bg: 'story:blackrock_mountain', dur: 10, cam: [[-3, 0, 1.12], [3, 0, 1.12]],
+        actors: [{ a: 'story:nefarian', x: 40, y: 2, w: 36, anim: 'breathe', from: { o: 0 }, dur: 2 }],
+        lines: [{ t: 0.5, text: 'Above them, in the spire, the orcs of the Blackrock clan serve a new lord: Victor Nefarius.' }, { t: 5.2, who: 'Lord Victor Nefarius', text: 'Let the dwarves and their Firelord fight for the depths. The spire, and the world, are mine.' }] },
+      { bg: 'story:shadow_court', dur: 11, cam: [[0, 0, 1.05], [0, 2, 1.22]],
+        actors: [{ a: 'story:prestor_shadow', x: 40, y: 2, w: 36, anim: 'breathe', from: { o: 0 }, dur: 2 }],
+        lines: [{ t: 0.6, who: 'Lady Prestor', text: 'My brother has his mountain. I have a court full of fools.' }, { t: 5.4, who: 'Lady Prestor', text: 'And the marshal? Let him rot in the Dark Iron cells. He will not be the last.' }] },
+      { bg: 'scene:@here', dur: 10, cam: [[0, 0, 1.12], [0, 0, 1.0]], fx: ['fadeout'],
+        actors: [{ a: 'hero:player', x: 38, y: 2, w: 26, anim: 'breathe' }],
+        lines: [{ t: 0.5, text: 'Word travels fast on the roads, {name}: Windsor was seen alive, in chains, under the mountain.' }, { t: 5, text: 'Someone will have to go and get him. Not yet. But soon.' }] },
+    ] },
     { id: 'ch5', level: 50, title: 'Chapter 5: The Masquerade', locked: true },
     { id: 'ch6', level: 60, title: 'Chapter 6: The Brood Mother', locked: true },
   ];
   CS.byId = (id) => CS.CHAPTERS.find((c) => c.id === id);
-  CS.forInstance = (key) => CS.CHAPTERS.find((c) => c.instance === key);
+  CS.forInstance = (key) => CS.CHAPTERS.find((c) => c.instance === key || (c.also || []).includes(key));
 
   // Unlocks are account-wide so the Theater shows everything any character has reached.
   CS.unlocked = function () { try { return new Set(JSON.parse(localStorage.getItem(STORE) || '[]')); } catch (e) { return new Set(); } };

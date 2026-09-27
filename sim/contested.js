@@ -16,12 +16,16 @@ for (const [race, home, mine, theirs] of [['human', 'goldshire', 'astranaar', 's
   G.travelTo(mine); ok(P.travel && P.travel.to === mine, race + ' can travel to ' + mine); P.travel = null;
   ok(G.dangerOf('mystral_lake') === 1.5 && G.dangerOf(mine) < 0.1, race + ' danger in Ashenvale');
   ok(G.dangerOf(race === 'human' ? 'far_watch' : 'crystal_lake') === 1.8, race + ' danger in enemy zones');
-  const other = race === 'human' ? ['durotar', 'barrens', 'hillsbrad'] : ['elwynn', 'westfall', 'duskwood'];
+  // from v5.1 the Alliance can walk to the Hillsbrad foothills and the Monastery gate in Tirisfal, around the Horde towns
+  const other = race === 'human' ? ['durotar', 'barrens', 'mulgore'] : ['elwynn', 'westfall', 'duskwood'];
+  ok(!G.canReach(home, race === 'human' ? 'tarren_mill' : 'refuge_pointe') && !G.canReach(home, race === 'human' ? 'pyrewood_village' : 'stormwind'), race + ' enemy towns and the places behind them stay closed');
   ok(other.every((r) => !reach.has(r)), race + ' cannot walk into the other faction\'s zones: ' + [...reach].filter((r) => other.includes(r)));
   ok(reach.has('stranglethorn'), race + ' reaches Stranglethorn');
   ok(!G.enemyTown('nesingwary_camp'), race + ' may use the neutral camp');
   ok(G.enemyTown(race === 'human' ? 'grom_gol' : 'rebel_camp'), race + ' enemy Stranglethorn town');
   ok(G.activityBlock(race === 'human' ? 'razorfen_kraul' : 'gnomeregan') === 'hidden' && G.activityBlock(race === 'human' ? 'gnomeregan' : 'razorfen_kraul') !== 'hidden', race + ' dungeon visibility for the level-30 dungeons');
+  ok(['sm_library', 'sm_cathedral'].every((x) => G.activityBlock(x) !== 'hidden'), race + ' sees the Scarlet Monastery');
+  P.place = 'alterac_foothills'; ok(G.activityBlock(race === 'human' ? 'shadowfang' : 'stockade') === 'hidden', race + ' still cannot reach the other faction\'s dungeon from the foothills'); P.place = home;
   console.log(`${race}: reaches ${[...reach].sort().join(', ')}`);
 }
 // bots: none stands in an enemy town, and both factions quest in Ashenvale
@@ -37,6 +41,6 @@ ok(inAsh.alliance > 0 && inAsh.horde > 0, 'both factions quest in Ashenvale ' + 
 console.log('bots in Ashenvale over a day:', JSON.stringify(inAsh));
 // quests: each faction has a full line in Ashenvale
 const cnt = { alliance: 0, horde: 0 }; for (const q in D.QUESTS) if (D.QUESTS[q].faction) cnt[D.QUESTS[q].faction]++;
-console.log('Ashenvale quests per faction:', JSON.stringify(cnt));
+console.log('contested-zone quests per faction:', JSON.stringify(cnt));
 console.log(fails ? `${fails} failures` : 'contested sim OK');
 process.exit(fails ? 1 : 0);

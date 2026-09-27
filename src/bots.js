@@ -87,6 +87,8 @@
     // v2.0: from 10 most players move on to Westfall or the Barrens
     // v3: from 18 most players move on again, to Redridge or Stonetalon
     const next = bot.level >= 24 && D.REGIONS.duskwood ? (B.factionOf(bot) === 'horde' ? 'hillsbrad' : D.REGIONS.wetlands && hash(bot.id * 29, Math.floor(slot / 6)) < 0.45 ? 'wetlands' : 'duskwood') : bot.level >= 18 && D.REGIONS.redridge ? (B.factionOf(bot) === 'horde' ? 'stonetalon' : 'redridge') : B.factionOf(bot) === 'horde' ? 'barrens' : 'westfall';
+    // v5.1: from 35 half of them are in Arathi
+    if (bot.level >= 35 && D.REGIONS.arathi && hash(bot.id * 37, Math.floor(slot / 6)) < 0.5) return 'arathi';
     // v5: from 30 most players go to contested Stranglethorn
     if (bot.level >= 30 && D.REGIONS.stranglethorn && hash(bot.id * 31, Math.floor(slot / 6)) < 0.7) return 'stranglethorn';
     // v4.1: from 22 some players quest in contested Ashenvale instead
@@ -106,7 +108,7 @@
       const P = D.PLACES[p];
       return P.region === region && !P.city && bot.level >= P.lvl[0] - 1 && bot.level <= P.lvl[1] + 1 && (!P.faction || P.faction === B.factionOf(bot));
     });
-    const CT = { ashenvale: { alliance: 'astranaar', horde: 'splintertree_post' }, stranglethorn: { alliance: 'rebel_camp', horde: 'grom_gol' } };
+    const CT = { ashenvale: { alliance: 'astranaar', horde: 'splintertree_post' }, stranglethorn: { alliance: 'rebel_camp', horde: 'grom_gol' }, arathi: { alliance: 'refuge_pointe', horde: 'hammerfall' } };
     const towns = CT[region] ? [CT[region][B.factionOf(bot)], ...(region === 'stranglethorn' ? ['nesingwary_camp'] : [])] : TOWNS[region];
     if (!options.length) return towns[0];
     // town visits now and then

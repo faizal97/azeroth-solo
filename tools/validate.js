@@ -54,7 +54,8 @@ for (const [k, q] of Object.entries(D.QUESTS)) {
 }
 for (const [c, C] of Object.entries(D.CLASSES)) for (const a of C.abilities) {
   if (!has('ABILITIES', a)) { err(`class ${c}: unknown ability '${a}'`); continue; }
-  const ic = D.ABILITIES[a].icon || a; if (icons.size && !icons.has(ic)) err(`ability ${a}: no icon '${ic}'`);
+  // abilities above the level cap are data for the next update; nobody can learn them yet
+  const ic = D.ABILITIES[a].icon || a; if (icons.size && !icons.has(ic) && (D.ABILITIES[a].lvl || 1) <= D.LEVEL_CAP) err(`ability ${a}: no icon '${ic}'`);
 }
 for (const [k, A] of Object.entries(D.ACTIVITIES)) {
   if (A.where && !has('PLACES', A.where)) err(`activity ${k}: unknown place '${A.where}'`);

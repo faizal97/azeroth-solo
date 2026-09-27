@@ -18,6 +18,8 @@
   "zones/stranglethorn.js",
   "zones/gnomeregan.js",
   "zones/razorfen.js",
+  "zones/arathi.js",
+  "zones/scarlet.js",
   "professions.js",
   "finalize.js"
 ]

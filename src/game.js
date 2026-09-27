@@ -356,13 +356,14 @@
     if (npc === 'allison') return ['tough_bread', 'fresh_bread', 'moist_cornbread', 'mutton_chop', 'spring_water', 'ice_milk', 'melon_juice', 'sweet_nectar'].map(G.copyItem);
     if (npc === 'heather' || npc === 'boorand') return ['fresh_bread', 'moist_cornbread', 'mutton_chop', 'ice_milk', 'melon_juice', 'sweet_nectar'].map(G.copyItem);
     if (npc === 'brianna' || npc === 'jayka') return ['moist_cornbread', 'mutton_chop', 'wild_hog_shank', 'melon_juice', 'sweet_nectar', 'morning_glory_dew'].map(G.copyItem);
+    if (npc === 'innkeeper_taruga' || npc === 'innkeeper_adegwa') return ['spiced_jungle_meat', 'hardened_mushroom', 'bubbling_water', 'moonberry_cordial'].map(G.copyItem);
     if (npc === 'corporal_bluth' || npc === 'innkeeper_thulbek') return ['roasted_boar', 'spiced_jungle_meat', 'morning_glory_dew', 'sparkling_water', 'bubbling_water'].map(G.copyItem);
     if (npc === 'helbrek') return ['wild_hog_shank', 'roasted_boar', 'melon_juice', 'morning_glory_dew', 'sparkling_water', 'thunder_ale'].map(G.copyItem);
     if (npc === 'kimlya' || npc === 'kaylisk') return ['wild_hog_shank', 'roasted_boar', 'moonberry_juice', 'morning_glory_dew', 'sparkling_water'].map(G.copyItem);
     if (npc === 'trelayne' || npc === 'marla') return ['mutton_chop', 'wild_hog_shank', 'roasted_boar', 'sweet_nectar', 'morning_glory_dew', 'sparkling_water'].map(G.copyItem);
     if (npc === 'renee' || npc === 'norman') return ['tough_bread', 'tirisfal_pumpkin', 'spring_water', 'ice_milk'].map(G.copyItem);
     if (npc === 'keldamyr' || npc === 'saelienne') return ['tough_bread', 'fresh_bread', 'spring_water', 'moonberry_juice'].map(G.copyItem);
-    if (npc === 'corina' || npc === 'grawn' || npc === 'bruuk' || npc === 'ilyenia' || npc === 'mydrannul' || npc === 'kaplak' || npc === 'rahauro' || npc === 'mahnott' || npc === 'etu' || npc === 'gerard' || npc === 'abigail' || npc === 'lewis' || npc === 'nargal' || npc === 'thurman' || npc === 'verner' || npc === 'krond' || npc === 'gavin' || npc === 'dogran' || npc === 'aeolynn' || npc === 'burkrum' || npc === 'murndan' || npc === 'uthok') {
+    if (npc === 'corina' || npc === 'grawn' || npc === 'bruuk' || npc === 'ilyenia' || npc === 'mydrannul' || npc === 'kaplak' || npc === 'rahauro' || npc === 'mahnott' || npc === 'etu' || npc === 'gerard' || npc === 'abigail' || npc === 'lewis' || npc === 'nargal' || npc === 'thurman' || npc === 'verner' || npc === 'krond' || npc === 'gavin' || npc === 'dogran' || npc === 'aeolynn' || npc === 'burkrum' || npc === 'murndan' || npc === 'uthok' || npc === 'urda') {
       if (!G.S.flags.corina || G.S.flags.corinaLvl !== G.S.player.level) {
         const L = G.S.player.level;
         G.S.flags.corina = Object.keys(D.WEAPON_BASES).map((w) => { const it = G.genGear('weapon', Math.max(2, L), 1, { wtype: w }); it.cost = it.sell * 5; return it; });
@@ -641,12 +642,38 @@
     return (p.safe || p.city) && f && f !== 'contested' ? f : null;
   };
   G.enemyTown = (id) => { const f = G.placeFaction(id); return !!f && f !== G.myFaction(); };
+  // ---- riding (v5.1)
+  G.mounted = () => { const P = G.S.player; return !!(P.riding && P.mount && D.MOUNTS[P.mount]); };
+  G.travelSecs = function (from, dest) {
+    const p = D.PLACES[from], secs = p.links[dest];
+    if (!secs) return 0;
+    return G.mounted() && !(p.via && p.via[dest]) ? Math.round(secs * D.RIDING.speed) : secs;
+  };
+  G.learnRiding = function () {
+    const P = G.S.player;
+    if (P.riding) return toast('You already know how to ride.');
+    if (P.level < D.RIDING.lvl) return toast(`Requires level ${D.RIDING.lvl}.`);
+    if (P.money < D.RIDING.cost) return toast(`You need ${G.moneyText(D.RIDING.cost)}.`);
+    P.money -= D.RIDING.cost; P.riding = true;
+    loot('You have learned Riding. Buy a mount from the stablemaster.'); emit('change'); G.save();
+  };
+  G.buyMount = function (key) {
+    const P = G.S.player, M = D.MOUNTS[key];
+    if (!M || M.faction !== G.myFaction()) return;
+    P.mounts = P.mounts || [];
+    if (P.mounts.includes(key)) { P.mount = key; emit('change'); return; }
+    if (!P.riding) return toast('Learn Riding first.');
+    if (P.money < M.cost) return toast(`You need ${G.moneyText(M.cost)}.`);
+    P.money -= M.cost; P.mounts.push(key); P.mount = key;
+    loot(`You bought a ${M.name}. Every road is 40% faster now.`); emit('change'); G.save();
+  };
+  G.setMount = function (key) { const P = G.S.player; if (key && !(P.mounts || []).includes(key)) return; P.mount = key || null; emit('change'); G.save(); };
   G.travelTo = function (dest) {
     const S = G.S, P = S.player;
     if (G.fight || S.run) return toast('You can\'t travel right now.');
     if (P.ghostUntil) return;
     const from = D.PLACES[P.place];
-    const secs = from.links[dest];
+    const secs = G.travelSecs(P.place, dest);
     if (!secs) return;
     if (G.enemyTown(dest)) return toast(`${D.PLACES[dest].name} is an enemy town. The guards would kill you on sight.`);
     P.travel = { to: dest, from: P.place, start: now(), end: now() + secs * 1000 };
@@ -1446,7 +1473,7 @@
     const P = G.S.player, cx = P.codex || {}; const pv = G.pvpStats();
     let flawless = 0, speed = 0; for (const k in cx) { flawless += cx[k].flawless || 0; speed += cx[k].speed || 0; }
     const craft = Math.max(0, ...Object.entries(P.prof || {}).filter(([k]) => D.PROFESSIONS[k] && D.PROFESSIONS[k].kind === 'craft').map(([, p]) => p.skill));
-    return { mentor: P.mentorRuns || 0, flawless, speed, honor: pv.honor, kills: pv.kills, clears: cx, craft };
+    return { mentor: P.mentorRuns || 0, flawless, speed, honor: pv.honor, kills: pv.kills, clears: cx, craft, riding: P.riding ? 1 : 0 };
   };
   G.titleUnlocked = function (t) {
     const r = G.records(), n = t.need;
@@ -1784,12 +1811,15 @@
     const seen = new Set([from]), q = [from], regions = new Set();
     // roads through enemy towns are closed
     while (q.length) { const k = q.shift(); regions.add(D.PLACES[k].region); for (const to in (D.PLACES[k].links || {})) if (D.PLACES[to] && !seen.has(to) && !G.enemyTown(to)) { seen.add(to); q.push(to); } }
+    regions.places = seen;
     return (reach[key] = regions);
   };
+  // the entrance itself must be reachable, not just its zone (the Alterac foothills are Hillsbrad, but Pyrewood is not reachable from there)
+  G.canReach = (from, place) => G.reachableRegions(from).places.has(place);
   G.activityBlock = function (act) {
     const S = G.S, P = S.player, A = D.ACTIVITIES[act];
     const region = A.where && D.PLACES[A.where].region;
-    if (region && !G.reachableRegions(P.place).has(region)) return 'hidden';
+    if (A.where && !G.canReach(P.place, A.where)) return 'hidden';
     if (P.level < A.minLvl) return `Requires level ${A.minLvl}`;
     if (region && region !== (D.PLACES[P.place] || {}).region) return `Go to ${D.REGIONS[region].name} to join`;
     if ((S.flags.deserterUntil || 0) > now()) return `Deserter: ${Math.ceil((S.flags.deserterUntil - now()) / 60000)} min`;

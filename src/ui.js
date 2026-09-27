@@ -313,7 +313,16 @@
         });
       }
     }
-    if (P.travel) sc.append(h('div', { class: 'castbar', id: 'travelbar', style: { bottom: '40%' } }, h('i'), h('b', null, 'Traveling to ' + D.PLACES[P.travel.to].name)));
+    // riding: the hero sits on the mount while travelling by road (offsets from art/mounts/render.js: the hero box is 0.56 of the
+    // mount's width, 17% in from its left and 3.6% down from its top; races sit higher or lower by their hip height)
+    if (P.travel && G.mounted() && !((D.PLACES[P.travel.from] || {}).via || {})[P.travel.to]) {
+      const RACE_Y = { human: 0, dwarf: -6.6, gnome: -12.3, nightelf: 6.3, orc: -0.7, troll: 7, tauren: 1.4, undead: 0 };
+      const mw = 36, ml = 18, mb = 4, mh = mw * 400 / 240 * 128 / 160; // mount height in % of scene height
+      const hw = mw * 0.56, hb = mb + mh * (1 - 4.6 / 128) - hw * 400 / 240 - mh * (RACE_Y[P.race] || 0) / 128;
+      sc.append(spriteEl(art('hero', looks(P)), { l: ml + mw * 0.17, b: hb, w: hw }, 'walker'));
+      sc.append(spriteEl(art('mount', P.mount), { l: ml, b: mb, w: mw }, 'walker'));
+    }
+    if (P.travel) sc.append(h('div', { class: 'castbar', id: 'travelbar', style: { bottom: G.mounted() ? '74%' : '40%' } }, h('i'), h('b', null, 'Traveling to ' + D.PLACES[P.travel.to].name)));
     if (P.ghostUntil) sc.append(h('div', { class: 'overlay-msg' }, h('div', null, h('h3', null, 'You are dead'), h('p', { id: 'ghost-t' }, 'Running back to your body...'))));
     if (S.run && S.run.phase === 'wipe') sc.append(h('div', { class: 'overlay-msg' }, h('div', null, h('h3', null, 'Party defeated'), h('p', null, 'Running back from the graveyard...'))));
     if (S.run && S.run.phase === 'done') sc.append(h('div', { class: 'overlay-msg', style: { background: 'rgba(0,0,0,.25)' } }, h('div', null, h('h3', null, S.run.name + ' cleared'), h('p', null, 'Leave the group when you are ready.'))));
@@ -581,7 +590,7 @@
   function travelTab(b, place) {
     const P = G.S.player;
     const roads = h('div', { class: 'chips' });
-    for (const to in place.links) { const foe = G.enemyTown(to); roads.append(h('button', { class: 'chip', disabled: foe, onclick: () => G.travelTo(to) }, D.PLACES[to].name, h('small', { style: foe ? { color: '#ff6a5a' } : null }, foe ? 'Enemy town' : (place.via && place.via[to] ? place.via[to] + ' · ' : '') + place.links[to] + 's'))); }
+    for (const to in place.links) { const foe = G.enemyTown(to); roads.append(h('button', { class: 'chip', disabled: foe, onclick: () => G.travelTo(to) }, D.PLACES[to].name, h('small', { style: foe ? { color: '#ff6a5a' } : null }, foe ? 'Enemy town' : (place.via && place.via[to] ? place.via[to] + ' · ' : '') + G.travelSecs(P.place, to) + 's'))); }
     const hs = (P.hearthAt || 0) - now();
     roads.append(h('button', { class: 'chip gold', onclick: () => G.hearth(), disabled: hs > 0 || P.place === P.bind }, 'Hearthstone', h('small', null, hs > 0 ? Math.ceil(hs / 60000) + 'm' : D.PLACES[P.bind].name)));
     b.append(roads, h('button', { class: 'btn alt wide', onclick: () => openMap() }, 'Open map'));
@@ -1109,12 +1118,13 @@
   const MAPS = {
     elwynn: { stormwind_bank: [58, 20], stormwind: [95, 40], stormwind_gate: [135, 130], northshire_vineyards: [120, 60], northshire_abbey: [215, 88], echo_ridge: [300, 52], goldshire: [150, 228], fargodeep: [110, 330], brackwell: [215, 352], crystal_lake: [270, 250], forests_edge: [42, 300] },
     mulgore: { thunder_bluff: [110, 70], bloodhoof_village: [175, 205], camp_narache: [220, 340], brambleblade_ravine: [300, 300], palemane_rock: [70, 250], venture_mine: [290, 120], golden_plains: [180, 110] },
-    tirisfal: { undercity: [285, 110], brill: [200, 180], deathknell: [60, 300], night_web_hollow: [40, 225], agamand_mills: [150, 90], garrens_haunt: [210, 60], scarlet_watch_post: [300, 250] },
+    tirisfal: { scarlet_monastery_gate: [310, 40], undercity: [285, 110], brill: [200, 180], deathknell: [60, 300], night_web_hollow: [40, 225], agamand_mills: [150, 90], garrens_haunt: [210, 60], scarlet_watch_post: [300, 250] },
     durotar: { orgrimmar: [150, 52], thunder_ridge: [80, 130], razor_hill: [200, 215], tiragarde_keep: [292, 185], echo_isles: [268, 325], valley_of_trials: [140, 300], burning_blade_coven: [62, 336] },
     teldrassil: { darnassus: [60, 110], dolanaar: [190, 200], shadowglen: [280, 90], shadowthread_cave: [312, 36], lake_alameth: [205, 318], banethil_barrow: [300, 250], fel_rock: [110, 290] },
     westfall: { furlbrow_farm: [250, 60], saldean_farm: [170, 110], sentinel_hill: [190, 225], jangolode_mine: [70, 150], molsen_farm: [260, 300], the_longshore: [50, 320], dagger_hills: [150, 355], gold_coast_quarry: [42, 92], moonbrook: [205, 285], the_dead_acre: [298, 362] },
     barrens: { far_watch: [290, 90], crossroads: [175, 175], forgotten_pools: [90, 150], stagnant_oasis: [230, 290], razormane_grounds: [270, 205], thorn_hill: [110, 330], sludge_fen: [215, 62], lushwater_oasis: [155, 262], baeldun_digsite: [52, 368] },
     redridge: { three_corners: [40, 300], lakeshire: [140, 205], lake_everstill: [195, 262], redridge_canyons: [70, 120], althers_mill: [160, 92], renders_valley: [262, 335], stonewatch_keep: [285, 205], galardell_valley: [272, 80] },
+    arathi: { refuge_pointe: [170, 180], hammerfall: [300, 150], highland_plains: [110, 200], drywhisker_gorge: [290, 250], witherbark_village: [70, 310], stromgarde_keep: [120, 300], boulderfist_hall: [285, 340], circle_of_west_binding: [160, 90] },
     stranglethorn: { rebel_camp: [170, 45], grom_gol: [40, 250], nesingwary_camp: [150, 150], lake_nazferiti: [235, 185], zuuldaia_ruins: [55, 150], kurzen_compound: [285, 90], venture_base_camp: [270, 285], balia_mah_ruins: [120, 330], zul_kunda: [205, 365] },
     wetlands: { menethil_harbor: [60, 250], bluegill_marsh: [70, 130], whelgars_excavation: [170, 300], saltspray_glen: [140, 60], dun_modr: [230, 160], angerfang_encampment: [295, 280] },
     ashenvale: { astranaar: [110, 190], splintertree_post: [290, 185], the_zoram_strand: [30, 150], mystral_lake: [180, 270], thistlefur_village: [120, 70], the_howling_vale: [205, 118], satyrnaar: [292, 70], felfire_hill: [305, 300] },
@@ -1124,6 +1134,10 @@
     dunmorogh: { ironforge: [170, 70], kharanos: [175, 210], grizzled_den: [190, 325], frostmane_hold: [62, 165], amberstill_ranch: [292, 205], anvilmar: [78, 330], coldridge_cave: [34, 262] },
   };
   const MAP_BG = {
+    arathi: `<defs><radialGradient id="mapah" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#8a9a52"/><stop offset="1" stop-color="#4a5a2c"/></radialGradient></defs>
+        <rect width="340" height="400" rx="6" fill="url(#mapah)"/>
+        <path d="M0 0 H20 V400 H0Z" fill="#5a5a50" opacity=".6"/>
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f8f4e0" opacity=".85">Arathi Highlands · contested</text>`,
     stranglethorn: `<defs><radialGradient id="mapv" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#3f6a2c"/><stop offset="1" stop-color="#1c3314"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapv)"/>
         <path d="M0 0 H24 C14 120 34 260 16 400 H0Z" fill="#2f6a8a" opacity=".85"/>
@@ -1260,7 +1274,7 @@
         else if (to !== cur) toast('Too far. Travel through the places next to you.');
       });
       const far = h('div', { class: 'chips' });
-      for (const a in MAP) for (const c in D.PLACES[a].links) if (!MAP[c] && !G.enemyTown(a) && !G.enemyTown(c)) far.append(h('button', { class: 'chip gold', onclick: () => { if (cur === a) { G.travelTo(c); closeSheet(); } else toast(`Go to ${D.PLACES[a].name} first.`); } }, `${D.PLACES[a].name} → ${D.PLACES[c].name}`, h('small', null, ((D.PLACES[a].via || {})[c] || 'Road') + ' · ' + D.PLACES[a].links[c] + 's')));
+      for (const a in MAP) for (const c in D.PLACES[a].links) if (!MAP[c] && !G.enemyTown(a) && !G.enemyTown(c)) far.append(h('button', { class: 'chip gold', onclick: () => { if (cur === a) { G.travelTo(c); closeSheet(); } else toast(`Go to ${D.PLACES[a].name} first.`); } }, `${D.PLACES[a].name} → ${D.PLACES[c].name}`, h('small', null, ((D.PLACES[a].via || {})[c] || 'Road') + ' · ' + G.travelSecs(a, c) + 's')));
       if (far.childNodes.length) b.append(far);
       b.append(m, h('div', { style: { color: 'var(--muted)', fontSize: '13px' } }, 'Gold: you are here. ! marks places your quests need. Level ranges are coloured by difficulty.'));
     });
@@ -1317,6 +1331,7 @@
       b.append(h('p', { style: { margin: 0, color: 'var(--text)' } }, (window.AI && AI.npcLine(npc)) || greeting(npc)));
       if (/^banker_/.test(npc)) b.append(h('button', { class: 'btn wide', onclick: () => openBank() }, 'Open your bank'));
       if (/^crafts_/.test(npc)) trainerBlock(b);
+      if (/^stable_/.test(npc)) stableBlock(b);
       if (/^auctioneer_/.test(npc)) b.append(h('button', { class: 'btn wide', onclick: () => openAuction() }, 'Browse the auction house'));
       if (npc === 'mentor_alliance' || npc === 'mentor_horde') {
         const acc = G.account();
@@ -1341,7 +1356,7 @@
       }
       if (place.vendor === npc || place.gearVendor === npc) b.append(h('button', { class: 'btn wide', onclick: () => openVendor(npc) }, 'Browse goods'));
       if (npc === 'farley') b.append(h('button', { class: 'btn alt wide', disabled: P.bind === P.place, onclick: () => { G.bindHere(); ui.sheetFn(); } }, P.bind === P.place ? 'This inn is your home' : 'Make this inn your home'));
-      if (!qs.length && place.vendor !== npc && npc !== 'farley' && place.gearVendor !== npc && !/^(mentor|banker|auctioneer|crafts)_/.test(npc)) b.append(h('p', { style: { color: 'var(--muted)' } }, 'Nothing for you right now. Come back when you have grown stronger.'));
+      if (!qs.length && place.vendor !== npc && npc !== 'farley' && place.gearVendor !== npc && !/^(mentor|banker|auctioneer|crafts|stable)_/.test(npc)) b.append(h('p', { style: { color: 'var(--muted)' } }, 'Nothing for you right now. Come back when you have grown stronger.'));
     });
   }
   window.UI_GREETING = (npc) => greeting(npc);
@@ -1392,6 +1407,8 @@
       madame_eva: 'The cards told me you would come. They did not say whether you would leave.', sirra: 'The history of Duskwood is written in blood and moonlight.', trelayne: 'Welcome to the Scarlet Raven. Keep the door shut, the wolves are out.', gavin: 'Silver edges bite worgen best. Take a look.',
       darthalia: 'The Dark Lady wants Hillsbrad. We will give it to her, one farm at a time.', lydon: 'Every plague needs a test. And every test needs subjects.', krusk: 'Lok\'tar. Tarren Mill needs blades, not talk.', dalar: 'Arugal made those worgen. He must answer for it.',
       marla: 'Rest in Tarren Mill. The dead do not sleep, but you still may.', dogran: 'Orc steel, Forsaken edge.',
+      captain_nials: 'Arathor will rise again. Until then, we hold Refuge Pointe.', sergeant_maclear: 'The highlands are full of things that want you dead. Pick one.', shards: 'I scout Stromgarde. The Syndicate never sleeps.', innkeeper_taruga: 'Supplies for the road, soldier.',
+      drum_fel: 'Hammerfall stands. Arathi will be the Horde\'s.', tor_gan: 'The hunt in these highlands is good.', gorn: 'The earth here is bound and angry. Help me free it.', innkeeper_adegwa: 'Rest in Hammerfall, the walls are thick.', urda: 'Orc steel. The best in the highlands.',
       barnil: 'Welcome to the Rebel Camp. We left Kurzen when he lost his mind.', lieutenant_doren: 'Stormwind forgot us out here. Kurzen did not.', sergeant_yohwa: 'Watch the trees. Everything in this jungle bites.', corporal_bluth: 'Supplies are thin, but they are yours for a price.',
       nimboya: 'Da Darkspear got old enemies in dis jungle, mon.', commander_aggro: "Grom'gol stands for the Horde. Keep it standing.", kin_weelay: 'Da loa whisper in dis jungle. Listen close.', innkeeper_thulbek: 'Rest. The jungle will still be here.', uthok: 'Blades for the jungle. Sharp and heavy.',
       nesingwary: 'Ah, a fellow hunter! The finest game in the world lives in this jungle.', ajeck: 'Tigers first. Prove your aim.', erlgadin: 'The raptors are cunning. Mind your flanks.',
@@ -1401,6 +1418,7 @@
       orendil: 'The furbolgs were friends once. Something poisons their hearts.', kimlya: 'Rest, traveller. Astranaar is safe while the lake guards us.', aeolynn: 'Kaldorei steel, sharp as moonlight.',
       senani: 'Splintertree holds, for now. The elves attack every night.', ertog: 'The Warsong need wood, and the forest fights back. Pick up an axe.', mitsuwa: 'The spirits of this forest are angry. I do not blame them.',
       kaylisk: 'Sit. Eat. The next night elf raid is not for an hour.', burkrum: 'Orc steel. Better than elf twigs.',
+      stable_alliance: 'A good mount is worth every copper. Ready to learn?', stable_horde: 'Every warrior of the Horde needs a mount. Show me your gold.',
       crafts_alliance: 'Every trade starts with a pick, a knife or a needle. Which will it be?', crafts_horde: 'Strong arms gather, clever hands craft. Choose your trade.',
       mentor_alliance: 'Helping the new ones through the dungeons is how heroes are made. Your marks are good here.', mentor_horde: 'The strong carry the weak through the fire. The Horde remembers. Spend your marks well.',
       denalan: 'The timberlings have been acting so oddly...', saelienne: 'Welcome to Darnassus, child of the stars.', mydrannul: 'Fine Kaldorei steel. Look, but do not touch.',
@@ -1478,6 +1496,11 @@
         h('button', { class: 'btn', onclick: () => { if (G.fight) return toast('You are in combat.'); G.logout(); showSelect(); } }, 'Switch character'),
         h('button', { class: 'btn alt', onclick: () => openTheater() }, 'Theater')));
       const tp = G.talentPoints(P);
+      if (P.riding) {
+        const row = h('div', { class: 'chips' }, h('button', { class: 'chip' + (!P.mount ? ' gold' : ''), onclick: () => { G.setMount(null); ui.sheetFn(); } }, 'On foot'));
+        for (const k of (P.mounts || [])) row.append(h('button', { class: 'chip' + (P.mount === k ? ' gold' : ''), onclick: () => { G.setMount(k); ui.sheetFn(); } }, img(art('icon', 'mount_' + k)), ' ', D.MOUNTS[k].name));
+        b.append(h('div', { class: 'sec-h' }, 'Mount', h('small', null, P.mount ? 'roads are 40% faster' : 'walking')), row);
+      }
       b.append(h('button', { class: 'btn wide alt', onclick: () => openProfessions() }, Object.keys(G.profs()).length ? 'Professions · ' + Object.entries(G.profs()).map(([k, p]) => `${D.PROFESSIONS[k].name} ${p.skill}`).join(', ') : 'Professions (learn from a trainer in a city)'));
       b.append(h('button', { class: 'btn wide' + (tp.free ? '' : ' alt'), onclick: () => openTalents() }, P.level < D.TALENT_START ? `Talents (from level ${D.TALENT_START})` : tp.free ? `Talents · ${tp.free} point${tp.free > 1 ? 's' : ''} to spend` : `Talents · ${tp.spent} spent`));
       b.append(h('div', { class: 'hero-top' }, img(art('hero', looks(P))),
@@ -1644,6 +1667,22 @@
         h('div', { class: 'r' }, R && R.ok && (p || n < D.PROF_MAX) ? 'Train' : '')));
     }
     b.append(list, h('p', { class: 'ai-note' }, 'Gatherers find ore and herbs in the Fight tab and on the scene. Skinning happens as you loot beasts. Craft from Hero → Professions. Mining pairs with Blacksmithing, Herbalism with Alchemy, Skinning with Leatherworking; Tailoring uses the cloth humanoids drop.'));
+  }
+  function stableBlock(b) {
+    const P = G.S.player;
+    b.append(h('div', { class: 'sec-h' }, 'Riding', h('small', null, P.riding ? 'you can ride' : `from level ${D.RIDING.lvl}`)));
+    if (!P.riding) b.append(h('button', { class: 'btn wide', disabled: P.level < D.RIDING.lvl || P.money < D.RIDING.cost, onclick: () => { G.learnRiding(); ui.sheetFn(); } },
+      P.level < D.RIDING.lvl ? `Riding at level ${D.RIDING.lvl} · ${G.moneyText(D.RIDING.cost)}` : `Learn Riding · ${G.moneyText(D.RIDING.cost)}`));
+    const list = h('div', { class: 'list' });
+    for (const [k, M] of Object.entries(D.MOUNTS)) {
+      if (M.faction !== G.myFaction()) continue;
+      const owned = (P.mounts || []).includes(k);
+      list.append(h('button', { class: 'row', disabled: !owned && !P.riding, onclick: () => { G.buyMount(k); ui.sheetFn(); } },
+        h('div', { class: 'ic' }, img(art('icon', 'mount_' + k))),
+        h('div', { class: 't' }, h('b', { style: { color: D.QUALITY[1].color } }, M.name), h('small', null, owned ? (P.mount === k ? 'Riding this one' : 'Owned · tap to ride') : `${D.RACES[M.race].name} mount · every road 40% faster`)),
+        h('div', { class: 'r' }, owned ? '' : G.moneyText(M.cost))));
+    }
+    b.append(list, h('p', { class: 'ai-note' }, 'Boats, zeppelins, gryphons and the tram keep their own time.'));
   }
   function openProfessions() {
     ui.profTab = ui.profTab || null;

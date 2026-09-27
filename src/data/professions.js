@@ -224,8 +224,12 @@
   Object.assign(D.NPCS, {
     crafts_alliance: { name: 'Artisan Hollis', title: 'Profession Trainer' },
     crafts_horde: { name: 'Artisan Grunna', title: 'Profession Trainer' },
+    stable_alliance: { name: 'Stablemaster Rowan', title: 'Riding Trainer' },
+    stable_horde: { name: 'Stablemaster Ogunaro', title: 'Riding Trainer' },
   });
-  const TRAIN = { crafts_alliance: ['stormwind', 'ironforge', 'darnassus', 'sentinel_hill', 'lakeshire', 'darkshire', 'astranaar', 'menethil_harbor', 'rebel_camp'], crafts_horde: ['orgrimmar', 'thunder_bluff', 'undercity', 'crossroads', 'sun_rock_retreat', 'tarren_mill', 'splintertree_post', 'grom_gol'] };
+  const TRAIN = { crafts_alliance: ['stormwind', 'ironforge', 'darnassus', 'sentinel_hill', 'lakeshire', 'darkshire', 'astranaar', 'menethil_harbor', 'rebel_camp', 'refuge_pointe'], crafts_horde: ['orgrimmar', 'thunder_bluff', 'undercity', 'crossroads', 'sun_rock_retreat', 'tarren_mill', 'splintertree_post', 'grom_gol', 'hammerfall'] };
   for (const npc in TRAIN) for (const p of TRAIN[npc]) if (D.PLACES[p] && !D.PLACES[p].npcs.includes(npc)) D.PLACES[p].npcs.push(npc);
   D.PROF_TRAINERS = TRAIN;
+  // riding trainers in the capitals (v5.1)
+  for (const [npc, caps] of [['stable_alliance', ['stormwind', 'ironforge', 'darnassus']], ['stable_horde', ['orgrimmar', 'thunder_bluff', 'undercity']]]) for (const p of caps) if (D.PLACES[p] && !D.PLACES[p].npcs.includes(npc)) D.PLACES[p].npcs.push(npc);
 })(typeof window !== 'undefined' ? window : globalThis);
