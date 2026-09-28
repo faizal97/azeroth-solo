@@ -2005,10 +2005,14 @@
     const ta = h('textarea', { readonly: true, style: { width: '100%', height: '120px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', fontSize: '11px' } });
     const note = h('p', { class: 'ai-note', style: { margin: 0 } }, 'Preparing your code...');
     const copy = h('button', { class: 'btn', disabled: true }, 'Copy');
-    showDialog([h('h3', null, 'Save code'), h('p', null, 'Keep this somewhere safe, or send it to yourself. Paste it back with Load save code, in the app or a browser.'), ta, note,
-      h('div', { class: 'btn-row' }, copy, h('button', { class: 'btn alt', onclick: closeDialog }, 'Close'))]);
+    // the same code as a file: shared through Android's share sheet in the app, downloaded in a browser
+    const file = h('button', { class: 'btn alt', disabled: true }, window.SAVEFILE && SAVEFILE.inApp() ? 'Share file' : 'Save file');
+    showDialog([h('h3', null, 'Save code'), h('p', null, 'Keep this somewhere safe, or send it to yourself. Load it back with Load save code, in the app or a browser. A file is the safest way to send it.'), ta, note,
+      h('div', { class: 'btn-row' }, copy, window.SAVEFILE ? file : null), h('button', { class: 'btn alt wide', onclick: closeDialog }, 'Close')]);
     G.exportSave().then((code) => {
-      ta.value = code; copy.disabled = false;
+      ta.value = code; copy.disabled = false; file.disabled = false;
+      const P = G.S.player, name = `${P.name}-level${P.level}.azsave`;
+      file.onclick = () => SAVEFILE.save(name, code).then(() => { if (!SAVEFILE.inApp()) toast(`Saved ${name}`, true); }, (e) => toast('Could not save the file: ' + ((e && e.message) || 'error')));
       note.textContent = `${code.length.toLocaleString()} characters. Copy all of it.`;
       copy.onclick = () => { ta.select(); try { navigator.clipboard.writeText(code).then(() => toast('Copied', true), () => { document.execCommand('copy'); toast('Copied', true); }); } catch (e) { document.execCommand('copy'); } };
     }, () => { note.textContent = 'Could not make a code on this device.'; });
@@ -2016,13 +2020,18 @@
   function importSave() {
     const ta = h('textarea', { style: { width: '100%', height: '120px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', fontSize: '11px' }, placeholder: 'Paste your save code' });
     const err = h('p', { style: { color: '#ff6a5a' } });
-    const load = h('button', { class: 'btn', onclick: async () => {
+    const doLoad = async () => {
       load.disabled = true; err.textContent = '';
       try { const id = await G.importSave(ta.value); closeDialog(); closeSheet(); enter(id); toast('Save loaded as a new character', true); }
       catch (e) { err.textContent = (e && e.message) || 'That code did not work. Copy the whole code and try again.'; load.disabled = false; }
-    } }, 'Load');
-    showDialog([h('h3', null, 'Load save code'), h('p', null, 'Paste a code from Hero → Settings → Copy save code, in the app or another browser. It is added as a new character; your others stay.'), ta, err,
-      h('div', { class: 'btn-row' }, load, h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))]);
+    };
+    const load = h('button', { class: 'btn', onclick: doLoad }, 'Load');
+    const fromFile = window.SAVEFILE ? h('button', { class: 'btn alt', onclick: () => {
+      err.textContent = '';
+      SAVEFILE.pick().then((text) => { if (text == null) return; ta.value = text; doLoad(); }, (e) => { err.textContent = 'Could not read that file: ' + ((e && e.message) || 'error'); });
+    } }, 'Load from file') : null;
+    showDialog([h('h3', null, 'Load save code'), h('p', null, 'Paste a code, or pick a save file, from Hero → Settings → Copy save code in the app or another browser. It is added as a new character; your others stay.'), ta, err,
+      h('div', { class: 'btn-row' }, load, fromFile), h('button', { class: 'btn alt wide', onclick: closeDialog }, 'Cancel')]);
   }
   function confirmDelete() {
     showDialog([h('h3', null, 'Delete ' + G.S.player.name + '?'), h('p', null, 'Your character, gear and quests are gone for good. Copy your save code first if you might want it back.'),

@@ -1,5 +1,6 @@
 package com.starlight.azeroth_solo
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -54,8 +55,59 @@ class MainActivity : FlutterActivity() {
     }
     private fun canInstall(): Boolean = Build.VERSION.SDK_INT < Build.VERSION_CODES.O || packageManager.canRequestPackageInstalls()
 
+    // ---- save files (v9.7.1): share a save through Android's share sheet, or pick one to load
+    private var pendingPick: MethodChannel.Result? = null
+    private val pickRequest = 4712
+    private fun savesDir(): File = File(cacheDir, "saves").apply { mkdirs() }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != pickRequest) return
+        val res = pendingPick ?: return
+        pendingPick = null
+        val uri: Uri? = data?.data
+        if (resultCode != Activity.RESULT_OK || uri == null) { res.success(null); return }
+        updWorker.execute {
+            try {
+                val bytes = contentResolver.openInputStream(uri).use { it!!.readBytes() }
+                if (bytes.size > 8 * 1024 * 1024) throw Exception("That file is too big to be a save")
+                val text = String(bytes, Charsets.UTF_8)
+                runOnUiThread { res.success(text) }
+            } catch (e: Exception) { runOnUiThread { res.error("read", e.message ?: e.toString(), null) } }
+        }
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "azsolo/file").setMethodCallHandler { call, result ->
+            when (call.method) {
+                "share" -> {
+                    val name = (call.argument<String>("name") ?: "save.azsave").replace(Regex("[^A-Za-z0-9._-]"), "_")
+                    val text = call.argument<String>("text") ?: ""
+                    try {
+                        savesDir().listFiles()?.forEach { it.delete() } // only the latest shared save is kept
+                        val f = File(savesDir(), name); f.writeText(text)
+                        val uri = FileProvider.getUriForFile(this, "$packageName.updates", f)
+                        val send = Intent(Intent.ACTION_SEND).apply {
+                            type = "application/octet-stream"
+                            putExtra(Intent.EXTRA_STREAM, uri)
+                            putExtra(Intent.EXTRA_SUBJECT, name)
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        }
+                        startActivity(Intent.createChooser(send, "Share your save"))
+                        result.success(true)
+                    } catch (e: Exception) { result.error("share", e.message ?: e.toString(), null) }
+                }
+                "pick" -> {
+                    if (pendingPick != null) { result.error("busy", "A file picker is already open", null); return@setMethodCallHandler }
+                    pendingPick = result
+                    val pick = Intent(Intent.ACTION_OPEN_DOCUMENT).apply { addCategory(Intent.CATEGORY_OPENABLE); type = "*/*" }
+                    startActivityForResult(pick, pickRequest)
+                }
+                else -> result.notImplemented()
+            }
+        }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "azsolo/update").setMethodCallHandler { call, result ->
             when (call.method) {
                 "appVersion" -> {

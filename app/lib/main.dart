@@ -32,23 +32,24 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   late final WebViewController _controller;
-  // Bridge to the in-app updater (MainActivity.kt). The page sends {id, cmd, args}; we answer with window.AZUPD_REPLY.
-  static const _upd = MethodChannel('azsolo/update');
-  Future<void> _onUpdMessage(JavaScriptMessage msg) async {
+  // Bridges to MainActivity.kt. The page sends {id, cmd, args} on a JS channel; the answer goes back to window.<reply>.
+  static const _upd = MethodChannel('azsolo/update'); // in-app updater, answered with window.AZUPD_REPLY
+  static const _file = MethodChannel('azsolo/file');  // save files: share sheet and file picker, window.AZFILE_REPLY
+  Future<void> _bridge(MethodChannel ch, String reply, JavaScriptMessage msg) async {
     Map<String, dynamic> req;
     try { req = jsonDecode(msg.message) as Map<String, dynamic>; } catch (_) { return; }
     final id = req['id'];
     bool ok = true;
     Object? value;
     try {
-      value = await _upd.invokeMethod(req['cmd'] as String, req['args']);
+      value = await ch.invokeMethod(req['cmd'] as String, req['args']);
     } on PlatformException catch (e) {
       ok = false; value = {'code': e.code, 'message': e.message};
     } catch (e) {
       ok = false; value = {'code': 'error', 'message': e.toString()};
     }
     final payload = jsonEncode({'id': id, 'ok': ok, 'value': value});
-    _controller.runJavaScript('window.AZUPD_REPLY && window.AZUPD_REPLY(${jsonEncode(payload)})');
+    _controller.runJavaScript('window.$reply && window.$reply(${jsonEncode(payload)})');
   }
 
   @override
@@ -58,7 +59,8 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFF0E0B08))
-      ..addJavaScriptChannel('AzUpd', onMessageReceived: _onUpdMessage)
+      ..addJavaScriptChannel('AzUpd', onMessageReceived: (m) => _bridge(_upd, 'AZUPD_REPLY', m))
+      ..addJavaScriptChannel('AzFile', onMessageReceived: (m) => _bridge(_file, 'AZFILE_REPLY', m))
       ..loadFlutterAsset('assets/game/index.html');
   }
 
