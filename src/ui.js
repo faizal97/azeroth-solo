@@ -1516,6 +1516,11 @@
     wrap.append(h('button', { class: 'qstory-b', onclick: (e) => { e.stopPropagation(); ui.storyOpen = open ? null : qid; wrap.replaceWith(questStory(qid)); } }, open ? 'Less' : 'More…'));
     return wrap;
   }
+  // the dungeon or raid a quest sends you to: its group-finder name (Q.dungeon is a dungeon key)
+  function questDungeon(Q) {
+    const A = Object.values(D.ACTIVITIES).find((a) => a.dungeon === Q.dungeon) || D.ACTIVITIES[Q.dungeon];
+    return { name: A ? A.name : (D.DUNGEONS[Q.dungeon] || {}).name || 'the dungeon', raid: !!(A && A.size >= 10) };
+  }
   function questDetail(qid, npc) {
     const Q = D.QUESTS[qid];
     const st = G.questState(qid);
@@ -1529,7 +1534,7 @@
       h('h4', null, 'Objectives'),
       ...pr.map((p) => h('div', { class: 'obj tnum' + (p.have >= p.n ? ' done' : '') }, `${p.label}: ${p.have}/${p.n}`)),
       Q.group ? h('div', { class: 'obj', style: { color: '#8a1a10' } }, `Group quest (${Q.group} players). Use the group finder.`) : null,
-      Q.dungeon ? h('div', { class: 'obj', style: { color: '#8a1a10' } }, 'Dungeon quest. Queue for The Deadmines in Social.') : null,
+      Q.dungeon ? h('div', { class: 'obj', style: { color: '#8a1a10' } }, `${questDungeon(Q).raid ? 'Raid' : 'Dungeon'} quest. Queue for ${questDungeon(Q).name} in Social.`) : null,
       h('h4', null, 'Rewards'),
       h('div', { class: 'money', html: `${G.questXp(Q.lvl)} experience · ` + moneyHtml(money) }));
     if (reward) {
