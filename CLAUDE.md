@@ -38,6 +38,8 @@ cd app && JAVA_HOME=/opt/homebrew/opt/openjdk@17 flutter build apk --release
 2. Copy the APK to `~/Library/Mobile Documents/com~apple~CloudDocs/Azeroth Solo/AzerothSolo-vX.apk`, remove the previous APK there, and confirm `ubiquitousItemIsUploaded` is true.
 3. Faizal installs it from icloud.com → Recents on his phone.
 
+**Cutscene video (MP4):** `art/promo/export_cutscene.sh <chapterId> <out.mp4> [endcard.png]` records any cutscene from `dist/` (run `build.py` first) at 1080 px, 30 fps, with its music. It uses `art/promo/record_cutscene.js` (headless Chrome on virtual time, so frames are exact). Port 8777 only; never touch 8765.
+
 Smoke-test on the emulator (AVD `Medium_Phone_API_36.0`). Its software renderer draws ghost and duplicate layers, which are not real bugs.
 
 ## Rules that matter

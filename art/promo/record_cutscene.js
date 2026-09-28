@@ -28,7 +28,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   await send('Page.enable'); await send('Runtime.enable');
   await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: SCALE, mobile: true });
   await send('Page.navigate', { url: 'http://localhost:8777/' }); await sleep(2500);
-  await js(`localStorage.clear(); G.newGame({name:'Aldric',cls:'paladin',race:'human'}); G.S.player.level=12; G.S.player.story={intro:true,ch1:true}; G.S.flags.warModeAsked=true; G.save(); try{localStorage.setItem('azsolo.story', JSON.stringify(['intro','ch1']));}catch(e){} return true;`);
+  await js(`localStorage.clear(); G.newGame({name:'Aldric',cls:'paladin',race:'human'}); G.S.player.level=12; G.S.player.story={intro:true,ch1:true}; G.S.flags.warModeAsked=true; G.save(); try{localStorage.setItem('azsolo.story', JSON.stringify(['intro','ch1','${CH}']));}catch(e){} return true;`);
   await send('Page.navigate', { url: 'http://localhost:8777/' }); await sleep(2500);
   const H = `const click=(re,sel='button, .row, .chip, .mcard')=>{const e=[...document.querySelectorAll(sel)].find(b=>re.test(b.textContent.trim())); if(e) e.click(); return !!e;};`;
   await js(`${H} click(/Enter World/); await new Promise(r=>setTimeout(r,1800)); document.querySelectorAll('.dialog .btn').forEach(b=>/OK|Enter World/i.test(b.textContent)&&b.click()); return true;`);
