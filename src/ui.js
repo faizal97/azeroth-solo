@@ -231,6 +231,35 @@
     if (P.travel) return D.PLACES[P.travel.to].scene;
     return D.PLACES[P.place].scene;
   }
+  // ---------- NPCs in the scene (v9.4): drawn with the hero rig, dressed by town and title; legends use their own art
+  const hashStr = (t) => { let x = 2166136261; for (let i = 0; i < t.length; i++) { x ^= t.charCodeAt(i); x = Math.imul(x, 16777619); } return x >>> 0; };
+  const REGION_RACES = { elwynn: ['human'], westfall: ['human'], redridge: ['human'], duskwood: ['human'], dunmorogh: ['dwarf', 'gnome'], wetlands: ['dwarf', 'human'], teldrassil: ['nightelf'], ashenvale: null, durotar: ['orc', 'troll'], barrens: ['orc', 'tauren'], mulgore: ['tauren'], tirisfal: ['undead'], hillsbrad: ['undead', 'orc'], stonetalon: ['tauren', 'orc'], feralas: null, plaguelands: null, tidewatch: ['human'], skullreef: ['troll', 'undead'] };
+  const GOBLIN_TOWNS = new Set(['gadgetzan', 'everlook', 'marshals_refuge', 'nesingwary_camp']);
+  function npcLooks(npc, place) {
+    const N = D.NPCS[npc], x = hashStr(npc), t = (N.title || '') + ' ' + N.name;
+    const fac = place.faction || (D.REGIONS[place.region] || {}).faction;
+    let races = /Darkspear|Witch Doctor|Hexx|Shadow Hunter/i.test(t) ? ['troll'] : /Forsaken|Deathstalker|Executor|Apothecary|Royal Apothecary/i.test(t) ? ['undead'] : /Cenarion|Sentinel|Keeper of Lore|Moon|Feathermoon/i.test(t) ? ['nightelf'] : /Bloodhoof|Mojache|Thunder Bluff/i.test(t) ? ['tauren'] : GOBLIN_TOWNS.has(P0(place)) ? ['gnome'] : REGION_RACES[place.region];
+    if (!races) races = fac === 'horde' ? ['orc', 'troll', 'tauren', 'undead'] : ['human', 'dwarf', 'nightelf', 'gnome'];
+    const cls = /Weapon|Smith|Armorer|Guard|Grunt|Marshal|Commander|Captain|Sergeant|Watch|Soldier|Warrior/i.test(t) ? 'warrior' : /Paladin|Argent|Knight/i.test(t) ? 'paladin' : /Druid|Cenarion|Herbal/i.test(t) ? 'druid' : /Witch|Shaman|Earthen/i.test(t) ? 'shaman' : /Apothecary|Alchemist|Warlock|Demon/i.test(t) ? 'warlock' : /Priest|Healer|Innkeeper|Cleric/i.test(t) ? 'priest' : /Hunter|Stable|Scout|Tracker|Ranger/i.test(t) ? 'hunter' : /Mage|Arcan|Trainer|Lore|Scholar|Surveyor|Engineer/i.test(t) ? 'mage' : ['rogue', 'warrior', 'priest', 'mage'][x % 4];
+    const first = N.name.replace(/^(Innkeeper|Quartermaster|Marshal|Commander|Captain|Sergeant|Scout|Artisan|Stablemaster|Admiral|Scholar|Deathstalker|Hexxer|Witch Doctor|Shadow Hunter|Trader|Armorer|High Executor|Apothecary|Alchemist|Chief Engineer|Senior Surveyor|Argent Officer|Lord|Lady|Baron)\s+/i, '').split(/\s+/)[0];
+    const gender = /(a|ie|elle|ine|ette|ssa|ra|na|lyn|ith|beth)$/i.test(first) && !/^(Grunna|Ogunaro|Thrall|Rahauro)$/i.test(first) ? 'f' : 'm';
+    return { cls, race: races[(x >> 3) % races.length], skin: (x >> 7) % 4, hair: (x >> 11) % 5, gender };
+  }
+  const P0 = (place) => Object.keys(D.PLACES).find((k) => D.PLACES[k] === place);
+  function npcSprites(sc, place) {
+    if (!place || !(place.npcs || []).length) return;
+    const rank = (n) => { const mk = G.npcMarker(n); if (D.NPCS[n].legend || n === 'hooded_stranger') return -1; return mk === '?' ? 0 : mk === '!' ? 1 : /^(mentor|banker|auctioneer|crafts|stable)_/.test(n) ? 3 : 2; };
+    const list = place.npcs.filter((n) => D.NPCS[n]).slice().sort((a, b) => rank(a) - rank(b)).slice(0, place.safe ? 3 : 1);
+    const slots = place.safe ? [{ r: 4, b: 6, w: 19 }, { r: 23, b: 13, w: 16 }, { r: 11, b: 27, w: 13 }] : [{ l: 46, b: 26, w: 14 }];
+    list.forEach((n, i) => {
+      const N = D.NPCS[n], mk = G.npcMarker(n);
+      const src = n === 'hooded_stranger' && window.ART && ART.legend ? art('legend', 'lyveus_hooded') : N.legend && window.ART && ART.legend ? art('legend', N.legend) : art('hero', npcLooks(n, place));
+      const tag = h('div', { class: 'np', style: { fontSize: '9px' } }, mk ? h('span', { style: { color: mk === '…' ? '#bbb' : '#ffd100', fontWeight: 800 } }, (mk === '…' ? '?' : mk) + ' ') : null, h('span', { style: { color: '#ffd100' } }, N.name.split(' ').length > 2 ? N.name.split(' ').slice(-1)[0] : N.name));
+      const el = spriteEl(src, slots[i], 'idle flip npc tappable', tag);
+      el.addEventListener('click', () => openNpc(n));
+      sc.append(el);
+    });
+  }
   function spriteEl(src, pos, cls, np) {
     const st = { width: pos.w + '%', bottom: pos.b + '%' };
     if (pos.l != null) st.left = pos.l + '%'; else st.right = pos.r + '%';
@@ -248,7 +277,7 @@
     else for (const c of [...sc.children]) if (c !== bg && !c.classList.contains('shade')) c.remove();
     const place = D.PLACES[P.place];
     const title = S.run ? S.run.name : P.travel ? 'On the road' : place.name;
-    const sub = S.run ? S.run.pulls[Math.min(S.run.idx, S.run.pulls.length - 1)].label : P.travel ? 'to ' + D.PLACES[P.travel.to].name : place.zone;
+    const sub = S.run ? S.run.pulls[Math.min(S.run.idx, S.run.pulls.length - 1)].label : P.travel ? 'to ' + D.PLACES[P.travel.to].name + (P.route && P.route.length ? ` · then ${D.PLACES[P.route[P.route.length - 1]].name}` : '') : place.zone;
     sc.append(h('div', { class: 'zone' }, title, h('small', null, sub)));
     const C = G.fight;
     if (C) {
@@ -305,6 +334,8 @@
           el.addEventListener('click', () => G.gatherNode(nd.i));
           sc.append(el);
         });
+        // the people of this place (v9.4): quest givers first, tap to talk
+        npcSprites(sc, place);
         // a few creatures in view
         const mobs = G.placeMobs().filter((m) => m.state === 'alive').slice(0, 2);
         mobs.forEach((m, i) => {
@@ -585,7 +616,7 @@
     const chips = h('div', { class: 'chips' });
     for (const k of others.sort((x, y) => places[y] - places[x])) {
       const t = here.links && here.links[k];
-      chips.append(h('button', { class: 'chip gold', onclick: () => (t ? G.travelTo(k) : openMap()) }, D.PLACES[k].name, h('small', null, `${places[k]} quest${places[k] > 1 ? 's' : ''}${t ? ' · ' + t + 's' : ''}`)));
+      chips.append(h('button', { class: 'chip gold', onclick: () => (t ? G.travelTo(k) : routeDialog(k)) }, D.PLACES[k].name, h('small', null, `${places[k]} quest${places[k] > 1 ? 's' : ''}${t ? ' · ' + t + 's' : ''}`)));
     }
     b.append(h('div', { class: 'sec-h' }, places[P.place] ? 'More quests nearby' : 'Quests for you', h('small', null, places[P.place] ? '' : 'none left here')), chips);
   }
@@ -1275,11 +1306,22 @@
         <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#2b2f36" opacity=".8">Dun Morogh</text>
         <text x="20" y="390" font-family="Marcellus SC, serif" font-size="12" fill="#2b2f36" opacity=".8">Coldridge Valley</text>`,
   };
-  function openMap() {
-    const region0 = (D.PLACES[(G.S.player.travel && G.S.player.travel.to) || G.S.player.place] || {}).region || 'elwynn';
-    openSheet('map', D.REGIONS[region0].name, 'Tap a place next to you to travel there', (b) => {
+  // The map (v9.4): a zone view you can browse to any zone, and a world view of how the zones connect.
+  // Tapping a far place offers the whole route, travelled leg by leg (G.travelRoute).
+  function openMap(view, regionPick) {
+    ui.mapView = typeof view === 'string' ? view : 'zone'; // the nav bar passes its click event
+    ui.mapRegion = typeof regionPick === 'string' ? regionPick : null;
+    openSheet('map', 'Map', 'Tap a place to travel there', (b, title) => {
       const P = G.S.player;
-      const region = (D.PLACES[(P.travel && P.travel.to) || P.place] || {}).region || 'elwynn';
+      const hereRegion = (D.PLACES[(P.travel && P.travel.to) || P.place] || {}).region || 'elwynn';
+      const tabs = h('div', { class: 'tabs' },
+        h('button', { class: ui.mapView === 'zone' ? 'on' : '', onclick: () => { ui.mapView = 'zone'; ui.sheetFn(); } }, 'Zone'),
+        h('button', { class: ui.mapView === 'world' ? 'on' : '', onclick: () => { ui.mapView = 'world'; ui.sheetFn(); } }, 'World'));
+      b.append(tabs);
+      if (ui.mapView === 'world') return worldMap(b, title, hereRegion);
+      const region = ui.mapRegion && MAPS[ui.mapRegion] ? ui.mapRegion : hereRegion;
+      title.firstChild.textContent = D.REGIONS[region].name;
+      if (region !== hereRegion) b.append(h('div', { class: 'chips' }, h('button', { class: 'chip', onclick: () => { ui.mapRegion = null; ui.sheetFn(); } }, '← Back to ' + D.REGIONS[hereRegion].name)));
       const MAP = MAPS[region];
       const cur = P.travel ? null : P.place;
       const lines = [], nodes = [];
@@ -1319,14 +1361,66 @@
       m.addEventListener('click', (e) => {
         const g = e.target.closest('[data-go]'); if (!g) return;
         const to = g.dataset.go;
-        if (cur && D.PLACES[cur].links[to]) { G.travelTo(to); closeSheet(); }
-        else if (to !== cur) toast('Too far. Travel through the places next to you.');
+        if (to === cur) return;
+        if (cur && D.PLACES[cur].links[to] && !G.enemyTown(to)) { G.travelTo(to); closeSheet(); return; }
+        routeDialog(to);
       });
       const far = h('div', { class: 'chips' });
       for (const a in MAP) for (const c in D.PLACES[a].links) if (!MAP[c] && !G.enemyTown(a) && !G.enemyTown(c)) far.append(h('button', { class: 'chip gold', onclick: () => { if (cur === a) { G.travelTo(c); closeSheet(); } else toast(`Go to ${D.PLACES[a].name} first.`); } }, `${D.PLACES[a].name} → ${D.PLACES[c].name}`, h('small', null, ((D.PLACES[a].via || {})[c] || 'Road') + ' · ' + G.travelSecs(a, c) + 's')));
-      if (far.childNodes.length) b.append(far);
-      b.append(m, h('div', { style: { color: 'var(--muted)', fontSize: '13px' } }, 'Gold: you are here. ! marks places your quests need. Level ranges are coloured by difficulty.'));
+      b.append(m, h('div', { style: { color: 'var(--muted)', fontSize: '13px' } }, 'Gold: you are here. ! marks places your quests need. Tap any place for the way there.'));
+      // roads out of this zone, under the map so they never push it down
+      if (far.childNodes.length) b.append(h('div', { class: 'sec-h' }, 'Roads out of ' + D.REGIONS[region].name), far);
     });
+  }
+
+  function routeDialog(to) {
+    const P = G.S.player, pl = D.PLACES[to];
+    if (P.travel) return toast('You are already on the road.');
+    const r = G.route(P.place, to);
+    if (!r) return showDialog([h('h3', null, pl.name), h('p', null, G.enemyTown(to) ? `${pl.name} is an enemy town. The guards would kill you on sight.` : `There's no way to ${pl.name} from here.`), h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: closeDialog }, 'OK'))], true);
+    const steps = r.path.slice(1).map((p, i) => { const a = r.path[i]; const via = (D.PLACES[a].via || {})[p]; return h('div', { class: 'obj' }, `${i + 1}. ${D.PLACES[p].name}`, h('small', { style: { color: 'var(--muted)' } }, ` · ${D.PLACES[p].zone}${via ? ' · ' + via : ''} · ${G.travelSecs(a, p)} s`)); });
+    showDialog([h('h3', null, 'Route to ' + pl.name), h('p', null, `${pl.zone} · levels ${pl.lvl[0]}–${pl.lvl[1]} · ${r.path.length - 1} stop${r.path.length > 2 ? 's' : ''}, about ${r.secs} s`), ...steps,
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); closeSheet(); G.travelRoute(to); } }, 'Go'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true);
+  }
+  // the world: every zone, where it sits, and how the zones connect
+  const WORLD = {
+    tirisfal: [44, 44], plaguelands: [124, 44], hillsbrad: [58, 100], arathi: [132, 112], wetlands: [100, 158], dunmorogh: [52, 204], steppes: [134, 214],
+    elwynn: [62, 264], redridge: [140, 264], westfall: [36, 320], duskwood: [110, 320], stranglethorn: [72, 384],
+    teldrassil: [236, 40], winterspring: [306, 66], ashenvale: [246, 108], stonetalon: [204, 154], durotar: [308, 154], barrens: [270, 208], mulgore: [214, 250],
+    feralas: [210, 310], tanaris: [298, 322], ungoro: [254, 380], tidewatch: [118, 458], stormveil: [196, 486], skullreef: [274, 458],
+  };
+  function worldMap(b, title, hereRegion) {
+    title.firstChild.textContent = 'Azeroth';
+    const P = G.S.player, my = G.myFaction();
+    const edges = {}, lines = [], nodes = [];
+    for (const k in D.PLACES) { const p = D.PLACES[k]; for (const l in p.links) { const a = p.region, c = D.PLACES[l].region; if (a && c && a !== c && WORLD[a] && WORLD[c]) { const key = [a, c].sort().join('|'); const via = (p.via || {})[l]; if (!edges[key] || (via && edges[key] === 'road')) edges[key] = via || 'road'; } } }
+    for (const key in edges) {
+      const [a, c] = key.split('|'); const [x1, y1] = WORLD[a], [x2, y2] = WORLD[c];
+      const road = /road|pass|wall|span/i.test(edges[key]);
+      lines.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${road ? '#8a6a3a' : '#5a7a9a'}" stroke-width="${road ? 3 : 2}" stroke-dasharray="${road ? '6 5' : '2 5'}" stroke-linecap="round" opacity=".9"/>`);
+    }
+    const lv = (r) => { let a = 99, c = 0; for (const k in D.PLACES) { const p = D.PLACES[k]; if (p.region === r && p.lvl) { a = Math.min(a, p.lvl[0]); c = Math.max(c, p.lvl[1]); } } return a <= c ? `${a}–${c}` : ''; };
+    for (const r in WORLD) {
+      if (!D.REGIONS[r]) continue;
+      const [x, y] = WORLD[r], R = D.REGIONS[r], here = r === hereRegion;
+      const col = R.faction === 'contested' ? '#c9a23a' : R.faction === my ? '#4f8a3a' : R.faction ? '#9a3a2a' : '#6a6a5a';
+      const been = Object.keys(D.PLACES).some((k) => D.PLACES[k].region === r && P.visited[k]);
+      nodes.push(`<g data-region="${r}" style="cursor:pointer">
+        <circle cx="${x}" cy="${y}" r="${here ? 12 : 9}" fill="${col}" stroke="${here ? '#f0c75e' : '#1a1208'}" stroke-width="${here ? 4 : 3}" opacity="${been || here ? 1 : 0.7}"/>
+        <text x="${x}" y="${y + 22}" text-anchor="middle" font-family="Alegreya Sans, sans-serif" font-weight="800" font-size="11" fill="${here ? '#ffd100' : '#f3e6c6'}" stroke="#120c05" stroke-width="3" paint-order="stroke">${esc(R.name)}</text>
+        <text x="${x}" y="${y + 34}" text-anchor="middle" font-family="Alegreya Sans, sans-serif" font-weight="700" font-size="10" fill="#bba" stroke="#120c05" stroke-width="3" paint-order="stroke">${lv(r)}</text></g>`);
+    }
+    const svg = `<svg viewBox="0 0 340 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="World map">
+      <rect width="340" height="520" rx="6" fill="#1d3a4e"/>
+      <path d="M12 26 C70 6 160 24 170 74 C182 150 158 250 164 330 C170 410 120 428 64 412 C4 392 0 250 12 150 Z" fill="#4a5a34" opacity=".85"/>
+      <path d="M190 22 C260 6 332 24 334 96 C338 200 332 300 322 370 C302 412 226 414 196 370 C180 300 184 200 184 120 Z" fill="#6a5a34" opacity=".85"/>
+      <ellipse cx="196" cy="468" rx="112" ry="32" fill="#3f6a58" opacity=".85"/>
+      <text x="88" y="16" text-anchor="middle" font-family="Marcellus SC, serif" font-size="11" fill="#cfe0e8" opacity=".75">Eastern Kingdoms</text>
+      <text x="262" y="16" text-anchor="middle" font-family="Marcellus SC, serif" font-size="11" fill="#cfe0e8" opacity=".75">Kalimdor</text><text x="196" y="432" text-anchor="middle" font-family="Marcellus SC, serif" font-size="10" fill="#cfe0e8" opacity=".75">The Stormveil Isle</text>
+      ${lines.join('')}${nodes.join('')}</svg>`;
+    const m = h('div', { class: 'map', html: svg });
+    m.addEventListener('click', (e) => { const g = e.target.closest('[data-region]'); if (!g) return; ui.mapView = 'zone'; ui.mapRegion = g.dataset.region; ui.sheetFn(); });
+    b.append(m, h('div', { style: { color: 'var(--muted)', fontSize: '13px' } }, 'Green: your faction · red: the enemy\'s · gold: contested. Brown dashes are roads, blue dots are ships and flights. Tap a zone to open it, then tap a place for the way there.'));
   }
 
   // ---------- quests
@@ -1536,7 +1630,7 @@
       const sel = P.bags[ui.bagSel];
       if (sel) {
         const it = sel.item;
-        const acts = h('div', { class: 'btn-row', style: { marginTop: '8px' } });
+        const acts = h('div', { class: 'btn-row' });
         if (D.GEAR_SLOTS.includes(it.slot)) acts.append(h('button', { class: 'btn', disabled: !G.canUseItem(it) || it.lvl > P.level, onclick: () => { G.equip(ui.bagSel); ui.bagSel = null; ui.sheetFn(); } }, 'Equip'));
         if (it.slot === 'food' || it.slot === 'drink') acts.append(h('button', { class: 'btn', onclick: () => { G.consume(it.slot); closeSheet(); } }, 'Use'));
         if (G.usable(it)) acts.append(h('button', { class: 'btn', onclick: () => { G.useItem(ui.bagSel); ui.bagSel = null; ui.sheetFn(); } }, it.slot === 'bag' ? 'Equip bag' : it.slot === 'recipe' ? 'Learn' : 'Use'));
@@ -1545,9 +1639,15 @@
         if (vendorHere && !it.noSell && it.slot !== 'quest') acts.append(h('button', { class: 'btn alt', onclick: () => { G.sell(ui.bagSel); ui.bagSel = null; ui.sheetFn(); } }, 'Sell'));
         if (!it.noSell && it.slot !== 'quest' && !vendorHere) acts.append(h('div', { style: { color: 'var(--muted)', fontSize: '13px', alignSelf: 'center' } }, 'Sell it at a vendor.'));
         const cur = P.equip[it.slot];
-        b.append(itemTip(it, acts));
+        // the buttons stay pinned to the bottom of the sheet, so selling never needs a scroll (v9.4)
+        const price = !it.noSell && it.slot !== 'quest' ? h('small', { html: ' · sells for ' + moneyHtml((it.sell || 1) * sel.n) }) : null;
+        b.append(h('div', { class: 'bag-acts' }, h('div', { class: 'bag-acts-t' }, h('b', { class: 'q' + (it.q || 0) }, it.name + (sel.n > 1 ? ' x' + sel.n : '')), price), acts));
+        b.append(itemTip(it));
         if (cur && D.GEAR_SLOTS.includes(it.slot)) b.append(h('div', { class: 'sec-h' }, 'Currently equipped'), itemTip(cur));
       } else b.append(h('p', { style: { color: 'var(--muted)', margin: 0 } }, 'Tap an item to inspect it. A green arrow means an upgrade.'));
+      const vendorNow = D.PLACES[P.place].vendor || D.PLACES[P.place].gearVendor;
+      const junk = P.bags.filter((x) => x.item.q === 0 && !x.item.noSell).length;
+      if (vendorNow && junk) b.append(h('button', { class: 'btn alt wide', onclick: () => { G.sellJunk(); ui.bagSel = null; ui.sheetFn(); } }, `Sell all grey items (${junk})`));
     });
   }
 
@@ -1870,7 +1970,7 @@
       const A = D.ACTIVITIES[r.act], Dg = D.DUNGEONS[A.dungeon];
       const marks = `${10 + (r.firstTimers ? 5 : 0) + (r.startIdx ? 3 : 0)}–${15 + (r.firstTimers ? 5 : 0) + (r.startIdx ? 3 : 0)} Marks`;
       b.append(h('div', { class: 'row hw', style: { gridTemplateColumns: '34px 1fr auto' } },
-        h('div', { class: 'ic mob' }, img(mobArt(A.boss || 'vancleef'))),
+        h('div', { class: 'ic mob' }, img(mobArt(A.boss || finalBoss(A) || 'vancleef'))),
         h('div', { class: 't' }, h('b', null, `${A.name} needs a ${r.role === 'dps' ? 'damage dealer' : r.role}`),
           h('small', { style: { whiteSpace: 'normal' } }, `${r.posterName}: ${r.startIdx ? 'stuck on ' + Dg.pulls[r.startIdx].label : 'full run'}${r.firstTimers ? ' · first-timers' : ''} · ${marks} · ${Math.ceil((r.expires - Date.now()) / 60000)} min left`)),
         h('button', { class: 'chip gold', disabled: !!S.queue, onclick: () => { closeSheet(); G.joinHelpWanted(r.id); renderAll(); } }, 'Help')));
@@ -1879,7 +1979,7 @@
     const rr = G.rouletteReady(), ropts = G.rouletteOptions();
     b.append(h('div', { class: 'sec-h' }, 'Dungeon Roulette', h('small', null, rr ? 'once a day' : 'done today')),
       h('div', { class: 'row', style: { gridTemplateColumns: '1fr auto' } },
-        h('div', { class: 't' }, h('b', null, 'A random dungeon, with bonus rewards'), h('small', { style: { whiteSpace: 'normal' } }, ropts.length ? `+15 Mentor Marks, a bonus blue and gold on top of the usual loot. From: ${ropts.map((k) => D.ACTIVITIES[k].name).join(', ')}.` : 'Reach a dungeon\'s level to join.')),
+        h('div', { class: 't' }, h('b', null, 'A random dungeon, with bonus rewards'), h('small', { style: { whiteSpace: 'normal' } }, ropts.length ? `+15 Mentor Marks, a bonus blue and gold on top of the usual loot. Picks one of ${ropts.length} dungeon${ropts.length > 1 ? 's' : ''} you can reach.` : 'Reach a dungeon\'s level to join.')),
         h('button', { class: 'chip gold', disabled: !rr || !ropts.length || !!S.queue, onclick: () => { closeSheet(); G.startRoulette(); renderAll(); } }, rr ? 'Go' : 'Tomorrow')));
     b.append(h('div', { class: 'sec-h' }, 'Group Finder', h('small', null, 'queue from the zone')));
     for (const k in D.ACTIVITIES) {
@@ -1889,7 +1989,7 @@
       const queued = S.queue && S.queue.act === k;
       const synced = !why && P.level > A.maxLvl ? ` · you are synced to level ${A.maxLvl}` : '';
       b.append(h('div', { class: 'row', style: { gridTemplateColumns: '34px 1fr auto' } },
-        h('div', { class: 'ic mob' }, img(mobArt(A.boss || 'vancleef'))),
+        h('div', { class: 'ic mob' }, img(mobArt(A.boss || finalBoss(A) || 'vancleef'))),
         h('div', { class: 't' }, h('b', null, A.name, h('span', { style: { color: 'var(--muted)', fontWeight: 400 } }, `  ${A.minLvl}–${A.maxLvl}`)), h('small', { style: why ? { color: '#ff8a6a' } : null }, why || A.desc + synced)),
         queued ? h('button', { class: 'chip', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave') : h('button', { class: 'chip gold', disabled: !!why || !!S.queue, onclick: () => { G.queueFor(k); ui.sheetFn(); } }, 'Queue')));
     }
@@ -1899,6 +1999,12 @@
       b.append(h('div', { class: 'sec-h' }, 'Your role'), rr);
     }
     b.append(h('p', { style: { color: 'var(--muted)', fontSize: '13px', margin: 0 } }, `You queue as ${G.role() === 'tank' ? 'a Tank' : G.role() === 'healer' ? 'a Healer' : 'Damage'}. Tanks and healers get groups faster.`));
+  }
+  // a dungeon's picture in the group finder is its last boss
+  function finalBoss(A) {
+    const Dg = A.dungeon && D.DUNGEONS[A.dungeon]; if (!Dg) return null;
+    const bosses = Dg.pulls.filter((p) => p.boss); const last = bosses[bosses.length - 1];
+    return last ? last.mobs[0] : null;
   }
   function chatTab(b) {
     const tabs = h('div', { class: 'tabs' });

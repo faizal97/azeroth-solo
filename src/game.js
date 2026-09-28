@@ -671,8 +671,36 @@
     loot(`You bought a ${M.name}. Every road is 40% faster now.`); emit('change'); G.save();
   };
   G.setMount = function (key) { const P = G.S.player; if (key && !(P.mounts || []).includes(key)) return; P.mount = key || null; emit('change'); G.save(); };
-  G.travelTo = function (dest) {
+  // Routes (v9.4): the quickest way to any place you can reach, skipping enemy towns. { path: [from, ..., to], secs }
+  G.route = function (from, to) {
+    if (from === to || !D.PLACES[to] || G.enemyTown(to)) return null;
+    const dist = { [from]: 0 }, prev = {}, done = new Set();
+    const open = [from];
+    while (open.length) {
+      open.sort((a, b) => dist[a] - dist[b]);
+      const a = open.shift(); if (done.has(a)) continue; done.add(a);
+      if (a === to) break;
+      for (const b in D.PLACES[a].links) {
+        if (done.has(b) || (G.enemyTown(b) && b !== to)) continue;
+        const d = dist[a] + (G.travelSecs(a, b) || D.PLACES[a].links[b]);
+        if (dist[b] == null || d < dist[b]) { dist[b] = d; prev[b] = a; open.push(b); }
+      }
+    }
+    if (dist[to] == null) return null;
+    const path = [to]; while (path[0] !== from) path.unshift(prev[path[0]]);
+    return { path, secs: Math.round(dist[to]) };
+  };
+  // Travel a whole route: one leg now, the rest as each leg ends (a fight or a manual trip cancels it).
+  G.travelRoute = function (dest) {
+    const P = G.S.player;
+    const r = G.route(P.place, dest);
+    if (!r) return toast(`There's no way from here to ${D.PLACES[dest].name}.`);
+    G.travelTo(r.path[1]);
+    if (P.travel) { P.route = r.path.slice(2); if (P.route.length) sys(`Route to ${D.PLACES[dest].name}: ${r.path.slice(1).map((p) => D.PLACES[p].name).join(' → ')}.`); }
+  };
+  G.travelTo = function (dest, keepRoute) {
     const S = G.S, P = S.player;
+    if (!keepRoute) P.route = null;
     if (G.fight || S.run) return toast('You can\'t travel right now.');
     if (P.ghostUntil) return;
     const from = D.PLACES[P.place];
@@ -728,6 +756,11 @@
     if (P.travel && t >= P.travel.end) {
       P.place = P.travel.to; P.travel = null;
       arrive();
+      // the next leg of a route
+      if (P.route && P.route.length) {
+        if (G.fight || S.run || P.ghostUntil) { P.route = null; sys('Route interrupted.'); }
+        else G.travelTo(P.route.shift(), true);
+      }
     }
     if (P.casting && t >= P.casting.end) {
       const c = P.casting; P.casting = null;

@@ -134,6 +134,13 @@ Hand-made characters with their own story, a questline across the levels, and a 
 - **v9.2.0:** before 37 he is a Hooded Wanderer. From level 15 he may step into a hard solo fight (at most once an hour and 3 times per zone). At 17–18 the Hooded Stranger gives one quest: at Sentinel Hill for the Alliance, the Crossroads for the Horde. At the lodge he pulls back the hood. His lore cutscene (Deathwing "Astaroth", the caravan, Vyn, the cabal, the fire) is in the Theater under Legends, unlocked from the start. He stays neutral (his call, 2026-09-28).
 - Parked: the friends feature (friends' real characters appear in your world as bot-played players, via a small free backend and friend codes).
 
+## v9.4.0 fixes (his list, 2026-09-28)
+- The group finder shows each dungeon's last boss, not VanCleef for all.
+- Bags: the selected item's buttons (Use, Equip, Sell) are pinned to the bottom of the sheet, plus "Sell all grey items" at vendors.
+- The map: roads out of the zone moved under the map. Zone and World tabs; the World view shows every zone and how they connect. Tapping any place, near or far, offers the route (G.route, fastest path, skipping enemy towns), and Go travels it leg by leg (G.travelRoute; a fight cancels it).
+- NPCs are drawn in the scene: up to 3 in towns, legends and the Hooded Stranger first, then quest givers. They're dressed by town and title (npcLooks), and tapping one opens them.
+- Fix: sheet rows no longer collapse when a sheet overflows (the Map and Social tabs were invisible).
+
 ## Group finder rules (agreed 2026-09-27)
 
 - **Be there:** any faction may run any dungeon or world elite, but you queue from its zone. Places with no road from where you are stay hidden; they appear when roads between the factions open in the contested zones.
