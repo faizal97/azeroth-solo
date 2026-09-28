@@ -100,7 +100,7 @@ A term here may not appear in any text a player can read below its level. "Allow
 |---|---|---|---|
 | `Onyxia` | 60 | Lady Prestor is the dragon Onyxia | |
 | `daughter of Deathwing` | 60 | Prestor's true parentage | |
-| `Prestor.{0,60}(dragon\|Deathwing\|wyrm)\|(dragon\|Deathwing\|wyrm).{0,60}Prestor` | 60 | Prestor is a dragon | |
+| `Prestor.{0,60}(\bdragon\|Deathwing\|wyrm)\|(\bdragon\|Deathwing\|wyrm).{0,60}Prestor` | 60 | Prestor is a dragon (a whole word, so "Fordragon" doesn't count) | |
 | `Nefarius.{0,60}Nefarian\|Nefarian.{0,60}Nefarius` | 60 | Victor Nefarius is Nefarian | |
 | `Windsor.{0,40}(alive\|in chains\|prisoner\|cell)` | 40 | Windsor survived the mountain | |
 | `Windsor.{0,40}(free\|escaped\|walks out)` | 60 | Windsor is freed | |
@@ -151,3 +151,9 @@ Proper names used in the story that are not already the name of an NPC, creature
 - **Deeprun Tram / Deeprun / Tram** — the tunnel train between Stormwind and Ironforge
 - **Imperial Seat / Seat / Throne** — Thaurissan's throne room in Blackrock Depths; also the thorn throne of Razorfen Kraul
 - **Isle** — as in Stormveil Isle
+- **Third War** — the war four to five years ago: the plague, the Scourge, the Legion's defeat
+- **Sundering** — the breaking of the world when the Well of Eternity exploded, ten thousand years ago
+- **Lyceum** — the Dark Iron's hall of learning in Blackrock Depths
+- **Scarlet Bastion** — the Crusade's stronghold in Stratholme
+- **King's Square** — the old market square of Stratholme
+- **Lion's Pride** — the inn at Goldshire

@@ -89,12 +89,27 @@ if (D.XP_TO_LEVEL.length <= D.LEVEL_CAP) err(`XP_TO_LEVEL stops before the level
 // no data file may redefine a key an earlier file added (a quest, item or mob with the same id silently replaces the first one)
 {
   const ctx = { localStorage: globalThis.localStorage }; ctx.globalThis = ctx; ctx.window = undefined; vm.createContext(ctx);
-  const TABLES = ['MOBS', 'PLACES', 'NPCS', 'QUESTS', 'ITEMS', 'ACTIVITIES', 'DUNGEONS', 'RECIPES'];
+  const TABLES = ['MOBS', 'PLACES', 'NPCS', 'QUESTS', 'ITEMS', 'ACTIVITIES', 'DUNGEONS', 'RECIPES', 'LORE'];
   for (const f of require(path.join(ROOT, 'src/data/files.json'))) {
     const before = {}; for (const t of TABLES) before[t] = Object.assign({}, (ctx.D || {})[t] || {});
     vm.runInContext(fs.readFileSync(path.join(ROOT, 'src/data', f), 'utf8'), ctx);
     for (const t of TABLES) for (const k in ((ctx.D || {})[t] || {})) if (before[t][k] && before[t][k] !== ctx.D[t][k]) err(`${f}: redefines ${t}.${k}, which an earlier file defines`);
   }
+}
+
+// Lore Journal pages: each needs text and exactly one unlock that points at something real
+const zonesSeen = new Set(Object.values(D.PLACES).map((p) => p.zone));
+for (const [k, E] of Object.entries(D.LORE || {})) {
+  if (!E.title || !Array.isArray(E.text) || !E.text.length) err(`lore ${k}: needs a title and text`);
+  if (!['story', 'legend', 'dungeon', 'zone', 'book'].includes(E.section)) err(`lore ${k}: unknown section '${E.section}'`);
+  if (E.dungeon && !D.DUNGEONS[E.dungeon]) err(`lore ${k}: unknown dungeon '${E.dungeon}'`);
+  if (E.zone && !zonesSeen.has(E.zone)) err(`lore ${k}: no place is in zone '${E.zone}'`);
+  if (E.quest && !D.QUESTS[E.quest]) err(`lore ${k}: unknown quest '${E.quest}'`);
+  for (const b in E.bosses || {}) {
+    const inDg = E.dungeon && D.DUNGEONS[E.dungeon] && D.DUNGEONS[E.dungeon].pulls.some((pl) => pl.boss && pl.mobs.includes(b));
+    if (!inDg) err(`lore ${k}: boss '${b}' is not a boss of ${E.dungeon}`);
+  }
+  if (E.dungeon) { const miss = D.DUNGEONS[E.dungeon] ? D.DUNGEONS[E.dungeon].pulls.filter((pl) => pl.boss).map((pl) => pl.mobs[0]).filter((b) => !(E.bosses || {})[b]) : []; if (miss.length) warn.push(`lore ${k}: no note for boss ${miss.join(', ')}`); }
 }
 
 const n = (t) => Object.keys(D[t]).length;

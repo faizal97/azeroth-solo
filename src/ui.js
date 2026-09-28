@@ -1104,6 +1104,7 @@
     const b = els.nav.querySelector('[data-nav="quests"]'); if (b) b.classList.toggle('dot', q);
     const s = els.nav.querySelector('[data-nav="social"]'); if (s) s.classList.toggle('dot', !!(G.S.queue && G.S.queue.popped));
     const hb = els.nav.querySelector('[data-nav="hero"]'); if (hb) hb.classList.toggle('dot', G.talentPoints(G.S.player).free > 0 || loreUnread() > 0);
+    loreNotice();
   }
 
   // ============================================================ sheets / dialogs
@@ -2239,47 +2240,101 @@
       setMusic: (m) => { ui.csMusic = m; G.paused = !!m || !!(window.CS && CS.playing); },
     }).then(() => { G.paused = false; P.story = P.story || {}; P.story[id] = true; G.save(); if (ch.then && CS.byId(ch.then) && !CS.unlocked().has(ch.then)) ui.pendingChapter = ch.then; });
   }
-  // ---------- Lore Journal (src/data/lore.js): story recaps and Legend pages, readable at your own pace
+  // ---------- Lore Journal (src/data/lore*.js): story recaps, Legends, dungeons (first clear) and zones (first visit)
   const LORE_READ = 'azsolo.loreread';
   const loreRead = () => { try { return new Set(JSON.parse(localStorage.getItem(LORE_READ) || '[]')); } catch (e) { return new Set(); } };
   function markLoreRead(k) { const s = loreRead(); if (s.has(k)) return; s.add(k); try { localStorage.setItem(LORE_READ, JSON.stringify([...s])); } catch (e) { } }
+  let zonePlaces = null; // zone name -> its place ids, built once
+  const placesOf = (zone) => { if (!zonePlaces) { zonePlaces = {}; for (const [k, p] of Object.entries(D.PLACES)) (zonePlaces[p.zone] = zonePlaces[p.zone] || []).push(k); } return zonePlaces[zone] || []; };
+  const dungeonActs = (dg) => Object.keys(D.ACTIVITIES).filter((a) => D.ACTIVITIES[a].dungeon === dg);
+  function loreLvl(E) {
+    if (E.lvl != null) return E.lvl;
+    if (E.dungeon) return Math.min(...dungeonActs(E.dungeon).map((a) => D.ACTIVITIES[a].minLvl), 60);
+    if (E.zone) return Math.min(...placesOf(E.zone).map((k) => (D.PLACES[k].lvl || [1])[0]), 60);
+    return 1;
+  }
   function loreOpen(k) {
-    const E = (D.LORE || {})[k]; if (!E) return false;
+    const E = (D.LORE || {})[k]; if (!E || !G.S) return false;
+    const P = G.S.player;
     if (E.open) return true;
-    if (E.quest) return !!(G.S && G.S.player.done[E.quest]);
+    if (E.quest) return !!P.done[E.quest];
+    if (E.dungeon) return dungeonActs(E.dungeon).some((a) => ((P.codex || {})[a] || {}).clears > 0);
+    if (E.zone) return placesOf(E.zone).some((k2) => P.visited && P.visited[k2]);
+    if (E.book) return !!(P.books && P.books[k]);
     return !!(E.chapter && window.CS && CS.unlocked().has(E.chapter));
+  }
+  // pages for places you can never reach (the other faction's dungeons and cities) are left out of the list
+  function loreVisible(k) {
+    const E = D.LORE[k]; if (loreOpen(k)) return true;
+    if (E.dungeon) return dungeonActs(E.dungeon).some((a) => G.activityBlock(a) !== 'hidden');
+    if (E.zone) return placesOf(E.zone).some((pl) => pl === G.S.player.place || G.canReach(G.S.player.place, pl));
+    return true;
   }
   const loreKeys = () => Object.keys(D.LORE || {});
   const loreUnread = () => { const r = loreRead(); return loreKeys().filter((k) => loreOpen(k) && !r.has(k)).length; };
   function loreHint(E) {
     if (E.quest) return 'Finish the story of this Legend to unlock.';
+    if (E.dungeon) return 'Clear it once to unlock.';
+    if (E.zone) return 'Travel there to unlock.';
+    if (E.book) return 'Found somewhere in the world.';
     const ch = window.CS && CS.byId(E.chapter);
     return ch && ch.level ? `Unlocks with the chapter at level ${ch.level}.` : 'Unlocks as the story goes on.';
   }
+  // a toast when a page opens during play (not for the pages you already had when you logged in)
+  function loreNotice() {
+    if (!G.S) return;
+    const open = loreKeys().filter(loreOpen);
+    if (!ui.loreSeen || ui.loreSeenFor !== G.S.id) { ui.loreSeen = new Set(open); ui.loreSeenFor = G.S.id; return; }
+    for (const k of open) if (!ui.loreSeen.has(k)) { ui.loreSeen.add(k); toast(`New in your Lore Journal: ${D.LORE[k].title}`, true); }
+  }
+  const LORE_TABS = [['story', 'Story', ['story', 'legend']], ['dungeon', 'Dungeons', ['dungeon']], ['zone', 'Zones', ['zone']], ['book', 'Library', ['book']]];
   function openLore(key) {
     ui.loreKey = key || null;
     openSheet('lore', 'Lore Journal', 'The story so far, to read at your own pace', (b) => {
       const k = ui.loreKey, E = k && D.LORE[k];
+      const tabOf = (sec) => (LORE_TABS.find((t) => t[2].includes(sec)) || LORE_TABS[0])[0];
+      if (E) ui.loreTab = tabOf(E.section);
+      ui.loreTab = ui.loreTab || 'story';
+      const read = loreRead();
+      const tabs = h('div', { class: 'tabs' });
+      for (const [t, label, secs] of LORE_TABS) {
+        const keys = loreKeys().filter((x) => secs.includes(D.LORE[x].section)); if (!keys.length) continue;
+        const fresh = keys.some((x) => loreOpen(x) && !read.has(x));
+        tabs.append(h('button', { class: ui.loreTab === t ? 'on' : '', onclick: () => { ui.loreTab = t; ui.loreKey = null; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } }, label, fresh ? h('span', { class: 'tab-dot' }) : null));
+      }
+      b.append(h('div', { class: 'sheet-stick' }, tabs));
+      const tab = LORE_TABS.find((t) => t[0] === ui.loreTab) || LORE_TABS[0];
+      const inTab = loreKeys().filter((x) => tab[2].includes(D.LORE[x].section) && loreVisible(x));
+      if (tab[0] !== 'story') inTab.sort((x, y) => loreLvl(D.LORE[x]) - loreLvl(D.LORE[y]));
       if (E && loreOpen(k)) {
         markLoreRead(k); renderNavDots();
-        const open = loreKeys().filter(loreOpen), i = open.indexOf(k);
-        b.append(h('div', { class: 'lore-page' }, h('h3', null, E.title), ...E.text.map((p) => h('p', null, p))),
-          h('div', { class: 'btn-row' },
-            h('button', { class: 'btn alt', disabled: i <= 0, onclick: () => { ui.loreKey = open[i - 1]; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } }, '‹ Previous'),
-            h('button', { class: 'btn alt', onclick: () => { ui.loreKey = null; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } }, 'All pages'),
-            h('button', { class: 'btn alt', disabled: i < 0 || i >= open.length - 1, onclick: () => { ui.loreKey = open[i + 1]; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } }, 'Next ›')));
+        const open = inTab.filter(loreOpen), i = open.indexOf(k);
+        const page = h('div', { class: 'lore-page' }, h('h3', null, E.title), ...E.text.map((p) => h('p', null, p)));
+        if (E.bosses) {
+          page.append(h('div', { class: 'sec-h' }, 'Who waits inside'));
+          const list = h('div', { class: 'lore-bosses' });
+          for (const [mob, note] of Object.entries(E.bosses)) list.append(h('div', { class: 'lore-boss' }, h('div', { class: 'ic mob' }, img(mobArt(mob))), h('div', null, h('b', null, D.MOBS[mob] ? D.MOBS[mob].name : mob), h('p', null, note))));
+          page.append(list);
+        }
+        b.append(page, h('div', { class: 'btn-row' },
+          h('button', { class: 'btn alt', disabled: i <= 0, onclick: () => { ui.loreKey = open[i - 1]; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } }, '‹ Previous'),
+          h('button', { class: 'btn alt', onclick: () => { ui.loreKey = null; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } }, 'All pages'),
+          h('button', { class: 'btn alt', disabled: i < 0 || i >= open.length - 1, onclick: () => { ui.loreKey = open[i + 1]; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } }, 'Next ›')));
         return;
       }
-      const read = loreRead();
-      for (const [sec, label] of [['story', 'The Story'], ['legend', 'Legends']]) {
-        const keys = loreKeys().filter((x) => D.LORE[x].section === sec); if (!keys.length) continue;
-        b.append(h('div', { class: 'sec-h' }, label, h('small', null, `${keys.filter(loreOpen).length}/${keys.length} pages`)));
+      const L = G.S.player.level;
+      const groups = tab[0] === 'story' ? [['story', 'The Story'], ['legend', 'Legends']] : [[null, null]];
+      for (const [sec, label] of groups) {
+        const keys = inTab.filter((x) => !sec || D.LORE[x].section === sec); if (!keys.length) continue;
+        b.append(h('div', { class: 'sec-h' }, label || tab[1], h('small', null, `${keys.filter(loreOpen).length}/${keys.length} pages`)));
         const list = h('div', { class: 'list' });
         for (const x of keys) {
           const P = D.LORE[x], on = loreOpen(x);
+          // a locked dungeon or zone keeps its name once you are near its level; story pages stay hidden
+          const named = on || ((P.dungeon || P.zone) && L >= loreLvl(P) - 5);
           list.append(h('button', { class: 'row' + (on ? '' : ' locked'), onclick: () => { if (!on) return toast(loreHint(P)); ui.loreKey = x; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } },
-            h('div', { class: 'ic' }, on ? img(art('icon', 'journal')) : h('span', { class: 'mark grey' }, '·')),
-            h('div', { class: 't' }, h('b', null, on ? P.title : '???'), h('small', { style: { whiteSpace: 'normal' } }, on ? P.text[0].split('. ')[0] + '.' : loreHint(P))),
+            h('div', { class: 'ic' + (P.dungeon ? ' mob' : '') }, on ? img(P.dungeon && P.bosses ? mobArt(Object.keys(P.bosses).pop()) : art('icon', 'journal')) : h('span', { class: 'mark grey' }, '·')),
+            h('div', { class: 't' }, h('b', null, named ? P.title : '???'), h('small', { style: { whiteSpace: 'normal' } }, on ? P.text[0].split('. ')[0] + '.' : (P.dungeon || P.zone) ? `Level ${loreLvl(P)}. ${loreHint(P)}` : loreHint(P))),
             h('div', { class: 'r' }, on && !read.has(x) ? h('span', { class: 'chip gold', style: { minHeight: 0, padding: '2px 6px' } }, 'New') : on ? 'Read' : 'Locked')));
         }
         b.append(list);

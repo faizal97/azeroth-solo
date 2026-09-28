@@ -51,7 +51,14 @@ for (const c of CS.CHAPTERS) {
 }
 for (const [k, Q] of Object.entries(D.QUESTS)) { add(`quest ${k}`, Q.lvl, Q.name, { faction: Q.faction, title: true }); add(`quest ${k}`, Q.lvl, Q.text, { faction: Q.faction, quest: k }); }
 for (const [k, L] of Object.entries(D.LEGENDS || {})) (L.story || []).forEach((p, i) => add(`legend ${k} story ${i + 1}`, 15, p));
-for (const [k, E] of Object.entries(D.LORE || {})) { add(`lore ${k}`, E.lvl, E.title, { title: true }); (E.text || []).forEach((p, i) => add(`lore ${k} p${i + 1}`, E.lvl, p)); }
+// a journal page is read at its own lvl, or on first clear (a dungeon's lowest level) or first visit (a zone's lowest level)
+const zoneLvl = {}; for (const p of Object.values(D.PLACES)) zoneLvl[p.zone] = Math.min(zoneLvl[p.zone] || 99, p.safe && !p.lvl ? 1 : (p.lvl || [1])[0]);
+for (const [k, E] of Object.entries(D.LORE || {})) {
+  const lvl = E.lvl != null ? E.lvl : E.dungeon ? (instanceLvl[E.dungeon] || 60) : E.zone ? (zoneLvl[E.zone] || 1) : 1;
+  add(`lore ${k}`, lvl, E.title, { title: true });
+  (E.text || []).forEach((p, i) => add(`lore ${k} p${i + 1}`, lvl, p));
+  for (const [b, note] of Object.entries(E.bosses || {})) add(`lore ${k} boss ${b}`, lvl, note);
+}
 const placeLvl = {};
 for (const [k, p] of Object.entries(D.PLACES)) for (const n of p.npcs || []) placeLvl[n] = Math.min(placeLvl[n] || 99, (p.lvl || [1])[0]);
 for (const [k, N] of Object.entries(D.NPCS)) { add(`npc ${k}`, placeLvl[k] || 1, N.name, { title: true }); add(`npc ${k}`, placeLvl[k] || 1, N.title, { title: true }); }
@@ -68,6 +75,8 @@ if (SELF) {
   add('selftest hood', 17, 'The stranger, Lyveus, wants a word.');
 }
 // ---------- checks
+// words the game itself writes in lower case are plain English, so their capitalised form at a sentence start is not a name
+const lowerWords = new Set(); for (const t of texts) for (const w of t.text.split(/[^A-Za-z']+/)) if (w && /^[a-z]/.test(w)) lowerWords.add(w);
 const problems = [], warnings = [], unknown = new Map();
 const lev = (a, b) => { const m = a.length, n = b.length; const d = Array.from({ length: m + 1 }, (_, i) => [i]); for (let j = 1; j <= n; j++) d[0][j] = j; for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; };
 const knownList = [...known].filter((w) => w.length >= 5);
@@ -98,7 +107,7 @@ for (const t of texts) {
       const base = w.replace(/'$/, '').replace(/(?:'ll|'ve|n't|'re|'d|'m)$/, '');
       const sing = [base, base.replace(/s$/, ''), base.replace(/es$/, ''), base.replace(/ies$/, 'y'), base.replace(/ves$/, 'f')];
       if (sing.some((x) => known.has(x) || COMMON.has(x))) return;
-      const english = (x) => dict.has(x.toLowerCase()) || sing.some((y) => dict.has(y.toLowerCase()));
+      const english = (x) => dict.has(x.toLowerCase()) || lowerWords.has(x.toLowerCase()) || sing.some((y) => dict.has(y.toLowerCase()) || lowerWords.has(y.toLowerCase()));
       if ((first || t.title) && english(base)) return;
       // hyphenated words: fine if every part is a known name or plain English ("Black-furred", "Twenty-one")
       if (base.includes('-') && base.split('-').every((p) => known.has(p) || COMMON.has(p) || dict.has(p.toLowerCase()))) return;

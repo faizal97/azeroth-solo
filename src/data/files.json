@@ -39,5 +39,6 @@
   "zones/legends.js",
   "professions.js",
   "lore.js",
+  "lore_places.js",
   "finalize.js"
 ]
