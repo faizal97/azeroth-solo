@@ -39,6 +39,7 @@ cd app && JAVA_HOME=/opt/homebrew/opt/openjdk@17 flutter build apk --release
 1. Bump `version:` in `app/pubspec.yaml` for every release.
 2. Copy the APK to `~/Library/Mobile Documents/com~apple~CloudDocs/Azeroth Solo/AzerothSolo-vX.apk`, remove the previous APK there, and confirm `ubiquitousItemIsUploaded` is true.
 3. Faizal installs it from icloud.com → Recents on his phone.
+4. Publish the browser version: `tools/publish_web.sh` (puts `dist/index.html` on the `gh-pages` branch, served at https://faizal97.github.io/azeroth-solo/). Every GitHub release also needs the APK attached, or the in-app updater won't see it.
 
 **Cutscene video (MP4):** `art/promo/export_cutscene.sh <chapterId> <out.mp4> [endcard.png]` records any cutscene from `dist/` (run `build.py` first) at 1080 px, 30 fps, with its music. It uses `art/promo/record_cutscene.js` (headless Chrome on virtual time, so frames are exact). Port 8777 only; never touch 8765.
 
