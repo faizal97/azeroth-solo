@@ -113,9 +113,11 @@
   G.importSave = function (str) {
     const S = JSON.parse(decodeURIComponent(escape(atob(str.trim()))));
     if (!S.player || !S.bots) throw new Error('That is not an Azeroth Solo save.');
-    // an imported save becomes its own character
+    if (G.characters().length >= G.MAX_CHARS) throw new Error(`You already have ${G.MAX_CHARS} characters. Delete one first.`);
+    if (G.S) G.save(); // keep the character you are playing
+    // an imported save becomes its own character; the caller opens it with G.load so it goes through the same fixes as any old save
     S.id = 'c' + now().toString(36) + Math.floor(Math.random() * 1e4).toString(36);
-    G.S = S; G.fight = null; G.save(); return true;
+    G.S = S; G.fight = null; G.save(); return S.id;
   };
   G.wipeSave = function () { if (G.S) G.deleteCharacter(G.S.id); G.S = null; };
 

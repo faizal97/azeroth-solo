@@ -2001,8 +2001,8 @@
   function importSave() {
     const ta = h('textarea', { style: { width: '100%', height: '120px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', fontSize: '11px' }, placeholder: 'Paste your save code' });
     const err = h('p', { style: { color: '#ff6a5a' } });
-    showDialog([h('h3', null, 'Load save code'), h('p', null, 'The save is added as a new character. Your current one stays.'), ta, err,
-      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { try { G.importSave(ta.value); closeDialog(); closeSheet(); G.catchUp(); buildLayout(); renderAll(); toast('Save loaded as a new character', true); } catch (e) { err.textContent = 'That code did not work. Copy the whole code and try again.'; } } }, 'Load'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))]);
+    showDialog([h('h3', null, 'Load save code'), h('p', null, 'Paste a code from Hero → Settings → Copy save code, in the app or another browser. It is added as a new character; your others stay.'), ta, err,
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { try { const id = G.importSave(ta.value); closeDialog(); closeSheet(); enter(id); toast('Save loaded as a new character', true); } catch (e) { err.textContent = 'That code did not work. Copy the whole code and try again.'; } } }, 'Load'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))]);
   }
   function confirmDelete() {
     showDialog([h('h3', null, 'Delete ' + G.S.player.name + '?'), h('p', null, 'Your character, gear and quests are gone for good. Copy your save code first if you might want it back.'),
@@ -2463,7 +2463,8 @@
         h('div', { class: 'btn-row' },
           h('button', { class: 'btn alt', disabled: list.length >= G.MAX_CHARS, onclick: () => showCreate(true) }, 'Create New'),
           h('button', { class: 'btn alt', onclick: () => { if (!G.S) { const r = G.load(sel); if (!r) return; } openTheater(); } }, 'Theater'),
-          h('button', { class: 'btn alt', style: { color: '#ff6a5a' }, onclick: () => confirmDeleteChar(cur, () => showSelect()) }, 'Delete')));
+          h('button', { class: 'btn alt', style: { color: '#ff6a5a' }, onclick: () => confirmDeleteChar(cur, () => showSelect()) }, 'Delete')),
+        h('button', { class: 'btn alt wide', onclick: importSave }, 'Load save code'));
     };
     draw();
   }
@@ -2517,7 +2518,9 @@
           playChapter('intro').then(() => banner(sp.zone, D.REGIONS[sp.region].name !== sp.zone ? D.REGIONS[sp.region].name : ''));
         } }, 'Enter World'),
         h('div', { class: 'sub', style: { fontSize: '12px', marginTop: '0' } }, 'Everyone else on this realm is simulated. The world keeps going while you are away.'));
-      if (G.characters().length) root.append(h('button', { class: 'btn alt wide', onclick: () => showSelect() }, 'Back to characters'));
+      root.append(h('div', { class: 'btn-row' },
+        h('button', { class: 'btn alt', onclick: importSave }, 'Load save code'),
+        G.characters().length ? h('button', { class: 'btn alt', onclick: () => showSelect() }, 'Back to characters') : null));
     };
     draw();
   }
