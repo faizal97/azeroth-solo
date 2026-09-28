@@ -1843,6 +1843,8 @@
       } else {
           b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { if (G.fight) return toast('You are in combat.'); G.logout(); showSelect(); } }, 'Switch character')));
           if (window.UPD) b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: manualUpdateCheck }, `Check for updates · v${UPD.current()}`)));
+        if (window.UPD) b.append(h('div', { class: 'sec-h' }, 'Community'), h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => UPD.open(UPD.DISCORD) }, 'Join the Discord')),
+          h('p', { class: 'ai-note', style: { margin: 0 } }, 'Talk about the game, report bugs and suggest ideas.'));
         b.append(h('div', { class: 'sec-h' }, 'Party invites'), h('div', { class: 'btn-row' },
           h('button', { class: 'btn alt', onclick: () => { G.setInvites(!!G.S.flags.noInvites); ui.sheetFn(); } }, 'Invites from nearby players: ' + (G.S.flags.noInvites ? 'Off' : 'On'))));
         if (window.SND) {
@@ -2474,6 +2476,7 @@
     showDialog([h('h3', null, 'Update available'), h('p', null, h('b', { style: { color: 'var(--gold)' } }, rel.name), h('br'), `You have v${cur}.`), notes, bar, status, row], false);
   }
 
+  const discordLink = () => window.UPD ? h('button', { class: 'discord-link', onclick: () => UPD.open(UPD.DISCORD) }, 'Join us on Discord') : null;
   function showSelect() {
     closeDialog(); closeSheet();
     setTimeout(autoUpdateCheck, 1200);
@@ -2502,7 +2505,8 @@
           h('button', { class: 'btn alt', disabled: list.length >= G.MAX_CHARS, onclick: () => showCreate(true) }, 'Create New'),
           h('button', { class: 'btn alt', onclick: () => { if (!G.S) { const r = G.load(sel); if (!r) return; } openTheater(); } }, 'Theater'),
           h('button', { class: 'btn alt', style: { color: '#ff6a5a' }, onclick: () => confirmDeleteChar(cur, () => showSelect()) }, 'Delete')),
-        h('button', { class: 'btn alt wide', onclick: importSave }, 'Load save code'));
+        h('button', { class: 'btn alt wide', onclick: importSave }, 'Load save code'),
+        discordLink());
     };
     draw();
   }
@@ -2559,6 +2563,7 @@
       root.append(h('div', { class: 'btn-row' },
         h('button', { class: 'btn alt', onclick: importSave }, 'Load save code'),
         G.characters().length ? h('button', { class: 'btn alt', onclick: () => showSelect() }, 'Back to characters') : null));
+      root.append(discordLink());
     };
     draw();
   }

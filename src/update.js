@@ -77,6 +77,7 @@
     return 'installing';
   };
   UPD.askPermission = () => UPD.call('askInstallPermission');
+  UPD.DISCORD = 'https://discord.gg/6xaVaXukeT'; // the game's community server; the app only opens this and the repo
   UPD.open = (url) => (UPD.inApp() ? UPD.call('openUrl', { url }) : (root.open && root.open(url, '_blank')));
 
   // Release notes are GitHub markdown; show the simple parts (headings, bold, bullets) as safe HTML.

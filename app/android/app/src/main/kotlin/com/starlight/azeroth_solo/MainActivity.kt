@@ -136,7 +136,8 @@ class MainActivity : FlutterActivity() {
                 }
                 "openUrl" -> {
                     val url = call.argument<String>("url") ?: ""
-                    if (url.startsWith("https://github.com/faizal97/azeroth-solo")) startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                    // only this game's own pages: its GitHub repo and its Discord invite
+                    if (url.startsWith("https://github.com/faizal97/azeroth-solo") || url == "https://discord.gg/6xaVaXukeT") startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                     result.success(true)
                 }
                 else -> result.notImplemented()

@@ -6,6 +6,8 @@ It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sp
 
 **Play it in your browser:** https://faizal97.github.io/azeroth-solo/ (desktop or phone; saves stay in your browser). Or install the Android app from [Releases](https://github.com/faizal97/azeroth-solo/releases).
 
+**Join the community on Discord:** https://discord.gg/6xaVaXukeT (talk about the game, report bugs, suggest ideas).
+
 <p align="center">
   <img src="docs/screenshots/02_goldshire.jpg" width="24%" alt="Goldshire with other players and General chat">
   <img src="docs/screenshots/04_deadmines_fight.jpg" width="24%" alt="A Deadmines pull with a simulated party">
