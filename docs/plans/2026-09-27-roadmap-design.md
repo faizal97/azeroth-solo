@@ -148,6 +148,20 @@ Hand-made characters with their own story, a questline across the levels, and a 
 - **Guild requests** (dungeon runs with guildmates, materials, help with kills, questions) earn standing. Ranks: Initiate 0, Member 100 (+3% XP), Veteran 300 (+5% quest gold), Officer 700 (guild runs +5 Mentor Marks), Champion 1500 (a title).
 - Road chips show the destination's zone.
 
+## v9.6.0: a livelier chat (his ask, 2026-09-28)
+- **New whisper requests:**
+  - team up on one of your active kill quests (they leave when it's done)
+  - a carry through a dungeon you've outlevelled, for a tip
+  - craft orders (the mats arrive; craft, hand over, get a tip)
+  - friendly duels, with or without a wager (nobody dies; yield = lose)
+  - swap offers (their gear for your mats)
+  - small talk about your weapon and your spec, answered from your real gear and talents
+  - haggling on sales
+- **In General:** rare sightings. The rare really spawns, and killing it within 10 minutes pays a bounty and a Mentor Mark.
+- **Alive:** a bot's own voice (sloppy, grumpy or friendly; item links keep their case), 5–8 phrasings per request, a "u there?" nudge and a "nvm, found someone" on expiry, and no repeating the last two kinds. Bots you help become friends: they come back with gifts or invites to runs.
+- **Guilds:** donations, elite groups, scheduled guild nights (sign up; the run starts on time), a weekly goal (kills, bosses or requests; +100 standing and gold), a daily message, guildmates chatting and reacting to your clears.
+- **Chat:** a Requests tab lists every open request (older ones used to scroll out of reach).
+
 ## Group finder rules (agreed 2026-09-27)
 
 - **Be there:** any faction may run any dungeon or world elite, but you queue from its zone. Places with no road from where you are stay hidden; they appear when roads between the factions open in the contested zones.

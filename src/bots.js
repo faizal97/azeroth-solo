@@ -192,6 +192,8 @@
     if (bot.toxic > 0.6 && chance(0.3)) s = s.toUpperCase();
     return s;
   }
+  B.sloppy = (bot, s) => sloppy(bot, s);
+
 
   const GENERAL = [
     (c) => `where is ${c.namedMob}?`,

@@ -35,5 +35,40 @@ for (let i = 0; i < 2 * 3600; i++) { t += 1000; G.update(1); for (const m of S.c
 console.log('guild requests in 2 h:', JSON.stringify(gk), '· standing', rep0, '→', P.guildRep, '· rank', SOC.RANKS[SOC.rank()].name, '· xp perk', SOC.perk('xp') + '%');
 if (!Object.keys(gk).length) fail('no guild requests');
 SOC.leaveGuild(); if (P.guild !== -1) fail('leave guild');
+// ---- v9.6: the richer requests, on a level 30 tailor with quests in the log
+{
+  G.newGame({ name: 'U', cls: 'warrior', race: 'human' }); const S2 = G.S, P2 = S2.player;
+  P2.level = 30; S2.flags.warModeAsked = true; S2.flags.warMode = false; P2.place = 'darkshire'; P2.money = 90000;
+  for (const b of S2.bots) b.level = Math.max(b.level, 24 + Math.floor(Math.random() * 10));
+  P2.prof = { tailoring: { skill: 120, max: 150, known: [] } };
+  G.addItem(G.copyItem('linen_cloth'), 40); G.addItem(G.copyItem('wool_cloth'), 20);
+  for (const q of Object.keys(D.QUESTS)) { const Q = D.QUESTS[q]; if (!Q.faction || Q.faction === 'alliance') if (Q.lvl >= 26 && Q.lvl <= 30 && !Q.group && !Q.dungeon && !(Q.pre || []).length && Q.objs.some((o) => o.type === 'kill')) { P2.quests[q] = { prog: Q.objs.map(() => 0) }; if (Object.keys(P2.quests).length >= 3) break; } }
+  const seen2 = {};
+  for (let i = 0; i < 4 * 3600; i++) { t += 1000; G.update(1); for (const m of S2.chat) if (m.act && !m.c2) { m.c2 = 1; seen2[m.act.kind] = (seen2[m.act.kind] || 0) + 1; } if (S2.run) { S2.run = null; S2.group = null; } if (G.fight) { G.fight = null; G.pUnit = null; } }
+  console.log('v9.6 requests in 4 h (level 30 tailor):', JSON.stringify(seen2));
+  for (const k of ['quest_team', 'carry', 'craft_order', 'duel', 'rare', 'chat']) if (!seen2[k]) fail('no ' + k + ' requests');
+  const latest = (kind) => S2.chat.slice().reverse().find((x) => x.act && x.act.kind === kind);
+  // craft order: take it, craft, hand over
+  const force2 = (kind) => { for (let i = 0; i < 40000; i++) { const m = S2.chat.slice().reverse().find((x) => x.act && x.act.kind === kind && x.act.state === 'open'); if (m) return m; t += 1000; G.update(1); if (S2.run) { S2.run = null; S2.group = null; } if (G.fight) { G.fight = null; G.pUnit = null; } } return null; };
+  const co = force2('craft_order'); if (!co) fail('no open craft order to test');
+  if (co) { SOC.actions(co)[0].fn(); const r = D.RECIPES[co.act.rid]; G.craft(r.id, 1); for (let i = 0; i < 40; i++) { t += 100; G.update(0.1); } const m0 = P2.money; const r2 = SOC.actions(co)[0].fn(); if (co.act.state !== 'done' || P2.money <= m0) fail('craft order: ' + r2); else console.log('craft_order ok:', co.text); }
+  const du = force2('duel');
+  if (du) { SOC.actions(du)[0].fn(); if (!G.fight || G.fight.kind !== 'duel') fail('duel did not start'); else { let g = 0; while (G.fight && g++ < 5000) { if (G.pUnit && G.pUnit.kind === 'player') { G.pUnit.kind = 'bot'; G.pUnit.bot = { skill: 0.7, react: 0.5 }; G.pUnit.role = 'dps'; } G.update(0.1); t += 100; } console.log('duel ok:', du.text, '· hp after', P2.hp, P2.ghostUntil ? '(ghost!)' : ''); if (P2.ghostUntil) fail('duel killed the player'); } }
+  const qt = force2('quest_team'); if (!qt) fail('no open quest team-up to test');
+  if (qt) { SOC.actions(qt)[0].fn(); if (!S2.wparty) fail('quest_team no party'); const qid = qt.act.qid; P2.quests[qid].prog = D.QUESTS[qid].objs.map((o) => o.n || 1); for (let i = 0; i < 3; i++) { t += 1000; G.update(1); } if (qt.act.state !== 'done') fail('quest_team did not finish'); else console.log('quest_team ok:', qt.text); }
+  const ra = force2('rare');
+  if (ra) { const m0 = P2.money; SOC.onKill(ra.act.mob); if (ra.act.state !== 'done' || P2.money <= m0) fail('rare bounty'); else console.log('rare ok:', ra.text); }
+  const ca = force2('carry');
+  if (ca) { SOC.actions(ca)[0].fn(); if (!S2.run || !S2.run.soc || S2.run.soc.kind !== 'carry') fail('carry did not start'); else { const m0 = P2.money; const d = { act: S2.run.act, soc: S2.run.soc }; S2.run = null; S2.group = null; SOC.onRunComplete(d); if (P2.money <= m0) fail('carry tip'); else console.log('carry ok:', ca.text); } }
+  const fr = SOC.friends(); console.log('friends made:', fr.length, fr.slice(0, 3).map((f) => f.bot.name + ' x' + f.n).join(', '));
+  if (!fr.length) fail('no friends remembered');
+  // guild extras
+  G.joinGuild(SOC.myGuilds()[0].g); const gseen = {}; const w0 = SOC.week().got;
+  for (let i = 0; i < 3 * 3600; i++) { t += 1000; G.update(1); for (const m of S2.chat) if (m.act && m.act.guild && !m.g2) { m.g2 = 1; gseen[m.act.kind] = (gseen[m.act.kind] || 0) + 1; if (m.act.kind === 'g_donate') SOC.actions(m)[0].fn(); if (m.act.kind === 'g_event') SOC.actions(m)[0].fn(); } if (S2.run) { const d = { act: S2.run.act, soc: S2.run.soc }; S2.run = null; S2.group = null; SOC.onRunComplete(d); } if (G.fight) { G.fight = null; G.pUnit = null; } }
+  for (let i = 0; i < 40; i++) SOC.onKill('skeletal_warrior');
+  const wk = SOC.week(); console.log('guild requests in 3 h:', JSON.stringify(gseen), '· standing', P2.guildRep, '· week', wk.what, wk.got + '/' + wk.goal, '· motd:', SOC.motd(P2.guild));
+  for (const k of ['g_donate', 'g_event']) if (!gseen[k]) fail('no ' + k);
+  const talk = S2.chat.filter((m) => m.ch === 'guild' && !m.act && m.from).length; console.log('guild chatter lines:', talk);
+}
 console.log(bad ? `${bad} problem(s)` : 'social sim OK');
 process.exitCode = bad ? 1 : 0;

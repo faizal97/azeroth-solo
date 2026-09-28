@@ -552,6 +552,8 @@
     }
     return W;
   }
+  // chat "rare spotted" posts (v9.6): the named creature really is up
+  G.spawnRare = function (place, key) { const W = placeState(place); const m = W.named[key]; if (m && m.state !== 'fight') { m.state = 'alive'; m.until = 0; m.level = D.MOBS[key].lvl[0]; } return !!m; };
   let MOBID = 1;
   // A spawn point always brings back the same creature, like Classic.
   function spawnMob(P, keep) {
@@ -1094,6 +1096,7 @@
   G.toggleAuto = function () { if (G.pUnit) G.pUnit.auto = !G.pUnit.auto; };
   G.flee = function () {
     const C = G.fight;
+    if (C && C.kind === 'duel') { C.over = 'lose'; sys('You yield.'); return; } // yielding a duel counts as a loss
     if (!C || (C.kind !== 'solo' && C.kind !== 'pvp')) return;
     if (Math.random() < (C.kind === 'pvp' ? 0.45 : 0.6)) {
       if (C.kind === 'pvp') { const f = G.S.flags; G.S.player.pvp = G.pvpStats(); G.S.player.pvp.escapes++; f.nextAmbush = now() + AMBUSH_GAP; }
@@ -1688,6 +1691,34 @@
     if (!quietNow()) return toast("You can't do that right now.");
     startAmbush(true);
   };
+  // A friendly duel from chat (v9.6): nobody dies. The loser ends at 1 health; the wager changes hands.
+  G.startDuel = function (botId, wager) {
+    const S = G.S, P = S.player;
+    if (G.fight || S.run || P.travel || P.ghostUntil) { toast("You can't duel right now."); return false; }
+    const bot = S.bots.find((b) => b.id === botId); if (!bot) return false;
+    const skill = clamp(bot.skill || 0.5, 0.3, 0.8);
+    const ec = G.botChar(Object.assign({}, bot, { level: clamp(bot.level, P.level - 1, P.level + 1), skill, role: 'dps' })); ec.role = 'dps';
+    const eu = E.charUnit(ec, 'enemy', 'bot', now()); eu.bot = { skill, react: 0.9 - 0.6 * skill }; eu.role = 'dps'; eu.threat = eu.threat || {};
+    stopActions();
+    const pu = E.charUnit(P, 'ally', 'player', now()); G.pUnit = pu;
+    const allies = [pu]; const pet = G.petUnitFor(pu); if (pet) allies.push(pet);
+    G.fight = E.fight(allies, [eu], { soloUid: pu.uid, puller: pu });
+    G.fight.kind = 'duel'; G.fight.duel = { bot: bot.id, name: bot.name, wager: wager || 0, hp0: P.hp };
+    sys(`Duel with ${bot.name} begins! ${wager ? 'Wager: ' + G.moneyText(wager) + '.' : ''}`);
+    emit('fightStart'); emit('change');
+    return true;
+  };
+  function endDuel(C) {
+    const S = G.S, P = S.player, d = C.duel;
+    E.writeBack(C, G.pUnit, now()); petWriteBack(C);
+    const won = C.over === 'win';
+    if (!won) P.hp = Math.max(1, Math.round(G.vitals().maxHp * 0.05));
+    if (d.wager) { if (won) P.money += d.wager; else P.money = Math.max(0, P.money - d.wager); }
+    sys(won ? `You won the duel against ${d.name}!${d.wager ? ' +' + G.moneyText(d.wager) + '.' : ''}` : `${d.name} won the duel.${d.wager ? ' You paid ' + G.moneyText(d.wager) + '.' : ''}`);
+    S.pending.push({ at: now() + 1500, bot: d.bot, ch: 'whisper', text: won ? pick(['gg, u got me', 'gg wp', 'nice one, rematch sometime?', 'ok ur good lol']) : pick(['gg!', 'gg wp', 'close one', 'ez... jk gg']) });
+    G.fight = null; G.pUnit = null;
+    emit('duelEnd', { bot: d.bot, won }); emit('fightEnd', { result: C.over, duel: true }); emit('change');
+  }
   function startAmbush(youStarted) {
     const S = G.S, P = S.player, place = D.PLACES[P.place], it = S.intruder;
     if (!it) return;
@@ -2379,7 +2410,7 @@
           else B.post(S, 'party', null, 'extra pack!');
         }
         if (C.events.length) { emit('combat', C.events); C.events.length = 0; }
-        if (C.over) { if (C.kind === 'solo') endSolo(C); else if (C.kind === 'pvp') endPvp(C); else endRunFight(C); }
+        if (C.over) { if (C.kind === 'solo') endSolo(C); else if (C.kind === 'pvp') endPvp(C); else if (C.kind === 'duel') endDuel(C); else endRunFight(C); }
       }
     }
     worldAcc += dt;

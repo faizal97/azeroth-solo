@@ -713,7 +713,7 @@
         h('div', { class: 'buffs rowbuffs', 'data-au': u.uid })));
     }
     p.append(h('div', { class: 'sec-h' }, 'In combat', h('small', null, 'tap an enemy to target it')), list);
-    p.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => G.flee() }, 'Run away')));
+    p.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => G.flee() }, G.fight && G.fight.kind === 'duel' ? 'Yield' : 'Run away')));
     tracker(p);
   }
   const MARK_SYM = { skull: '☠', cross: '✖' };
@@ -2010,7 +2010,8 @@
   }
   function chatTab(b) {
     const tabs = h('div', { class: 'tabs' });
-    for (const [k, label] of [['all', 'All'], ['general', 'General'], ['lfg', 'LFG'], ['party', 'Party'], ['guild', 'Guild'], ['whisper', 'Whispers'], ['loot', 'Loot']]) tabs.append(h('button', { class: ui.chatTab === k ? 'on' : '', onclick: () => { ui.chatTab = k; ui.sheetFn(); } }, label));
+    const nReq = G.S.chat.filter((m) => m.act && m.act.state === 'open').length;
+    for (const [k, label] of [['requests', nReq ? `Requests (${nReq})` : 'Requests'], ['all', 'All'], ['general', 'General'], ['lfg', 'LFG'], ['party', 'Party'], ['guild', 'Guild'], ['whisper', 'Whispers'], ['loot', 'Loot']]) tabs.append(h('button', { class: ui.chatTab === k ? 'on' : '', onclick: () => { ui.chatTab = k; ui.sheetFn(); } }, label));
     b.append(tabs);
     ui.chatLog = h('div', { class: 'chat-full', onclick: (e) => { const ln = e.target.closest('.ln.tap'); const m = ln && G.S.chat.find((x) => String(x.id) === ln.dataset.mid); if (m) msgDialog(m); } });
     b.append(ui.chatLog);
@@ -2026,9 +2027,9 @@
   function refreshChatLog() {
     if (!ui.chatLog || !ui.chatLog.isConnected) return;
     const f = ui.chatTab;
-    const msgs = G.S.chat.filter((m) => f === 'all' ? m.ch !== 'combat' : f === 'loot' ? m.ch === 'loot' || m.ch === 'combat' : m.ch === f).slice(-80);
+    const msgs = G.S.chat.filter((m) => f === 'requests' ? m.act && m.act.state === 'open' : f === 'all' ? m.ch !== 'combat' : f === 'loot' ? m.ch === 'loot' || m.ch === 'combat' : m.ch === f).slice(-80);
     const atBottom = ui.sheetBody.scrollHeight - ui.sheetBody.scrollTop - ui.sheetBody.clientHeight < 60;
-    ui.chatLog.innerHTML = msgs.map(chatLineHtml).join('') || '<div class="ln" style="color:var(--muted)">Nothing here yet.</div>';
+    ui.chatLog.innerHTML = msgs.map(chatLineHtml).join('') || `<div class="ln" style="color:var(--muted)">${f === 'requests' ? 'No open requests. They show up in LFG, whispers, General and guild chat.' : 'Nothing here yet.'}</div>`;
     if (atBottom) ui.sheetBody.scrollTop = ui.sheetBody.scrollHeight;
   }
   function newsTab(b) {
@@ -2068,7 +2069,7 @@
       } }, x.label));
       parts.push(row);
     }
-    const reps = window.SOC && !(a && (m.ch === 'lfg' || m.ch === 'general')) ? SOC.replies(m) : [];
+    const reps = window.SOC && !(a && a.state === 'open' && a.kind !== 'chat') && !(a && (m.ch === 'lfg' || m.ch === 'general')) ? SOC.replies(m) : [];
     if (reps.length) {
       parts.push(h('div', { class: 'sec-h' }, 'Reply', h('small', null, reps[0].ch === 'whisper' ? 'as a whisper' : 'in ' + reps[0].ch)));
       parts.push(h('div', { class: 'chips' }, ...reps.map((r) => h('button', { class: 'chip', onclick: () => { r.fn(); closeDialog(); renderChat(); } }, r.label))));
@@ -2101,6 +2102,12 @@
       h('div', { class: 'xpbar', style: { height: '6px', background: '#1a140c', borderRadius: '3px', overflow: 'hidden', margin: '6px 0' } }, h('i', { style: { display: 'block', height: '100%', width: (nx ? Math.min(100, Math.round((st - R[r].at) / (nx.at - R[r].at) * 100)) : 100) + '%', background: 'var(--gold)' } })),
       h('p', { class: 'ai-note', style: { margin: 0 } }, 'Perks: ' + (R.slice(1, r + 1).map((k) => k.perk).join(' · ') || 'none yet') + (nx ? `. Next, ${nx.name}: ${nx.perk}.` : '.')),
       h('p', { class: 'ai-note', style: { margin: '4px 0 0' } }, 'Earn standing by helping guildmates: their requests appear in guild chat. Tap one to help.')));
+    b.append(h('p', { style: { margin: 0, fontStyle: 'italic', color: '#c9b88a' } }, 'Message of the day: ' + SOC.motd(P.guild)));
+    const wk = SOC.week();
+    if (wk) b.append(h('div', { class: 'ai-box' },
+      h('div', { class: 'ai-row' }, h('span', null, 'Weekly goal'), h('b', { class: 'tnum' }, wk.done ? 'Done!' : `${Math.min(wk.got, wk.goal)} / ${wk.goal}`)),
+      h('div', { style: { height: '6px', background: '#1a140c', borderRadius: '3px', overflow: 'hidden', margin: '6px 0' } }, h('i', { style: { display: 'block', height: '100%', width: Math.min(100, Math.round(wk.got / wk.goal * 100)) + '%', background: wk.done ? '#6b8f3a' : 'var(--gold)' } })),
+      h('p', { class: 'ai-note', style: { margin: 0 } }, `The guild wants ${wk.goal} ${wk.what} this week. Everything you do counts. Reward: gold and +100 standing.`)));
     const reqs = S.chat.filter((m) => m.act && m.act.guild && m.act.state === 'open').slice(-6).reverse();
     b.append(h('div', { class: 'sec-h' }, 'Guild requests', h('small', null, reqs.length ? 'tap to help' : 'none right now')));
     for (const m of reqs) b.append(h('button', { class: 'row', style: { gridTemplateColumns: '1fr auto', textAlign: 'left' }, onclick: () => msgDialog(m) }, h('div', { class: 't' }, h('b', { class: 'cls-' + (m.cls || '') }, m.from), h('small', { html: richText(m.text), style: { whiteSpace: 'normal' } })), h('span', { class: 'chip gold' }, 'Help')));
