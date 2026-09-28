@@ -2430,6 +2430,8 @@
   // an offer held back by a fight or a dialog shows once the way is clear
   setInterval(() => { if (ui.updPending && !ui.dialog) offerUpdate(ui.updPending); }, 5000);
   function offerUpdate(rel) {
+    // a browser that just reloaded for this version but still got the old one: the site is still updating
+    if (!UPD.inApp() && UPD.justReloadedFor(rel.latest)) { if (!ui.updWaitToast) { ui.updWaitToast = true; toast(`${rel.latest} is still reaching the site. Try again in a few minutes.`, true); } return; }
     if (ui.dialog || G.fight || (G.S && G.S.run && G.S.run.phase !== 'done')) { ui.updPending = rel; return; }
     ui.updPending = null; updateDialog(rel);
   }
@@ -2456,7 +2458,9 @@
       row.append(h('button', { class: 'btn', onclick: () => UPD.askPermission() }, 'Open settings'),
         h('button', { class: 'btn alt', onclick: () => UPD.install().then((r) => { if (r === 'need_permission') status.textContent = 'Not allowed yet. Turn on "Allow from this source" for Azeroth Solo.'; else status.textContent = 'Opening the installer...'; }).catch((e) => { status.textContent = 'Install failed: ' + ((e && e.message) || 'unknown error'); }) }, 'Install'), later);
     };
+    const web = !UPD.inApp();
     const go = h('button', { class: 'btn', onclick: async () => {
+      if (web) { if (G.S) G.save(); UPD.reloadWeb(rel.latest); return; }
       if (!inApp) { UPD.open(rel.url); return; }
       if (G.S) G.save();
       go.disabled = true; later.disabled = true; skip.disabled = true; bar.style.display = 'block';
@@ -2471,7 +2475,7 @@
         go.textContent = 'Try again';
         row.append(h('button', { class: 'btn alt', onclick: () => UPD.open(rel.url) }, 'Release page'));
       }
-    } }, inApp ? `Update now${rel.size ? ` (${(rel.size / 1048576).toFixed(0)} MB)` : ''}` : 'Open the release page');
+    } }, web ? 'Reload to update' : inApp ? `Update now${rel.size ? ` (${(rel.size / 1048576).toFixed(0)} MB)` : ''}` : 'Open the release page');
     row.append(go, later, skip);
     showDialog([h('h3', null, 'Update available'), h('p', null, h('b', { style: { color: 'var(--gold)' } }, rel.name), h('br'), `You have v${cur}.`), notes, bar, status, row], false);
   }

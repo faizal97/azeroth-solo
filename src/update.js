@@ -77,6 +77,15 @@
     return 'installing';
   };
   UPD.askPermission = () => UPD.call('askInstallPermission');
+  // In a browser there is nothing to install: the new version is already on the site, so reload past the cached copy
+  // (a ?v= tag makes it a new address). If the reload still brings the old build (Pages can lag a few minutes),
+  // justReloadedFor stops the offer from looping.
+  UPD.reloadWeb = function (tag) {
+    save({ reloadedFor: tag, reloadAt: Date.now() });
+    const u = new URL(root.location.href); u.searchParams.set('v', String(tag).replace(/^v/i, ''));
+    root.location.replace(u.toString());
+  };
+  UPD.justReloadedFor = (tag) => { const st = store(); return st.reloadedFor === tag && Date.now() - (st.reloadAt || 0) < 30 * 60000; };
   UPD.DISCORD = 'https://discord.gg/6xaVaXukeT'; // the game's community server; the app only opens this and the repo
   UPD.open = (url) => (UPD.inApp() ? UPD.call('openUrl', { url }) : (root.open && root.open(url, '_blank')));
 
