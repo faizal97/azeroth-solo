@@ -59,6 +59,7 @@ for (const [k, E] of Object.entries(D.LORE || {})) {
   (E.text || []).forEach((p, i) => add(`lore ${k} p${i + 1}`, lvl, p));
   for (const [b, note] of Object.entries(E.bosses || {})) add(`lore ${k} boss ${b}`, lvl, note);
 }
+for (const [q, t] of Object.entries(D.QUEST_STORY || {})) { const Q = D.QUESTS[q]; if (Q) add(`quest ${q} story`, Q.lvl, t, { faction: Q.faction }); }
 const placeLvl = {};
 for (const [k, p] of Object.entries(D.PLACES)) for (const n of p.npcs || []) placeLvl[n] = Math.min(placeLvl[n] || 99, (p.lvl || [1])[0]);
 for (const [k, N] of Object.entries(D.NPCS)) { add(`npc ${k}`, placeLvl[k] || 1, N.name, { title: true }); add(`npc ${k}`, placeLvl[k] || 1, N.title, { title: true }); }
@@ -105,7 +106,8 @@ for (const t of texts) {
       const first = i === 0 || /^["'(]/.test(raw);
       // plurals and possessives of known names ("Kobolds", "Stonemasons'"), contractions at a sentence start ("Don't")
       const base = w.replace(/'$/, '').replace(/(?:'ll|'ve|n't|'re|'d|'m)$/, '');
-      const sing = [base, base.replace(/s$/, ''), base.replace(/es$/, ''), base.replace(/ies$/, 'y'), base.replace(/ves$/, 'f')];
+      const sing = [base, base.replace(/s$/, ''), base.replace(/es$/, ''), base.replace(/ies$/, 'y'), base.replace(/ves$/, 'f'),
+        base.replace(/ing$/, ''), base.replace(/ing$/, 'e'), base.replace(/ed$/, ''), base.replace(/ed$/, 'e'), base.replace(/ly$/, '')]; // and word forms: Releasing, Slowed, Quietly
       if (sing.some((x) => known.has(x) || COMMON.has(x))) return;
       const english = (x) => dict.has(x.toLowerCase()) || lowerWords.has(x.toLowerCase()) || sing.some((y) => dict.has(y.toLowerCase()) || lowerWords.has(y.toLowerCase()));
       if ((first || t.title) && english(base)) return;

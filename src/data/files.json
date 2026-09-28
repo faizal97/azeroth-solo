@@ -40,5 +40,7 @@
   "professions.js",
   "lore.js",
   "lore_places.js",
+  "lore_books.js",
+  "lore_quests.js",
   "finalize.js"
 ]

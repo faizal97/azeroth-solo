@@ -915,10 +915,25 @@
     for (const qid in P.quests) for (const o of D.QUESTS[qid].objs) if (o.type === 'collect' && o.item === itemId && G.countItem(itemId) < o.n) return true;
     return false;
   }
+  // Lore Journal books (src/data/lore_books.js): some creatures carry one; it goes straight into the Library
+  function bookDrop(mobKey) {
+    const P = G.S.player;
+    for (const k in D.LORE || {}) {
+      const E = D.LORE[k]; if (!E.book || !E.from || !(mobKey in E.from)) continue;
+      if ((P.books = P.books || {})[k]) continue;
+      if (E.faction && E.faction !== 'both' && E.faction !== G.myFaction()) continue;
+      if (Math.random() >= E.from[mobKey]) continue;
+      P.books[k] = now();
+      loot(`You found a book: ${B.link(E.title, 4)}. Read it in your Lore Journal.`);
+      emit('change');
+    }
+  }
+  G.bookDrop = bookDrop;
   function onKill(mobKey) {
     const P = G.S.player;
     P.kills++;
     emit('kill', { mob: mobKey });
+    bookDrop(mobKey);
     for (const qid in P.quests) D.QUESTS[qid].objs.forEach((o, i) => {
       if (o.type === 'kill' && o.mob === mobKey && (P.quests[qid].prog[i] || 0) < o.n) {
         P.quests[qid].prog[i] = (P.quests[qid].prog[i] || 0) + 1;

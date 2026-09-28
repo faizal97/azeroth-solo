@@ -148,6 +148,8 @@ img { max-width: 100%; display: block; }
 .lore-boss .ic { width: 44px; height: 44px; }
 .lore-boss b { font: 700 14px var(--body); color: var(--gold); }
 .lore-boss p { margin: 2px 0 0; font: 400 14px/1.5 var(--body); color: var(--text); }
+.parch .qstory p { margin: 6px 0 2px; padding-left: 10px; border-left: 2px solid #b08a4a; font-style: italic; color: #4a3210; }
+.qstory-b { font: 700 13px var(--body); color: #6b3d0c; text-decoration: underline; padding: 2px 0; min-height: 28px; }
 .tab-dot { display: inline-block; width: 7px; height: 7px; margin-left: 6px; border-radius: 50%; background: var(--gold); vertical-align: middle; }
 .sheet-stick { position: sticky; top: -12px; z-index: 3; display: grid; gap: 6px; background: var(--panel); margin: -12px -16px 0; padding: 12px 16px 8px; border-bottom: 1px solid #3b2d18; }
 .chat .ln { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

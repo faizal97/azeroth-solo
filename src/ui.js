@@ -1507,6 +1507,15 @@
   }
 
   // ---------- quests
+  // a longer story for the first and last quest of a storyline (src/data/lore_quests.js), folded until you ask for it
+  function questStory(qid) {
+    const t = (D.QUEST_STORY || {})[qid]; if (!t) return null;
+    const open = ui.storyOpen === qid;
+    const wrap = h('div', { class: 'qstory' });
+    if (open) wrap.append(h('p', null, t));
+    wrap.append(h('button', { class: 'qstory-b', onclick: (e) => { e.stopPropagation(); ui.storyOpen = open ? null : qid; wrap.replaceWith(questStory(qid)); } }, open ? 'Less' : 'More…'));
+    return wrap;
+  }
   function questDetail(qid, npc) {
     const Q = D.QUESTS[qid];
     const st = G.questState(qid);
@@ -1516,6 +1525,7 @@
     const box = h('div', { class: 'parch' },
       h('h3', null, Q.name),
       h('p', null, Q.text),
+      questStory(qid),
       h('h4', null, 'Objectives'),
       ...pr.map((p) => h('div', { class: 'obj tnum' + (p.have >= p.n ? ' done' : '') }, `${p.label}: ${p.have}/${p.n}`)),
       Q.group ? h('div', { class: 'obj', style: { color: '#8a1a10' } }, `Group quest (${Q.group} players). Use the group finder.`) : null,
@@ -2263,20 +2273,29 @@
     if (E.book) return !!(P.books && P.books[k]);
     return !!(E.chapter && window.CS && CS.unlocked().has(E.chapter));
   }
+  // where a book turns up: the dungeon of its first source, or the zone of a rare
+  function bookWhere(E) {
+    const m = Object.keys(E.from || {})[0]; if (!m) return '';
+    for (const dk in D.DUNGEONS) if (D.DUNGEONS[dk].pulls.some((p) => p.mobs.includes(m))) { const A = Object.values(D.ACTIVITIES).find((a) => a.dungeon === dk); return A ? `in ${A.name}` : ''; }
+    const pl = Object.values(D.PLACES).find((p) => (p.named || {})[m] || (p.mobs || []).some((x) => x[0] === m));
+    return pl ? `in ${pl.zone}` : '';
+  }
   // pages for places you can never reach (the other faction's dungeons and cities) are left out of the list
   function loreVisible(k) {
     const E = D.LORE[k]; if (loreOpen(k)) return true;
     if (E.dungeon) return dungeonActs(E.dungeon).some((a) => G.activityBlock(a) !== 'hidden');
     if (E.zone) return placesOf(E.zone).some((pl) => pl === G.S.player.place || G.canReach(G.S.player.place, pl));
+    if (E.book) return !E.faction || E.faction === 'both' || E.faction === G.myFaction();
     return true;
   }
+  const firstSentence = (t) => { const s = t.split(/(?<=[.!?])\s/)[0]; return /[.!?]$/.test(s) ? s : s + '.'; };
   const loreKeys = () => Object.keys(D.LORE || {});
   const loreUnread = () => { const r = loreRead(); return loreKeys().filter((k) => loreOpen(k) && !r.has(k)).length; };
   function loreHint(E) {
     if (E.quest) return 'Finish the story of this Legend to unlock.';
     if (E.dungeon) return 'Clear it once to unlock.';
     if (E.zone) return 'Travel there to unlock.';
-    if (E.book) return 'Found somewhere in the world.';
+    if (E.book) { const w = bookWhere(E); return w ? `Said to be found ${w}.` : 'Found somewhere in the world.'; }
     const ch = window.CS && CS.byId(E.chapter);
     return ch && ch.level ? `Unlocks with the chapter at level ${ch.level}.` : 'Unlocks as the story goes on.';
   }
@@ -2334,7 +2353,7 @@
           const named = on || ((P.dungeon || P.zone) && L >= loreLvl(P) - 5);
           list.append(h('button', { class: 'row' + (on ? '' : ' locked'), onclick: () => { if (!on) return toast(loreHint(P)); ui.loreKey = x; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } },
             h('div', { class: 'ic' + (P.dungeon ? ' mob' : '') }, on ? img(P.dungeon && P.bosses ? mobArt(Object.keys(P.bosses).pop()) : art('icon', 'journal')) : h('span', { class: 'mark grey' }, '·')),
-            h('div', { class: 't' }, h('b', null, named ? P.title : '???'), h('small', { style: { whiteSpace: 'normal' } }, on ? P.text[0].split('. ')[0] + '.' : (P.dungeon || P.zone) ? `Level ${loreLvl(P)}. ${loreHint(P)}` : loreHint(P))),
+            h('div', { class: 't' }, h('b', null, named ? P.title : '???'), h('small', { style: { whiteSpace: 'normal' } }, on ? firstSentence(P.text[0]) : (P.dungeon || P.zone) ? `Level ${loreLvl(P)}. ${loreHint(P)}` : loreHint(P))),
             h('div', { class: 'r' }, on && !read.has(x) ? h('span', { class: 'chip gold', style: { minHeight: 0, padding: '2px 6px' } }, 'New') : on ? 'Read' : 'Locked')));
         }
         b.append(list);

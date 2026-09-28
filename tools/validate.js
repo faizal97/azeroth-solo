@@ -109,9 +109,12 @@ for (const [k, E] of Object.entries(D.LORE || {})) {
     const inDg = E.dungeon && D.DUNGEONS[E.dungeon] && D.DUNGEONS[E.dungeon].pulls.some((pl) => pl.boss && pl.mobs.includes(b));
     if (!inDg) err(`lore ${k}: boss '${b}' is not a boss of ${E.dungeon}`);
   }
+  for (const [m, c] of Object.entries(E.from || {})) { if (!D.MOBS[m]) err(`lore ${k}: drops from unknown mob '${m}'`); if (!(c > 0 && c <= 1)) err(`lore ${k}: drop chance for ${m} must be between 0 and 1`); }
+  if (E.book && !Object.keys(E.from || {}).length) err(`lore ${k}: a book needs at least one source in 'from'`);
   if (E.dungeon) { const miss = D.DUNGEONS[E.dungeon] ? D.DUNGEONS[E.dungeon].pulls.filter((pl) => pl.boss).map((pl) => pl.mobs[0]).filter((b) => !(E.bosses || {})[b]) : []; if (miss.length) warn.push(`lore ${k}: no note for boss ${miss.join(', ')}`); }
 }
 
+for (const q in D.QUEST_STORY || {}) if (!D.QUESTS[q]) err(`quest story for unknown quest '${q}'`);
 const n = (t) => Object.keys(D[t]).length;
 console.log(`data: ${n('REGIONS')} zones, ${n('PLACES')} places, ${n('MOBS')} mobs, ${n('QUESTS')} quests, ${n('ITEMS')} items` + (warn.length ? ` · ${warn.length} warnings` : ''));
 if (process.argv.includes('-v')) warn.forEach((w) => console.log('  warn:', w));

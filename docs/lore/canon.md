@@ -4,7 +4,7 @@ This is the single source of truth for the game's story. Read it before writing 
 
 > Unofficial, non-commercial fan project. Not affiliated with Blizzard Entertainment. All text is original: never copy Blizzard's quest or book text, even when retelling the same events.
 
-`node tools/lorekeeper.js` checks the game's text against this file, and `build.py` runs it on every build. It reads two sections by their headings, **Reveals** (a table) and **Names** (a list), so keep those headings and formats as they are. The Lore Journal's pages live in `src/data/lore.js`.
+`node tools/lorekeeper.js` checks the game's text against this file, and `build.py` runs it on every build. It reads two sections by their headings, **Reveals** (a table) and **Names** (a list), so keep those headings and formats as they are. The Lore Journal's pages live in `src/data/lore.js` (story and Legends), `lore_places.js` (dungeons, raids and zones) and `lore_books.js` (books found in the world); the optional quest stories are `D.QUEST_STORY` in `lore_quests.js`. The lorekeeper checks all of them.
 
 ## Voice and style
 
