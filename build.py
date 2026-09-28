@@ -7,6 +7,9 @@ import base64, json, glob, sys, subprocess
 # the data must check out before anything is built
 if subprocess.run(['node', os.path.join(R, 'tools', 'validate.js')]).returncode != 0:
     sys.exit('build stopped: fix the data errors above')
+# and the story must agree with the lore bible (docs/lore/canon.md): no spoilers, no stray names
+if subprocess.run(['node', os.path.join(R, 'tools', 'lorekeeper.js')]).returncode != 0:
+    sys.exit('build stopped: fix the lore problems above (see docs/lore/canon.md)')
 DATA = ['src/data/' + f for f in json.load(open(os.path.join(R, 'src', 'data', 'files.json')))]
 # music ships only once he has listened and approved the track
 APPROVED = set(open(os.path.join(R, 'audio', 'approved.txt')).read().split()) if os.path.exists(os.path.join(R, 'audio', 'approved.txt')) else set()
