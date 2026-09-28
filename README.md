@@ -37,7 +37,6 @@ It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sp
 - **Our own expansion, "The Drowned Crown" (level 60).** After Chapter 6 an island rises from the sea: the Tidewatch Coast (Alliance) and the Skullreef Isles (Horde), a dungeon for each side (the Sunken Archive and the Temple of Shal'zua), and a 10-player raid for both, the Tidecrown Citadel, with its own story. All original.
 - **Legends.** Hand-made characters with their own story. The first is Lyveus Cloveus, the Exiled Knight (an original character by a friend): cross paths with a hooded stranger from level 15, meet him properly in the Arathi Highlands at 37, follow his questline to 60, and he joins your groups as a tank with his own abilities.
 - **Story cutscenes** at key levels and a first-time lore intro for every dungeon, replayable in the Theater.
-- **Optional on-device AI chat** (Android): a small local model can write bot chat and banter ahead of time. Off by default; the game never lets it decide anything.
 
 Where the game stands, how it is designed and what comes next: [the roadmap](docs/plans/2026-09-27-roadmap-design.md).
 

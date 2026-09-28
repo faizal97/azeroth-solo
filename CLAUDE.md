@@ -21,7 +21,6 @@ A single-player fake MMO in World of Warcraft Classic's world: every other "play
   - `art.js` (`window.ART`) and `art_story.js` + `art_story2.js` (`ART.story`): all art as SVG strings
   - zone art packs `art_<zone>.js` (one per zone or dungeon, e.g. `art_durotar.js` … `art_tidecrown.js`) plus icon packs `art_icons2.js`…`art_icons10.js` (`art_icons3.js` also adds `ART.node` for gathering nodes) and `art_mounts.js`. Each wraps `ART.scene`/`ART.mob`/`ART.icon` and falls through for other keys; each has a render script in `art/<name>/render.js`. A new pack must also be added to the list in `build.py`
   - `data/professions.js` loads after the zones (it adds trainers to hubs and reads place levels)
-  - `ai.js`: the optional on-device AI chat pack (line bank + battery guards; the native side is in `app/android/.../MainActivity.kt`)
 - `audio/compose_game.py` composes the music and sound effects; `check.py` runs the loudness, spike and seam checks. Music ships only if listed in `audio/approved.txt`.
 - `art/render.js` and `art/story/render.js` render contact sheets with `rsvg-convert`. Look at the sheets before shipping art.
 - `sim/*.js` are Node balance and playthrough sims (`node sim/group.js`, `node sim/v17.js` …).
@@ -47,6 +46,6 @@ Smoke-test on the emulator (AVD `Medium_Phone_API_36.0`). Its software renderer 
 ## Rules that matter
 
 - Saves: one per character under `azsolo.char.<id>` plus the index `azsolo.chars`. Keep old saves loading; migrate, never break them.
-- Any race can play any class (house rule). Bots are simulated players driven by the game's rules (bots.js, social.js). Since v9.5 they have real social systems (actionable chat, guilds, friends who remember you), but never an online service; the optional AI only writes words.
+- Any race can play any class (house rule). Bots are simulated players driven by the game's rules (bots.js, social.js). Since v9.5 they have real social systems (actionable chat, guilds, friends who remember you), but never an online service. Chat that reads like a request must be a real one (`node sim/chatcheck.js`). The on-device AI chat pack was removed in v9.6.1.
 - After 60, progression is horizontal (synced power, collections). Every dungeon and raid ships with a first-entry lore intro.
 - Sprites use z-index 60–96 inside `.scene`, which is isolated. Layers: `.create` 50 < sheets 55 < dialogs 57 < toasts 59 < cutscenes 60.

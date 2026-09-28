@@ -732,8 +732,7 @@
     if (G.S.wparty && G.S.wparty.members.some((m) => m.bot.id === b.id)) return toast(`${b.name} is already in your party.`, true);
     if (G.S.run || G.S.queue) return toast('Not while in the group finder.');
     if (G.partySize() >= 3) return toast('Your party is full.');
-    const bio = h('p', { class: 'bio' }, (window.AI && AI.bio(b)) || B.bio(b));
-    if (window.AI && !AI.bio(b) && AI.ready()) { bio.classList.add('writing'); AI.requestBio(b).then((t) => { bio.classList.remove('writing'); if (t) bio.textContent = t; }); }
+    const bio = h('p', { class: 'bio' }, B.bio(b));
     showDialog([h('h3', null, `Invite ${b.name}?`), h('p', null, `Level ${b.level} ${(D.RACES[b.race] || D.RACES.human).name} ${D.CLASSES[b.cls].name}`), bio,
       h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); G.invite(b.id); } }, 'Invite'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true);
   }
@@ -1531,7 +1530,7 @@
       const qs = G.npcQuests(npc);
       const P = G.S.player;
       const place = D.PLACES[P.place];
-      b.append(h('p', { style: { margin: 0, color: 'var(--text)' } }, (window.AI && AI.npcLine(npc)) || greeting(npc)));
+      b.append(h('p', { style: { margin: 0, color: 'var(--text)' } }, greeting(npc)));
       if (/^banker_/.test(npc)) b.append(h('button', { class: 'btn wide', onclick: () => openBank() }, 'Open your bank'));
       if (/^crafts_/.test(npc)) trainerBlock(b);
       if (/^stable_/.test(npc)) stableBlock(b);
@@ -1815,7 +1814,6 @@
             h('button', { class: 'btn alt', onclick: () => { window.SND.setPref('music', !pr.music); ui.sheetFn(); } }, 'Music: ' + (pr.music ? 'On' : 'Off')),
             h('button', { class: 'btn alt', onclick: () => { window.SND.setPref('sfx', !pr.sfx); ui.sheetFn(); } }, 'Effects: ' + (pr.sfx ? 'On' : 'Off'))));
         }
-        aiSection(b);
         b.append(h('div', { class: 'sec-h' }, 'Save'));
         b.append(h('div', { class: 'btn-row' },
           h('button', { class: 'btn alt', onclick: exportSave }, 'Copy save code'),
@@ -1825,47 +1823,6 @@
       }
     });
   }
-  // Optional on-device AI chat pack. Only the Android app has the bridge.
-  function aiSection(b) {
-    const A = window.AI;
-    b.append(h('div', { class: 'sec-h' }, 'AI chat', h('small', null, 'optional, on this phone')));
-    if (!A || !A.available) { b.append(h('p', { class: 'ai-note' }, 'Needs the Android app. Chat uses the built-in lines.')); return; }
-    const d = A.device, tier = A.tier(), st = A.prefs.stats;
-    const rows = h('div', { class: 'ai-box' });
-    const line = (k, v, cls) => rows.append(h('div', { class: 'ai-row' + (cls ? ' ' + cls : '') }, h('span', null, k), h('b', null, v)));
-    line('Phone', d ? `${(d.ramMB / 1024).toFixed(1)} GB RAM · ${tier.name}` : 'checking...');
-    line('Model', A.model ? `${Math.round(A.model.bytes / 1048576)} MB file` : 'none yet');
-    const label = { checking: 'Checking', no_model: 'Needs a model file', off: 'Off', idle: 'On', loading: 'Loading model...', busy: 'Writing lines...', error: 'Problem' }[A.state] || A.state;
-    line('Status', A.state === 'idle' && A.pauseReason ? 'Paused: ' + A.pauseReason : label, A.state === 'error' ? 'bad' : '');
-    if (st && A.prefs.on) {
-      const drop = st.batt0 >= 0 && d && d.battery >= 0 ? st.batt0 - d.battery : null;
-      line('Battery', `${d && d.battery >= 0 ? d.battery + '%' : '?'}${d && d.charging ? ' charging' : ''}${drop != null && drop > 0 && !(d && d.charging) ? ` · ${drop}% since on` : ''}`);
-      line('Work', `${Math.round(st.busyMs / 1000)}s busy · ${st.lines} lines written · ${A.bankSize()} ready`);
-    }
-    b.append(rows);
-    if (A.error) b.append(h('p', { class: 'ai-note bad' }, A.error));
-    if (tier.id === 'off' && d) { b.append(h('p', { class: 'ai-note' }, tier.note + '.')); return; }
-    const row = h('div', { class: 'btn-row' });
-    row.append(h('button', { class: 'btn alt', onclick: () => {
-      toast('Pick the Gemma .task file. Copying it can take a minute.', true);
-      A.importModel().then((m) => { if (m) toast('Model ready', true); ui.sheetFn && ui.sheetFn(); }, (e) => { toast('Could not load that file'); ui.sheetFn && ui.sheetFn(); });
-    } }, A.model ? 'Replace model file' : 'Load model file'));
-    if (A.model) row.append(h('button', { class: 'btn alt', onclick: () => { A.setOn(!A.prefs.on); ui.sheetFn(); } }, 'AI chat: ' + (A.prefs.on ? 'On' : 'Off')));
-    b.append(row);
-    if (A.model) {
-      const row2 = h('div', { class: 'btn-row' });
-      row2.append(h('button', { class: 'btn alt', disabled: A.state === 'busy' || A.state === 'loading', onclick: () => {
-        const t0 = Date.now(); toast('Writing a test line...', true);
-        A.test().then((r) => showDialog([h('h3', null, 'Test line'), h('p', null, r.text), h('p', { class: 'ai-note' }, `Took ${((Date.now() - t0) / 1000).toFixed(1)}s including loading.`), h('button', { class: 'btn wide', onclick: closeDialog }, 'OK')], true),
-          (e) => toast('Test failed: ' + ((e && e.message) || (e && e.code) || 'error')));
-      } }, 'Test'));
-      row2.append(h('button', { class: 'btn alt', onclick: () => showDialog([h('h3', null, 'Remove the model?'), h('p', null, 'This frees the space on your phone. Lines already written stay. You can load the file again later.'),
-        h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); A.removeModel().then(() => ui.sheetFn && ui.sheetFn()); } }, 'Remove'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true) }, 'Remove model'));
-      b.append(row2);
-    }
-    b.append(h('p', { class: 'ai-note' }, 'Writes chat, banter, greetings and bios ahead of time, only when you are not fighting. Stops under 30% battery, in battery saver or when the phone is warm. The game never lets it decide anything.'));
-  }
-  if (window.AI) AI.onChange = () => { if (ui.sheet === 'hero' && ui.sheetFn && !document.querySelector('.dialog')) ui.sheetFn(); };
   // ---------- bank and auction house
   const TRADE_LABEL = { mat: 'Trade goods', potion: 'Potion', elixir: 'Elixir', stone: 'Sharpening stone', kit: 'Armor kit', bag: 'Bag', recipe: 'Recipe' };
   const itemRow = (it, n, right, onclick, sub) => h('button', { class: 'row', onclick },
@@ -2227,11 +2184,6 @@
     const S = G.S;
     const news = rep.news.slice(-8).reverse();
     const newsEl = news.length ? h('div', { class: 'news' }, ...news.map((n) => h('div', { class: n.big ? 'big' : '' }, n.text))) : null;
-    if (newsEl && window.AI && AI.ready()) {
-      const crier = h('div', { class: 'crier writing' }, 'The town crier is gathering the news...');
-      newsEl.prepend(crier);
-      AI.awayStory(rep).then((t) => { if (t) { crier.classList.remove('writing'); crier.textContent = t; } else crier.remove(); });
-    }
     showDialog([h('h3', null, 'Welcome back'),
       h('p', null, `You were away for ${fmtTime(rep.away)}.`),
       rep.rested > 0 ? h('p', { style: { color: '#6fa8ff' } }, `You feel rested: +${rep.rested} bonus XP.`) : null,

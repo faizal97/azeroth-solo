@@ -398,9 +398,8 @@
     }
     if (due('general', 9, 22)) {
       const b = onl(); c.me = b;
-      const ai = root.AI && chance(0.7) ? root.AI.take('general', root.AI.zoneKey()) : null;
       const pool = GENERAL_ANY.concat(c.horde ? GENERAL_HORDE : GENERAL_ALLI, GENERAL_BAND[c.band], GENERAL_BAND[c.band]);
-      const text = sloppy(b, ai || pick(pool)(c));
+      const text = sloppy(b, pick(pool)(c));
       B.post(S, 'general', b, text);
       // sometimes someone answers
       for (const A of ANSWERS) {
@@ -463,7 +462,7 @@
     if (chance(0.45)) say(pick(['k', 'lol', 'ok', '?', 'true', 'fr', 'nice', 'same']));
   };
 
-  // A short profile when you tap someone. The AI pack may replace it with a written one.
+  // A short profile when you tap someone.
   B.bio = function (b) {
     const how = b.style === 'tryhard' ? 'Plays every day and pushes hard' : b.style === 'regular' ? 'Plays most evenings' : 'Logs in now and then, mostly to quest';
     const vibe = b.toxic > 0.6 ? 'Known to lose patience in groups.' : b.ninja ? 'Rolls need on a little too much.' : b.social > 0.7 ? 'Always up for a chat.' : b.social < 0.3 ? 'Keeps to themselves.' : 'Polite in groups.';
@@ -472,9 +471,6 @@
 
   // Party banter hooks
   B.partyLine = function (bot, kind) {
-    // banked AI lines first; ninjas keep their template excuses
-    const aiKind = kind === 'wipe' && bot.toxic > 0.6 ? 'wipe_rude' : kind;
-    if (root.AI && !(kind === 'loot' && bot.ninja) && chance(0.65)) { const l = root.AI.take('party', aiKind); if (l) return sloppy(bot, l); }
     const T = {
       hello: ['hi', 'hey all', 'yo', 'sup', 'hello', 'o/', 'halo'],
       pull: ['pulling', 'ready?', 'go go', 'inc', 'lets go'],

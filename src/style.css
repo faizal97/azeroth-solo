@@ -358,7 +358,7 @@ img { max-width: 100%; display: block; }
 .pmini b { font: 700 11.5px var(--body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pmini .bar.thin { height: 4px; }
 
-/* AI chat pack */
+/* bios and info boxes */
 .bio{color:var(--muted);font-size:13px;font-style:italic;margin:4px 0 8px}
 .writing{opacity:.6}
 .news .crier{color:var(--text);font-style:italic;margin-bottom:6px;white-space:normal}

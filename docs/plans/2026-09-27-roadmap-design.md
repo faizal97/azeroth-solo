@@ -20,7 +20,7 @@ This document says where the game stands, how it is designed, and what comes nex
 
 - **World first.** Each update adds zones and the classic systems that unlock in their level range: talents at 10, a mount at 40, raids at 60.
 - **The main levelling path.** About 12 zones per faction, the way most classic players levelled, each covering a few levels. From 30 most zones are contested and shared by both factions.
-- **A simulated server.** Other players are bots with names, classes, levels, play times and personalities. They take mobs before you do, group with you, trade, chat and remember you when you help them. They are driven by the game's rules, never by an online service. An optional on-device AI can write some of their chat lines, but it never decides what happens.
+- **A simulated server.** Other players are bots with names, classes, levels, play times and personalities. They take mobs before you do, group with you, trade, chat and remember you when you help them. They are driven by the game's rules, never by an online service. Chat that reads like a request is always a real one you can act on.
 - **Any race can play any class** (a house rule).
 - **Nothing punishes a day off.** No login streaks. Coming back should feel like the world moved on, not like a chore was missed.
 - **Saves stay compatible.** Every update migrates old characters forward.
@@ -30,7 +30,7 @@ This document says where the game stands, how it is designed, and what comes nex
 
 | Version | Highlights |
 |---|---|
-| 1.x | Elwynn Forest and the Deadmines; all nine classes; Dun Morogh, Teldrassil, Durotar, Mulgore and Tirisfal starting zones; the Horde; Ragefire Chasm; story cutscenes; the optional on-device AI chat pack |
+| 1.x | Elwynn Forest and the Deadmines; all nine classes; Dun Morogh, Teldrassil, Durotar, Mulgore and Tirisfal starting zones; the Horde; Ragefire Chasm; story cutscenes; an optional on-device AI chat pack (removed in 9.6.1) |
 | 2.x | Westfall and the Barrens (10–20); the Deadmines and Wailing Caverns at their real levels; world PvP ambushes with War Mode; talents; Stormwind; banks and auction houses; Help Wanted, Mentor Marks, heirlooms, titles and the daily Roulette; hub bounty boards; professions |
 | 3.0 | Redridge and Stonetalon (18–25); the Stockade |
 | 4.x | Duskwood, the Wetlands, Hillsbrad and contested Ashenvale (20–30); Shadowfang Keep; Blackfathom Deeps |
@@ -42,7 +42,7 @@ This document says where the game stands, how it is designed, and what comes nex
 | 9.1–9.2 | Legends: Lyveus Cloveus, the Exiled Knight |
 | 9.3 | In-app updates |
 | 9.4 | World map with routes, NPCs in town scenes, easier selling |
-| 9.5–9.6 | Working chat and guilds |
+| 9.5–9.6 | Working chat and guilds; custom chat tabs, a tabbed Hero sheet |
 
 ## How the world works
 
