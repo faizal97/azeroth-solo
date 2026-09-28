@@ -141,6 +141,13 @@ Hand-made characters with their own story, a questline across the levels, and a 
 - NPCs are drawn in the scene: up to 3 in towns, legends and the Hooded Stranger first, then quest givers. They're dressed by town and title (npcLooks), and tapping one opens them.
 - Fix: sheet rows no longer collapse when a sheet overflows (the Map and Social tabs were invisible).
 
+## v9.5.0: working chat and guilds (his ask, 2026-09-28)
+- Chat messages can carry an action (`m.act`, src/social.js). **LFG:** real activities at your level; Join summons you, like Help Wanted. **Whispers** (one open at a time): help with N kills (the bot joins your party and pays when done, +2 Mentor Marks), WTB your trade goods at 2.5–4x vendor price, WTS gear for your class, a "where is" question (the right zone earns +1 Mentor Mark), and a guild invite. **General:** WTS posts and guild recruiting (tap to apply).
+- Every line can be tapped: a card with the request's buttons, the linked items (with the upgrade comparison), and quick replies.
+- **Guilds:** browse your faction's guilds (style, size, online, level floor) and apply; an officer answers in 15–45 s, and you're turned down below the floor. You can leave (standing resets).
+- **Guild requests** (dungeon runs with guildmates, materials, help with kills, questions) earn standing. Ranks: Initiate 0, Member 100 (+3% XP), Veteran 300 (+5% quest gold), Officer 700 (guild runs +5 Mentor Marks), Champion 1500 (a title).
+- Road chips show the destination's zone.
+
 ## Group finder rules (agreed 2026-09-27)
 
 - **Be there:** any faction may run any dungeon or world elite, but you queue from its zone. Places with no road from where you are stay hidden; they appear when roads between the factions open in the contested zones.

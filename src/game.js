@@ -498,7 +498,7 @@
     if (P.level >= D.LEVEL_CAP || amount <= 0) return 0;
     let bonus = 0;
     if (fromKill && P.rested > 0) { bonus = Math.min(amount, Math.round(P.rested)); P.rested -= bonus; }
-    amount = Math.round(amount * G.warBonus() * (1 + G.heirloomXpBonus() / 100));
+    amount = Math.round(amount * G.warBonus() * (1 + G.heirloomXpBonus() / 100) * (1 + ((root.SOC && SOC.perk('xp')) || 0) / 100));
     const total = amount + bonus;
     P.xp += total;
     B.post(G.S, 'combat', null, bonus ? `You gain ${total} experience. (+${bonus} exp Rested bonus)` : `You gain ${total} experience.`);
@@ -888,7 +888,7 @@
     for (const o of Q.objs) if (o.type === 'collect') G.removeItem(o.item, o.n);
     delete P.quests[qid]; P.done[qid] = true;
     sys(`${Q.name} completed.`);
-    const m = Math.round(((Q.reward.money || 0) + G.questMoney(Q.lvl)) * (1 + racialPassive('questMoneyPct') / 100) * G.warBonus());
+    const m = Math.round(((Q.reward.money || 0) + G.questMoney(Q.lvl)) * (1 + (racialPassive('questMoneyPct') + ((root.SOC && SOC.perk('gold')) || 0)) / 100) * G.warBonus());
     P.money += m;
     sys(`Received ${G.moneyText(m)}.`);
     if (it) { G.addItem(JSON.parse(JSON.stringify(it)), 1); loot(`You receive item: ${B.link(it.name, it.q)}.`); }
@@ -914,6 +914,7 @@
   function onKill(mobKey) {
     const P = G.S.player;
     P.kills++;
+    emit('kill', { mob: mobKey });
     for (const qid in P.quests) D.QUESTS[qid].objs.forEach((o, i) => {
       if (o.type === 'kill' && o.mob === mobKey && (P.quests[qid].prog[i] || 0) < o.n) {
         P.quests[qid].prog[i] = (P.quests[qid].prog[i] || 0) + 1;
@@ -1517,6 +1518,7 @@
     const r = G.records(), n = t.need;
     if (n.clear) return !!(r.clears[n.clear] && r.clears[n.clear].clears);
     if (n.quest) return !!G.S.player.done[n.quest];
+    if (n.guildRank != null) return !!(root.SOC && SOC.rank() >= n.guildRank);
     return Object.keys(n).every((k) => (r[k] || 0) >= n[k]);
   };
   G.titleName = function (t, name) { const horde = (D.RACES[G.S.player.race] || {}).faction === 'horde'; return (horde && t.horde ? t.horde : t.name).replace('%s', name); };
@@ -1769,6 +1771,25 @@
     S.pending.push({ at: now() + 1500, bot: b.id, ch: 'party', text: B.partyLine(b, 'hello'), fromName: ch.name });
     emit('change');
   }
+  G.addToParty = (bot) => addToParty(bot);
+  // A group from chat (LFG post or guild request) summons you, like Help Wanted. opts: { leader, guild, soc }
+  G.joinChatGroup = function (act, role, opts) {
+    const S = G.S; opts = opts || {};
+    if (S.run || S.queue || G.fight) { toast('Leave your current group first.'); return false; }
+    if ((S.flags.deserterUntil || 0) > now()) { toast('You are a Deserter for a few more minutes.'); return false; }
+    if (S.wparty) disbandParty('You left your party to join another group.');
+    if (role && G.roles().includes(role)) S.player.role = role;
+    stopActions();
+    const grp = formGroup(act, { guild: opts.guild });
+    const lead = opts.leader && S.bots.find((b) => b.id === opts.leader);
+    if (lead) { const i = grp.members.findIndex((m) => m.role === 'dps' && !m.legend); if (i >= 0) { const lc = G.botChar(Object.assign({}, lead, { level: grp.members[i].level, role: 'dps' })); lc.syncLevel = grp.members[i].syncLevel; grp.members[i] = lc; } }
+    sys(`${lead ? lead.name + "'s" : 'The'} group summons you to ${D.ACTIVITIES[act].name}.`);
+    grp.members.forEach((m, i) => S.pending.push({ at: now() + 900 + i * 1400, bot: m.bot.id, ch: 'party', text: pick(m.bot.id === (lead && lead.id) ? ['ty for joining!', 'yay ty', 'nice, lets go'] : ['hi', 'hello', 'o/', 'hey']), fromName: m.name }));
+    startRun(act);
+    S.run.soc = opts.soc || null;
+    emit('change');
+    return true;
+  };
   G.leaveParty = function (quiet) {
     const S = G.S;
     if (!S.wparty) return;
@@ -1880,12 +1901,13 @@
   };
   G.leaveQueue = function () { G.S.queue = null; sys('You left the queue.'); emit('change'); };
   const OTHER_REALMS = ['Stormrage', 'Silvermoon', 'Argent Dawn', 'Kirin Tor', 'Bronzebeard', 'Moonglade'];
-  function recruit(role, lvl, used, usedCls) {
+  function recruit(role, lvl, used, usedCls, guild) {
     const S = G.S, date = new Date();
     const want = role === 'tank' ? ['warrior', 'warrior', 'paladin'].concat(lvl >= 10 ? ['druid'] : []) : role === 'healer' ? ['priest', 'priest', 'paladin', 'druid', 'shaman'] : ['mage', 'rogue', 'rogue', 'mage', 'warrior', 'warlock', 'warlock', 'hunter', 'hunter', 'druid', 'shaman'];
     const myF = (D.RACES[S.player.race] || {}).faction || 'alliance';
     let pool = S.bots.filter((b) => B.isOnline(b, date) && B.factionOf(b) === myF && want.includes(b.cls) && b.level >= lvl - 1 && b.level <= lvl + 3 && !used.has(b.id));
     // prefer classes the group does not have yet
+    if (guild != null && guild >= 0) { const mates = pool.filter((b) => b.guild === guild); if (mates.length) pool = mates; }
     if (usedCls) { const fresh = pool.filter((b) => !usedCls.has(b.cls)); if (fresh.length) pool = fresh; }
     let b;
     if (pool.length) b = JSON.parse(JSON.stringify(pick(pool)));
@@ -1959,7 +1981,7 @@
     roles.splice(roles.indexOf(mine), 1);
     const used = new Set(), usedCls = new Set([S.player.cls]);
     const lvl = G.syncLevel(act);
-    const members = roles.map((r) => G.botChar(recruit(r, lvl, used, usedCls)));
+    const members = roles.map((r) => G.botChar(recruit(r, lvl, used, usedCls, opts && opts.guild)));
     // everyone fights at the activity's level
     const cap = A.maxLvl || D.LEVEL_CAP;
     for (const m of members) m.syncLevel = cap;
@@ -2106,6 +2128,7 @@
         R.phase = 'done';
         sys(`${R.name} complete!`);
         runBonuses(R);
+        emit('runComplete', { act: R.act, soc: R.soc || null, wipes: R.wipes });
         S.group.members.filter((m) => !m.gone).forEach((m, i) => S.pending.push({ at: now() + 2000 + i * 1600, bot: m.bot.id, ch: 'party', text: B.partyLine(m.bot, 'bye'), fromName: m.name }));
       } else { R.phase = 'rest'; R.restUntil = now() + 6500 * (PACE[R.pace || 'normal'].rest); }
     } else {
@@ -2308,13 +2331,14 @@
   };
 
   // ============================================================ chat
-  G.say = function (ch, text) {
+  G.say = function (ch, text, to) {
     const S = G.S;
     text = String(text).slice(0, 180);
     if (!text.trim()) return;
     if (ch === 'guild' && S.player.guild < 0) return toast('You are not in a guild.');
-    if (ch === 'party' && !S.group) return toast('You are not in a party.');
-    S.chat.push({ t: now(), ch, from: S.player.name, cls: S.player.cls, me: true, text });
+    if (ch === 'party' && !S.group && !S.wparty) return toast('You are not in a party.');
+    if (ch === 'whisper' && to) S.lastWhisper = to;
+    S.chat.push({ id: (S.chatSeq = (S.chatSeq || 0) + 1), t: now(), ch, from: S.player.name, cls: S.player.cls, me: true, to: ch === 'whisper' ? (to || S.lastWhisper) : undefined, text });
     B.respond(S, ch, text);
     emit('chat');
   };
@@ -2322,13 +2346,16 @@
   function loot(text) { B.post(G.S, 'loot', null, text); emit('chat'); }
   function toast(text) { emit('toast', text); return text; }
   G.sys = sys; G.toast = toast;
+  G.emitChange = () => emit('change'); G.emitChat = () => emit('chat');
 
   // ============================================================ main loop
   let acc = 0, worldAcc = 0, saveAcc = 0;
+  let socAcc = 0;
   G.update = function (dt) {
     const S = G.S;
     if (!S) return;
     acc += dt;
+    socAcc += dt; if (socAcc >= 1) { socAcc = 0; if (root.SOC) try { SOC.tick(); } catch (e) { console.error(e); } }
     S.player.played = (S.player.played || 0) + dt;
     // combat at fixed 0.1s steps
     while (acc >= 0.1) {

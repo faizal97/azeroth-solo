@@ -155,7 +155,7 @@
     app.innerHTML = '';
     els.frames = h('div', { class: 'frames' });
     els.scene = h('div', { class: 'scene' });
-    els.chat = h('div', { class: 'chat', onclick: () => openSocial('chat') });
+    els.chat = h('div', { class: 'chat', onclick: (e) => { const ln = e.target.closest('.ln.tap'); const m = ln && G.S.chat.find((x) => String(x.id) === ln.dataset.mid); if (m) { e.stopPropagation(); msgDialog(m); } else openSocial('chat'); } });
     els.panel = h('div', { class: 'panel' });
     els.bar = h('div', { class: 'actionbar' });
     els.bottom = h('div', { class: 'bottom-wrap' }, els.bar);
@@ -447,7 +447,9 @@
     else if (m.ch === 'say') pre = `${name} says: `;
     else if (m.ch === 'monster') pre = m.from ? `${esc(m.from)} says: ` : '';
     else if (m.from) pre = `${ch.label ? '[' + ch.label + '] ' : ''}${name}: `;
-    return `<div class="ln" style="color:${color}">${pre}${richText(m.text)}</div>`;
+    const open = m.act && m.act.state === 'open';
+    const tap = open || (m.from && !m.me && m.ch !== 'combat') || /\[\[\d\|/.test(m.text);
+    return `<div class="ln${tap ? ' tap' : ''}${open ? ' act' : ''}" data-mid="${m.id || ''}" style="color:${color}">${open ? '<span class="act-mark">▸</span>' : ''}${pre}${richText(m.text)}</div>`;
   }
   function renderChat() {
     if (!els.chat) return;
@@ -2010,7 +2012,7 @@
     const tabs = h('div', { class: 'tabs' });
     for (const [k, label] of [['all', 'All'], ['general', 'General'], ['lfg', 'LFG'], ['party', 'Party'], ['guild', 'Guild'], ['whisper', 'Whispers'], ['loot', 'Loot']]) tabs.append(h('button', { class: ui.chatTab === k ? 'on' : '', onclick: () => { ui.chatTab = k; ui.sheetFn(); } }, label));
     b.append(tabs);
-    ui.chatLog = h('div', { class: 'chat-full' });
+    ui.chatLog = h('div', { class: 'chat-full', onclick: (e) => { const ln = e.target.closest('.ln.tap'); const m = ln && G.S.chat.find((x) => String(x.id) === ln.dataset.mid); if (m) msgDialog(m); } });
     b.append(ui.chatLog);
     refreshChatLog();
     const sel = h('select', { id: 'chat-ch', 'aria-label': 'Channel' }, ...[['say', 'Say'], ['general', 'General'], ['lfg', 'LFG'], ['party', 'Party'], ['guild', 'Guild'], ['whisper', 'Reply']].map(([v, l]) => { const o = h('option', { value: v }, l); if (v === ui.chatCh) o.selected = true; return o; }));
@@ -2039,14 +2041,74 @@
     b.append(h('div', { class: 'sec-h' }, 'Highest level on ' + D.REALM), h('div', { class: 'people', html: top.map((x) => `<span class="cls-${x.cls}">${esc(x.name)}</span> ${x.level}`).join(' · ') }));
     b.append(h('div', { class: 'sec-h' }, 'News'), list);
   }
+  // ---------- a chat message: what it asks for, linked items, and quick replies (v9.5, src/social.js)
+  function linkedItems(m) {
+    const out = [];
+    if (m.act && m.act.itemData) out.push(m.act.itemData);
+    else if (m.act && m.act.item && D.ITEMS[m.act.item]) out.push(D.ITEMS[m.act.item]);
+    const re = /\[\[\d\|([^\]]+)\]\]/g; let x;
+    while ((x = re.exec(m.text))) { const name = x[1]; if (out.some((it) => it.name === name)) continue; const id = Object.keys(D.ITEMS).find((k) => D.ITEMS[k].name === name); if (id) out.push(D.ITEMS[id]); }
+    return out;
+  }
+  function msgDialog(m) {
+    const a = m.act;
+    const ch = D.CHANNELS[m.ch] || D.CHANNELS.system;
+    const who = m.me ? 'You' : m.from || ch.label || 'System';
+    const parts = [h('h3', null, m.ch === 'whisper' ? `${who} whispers` : `${who}${ch.label ? ' · ' + ch.label : ''}`), h('p', { html: richText(m.text) })];
+    for (const it of linkedItems(m).slice(0, 2)) parts.push(itemTip(it));
+    if (a && a.state !== 'open') parts.push(h('p', { class: 'ai-note' }, a.state === 'done' ? 'Done.' : a.state === 'declined' ? 'You said no.' : 'This has expired.'));
+    if (a && a.kind === 'help_kill' && a.accepted) parts.push(h('p', { class: 'ai-note' }, `${a.got}/${a.n} ${D.MOBS[a.mob].name} at ${D.PLACES[a.place].name}.`));
+    const acts = window.SOC ? SOC.actions(m) : [];
+    if (acts.length) {
+      const row = h('div', { class: 'btn-row wrap' });
+      for (const x of acts) row.append(h('button', { class: 'btn' + (x.primary ? '' : ' alt'), disabled: !!x.disabled, onclick: () => {
+        const r = x.fn(); closeDialog(); renderAll();
+        if (typeof r === 'string' && r.startsWith('route:')) { const to = r.slice(6); if (G.S.player.place !== to) routeDialog(to); }
+        else if (r) toast(r);
+      } }, x.label));
+      parts.push(row);
+    }
+    const reps = window.SOC && !(a && (m.ch === 'lfg' || m.ch === 'general')) ? SOC.replies(m) : [];
+    if (reps.length) {
+      parts.push(h('div', { class: 'sec-h' }, 'Reply', h('small', null, reps[0].ch === 'whisper' ? 'as a whisper' : 'in ' + reps[0].ch)));
+      parts.push(h('div', { class: 'chips' }, ...reps.map((r) => h('button', { class: 'chip', onclick: () => { r.fn(); closeDialog(); renderChat(); } }, r.label))));
+    }
+    parts.push(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: closeDialog }, 'Close')));
+    showDialog(parts, true);
+  }
+
   function guildTab(b) {
     const S = G.S, P = S.player;
-    if (P.guild < 0) { b.append(h('p', null, 'You are not in a guild. Guilds tend to invite new players around level 5.')); return; }
+    if (P.guild < 0) {
+      const ap = S.soc && S.soc.applied && S.soc.applied.until > Date.now() ? S.soc.applied : null;
+      b.append(h('p', null, ap ? `You applied to <${B.GUILDS[ap.g]}>. An officer will answer soon.` : 'You are not in a guild. Pick one and apply, or watch General for recruiters.'));
+      b.append(h('div', { class: 'sec-h' }, 'Guilds', h('small', null, (D.RACES[P.race] || {}).faction === 'horde' ? 'Horde' : 'Alliance')));
+      for (const gi of SOC.myGuilds()) {
+        const ok = P.level >= gi.min;
+        b.append(h('div', { class: 'row', style: { gridTemplateColumns: '1fr auto' } },
+          h('div', { class: 't' }, h('b', null, '<' + gi.name + '>'), h('small', { style: { whiteSpace: 'normal' } }, `${gi.style[0].toUpperCase() + gi.style.slice(1)} · ${gi.members} members, ${gi.online} online · level ${gi.min}+. ${gi.blurb}`)),
+          h('button', { class: 'chip gold', disabled: !!ap || !ok, onclick: () => { SOC.apply(gi.g); ui.sheetFn(); } }, ok ? 'Apply' : `Level ${gi.min}+`)));
+      }
+      return;
+    }
+    const gi = SOC.guildInfo(P.guild), st = SOC.standing(), r = SOC.rank(), R = SOC.RANKS, nx = R[r + 1];
     const mates = S.bots.filter((x) => x.guild === P.guild);
     const on = mates.filter((x) => B.isOnline(x, new Date()));
-    b.append(h('div', { class: 'sec-h' }, '<' + B.GUILDS[P.guild] + '>', h('small', null, `${on.length} of ${mates.length} online`)));
-    b.append(h('div', { class: 'list' }, ...on.slice(0, 30).map((x) => h('div', { class: 'row', style: { minHeight: '36px' } }, h('div', { class: 'ic' }, img(art('portrait', looks(x)))), h('div', { class: 't' }, h('b', { class: 'cls-' + x.cls }, x.name), h('small', null, `Level ${x.level} ${D.CLASSES[x.cls].name} · ${D.PLACES[B.placeFor(x, new Date())].name}`)), h('div')))));
+    b.append(h('div', { class: 'sec-h' }, '<' + gi.name + '>', h('small', null, `${gi.style} · ${on.length} of ${mates.length} online`)));
+    b.append(h('div', { class: 'ai-box' },
+      h('div', { class: 'ai-row' }, h('span', null, 'Your rank'), h('b', null, R[r].name)),
+      h('div', { class: 'ai-row' }, h('span', null, 'Guild standing'), h('b', { class: 'tnum' }, nx ? `${st} / ${nx.at}` : String(st))),
+      h('div', { class: 'xpbar', style: { height: '6px', background: '#1a140c', borderRadius: '3px', overflow: 'hidden', margin: '6px 0' } }, h('i', { style: { display: 'block', height: '100%', width: (nx ? Math.min(100, Math.round((st - R[r].at) / (nx.at - R[r].at) * 100)) : 100) + '%', background: 'var(--gold)' } })),
+      h('p', { class: 'ai-note', style: { margin: 0 } }, 'Perks: ' + (R.slice(1, r + 1).map((k) => k.perk).join(' · ') || 'none yet') + (nx ? `. Next, ${nx.name}: ${nx.perk}.` : '.')),
+      h('p', { class: 'ai-note', style: { margin: '4px 0 0' } }, 'Earn standing by helping guildmates: their requests appear in guild chat. Tap one to help.')));
+    const reqs = S.chat.filter((m) => m.act && m.act.guild && m.act.state === 'open').slice(-6).reverse();
+    b.append(h('div', { class: 'sec-h' }, 'Guild requests', h('small', null, reqs.length ? 'tap to help' : 'none right now')));
+    for (const m of reqs) b.append(h('button', { class: 'row', style: { gridTemplateColumns: '1fr auto', textAlign: 'left' }, onclick: () => msgDialog(m) }, h('div', { class: 't' }, h('b', { class: 'cls-' + (m.cls || '') }, m.from), h('small', { html: richText(m.text), style: { whiteSpace: 'normal' } })), h('span', { class: 'chip gold' }, 'Help')));
+    b.append(h('div', { class: 'sec-h' }, 'Online'));
+    b.append(h('div', { class: 'list' }, ...on.slice(0, 30).map((x) => h('div', { class: 'row', style: { minHeight: '36px' } }, h('div', { class: 'ic' }, img(art('portrait', looks(x)))), h('div', { class: 't' }, h('b', { class: 'cls-' + x.cls }, x.name), h('small', null, `Level ${x.level} ${D.CLASSES[x.cls].name}`))))));
+    b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => showDialog([h('h3', null, `Leave <${gi.name}>?`), h('p', null, 'Your guild standing resets to zero.'), h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { SOC.leaveGuild(); closeDialog(); ui.sheetFn && ui.sheetFn(); } }, 'Leave'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Stay'))], true) }, 'Leave guild')));
   }
+
 
   // ---------- loot rolls
   function renderRolls() {

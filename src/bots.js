@@ -324,7 +324,7 @@
 
   // Emit one chat message into S.chat. from: bot | null (system)
   B.post = function (S, ch, from, text) {
-    const m = { t: Date.now(), ch, from: from ? from.name : null, cls: from ? from.cls : null, fromId: from ? from.id : null, text };
+    const m = { id: (S.chatSeq = (S.chatSeq || 0) + 1), t: Date.now(), ch, from: from ? from.name : null, cls: from ? from.cls : null, fromId: from ? from.id : null, text };
     S.chat.push(m);
     if (ch === 'whisper' && from && from.name) S.lastWhisper = from.name;
     if (S.chat.length > 160) S.chat.splice(0, S.chat.length - 160);

@@ -397,3 +397,9 @@ img { max-width: 100%; display: block; }
 .bag-acts-t { font-size: 14px; } .bag-acts-t small { color: var(--muted); }
 /* sheet rows always take their content's height, so scrollable rows (tabs) never collapse when the sheet overflows (v9.4) */
 .sheet-b { grid-auto-rows: max-content; }
+
+/* working chat (v9.5): tappable lines, open requests highlighted */
+.ln.tap { cursor: pointer; }
+.ln.act { background: linear-gradient(90deg, #3a2c1266, transparent); border-left: 2px solid var(--gold); padding-left: 4px; }
+.act-mark { color: var(--gold); margin-right: 3px; }
+.btn-row.wrap { flex-wrap: wrap; }

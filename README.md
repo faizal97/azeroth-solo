@@ -19,7 +19,7 @@ It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sp
 
 > **Unofficial, non-commercial fan project.** Not affiliated with, endorsed by or sponsored by Blizzard Entertainment. World of Warcraft, Warcraft and Azeroth are trademarks or registered trademarks of Blizzard Entertainment, Inc. No Blizzard assets are used: all art (hand-written SVG), music (composed synth) and code in this repository are original. The game is free and will stay free.
 
-## What's in it (v9.2)
+## What's in it (v9.5)
 
 - **Both factions, all 8 classic races.** Human, Dwarf, Gnome, Night Elf, Orc, Troll, Tauren, Undead, each with its own starting zone, and racial traits (one active, two passive).
 - **Talents** from level 10: three trees per class.
@@ -30,7 +30,10 @@ It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sp
 - **Levels 1–60.** Starting zones, then Westfall and the Barrens, Redridge and Stonetalon, then Duskwood, the Wetlands and Hillsbrad, and contested Ashenvale, Stranglethorn Vale, the Arathi Highlands, Feralas, the Burning Steppes, the Western Plaguelands, Tanaris, Un'Goro Crater and Winterspring (neutral Gadgetzan, Marshal's Refuge and Everlook), with about 700 quests, named rares and unique drops.
 - **Dungeons and elites with a group of simulated players.** Ragefire Chasm, The Deadmines, Wailing Caverns, The Stockade, Shadowfang Keep, Blackfathom Deeps, Gnomeregan, Razorfen Kraul, the Scarlet Monastery (Library and Cathedral), Zul'Farrak, Maraudon, Blackrock Depths, Scholomance, Stratholme, and open-world elites such as Hogger, Bellygrub, XT:9, Stitches, Big Samras, Sharptalon, the Razormaw Matriarch, King Bangalash, Kregg Keelhaul, Lord Shalzaru, King Mosh, Volchan, Araj the Summoner and Rak'shiri, with roles, threat, wipes and need/greed rolls. Groups are synced to the dungeon's level; you choose the pull pace, mark the kill order and pick a boss plan.
 - **World PvP (War Mode).** Enemy players show up nearby; some pass by, some attack, and you can strike first. Guards help in towns. Ashenvale is contested: both factions quest there, each from its own town, and enemy players are more common. +10% XP and gold, and Honor.
-- **A living server.** Players online by time of day, general and LFG chat, guilds, a welcome-back digest of what happened while you were away.
+- **A living server.** Players online by time of day and a welcome-back digest of what happened while you were away.
+- **Chat that does things.** Tap an LFG post to join that group. Whispers ask for real things: help with a kill (paid), buying your cloth, selling you gear, a question you can answer. Tap any [item] to see it, and use quick replies.
+- **Guilds.** Browse your faction's guilds and apply (each has a style and a level floor), or answer a recruiter. Guildmates post requests in guild chat. Helping earns guild standing, and ranks bring small perks (XP, quest gold, Mentor Marks, a title).
+- **World map and routes.** Every zone and how they connect. Tap any place for the way there, and travel it in one go.
 - **Our own expansion, "The Drowned Crown" (level 60).** After Chapter 6 an island rises from the sea: the Tidewatch Coast (Alliance) and the Skullreef Isles (Horde), a dungeon for each side (the Sunken Archive and the Temple of Shal'zua), and a 10-player raid for both, the Tidecrown Citadel, with its own story. All original.
 - **Legends.** Hand-made characters with their own story. The first is Lyveus Cloveus, the Exiled Knight (an original character by a friend): cross paths with a hooded stranger from level 15, meet him properly in the Arathi Highlands at 37, follow his questline to 60, and he joins your groups as a tank with his own abilities.
 - **Story cutscenes** at key levels and a first-time lore intro for every dungeon, replayable in the Theater.

@@ -15,6 +15,8 @@ A single-player fake MMO in World of Warcraft Classic's world: every other "play
   - `engine.js`: combat, DOM-free so it also runs in Node sims
   - `bots.js`: simulated server, chat, catch-up after time away
   - `game.js`: controller for world, quests, loot, group finder, runs and character saves
+  - `social.js`: the working chat and guilds (`SOC`): messages with an action (`m.act`: LFG joins, whisper requests, trade, recruiting, guild requests), guild standing and ranks
+  - `update.js`: the in-app updater (GitHub releases; the Android side is in MainActivity.kt)
   - `sound.js`, `cutscene.js`, `ui.js`
   - `art.js` (`window.ART`) and `art_story.js` + `art_story2.js` (`ART.story`): all art as SVG strings
   - zone art packs `art_<zone>.js` (one per zone or dungeon, e.g. `art_durotar.js` … `art_tidecrown.js`) plus icon packs `art_icons2.js`…`art_icons10.js` (`art_icons3.js` also adds `ART.node` for gathering nodes) and `art_mounts.js`. Each wraps `ART.scene`/`ART.mob`/`ART.icon` and falls through for other keys; each has a render script in `art/<name>/render.js`. A new pack must also be added to the list in `build.py`
