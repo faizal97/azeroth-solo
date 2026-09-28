@@ -2002,17 +2002,27 @@
     });
   }
   function exportSave() {
-    const code = G.exportSave();
     const ta = h('textarea', { readonly: true, style: { width: '100%', height: '120px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', fontSize: '11px' } });
-    ta.value = code;
-    showDialog([h('h3', null, 'Save code'), h('p', null, 'Keep this somewhere safe. Paste it back with Load save code.'), ta,
-      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { ta.select(); try { navigator.clipboard.writeText(code).then(() => toast('Copied', true), () => { document.execCommand('copy'); toast('Copied', true); }); } catch (e) { document.execCommand('copy'); } } }, 'Copy'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Close'))]);
+    const note = h('p', { class: 'ai-note', style: { margin: 0 } }, 'Preparing your code...');
+    const copy = h('button', { class: 'btn', disabled: true }, 'Copy');
+    showDialog([h('h3', null, 'Save code'), h('p', null, 'Keep this somewhere safe, or send it to yourself. Paste it back with Load save code, in the app or a browser.'), ta, note,
+      h('div', { class: 'btn-row' }, copy, h('button', { class: 'btn alt', onclick: closeDialog }, 'Close'))]);
+    G.exportSave().then((code) => {
+      ta.value = code; copy.disabled = false;
+      note.textContent = `${code.length.toLocaleString()} characters. Copy all of it.`;
+      copy.onclick = () => { ta.select(); try { navigator.clipboard.writeText(code).then(() => toast('Copied', true), () => { document.execCommand('copy'); toast('Copied', true); }); } catch (e) { document.execCommand('copy'); } };
+    }, () => { note.textContent = 'Could not make a code on this device.'; });
   }
   function importSave() {
     const ta = h('textarea', { style: { width: '100%', height: '120px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', fontSize: '11px' }, placeholder: 'Paste your save code' });
     const err = h('p', { style: { color: '#ff6a5a' } });
+    const load = h('button', { class: 'btn', onclick: async () => {
+      load.disabled = true; err.textContent = '';
+      try { const id = await G.importSave(ta.value); closeDialog(); closeSheet(); enter(id); toast('Save loaded as a new character', true); }
+      catch (e) { err.textContent = (e && e.message) || 'That code did not work. Copy the whole code and try again.'; load.disabled = false; }
+    } }, 'Load');
     showDialog([h('h3', null, 'Load save code'), h('p', null, 'Paste a code from Hero → Settings → Copy save code, in the app or another browser. It is added as a new character; your others stay.'), ta, err,
-      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { try { const id = G.importSave(ta.value); closeDialog(); closeSheet(); enter(id); toast('Save loaded as a new character', true); } catch (e) { err.textContent = 'That code did not work. Copy the whole code and try again.'; } } }, 'Load'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))]);
+      h('div', { class: 'btn-row' }, load, h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))]);
   }
   function confirmDelete() {
     showDialog([h('h3', null, 'Delete ' + G.S.player.name + '?'), h('p', null, 'Your character, gear and quests are gone for good. Copy your save code first if you might want it back.'),

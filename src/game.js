@@ -109,14 +109,40 @@
     for (const b of (S.player.bags || []).concat(S.player.bank || [])) { const base = D.ITEMS[b.item.id]; if (base && base.slot === 'mat' && b.item.slot !== 'mat') { b.item.slot = 'mat'; b.item.icon = base.icon; } }
     return G.catchUp();
   };
-  G.exportSave = function () { G.save(); return btoa(unescape(encodeURIComponent(JSON.stringify(G.S)))); };
-  G.importSave = function (str) {
-    const S = JSON.parse(decodeURIComponent(escape(atob(str.trim()))));
+  // Save codes (v9.7.1): "AZS2.<length>.<base64 of the deflated save>", about a fifth of the old size, so a code fits in a
+  // chat message (WhatsApp cuts messages at about 65,000 characters; the old plain codes were over 100,000). The length
+  // lets import tell a cut-off code from a broken one. Old plain base64 codes still load. Chat history is left out.
+  const SAVE_TAG = 'AZS2';
+  const toB64 = (u8) => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
+  const fromB64 = (b) => { const s = atob(b); const u8 = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u8[i] = s.charCodeAt(i); return u8; };
+  const pipe = async (u8, Stream) => { const cs = new Stream('deflate-raw'); const w = cs.writable.getWriter(); w.write(u8); w.close(); return new Uint8Array(await new Response(cs.readable).arrayBuffer()); };
+  G.exportSave = async function () {
+    G.save();
+    const json = JSON.stringify(Object.assign({}, G.S, { chat: [], pending: [] }));
+    if (typeof CompressionStream === 'undefined') return btoa(unescape(encodeURIComponent(json)));
+    const b = toB64(await pipe(new TextEncoder().encode(json), CompressionStream));
+    return `${SAVE_TAG}.${b.length}.${b}`;
+  };
+  G.importSave = async function (str) {
+    let code = String(str || '').replace(/\s+/g, ''); // messaging apps add line breaks and spaces
+    let json;
+    const at = code.indexOf(SAVE_TAG + '.');
+    if (at >= 0) {
+      const [, len, ...rest] = code.slice(at).split('.');
+      const b = rest.join('.'), n = +len;
+      if (b.length < n) throw new Error(`This code is incomplete: only ${b.length.toLocaleString()} of its ${n.toLocaleString()} characters arrived. The app you sent it with probably cut it short. Try sending it as a note or a file.`);
+      if (typeof DecompressionStream === 'undefined') throw new Error('This browser is too old to read save codes.');
+      try { json = new TextDecoder().decode(await pipe(fromB64(b.slice(0, n)), DecompressionStream)); } catch (e) { throw new Error('That code is damaged. Copy it again and paste the whole thing.'); }
+    } else {
+      try { json = decodeURIComponent(escape(atob(code))); } catch (e) { throw new Error('That is not a save code. Copy it again and paste the whole thing.'); }
+    }
+    let S; try { S = JSON.parse(json); } catch (e) { throw new Error('That code is incomplete or damaged. Copy it again and paste the whole thing.'); }
     if (!S.player || !S.bots) throw new Error('That is not an Azeroth Solo save.');
     if (G.characters().length >= G.MAX_CHARS) throw new Error(`You already have ${G.MAX_CHARS} characters. Delete one first.`);
     if (G.S) G.save(); // keep the character you are playing
     // an imported save becomes its own character; the caller opens it with G.load so it goes through the same fixes as any old save
     S.id = 'c' + now().toString(36) + Math.floor(Math.random() * 1e4).toString(36);
+    if (!Array.isArray(S.chat)) S.chat = [];
     G.S = S; G.fight = null; G.save(); return S.id;
   };
   G.wipeSave = function () { if (G.S) G.deleteCharacter(G.S.id); G.S = null; };
