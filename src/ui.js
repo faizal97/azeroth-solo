@@ -828,6 +828,15 @@
         h('div', { class: 'chips' }, chip('Burn the boss', bp === 'boss', () => G.setBossPlan('boss')), chip('Adds first', bp === 'adds', () => G.setBossPlan('adds'))));
     }
   }
+  // Leaving before the last boss costs the group and gives Deserter, so ask first; once the run is done, just go.
+  function confirmLeaveGroup(after) {
+    const R = G.S.run;
+    const go = () => { closeDialog(); G.leaveGroup(); renderAll(); if (typeof after === 'function') after(); };
+    if (!R || R.phase === 'done') return go();
+    const left = R.pulls.length - R.idx;
+    showDialog([h('h3', null, `Leave ${R.name}?`), h('p', null, `The group still has ${left} pull${left === 1 ? '' : 's'} to go. Leaving now gives you Deserter for 10 minutes, and you can't join another group until it wears off.`),
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: go }, 'Leave'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Stay'))], true);
+  }
   function runPanel(p) {
     const S = G.S, R = S.run, C = G.fight;
     const dots = h('div', { class: 'progress-dots' });
@@ -866,7 +875,7 @@
       const row = h('div', { class: 'btn-row' });
       if (R.phase === 'rest') row.append(h('button', { class: 'btn', onclick: () => G.runReady() }, G.role() === 'tank' ? 'Pull' : 'Ready'));
       if (R.phase === 'done' && S.player.quests.defias_brotherhood === undefined && !S.player.done.defias_brotherhood && R.act === 'deadmines') row.append(h('div', { style: { fontSize: '13px', color: 'var(--muted)' } }, 'Tip: Marshal Dughan in Goldshire has a quest for VanCleef.'));
-      row.append(h('button', { class: 'btn alt', onclick: () => G.leaveGroup() }, R.phase === 'done' ? 'Leave group' : 'Leave'));
+      row.append(h('button', { class: 'btn alt', onclick: confirmLeaveGroup }, R.phase === 'done' ? 'Leave group' : 'Leave'));
       actions.append(row);
     }
     if (!actions.childNodes.length) actions.remove();
@@ -2082,7 +2091,7 @@
   }
   function groupTab(b) {
     const S = G.S, P = S.player;
-    if (S.run) { b.append(h('p', null, `You are in a group for ${S.run.name}.`), h('button', { class: 'btn alt wide', onclick: () => { G.leaveGroup(); ui.sheetFn(); } }, 'Leave group')); return; }
+    if (S.run) { b.append(h('p', null, `You are in a group for ${S.run.name}.`), h('button', { class: 'btn alt wide', onclick: () => confirmLeaveGroup(() => ui.sheetFn && ui.sheetFn()) }, 'Leave group')); return; }
     // Help Wanted: groups that need a helper; they summon you
     const hw = (S.helpWanted || []).filter((r) => r.expires > Date.now());
     b.append(h('div', { class: 'sec-h' }, 'Help Wanted', h('small', null, `Mentor Marks: ${G.account().marks}`)));
