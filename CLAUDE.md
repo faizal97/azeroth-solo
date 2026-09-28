@@ -47,6 +47,6 @@ Smoke-test on the emulator (AVD `Medium_Phone_API_36.0`). Its software renderer 
 ## Rules that matter
 
 - Saves: one per character under `azsolo.char.<id>` plus the index `azsolo.chars`. Keep old saves loading; migrate, never break them.
-- Any race can play any class (house rule). Bots are scenery only: no social systems.
+- Any race can play any class (house rule). Bots are simulated players driven by the game's rules (bots.js, social.js). Since v9.5 they have real social systems (actionable chat, guilds, friends who remember you), but never an online service; the optional AI only writes words.
 - After 60, progression is horizontal (synced power, collections). Every dungeon and raid ships with a first-entry lore intro.
 - Sprites use z-index 60–96 inside `.scene`, which is isolated. Layers: `.create` 50 < sheets 55 < dialogs 57 < toasts 59 < cutscenes 60.

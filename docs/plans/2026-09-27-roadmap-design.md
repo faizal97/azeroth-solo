@@ -1,188 +1,144 @@
 # Azeroth Solo roadmap
 
-Agreed 2026-09-27. A single-player fake MMO: a vanilla WoW campaign from 1 to 60, Alliance and Horde, in which every other player is simulated. After 60 the story is our own, not TBC.
+Azeroth Solo is a single-player "fake MMO" set in the world of classic World of Warcraft. You level from 1 to 60 as Alliance or Horde through the classic zones and dungeons, and every other player on the "server" is simulated. They quest around you, fill your dungeon groups, post in chat, ask you for help and run their own guilds. After 60 the story continues in an original expansion.
 
-## Principles
+> Unofficial, non-commercial fan project. Not affiliated with, endorsed by or sponsored by Blizzard Entertainment. All art, music and code are original.
 
-- **World and game systems lead.** Each update adds a zone, or a race's starting zone, and the Classic systems that unlock in that level range.
-- **Systems unlock at Classic's own levels.** Talents at 10, mount at 40, raids and battlegrounds at 60.
-- **Other players are scenery.** You see them in the world, they take mobs before you do, fill group finder slots and raids, and post in chat. No social systems: no friends list, whisper conversations, rivals or Claude-written chat. Bots follow new content automatically (new classes, races and zones).
-- **Main path (agreed 2026-09-27, replacing the lean path).** About 12 zones per faction, the way most Classic players levelled, plus the key dungeons. Each zone covers a few levels, which keeps levelling varied. From 30 the zones are contested and shared by both factions.
-- **One update at a time.** Each is an APK in iCloud Drive `Azeroth Solo/`. Feedback from playing one update shapes the next.
-- **Saves stay compatible.** Save key `azsolo.save.v1`; every update migrates old saves forward.
+This document says where the game stands, how it is designed, and what comes next.
 
-## Releases
+## Where it stands (v9.6)
 
-| Update | Content | Unlocks |
-|---|---|---|
-| v1 (shipped) | Northshire + Elwynn (1–10), Human, Warrior/Mage/Priest/Rogue | Group finder, Hogger, Deadmines scaled to 10 |
-| v1.1 | Fixes from the first real-phone session | — |
-| v1.5 (shipped) | Paladin, Warlock, Hunter, Druid | Seals/Judgement and Paladin role choice; Warlock Imp and Voidwalker; Hunter bow + tame a beast at 10; Druid Bear Form at 10 |
-| v1.5.1 | Unique gear shows on your character | Named dungeon and rare-boss items change the hero sprite |
-| v1.6 (shipped) | Dun Morogh: Coldridge Valley, Kharanos, Ironforge (Dwarf, Gnome, 1–10) | Ironforge as a second city; Vagash (3-player elite); Deeprun Tram to Elwynn brought forward |
-| v1.7 (shipped) | Teldrassil: Shadowglen, Dolanaar, Darnassus (Night Elf, 1–10) | Boat to the Eastern Kingdoms at 10 |
-| v1.8 (shipped) | **Horde:** Durotar + Orgrimmar (Orc, Troll, 1–10) | Faction choice at character creation; Ragefire Chasm; Alliance and Horde bots see each other as enemies |
-| v1.9 (shipped) | **Horde:** Mulgore + Thunder Bluff (Tauren), Tirisfal Glades + Undercity (Undead) | Zeppelins between Horde cities |
-| v1.10 (shipped) | **AI chat pack** (optional, on-device) + levels 5–10 quest fill (42 quests) | Uses (agreed): bot chat; party and dungeon banter that reacts to events; the welcome-back story; NPC flavour lines (objectives unchanged); player bios when you tap someone. The model writes words and never decides outcomes. Written by a local model: Gemma 3 1B on phones with 6 GB+ RAM, 270M on 3–6 GB, off below; loaded from iCloud as a separate file; behaviour stays rule-based; templates as fallback; battery guards (pre-generated line bank, quiet moments only, stops under 30% or in battery saver, refills while charging, heat pause, battery meter in Hero) |
-| v2.0 (shipped) | Westfall (Sentinel Hill) · **Horde:** the Barrens (Crossroads), levels 10–15 | Level cap 15; new class abilities at 12 and 14; ~14 quests per zone with a named rare |
-| v2.1 + v2.2 (shipped) | Westfall + the Barrens 15–20 | Level cap 20; The Deadmines at its real level (17–21); Wailing Caverns; story Chapter 2 at 20; world PvP ambushes (see below) |
-| v2.2 (shipped as app v2.3.0) | Talents | Talents from 10, one point per level: 3 trees per class, tiers 1–3 now (deeper tiers with the 30+ updates); bots auto-spec for their role; first reset free, then 1g/5g/10g |
-| v2.3 (shipped as app v2.4.0 + v2.5.0) | Stormwind (and the Horde city services) | Stormwind (Valley of Heroes, Trade District, bank); a bank (24 slots) and auction house in every capital; Help Wanted + Mentor Marks + heirlooms; titles; daily Roulette; hub bounty boards (3 daily + 1 weekly). Tram now runs Ironforge–Stormwind |
-| v3 (shipped as app v2.6.0 + v3.0.0) | Redridge Mountains (18–25) · **Horde:** Stonetalon Mountains (18–25) | Professions (shipped first, as app v2.6.0): Mining, Herbalism, Skinning, Blacksmithing, Alchemy, Leatherworking, Tailoring; two per character, skill to 150 (Apprentice 75, Journeyman 150; Expert 225 with the 30s zones); nodes in every wild place, skinning on loot, potions (combat, 2 min cooldown), elixirs, sharpening stones, armour kits, bags (4 slots), rare plans from bosses and rares, trade goods on the auction house. Then (v3.0.0) level cap 25, Redridge (Lakeshire hub, Bellygrub elite) and Stonetalon (Sun Rock hub, XT:9 elite), ~34 quests each, The Stockade (6 bosses, 22–25, lore intro), 18 class abilities at 20 and 24. The Horde gets its 20s dungeon (Shadowfang Keep) in v4 |
-| v4 (shipped as app v4.0.0–v4.2.0) | Duskwood + Wetlands (20–30) · **Horde:** Hillsbrad Foothills; Ashenvale (contested) | Shadowfang Keep; Blackfathom Deeps; story Chapter 3 at 30 |
-| v5 | Stranglethorn Vale + Arathi Highlands (30–40, contested from here) | Mount at 40; Scarlet Monastery; Gurubashi Arena event; story Chapter 4 at 40 |
-| v6 (shipped) | Tanaris + Feralas (40–50) | Zul'Farrak; Maraudon; open-world elites (world bosses moved to v9) |
-| v7 (shipped) | Un'Goro Crater + Burning Steppes (48–55) | Blackrock Depths; story Chapter 5 at 50 |
-| v8 (shipped) | Western Plaguelands + Winterspring (55–60) | Level cap 60; Scholomance and Stratholme; story Chapter 6 at 60 |
-| v9 | Endgame at 60 | Molten Core and Onyxia (40 bots), the last power step; keystone dungeons; account-wide wardrobe; battlegrounds |
-| v10+ | Our own expansion | Original story, new zones, dungeons and raids, all horizontal (see below) |
+- **Levels 1–60, both factions, all eight classic races and nine classes.** About 25 zones, from the starting valleys to Winterspring and the Western Plaguelands.
+- **Every classic dungeon along the way,** from Ragefire Chasm and the Deadmines to Blackrock Depths, Scholomance and Stratholme, each with a lore intro.
+- **The main story,** the Black Dragonflight conspiracy, told in six chapters at levels 10–60.
+- **An original expansion at 60, "The Drowned Crown":** two new zones, two dungeons and a 10-player raid.
+- **Legends:** hand-made characters with their own questline, who then fight at your side.
+- **A server that feels alive:** working chat, guilds, requests, trades, duels and rare sightings.
+- **The app updates itself.** New versions come from GitHub releases, with release notes, through the in-app updater.
 
-## Story and cutscenes
+## Design principles
 
-- The story is the Black Dragonflight conspiracy (Lady Prestor / Onyxia, the Defias, Blackrock). The intro plays after character creation, then a chapter plays at 10, 20, 30, 40, 50 and 60. Every chapter ships with the update that opens its level.
-- **Every dungeon and raid ships with a lore intro** that plays the first time any character enters (account-wide, once). The group waits while it plays.
-- The Theater replays everything unlocked, with Story and Dungeons & Raids sections.
+- **World first.** Each update adds zones and the classic systems that unlock in their level range: talents at 10, a mount at 40, raids at 60.
+- **The main levelling path.** About 12 zones per faction, the way most classic players levelled, each covering a few levels. From 30 most zones are contested and shared by both factions.
+- **A simulated server.** Other players are bots with names, classes, levels, play times and personalities. They take mobs before you do, group with you, trade, chat and remember you when you help them. They are driven by the game's rules, never by an online service. An optional on-device AI can write some of their chat lines, but it never decides what happens.
+- **Any race can play any class** (a house rule).
+- **Nothing punishes a day off.** No login streaks. Coming back should feel like the world moved on, not like a chore was missed.
+- **Saves stay compatible.** Every update migrates old characters forward.
+- **Balance is tested before it ships.** Each update is checked with simulations of levelling flow (quests should give most of the XP), dungeon difficulty (wipes per run and par times) and the new systems.
+
+## What's shipped
+
+| Version | Highlights |
+|---|---|
+| 1.x | Elwynn Forest and the Deadmines; all nine classes; Dun Morogh, Teldrassil, Durotar, Mulgore and Tirisfal starting zones; the Horde; Ragefire Chasm; story cutscenes; the optional on-device AI chat pack |
+| 2.x | Westfall and the Barrens (10–20); the Deadmines and Wailing Caverns at their real levels; world PvP ambushes with War Mode; talents; Stormwind; banks and auction houses; Help Wanted, Mentor Marks, heirlooms, titles and the daily Roulette; hub bounty boards; professions |
+| 3.0 | Redridge and Stonetalon (18–25); the Stockade |
+| 4.x | Duskwood, the Wetlands, Hillsbrad and contested Ashenvale (20–30); Shadowfang Keep; Blackfathom Deeps |
+| 5.x | Stranglethorn Vale and the Arathi Highlands (30–40); Gnomeregan, Razorfen Kraul and the Scarlet Monastery; mounts at 40 |
+| 6.0 | Tanaris and Feralas (40–50); Zul'Farrak and Maraudon |
+| 7.0 | Un'Goro Crater and the Burning Steppes (48–55); Blackrock Depths |
+| 8.0 | The Western Plaguelands and Winterspring (55–60); Scholomance and Stratholme; level 60 |
+| 9.0 | The expansion "The Drowned Crown", with a 10-player raid |
+| 9.1–9.2 | Legends: Lyveus Cloveus, the Exiled Knight |
+| 9.3 | In-app updates |
+| 9.4 | World map with routes, NPCs in town scenes, easier selling |
+| 9.5–9.6 | Working chat and guilds |
+
+## How the world works
+
+### Zones and factions
+
+- Each faction has its own zones up to about 30. From there the zones are **contested**: both factions quest there, each from its own town, and enemy players are more common.
+- **Enemy towns are closed.** You can't enter the other faction's hubs or capitals, so routes and the group finder go around them. Some dungeons are therefore one faction's own (the Stockade for the Alliance, Shadowfang Keep for the Horde). Dungeons in contested land are open to both.
+- **Neutral towns** (Gadgetzan, Marshal's Refuge, Everlook) welcome everyone.
+- **The world map** shows every zone and how they connect by road, ship or flight. Tap any place for the fastest route there, and travel it in one go.
+- **Mounts at 40:** learn riding and buy your race's mount. Roads are 40% faster; boats and flights keep their times.
+
+### Dungeons and the group finder
+
+- **Be there to queue:** you queue from the dungeon's zone, and the group is formed from players of your faction who are online.
+- **Synced level:** everyone fights at the dungeon's level, so old content stays a real fight. Your better gear gives a small edge.
+- **Tactics:** pull pace (careful, normal, fast), kill-order marks, and a boss plan (burn the boss or kill the adds first).
+- **Rewards for playing well:** each dungeon has a par time (beat it for a bonus chest), and a run with no wipes is Flawless. Chaining pulls quickly builds Momentum. A codex tracks clears, best times and flawless runs.
+- **Help Wanted and Roulette:** groups of players stuck on a boss ask for help and pay in Mentor Marks. A daily Roulette gives a random dungeon with bonus rewards.
+- **Raids** hold 10 players (2 tanks, 3 healers, 5 damage dealers).
+
+### World PvP
+
+- With War Mode on (+10% XP and gold), enemy players sometimes turn up where you are. Most attack after a short while, some just pass through, and you can strike first.
+- Danger depends on the place: none in capitals and starting valleys, low in your own zones, higher in contested zones, highest in enemy territory. Guards help in towns, and a nearby player of your faction sometimes joins in.
+- Kills earn Honor, which buys only looks and titles, never power.
+
+### Professions
+
+- Mining, Herbalism, Skinning, Blacksmithing, Alchemy, Leatherworking and Tailoring. Two per character, skill up to 150.
+- Gathering nodes are in every wild place. Crafted goods include gear, potions, elixirs, sharpening stones, armour kits and bags. Rare recipes drop from bosses and rares, and trade goods sell on the auction house.
+
+### Story and cutscenes
+
+- **The main story** is the Black Dragonflight conspiracy: the Defias Brotherhood, the Blackrock orcs, Marshal Windsor's capture, and Lady Prestor, who is Onyxia in disguise. An intro plays at character creation, then a chapter at 10, 20, 30, 40, 50 and 60.
+- **Every dungeon and raid has a lore intro** that plays the first time you enter.
+- **The Theater** replays everything you've unlocked, in sections for the story, Legends, and dungeons and raids.
+
+### The expansion: "The Drowned Crown" (level 60)
+
+- When Onyxia is unmasked and flees, the storm she raises tears the sea open. The **Stormveil Isle** rises: Sael'anor, a Highborne city that sank ten thousand years ago. Its prince, Aeldran Tidecrown, bargained with a sea spirit, Nal'veshra the Deepmother, to keep his court alive beneath the waves. The drowned Wavebreaker trolls rose with it, and their sea loa has been swallowed by the Deepmother.
+- **Alliance:** the Tidewatch Coast, reached from Menethil Harbor. Its dungeon is the Sunken Archive.
+- **Horde:** the Skullreef Isles, reached from Grom'gol. Its dungeon is the Temple of Shal'zua.
+- **Raid (both factions):** the Tidecrown Citadel, 10 players, five bosses, ending with Nal'veshra.
+
+### Legends
+
+- Legends are hand-made characters with their own story. You meet them along the way, follow their questline, and they then join your groups with abilities of their own.
+- **The first is Lyveus Cloveus, the Exiled Knight,** an original character created by a friend and adapted for Azeroth. He is a high elf paladin of the Stormwind guard who overheard Lady Prestor's cabal and was hunted for it.
+  - From level 15 a hooded stranger crosses your path.
+  - At 37 you meet him properly at the ruins of his home in the Arathi Highlands.
+  - His story runs through Gadgetzan and Blackrock Depths to a showdown at 60.
+  - After that he fights at your side as a tank. His lore cutscene is in the Theater from the start.
+
+### Chat and guilds
+
+- **Chat that does things.** Messages that ask for something can be tapped and acted on:
+  - LFG posts are real groups; tap to join.
+  - Players whisper you for help with kills, to team up on your quest, for a carry through a dungeon you've outlevelled, for craft orders, trades and duels, or with a question you can answer.
+  - General announces rare sightings and guild recruiting.
+  - A Requests tab lists everything open, and any [item] can be tapped to see it.
+- **Players remember you.** Help someone and they may come back later with a thank-you gift or an invite to a run.
+- **Guilds.**
+  - Browse your faction's guilds and apply. Each has a style (casual, levelling, dungeons, raiding, PvP, social) and a minimum level. Or accept a recruiter's invite.
+  - Guildmates post requests: dungeon runs together, materials, help with kills, donations, and scheduled guild nights. Helping earns guild standing.
+  - Ranks bring small perks: more XP, more quest gold, Mentor Marks on guild runs, and a title at the top.
+  - There is a weekly guild goal and a daily message of the day.
 
 ## After 60: horizontal progression
 
-Agreed 2026-09-27. Power stops climbing; what you collect and what you can do keeps growing.
+At the level cap, power stops climbing; what you collect and what you can do keeps growing.
 
-- **Power ceiling.** Molten Core and Onyxia epics are the last step up in raw power. Everything after that (including our own expansion) adds options and looks, not bigger numbers.
-- **Challenge is the loop.** Every dungeon returns as a level-60 keystone dungeon. The affixes rotate with the real calendar week, and tiers +1 to +20 make enemies harder, not you stronger. Power is normalised inside keystones, so skill and group comp decide the run, not gear.
-- **Collections are the reward.** Each dungeon and raid has its own looks, titles and mounts, plus rare-boss trophy variants and a codex of every boss beaten. The wardrobe is account-wide: looks earned on one character can be worn by all.
-- **Synced power (agreed 2026-09-27).** New raids may raise the gear ceiling, so they feel like upgrades. Every dungeon and raid has its own power cap: on entry your stats scale down to that cap plus a +10–15% overgear bonus, so old content stays a real fight and never becomes a one-shot. (Precedents: FFXIV item level sync, GW2 downscaling, ESO One Tamriel.)
-- **Drops carry unique effects.** Build-changing procs and set bonuses (a pet-taunt trinket, a chaining Fireball staff, a Bear Form self-heal set) are sidegrades that open builds. They scale with sync, so old dungeon effects stay useful forever.
-- **Reasons to go back.** A weekly featured old dungeon with bonus rewards; resistance or attunement gear from older raids that newer raids ask for (as Nefarian needed the Onyxia Scale Cloak).
-- **Help Wanted (from v2).** Bots post help requests in the group finder ("first-time Deadmines needs a tank", "stuck on Mr. Smite, need a healer"). You join mid-run, synced to the dungeon's cap, as the carry in a group that can still wipe. Rewards are Mentor Marks (more for first-timers, a bonus for a no-wipe clear), spent on account-wide heirloom gear that scales with an alt's level, veteran looks and titles. A daily Roulette gives a random old dungeon with bonus rewards.
-- **New content never makes old content obsolete.** New dungeons and raids join the keystone pool next to the old ones. Their rewards are new looks, titles, mounts and sidegrades (situational gear such as resistances or set bonuses that change how you play), never flat upgrades that retire older gear. Old dungeons keep their own unique rewards.
-- **Old zones stay alive.** Rare elites and world bosses return at 60 with trophies.
-- **Alts are breadth.** The shared wardrobe and character slots make levelling another class worthwhile.
+- **A power ceiling.** The endgame raids are the last real step up in power. Everything after that adds options and looks, not bigger numbers.
+- **Synced power everywhere.** Each dungeon and raid scales you to its level plus a small overgear bonus, so older content stays a real fight.
+- **Challenge is the loop.** Every dungeon returns as a level-60 keystone dungeon, with weekly rotating affixes and tiers that make enemies harder, not you stronger.
+- **Collections are the reward:** looks, titles, mounts, rare-boss trophies and a codex of every boss beaten, in a wardrobe shared by all your characters.
+- **Drops that change how you play:** procs and set bonuses that open new builds, rather than flat upgrades.
+- **New content never makes old content obsolete.** New dungeons join the keystone pool beside the old ones, and old dungeons keep their own rewards.
+- **Alts are breadth.** The shared wardrobe and Mentor Mark heirlooms make levelling another class worthwhile.
 
-## Horde
+## What's next
 
-Agreed 2026-09-27. The Horde is fully playable. Each faction has its own zones up to 30, and each update ships the Alliance and Horde zone of a bracket together. From Stranglethorn (30) on, the main path uses contested zones both factions share, so the Horde needs no separate content past 30. Opposite-faction bots appear in contested zones as enemies (from v2.1 they can also ambush you; see World PvP ambushes).
+Roughly in priority order:
 
-## Races and classes
+1. **Endgame raids: Molten Core and Onyxia's Lair.** The payoff for the main story, since Onyxia is still out there after Chapter 6. The last step up in power.
+2. **Keystone dungeons and the account-wide wardrobe.** The core of the after-60 loop.
+3. **World bosses and level-60 rares,** with trophies.
+4. **Battlegrounds,** with Honor ranks for looks and titles.
+5. **Booty Bay and the Gurubashi Arena event** in southern Stranglethorn.
+6. **Expert professions** (skill 225) with new materials.
+7. **Drops with unique effects** (procs and set bonuses).
+8. **Server events:** a Darkmoon Faire week, guild server-first races, and town defences in War Mode.
+9. **More Legends.**
+10. **Friends in your world** (parked). Your real friends' characters would appear on your server as simulated players, via a small online service and friend codes.
 
-**House rule (2026-09-27): any race can play any class.** The Classic list below is for reference only.
+## Open questions
 
-
-- Human: Warrior, Paladin, Rogue, Priest, Mage, Warlock
-- Dwarf: Warrior, Paladin, Hunter, Rogue, Priest
-- Gnome: Warrior, Rogue, Mage, Warlock
-- Night Elf: Warrior, Hunter, Rogue, Priest, Druid
-- Orc: Warrior, Hunter, Rogue, Shaman, Warlock
-- Troll: Warrior, Hunter, Rogue, Priest, Mage, Shaman
-- Tauren: Warrior, Hunter, Druid, Shaman
-- Undead: Warrior, Rogue, Priest, Mage, Warlock
-
-The Horde brings Shaman, its own class (Paladin is Alliance-only in Classic). Under the house rule, both factions may get both.
-
-## World PvP ambushes (agreed 2026-09-27; shipped in v2.0.2)
-
-Enemy-faction bots sometimes attack you, even in friendly zones.
-
-- **Danger per place:** capitals and starting valleys 0. Faction hub towns are very rare, and guards join on your side. Friendly questing zones are low. Contested zones (from v4) are high, and enemy territory is highest.
-- **Enemies arrive first (2026-09-27):** an enemy player shows up in the scene and under People, like any other player, before anything happens. About 70% attack after 25–60 seconds if you're still there (55% in towns); the rest only pass through. You can attack them first, or walk away.
-- **The fight:** an enemy bot of your level ±2, using its real class and abilities. A rare high-level "skull" ganker appears only in dangerous zones. You can fight or try to run, and nearby players of your faction sometimes join.
-- **Rewards:** a kill tally and small trophies; honour ranks come later with battlegrounds. Death is the normal death, with nothing extra.
-- **Guardrails:** a cooldown between ambushes; never during quest turn-ins, dungeons or cutscenes; a War Mode switch in Hero; no camping your corpse.
-- **Chat reacts,** for example "Horde in Goldshire!!", and defenders gather.
-- **War Mode incentive (agreed 2026-09-27):** +10% XP and gold while it is on. World PvP kills earn Honor, spent only on PvP looks: titles ("Defender of Goldshire", "Crossroads Raider"), a faction tabard, and later a war mount at 40. Named gankers drop unique trophies. Honor never buys power, so War Mode stays optional.
-- **Wanted bounties:** a named enemy player now and then marked on the hub board, worth bonus Honor. They tie into the hub bounty boards.
-- **Defend the town:** when enemies raid a hub, you get a call to defend. Joining earns Honor even if the guards land the kill.
-- **Data:** the danger rating is a field in each zone's data file (after the data refactor).
-- **Crossing into enemy zones** opens with the contested zones (v4 onward); until then factions cannot reach each other's areas.
-
-## v4 plan and contested zones (planned 2026-09-27, while he was away)
-
-v4 ships in three steps:
-1. **v4.0 (shipped):** level cap 30. Duskwood (Alliance, Darkshire, Stitches elite) and Hillsbrad Foothills (Horde, Tarren Mill, Big Samras elite), with Pyrewood Village in Silverpine and **Shadowfang Keep**. 18 class abilities at 26 and 28, and the missing racial icons.
-2. **v4.1 (shipped):** Ashenvale, the first **contested** zone. Astranaar (Alliance) and Splintertree Post (Horde) are both there, plus **Blackfathom Deeps**.
-3. **v4.2 (shipped):** Wetlands (Menethil Harbor) and story Chapter 3 at 30.
-
-Contested-zone rules (proposed; he can overrule):
-- Roads connect the two faction networks for the first time. Ashenvale joins the Barrens (Horde) to Darkshore and Teldrassil (Alliance, by boat).
-- **Enemy towns stay closed:** you can't enter an enemy hub or capital ("the guards would kill you on sight"). Routes and the group finder's "be there" check go around them. So the Stockade stays Alliance-only and Shadowfang Keep stays Horde-only, while Blackfathom Deeps (in Ashenvale) is open to both.
-- **Danger:** world PvP ambushes are more frequent in contested zones, and more frequent still in the other faction's zones.
-
-## v5 plan (2026-09-27)
-
-1. **v5.0 (shipped):** level cap 35. Northern Stranglethorn Vale is contested: Rebel Camp (Alliance), Grom'gol (Horde) and Nesingwary's Expedition (both). There's a dungeon per faction, Gnomeregan (Alliance) and Razorfen Kraul (Horde), plus 18 class abilities at 32 and 34.
-2. **v5.1 (shipped):** level cap 40. Mount (his choice, classic-style): riding 40g + racial mount 10g at a capital's stablemaster, roads 40% faster (boats and flights unchanged). Arathi Highlands is contested: Refuge Pointe and Hammerfall. Also the Scarlet Monastery (reachable by both), the **mount at 40**, and story Chapter 4.
-3. **v5.2:** southern Stranglethorn (Booty Bay) and the Gurubashi Arena event.
-4. **Open:** Expert professions (skill 225, iron/mithril/silk/kingsblood) for the 30s.
-
-## v6–v8 and the expansion (2026-09-28, planned and built while he slept)
-
-His brief: keep going to 60, then one original "expansion" with 1 raid and 2 dungeons (one Alliance zone, one Horde zone). I chose new zones for the expansion rather than expanding vanilla ones.
-
-1. **v6.0 (shipped):** level cap 50. Tanaris is contested around neutral Gadgetzan (Kregg Keelhaul elite; zeppelin to Nesingwary's camp). Feralas is contested: Feathermoon Stronghold (Alliance) and Camp Mojache (Horde), Lord Shalzaru elite. **Zul'Farrak** (43–47) and **Maraudon** (46–50, gate in Feralas) are open to both. 18 class abilities at 44 and 48. Chapter 5 stays with v7, where Blackrock Depths needs it.
-2. **v7.0 (shipped):** level cap 55. Un'Goro Crater (neutral Marshal's Refuge, King Mosh elite), the Burning Steppes (Morgan's Vigil and Flame Crest, Volchan elite), **Blackrock Depths** (51–55; Marshal Windsor is its prisoner), and story Chapter 5 at 50, "The Masquerade". Also fixed: the other faction's quests no longer count as available (they showed up as "quests nearby" in contested zones).
-3. **v8.0 (shipped):** level cap 60. The Western Plaguelands (Chillwind Camp and the Bulwark, Araj the Summoner elite) and Winterspring (neutral Everlook), **Scholomance** and **Stratholme**, and Chapter 6 at 60, "The Brood Mother".
-4. **Expansion: "The Drowned Crown" (shipped as v9.0.0)** (my design, 2026-09-28). Original story, all at level 60.
-   - **Story.** Chapter 6 ends with Onyxia unmasked; the storm she raises as she flees tears the sea open, and the **Stormveil Isle** rises. It is the Highborne city of Sael'anor, sunk in the Sundering. Its prince, **Aeldran Tidecrown**, bargained with a sea spirit, **Nal'veshra the Deepmother**, to keep his court alive under the waves. The drowned troll tribe of the Wavebreakers, who served the sea loa Shal'zua, rose with it; the Deepmother swallowed their loa. A prologue cutscene ("The Drowned Crown") plays right after Chapter 6.
-   - **Alliance zone: the Tidewatch Coast.** Brightwater Landing, the Kul Tiran expedition; ship from Menethil Harbor. 13 quests, the rare Old Brinescale, and the elite Warden Ithrael. Dungeon: **The Sunken Archive** (4 bosses; Lady Vessaria the Tidescribe), Alliance-only.
-   - **Horde zone: the Skullreef Isles.** Bloodtide Landing, Darkspear and Forsaken; ship from Grom'gol. 13 quests, the rare Captain Saltbones, and the elite Krag'vesh. Dungeon: **Temple of Shal'zua** (4 bosses; the Avatar of Shal'zua), Horde-only.
-   - **Raid: the Tidecrown Citadel**, 10 players, both factions, entered from the contested Stormveil Reach causeway. Bosses: Commander Serathis, the Twin Tides, the Coralheart Colossus, Prince Aeldran and Nal'veshra. Epic (purple) drops, titles, and a lore intro.
-   - **Engine:** 10-player groups (2 tanks, 3 healers, 5 DPS) and a raid formation in the fight scene. Balance: the raid averages about 0.7 wipes a run at normal pace and 1.1 at fast.
-   - Chapters can wait for a zone (`needs`) and chain (`then`).
-
-## Legends (agreed 2026-09-28, shipped in v9.1.0)
-
-Hand-made characters with their own story, a questline across the levels, and a slot in your groups once it's done (`zones/legends.js`, `D.LEGENDS`, art in `src/art_legends.js`). The first is **Lyveus Cloveus, the Exiled Knight**, a friend's original character adapted to the Black Dragonflight story: a high elf paladin of the Stormwind guard who overheard Lady Prestor's cabal, was saved by his comrade Vyn faking his death, and lost Silverleaf Lodge (Arathi) to the cabal's fire, blamed on the Syndicate. His "Astaroth" is Deathwing. Questline: Silverleaf Lodge (37–38), Vyn in Gadgetzan (44–45), Windsor's page in Blackrock Depths (54), Lord Cassius Marrow at the lodge (60, 3 players, he fights with you). Reward: he joins groups in his role (tank, or a damage slot if you tank) with Oathbound Strike and Ancients' Bulwark, can be switched off in Hero, and the title "the Oathkeeper". He also appears beside Windsor in Chapter 6.
-- **v9.2.0:** before 37 he is a Hooded Wanderer. From level 15 he may step into a hard solo fight (at most once an hour and 3 times per zone). At 17–18 the Hooded Stranger gives one quest: at Sentinel Hill for the Alliance, the Crossroads for the Horde. At the lodge he pulls back the hood. His lore cutscene (Deathwing "Astaroth", the caravan, Vyn, the cabal, the fire) is in the Theater under Legends, unlocked from the start. He stays neutral (his call, 2026-09-28).
-- Parked: the friends feature (friends' real characters appear in your world as bot-played players, via a small free backend and friend codes).
-
-## v9.4.0 fixes (his list, 2026-09-28)
-- The group finder shows each dungeon's last boss, not VanCleef for all.
-- Bags: the selected item's buttons (Use, Equip, Sell) are pinned to the bottom of the sheet, plus "Sell all grey items" at vendors.
-- The map: roads out of the zone moved under the map. Zone and World tabs; the World view shows every zone and how they connect. Tapping any place, near or far, offers the route (G.route, fastest path, skipping enemy towns), and Go travels it leg by leg (G.travelRoute; a fight cancels it).
-- NPCs are drawn in the scene: up to 3 in towns, legends and the Hooded Stranger first, then quest givers. They're dressed by town and title (npcLooks), and tapping one opens them.
-- Fix: sheet rows no longer collapse when a sheet overflows (the Map and Social tabs were invisible).
-
-## v9.5.0: working chat and guilds (his ask, 2026-09-28)
-- Chat messages can carry an action (`m.act`, src/social.js). **LFG:** real activities at your level; Join summons you, like Help Wanted. **Whispers** (one open at a time): help with N kills (the bot joins your party and pays when done, +2 Mentor Marks), WTB your trade goods at 2.5–4x vendor price, WTS gear for your class, a "where is" question (the right zone earns +1 Mentor Mark), and a guild invite. **General:** WTS posts and guild recruiting (tap to apply).
-- Every line can be tapped: a card with the request's buttons, the linked items (with the upgrade comparison), and quick replies.
-- **Guilds:** browse your faction's guilds (style, size, online, level floor) and apply; an officer answers in 15–45 s, and you're turned down below the floor. You can leave (standing resets).
-- **Guild requests** (dungeon runs with guildmates, materials, help with kills, questions) earn standing. Ranks: Initiate 0, Member 100 (+3% XP), Veteran 300 (+5% quest gold), Officer 700 (guild runs +5 Mentor Marks), Champion 1500 (a title).
-- Road chips show the destination's zone.
-
-## v9.6.0: a livelier chat (his ask, 2026-09-28)
-- **New whisper requests:**
-  - team up on one of your active kill quests (they leave when it's done)
-  - a carry through a dungeon you've outlevelled, for a tip
-  - craft orders (the mats arrive; craft, hand over, get a tip)
-  - friendly duels, with or without a wager (nobody dies; yield = lose)
-  - swap offers (their gear for your mats)
-  - small talk about your weapon and your spec, answered from your real gear and talents
-  - haggling on sales
-- **In General:** rare sightings. The rare really spawns, and killing it within 10 minutes pays a bounty and a Mentor Mark.
-- **Alive:** a bot's own voice (sloppy, grumpy or friendly; item links keep their case), 5–8 phrasings per request, a "u there?" nudge and a "nvm, found someone" on expiry, and no repeating the last two kinds. Bots you help become friends: they come back with gifts or invites to runs.
-- **Guilds:** donations, elite groups, scheduled guild nights (sign up; the run starts on time), a weekly goal (kills, bosses or requests; +100 standing and gold), a daily message, guildmates chatting and reacting to your clears.
-- **Chat:** a Requests tab lists every open request (older ones used to scroll out of reach).
-
-## Group finder rules (agreed 2026-09-27)
-
-- **Be there:** any faction may run any dungeon or world elite, but you queue from its zone. Places with no road from where you are stay hidden; they appear when roads between the factions open in the contested zones.
-- **Synced level:** everyone in the group fights at the activity's level (`maxLvl`); your gear is the overgear bonus, and XP follows your real level.
-- **Mixed groups**, and a 10-minute deserter cooldown for leaving early.
-- **Tactics:** pull pace (careful / normal / fast), kill-order marks (skull, cross; the tank holds the skull) and a boss plan (burn the boss / adds first).
-- **Pace rewards (2026-09-27):** each dungeon has a par time; beat it for a speed chest (half the time a blue from that dungeon, plus gold). A run with no wipes is Flawless (a green plus gold). Momentum: pulling within 5 sec of the last fight stacks +5% haste and more attack and spell power, up to 5 stacks, and resting resets it. Careful is the reliable Flawless route, Fast the best par-time odds, and a good group can get both. A codex counts clears, speed, flawless and best time per dungeon.
-
-## Daily reasons to log in (agreed 2026-09-27)
-
-For when he is capped or has done everything while waiting for the next update. Build them in this order:
-
-1. **Daily Roulette + Help Wanted** (v2.3): a random old dungeon with bonus rewards; bots asking for a carry, paid in Mentor Marks.
-2. **Hub bounty boards:** three daily quests per hub that rotate with the real calendar, plus one weekly bounty with a bigger reward. They reuse cleared zones.
-3. **Rare-spawn hunting:** named rares on respawn timers, trophy looks, and a codex to complete.
-4. **Weekly keystone affixes + account-wide collections** at 60 (see above).
-5. **Simulated server events:** a world boss spawn, a Darkmoon Faire week, guild server-first races. He can watch or join; they stay scenery.
-
-No login streaks that punish a missed day. Coming back should feel like the world moved on, not like a chore was missed.
-
-## Open questions for later
-
-- Scholomance or Stratholme for v6.
-- Where the original story after 60 begins.
+- How keystone affixes should work with synced power.
+- Whether battlegrounds should use simulated players only, or also the friends feature if it ever ships.
+- Which character becomes the next Legend.

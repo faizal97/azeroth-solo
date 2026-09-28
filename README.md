@@ -39,7 +39,7 @@ It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sp
 - **Story cutscenes** at key levels and a first-time lore intro for every dungeon, replayable in the Theater.
 - **Optional on-device AI chat** (Android): a small local model can write bot chat and banter ahead of time. Off by default; the game never lets it decide anything.
 
-The plan up to level 60 and beyond is in [docs/plans/2026-09-27-roadmap-design.md](docs/plans/2026-09-27-roadmap-design.md).
+Where the game stands, how it is designed and what comes next: [the roadmap](docs/plans/2026-09-27-roadmap-design.md).
 
 ## Install (Android)
 
