@@ -2459,7 +2459,7 @@
         h('h1', null, 'Azeroth Solo'), h('div', { class: 'sub' }, `Realm: ${D.REALM} · ${list.length}/${G.MAX_CHARS} characters`),
         h('img', { class: 'preview', src: art('hero', { cls: cur.cls, race: cur.race || 'human', skin: cur.skin || 0, hair: cur.hair || 0, gender: cur.gender || 'm', gear: cur.gear || undefined }), alt: '' }),
         rows,
-        h('button', { class: 'btn wide', onclick: () => enter(sel) }, 'Enter World'),
+        h('button', { class: 'btn wide go', onclick: () => enter(sel) }, 'Enter World'),
         h('div', { class: 'btn-row' },
           h('button', { class: 'btn alt', disabled: list.length >= G.MAX_CHARS, onclick: () => showCreate(true) }, 'Create New'),
           h('button', { class: 'btn alt', onclick: () => { if (!G.S) { const r = G.load(sel); if (!r) return; } openTheater(); } }, 'Theater'),
@@ -2508,7 +2508,7 @@
         classes,
         h('div', { class: 'looks' }, h('button', { class: 'chip', onclick: () => { st.gender = st.gender === 'm' ? 'f' : 'm'; draw(); } }, st.gender === 'm' ? 'Male' : 'Female'), cyc('skin', 4, 'Skin'), cyc('hair', 5, 'Hair')),
         nameIn,
-        h('button', { class: 'btn wide', onclick: () => {
+        h('button', { class: 'btn wide go', onclick: () => {
           const n = (st.name || '').trim();
           if (n.length < 2) return toast('Pick a name with at least 2 letters.');
           G.newGame({ name: n.charAt(0).toUpperCase() + n.slice(1).toLowerCase(), race: st.race, cls: st.cls, gender: st.gender, skin: st.skin, hair: st.hair });
