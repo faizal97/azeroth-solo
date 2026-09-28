@@ -1103,7 +1103,7 @@
     const q = Object.keys(G.S.player.quests).some((id) => G.questState(id) === 'complete');
     const b = els.nav.querySelector('[data-nav="quests"]'); if (b) b.classList.toggle('dot', q);
     const s = els.nav.querySelector('[data-nav="social"]'); if (s) s.classList.toggle('dot', !!(G.S.queue && G.S.queue.popped));
-    const hb = els.nav.querySelector('[data-nav="hero"]'); if (hb) hb.classList.toggle('dot', G.talentPoints(G.S.player).free > 0);
+    const hb = els.nav.querySelector('[data-nav="hero"]'); if (hb) hb.classList.toggle('dot', G.talentPoints(G.S.player).free > 0 || loreUnread() > 0);
   }
 
   // ============================================================ sheets / dialogs
@@ -1743,7 +1743,7 @@
       const tp = G.talentPoints(P);
       // four pinned tabs instead of one long page; a dot marks unspent talent points
       const tabs = h('div', { class: 'tabs' });
-      for (const [k, label, dot] of [['char', 'Character'], ['abil', 'Abilities', tp.free > 0], ['journey', 'Journey'], ['settings', 'Settings']])
+      for (const [k, label, dot] of [['char', 'Character'], ['abil', 'Abilities', tp.free > 0], ['journey', 'Journey', loreUnread() > 0], ['settings', 'Settings']])
         tabs.append(h('button', { class: ui.heroTab === k ? 'on' : '', onclick: () => { ui.heroTab = k; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } }, label, dot ? h('span', { class: 'tab-dot' }) : null));
       b.append(h('div', { class: 'sheet-stick' }, tabs));
       if (ui.heroTab === 'char') {
@@ -1795,7 +1795,10 @@
               ...RC.text.map((tx) => h('div', { class: 'row', style: { minHeight: '36px' } }, h('div', { class: 'ic' }, '•'), h('div', { class: 't' }, h('b', { style: { fontWeight: 600 } }, tx)), h('div', { class: 'r' }, 'Passive')))));
         }
       } else if (ui.heroTab === 'journey') {
-          b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => openTheater() }, 'Theater · replay the story')));
+          const nNew = loreUnread();
+          b.append(h('div', { class: 'btn-row' },
+            h('button', { class: 'btn' + (nNew ? '' : ' alt'), onclick: () => openLore() }, nNew ? `Lore Journal · ${nNew} new` : 'Lore Journal'),
+            h('button', { class: 'btn alt', onclick: () => openTheater() }, 'Theater')));
         // Legends (v10): story, credit, and whether they join your groups
         for (const key in (D.LEGENDS || {})) {
           const L = D.LEGENDS[key], on = G.legendUnlocked(key);
@@ -2235,6 +2238,53 @@
       startScene: startPlace.scene, hereScene: D.PLACES[P.place].scene,
       setMusic: (m) => { ui.csMusic = m; G.paused = !!m || !!(window.CS && CS.playing); },
     }).then(() => { G.paused = false; P.story = P.story || {}; P.story[id] = true; G.save(); if (ch.then && CS.byId(ch.then) && !CS.unlocked().has(ch.then)) ui.pendingChapter = ch.then; });
+  }
+  // ---------- Lore Journal (src/data/lore.js): story recaps and Legend pages, readable at your own pace
+  const LORE_READ = 'azsolo.loreread';
+  const loreRead = () => { try { return new Set(JSON.parse(localStorage.getItem(LORE_READ) || '[]')); } catch (e) { return new Set(); } };
+  function markLoreRead(k) { const s = loreRead(); if (s.has(k)) return; s.add(k); try { localStorage.setItem(LORE_READ, JSON.stringify([...s])); } catch (e) { } }
+  function loreOpen(k) {
+    const E = (D.LORE || {})[k]; if (!E) return false;
+    if (E.open) return true;
+    if (E.quest) return !!(G.S && G.S.player.done[E.quest]);
+    return !!(E.chapter && window.CS && CS.unlocked().has(E.chapter));
+  }
+  const loreKeys = () => Object.keys(D.LORE || {});
+  const loreUnread = () => { const r = loreRead(); return loreKeys().filter((k) => loreOpen(k) && !r.has(k)).length; };
+  function loreHint(E) {
+    if (E.quest) return 'Finish the story of this Legend to unlock.';
+    const ch = window.CS && CS.byId(E.chapter);
+    return ch && ch.level ? `Unlocks with the chapter at level ${ch.level}.` : 'Unlocks as the story goes on.';
+  }
+  function openLore(key) {
+    ui.loreKey = key || null;
+    openSheet('lore', 'Lore Journal', 'The story so far, to read at your own pace', (b) => {
+      const k = ui.loreKey, E = k && D.LORE[k];
+      if (E && loreOpen(k)) {
+        markLoreRead(k); renderNavDots();
+        const open = loreKeys().filter(loreOpen), i = open.indexOf(k);
+        b.append(h('div', { class: 'lore-page' }, h('h3', null, E.title), ...E.text.map((p) => h('p', null, p))),
+          h('div', { class: 'btn-row' },
+            h('button', { class: 'btn alt', disabled: i <= 0, onclick: () => { ui.loreKey = open[i - 1]; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } }, '‹ Previous'),
+            h('button', { class: 'btn alt', onclick: () => { ui.loreKey = null; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } }, 'All pages'),
+            h('button', { class: 'btn alt', disabled: i < 0 || i >= open.length - 1, onclick: () => { ui.loreKey = open[i + 1]; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } }, 'Next ›')));
+        return;
+      }
+      const read = loreRead();
+      for (const [sec, label] of [['story', 'The Story'], ['legend', 'Legends']]) {
+        const keys = loreKeys().filter((x) => D.LORE[x].section === sec); if (!keys.length) continue;
+        b.append(h('div', { class: 'sec-h' }, label, h('small', null, `${keys.filter(loreOpen).length}/${keys.length} pages`)));
+        const list = h('div', { class: 'list' });
+        for (const x of keys) {
+          const P = D.LORE[x], on = loreOpen(x);
+          list.append(h('button', { class: 'row' + (on ? '' : ' locked'), onclick: () => { if (!on) return toast(loreHint(P)); ui.loreKey = x; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } },
+            h('div', { class: 'ic' }, on ? img(art('icon', 'journal')) : h('span', { class: 'mark grey' }, '·')),
+            h('div', { class: 't' }, h('b', null, on ? P.title : '???'), h('small', { style: { whiteSpace: 'normal' } }, on ? P.text[0].split('. ')[0] + '.' : loreHint(P))),
+            h('div', { class: 'r' }, on && !read.has(x) ? h('span', { class: 'chip gold', style: { minHeight: 0, padding: '2px 6px' } }, 'New') : on ? 'Read' : 'Locked')));
+        }
+        b.append(list);
+      }
+    });
   }
   function openTheater() {
     openSheet('theater', 'Theater', 'Replay the story chapters you have reached', (b) => {

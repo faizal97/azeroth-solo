@@ -3,7 +3,8 @@
 //   - unknown names: a proper name that is neither in the game data nor in the bible's Names list (typos, invented people)
 //   - near misses: an unknown name one or two letters away from a known one ("Van Cleef" for "VanCleef")
 //   - faction slips: a quest sending you to the other faction's town
-// Text it reads: quest names and text, cutscene captions (story, dungeon intros, Legends), Legend stories, NPC names and
+// Text it reads: quest names and text, cutscene captions (story, dungeon intros, Legends), Legend stories, Lore Journal
+// pages, NPC names and
 // titles, activity names and descriptions. Exits 1 on spoilers and faction slips; unknown names are warnings unless --strict.
 // Run: node tools/lorekeeper.js [--strict] [--names]   (--names prints every unknown name once, for adding to the bible)
 const fs = require('fs'), path = require('path');
@@ -50,6 +51,7 @@ for (const c of CS.CHAPTERS) {
 }
 for (const [k, Q] of Object.entries(D.QUESTS)) { add(`quest ${k}`, Q.lvl, Q.name, { faction: Q.faction, title: true }); add(`quest ${k}`, Q.lvl, Q.text, { faction: Q.faction, quest: k }); }
 for (const [k, L] of Object.entries(D.LEGENDS || {})) (L.story || []).forEach((p, i) => add(`legend ${k} story ${i + 1}`, 15, p));
+for (const [k, E] of Object.entries(D.LORE || {})) { add(`lore ${k}`, E.lvl, E.title, { title: true }); (E.text || []).forEach((p, i) => add(`lore ${k} p${i + 1}`, E.lvl, p)); }
 const placeLvl = {};
 for (const [k, p] of Object.entries(D.PLACES)) for (const n of p.npcs || []) placeLvl[n] = Math.min(placeLvl[n] || 99, (p.lvl || [1])[0]);
 for (const [k, N] of Object.entries(D.NPCS)) { add(`npc ${k}`, placeLvl[k] || 1, N.name, { title: true }); add(`npc ${k}`, placeLvl[k] || 1, N.title, { title: true }); }

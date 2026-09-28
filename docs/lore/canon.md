@@ -4,7 +4,7 @@ This is the single source of truth for the game's story. Read it before writing 
 
 > Unofficial, non-commercial fan project. Not affiliated with Blizzard Entertainment. All text is original: never copy Blizzard's quest or book text, even when retelling the same events.
 
-`node tools/lorekeeper.js` checks the game's text against this file, and `build.py` runs it on every build. It reads three sections by their headings: **Reveals** (a table), **Names** (a list) and nothing else, so keep those headings and formats as they are.
+`node tools/lorekeeper.js` checks the game's text against this file, and `build.py` runs it on every build. It reads two sections by their headings, **Reveals** (a table) and **Names** (a list), so keep those headings and formats as they are. The Lore Journal's pages live in `src/data/lore.js`.
 
 ## Voice and style
 
@@ -13,7 +13,7 @@ This is the single source of truth for the game's story. Read it before writing 
 - Quest text is spoken by the quest giver, in their voice, and ends with what to do: "Kill 8 of them and bring me a seal."
 - Simulated players in chat are exempt: they talk like players. Chat must still never name a secret before its level (see Reveals).
 - Numbers in lore are written out below ten ("five years ago"), digits in quest goals ("Kill 12").
-- British spelling in lore text (armour, harbour), matching what is already written.
+- British spelling in lore text (armour, travellers), matching what is already written. Proper names keep the game's spelling (Menethil Harbor).
 
 ## Premise
 
@@ -51,7 +51,7 @@ What the player knows at each point. Nothing later may be stated earlier (see Re
 - **Chapter 4 (40), "Blackrock Rising".** The Dark Iron dig for Ragnaros; Victor Nefarius commands the Blackrock orcs from the spire. Prestor (unnamed as a dragon) calls him "my brother". Windsor is alive, in chains.
 - **Chapter 5 (50), "The Masquerade".** Prestor admits, to herself, that she writes the court's orders. Windsor keeps notes in his cell; the Emperor holds them.
 - **Chapter 6 (60), "The Brood Mother".** Windsor walks free and brings Lyveus to court. Prestor is unmasked as Onyxia, daughter of Deathwing, and flees south across the sea. Her storm tears the waters open; land appears where none has been for ten thousand years.
-- **Expansion (60), "The Drowned Crown".** The Stormveil Isle rises: Sael'anor and its prince, the drowned Wavebreakers, and beneath them Nal'veshra. Alliance land at the Tidewatch Coast (from Menethil Harbour with Admiral Vane); the Horde at the Skullreef Isles (from Grom'gol on the Bloodtide ship). Both reach the Tidecrown Citadel on the same morning and, for once, do not fight each other.
+- **Expansion (60), "The Drowned Crown".** The Stormveil Isle rises: Sael'anor and its prince, the drowned Wavebreakers, and beneath them Nal'veshra. Alliance land at the Tidewatch Coast (from Menethil Harbor with Admiral Vane); the Horde at the Skullreef Isles (from Grom'gol on the Bloodtide ship). Both reach the Tidecrown Citadel on the same morning and, for once, do not fight each other.
 
 ### Dungeon intros (first entry)
 
@@ -106,7 +106,7 @@ A term here may not appear in any text a player can read below its level. "Allow
 | `Windsor.{0,40}(free\|escaped\|walks out)` | 60 | Windsor is freed | |
 | `Sael'anor\|Aeldran\|Nal'veshra\|Deepmother\|Stormveil\|Tidecrown\|Wavebreaker\|Shal'zua\|Vessaria` | 60 | the Drowned Crown expansion | |
 | `Marrow` | 45 | Cassius Marrow is behind the cabal | |
-| `Lyveus\|\bLyv\b\|Cloveus` | 37 | the Hooded Stranger is Lyveus | `cutscene legend_lyveus`, `legend lyveus`, `npc lyveus` |
+| `Lyveus\|\bLyv\b\|Cloveus` | 37 | the Hooded Stranger is Lyveus | `cutscene legend_lyveus`, `legend lyveus`, `npc lyveus`, `lore lyveus_1` |
 
 ## Names
 

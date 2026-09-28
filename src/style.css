@@ -139,6 +139,10 @@ img { max-width: 100%; display: block; }
 .ctab-name { min-height: 40px; background: #0c0906; color: var(--text); border: 1px solid #5c4526; border-radius: 3px; padding: 0 8px; font: 700 14px var(--body); min-width: 0; }
 .ctab-btns { display: flex; gap: 4px; }
 .ctab .chip { min-height: 34px; padding: 6px 9px; }
+.lore-page { padding: 4px 2px 8px; }
+.lore-page h3 { margin: 0 0 10px; font: 22px/1.15 var(--display); color: var(--gold); text-wrap: balance; }
+.lore-page p { margin: 0 0 12px; font: 400 16px/1.6 var(--body); color: var(--text); max-width: 34em; text-wrap: pretty; }
+.lore-page p:first-of-type::first-letter { font: 34px/0.9 var(--display); color: var(--gold); float: left; margin: 4px 6px 0 0; }
 .tab-dot { display: inline-block; width: 7px; height: 7px; margin-left: 6px; border-radius: 50%; background: var(--gold); vertical-align: middle; }
 .sheet-stick { position: sticky; top: -12px; z-index: 3; display: grid; gap: 6px; background: var(--panel); margin: -12px -16px 0; padding: 12px 16px 8px; border-bottom: 1px solid #3b2d18; }
 .chat .ln { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
