@@ -47,4 +47,6 @@ flutter {
 dependencies {
     // On-device LLM for the optional AI chat pack
     implementation("com.google.mediapipe:tasks-genai:0.10.27")
+    // FileProvider, for handing a downloaded update to the system installer
+    implementation("androidx.core:core-ktx:1.13.1")
 }

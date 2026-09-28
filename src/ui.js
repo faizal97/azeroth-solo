@@ -1559,6 +1559,7 @@
       b.append(h('div', { class: 'btn-row' },
         h('button', { class: 'btn', onclick: () => { if (G.fight) return toast('You are in combat.'); G.logout(); showSelect(); } }, 'Switch character'),
         h('button', { class: 'btn alt', onclick: () => openTheater() }, 'Theater')));
+      if (window.UPD) b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: manualUpdateCheck }, `Check for updates · v${UPD.current()}`)));
       const tp = G.talentPoints(P);
       if (P.riding) {
         const row = h('div', { class: 'chips' }, h('button', { class: 'chip' + (!P.mount ? ' gold' : ''), onclick: () => { G.setMount(null); ui.sheetFn(); } }, 'On foot'));
@@ -2039,8 +2040,58 @@
     hunter: 'Damage. Shoots from range with a bow. At level 10 you tame a beast to fight beside you.',
     druid: 'Healer, tank or damage. Nature spells and heals; at level 10, Bear Form makes you a tank.',
   };
+  // ============================================================ in-app updater (v9.3, src/update.js)
+  // Checks GitHub at most every 6 hours when the character list opens; Hero has a manual check.
+  function autoUpdateCheck() {
+    if (!window.UPD || ui.updChecked) return; ui.updChecked = true;
+    UPD.check(false).then((rel) => { if (rel && rel.newer && !rel.skipped && !ui.dialog) updateDialog(rel); }).catch(() => {});
+  }
+  function manualUpdateCheck() {
+    if (!window.UPD) return;
+    toast('Checking for updates...');
+    UPD.check(true).then((rel) => {
+      if (!rel) return toast("Couldn't reach GitHub. Check your connection.");
+      if (rel.newer) updateDialog(rel); else toast(`You're up to date (v${UPD.current()}).`);
+    });
+  }
+  function updateDialog(rel) {
+    const cur = UPD.current(), inApp = UPD.inApp() && rel.apk;
+    const notes = h('div', { class: 'upd-notes', style: { textAlign: 'left', maxHeight: '42vh', overflowY: 'auto', margin: '8px 0', padding: '8px 10px', background: '#0c0906', border: '1px solid #3a2c18', borderRadius: '3px', fontSize: '14px', lineHeight: '1.4' } });
+    notes.innerHTML = UPD.notesHtml(rel.notes) || '<p>No details were written for this release.</p>';
+    const status = h('p', { class: 'ai-note', style: { minHeight: '1.2em' } });
+    const bar = h('div', { style: { height: '8px', background: '#1a140c', border: '1px solid #3a2c18', borderRadius: '4px', overflow: 'hidden', display: 'none' } }, h('i', { style: { display: 'block', height: '100%', width: '0%', background: 'var(--gold)' } }));
+    const row = h('div', { class: 'btn-row' });
+    const later = h('button', { class: 'btn alt', onclick: closeDialog }, 'Later');
+    const skip = h('button', { class: 'btn alt', onclick: () => { UPD.skip(rel.latest); closeDialog(); toast(`Skipped ${rel.latest}. Hero has a manual check.`); } }, 'Skip this version');
+    const permissionStep = () => {
+      status.textContent = 'Android needs your OK once: allow Azeroth Solo to install apps, then come back and tap Install.';
+      row.innerHTML = '';
+      row.append(h('button', { class: 'btn', onclick: () => UPD.askPermission() }, 'Open settings'),
+        h('button', { class: 'btn alt', onclick: () => UPD.install().then((r) => { if (r === 'need_permission') status.textContent = 'Not allowed yet. Turn on "Allow from this source" for Azeroth Solo.'; else status.textContent = 'Opening the installer...'; }).catch((e) => { status.textContent = 'Install failed: ' + ((e && e.message) || 'unknown error'); }) }, 'Install'), later);
+    };
+    const go = h('button', { class: 'btn', onclick: async () => {
+      if (!inApp) { UPD.open(rel.url); return; }
+      if (G.S) G.save();
+      go.disabled = true; later.disabled = true; skip.disabled = true; bar.style.display = 'block';
+      try {
+        const r = await UPD.download(rel, (f) => { bar.firstChild.style.width = Math.round(f * 100) + '%'; status.textContent = `Downloading... ${Math.round(f * 100)}%`; });
+        bar.firstChild.style.width = '100%';
+        if (r === 'need_permission') permissionStep();
+        else status.textContent = 'Opening the installer... Your characters stay: the update keeps this phone\'s saves.';
+      } catch (e) {
+        status.textContent = 'Download failed: ' + ((e && e.message) || 'unknown error') + '. Try again, or get it from the release page.';
+        go.disabled = false; later.disabled = false; skip.disabled = false;
+        go.textContent = 'Try again';
+        row.append(h('button', { class: 'btn alt', onclick: () => UPD.open(rel.url) }, 'Release page'));
+      }
+    } }, inApp ? `Update now${rel.size ? ` (${(rel.size / 1048576).toFixed(0)} MB)` : ''}` : 'Open the release page');
+    row.append(go, later, skip);
+    showDialog([h('h3', null, 'Update available'), h('p', null, h('b', { style: { color: 'var(--gold)' } }, rel.name), h('br'), `You have v${cur}.`), notes, bar, status, row], false);
+  }
+
   function showSelect() {
     closeDialog(); closeSheet();
+    setTimeout(autoUpdateCheck, 1200);
     const list = G.characters();
     if (!list.length) return showCreate();
     app.innerHTML = '';

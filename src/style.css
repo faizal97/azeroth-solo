@@ -386,3 +386,8 @@ img { max-width: 100%; display: block; }
 .row.talent .next { color: #9fd6ff; }
 .pill { font: 700 12px var(--body); color: var(--muted); }
 .pill.ready { color: #1a1206; background: #ffd84a; padding: 3px 8px; border-radius: 10px; }
+
+/* in-app updater release notes (v9.3) */
+.upd-notes, .upd-notes p, .upd-notes li { text-align: left; }
+.upd-notes p { margin: 4px 0; }
+.upd-notes ul { margin: 4px 0; padding-left: 20px; }

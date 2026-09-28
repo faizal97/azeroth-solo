@@ -40,6 +40,9 @@ The plan up to level 60 and beyond is in [docs/plans/2026-09-27-roadmap-design.m
 
 ## Install (Android)
 
+From v9.3.0 the app checks GitHub for new releases. When one is out it shows what changed, and **Update now** downloads it and opens Android's installer. The first time, Android asks you to allow Azeroth Solo to install apps. Hero → Check for updates checks by hand.
+
+
 Download the latest APK from [Releases](../../releases) and open it on your phone (you may need to allow installs from your browser or file manager). arm64 phones only.
 
 ## Build it yourself
