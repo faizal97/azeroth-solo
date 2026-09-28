@@ -1482,6 +1482,7 @@
   G.titleUnlocked = function (t) {
     const r = G.records(), n = t.need;
     if (n.clear) return !!(r.clears[n.clear] && r.clears[n.clear].clears);
+    if (n.quest) return !!G.S.player.done[n.quest];
     return Object.keys(n).every((k) => (r[k] || 0) >= n[k]);
   };
   G.titleName = function (t, name) { const horde = (D.RACES[G.S.player.race] || {}).faction === 'horde'; return (horde && t.horde ? t.horde : t.name).replace('%s', name); };
@@ -1824,6 +1825,7 @@
     const S = G.S, P = S.player, A = D.ACTIVITIES[act];
     const region = A.where && D.PLACES[A.where].region;
     if (A.where && !G.canReach(P.place, A.where)) return 'hidden';
+    if (A.needQuest && !P.quests[A.needQuest]) return 'hidden'; // a legend's story fight shows only while you're on it
     if (P.level < A.minLvl) return `Requires level ${A.minLvl}`;
     if (region && region !== (D.PLACES[P.place] || {}).region) return `Go to ${D.REGIONS[region].name} to join`;
     if ((S.flags.deserterUntil || 0) > now()) return `Deserter: ${Math.ceil((S.flags.deserterUntil - now()) / 60000)} min`;
@@ -1881,6 +1883,17 @@
     const talents = G.autoTalents(b.cls, b.role || (D.CLASSES[b.cls] || {}).role || 'dps', b.level, Math.abs(b.id || 0));
     return { name: b.name + (b.realm ? '-' + b.realm.replace(' ', '') : ''), cls: b.cls, race: b.race || 'human', level: b.level, equip, role: b.role, hp: null, res: null, auras: [], bot: b, talents };
   };
+  // ------------------------------------------------------------ Legends
+  G.legendUnlocked = (key) => { const L = (D.LEGENDS || {})[key]; return !!(L && G.S && G.S.player.done[L.unlock]); };
+  G.legendOn = (key) => !((G.S.player.legendOff || {})[key]);
+  G.setLegendOn = function (key, on) { const P = G.S.player; P.legendOff = P.legendOff || {}; if (on) delete P.legendOff[key]; else P.legendOff[key] = true; G.save(); emit('change'); };
+  G.legendChar = function (key, lvl) {
+    const L = D.LEGENDS[key], C = D.CLASSES[L.cls];
+    const b = { id: -1000 - Object.keys(D.LEGENDS).indexOf(key), name: L.short, cls: L.cls, race: L.race, level: lvl, role: L.role, skill: 0.85, react: 0.45, toxic: 0, legend: key };
+    const equip = { weapon: G.genGear('weapon', lvl, 3, { wtype: 'sword' }) };
+    for (const s of ['chest', 'legs', 'feet', 'hands', 'wrist', 'waist', 'back']) equip[s] = G.genGear(s, lvl, 3, s === 'back' ? {} : { atype: C.armorType });
+    return { name: L.short, cls: L.cls, race: L.race, level: lvl, equip, role: L.role, hp: null, res: null, auras: [], bot: b, legend: key, talents: G.autoTalents(L.cls, L.role, lvl, 7) };
+  };
   function formGroup(act, opts) {
     const S = G.S, A = D.ACTIVITIES[act];
     const roles = A.size === 3 ? ['tank', 'healer', 'dps'] : A.size === 10 ? ['tank', 'tank', 'healer', 'healer', 'healer', 'dps', 'dps', 'dps', 'dps', 'dps'] : ['tank', 'healer', 'dps', 'dps', 'dps'];
@@ -1893,6 +1906,19 @@
     const cap = A.maxLvl || D.LEVEL_CAP;
     for (const m of members) m.syncLevel = cap;
     if (opts && opts.firstTimers) for (const m of members) { m.bot.skill = Math.min(m.bot.skill, 0.25 + Math.random() * 0.2); m.level = Math.max(A.minLvl, Math.min(m.level, A.minLvl + 1)); }
+    // Legends (v10): an unlocked legend takes a slot in your group (his role if you don't play it), and always joins
+    // the run that finishes his own story
+    for (const key in (D.LEGENDS || {})) {
+      const L = D.LEGENDS[key];
+      const story = A.needQuest && D.QUESTS[A.needQuest] && D.QUESTS[A.needQuest].legend === key;
+      if (!story && !(G.legendUnlocked(key) && G.legendOn(key))) continue;
+      const slot = members.findIndex((m) => m.role === L.role);
+      const i = slot >= 0 ? slot : members.findIndex((m) => m.role === 'dps');
+      if (i < 0) continue;
+      const lc = G.legendChar(key, lvl);
+      lc.role = members[i].role; lc.syncLevel = cap;
+      members[i] = lc;
+    }
     S.player.syncLevel = cap;
     S.group = { act, members };
     return S.group;

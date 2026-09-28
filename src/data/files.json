@@ -23,7 +23,7 @@
   "zones/tanaris.js",
   "zones/zulfarrak.js",
   "zones/feralas.js",
-  "zones/maraudon.js", "zones/ungoro.js", "zones/steppes.js", "zones/brd.js", "zones/plaguelands.js", "zones/scholomance.js", "zones/stratholme.js", "zones/winterspring.js", "zones/tidewatch.js", "zones/skullreef.js", "zones/sunken_archive.js", "zones/shalzua.js", "zones/tidecrown.js",
+  "zones/maraudon.js", "zones/ungoro.js", "zones/steppes.js", "zones/brd.js", "zones/plaguelands.js", "zones/scholomance.js", "zones/stratholme.js", "zones/winterspring.js", "zones/tidewatch.js", "zones/skullreef.js", "zones/sunken_archive.js", "zones/shalzua.js", "zones/tidecrown.js", "zones/legends.js",
   "professions.js",
   "finalize.js"
 ]

@@ -128,6 +128,11 @@ His brief: keep going to 60, then one original "expansion" with 1 raid and 2 dun
    - **Engine:** 10-player groups (2 tanks, 3 healers, 5 DPS) and a raid formation in the fight scene. Balance: the raid averages about 0.7 wipes a run at normal pace and 1.1 at fast.
    - Chapters can wait for a zone (`needs`) and chain (`then`).
 
+## Legends (agreed 2026-09-28, shipped in v9.1.0)
+
+Hand-made characters with their own story, a questline across the levels, and a slot in your groups once it's done (`zones/legends.js`, `D.LEGENDS`, art in `src/art_legends.js`). The first is **Lyveus Cloveus, the Exiled Knight**, a friend's original character adapted to the Black Dragonflight story: a high elf paladin of the Stormwind guard who overheard Lady Prestor's cabal, was saved by his comrade Vyn faking his death, and lost Silverleaf Lodge (Arathi) to the cabal's fire, blamed on the Syndicate. His "Astaroth" is Deathwing. Questline: Silverleaf Lodge (37–38), Vyn in Gadgetzan (44–45), Windsor's page in Blackrock Depths (54), Lord Cassius Marrow at the lodge (60, 3 players, he fights with you). Reward: he joins groups in his role (tank, or a damage slot if you tank) with Oathbound Strike and Ancients' Bulwark, can be switched off in Hero, and the title "the Oathkeeper". He also appears beside Windsor in Chapter 6.
+- Parked: the friends feature (friends' real characters appear in your world as bot-played players, via a small free backend and friend codes).
+
 ## Group finder rules (agreed 2026-09-27)
 
 - **Be there:** any faction may run any dungeon or world elite, but you queue from its zone. Places with no road from where you are stay hidden; they appear when roads between the factions open in the contested zones.

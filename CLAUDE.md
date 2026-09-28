@@ -8,6 +8,7 @@ A single-player fake MMO in World of Warcraft Classic's world: every other "play
   - `data/`: the game data, loaded in the order in `data/files.json`
     - `core.js`: classes, races, abilities, gear rules, reward families, shared items (food, junk, starting gear)
     - `zones/<zone>.js`: one file per zone with everything that lives there (`D.zone(...)`, items, mobs, places, NPCs, quests, dungeons, group-finder activities). Links to other zones sit on the places.
+    - `zones/legends.js`: Legends (`D.LEGENDS`), hand-made characters with a questline who then join your groups; art in `art_legends.js` (`ART.legend(key)`)
     - `finalize.js`: derived fields that need the whole world (boss-loot sources)
     - `data.js` is only the Node entry point that loads these for sims and tools
   - A new zone = a new `zones/<zone>.js`, added to `files.json`, plus its art pack

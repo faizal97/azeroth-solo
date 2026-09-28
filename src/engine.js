@@ -118,6 +118,7 @@
       const left = (a.until - nowMs) / 1000;
       if (left > 0) u.auras.push({ id: a.id, until: left, stats: a.stats, src: null, persistent: true, seal: a.seal, sealSchool: a.sealSchool, thorns: a.thorns, name: a.name, icon: a.icon });
     }
+    u.legend = char.legend || null;
     E.recalc(u, true);
     u.hp = char.hp == null ? u.maxHp : clamp(char.hp, 1, u.maxHp);
     u.maxRes = C.resource === 'mana' ? u.st.maxMana : 100;
@@ -705,6 +706,12 @@
       return;
     }
     let tgt;
+    // Legends use their own abilities first (Lyveus: shield when hurt, then his strike)
+    if (u.legend === 'lyveus') {
+      const t0 = C.units[u.target] && !C.units[u.target].dead ? C.units[u.target] : (u.role === 'tank' ? en[0] : focusTarget(C, u));
+      if (u.hp / u.maxHp < 0.55 && try_('ancients_bulwark')) return;
+      if (t0 && try_('oathbound_strike', t0)) return;
+    }
     if (u.role === 'tank') {
       // grab loose mobs
       const loose = en.find((e) => e.target && e.target !== u.uid && C.units[e.target] && C.units[e.target].role !== 'tank');

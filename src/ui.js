@@ -255,7 +255,7 @@
       C.allies.forEach((u, i) => {
         const pos = C.allies.length > 7 ? (POS_RAID[i] || POS_RAID[POS_RAID.length - 1]) : (POS_ALLY[i] || POS_ALLY[4]);
         const np = C.allies.length > 1 ? h('div', { class: 'np' }, h('span', { class: 'cls-' + u.cls }, u.kind === 'player' ? '' : u.name.split('-')[0]), h('div', { class: 'hpb' }, h('i'))) : null;
-        const src = u.kind === 'pet' ? petArt(u) : u.form === 'bear' ? art('pet', 'bear_form') : art('hero', looks(u.char));
+        const src = u.kind === 'pet' ? petArt(u) : u.form === 'bear' ? art('pet', 'bear_form') : u.char && u.char.legend ? art('legend', u.char.legend) : art('hero', looks(u.char));
         const el = spriteEl(src, u.kind === 'pet' && u.key === 'imp' ? Object.assign({}, pos, { w: pos.w * 0.7 }) : pos, 'friend idle' + (u.dead ? ' dead' : '') + (u.kind === 'pet' && u.key === 'beast' ? ' flip' : ''), np);
         el.addEventListener('click', () => { G.setTarget(u.uid); renderTarget(); markTargets(); renderPanel(); });
         ui.spriteEls[u.uid] = el; sc.append(el);
@@ -521,7 +521,7 @@
     for (const npc of place.npcs) {
       const N = D.NPCS[npc]; const mk = G.npcMarker(npc);
       here.append(h('button', { class: 'mcard', onclick: () => openNpc(npc) },
-        h('div', { class: 'ic' }, mk ? h('span', { class: 'mark' + (mk === '…' ? ' grey' : '') }, mk === '…' ? '?' : mk) : img(art('icon', npc === place.vendor || npc === place.gearVendor ? 'coin' : 'hearthstone'))),
+        h('div', { class: 'ic' }, mk ? h('span', { class: 'mark' + (mk === '…' ? ' grey' : '') }, mk === '…' ? '?' : mk) : img(art('icon', N.legend ? 'legend_' + N.legend : npc === place.vendor || npc === place.gearVendor ? 'coin' : 'hearthstone'))),
         h('div', { class: 't' }, h('b', { style: { color: '#ffd100' } }, N.name), h('small', null, N.title))));
     }
     if (place.npcs.length) b.append(here); else b.append(h('div', { class: 'people' }, 'No one to talk to here.'));
@@ -1135,7 +1135,7 @@
     skullreef: { bloodtide_landing: [280, 330], coralbone_beach: [290, 220], screaming_grotto: [230, 110], sunken_pier: [160, 300], loas_rest: [110, 180], temple_steps: [50, 290] },
     stormveil: { drowned_causeway: [170, 260], tidecrown_gate: [170, 110] },
     feralas: { feathermoon_stronghold: [45, 170], camp_mojache: [270, 170], frayfeather_highlands: [150, 90], woodpaw_hills: [230, 80], gordunni_outpost: [180, 260], the_forgotten_coast: [60, 300], lower_wilds: [300, 290], maraudon_gate: [240, 20] },
-    arathi: { refuge_pointe: [170, 180], hammerfall: [300, 150], highland_plains: [110, 200], drywhisker_gorge: [290, 250], witherbark_village: [70, 310], stromgarde_keep: [120, 300], boulderfist_hall: [285, 340], circle_of_west_binding: [160, 90] },
+    arathi: { silverleaf_lodge: [60, 250], refuge_pointe: [170, 180], hammerfall: [300, 150], highland_plains: [110, 200], drywhisker_gorge: [290, 250], witherbark_village: [70, 310], stromgarde_keep: [120, 300], boulderfist_hall: [285, 340], circle_of_west_binding: [160, 90] },
     stranglethorn: { rebel_camp: [170, 45], grom_gol: [40, 250], nesingwary_camp: [150, 150], lake_nazferiti: [235, 185], zuuldaia_ruins: [55, 150], kurzen_compound: [285, 90], venture_base_camp: [270, 285], balia_mah_ruins: [120, 330], zul_kunda: [205, 365] },
     wetlands: { menethil_harbor: [60, 250], bluegill_marsh: [70, 130], whelgars_excavation: [170, 300], saltspray_glen: [140, 60], dun_modr: [230, 160], angerfang_encampment: [295, 280] },
     ashenvale: { astranaar: [110, 190], splintertree_post: [290, 185], the_zoram_strand: [30, 150], mystral_lake: [180, 270], thistlefur_village: [120, 70], the_howling_vale: [205, 118], satyrnaar: [292, 70], felfire_hill: [305, 300] },
@@ -1459,6 +1459,7 @@
       noggenfogger: 'Welcome to Gadgetzan, where everything has a price and the water costs extra.', bilgewhizzle: 'Bandits, pirates, bugs. My water towers have more enemies than friends.', sprinkle: 'Water is life out here. Help me keep it flowing.', fizzledowser: 'Fascinating desert! Dangerous, but fascinating.', innkeeper_fizzgrimble: 'Rooms, drinks, sand in everything. Welcome.', blizrik: 'Guns, blades and bombs. No refunds.',
       shandris: 'Feathermoon holds the coast. Elune gives us strength.', latronicus: 'The forest is vast and old. So are its dangers.', innkeeper_shyria: 'Rest under the moon, friend.', vivianna: 'Moonsteel blades, light and deadly.',
       hadoken: 'The hunt in Feralas is the greatest in Kalimdor.', orwin: 'Mojache is a camp of hunters. Bring me proof of yours.', innkeeper_greul: 'Eat, drink, sleep. The forest will wait.', krueg: 'Heavy weapons for heavy work.',
+      lyveus: 'They told the world I died. Some days I almost believed them.', vyn: 'Keep your voice down. The court has ears even in Gadgetzan.',
       donova_snowden: 'The Winterfall were a peaceful tribe. Something poisoned them.', witch_doctor_mauari: 'Cold magic, strong magic. Mauari has work for you.', umi_rumplesnicker: 'Have you seen a yeti? Aren\'t they wonderful? Please kill some.', malyfous_darkhammer: 'Bring me good materials and I\'ll make you something worth wearing.', haleh: 'The blue dragonflight watches Winterspring. Not all of us stayed loyal.', innkeeper_everlook: 'Welcome to Everlook. Warm beds, hot food, cold prices.', xizzer_fizzbolt: 'Weapons for the cold. Guaranteed not to freeze. Mostly.',
       admiral_vane: 'Kul Tiras charts every sea. This island was never on any chart.', lyssa_moonquill: 'Highborne built this place. I want to know what they became.', sergeant_tamsin: 'Keep your blade dry and your back to the landing.', quartermaster_brenn: 'Supplies from Menethil. What\'s left of them.', armorer_hale: 'Kul Tiran steel. It holds an edge in salt water.',
       shadow_hunter_zulkesh: 'Our ancestors knew this reef. Now it knows us again.', deathstalker_voss: 'The drowned are not Scourge. That makes them interesting.', hexxer_mazu: 'The loa is screaming, mon. Mazu can hear it.', trader_gikkix: 'Everything\'s for sale on the reef. Even the reef.', armorer_krosh: 'Blades for the Horde. Sharp, heavy, and cheap enough.',
@@ -1598,6 +1599,19 @@
         abl.append(h('div', { class: 'row' + (known ? '' : ' off') }, h('div', { class: 'ic' }, img(abIcon(id))), h('div', { class: 't' }, h('b', null, ab.name), h('small', { style: { whiteSpace: 'normal' } }, known ? t.d : `Learned at level ${ab.lvl}`)), h('div', { class: 'r' }, t.cost)));
       }
       b.append(abl);
+      // Legends (v10): story, credit, and whether they join your groups
+      for (const key in (D.LEGENDS || {})) {
+        const L = D.LEGENDS[key], on = G.legendUnlocked(key);
+        const started = Object.keys(P.done).concat(Object.keys(P.quests)).some((q) => D.QUESTS[q] && D.QUESTS[q].legend === key);
+        b.append(h('div', { class: 'sec-h' }, 'Legend: ' + L.name, h('small', null, on ? (G.legendOn(key) ? 'joins your groups' : 'resting') : started ? 'story in progress' : 'not met yet')));
+        const box = h('div', { class: 'ai-box' }, h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', 'legend_' + key))), h('div', { class: 't' }, h('b', { style: { color: '#ff8000' } }, L.name), h('small', null, L.title))));
+        if (on || started) for (const para of L.story) box.append(h('p', { style: { margin: '6px 0' } }, para));
+        else box.append(h('p', { style: { margin: '6px 0' } }, 'A high elf knight, said to have died five years ago, has been seen among the ashes of Silverleaf Lodge in the Arathi Highlands (level 37+).'));
+        if (on) box.append(h('p', { class: 'ai-note' }, `${L.short} takes a ${L.role} slot in your groups (a damage slot if you are the ${L.role}), with his own abilities: ${L.abilities.map((a) => D.ABILITIES[a].name).join(' and ')}.`));
+        box.append(h('p', { class: 'ai-note' }, L.credit));
+        b.append(box);
+        if (on) b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { G.setLegendOn(key, !G.legendOn(key)); ui.sheetFn(); } }, `${L.short} joins groups: ${G.legendOn(key) ? 'On' : 'Off'}`)));
+      }
       const titles = D.TITLES.filter(G.titleUnlocked);
       b.append(h('div', { class: 'sec-h' }, 'Title', h('small', null, `${titles.length}/${D.TITLES.length} unlocked · ${G.account().marks} Mentor Marks`)));
       const tchips = h('div', { class: 'chips' }, h('button', { class: 'chip' + (!P.title ? ' gold' : ''), onclick: () => { G.setTitle(null); ui.sheetFn(); } }, 'None'));
