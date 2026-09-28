@@ -1,5 +1,6 @@
 // Verifies src/art_legends.js (the Legend characters: Lyveus Cloveus, his comrade Vyn, Lord Cassius Marrow,
-// Silverleaf Lodge, and the four Lyveus icons) and renders contact sheets into art/legends/out/.
+// Silverleaf Lodge, the four Lyveus icons; then the hooded wanderer, Deathwing and the two lore story scenes) and renders
+// contact sheets into art/legends/out/.
 // Usage: node art/legends/render.js
 const fs = require('fs');
 const path = require('path');
@@ -15,7 +16,11 @@ const read = (f) => fs.readFileSync(path.join(ROOT, 'src', f), 'utf8');
 const SELF = 'art_legends.js';
 const SRC = read(SELF);
 
-const NEW = { legends: ['lyveus'], mobs: ['lord_cassius_marrow'], scenes: ['silverleaf_lodge'], icons: ['legend_lyveus', 'oathbound_strike', 'ancients_bulwark', 'silverleaf_aegis'], actors: ['lyveus', 'vyn'] };
+const NEW = { legends: ['lyveus', 'lyveus_hooded'], mobs: ['lord_cassius_marrow'], scenes: ['silverleaf_lodge'], icons: ['legend_lyveus', 'oathbound_strike', 'ancients_bulwark', 'silverleaf_aegis'],
+  actors: ['lyveus', 'vyn', 'lyveus_hooded', 'deathwing'], storyScenes: ['silverleaf_burning', 'caravan_road'] };
+// the first batch of keys must stay byte-identical: sha1 (first 12 hex) of each, drawn in a fresh world in this order
+const BASELINE = { legend_lyveus: '45e75da0f5b3', mob: '6d2bc85dee20', scene: '6dbbe3f65946', actor_lyveus: 'da9c4fab333e', actor_vyn: 'daa2bfec4958',
+  icon_legend_lyveus: 'f528ef62b578', icon_oathbound_strike: '5d860cc9e318', icon_ancients_bulwark: '74aeffa4f137', icon_silverleaf_aegis: '19f94953de70' };
 const WEIRD = ['nope', '', 'toString', '__proto__', 'constructor', 'hasOwnProperty', 'valueOf', 'lyveus ', undefined, null, 42, {}, []];
 const problems = [];
 const notes = [];
@@ -43,13 +48,16 @@ function fake() {
     if (A.scene(k) !== 'BASE_SCENE:' + k) bad('fake: scene did not fall through for ' + k);
     if (A.icon(k) !== 'BASE_ICON:' + k) bad('fake: icon did not fall through for ' + k);
     if (k !== 'lyveus' && A.story.actor(k) !== 'BASE_ACTOR:' + k) bad('fake: actor did not fall through for ' + k);
+    if (A.story.scene(k) !== 'BASE_SSCENE:' + k) bad('fake: story scene did not fall through for ' + k);
   }
+  // a story scene key asked for as an actor (and vice versa) is not ours
+  if (A.story.actor('caravan_road') !== 'BASE_ACTOR:caravan_road' || A.story.scene('deathwing') !== 'BASE_SSCENE:deathwing') bad('fake: story scene / actor keys crossed');
   for (const k of ['elsewhere', 'toString', '__proto__', 'constructor', 'lyveus', 'vyn']) if (A.mob(k) !== 'BASE_MOB:' + k) bad('fake: mob did not fall through for ' + k);
   if (A.story !== story) bad('fake: ART.story replaced instead of extended');
-  if (A.story.scene !== sScene) bad('fake: ART.story.scene was wrapped (the pack has no story scenes)');
   if (A.scene('silverleaf_lodge').indexOf('<svg') !== 0 || A.mob('lord_cassius_marrow').indexOf('<svg') !== 0) bad('fake: own scene / mob broken');
   for (const k of NEW.icons) if (A.icon(k).indexOf('<svg') !== 0) bad('fake: own icon broken ' + k);
   for (const k of NEW.actors) if (A.story.actor(k).indexOf('<svg') !== 0) bad('fake: own actor broken ' + k);
+  for (const k of NEW.storyScenes) if (A.story.scene(k).indexOf('<svg') !== 0) bad('fake: own story scene broken ' + k);
   if (typeof A.legend !== 'function') bad('fake: no ART.legend');
   else {
     if (A.legend('lyveus').indexOf('<svg') !== 0) bad('fake: legend lyveus broken');
@@ -60,17 +68,17 @@ function fake() {
   if (K.scenes.join() !== ['x_scene'].concat(NEW.scenes).join()) bad('fake: keys.scenes ' + K.scenes);
   if (K.mobs.join() !== ['x_mob'].concat(NEW.mobs).join()) bad('fake: keys.mobs ' + K.mobs);
   if (K.icons.join() !== ['x_icon'].concat(NEW.icons).join()) bad('fake: keys.icons ' + K.icons);
-  if (A.story.keys.actors.join() !== ['x_actor'].concat(NEW.actors).join() || A.story.keys.scenes.join() !== 'x_sscene') bad('fake: story keys ' + JSON.stringify(A.story.keys));
-  for (const bad2 of WEIRD) { try { A.mob(bad2); A.scene(bad2); A.icon(bad2); A.story.actor(bad2); } catch (e) { bad('fake: threw on ' + String(bad2)); } }
+  if (A.story.keys.actors.join() !== ['x_actor'].concat(NEW.actors).join() || A.story.keys.scenes.join() !== ['x_sscene'].concat(NEW.storyScenes).join()) bad('fake: story keys ' + JSON.stringify(A.story.keys));
+  for (const bad2 of WEIRD) { try { A.mob(bad2); A.scene(bad2); A.icon(bad2); A.story.actor(bad2); A.story.scene(bad2); } catch (e) { bad('fake: threw on ' + String(bad2)); } }
   // loading twice does not duplicate keys
   runIn(w);
-  if (w.ART.keys.icons.length !== 1 + NEW.icons.length || w.ART.story.keys.actors.length !== 1 + NEW.actors.length) bad('fake: double load duplicated keys');
+  if (w.ART.keys.icons.length !== 1 + NEW.icons.length || w.ART.story.keys.actors.length !== 1 + NEW.actors.length || w.ART.story.keys.scenes.length !== 1 + NEW.storyScenes.length) bad('fake: double load duplicated keys');
   // bases that throw are caught
   const wt = runIn({ ART: { scene() { throw new Error('x'); }, mob() { throw new Error('x'); }, icon() { throw new Error('x'); }, hero() { throw new Error('x'); }, story: { scene() { throw new Error('x'); }, actor() { throw new Error('x'); }, keys: { scenes: [], actors: [] } } } });
-  try { for (const f of ['scene', 'mob', 'icon', 'legend']) if (!/^<svg /.test(wt.ART[f]('elsewhere'))) bad('throwing base: no placeholder from ' + f); if (!/^<svg /.test(wt.ART.story.actor('elsewhere'))) bad('throwing base: no actor placeholder'); } catch (e) { bad('throwing base: threw ' + e.message); }
+  try { for (const f of ['scene', 'mob', 'icon', 'legend']) if (!/^<svg /.test(wt.ART[f]('elsewhere'))) bad('throwing base: no placeholder from ' + f); if (!/^<svg /.test(wt.ART.story.actor('elsewhere')) || !/^<svg /.test(wt.ART.story.scene('elsewhere'))) bad('throwing base: no story placeholder'); } catch (e) { bad('throwing base: threw ' + e.message); }
   // a frozen story object: a fresh one is published, the old scene function kept
   const fz = fake(); Object.freeze(fz.ART.story); Object.freeze(fz.ART.story.keys);
-  try { runIn(fz); if (!/^<svg /.test(fz.ART.story.actor('vyn')) || fz.ART.story.actor('q') !== 'BASE_ACTOR:q' || fz.ART.story.scene('q') !== 'BASE_SSCENE:q' || !fz.ART.story.keys.actors.includes('lyveus')) bad('frozen story: pack not installed'); } catch (e) { bad('frozen story: threw ' + e.message); }
+  try { runIn(fz); if (!/^<svg /.test(fz.ART.story.actor('vyn')) || fz.ART.story.actor('q') !== 'BASE_ACTOR:q' || fz.ART.story.scene('q') !== 'BASE_SSCENE:q' || !fz.ART.story.keys.actors.includes('lyveus') || !/^<svg /.test(fz.ART.story.scene('caravan_road'))) bad('frozen story: pack not installed'); } catch (e) { bad('frozen story: threw ' + e.message); }
   // empty and garbage worlds
   const worlds = [{}, { ART: {} }, { ART: null }, { ART: 5 }, { ART: { keys: null, scene: 'no', mob: 7, story: 3 } }, { ART: { keys: { scenes: 'x', mobs: {}, icons: 4 }, story: { keys: null, actor: 'x' } } }];
   worlds.forEach((wd, i) => {
@@ -81,9 +89,9 @@ function fake() {
         if (typeof T[f] !== 'function') { bad('world ' + i + ': no ' + f); continue; }
         for (const k of WEIRD) if (!/^<svg /.test(T[f](k))) bad('world ' + i + ': ' + f + ' placeholder for ' + String(k));
       }
-      for (const k of WEIRD) if (!/^<svg /.test(T.story.actor(k))) bad('world ' + i + ': actor placeholder for ' + String(k));
-      if (T.scene('silverleaf_lodge').length < 8000 || T.mob('lord_cassius_marrow').length < 4000 || T.legend('lyveus').length < 4000 || T.story.actor('vyn').length < 4000) bad('world ' + i + ': own keys broken');
-      if (T.keys.scenes.join() !== NEW.scenes.join() || T.keys.mobs.join() !== NEW.mobs.join() || T.keys.icons.join() !== NEW.icons.join() || T.story.keys.actors.join() !== NEW.actors.join()) bad('world ' + i + ': keys ' + JSON.stringify(T.keys));
+      for (const k of WEIRD) { if (!/^<svg /.test(T.story.actor(k))) bad('world ' + i + ': actor placeholder for ' + String(k)); if (!/^<svg /.test(T.story.scene(k))) bad('world ' + i + ': story scene placeholder for ' + String(k)); }
+      if (T.scene('silverleaf_lodge').length < 8000 || T.mob('lord_cassius_marrow').length < 4000 || T.legend('lyveus').length < 4000 || T.story.actor('vyn').length < 4000 || T.story.scene('caravan_road').length < 8000 || T.legend('lyveus_hooded').length < 4000) bad('world ' + i + ': own keys broken');
+      if (T.keys.scenes.join() !== NEW.scenes.join() || T.keys.mobs.join() !== NEW.mobs.join() || T.keys.icons.join() !== NEW.icons.join() || T.story.keys.actors.join() !== NEW.actors.join() || T.story.keys.scenes.join() !== NEW.storyScenes.join()) bad('world ' + i + ': keys ' + JSON.stringify(T.keys));
     } catch (e) { bad('world ' + i + ': threw ' + e.message); }
   });
   console.log('fake/empty ART checks: ' + (worlds.length + 3) + ' worlds');
@@ -123,13 +131,14 @@ for (const k of NEW.scenes) if (A.keys.scenes.includes(k)) bad('scene key alread
 for (const k of NEW.mobs) if (A.keys.mobs.includes(k)) bad('mob key already exists before this pack: ' + k);
 for (const k of NEW.icons) if (A.keys.icons.includes(k)) bad('icon key already exists before this pack: ' + k);
 for (const k of NEW.actors) if (A.story.keys.actors.includes(k)) bad('actor key already exists before this pack: ' + k);
+for (const k of NEW.storyScenes) if (A.story.keys.scenes.includes(k)) bad('story scene key already exists before this pack: ' + k);
 if (B.keys.scenes.slice(0, A.keys.scenes.length).join() !== A.keys.scenes.join() || B.keys.scenes.slice(A.keys.scenes.length).join() !== NEW.scenes.join()) bad('real: keys.scenes not old + new');
 if (B.keys.mobs.slice(0, A.keys.mobs.length).join() !== A.keys.mobs.join() || B.keys.mobs.slice(A.keys.mobs.length).join() !== NEW.mobs.join()) bad('real: keys.mobs not old + new');
 if (B.keys.icons.slice(0, A.keys.icons.length).join() !== A.keys.icons.join() || B.keys.icons.slice(A.keys.icons.length).join() !== NEW.icons.join()) bad('real: keys.icons not old + new');
-if (B.story.keys.actors.join() !== A.story.keys.actors.concat(NEW.actors).join() || B.story.keys.scenes.join() !== A.story.keys.scenes.join()) bad('real: story keys not old + new');
+if (B.story.keys.actors.join() !== A.story.keys.actors.concat(NEW.actors).join() || B.story.keys.scenes.join() !== A.story.keys.scenes.concat(NEW.storyScenes).join()) bad('real: story keys not old + new');
 // only scene, mob and icon are wrapped; everything else art.js and the earlier packs publish is left as it was
 for (const k of Object.keys(B0.refs)) if (k !== 'storyScene' && !['scene', 'mob', 'icon'].includes(k) && B0.refs[k] !== B[k]) bad('real: ART.' + k + ' was replaced');
-if (B.story !== B0.refs.story || B.story.scene !== B0.refs.storyScene) bad('real: ART.story replaced or ART.story.scene wrapped');
+if (B.story !== B0.refs.story) bad('real: ART.story replaced instead of extended');
 if (typeof B.legend !== 'function') bad('real: no ART.legend');
 // the same calls in the same order in both worlds must give byte-identical strings
 const calls = [];
@@ -175,6 +184,7 @@ const art = {
   mob: NEW.mobs.map((k) => ['mob_' + k, ART.mob(k), '0 0 128 128', 6000]),
   scene: NEW.scenes.map((k) => ['scene_' + k, ART.scene(k), '0 0 400 240', 20000]),
   actor: NEW.actors.map((k) => ['actor_' + k, ART.story.actor(k), '0 0 160 160', 6000]),
+  sscene: NEW.storyScenes.map((k) => ['sscene_' + k, ART.story.scene(k), '0 0 480 270', 20000]),
   icon: NEW.icons.map((k) => ['icon_' + k, ART.icon(k), '0 0 64 64', 3000])
 };
 for (const list of Object.values(art)) for (const [name, s, vb, min] of list) {
@@ -187,6 +197,7 @@ NEW.legends.forEach((k) => check('again legend ' + k, ART.legend(k), '0 0 128 12
 NEW.mobs.forEach((k) => check('again mob ' + k, ART.mob(k), '0 0 128 128'));
 NEW.scenes.forEach((k) => check('again scene ' + k, ART.scene(k), '0 0 400 240'));
 NEW.actors.forEach((k) => check('again actor ' + k, ART.story.actor(k), '0 0 160 160'));
+NEW.storyScenes.forEach((k) => check('again story scene ' + k, ART.story.scene(k), '0 0 480 270'));
 NEW.icons.forEach((k) => check('again icon ' + k, ART.icon(k), '0 0 64 64'));
 // no exception reached a try/catch placeholder: run the pack with make() instrumented
 {
@@ -195,7 +206,16 @@ NEW.icons.forEach((k) => check('again icon ' + k, ART.icon(k), '0 0 64 64'));
   const w4 = { __DBG: (e) => bad('exception while drawing: ' + (e && e.stack ? e.stack.split('\n').slice(0, 2).join(' | ') : e)) };
   runIn(w4);
   NEW.legends.forEach((k) => w4.ART.legend(k)); NEW.mobs.forEach((k) => w4.ART.mob(k)); NEW.scenes.forEach((k) => w4.ART.scene(k));
-  NEW.actors.forEach((k) => w4.ART.story.actor(k)); NEW.icons.forEach((k) => w4.ART.icon(k));
+  NEW.actors.forEach((k) => w4.ART.story.actor(k)); NEW.icons.forEach((k) => w4.ART.icon(k)); NEW.storyScenes.forEach((k) => w4.ART.story.scene(k));
+}
+// the first batch is unchanged, byte for byte
+{
+  const crypto = require('crypto'), h = (t) => crypto.createHash('sha1').update(t).digest('hex').slice(0, 12);
+  const w5 = runIn({}), T = w5.ART;
+  const got = { legend_lyveus: h(T.legend('lyveus')), mob: h(T.mob('lord_cassius_marrow')), scene: h(T.scene('silverleaf_lodge')), actor_lyveus: h(T.story.actor('lyveus')), actor_vyn: h(T.story.actor('vyn')) };
+  for (const k of ['legend_lyveus', 'oathbound_strike', 'ancients_bulwark', 'silverleaf_aegis']) got['icon_' + k] = h(T.icon(k));
+  for (const k of Object.keys(BASELINE)) if (got[k] !== BASELINE[k]) bad('baseline: ' + k + ' changed (' + got[k] + ' != ' + BASELINE[k] + ')');
+  console.log('baseline: ' + Object.keys(BASELINE).length + ' first-batch keys checked byte for byte');
 }
 
 // ---- 4. files, PNGs, edge and ground checks ----
@@ -237,7 +257,7 @@ function edges(name, file, scale, ref) {
 const pngs = {};
 for (const [name, s] of art.legend.concat(art.mob)) pngs[name] = png(write(name, s), 512);
 for (const [name, s] of art.actor) pngs[name] = png(write(name, s), 480);
-for (const [name, s] of art.scene) pngs[name] = png(write(name, s), 800);
+for (const [name, s] of art.scene.concat(art.sscene)) pngs[name] = png(write(name, s), 800);
 for (const [name, s] of art.icon) pngs[name] = png(write(name, s), 128);
 const ground = {};
 for (const [name] of art.legend.concat(art.mob)) ground[name] = edges(name, pngs[name], 4);
@@ -247,11 +267,11 @@ const HEROES = [{ cls: 'paladin', race: 'human' }, { cls: 'warrior', race: 'nigh
 const heroLow = HEROES.map((o, i) => edges('hero_' + i, png(write('ref_hero_' + i, ART.hero(o)), 512), 4, true));
 // the human paladin is the reference (the other races' boots are scaled and sit a little lower). The heroes' lowest
 // solid row is the round cap of the leg outline under the heel, about a pixel below the boot sole, hence the tolerance.
-if (Math.abs(ground.legend_lyveus - heroLow[0]) > 1.4) bad('ground: lyveus feet at y=' + ground.legend_lyveus.toFixed(1) + ', human paladin at y=' + heroLow[0].toFixed(1));
+for (const k of NEW.legends) if (Math.abs(ground['legend_' + k] - heroLow[0]) > 1.4) bad('ground: ' + k + ' feet at y=' + ground['legend_' + k].toFixed(1) + ', human paladin at y=' + heroLow[0].toFixed(1));
 const refMob = edges('ref_syndicate_highwayman', png(write('ref_mob_syndicate_highwayman', ART.mob('syndicate_highwayman')), 512), 4, true);
 if (Math.abs(ground.mob_lord_cassius_marrow - refMob) > 0.8) bad('ground: lord_cassius_marrow feet at y=' + ground.mob_lord_cassius_marrow.toFixed(1) + ', syndicate_highwayman at y=' + refMob.toFixed(1));
 for (const k of NEW.actors) if (ground['actor_' + k] < 150 || ground['actor_' + k] > 159) bad('ground: actor ' + k + ' feet at y=' + ground['actor_' + k].toFixed(1) + ' (want the bottom edge)');
-console.log('feet (solid bottom row): lyveus ' + ground.legend_lyveus.toFixed(1) + ', heroes ' + heroLow.map((v) => v.toFixed(1)).join(' ') + ', cassius ' + ground.mob_lord_cassius_marrow.toFixed(1) + ' (highwayman ' + refMob.toFixed(1) + '), actors ' + NEW.actors.map((k) => ground['actor_' + k].toFixed(1)).join(' '));
+console.log('feet (solid bottom row): lyveus ' + ground.legend_lyveus.toFixed(1) + ', hooded ' + ground.legend_lyveus_hooded.toFixed(1) + ', heroes ' + heroLow.map((v) => v.toFixed(1)).join(' ') + ', cassius ' + ground.mob_lord_cassius_marrow.toFixed(1) + ' (highwayman ' + refMob.toFixed(1) + '), actors ' + NEW.actors.map((k) => ground['actor_' + k].toFixed(1)).join(' '));
 
 // ---- 5. sheets ----
 const HEAD = /^<svg xmlns="http:\/\/www.w3.org\/2000\/svg" viewBox="([^"]+)"(?: width="[^"]+" height="[^"]+")?>/;
@@ -279,6 +299,11 @@ const heroRow = [['lyveus', ART.legend('lyveus')]].concat(HEROES.map((o, i) => [
 sheet('legend_heroes', heroRow, 256, 256, 5, '#8a9a8a', line);
 sheet('legend_heroes_ingame', heroRow.concat(heroRow.map(([k, s]) => [k, s, '#2a3440'])), 90, 90, 5, '#8a9a8a');
 sheet('legend_heroes_small', heroRow.concat(heroRow.map(([k, s]) => [k, s, '#2a3440'])), 48, 48, 5, '#8a9a8a');
+// the hooded wanderer next to the plain sprite and two heroes, full size and in-game
+const hoodRow = [['hooded', ART.legend('lyveus_hooded')], ['lyveus', ART.legend('lyveus')], ['paladin', ART.hero(HEROES[0])], ['rogue', ART.hero({ cls: 'rogue', race: 'human' })]];
+sheet('hooded_heroes', hoodRow, 256, 256, 4, '#8a9a8a', line);
+sheet('hooded_heroes_ingame', hoodRow.concat(hoodRow.map(([k, s]) => [k, s, '#2a3440'])), 90, 90, 4, '#8a9a8a');
+sheet('hooded_heroes_small', hoodRow.concat(hoodRow.map(([k, s]) => [k, s, '#2a3440'])), 48, 48, 4, '#8a9a8a');
 // the combat mob next to the Arathi and cabal humanoids it fights beside
 const mobRow = [['cassius', ART.mob('lord_cassius_marrow')]].concat(['syndicate_highwayman', 'syndicate_magus', 'arugal', 'dark_iron_agent'].filter((k) => ART.keys.mobs.includes(k)).map((k) => [k, ART.mob(k)]));
 sheet('mob_compare', mobRow, 200, 200, mobRow.length, '#c8b07a', line);
@@ -314,6 +339,7 @@ const dMob = ['nightbane_worgen', 'defias_convict', 'murloc_flesheater'].filter(
 const party = [H({ cls: 'warrior', race: 'orc' }), LYV(), H({ cls: 'priest', race: 'human', gender: 'f' }), H({ cls: 'mage', race: 'gnome' }), H({ cls: 'rogue', race: 'nightelf' })];
 const dungeon = [
   onScene('dungeon party', dungeonKey, party, [ART.mob(dMob[0]), ART.mob(dMob[0]), ART.mob(dMob[1] || dMob[0])]),
+  onScene('dungeon hooded slot 1', dungeonKey, [H({ cls: 'warrior', race: 'orc' }), ART.legend('lyveus_hooded'), H({ cls: 'priest', race: 'human', gender: 'f' })], [ART.mob(dMob[0]), ART.mob(dMob[1] || dMob[0])]),
   onScene('dungeon lyveus front', dungeonKey, [LYV(), H({ cls: 'paladin', race: 'dwarf' }), H({ cls: 'priest', race: 'undead' })], [ART.mob(dMob[0])])
 ];
 sheet('party_dungeon', dungeon, 400, 240, 2, '#000');
@@ -322,6 +348,7 @@ const lodge = ART.scene('silverleaf_lodge');
 const hw = ART.mob('syndicate_highwayman'), mg = ART.mob('syndicate_magus'), cas = ART.mob('lord_cassius_marrow');
 const lodgeSheets = [
   ['lodge', lodge],
+  ['town hooded', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="400" height="240">${strip(lodge)}${spr({ l: 4, b: 5, w: 26 }, ART.legend('lyveus_hooded'))}</svg>`],
   ['town', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" width="400" height="240">${strip(lodge)}${spr({ l: 4, b: 5, w: 26 }, LYV())}</svg>`],
   // floor test: back-row enemies in slots 3 and 4 behind the boss
   onScene('boss', 'silverleaf_lodge', [LYV(), H({ cls: 'priest', race: 'human', gender: 'f' }), H({ cls: 'hunter', race: 'dwarf' })], [cas, ART.mob('syndicate_highwayman'), ART.mob('syndicate_highwayman'), hw, mg], true),
@@ -331,9 +358,15 @@ const lodgeSheets = [
 sheet('lodge', [['lodge', lodge]], 800, 480, 1, '#000');
 sheet('lodge_onscene', lodgeSheets, 400, 240, 2, '#000');
 // story actors next to Windsor and Bolvar, on light and dark, and over a story backdrop as cutscene.js places them
-const actors = [['lyveus', ART.story.actor('lyveus')], ['vyn', ART.story.actor('vyn')], ['windsor', ART.story.actor('windsor')], ['bolvar', ART.story.actor('bolvar')]];
-sheet('actors', actors.concat(actors.map(([k, s]) => [k, s, '#10161c'])), 150, 150, 4, '#6a7a8a');
-sheet('actors_big', actors, 300, 300, 4, '#6a7a8a');
+const actors = [['lyveus', ART.story.actor('lyveus')], ['vyn', ART.story.actor('vyn')], ['windsor', ART.story.actor('windsor')], ['bolvar', ART.story.actor('bolvar')], ['lyveus_hooded', ART.story.actor('lyveus_hooded')]];
+sheet('actors', actors.concat(actors.map(([k, s]) => [k, s, '#10161c'])), 150, 150, 5, '#6a7a8a');
+sheet('actors_big', actors, 300, 300, 5, '#6a7a8a');
+// Deathwing next to the black dragons of art_story.js, on light and dark, and big
+const dragons = [['deathwing', ART.story.actor('deathwing')], ['onyxia', ART.story.actor('onyxia')], ['nefarian', ART.story.actor('nefarian')]];
+sheet('dragons', dragons.concat(dragons.map(([k, s]) => [k, s, '#10161c'])), 200, 200, 3, '#6a7a8a');
+sheet('dragons_big', dragons, 400, 400, 3, '#6a7a8a');
+// the two new story scenes alone
+sheet('story_scenes', NEW.storyScenes.map((k) => [k, ART.story.scene(k)]), 480, 270, 1, '#000', null);
 const stage = (bgKey, placements) => {
   let body = nest(ART.story.scene(bgKey), 0, 0, 480, 270);
   for (const [s, x, y, w] of placements) { const sz = w * 4.8; body += nest(s, x * 4.8, 270 - y * 2.7 - sz, sz, sz); }
@@ -341,7 +374,14 @@ const stage = (bgKey, placements) => {
 };
 sheet('actors_stage', [
   stage('stormwind_keep', [[ART.story.actor('vyn'), 22, 2, 30], [ART.story.actor('lyveus'), 56, 2, 32]]),
-  stage('stormwind_keep', [[ART.story.actor('vyn'), 16, 2, 30], [ART.story.actor('windsor'), 42, 2, 30], [ART.story.actor('bolvar'), 66, 2, 30]])
+  stage('stormwind_keep', [[ART.story.actor('vyn'), 16, 2, 30], [ART.story.actor('windsor'), 42, 2, 30], [ART.story.actor('bolvar'), 66, 2, 30]]),
+  // the lore cutscene: the ambushed caravan with young Lyveus in the light, the burning lodge, Deathwing looming over it
+  stage('caravan_road', [[ART.story.actor('lyveus'), 34, 3, 32]]),
+  stage('caravan_road', [[ART.story.actor('vyn'), 14, 2, 28], [ART.story.actor('lyveus'), 36, 3, 30]]),
+  stage('silverleaf_burning', [[ART.story.actor('lyveus_hooded'), 36, 2, 30]]),
+  stage('silverleaf_burning', [[ART.story.actor('deathwing'), 18, 0, 64]]),
+  stage('silverleaf_burning', [[ART.story.actor('deathwing'), 30, 6, 44], [ART.story.actor('lyveus_hooded'), 4, 0, 24]]),
+  stage('azeroth_dawn', [[ART.story.actor('deathwing'), 22, 4, 56]])
 ], 480, 270, 2, '#000');
 // icons at 128, 64 and 40, next to the icons they sit beside or could be confused with
 const nearIcons = ['holy_shield', 'shield_wall', 'shield_block', 'crusader_strike', 'divine_protection', 'sword'].filter((k) => ART.keys.icons.includes(k));

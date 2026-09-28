@@ -1116,6 +1116,7 @@
 
   function endSolo(C) {
     const S = G.S, P = S.player;
+    if (C.wanderer) { const Hd = D.LEGENDS[C.wanderer.key].hooded; B.post(S, 'say', { name: Hd.name, cls: 'paladin' }, pick(Hd.leave)); sys('The hooded knight walks off without giving a name.'); }
     const pu = G.pUnit;
     E.writeBack(C, pu, now());
     petWriteBack(C);
@@ -1884,6 +1885,30 @@
     return { name: b.name + (b.realm ? '-' + b.realm.replace(' ', '') : ''), cls: b.cls, race: b.race || 'human', level: b.level, equip, role: b.role, hp: null, res: null, auras: [], bot: b, talents };
   };
   // ------------------------------------------------------------ Legends
+  // Before you know him, a legend may step into a hard solo fight in disguise: at most once an hour, 3 times per zone.
+  G.WANDERER_GAP = 60 * 60000;
+  G.wandererCheck = function (C) {
+    C.wandererTried = true;
+    const S = G.S, P = S.player;
+    for (const key in (D.LEGENDS || {})) {
+      const Hd = D.LEGENDS[key].hooded; if (!Hd || P.done[Hd.until] || P.quests[Hd.until] || P.level < Hd.minLvl) continue;
+      const W = P.wanderer = P.wanderer || { n: 0, last: 0, zones: {} };
+      const region = (D.PLACES[P.place] || {}).region || 'x';
+      if (now() - W.last < G.WANDERER_GAP || (W.zones[region] || 0) >= 3) continue;
+      const pu = C.units[G.pUnit && G.pUnit.uid];
+      const hard = (pu && pu.hp / pu.maxHp < 0.6) || C.enemies.filter((e) => !e.dead).length >= 2 || C.enemies.some((e) => e.level > P.level + 1);
+      if (!hard || Math.random() > 0.35) continue;
+      const lc = G.legendChar(key, P.level); lc.name = Hd.name; lc.legendArt = Hd.art; lc.role = 'tank';
+      const u = E.charUnit(lc, 'ally', 'bot', now()); u.bot = { skill: 0.85, react: 0.45 }; u.role = 'tank'; u.name = Hd.name;
+      E.addAlly(C, u);
+      C.wanderer = { key, name: Hd.name };
+      W.n++; W.last = now(); W.zones[region] = (W.zones[region] || 0) + 1;
+      B.post(S, 'combat', null, `A hooded knight joins the fight!`);
+      B.post(S, 'say', { name: Hd.name, cls: 'paladin' }, pick(Hd.join));
+      emit('change');
+      return;
+    }
+  };
   G.legendUnlocked = (key) => { const L = (D.LEGENDS || {})[key]; return !!(L && G.S && G.S.player.done[L.unlock]); };
   G.legendOn = (key) => !((G.S.player.legendOff || {})[key]);
   G.setLegendOn = function (key, on) { const P = G.S.player; P.legendOff = P.legendOff || {}; if (on) delete P.legendOff[key]; else P.legendOff[key] = true; G.save(); emit('change'); };
@@ -2284,6 +2309,7 @@
           E.addEnemy(C, mu); C.addAt = null;
           B.post(S, 'combat', null, `${mu.name} joins the fight!`);
         }
+        if (C.kind === 'solo' && !C.wandererTried && C.t >= 3) G.wandererCheck(C);
         if (C.extraAt && C.t >= C.extraAt.t) {
           for (const k of C.extraAt.mobs) E.addEnemy(C, E.mobUnit(k, null, S.run.mult));
           C.extraAt = null;

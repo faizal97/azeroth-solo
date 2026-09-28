@@ -228,6 +228,11 @@
     if (pick) { e.threat[pick.uid] = 1; e.target = pick.uid; }
   };
 
+  E.addAlly = function (C, a) {
+    C.allies.push(a); C.units[a.uid] = a;
+    for (const e of C.enemies) if (e.threat[a.uid] == null) e.threat[a.uid] = 0;
+  };
+
   function auraOf(u, id) { return u.auras.find((a) => a.id === id); }
   E.auraOf = auraOf;
   function addAura(C, u, a) {

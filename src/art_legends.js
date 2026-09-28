@@ -7,10 +7,17 @@
  *   scene   silverleaf_lodge     ART.scene: 400x240, the high elf lodge in the Arathi pines, burned two years ago, at sunset
  *   mob     lord_cassius_marrow  ART.mob: 128x128, facing LEFT, feet on y=122 (open-world elite, Lady Prestor's cabal)
  *   icons   legend_lyveus, oathbound_strike, ancients_bulwark, silverleaf_aegis   ART.icon: 64x64
+ * Second batch (the hooded-wanderer stage and the Theater lore cutscene):
+ *   legend  lyveus_hooded        the same sprite format: a deep moss-green travel cloak, hood up, face in shadow but for
+ *                                the chin and one eye glint, the shield wrapped in cloth on his back, the same sword
+ *   actors  lyveus_hooded        the same disguise in the actor format, sword point lowered
+ *           deathwing            Deathwing, the Black Ruin: wings spread, bolted iron plates, molten cracks, fire in his jaws
+ *   story scenes (480x270)       silverleaf_burning (the lodge on fire at night, hooded riders leaving),
+ *                                caravan_road (the ambushed Stormwind wagon, the burst of holy light mid-road)
  * Loads AFTER every other art pack (art_story.js and art_story2.js included) and EXTENDS window.ART: ART.scene, ART.mob,
- * ART.icon and ART.story.scene / ART.story.actor handle the keys above and fall through to the previous functions for
+ * ART.icon, ART.story.scene and ART.story.actor handle the keys above and fall through to the previous functions for
  * every other key (prototype keys included). Keys are appended to ART.keys.scenes / mobs / icons and
- * ART.story.keys.actors. Self-contained: helpers are copies of the zone packs'. Never throws.
+ * ART.story.keys.scenes / actors. Self-contained: helpers are copies of the zone packs'. Never throws.
  * Lyveus's look (from the reference): pale skin, long swept-back pointed ears, short swept mint hair, eager open mouth;
  * sage-green padded vest with a high dark collar and a cross-laced front, grey-green shoulder guards, white sleeves and
  * leggings, brown strapped gloves, grey-green greaves with pointed knee guards; a long dark-steel sword with white
@@ -272,6 +279,83 @@
   function lyveusActor(c) {
     var keep = SWM; SWM = 0.8;
     try { return E(96, 155, 40, 5, c.rg([[0, '#000', 0.45], [0.65, '#000', 0.25], [1, '#000', 0]])) + G(lyvRig(c, POSE_ACTOR), 'matrix(-1.25,0,0,1.25,176,2.5)'); } finally { SWM = keep; }
+  }
+
+  // =====================================================================
+  // LYVEUS, HOODED: the wanderer players meet from level 15. The same rig under a deep moss-green travel cloak,
+  // hood up, face in shadow but for the chin and one glint of an eye; the shield wrapped in cloth on his back.
+  // =====================================================================
+  var HD = { cloak: '#3f4c30', cloakD: '#2a3320', cloakL: '#5e6c44', wrap: '#8a7c62', wrapD: '#5e5442', cord: '#3a2a1a', mud: '#4a3a28' };
+  var POSE_HOOD_SPRITE = {
+    head: [69, 27, 10.5], fSh: [76, 48], fEl: [86, 57], fHd: [93, 63],
+    bHip: [61, 80], bKn: [57.5, 99], bFt: [54, 117], fHip: [68, 80], fKn: [73.5, 99], fFt: [77, 117], sword: [30, 56]
+  };
+  // the story pose: standing still, the sword point lowered in front of him
+  var POSE_HOOD_ACTOR = {
+    head: [69, 27, 10.5], fSh: [76, 48], fEl: [83, 62], fHd: [91, 71],
+    bHip: [61, 80], bKn: [57, 99], bFt: [52, 117], fHip: [68, 80], fKn: [74, 99], fFt: [79, 117], sword: [152, 50]
+  };
+  function frayed(pts, y0, amp) {
+    // a ragged hem: zig-zag between the given x points at y0
+    var d = '';
+    pts.forEach(function (x, i) { d += ' L' + n(x) + ',' + n(y0 + (i % 2 ? -amp : 0) + (i % 3 === 2 ? amp * 0.5 : 0)); });
+    return d;
+  }
+  function wrappedShield(c) {
+    // the kite shield bundled in travel cloth, bound with cord: no emblem shows
+    var o = P(kiteD(), c.lg([[0, lt(HD.wrap, 0.12)], [0.6, HD.wrap], [1, HD.wrapD]], 0.2, 0, 0.8, 1), 2.4);
+    o += CG(L('M-14,-8 L14,-14 M-14,2 L14,-6 M-12,11 L12,3 M-6,19 L10,12', HD.wrapD, 1.4, 0.9) + F('M-13,-18 L-4,-18 L-13,6 Z', '#ffffff', 0.12), c.clip(kiteD()));
+    o += L('M-12.5,-4 L12.5,-10 M-10,8 L10.5,2', OL, 3.4) + L('M-12.5,-4 L12.5,-10 M-10,8 L10.5,2', HD.cord, 1.8);
+    o += L('M9,-16 L13,-19 M-7,16 L-10,20', HD.wrapD, 1.6);
+    return o;
+  }
+  function hoodHead(c, X, Y, r) {
+    function q(u, v) { return n(X + r * u) + ',' + n(Y + r * v); }
+    var o = '';
+    var hood = 'M' + q(1.0, -0.62) + ' C' + q(0.9, -1.6) + ' ' + q(-0.6, -2.0) + ' ' + q(-1.3, -1.25) + ' L' + q(-2.0, -0.2) + ' L' + q(-1.45, 0.05) +
+      ' C' + q(-1.5, 0.7) + ' ' + q(-1.55, 1.3) + ' ' + q(-1.7, 1.9) + ' L' + q(0.7, 1.9) + ' C' + q(1.25, 1.2) + ' ' + q(1.38, 0.2) + ' ' + q(1.0, -0.62) + ' Z';
+    o += P(hood, c.lg([[0, HD.cloakL], [0.45, HD.cloak], [1, HD.cloakD]], 0.7, 0, 0.3, 1), 2.2);
+    o += L('M' + q(0.3, -1.45) + ' C' + q(-0.3, -1.4) + ' ' + q(-0.9, -0.9) + ' ' + q(-1.2, 0.1) + ' M' + q(-0.2, 1.0) + ' C' + q(-0.5, 1.3) + ' ' + q(-0.9, 1.5) + ' ' + q(-1.3, 1.6), HD.cloakD, 1.2, 0.9);
+    // the opening: deep shadow, the chin in the light at its bottom
+    var hole = 'M' + q(1.0, -0.62) + ' C' + q(0.35, -0.62) + ' ' + q(-0.05, 0.05) + ' ' + q(0.08, 0.85) + ' C' + q(0.3, 1.25) + ' ' + q(0.9, 1.22) + ' ' + q(1.16, 0.8) + ' C' + q(1.3, 0.2) + ' ' + q(1.22, -0.3) + ' ' + q(1.0, -0.62) + ' Z';
+    o += P(hole, c.lg([[0, '#050806'], [0.7, '#0e1410'], [1, '#1e2418']], 0, 0, 0, 1), 1.4);
+    o += CG(P('M' + q(0.28, 1.3) + ' C' + q(0.4, 0.9) + ' ' + q(0.9, 0.78) + ' ' + q(1.24, 0.88) + ' L' + q(1.24, 1.4) + ' Z', c.lg([[0, dk(LY.skin, 0.35)], [1, LY.skin]], 0, 0, 0, 1), 1) + L('M' + q(0.62, 1.02) + ' L' + q(0.88, 1.0), dk(LY.skin, 0.55), 0.9), c.clip(hole));
+    // one glint of an eye, and a single mint strand escaping the hood
+    o += E(X + r * 0.66, Y + r * 0.1, 3.4, 2.4, glow(c, '#b8ffe0', 0.7)) + E(X + r * 0.66, Y + r * 0.1, 1.3, 0.8, '#d8fff0') + C(X + r * 0.7, Y + r * 0.1, 0.45, '#ffffff');
+    o += L('M' + q(0.92, -0.5) + ' C' + q(0.7, -0.2) + ' ' + q(0.8, 0.1) + ' ' + q(0.62, 0.36), OL, 2.4) + L('M' + q(0.92, -0.5) + ' C' + q(0.7, -0.2) + ' ' + q(0.8, 0.1) + ' ' + q(0.62, 0.36), LY.hair, 1.1);
+    o += L('M' + q(1.0, -0.62) + ' C' + q(1.36, 0.2) + ' ' + q(1.24, 1.2) + ' ' + q(0.7, 1.9), HD.cloakL, 1.2, 0.8);
+    return o;
+  }
+  function hoodRig(c, J) {
+    var o = '';
+    // cloak behind, ragged hem
+    o += P('M57,40 C47,56 41,82 37,110' + frayed([42, 46, 51, 56, 61, 66, 71, 76], 110, 4) + ' L79,106 C80,84 79,60 75,44 Z', c.lg([[0, HD.cloak], [1, HD.cloakD]], 0, 0, 0, 1), 2.1);
+    o += L('M50,60 C46,76 44,92 43,106 M60,58 C58,76 57,92 57,108', HD.cloakD, 1.2, 0.9);
+    // the wrapped shield slung on his back
+    o += G(wrappedShield(c), 'translate(47,64) rotate(-16) scale(0.8)');
+    o += lyvLeg(c, J.bHip, J.bKn, J.bFt, true);
+    o += lyvLeg(c, J.fHip, J.fKn, J.fFt, false);
+    // travel mud on the greaves
+    [[J.bFt, -1], [J.fFt, 1]].forEach(function (q) { var f = q[0]; o += F('M' + n(f[0] - 5) + ',' + n(f[1] + 4) + ' Q' + n(f[0] - 2) + ',' + n(f[1] - 5) + ' ' + n(f[0] + 2) + ',' + n(f[1] - 2) + ' Q' + n(f[0] + 6) + ',' + n(f[1] - 1) + ' ' + n(f[0] + 10) + ',' + n(f[1] + 4) + ' Z', HD.mud, 0.75); });
+    // front of the cloak, closed over the armour, a patch on it
+    var front = 'M59,35 Q68,32 77,36 C84,48 86,64 83,80 C82,88 82,94 81,100' + frayed([77, 73, 69, 65, 61, 57], 98, 3.6) + ' L55,96 C53,78 53,56 55,42 Z';
+    o += P(front, c.lg([[0, HD.cloakL], [0.35, HD.cloak], [1, HD.cloakD]], 0.8, 0, 0.2, 1), 2.2);
+    o += CG(F('M48,30 L62,30 L62,104 L48,104 Z', '#000000', 0.22) + L('M72,40 C76,56 77,74 75,96 M65,42 C66,60 66,78 65,96', HD.cloakD, 1.2, 0.9), c.clip(front));
+    o += P('M60,78 L68,77 L68.6,85 L60.4,85.6 Z', c.cel('#6a6448'), 1.2) + L('M61,79 L62,79 M64,78.6 L65,78.6 M61,84.4 L62,84.4 M65,84 L66,84', '#2a2418', 0.8);
+    // the shield's carrying strap across his chest
+    o += L('M58,42 L80,76', OL, 3.8) + L('M58,42 L80,76', '#5a3a22', 2.2) + R(67.2, 57, 3.2, 3.2, '#b8a068', 0.9);
+    o += hoodHead(c, J.head[0], J.head[1], J.head[2]);
+    // the sword arm, sleeved in the cloak, the same sword
+    o += tube([J.fSh, J.fEl, J.fHd], 8.4, HD.cloak, HD.cloakD);
+    o += tube([lerp(J.fEl, J.fHd, 0.3), J.fHd], 9, LY.glove) + strap(J.fEl, J.fHd, 0.46, 4.6) + strap(J.fEl, J.fHd, 0.72, 4.6);
+    o += G(lsword(c, J.sword[1]), 'translate(' + n(J.fHd[0]) + ',' + n(J.fHd[1]) + ') rotate(' + n(J.sword[0]) + ')');
+    o += lyvHand(c, J.fHd, false);
+    return o;
+  }
+  function lyveusHoodedSprite(c) { return shadow(c, 64, 28) + G(hoodRig(c, POSE_HOOD_SPRITE), 'matrix(1.05,0,0,1.05,-3.2,-6.1)'); }
+  function lyveusHoodedActor(c) {
+    var keep = SWM; SWM = 0.8;
+    try { return E(84, 155, 38, 5, c.rg([[0, '#000', 0.45], [0.65, '#000', 0.25], [1, '#000', 0]])) + G(hoodRig(c, POSE_HOOD_ACTOR), 'matrix(-1.3,0,0,1.3,170,-4)'); } finally { SWM = keep; }
   }
 
   // =====================================================================
@@ -628,6 +712,249 @@
   };
 
   // =====================================================================
+  // DEATHWING, the Black Ruin (story actor, 160x160, facing LEFT): wings spread, iron plates bolted to his hide,
+  // molten cracks glowing between them, fire in his jaws. Bigger and more monstrous than onyxia / nefarian.
+  // =====================================================================
+  function bz(q, t) {
+    var u = 1 - t;
+    return [u * u * u * q[0][0] + 3 * u * u * t * q[1][0] + 3 * u * t * t * q[2][0] + t * t * t * q[3][0],
+      u * u * u * q[0][1] + 3 * u * u * t * q[1][1] + 3 * u * t * t * q[2][1] + t * t * t * q[3][1]];
+  }
+  // tapered ribbon along a cubic bezier: width w0 at the root to w1 at the tip
+  function ribbon(q, w0, w1, N) {
+    N = N || 20; var Lf = [], Rt = [];
+    for (var i = 0; i <= N; i++) {
+      var t = i / N, p = bz(q, t), a = bz(q, Math.max(0, t - 0.01)), b = bz(q, Math.min(1, t + 0.01));
+      var dx = b[0] - a[0], dy = b[1] - a[1], len = Math.sqrt(dx * dx + dy * dy) || 1, nx = -dy / len, ny = dx / len, w = (w0 + (w1 - w0) * t) / 2;
+      Lf.push([p[0] + nx * w, p[1] + ny * w]); Rt.push([p[0] - nx * w, p[1] - ny * w]);
+    }
+    return pd(Lf.concat(Rt.reverse()), true);
+  }
+  var DW = { hide: '#241d24', hideL: '#3e3238', plate: '#4a4448', plateL: '#776e70', mem: '#4a1e1c', memL: '#7e3628', molt: '#ff6a1a', core: '#ffd868', ember: '#ff3a0a' };
+  function molten(d, w) { w = w || 1; return L(d, DW.ember, 4.6 * w, 0.45) + L(d, DW.molt, 2.2 * w) + L(d, DW.core, 0.8 * w, 0.95); }
+  function rivets(pts) { return pts.map(function (p) { return C(p[0], p[1], 0.9, '#9a9294', 0.5); }).join(''); }
+  function dwWing(c, sh, wr, tips, root) {
+    // membrane from the shoulder through the finger tips, scalloped between them, back to the body
+    var d = 'M' + pt(sh) + ' L' + pt(wr) + ' L' + pt(tips[0]);
+    for (var i = 1; i < tips.length; i++) { var a = tips[i - 1], b = tips[i], m = lerp(a, b, 0.5), k = lerp(m, wr, 0.12); d += ' Q' + pt(k) + ' ' + pt(b); }
+    var last = tips[tips.length - 1], km = lerp(lerp(last, root, 0.5), wr, 0.2);
+    d += ' Q' + pt(km) + ' ' + pt(root) + ' Z';
+    var o = P(d, c.lg([[0, lt(DW.memL, 0.12)], [0.45, DW.memL], [1, DW.mem]], 0.2, 0, 0.6, 1), 2);
+    // veins glowing faintly, torn notches near the edge
+    var v = '';
+    tips.forEach(function (t, i) { if (i) v += 'M' + pt(wr) + ' L' + pt(lerp(wr, t, 0.95)); });
+    o += L(v, OL, 3.6) + L(v, DW.hideL, 1.6);
+    o += L('M' + pt(lerp(wr, tips[1], 0.3)) + ' L' + pt(lerp(wr, tips[1], 0.7)), DW.molt, 0.8, 0.6);
+    o += L('M' + pt(sh) + ' L' + pt(wr) + ' L' + pt(tips[0]), OL, 7) + L('M' + pt(sh) + ' L' + pt(wr) + ' L' + pt(tips[0]), DW.hideL, 4.2);
+    // a claw on the wrist, an iron cap on the arm
+    o += P('M' + pt([wr[0] - 3, wr[1] + 2]) + ' L' + pt([wr[0], wr[1] - 8]) + ' L' + pt([wr[0] + 3, wr[1] + 1]) + ' Z', '#cfc6b8', 1.2);
+    var mid = lerp(sh, wr, 0.5);
+    o += P('M' + pt([mid[0] - 5, mid[1] - 3]) + ' L' + pt([mid[0] + 4, mid[1] - 5]) + ' L' + pt([mid[0] + 6, mid[1] + 3]) + ' L' + pt([mid[0] - 3, mid[1] + 5]) + ' Z', c.cel(DW.plate), 1.4) + rivets([[mid[0] - 2, mid[1] - 2], [mid[0] + 3, mid[1] + 1]]);
+    return o;
+  }
+  function flameD(x, y, s, lean) {
+    lean = lean || 0;
+    return 'M' + n(x) + ',' + n(y) + ' C' + n(x - 8 * s) + ',' + n(y) + ' ' + n(x - 9 * s + lean * 0.3) + ',' + n(y - 9 * s) + ' ' + n(x - 4 * s + lean * 0.6) + ',' + n(y - 14 * s) +
+      ' C' + n(x - 4 * s + lean * 0.6) + ',' + n(y - 9 * s) + ' ' + n(x - 1 * s + lean * 0.7) + ',' + n(y - 9 * s) + ' ' + n(x + lean) + ',' + n(y - 20 * s) +
+      ' C' + n(x + 4 * s + lean * 0.7) + ',' + n(y - 12 * s) + ' ' + n(x + 5 * s + lean * 0.6) + ',' + n(y - 14 * s) + ' ' + n(x + 5 * s + lean * 0.6) + ',' + n(y - 16 * s) +
+      ' C' + n(x + 10 * s + lean * 0.3) + ',' + n(y - 9 * s) + ' ' + n(x + 8 * s) + ',' + n(y) + ' ' + n(x) + ',' + n(y) + ' Z';
+  }
+  function fire(c, x, y, s, lean, sw) {
+    return P(flameD(x, y, s, lean), '#e0401a', sw == null ? 1.4 : sw) + F(flameD(x, y - 1 * s, s * 0.7, lean * 0.7), '#ff9a2a') + F(flameD(x, y - 1.5 * s, s * 0.4, lean * 0.4), '#ffe68a');
+  }
+  function deathwing(c) {
+    var o = '';
+    o += E(80, 90, 74, 68, glow(c, DW.ember, 0.34));
+    // far wing (up and back, to the right)
+    o += dwWing(c, [108, 76], [132, 24], [[152, 7], [154, 44], [149, 78], [128, 96]], [118, 100]);
+    // tail sweeping round behind, spiked
+    var tq = [[136, 120], [154, 120], [150, 150], [126, 152]];
+    o += P(ribbon(tq, 18, 3, 24), c.lg([[0, DW.hideL], [1, DW.hide]], 0, 0, 1, 1), 2);
+    [0.25, 0.45, 0.65, 0.82].forEach(function (t) { var p = bz(tq, t); o += P('M' + n(p[0] - 3) + ',' + n(p[1] - 2) + ' L' + n(p[0] + 2) + ',' + n(p[1] - 9 + t * 4) + ' L' + n(p[0] + 4) + ',' + n(p[1] - 1) + ' Z', '#1a1418', 1.2); });
+    o += molten('M' + pt(bz(tq, 0.15)) + ' L' + pt(bz(tq, 0.35)) + ' L' + pt(bz(tq, 0.5)), 0.8);
+    // near wing (up and forward, over the head)
+    o += dwWing(c, [86, 76], [52, 18], [[8, 7], [6, 38], [20, 60], [56, 82]], [70, 92]);
+    // far legs
+    o += tube([[108, 128], [114, 138], [107, 145]], 13, DW.hide) + tube([[134, 122], [148, 134], [141, 144]], 15, DW.hide);
+    var claws = function (x, y, s2) { return P('M' + n(x - 8 * s2) + ',' + n(y) + ' L' + n(x - 12 * s2) + ',' + n(y + 4 * s2) + ' L' + n(x - 5 * s2) + ',' + n(y + 2 * s2) + ' L' + n(x - 3 * s2) + ',' + n(y + 4.6 * s2) + ' L' + n(x) + ',' + n(y + 2 * s2) + ' L' + n(x + 3 * s2) + ',' + n(y + 4.4 * s2) + ' L' + n(x + 4 * s2) + ',' + n(y) + ' Z', '#d8cfc0', 1.1); };
+    o += claws(105, 147, 0.9) + claws(139, 147, 1);
+    // the body: hunched, massive
+    var bd = 'M56,112 C60,90 78,76 98,76 C122,74 144,88 150,110 C154,126 146,140 132,146 C114,152 86,152 70,142 C58,134 54,124 56,112 Z';
+    o += P(bd, c.lg([[0, DW.hideL], [0.5, DW.hide], [1, '#140f14']], 0.3, 0, 0.7, 1), 2.4);
+    o += CG(molten('M70,104 L80,112 L78,124 L90,132 M104,94 L112,106 L124,108 L132,122 M92,140 L104,136 L118,142 M120,86 L128,96 L140,100', 1), c.clip(bd));
+    // iron plates bolted on, in rows along the back and flank
+    [['M78,84 L96,78 L100,90 L82,96 Z', [[82, 86], [95, 82], [97, 88]]], ['M102,78 L122,80 L122,94 L104,94 Z', [[106, 82], [119, 83], [119, 91]]], ['M124,84 L140,96 L134,108 L124,98 Z', [[128, 90], [136, 98]]],
+      ['M84,112 L102,108 L106,124 L88,128 Z', [[88, 114], [100, 111], [102, 122]]], ['M110,112 L128,114 L126,130 L110,128 Z', [[114, 116], [124, 117], [123, 126]]]].forEach(function (p) {
+      o += P(p[0], c.cel(DW.plate), 1.6) + rivets(p[1]);
+    });
+    o += L('M80,86 L96,80 M104,80 L120,82', DW.plateL, 1, 0.8);
+    [[84, 78], [96, 74], [108, 73], [120, 76], [132, 82], [142, 92]].forEach(function (p, i) { o += P('M' + n(p[0] - 4) + ',' + n(p[1] + 3) + ' L' + n(p[0] + 1) + ',' + n(p[1] - 11 + (i % 2) * 3) + ' L' + n(p[0] + 4) + ',' + n(p[1] + 3) + ' Z', '#1a1418', 1.3); });
+    // neck reaching forward and down, plated, the throat glowing through the seams
+    var nq = [[86, 104], [72, 98], [60, 86], [48, 76]];
+    var neck = ribbon(nq, 32, 20, 22);
+    o += P(neck, c.lg([[0, DW.hideL], [1, DW.hide]], 0, 0, 1, 1), 2.2);
+    o += CG(molten('M52,92 L62,98 L60,86 L68,88 M64,106 L74,102', 0.9), c.clip(neck));
+    [0.22, 0.46, 0.7].forEach(function (t) { var p = bz(nq, t); o += P('M' + n(p[0] - 5) + ',' + n(p[1] - 8) + ' L' + n(p[0] + 8) + ',' + n(p[1] - 10) + ' L' + n(p[0] + 9) + ',' + n(p[1]) + ' L' + n(p[0] - 3) + ',' + n(p[1] + 2) + ' Z', c.cel(DW.plate), 1.4) + rivets([[p[0] - 2, p[1] - 6], [p[0] + 6, p[1] - 7]]); });
+    // near foreleg with an iron greave
+    o += tube([[76, 124], [64, 136], [61, 143]], 16, DW.hide, '#140f14');
+    o += P('M57,134 L70,130 L69,146 L59,148 Z', c.cel(DW.plate), 1.5) + rivets([[61, 136], [66, 134], [63, 145]]) + molten('M66,124 L72,128', 0.8);
+    o += claws(60, 146, 1.15);
+    // the head, low and forward: great swept horns, iron jaw plates, jaws open on fire
+    var h = '';
+    h += P('M56,40 C60,26 70,12 88,2 C80,16 72,30 66,44 Z', c.lg([[0, '#7a7070'], [1, '#2a2226']], 0, 0, 1, 0), 1.8) + P('M60,46 C70,40 84,36 98,38 C86,42 76,48 66,54 Z', c.lg([[0, '#5a5052'], [1, '#2a2226']], 0, 0, 1, 0), 1.6);
+    h += P('M40,32 C40,22 46,14 54,10 C52,18 50,26 50,32 Z', '#3a3034', 1.4);
+    h += P('M44,62 L42,74 L48,66 Z M50,62 L52,74 L55,64 Z', '#2a2226', 1.2);
+    h += F('M48,60 L8,56 L12,80 Z', DW.ember) + F('M44,60 L12,58 L15,76 Z', DW.molt) + F('M36,61 L16,60 L18,72 Z', DW.core);
+    h += P('M48,60 L30,63 L12,78 L16,82 L38,75 L54,66 Z', c.cel(DW.hide), 1.9);
+    h += P('M16,79 L20,74 L22,80 Z M24,74 L27,69 L29,75 Z', '#e8e0d0', 0.7);
+    var head = 'M62,40 C58,28 42,26 30,34 L10,46 L5,55 L30,58 L48,60 C58,58 64,50 62,40 Z';
+    h += P(head, c.lg([[0, DW.hideL], [0.55, DW.hide], [1, '#140f14']], 0.3, 0, 0.7, 1), 2.2);
+    h += P('M8,55 L11,59 L14,55 Z M17,56 L20,61 L23,56.4 Z M26,57 L29,62 L32,57.4 Z', '#e8e0d0', 0.7);
+    h += P('M12,48 L34,40 L40,52 L10,54 Z', c.cel(DW.plate), 1.5) + rivets([[16, 50], [24, 47], [32, 45], [36, 50]]) + molten('M40,52 L48,50 L52,56', 0.8);
+    h += P('M28,34 L46,32 L50,40 L30,40 Z', '#1a1418', 1.2);
+    h += E(38, 40, 9, 6, glow(c, DW.molt, 0.95)) + P('M32,41 Q38,35.6 44,39 Q39,43 32,41 Z', DW.core, 1) + E(38.6, 40, 0.8, 2, '#3a0a00');
+    o += G(h, 'matrix(1.2,0,0,1.2,1,20)');
+    // fire pouring from the jaws onto the land below
+    var gout = [[18, 102], [10, 116], [24, 132], [20, 146]];
+    o += C(22, 120, 18, glow(c, '#ffb040', 0.8));
+    o += P(ribbon(gout, 8, 26, 20), c.lg([[0, '#ffe68a'], [0.5, '#ff9a2a'], [1, '#e0401a']], 0, 0, 0, 1), 1.4) + F(ribbon(gout, 3, 12, 20), '#fff2b0', 0.85);
+    o += fire(c, 20, 153, 1.1, -4, 1.2) + fire(c, 34, 152, 0.8, 4, 1) + fire(c, 10, 151, 0.5, -2, 0.9);
+    return o;
+  }
+
+  // =====================================================================
+  // STORY SCENES (480 x 270, opaque)
+  // =====================================================================
+  function rider(x, y, s, col, rim) {
+    // a hooded rider galloping to the right, in silhouette
+    function q(u, v) { return n(x + u * s) + ',' + n(y + v * s); }
+    var d = 'M' + q(-11, -12) + ' C' + q(-6, -16) + ' ' + q(6, -16) + ' ' + q(10, -13) + ' L' + q(14, -20) + ' L' + q(20, -18) + ' L' + q(19, -14) + ' L' + q(14, -9) + ' C' + q(12, -6) + ' ' + q(8, -5) + ' ' + q(6, -5) +
+      ' L' + q(10, 0) + ' L' + q(7, 0) + ' L' + q(3, -5) + ' L' + q(-5, -5) + ' L' + q(-9, 0) + ' L' + q(-12, 0) + ' L' + q(-9, -6) + ' C' + q(-13, -7) + ' ' + q(-16, -9) + ' ' + q(-19, -6) + ' C' + q(-17, -10) + ' ' + q(-14, -12) + ' ' + q(-11, -12) + ' Z';
+    var man = 'M' + q(-6, -14) + ' L' + q(-7, -22) + ' C' + q(-6, -28) + ' ' + q(-3, -32) + ' ' + q(-6, -36) + ' C' + q(0, -34) + ' ' + q(4, -30) + ' ' + q(3, -24) + ' L' + q(5, -14) + ' Z M' + q(-6, -22) + ' L' + q(-18, -18) + ' L' + q(-14, -15) + ' L' + q(-6, -16) + ' Z';
+    return F(d, col) + F(man, col) + L('M' + q(-10, -13) + ' C' + q(-4, -16) + ' ' + q(6, -16) + ' ' + q(10, -13) + ' M' + q(-6, -36) + ' C' + q(0, -34) + ' ' + q(4, -30) + ' ' + q(3, -24), rim, 1, 0.8);
+  }
+  function burningScene(c) {
+    var r = rng(9133), s = '';
+    s += R(0, 0, 480, 270, c.lg([[0, '#0a0814'], [0.35, '#2a1026'], [0.6, '#8a301a'], [0.76, '#e0701e'], [0.8, '#f09030']]));
+    s += C(210, 196, 230, glow(c, '#ff8a2a', 0.55));
+    for (var i = 0; i < 24; i++) s += C(r() * 480, r() * 70, 0.6 + r() * 0.7, '#fff0e0', 0, 0.7);
+    // smoke pouring up from the roofs, lit from below
+    [[150, 150, 60, -40], [250, 140, 70, 30], [380, 160, 44, 50]].forEach(function (q, k) {
+      var x = q[0], y = q[1], w = q[2], lean = q[3], d = 'M' + n(x - w * 0.4) + ',' + n(y);
+      for (var j = 0; j < 7; j++) { var t = (j + 1) / 7, cx = x + lean * t - w * (0.5 + t * 0.6), cy = y - t * (y + 10); d += ' Q' + n(cx - 14) + ',' + n(cy + 12) + ' ' + n(cx) + ',' + n(cy); }
+      for (var j2 = 6; j2 >= 0; j2--) { var t2 = (j2 + 0.5) / 7, cx2 = x + lean * t2 + w * (0.5 + t2 * 0.6), cy2 = y - t2 * (y + 10); d += ' Q' + n(cx2 + 16) + ',' + n(cy2 - 6) + ' ' + n(cx2) + ',' + n(cy2 + 10); }
+      s += F(d + ' Z', k === 1 ? '#2a1c20' : '#241820', 0.88) + L('M' + n(x - w * 0.5) + ',' + n(y - 10) + ' Q' + n(x) + ',' + n(y - 24) + ' ' + n(x + w * 0.5 + lean * 0.2) + ',' + n(y - 14), '#ff9a4a', 2, 0.35);
+    });
+    // far treeline against the glow, and a ridge on the right where the riders go
+    var tl = '';
+    for (var x = -4; x < 360; x += 6 + r() * 6) { var h = 14 + r() * 18, w = 3.5 + r() * 3; tl += 'M' + n(x - w) + ',206 L' + n(x) + ',' + n(206 - h) + ' L' + n(x + w) + ',206 Z'; }
+    s += F(tl, '#140a0e') + R(0, 204, 480, 10, '#140a0e');
+    s += F('M330,214 C370,204 410,198 480,200 L480,230 L330,230 Z', '#120a0c');
+    s += rider(376, 208, 1.3, '#0a0608', '#ff8a3a') + rider(410, 204, 1.18, '#0a0608', '#ff8a3a') + rider(442, 201, 1.05, '#0a0608', '#ff8a3a');
+    // the lodge, whole on this night: timber halls with curved elven roofs, burning
+    s += R(104, 206, 240, 10, '#2a1a16', 1.6);
+    s += P('M122,206 L122,164 L326,164 L326,206 Z', '#2a1814', 1.8);
+    [[138, 176], [170, 176], [202, 176], [246, 176], [278, 176], [310, 176]].forEach(function (p) {
+      s += P('M' + (p[0] - 8) + ',' + (p[1] + 22) + ' L' + (p[0] - 8) + ',' + p[1] + ' Q' + p[0] + ',' + (p[1] - 10) + ' ' + (p[0] + 8) + ',' + p[1] + ' L' + (p[0] + 8) + ',' + (p[1] + 22) + ' Z', c.lg([[0, '#fff0a0'], [0.5, '#ffb040'], [1, '#e0601a']]), 1.4);
+      s += L('M' + p[0] + ',' + (p[1] - 6) + ' L' + p[0] + ',' + (p[1] + 22), '#2a1814', 1.6);
+    });
+    s += R(222, 170, 14, 36, '#1a0e0c', 1.4) + L('M126,206 L126,166 M226,206 L226,166 M322,206 L322,166', '#1a0e0c', 3);
+    // upper roof: steep, concave, rising to a leaf finial; lower roof: a skirt with upswept eave tips
+    var up = 'M114,146 C150,140 184,122 206,98 C214,88 220,76 226,60 C232,76 238,88 246,98 C268,122 302,140 338,146 Z';
+    s += P(up, c.lg([[0, '#6a3026'], [0.55, '#3e1e1a'], [1, '#1e1010']]), 2);
+    s += CG(L('M150,140 C180,128 200,112 214,94 M300,140 C272,128 252,112 238,94 M136,146 C170,138 196,124 210,106', '#1a0c0c', 1.3, 0.8) + F('M170,146 L204,108 L220,146 Z', '#ff7a2a', 0.3), c.clip(up));
+    s += L('M114,146 C150,140 184,122 206,98 C214,88 220,76 226,60 C232,76 238,88 246,98 C268,122 302,140 338,146', '#c89a4a', 1.4, 0.9);
+    var skirt = 'M76,150 C90,162 112,168 138,168 L314,168 C340,168 362,162 376,150 C362,154 346,152 332,144 L120,144 C106,152 90,154 76,150 Z';
+    s += P(skirt, c.lg([[0, '#5a2a22'], [1, '#2a1414']]), 1.8) + L('M76,150 C90,162 112,168 138,168 L314,168 C340,168 362,162 376,150', '#c89a4a', 1.6);
+    s += P('M226,60 C222,50 222,42 226,32 C230,42 230,50 226,60 Z', c.lg([[0, '#e0b060'], [1, '#6a4a28']], 0, 0, 1, 0), 1.3);
+    // the pavilion to the left, its spire roof alight
+    s += R(30, 200, 64, 8, '#2a1a16', 1.4) + L('M40,200 L40,178 M62,200 L62,178 M84,200 L84,178', '#1a0e0c', 3.4);
+    s += P('M24,180 C40,176 52,160 62,128 C72,160 84,176 100,180 Q62,186 24,180 Z', c.lg([[0, '#5a2a22'], [1, '#1e1010']]), 1.8);
+    // flames along the ridges and out of the windows
+    [[200, 108, 2.6, -8], [250, 104, 3, 10], [226, 92, 2, 2], [178, 128, 1.8, -10], [276, 124, 2.2, 12], [150, 140, 1.3, -6], [306, 138, 1.5, 8], [336, 150, 0.8, 6], [98, 156, 0.8, -4], [226, 146, 1.1, 4],
+      [52, 146, 1.1, -3], [66, 136, 1.4, 4], [80, 162, 0.8, 3], [170, 172, 0.7, -2], [278, 172, 0.8, 3]].forEach(function (q) { s += fire(c, q[0], q[1], q[2], q[3]); });
+    s += C(226, 120, 60, glow(c, '#ffd070', 0.35));
+    // tall pines black against the fire
+    function spine(x, base, h, w) {
+      var d = 'M' + n(x - 2.4) + ',' + base + ' L' + n(x - 1) + ',' + n(base - h) + ' L' + n(x + 1) + ',' + n(base - h) + ' L' + n(x + 2.4) + ',' + base + ' Z';
+      for (var t = 0; t < 9; t++) { var f = t / 9, ty = base - h * 0.16 - h * 0.84 * f, tw = w * (1 - f * 0.85), th = h / 9 * 1.8; d += ' M' + n(x - tw) + ',' + n(ty + 3) + ' Q' + n(x - tw * 0.4) + ',' + n(ty - th * 0.3) + ' ' + n(x) + ',' + n(ty - th) + ' Q' + n(x + tw * 0.4) + ',' + n(ty - th * 0.3) + ' ' + n(x + tw) + ',' + n(ty + 3) + ' Q' + n(x) + ',' + n(ty + 1) + ' ' + n(x - tw) + ',' + n(ty + 3) + ' Z'; }
+      return P(d, '#0c080a', 1.2) + L('M' + n(x + w * 0.2) + ',' + n(base - h * 0.9) + ' L' + n(x + w * 0.7) + ',' + n(base - h * 0.2), '#ff7a2a', 1, 0.35);
+    }
+    s += spine(14, 240, 220, 26) + spine(470, 236, 210, 24) + spine(360, 214, 130, 16) + spine(104, 220, 150, 18);
+    // ground lit orange in front of the fire
+    s += P('M0,214 L480,214 L480,270 L0,270 Z', c.lg([[0, '#3a1a10'], [0.4, '#1e0e0a'], [1, '#0a0606']]), 0);
+    s += E(226, 222, 170, 12, glow(c, '#ff8a2a', 0.45));
+    var gr = '';
+    for (var g = 0; g < 60; g++) { var gx = r() * 480, gy = 230 + r() * 40, gs = 0.6 + r() * 1.2; gr += 'M' + n(gx - 3 * gs) + ',' + n(gy) + ' L' + n(gx - 1 * gs) + ',' + n(gy - 7 * gs) + ' L' + n(gx) + ',' + n(gy - 1) + ' L' + n(gx + 2 * gs) + ',' + n(gy - 8 * gs) + ' L' + n(gx + 3 * gs) + ',' + n(gy) + ' Z'; }
+    s += F(gr, '#080406');
+    // embers rising
+    for (var e = 0; e < 90; e++) { var ex = 60 + r() * 360, ey = 20 + r() * 200, er = 0.6 + r() * 1.4; s += C(ex, ey, er * 2.4, glow(c, '#ff8a2a', 0.5)) + C(ex, ey, er, r() < 0.5 ? '#ffd070' : '#ff8a3a'); }
+    s += R(0, 0, 480, 270, c.rg([[0.55, '#000', 0], [1, '#000', 0.55]], 0.48, 0.55, 0.75));
+    return s;
+  }
+  function caravanScene(c) {
+    var r = rng(2207), s = '';
+    s += R(0, 0, 480, 270, c.lg([[0, '#5a9ad8'], [0.55, '#a8d4f0'], [0.62, '#d8ecf0']]));
+    s += C(400, 40, 70, glow(c, '#fff8d8', 0.6)) + C(400, 40, 16, '#fffbe8');
+    [[60, 44, 1.1], [220, 30, 0.9], [330, 70, 0.8]].forEach(function (q) {
+      var x = q[0], y = q[1], k = q[2];
+      s += P('M' + n(x - 34 * k) + ',' + n(y + 8 * k) + ' Q' + n(x - 34 * k) + ',' + n(y - 6 * k) + ' ' + n(x - 18 * k) + ',' + n(y - 4 * k) + ' Q' + n(x - 12 * k) + ',' + n(y - 20 * k) + ' ' + n(x + 4 * k) + ',' + n(y - 12 * k) + ' Q' + n(x + 20 * k) + ',' + n(y - 22 * k) + ' ' + n(x + 28 * k) + ',' + n(y - 4 * k) + ' Q' + n(x + 40 * k) + ',' + n(y - 2 * k) + ' ' + n(x + 38 * k) + ',' + n(y + 8 * k) + ' Z', '#ffffff', 1.4) +
+        F('M' + n(x - 30 * k) + ',' + n(y + 6 * k) + ' L' + n(x + 34 * k) + ',' + n(y + 6 * k) + ' L' + n(x + 36 * k) + ',' + n(y + 8 * k) + ' L' + n(x - 32 * k) + ',' + n(y + 8 * k) + ' Z', '#c8dcec');
+    });
+    // Arathi hills and the far pinewood
+    s += F('M0,142 C60,122 130,118 190,130 C250,140 300,118 360,120 C410,122 450,130 480,128 L480,170 L0,170 Z', '#8aa88a');
+    var tl = '';
+    for (var x = -4; x < 486; x += 7 + r() * 6) { var h = 16 + r() * 20, w = 4 + r() * 3; if (x > 206 && x < 272) h *= 0.5; tl += 'M' + n(x - w) + ',160 L' + n(x) + ',' + n(160 - h) + ' L' + n(x + w) + ',160 Z'; }
+    s += F(tl, '#3a5a40') + R(0, 156, 480, 8, '#3a5a40');
+    // meadow and the road winding up into the pines
+    s += R(0, 160, 480, 110, c.lg([[0, '#78a850'], [1, '#4e7c34']]));
+    var road = 'M150,270 C176,226 214,196 230,176 C236,168 234,164 232,160 L248,160 C252,166 252,172 258,180 C276,204 316,232 346,270 Z';
+    s += P(road, c.lg([[0, '#c8aa78'], [1, '#a8885a']]), 1.6);
+    s += L('M196,270 C212,232 232,200 238,176 M296,270 C284,232 262,200 246,176', '#8a6c44', 1.6, 0.8);
+    var tf = '';
+    for (var g = 0; g < 80; g++) { var gx = r() * 480, gy = 164 + Math.pow(r(), 0.8) * 104, gs = 0.5 + (gy - 164) / 104; if (gx > 150 && gx < 346 && gy > 200) continue; tf += 'M' + n(gx - 3 * gs) + ',' + n(gy) + ' L' + n(gx - 1.6 * gs) + ',' + n(gy - 6 * gs) + ' L' + n(gx) + ',' + n(gy - 1.4 * gs) + ' L' + n(gx + 1.6 * gs) + ',' + n(gy - 7 * gs) + ' L' + n(gx + 3 * gs) + ',' + n(gy) + ' Z'; }
+    s += F(tf, '#5a8e3a');
+    // framing pines
+    s += pine(c, 26, 250, 240, 34, '#2e4a30', '#8ab868', 0, 21) + pine(c, 74, 196, 150, 20, '#34523a', '#8ab868', 0, 23);
+    s += pine(c, 456, 252, 240, 34, '#2e4a30', '#8ab868', 0, 25) + pine(c, 404, 196, 150, 20, '#34523a', '#8ab868', 0, 27);
+    // the overturned Stormwind supply wagon, spilled crates, arrows in the wood
+    var WD = '#8a6440', WL = '#b08a5a';
+    s += E(128, 238, 78, 8, '#000', 0, 0.25);
+    s += P('M66,236 C70,220 84,212 100,214 L124,232 Z', c.lg([[0, '#f0e8d0'], [1, '#c8bc9c']]), 1.6) + L('M78,228 L96,218 M90,232 L106,222', '#a89c7c', 1.1);
+    s += P('M96,172 L186,184 L184,236 L94,226 Z', c.cel(WD), 2);
+    s += L('M95,186 L185,197 M95,200 L185,210 M95,213 L184,223', dk(WD, 0.35), 1.3) + L('M110,174 L108,228 M140,178 L138,232 M170,182 L168,234', dk(WD, 0.25), 1.1);
+    s += P('M186,184 L198,178 L196,230 L184,236 Z', c.cel(dk(WD, 0.2)), 1.8);
+    function wheel(x, y, rr) {
+      var sp = '';
+      for (var k = 0; k < 8; k++) { var a = k / 8 * PI * 2; sp += 'M' + n(x) + ',' + n(y) + ' L' + n(x + Math.cos(a) * rr) + ',' + n(y + Math.sin(a) * rr); }
+      return E(x, y, rr, rr, 'none', 0).replace('fill="none"', 'fill="none" stroke="' + OL + '" stroke-width="7"') + E(x, y, rr, rr, 'none', 0).replace('fill="none"', 'fill="none" stroke="' + WL + '" stroke-width="3.6"') + L(sp, OL, 3) + L(sp, WL, 1.4) + C(x, y, rr * 0.22, c.cel('#6a6a72'), 1.4);
+    }
+    s += wheel(118, 170, 17) + wheel(168, 176, 15);
+    s += P('M200,222 L222,222 L222,240 L200,240 Z', c.cel(WL), 1.6) + L('M200,231 L222,231 M211,222 L211,240', dk(WL, 0.35), 1.1);
+    s += P('M52,236 C52,226 70,226 70,236 L70,248 C70,256 52,256 52,248 Z', c.cel('#9a6a3a'), 1.6) + L('M52,240 L70,240 M52,248 L70,248', '#5a5a62', 1.6);
+    // the blue-and-gold banner on a broken pole, sagging from the wagon
+    s += L('M150,174 L126,120', OL, 4.6) + L('M150,174 L126,120', '#6a4a28', 2.4) + C(126, 120, 2.6, c.cel('#e0b44a'), 1.2);
+    s += P('M127,124 L160,128 L164,148 L156,146 L150,156 L146,144 L136,140 Z', c.lg([[0, '#3a6ac0'], [1, '#1e3e80']], 0, 0, 1, 1), 1.6) + L('M129,128 L159,132', '#e0b44a', 1.6);
+    s += lionCrest(c, 148, 138, 3.8);
+    // arrows stuck in the wagon and the road
+    [[120, 196, -30], [136, 206, -24], [158, 192, -36], [176, 214, -20], [104, 212, -28], [192, 206, -40], [272, 236, 20], [300, 250, 14], [182, 256, -12]].forEach(function (q) {
+      var x = q[0], y = q[1], a = q[2] * PI / 180, dx = Math.cos(a) * 14, dy = Math.sin(a) * 14;
+      s += L('M' + n(x) + ',' + n(y) + ' L' + n(x - dx) + ',' + n(y + dy), OL, 2.8) + L('M' + n(x) + ',' + n(y) + ' L' + n(x - dx) + ',' + n(y + dy), '#c8a870', 1.2) +
+        P('M' + n(x - dx) + ',' + n(y + dy) + ' l' + n(-Math.cos(a) * 4 - 2) + ',' + n(Math.sin(a) * 4 - 2) + ' l3,1 Z', '#c83a2a', 0.8);
+    });
+    // the burst of holy light in the middle of the road, where young Lyveus stood
+    s += E(240, 226, 64, 14, glow(c, '#fff0a0', 0.9));
+    var ray = '';
+    for (var k = 0; k < 18; k++) { var a = -PI + k / 17 * PI, rr0 = 20, rr1 = 70 + (k % 2) * 30; ray += 'M' + n(240 + Math.cos(a) * rr0) + ',' + n(206 + Math.sin(a) * rr0 * 0.9) + ' L' + n(240 + Math.cos(a - 0.05) * rr1) + ',' + n(206 + Math.sin(a - 0.05) * rr1 * 0.9) + ' L' + n(240 + Math.cos(a + 0.05) * rr1) + ',' + n(206 + Math.sin(a + 0.05) * rr1 * 0.9) + ' Z'; }
+    s += F(ray, '#fff4c0', 0.45);
+    s += C(240, 200, 64, glow(c, '#ffe68a', 0.75));
+    s += E(240, 226, 40, 7, 'none', 0).replace('fill="none"', 'fill="none" stroke="#fff4c0" stroke-width="2" opacity="0.9"') + E(240, 226, 56, 10, 'none', 0).replace('fill="none"', 'fill="none" stroke="#ffe68a" stroke-width="1.2" opacity="0.7"');
+    [[200, 180, 3.4], [284, 176, 3], [226, 150, 2.6], [262, 160, 2.2], [306, 208, 2.4], [174, 214, 2.4]].forEach(function (q) { s += sparkle(q[0], q[1], q[2], '#ffffff'); });
+    s += R(0, 0, 480, 270, c.rg([[0.62, '#000', 0], [1, '#000', 0.3]], 0.5, 0.5, 0.75));
+    return s;
+  }
+
+  // =====================================================================
   // INSTALL: extend ART.legend / ART.mob / ART.scene / ART.icon / ART.story
   // =====================================================================
   function has(t, k) { return typeof k === 'string' && Object.prototype.hasOwnProperty.call(t, k); }
@@ -649,10 +976,11 @@
   }
   function addKeys(list, keys) { var a = Array.isArray(list) ? list : []; keys.forEach(function (k) { if (a.indexOf(k) < 0) a.push(k); }); return a; }
 
-  var LEGENDS = { lyveus: lyveusSprite };
+  var LEGENDS = { lyveus: lyveusSprite, lyveus_hooded: lyveusHoodedSprite };
   var MOBS = { lord_cassius_marrow: cassiusMob };
   var SCENES = { silverleaf_lodge: lodgeScene };
-  var ACTORS = { lyveus: lyveusActor, vyn: vynActor };
+  var ACTORS = { lyveus: lyveusActor, vyn: vynActor, lyveus_hooded: lyveusHoodedActor, deathwing: deathwing };
+  var STORY_SCENES = { silverleaf_burning: burningScene, caravan_road: caravanScene };
   var KEYS = ART.keys;
   try { if (!KEYS || typeof KEYS !== 'object') { KEYS = {}; ART.keys = KEYS; } } catch (e) { KEYS = {}; }
   function keyList(name, keys) {
@@ -692,19 +1020,19 @@
     var prev = (ART.story && (typeof ART.story === 'object' || typeof ART.story === 'function')) ? ART.story : {};
     var bScene = typeof prev.scene === 'function' ? prev.scene : null;
     var bActor = typeof prev.actor === 'function' ? prev.actor : null;
-    // no story scenes here: an existing ART.story.scene is left exactly as it is
-    var sceneFn = bScene || function () { return make(function (c) { return R(0, 0, 480, 270, c.lg([[0, '#5a5a62'], [1, '#2e2e34']])); }, 480, 270, function () { return ''; }, '#444'); };
+    var phStory = function (c) { return R(0, 0, 480, 270, c.lg([[0, '#5a5a62'], [1, '#2e2e34']])); };
+    var sceneFn = function (key) { return has(STORY_SCENES, key) ? make(STORY_SCENES[key], 480, 270, phStory, '#444') : callBase(bScene, this, arguments, null, 480, 270, phStory, '#444'); };
     var actorFn = function (key) { return has(ACTORS, key) ? make(ACTORS[key], 160, 160, phActor) : callBase(bActor, this, arguments, null, 160, 160, phActor); };
     try {
       var K0 = (prev.keys && typeof prev.keys === 'object') ? prev.keys : {};
-      K0.scenes = addKeys(K0.scenes, []);
+      K0.scenes = addKeys(K0.scenes, Object.keys(STORY_SCENES));
       K0.actors = addKeys(K0.actors, Object.keys(ACTORS));
       prev.keys = K0; prev.scene = sceneFn; prev.actor = actorFn;
       if (prev.scene !== sceneFn || prev.actor !== actorFn || prev.keys !== K0 || K0.actors.indexOf('vyn') < 0) throw new Error('read-only');
       ART.story = prev;
     } catch (e) {
       var pk = (prev.keys && typeof prev.keys === 'object') ? prev.keys : {};
-      ART.story = { scene: sceneFn, actor: actorFn, keys: { scenes: addKeys(Array.isArray(pk.scenes) ? pk.scenes.slice() : [], []), actors: addKeys(Array.isArray(pk.actors) ? pk.actors.slice() : [], Object.keys(ACTORS)) } };
+      ART.story = { scene: sceneFn, actor: actorFn, keys: { scenes: addKeys(Array.isArray(pk.scenes) ? pk.scenes.slice() : [], Object.keys(STORY_SCENES)), actors: addKeys(Array.isArray(pk.actors) ? pk.actors.slice() : [], Object.keys(ACTORS)) } };
     }
   } catch (e) { }
 })(typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : this));

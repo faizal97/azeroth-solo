@@ -42,5 +42,23 @@ for (const cls of ['mage', 'warrior']) {
 }
 // switched off: does not join
 { const r = run('stratholme', 'mage', (P) => { for (const q of chain) P.done[q] = true; P.legendOff = { lyveus: true }; }); if (r.lyv) fail('joined while off'); }
+// the hooded wanderer: steps into hard solo fights from level 15, at most 3 times per zone, never after the lodge
+{
+  G.newGame({ name: 'T', cls: 'mage', race: 'human' }); const S = G.S, P = S.player; P.level = 18; S.flags.warModeAsked = true; P.place = 'moonbrook';
+  G.WANDERER_GAP = 0; let joins = 0, fights = 0;
+  for (let f = 0; f < 60; f++) {
+    P.hp = null; P.res = null; S.mobs = null;
+    const m = G.placeMobs().find((x) => x.state === 'alive'); if (!m) { t += 600000; continue; }
+    G.engage(m.id); if (!G.fight) continue; fights++;
+    G.fight.units[G.pUnit.uid].hp = Math.round(G.fight.units[G.pUnit.uid].maxHp * 0.5); // make it a hard fight
+    let g = 0; while (G.fight && g++ < 3000) { if (G.fight.wanderer && !G.fight.counted) { G.fight.counted = true; joins++; } G.update(0.1); t += 100; }
+    t += 120000; P.ghostUntil = 0; P.hp = null;
+  }
+  console.log(`wanderer: joined ${joins} of ${fights} hard fights in Moonbrook (cap 3)`);
+  if (joins < 1 || joins > 3) fail('wanderer join count');
+  P.done.lg_lyv_ashes = true; G.fight = null; P.place = 'the_dead_acre'; let after = 0;
+  for (let f = 0; f < 20; f++) { S.mobs = null; const m = G.placeMobs().find((x) => x.state === 'alive'); if (!m) continue; G.engage(m.id); if (!G.fight) continue; G.fight.units[G.pUnit.uid].hp = 10; let g = 0; while (G.fight && g++ < 3000) { if (G.fight.wanderer) after++; G.update(0.1); t += 100; } P.ghostUntil = 0; P.hp = null; t += 120000; }
+  if (after) fail('wanderer appeared after the lodge');
+}
 console.log(bad ? `${bad} problem(s)` : 'legends sim OK');
 process.exitCode = bad ? 1 : 0;

@@ -56,7 +56,23 @@
     vyn: { name: 'Vyn', title: 'Stormwind Guard, off duty' },
   });
 
+  // Before level 37 he wanders in a hood (v9.2): he may step into a hard fight from level 15 (G.wandererCheck), and at
+  // 17-18 he asks each faction for help with one quest. At Silverleaf Lodge he pulls back the hood.
+  D.LEGENDS.lyveus.hooded = { minLvl: 15, until: 'lg_lyv_ashes', name: 'Hooded Wanderer', art: 'lyveus_hooded',
+    join: ['Keep your guard up.', 'Hold. I have this one.', 'Not every bandit on these roads is a bandit.', 'Back to back, stranger.'],
+    leave: ['The Light keeps you. For now.', 'Watch the nobles, not the roads.', "We'll meet again, I think.", 'Tell no one you saw me.'] };
+  D.item('cabal_seal', { name: "A Noble's Wax Seal", slot: 'quest', q: 1, icon: 'coin' });
+  D.MOBS.defias_highwayman.qdrops = (D.MOBS.defias_highwayman.qdrops || []).concat([['cabal_seal', 0.3]]);
+  D.MOBS.baeldun_soldier.qdrops = (D.MOBS.baeldun_soldier.qdrops || []).concat([['cabal_seal', 0.3]]);
+  D.NPCS.hooded_stranger = { name: 'Hooded Stranger', title: 'A wanderer' };
+  D.PLACES.sentinel_hill.npcs.push('hooded_stranger');
+  D.PLACES.crossroads.npcs.push('hooded_stranger');
+
   const Q = (id, q) => { D.QUESTS[id] = q; };
+  Q('lg_hood_a', { name: 'Sealed in Wax', lvl: 17, faction: 'alliance', giver: 'hooded_stranger', turnin: 'hooded_stranger', legend: 'lyveus', text: "Don't look at my face; look at Moonbrook. The Defias highwaymen there carry letters that aren't theirs, sealed in a lord's wax. Kill 8 of them and bring me one of those seals. Tell no one who asked.",
+    objs: [{ type: 'kill', mob: 'defias_highwayman', n: 8 }, { type: 'collect', item: 'cabal_seal', n: 1 }], reward: { choice: ['fam_hands19'] } });
+  Q('lg_hood_h', { name: 'Sealed in Wax', lvl: 18, faction: 'horde', giver: 'hooded_stranger', turnin: 'hooded_stranger', legend: 'lyveus', text: "The Bael'dun soldiers in the south dig for Ironforge, but their orders come sealed from Stormwind. Someone in that court wants a war in the Barrens. Kill 8 of them and bring me a seal. Don't ask my name.",
+    objs: [{ type: 'kill', mob: 'baeldun_soldier', n: 8 }, { type: 'collect', item: 'cabal_seal', n: 1 }], reward: { choice: ['fam_hands19'] } });
   Q('lg_lyv_ashes', { name: 'Ashes of Silverleaf', lvl: 37, giver: 'lyveus', turnin: 'lyveus', legend: 'lyveus', text: "This was my home. Two years ago it burned, and the world was told the Syndicate did it. Now the Syndicate camps in its ashes as if they own it. Help me clear them out: 10 highwaymen.",
     objs: [{ type: 'kill', mob: 'syndicate_highwayman', n: 10 }], reward: { choice: ['fam_back38'] } });
   Q('lg_lyv_orders', { name: 'Sealed Orders', lvl: 38, giver: 'lyveus', turnin: 'lyveus', legend: 'lyveus', pre: ['lg_lyv_ashes'], text: "Bandits don't carry orders. These do. Their magi keep them sealed. Bring me one, and we'll see whose wax it is.",

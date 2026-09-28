@@ -255,7 +255,7 @@
       C.allies.forEach((u, i) => {
         const pos = C.allies.length > 7 ? (POS_RAID[i] || POS_RAID[POS_RAID.length - 1]) : (POS_ALLY[i] || POS_ALLY[4]);
         const np = C.allies.length > 1 ? h('div', { class: 'np' }, h('span', { class: 'cls-' + u.cls }, u.kind === 'player' ? '' : u.name.split('-')[0]), h('div', { class: 'hpb' }, h('i'))) : null;
-        const src = u.kind === 'pet' ? petArt(u) : u.form === 'bear' ? art('pet', 'bear_form') : u.char && u.char.legend ? art('legend', u.char.legend) : art('hero', looks(u.char));
+        const src = u.kind === 'pet' ? petArt(u) : u.form === 'bear' ? art('pet', 'bear_form') : u.char && u.char.legend ? art('legend', u.char.legendArt || u.char.legend) : art('hero', looks(u.char));
         const el = spriteEl(src, u.kind === 'pet' && u.key === 'imp' ? Object.assign({}, pos, { w: pos.w * 0.7 }) : pos, 'friend idle' + (u.dead ? ' dead' : '') + (u.kind === 'pet' && u.key === 'beast' ? ' flip' : ''), np);
         el.addEventListener('click', () => { G.setTarget(u.uid); renderTarget(); markTargets(); renderPanel(); });
         ui.spriteEls[u.uid] = el; sc.append(el);
@@ -1410,6 +1410,9 @@
   }
   window.UI_GREETING = (npc) => greeting(npc);
   function greeting(npc) {
+    // the reveal: you met him on the road in a hood
+    if (npc === 'lyveus' && G.S && !G.S.player.done.lg_lyv_ashes && (G.S.player.done.lg_hood_a || G.S.player.done.lg_hood_h || (G.S.player.wanderer || {}).n)) return "You. The one from the road. I wondered if we'd meet again. Yes, the hood was me. My name is Lyveus Cloveus, and this was my home.";
+    if (npc === 'hooded_stranger') return 'Keep your voice down. Some of the people who would like me dead wear very fine clothes.';
     return ({
       mcbride: 'Greetings, citizen. The Northshire Abbey could use your help.', willem: 'Stay alert, friend. The Defias are bold these days.',
       eagan: 'Mind the wolves. They get hungrier every week.', danil: 'Care for some bread and water? Fresh from the abbey.',
@@ -2003,15 +2006,17 @@
       const un = window.CS ? CS.unlocked() : new Set();
       const list = h('div', { class: 'list theater' });
       const all = window.CS ? CS.CHAPTERS : [];
-      const ordered = all.filter((c) => !c.instance).concat(all.filter((c) => c.instance));
+      const ordered = all.filter((c) => !c.instance && !c.legend).concat(all.filter((c) => c.legend), all.filter((c) => c.instance));
+      let shownLeg = false;
       let shownInst = false;
       for (const ch of ordered) {
+        if (ch.legend && !shownLeg) { shownLeg = true; list.append(h('div', { class: 'sec-h', style: { marginTop: '8px' } }, 'Legends')); }
         if (ch.instance && !shownInst) { shownInst = true; list.append(h('div', { class: 'sec-h', style: { marginTop: '8px' } }, 'Dungeons & Raids')); }
         if (!ch.instance && ch === ordered[0]) list.append(h('div', { class: 'sec-h' }, 'Story'));
-        const open = un.has(ch.id) && ch.shots;
+        const open = (un.has(ch.id) || ch.legend) && ch.shots; // legend lore is open from the start
         list.append(h('button', { class: 'row' + (open ? '' : ' locked'), onclick: () => { if (open) { closeSheet(); playChapter(ch.id); } else toast(ch.instance ? 'Enter the dungeon to unlock.' : ch.shots ? `Reach level ${ch.level} to unlock.` : 'Arrives with a later update.'); } },
           h('div', { class: 'ic' }, h('span', { class: 'mark' + (open ? '' : ' grey') }, open ? '▶' : '·')),
-          h('div', { class: 't' }, h('b', null, ch.title), h('small', null, ch.instance ? (open ? 'Dungeon intro' : 'Plays the first time you enter') : ch.id === 'intro' ? 'Plays after you create a character' : `Level ${ch.level}`)),
+          h('div', { class: 't' }, h('b', null, ch.title), h('small', null, ch.legend ? 'Legend lore' : ch.instance ? (open ? 'Dungeon intro' : 'Plays the first time you enter') : ch.id === 'intro' ? 'Plays after you create a character' : `Level ${ch.level}`)),
           h('div', { class: 'r' }, open ? 'Play' : ch.shots ? 'Locked' : 'Coming')));
       }
       b.append(list);
