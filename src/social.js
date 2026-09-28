@@ -47,7 +47,7 @@
       leveling: ['Low dungeon runs every evening, ask in guild.', 'Share your quest drops, someone needs them.', 'Level 20? Deadmines and Wailing Caverns runs this week.', 'Help a guildie, earn standing.'],
       dungeons: ['Tank and healer spots always open.', 'This week: full clears only, no speedruns.', 'Sign up for guild nights in guild chat.', 'Bring potions to guild runs.'],
       raiding: ['Raid prep: bring resist gear.', 'Attendance matters. Sign up early.', 'New recruits: shadow a raid first.', 'Consumables are on the guild.'],
-      pvp: ['For the glory. War Mode on.', 'Group up before you roam.', 'Honor is earned, not given.', 'Watch the contested zones this week.'],
+      pvp: ['For the glory. War Mode on.', 'Never roam alone out there.', 'Honor is earned, not given.', 'Watch the contested zones this week.'],
       social: ['Tell us about your day!', 'Screenshot contest this week.', 'Fishing party at the lake, everyone welcome.', 'Be kind, stay weird.'] }[info.style];
     return lines[(day + g) % lines.length];
   };
@@ -210,12 +210,12 @@
     for (const m of S.chat) {
       const a = m.act; if (!a || a.state !== 'open') continue;
       // one nudge if a whisper request is ignored, then a goodbye when it expires
-      if (a.whisper && !a.accepted && !a.nudged && t - (a.posted || t) > 100000) { a.nudged = true; const b = botById(a.bot); if (b) post('whisper', b, pick(['u there?', '??', 'hello?', 'no rush, just lmk', 'still up for it?'])); }
+      if (a.whisper && !a.accepted && !a.nudged && t - (a.posted || t) > 100000) { a.nudged = true; const b = botById(a.bot); if (b) { const n = post('whisper', b, pick(['u there?', '??', 'hello?', 'no rush, just lmk', 'still up for it?', 'hellooo', 'ping :)'])); if (n) n.ref = m.id; } }
       if (a.until < t) {
         a.state = 'expired';
         if (a.kind === 'help_kill' && a.accepted) finishHelp(m, false);
         else if (a.kind === 'quest_team' && a.accepted) finishTeam(m, false);
-        else if (a.whisper && !a.accepted && chance(0.6)) { const b = botById(a.bot); if (b) post('whisper', b, pick(['nvm, found someone', 'nvm got it', 'all good, someone else helped', 'np, maybe next time'])); }
+        else if (a.whisper && !a.accepted && chance(0.6)) { const b = botById(a.bot); if (b) { const n = post('whisper', b, pick(['nvm, found someone', 'nvm got it', 'all good, someone else helped', 'np, maybe next time', 'all sorted, ty anyway'])); if (n) n.ref = m.id; } }
       }
       if (a.kind === 'quest_team' && a.accepted && (G.questComplete(a.qid) || !P.quests[a.qid])) { a.state = 'done'; finishTeam(m, true); }
       if (a.kind === 'g_event' && a.signed && !a.started && t >= a.startAt) startGuildEvent(m);
@@ -234,9 +234,10 @@
   const LFG_TEXT = [
     (c) => `LF1M ${c.role} ${c.name}, ${c.have}/${c.size}`, (c) => `LFM ${c.name}, need ${c.role} then go`, (c) => `${c.name} needs a ${c.role}! pst`,
     (c) => `LF ${c.role} for ${c.name}, quick run`, (c) => `${c.name} ${c.have}/${c.size}, missing a ${c.role}, whisper me`, (c) => `anyone ${c.role}? ${c.name}, we have summons`,
-    (c) => `need 1 ${c.role} for ${c.name}, full clear`, (c) => `${c.name} group forming, ${c.role} wanted, all quests shared`];
+    (c) => `need 1 ${c.role} for ${c.name}, full clear`, (c) => `${c.name} group forming, ${c.role} wanted, all quests shared`,
+    (c) => `LFM ${c.name} ${c.have}/${c.size}, ${c.role} pst`, (c) => `${c.role} for ${c.name}? we're at the entrance`, (c) => `need ${c.role}, ${c.name}, chill group`, (c) => `${c.name} run, missing ${c.role}, then go`];
   const GUILD_LFG_TEXT = [(c) => `anyone want to run ${c.name}? need a ${c.role}`, (c) => `${c.name} with guildies, need ${c.role}, who's in?`, (c) => `guild run: ${c.name}, ${c.have}/${c.size}, need ${c.role}`,
-    (c) => `we're doing ${c.name}, spot for a ${c.role}`, (c) => `${c.name} tonight? need a ${c.role} from the guild`];
+    (c) => `we're doing ${c.name}, spot for a ${c.role}`, (c) => `${c.name} tonight? need a ${c.role} from the guild`, (c) => `guildies! ${c.name} needs a ${c.role}`, (c) => `${c.have}/${c.size} for ${c.name}, one ${c.role} from the guild?`];
   function makeLfg(guild, opts) {
     const P = G.S.player;
     const acts = joinableActs(opts);
@@ -264,65 +265,71 @@
       const h = huntTarget(); const M = D.MOBS[h.mob]; const pay = Math.round(M.lvl[1] * 12 * h.n + 50); const at = D.PLACES[h.place].name;
       W(pick([`hey can u help me kill ${h.n} ${M.name} at ${at}? ill pay ${coin(pay)}`, `need help with ${h.n} ${M.name} (${at}), group up? ${coin(pay)} for ur time`,
         `${M.name} keep killing me at ${at}, can u help? need ${h.n}, ${coin(pay)}`, `yo, ${h.n} ${M.name} at ${at} and im done with this quest. help? ${coin(pay)} on me`,
-        `would u help me clear ${h.n} ${M.name}? ${at}. ill tip ${coin(pay)}`]), Object.assign({ kind: 'help_kill', until: now() + 15 * 60000, pay, got: 0 }, h));
+        `would u help me clear ${h.n} ${M.name}? ${at}. ill tip ${coin(pay)}`,
+        `${M.name} at ${at} are too much for me solo, ${h.n} to go. ${coin(pay)} if u help`, `u look strong lol. help me with ${h.n} ${M.name}? ${at}, ${coin(pay)}`,
+        `been dying to ${M.name} at ${at} all night. ${h.n} left, ${coin(pay)} for a hand?`, `2 of us would make ${h.n} ${M.name} easy. ${at}? ${coin(pay)} for ur time`]), Object.assign({ kind: 'help_kill', until: now() + 15 * 60000, pay, got: 0 }, h));
     } else if (kind === 'quest_team') {
       const Q = D.QUESTS[qt.qid], M = D.MOBS[qt.mob];
       W(pick([`hey u on "${Q.name}" too? want to team up, same ${M.name}`, `saw u killing ${M.name}, im on "${Q.name}" too, group?`, `wanna duo "${Q.name}"? faster together`,
-        `"${Q.name}" is so slow solo lol, team up?`, `im doing "${Q.name}" at ${D.PLACES[qt.place].name} too, party?`]), Object.assign({ kind: 'quest_team', until: now() + 20 * 60000 }, qt));
+        `"${Q.name}" is so slow solo lol, team up?`, `im doing "${Q.name}" at ${D.PLACES[qt.place].name} too, party?`,
+        `both on "${Q.name}"? lets share kills`, `hey, "${Q.name}" buddy? i'll invite`, `${M.name} spawns are slow, want to group for "${Q.name}"?`, `same quest! "${Q.name}", duo it?`]), Object.assign({ kind: 'quest_team', until: now() + 20 * 60000 }, qt));
     } else if (kind === 'wtb') {
       const bag = pick(sellable()); const it = bag.item; const n = Math.min(bag.n, rint(5, 20)); const price = Math.max(n * 3, Math.round((it.sell || 1) * n * rnd(2.5, 4)));
       W(pick([`hey u have ${link(it)}? ill buy ${n} for ${coin(price)}`, `wtb ${n} ${link(it)} for ${coin(price)}, u selling?`, `need ${n} ${link(it)} for my profession, ${coin(price)}?`,
-        `buying ${link(it)} x${n}, ${coin(price)}, better than the vendor`, `can i buy ${n} of ur ${link(it)}? ${coin(price)}`]), { kind: 'wtb', item: it.id, n, price });
+        `buying ${link(it)} x${n}, ${coin(price)}, better than the vendor`, `can i buy ${n} of ur ${link(it)}? ${coin(price)}`,
+        `do u have spare ${link(it)}? ${n} for ${coin(price)}`, `paying ${coin(price)} for ${n} ${link(it)}, vendor gives way less`, `levelling my profession, need ${n} ${link(it)}. ${coin(price)}?`]), { kind: 'wtb', item: it.id, n, price });
     } else if (kind === 'wts') {
       const it = offerItem(); if (!it) return; const price = Math.round((it.sell || 10) * rnd(4, 6));
       W(pick([`wts ${link(it)} ${coin(price)}, good for a ${D.CLASSES[P.cls].name.toLowerCase()} ur level`, `hey, want ${link(it)}? ${coin(price)} and its yours`, `got a ${link(it)} i cant use, ${coin(price)}?`,
-        `${link(it)} dropped for me but its ur armor type. ${coin(price)}?`, `selling ${link(it)} cheap, ${coin(price)}, looks like an upgrade for u`]), { kind: 'wts', itemData: it, price });
+        `${link(it)} dropped for me but its ur armor type. ${coin(price)}?`, `selling ${link(it)} cheap, ${coin(price)}, looks like an upgrade for u`,
+        `hey, ${link(it)} is yours for ${coin(price)} if u want it`, `no one in my group can use ${link(it)}, ${coin(price)}?`, `${link(it)} for ${coin(price)}? figured id ask u first`]), { kind: 'wts', itemData: it, price });
     } else if (kind === 'swap') {
       const bag = pick(sellable().filter((x) => x.n >= 5)); const n = Math.min(bag.n, rint(5, 12)); const it = offerItem(); if (!it) return;
-      W(pick([`trade u my ${link(it)} for ${n} ${link(bag.item)}?`, `swap? my ${link(it)} for ur ${n} ${link(bag.item)}`, `need ${n} ${link(bag.item)}, ill give u ${link(it)} for them`]), { kind: 'swap', item: bag.item.id, n, itemData: it });
+      W(pick([`trade u my ${link(it)} for ${n} ${link(bag.item)}?`, `swap? my ${link(it)} for ur ${n} ${link(bag.item)}`, `need ${n} ${link(bag.item)}, ill give u ${link(it)} for them`, `i have ${link(it)}, u have ${n} ${link(bag.item)}. trade?`, `fair trade? ${link(it)} for ${n} ${link(bag.item)}`]), { kind: 'swap', item: bag.item.id, n, itemData: it });
     } else if (kind === 'where') {
       const q = whereQuestion(); if (!q) return;
-      W(pick([`sorry to bother, where is ${q.name}?`, `hey do u know where ${q.name} is?`, `quick q: where do i find ${q.name}?`, `lost lol. which zone is ${q.name} in?`, `been looking for ${q.name} for ages, where is it?`]), Object.assign({ kind: 'where' }, q));
+      W(pick([`sorry to bother, where is ${q.name}?`, `hey do u know where ${q.name} is?`, `quick q: where do i find ${q.name}?`, `lost lol. which zone is ${q.name} in?`, `been looking for ${q.name} for ages, where is it?`, `ok i give up, where is ${q.name}?`, `hey, which way to ${q.name}?`]), Object.assign({ kind: 'where' }, q));
     } else if (kind === 'guild_invite') {
       const gs = SOC.myGuilds().filter((x) => P.level >= x.min); if (!gs.length) return;
       const g = pick(gs); const inv = g.officer || b;
       state().invites = (state().invites || 0) + 1;
-      post('whisper', inv, pick([`hey! want to join <${g.name}>? ${g.blurb.toLowerCase()}`, `we're recruiting for <${g.name}>, ${g.style} guild. want an invite?`, `saw you around, <${g.name}> could use someone like you. interested?`]), { kind: 'guild_invite', whisper: true, bot: inv.id, g: g.g });
+      post('whisper', inv, pick([`hey! want to join <${g.name}>? ${g.blurb.toLowerCase()}`, `we're recruiting for <${g.name}>, ${g.style} guild. want an invite?`, `saw you around, <${g.name}> could use someone like you. interested?`, `hey, <${g.name}> has a spot open. want in?`, `we're a ${g.style} guild, <${g.name}>. want an invite?`]), { kind: 'guild_invite', whisper: true, bot: inv.id, g: g.g });
     } else if (kind === 'carry') {
       const k = pick(carryActs()), A = D.ACTIVITIES[k]; const tip = Math.round(A.maxLvl * rnd(80, 140));
       W(pick([`hey ur level ${P.level}? could u run me through ${A.name}? ill tip ${coin(tip)}`, `can u carry me in ${A.name}? i keep wiping lol, ${coin(tip)}`, `need a strong ${roleWord(G.role())} for ${A.name}, ${coin(tip)} tip`,
-        `would u help my group through ${A.name}? we're all first timers. ${coin(tip)}`]), { kind: 'carry', act: k, tip, until: now() + 8 * 60000 });
+        `would u help my group through ${A.name}? we're all first timers. ${coin(tip)}`,
+        `could u take me through ${A.name}? ${coin(tip)} for the trouble`, `my alt needs ${A.name} done. carry? ${coin(tip)}`, `quick ${A.name} run? ur overgeared for it, ${coin(tip)} tip`]), { kind: 'carry', act: k, tip, until: now() + 8 * 60000 });
     } else if (kind === 'craft_order') {
       const r = ct, it = D.ITEMS[r.makes], tip = Math.round((it.sell || 20) * rnd(2, 4) + 80);
-      W(pick([`hey u can make ${link(it)} right? ill send the mats + ${coin(tip)}`, `could u craft me a ${link(it)}? mats on me, ${coin(tip)} tip`, `need a ${link(it)}, ill mail the materials. ${coin(tip)} for the work?`]), { kind: 'craft_order', rid: r.id, tip, sent: false, until: now() + 20 * 60000 });
+      W(pick([`hey u can make ${link(it)} right? ill send the mats + ${coin(tip)}`, `could u craft me a ${link(it)}? mats on me, ${coin(tip)} tip`, `need a ${link(it)}, ill mail the materials. ${coin(tip)} for the work?`, `ur a crafter right? ${link(it)} please, ill send mats and ${coin(tip)}`, `commission: one ${link(it)}. mats + ${coin(tip)} from me`]), { kind: 'craft_order', rid: r.id, tip, sent: false, until: now() + 20 * 60000 });
     } else if (kind === 'duel') {
       const wager = Math.max(100, Math.round(P.level * rnd(20, 60)));
-      W(pick([`duel? ${coin(wager)} on it`, `bored lol, duel? ${coin(wager)}`, `think u can beat a ${D.CLASSES[b.cls].name.toLowerCase()}? ${coin(wager)} says no`, `friendly duel? loser pays ${coin(wager)}`]), { kind: 'duel', wager, until: now() + 3 * 60000 });
+      W(pick([`duel? ${coin(wager)} on it`, `bored lol, duel? ${coin(wager)}`, `think u can beat a ${D.CLASSES[b.cls].name.toLowerCase()}? ${coin(wager)} says no`, `friendly duel? loser pays ${coin(wager)}`, `u vs me outside town? ${coin(wager)}`, `duel for ${coin(wager)}? just for fun`, `i need practice, duel? ${coin(wager)} to the winner`]), { kind: 'duel', wager, until: now() + 3 * 60000 });
     } else if (kind === 'ask_gear') {
       const it = P.equip.weapon;
-      W(pick([`nice ${link(it)}! where did u get it?`, `ooh is that ${link(it)}? how`, `that ${link(it)} looks sick, drop or crafted?`]), { kind: 'chat', topic: 'gear', item: it.id, itemData: it, until: now() + 4 * 60000 });
+      W(pick([`nice ${link(it)}! where did u get it?`, `ooh is that ${link(it)}? how`, `that ${link(it)} looks sick, drop or crafted?`, `where did u find ${link(it)}? i want one`, `${link(it)}! been farming for that, where from?`]), { kind: 'chat', topic: 'gear', item: it.id, itemData: it, until: now() + 4 * 60000 });
     } else if (kind === 'ask_spec') {
-      W(pick([`what spec are u? thinking of trying ${D.CLASSES[P.cls].name.toLowerCase()}`, `hey, what talents do u use?`, `${D.CLASSES[P.cls].name.toLowerCase()} fun at ur level? what spec?`]), { kind: 'chat', topic: 'spec', until: now() + 4 * 60000 });
+      W(pick([`what spec are u? thinking of trying ${D.CLASSES[P.cls].name.toLowerCase()}`, `hey, what talents do u use?`, `${D.CLASSES[P.cls].name.toLowerCase()} fun at ur level? what spec?`, `how do u spec ur ${D.CLASSES[P.cls].name.toLowerCase()}? mine feels weak`, `quick q, which talents did u go?`]), { kind: 'chat', topic: 'spec', until: now() + 4 * 60000 });
     }
   }
   function makeTrade() {
     const b = pick(myBots()); if (!b) return;
     const it = offerItem(); if (!it) return;
     const price = Math.round((it.sell || 10) * rnd(4.5, 7));
-    post('general', b, pick([`WTS ${link(it)} ${coin(price)} pst`, `selling ${link(it)}, ${coin(price)}`, `${link(it)} for ${coin(price)}, anyone?`, `cleaning my bags: ${link(it)} ${coin(price)}`, `${link(it)}, ${coin(price)} or best offer`]), { kind: 'wts', bot: b.id, itemData: it, price, until: now() + 6 * 60000 });
+    post('general', b, pick([`WTS ${link(it)} ${coin(price)} pst`, `selling ${link(it)}, ${coin(price)}`, `${link(it)} for ${coin(price)}, anyone?`, `cleaning my bags: ${link(it)} ${coin(price)}`, `${link(it)}, ${coin(price)} or best offer`, `${link(it)}, ${coin(price)}, whisper me`, `anyone need ${link(it)}? ${coin(price)}`, `${link(it)} for sale, ${coin(price)}, cheaper than the AH`]), { kind: 'wts', bot: b.id, itemData: it, price, until: now() + 6 * 60000 });
   }
   function makeRare() {
     const r = rareTarget(); if (!r) return;
     const b = pick(myBots()); if (!b) return;
     const M = D.MOBS[r.mob], at = D.PLACES[r.place].name;
     G.spawnRare(r.place, r.mob);
-    post('general', b, pick([`${M.name} is up at ${at}!`, `rare spotted: ${M.name}, ${at}, go go`, `just saw ${M.name} at ${at}, cant solo it lol`, `${M.name} at ${at} right now if anyone needs it`]), { kind: 'rare', bot: b.id, until: now() + 10 * 60000, ...r });
+    post('general', b, pick([`${M.name} is up at ${at}!`, `rare spotted: ${M.name}, ${at}, go go`, `just saw ${M.name} at ${at}, cant solo it lol`, `${M.name} at ${at} right now if anyone needs it`, `${M.name} spawned at ${at}!!`, `heads up, ${M.name} at ${at}`, `${M.name} up at ${at}, too tough for me`]), { kind: 'rare', bot: b.id, until: now() + 10 * 60000, ...r });
   }
   function makeRecruit() {
     const gs = SOC.myGuilds().filter((x) => x.members > 0); if (!gs.length) return;
     const g = pick(gs); const who = g.officer || pick(myBots()); if (!who) return;
     post('general', who, pick([`<${g.name}> is recruiting! ${g.style} guild, level ${g.min}+, pst`, `<${g.name}> ${g.blurb.toLowerCase()} whisper me for an invite`, `looking for more people for <${g.name}>, ${g.min}+ welcome`,
-      `<${g.name}>: ${g.style} guild, friendly officers, ${g.min}+. apply any time`]), { kind: 'guild_apply', bot: who.id, g: g.g, until: now() + 8 * 60000 });
+      `<${g.name}>: ${g.style} guild, friendly officers, ${g.min}+. apply any time`, `<${g.name}> ${g.style} guild looking for members, ${g.min}+. whisper me`, `join <${g.name}>! ${g.blurb.toLowerCase()}`]), { kind: 'guild_apply', bot: who.id, g: g.g, until: now() + 8 * 60000 });
   }
   function makeGuildRequest() {
     const S = G.S, P = S.player;
@@ -336,35 +343,36 @@
       const it = have.length && chance(0.7) ? pick(have).item : D.ITEMS[pick(mats.length ? mats : ['linen_cloth'])];
       if (!it) return;
       const n = rint(5, 15);
-      post('guild', mate, pick([`can anyone spare ${n} ${link(it)}? need them for crafting`, `looking for ${n} ${link(it)}, will pay back`, `anyone got ${n} ${link(it)} lying around?`, `guild bank is out of ${link(it)}, anyone? ${n} would do`]), { kind: 'g_mats', guild: true, bot: mate.id, item: it.id, n, pay: Math.round((it.sell || 1) * n * 3), until: now() + 12 * 60000 });
+      post('guild', mate, pick([`can anyone spare ${n} ${link(it)}? need them for crafting`, `looking for ${n} ${link(it)}, will pay back`, `anyone got ${n} ${link(it)} lying around?`, `guild bank is out of ${link(it)}, anyone? ${n} would do`, `short on ${link(it)} for guild crafting, need ${n}`, `${n} ${link(it)} from anyone who can spare them? will pay`]), { kind: 'g_mats', guild: true, bot: mate.id, item: it.id, n, pay: Math.round((it.sell || 1) * n * 3), until: now() + 12 * 60000 });
       return;
     }
     if (kind === 'g_help') {
       const h = huntTarget(); if (!h) return; const M = D.MOBS[h.mob];
-      post('guild', mate, pick([`anyone free to help me with ${h.n} ${M.name} at ${D.PLACES[h.place].name}?`, `need a hand: ${h.n} ${M.name}, ${D.PLACES[h.place].name}`, `stuck on ${M.name} at ${D.PLACES[h.place].name}, help a guildie?`]), Object.assign({ kind: 'help_kill', guild: true, bot: mate.id, until: now() + 15 * 60000, pay: Math.round(M.lvl[1] * 8 * h.n), got: 0 }, h));
+      post('guild', mate, pick([`anyone free to help me with ${h.n} ${M.name} at ${D.PLACES[h.place].name}?`, `need a hand: ${h.n} ${M.name}, ${D.PLACES[h.place].name}`, `stuck on ${M.name} at ${D.PLACES[h.place].name}, help a guildie?`, `who can help with ${h.n} ${M.name}? ${D.PLACES[h.place].name}`, `guildie in need: ${M.name} at ${D.PLACES[h.place].name}, ${h.n} to go`]), Object.assign({ kind: 'help_kill', guild: true, bot: mate.id, until: now() + 15 * 60000, pay: Math.round(M.lvl[1] * 8 * h.n), got: 0 }, h));
       return;
     }
     if (kind === 'g_donate') {
       const amt = Math.max(100, Math.round(P.level * rnd(15, 30) / 10) * 10);
-      post('guild', guildOfficer(), pick([`guild bank fund for new tabards, anyone chip in ${coin(amt)}?`, `we're saving for a guild bank tab, ${coin(amt)} helps a lot`, `potions for guild night, donations welcome: ${coin(amt)}`]), { kind: 'g_donate', guild: true, bot: guildOfficer().id, amt, until: now() + 15 * 60000 });
+      post('guild', guildOfficer(), pick([`guild bank fund for new tabards, anyone chip in ${coin(amt)}?`, `we're saving for a guild bank tab, ${coin(amt)} helps a lot`, `potions for guild night, donations welcome: ${coin(amt)}`, `guild repair fund is low, ${coin(amt)} anyone?`, `saving for guild tabards, ${coin(amt)} each if you can`]), { kind: 'g_donate', guild: true, bot: guildOfficer().id, amt, until: now() + 15 * 60000 });
       return;
     }
     if (kind === 'g_event') {
       const acts = joinableActs({ dungeonOnly: true }); if (!acts.length) return;
       const k = pick(acts), A = D.ACTIVITIES[k], off = guildOfficer(), mins = rint(2, 4);
-      post('guild', off, pick([`GUILD NIGHT: ${A.name} in ${mins} min! sign up here`, `guild event in ${mins} min, ${A.name}. who's coming?`, `${A.name} guild run starting in ${mins} min, bonus standing for everyone who shows`]), { kind: 'g_event', guild: true, bot: off.id, act: k, startAt: now() + mins * 60000, until: now() + (mins + 3) * 60000, signed: false });
+      post('guild', off, pick([`GUILD NIGHT: ${A.name} in ${mins} min! sign up here`, `guild event in ${mins} min, ${A.name}. who's coming?`, `${A.name} guild run starting in ${mins} min, bonus standing for everyone who shows`, `${A.name} guild run in ${mins} min, sign up!`, `event: ${A.name} in ${mins} min. let's fill it with guildies`]), { kind: 'g_event', guild: true, bot: off.id, act: k, startAt: now() + mins * 60000, until: now() + (mins + 3) * 60000, signed: false });
       return;
     }
     const q = whereQuestion(); if (!q) return;
-    post('guild', mate, pick([`where is ${q.name} again?`, `guild, where do i find ${q.name}?`, `anyone know which zone ${q.name} is in?`]), Object.assign({ kind: 'where', guild: true, bot: mate.id }, q));
+    post('guild', mate, pick([`where is ${q.name} again?`, `guild, where do i find ${q.name}?`, `anyone know which zone ${q.name} is in?`, `lost again lol. ${q.name}?`, `where do u find ${q.name}? asking for a friend (me)`]), Object.assign({ kind: 'where', guild: true, bot: mate.id }, q));
   }
   // guildmates chat among themselves, and about you
   function guildTalk() {
     const P = G.S.player, a = onlineMate(); if (!a) return;
-    const lines = [`anyone up for a run later?`, `just dinged ${Math.min(D.LEVEL_CAP, a.level + 1)}!`, `this week's goal is going well`, `who's online tonight?`, `lol i fell off the lift again`, `anyone know a good farming spot?`, `brb food`, `gz everyone on the weekly progress`, SOC.motd(P.guild).toLowerCase()];
+    const lines = [`just dinged ${Math.min(D.LEVEL_CAP, a.level + 1)}!`, `this week's goal is going well`, `who's online tonight?`, `lol i fell off the lift again`, `brb food`, `gz everyone on the weekly progress`, SOC.motd(P.guild).toLowerCase(),
+      'finally finished my set', 'repair bills are killing me', 'love seeing everyone online', 'who else is on their alt tonight?', 'rolled a new alt, starting zones are so peaceful', 'best guild on the server, no contest'];
     if (P.level >= 10) lines.push(`${P.name} carrying the guild again`, `thanks for the help earlier ${P.name}`);
     const m = post('guild', a, pick(lines));
-    if (chance(0.5)) { const b = onlineMate(a.id); if (b) G.S.pending.push({ at: now() + rnd(3000, 9000), bot: b.id, ch: 'guild', text: voice(b, pick(['lol', 'same', 'nice', 'gz!', 'haha', 'yep', 'count me in'])) }); }
+    if (chance(0.5)) { const b = onlineMate(a.id); if (b) G.S.pending.push({ at: now() + rnd(3000, 9000), bot: b.id, ch: 'guild', text: voice(b, pick(['lol', 'same', 'nice', 'gz!', 'haha', 'yep', 'lmao', 'o/'])) }); }
     return m;
   }
   // a bot you helped comes back: a gift, or an invite to a run
@@ -375,11 +383,11 @@
     const acts = joinableActs();
     if (acts.length && chance(0.5) && !openActs((a) => a.whisper).length) {
       const k = pick(acts), A = D.ACTIVITIES[k];
-      post('whisper', b, pick([`hey its ${b.name}${f.where ? ' from ' + D.PLACES[f.where].name : ''}! want to run ${A.name} with me?`, `${P.name}! doing ${A.name}, want in? would be fun`, `we still need someone for ${A.name}, u in? :)`]), { kind: 'lfg', whisper: true, bot: b.id, act: k, role: pick(G.roles()), leader: b.id, until: now() + 5 * 60000 });
+      post('whisper', b, pick([`hey its ${b.name}${f.where ? ' from ' + D.PLACES[f.where].name : ''}! want to run ${A.name} with me?`, `${P.name}! doing ${A.name}, want in? would be fun`, `we still need someone for ${A.name}, u in? :)`, `${P.name}, got a spot in ${A.name} if u want it`, `remember me? we're doing ${A.name}, join?`]), { kind: 'lfg', whisper: true, bot: b.id, act: k, role: pick(G.roles()), leader: b.id, until: now() + 5 * 60000 });
     } else {
       const gift = chance(0.5) ? offerItem() : null;
       const gold = Math.round(P.level * rnd(20, 50));
-      post('whisper', b, gift ? pick([`hey, found this and thought of u: ${link(gift)}`, `thanks again for the help, have this ${link(gift)}`]) : pick([`thanks again for earlier! sent u ${coin(gold)}`, `still grateful for the help, here's ${coin(gold)}`]), { kind: 'gift', whisper: true, bot: b.id, itemData: gift, gold: gift ? 0 : gold, until: now() + 10 * 60000 });
+      post('whisper', b, gift ? pick([`hey, found this and thought of u: ${link(gift)}`, `thanks again for the help, have this ${link(gift)}`, `ty for last time, this is for u: ${link(gift)}`]) : pick([`thanks again for earlier! sent u ${coin(gold)}`, `still grateful for the help, here's ${coin(gold)}`, `sent u ${coin(gold)}, for the help that day`]), { kind: 'gift', whisper: true, bot: b.id, itemData: gift, gold: gift ? 0 : gold, until: now() + 10 * 60000 });
     }
     f.last = now();
   }
@@ -408,10 +416,15 @@
     const b = botById(a.bot || a.leader);
     const reply = (text, ch) => { if (b) S.pending.push({ at: now() + rnd(1200, 2800), bot: b.id, ch: ch || (m.ch === 'lfg' || m.ch === 'general' ? 'whisper' : m.ch), text: voice(b, text) }); };
     const close = (st) => { a.state = st || 'done'; G.emitChange(); };
-    const decline = { label: 'No thanks', fn: () => { close('declined'); if (b && (a.whisper || a.guild) && chance(0.6)) reply(tone(b) === 'rude' ? pick(['k whatever', 'ok', 'fine']) : pick(['np', 'ok no worries', 'all good', 'no problem!'])); } };
+    const decline = { label: 'No thanks', fn: () => { close('declined'); if (b && (a.whisper || a.guild) && chance(0.6)) reply(tone(b) === 'rude' ? pick(['k whatever', 'ok', 'fine', 'whatever', 'ok then']) : pick(['np', 'ok no worries', 'all good', 'no problem!', 'all good!', 'no stress'])); } };
     const help = () => { weekProgress('help', 1); };
     if (a.kind === 'lfg') {
       return [{ label: `Join as ${roleName(a.role)}`, primary: true, fn: () => { if (G.joinChatGroup(a.act, a.role, { leader: a.leader, guild: a.guild ? P.guild : null, soc: a.guild ? { kind: 'g_run' } : null })) { close(); help(); } } }, decline];
+    }
+    if (a.kind === 'help_wanted') {
+      const r = (S.helpWanted || []).find((x) => x.id === a.hw);
+      if (!r) { close('expired'); return []; }
+      return [{ label: `Help as ${roleName(r.role)}`, primary: true, fn: () => { if (S.run || S.queue || G.fight) return 'Leave your current group first.'; G.joinHelpWanted(r.id); close(); help(); } }, decline];
     }
     if (a.kind === 'carry') {
       return [{ label: `Run it (tip ${coin(a.tip)})`, primary: true, fn: () => { if (G.joinChatGroup(a.act, G.role(), { leader: a.bot, soc: { kind: 'carry', tip: a.tip, bot: a.bot } })) { close(); help(); } } }, decline];
@@ -422,8 +435,8 @@
         if (S.run || S.queue) return 'Not while in the group finder.';
         if (G.partySize() >= 3) return 'Your party is full.';
         a.accepted = true; a.until = now() + 20 * 60000;
-        if (b) G.addToParty(b);
-        reply(pick(['omg ty! meet me there', 'thanks!! on my way', 'ty, lets go', 'yay, inviting', 'sweet, party up']));
+        if (b) G.addToParty(b, { meet: a.place, until: a.until });
+        reply(pick(['omg ty! meet me there', 'thanks!! on my way', 'ty, lets go', 'yay, inviting', 'sweet, party up', 'omw!', 'u r the best, see u there']));
         G.sys(a.kind === 'quest_team' ? `${b ? b.name : 'They'} joined your party for "${D.QUESTS[a.qid].name}".` : `${b ? b.name : 'They'} joined your party. Kill ${a.n} ${D.MOBS[a.mob].name} at ${D.PLACES[a.place].name}.`);
         G.emitChange();
         if (P.place !== a.place) return 'route:' + a.place;
@@ -435,7 +448,7 @@
         if (G.countItem(a.item) < a.n) return `You need ${a.n}.`;
         G.removeItem(a.item, a.n); P.money += a.price;
         G.sys(`You sold ${a.n} ${D.ITEMS[a.item].name} to ${b ? b.name : 'them'} for ${coin(a.price)}.`);
-        reply(pick(['ty!', 'pleasure doing business', 'thx a lot', 'perfect, ty'])); befriend(b, P.place); help(); close();
+        reply(pick(['ty!', 'pleasure doing business', 'thx a lot', 'perfect, ty', 'awesome, ty', 'exactly what i needed'])); befriend(b, P.place); help(); close();
       } }, decline];
     }
     if (a.kind === 'wts') {
@@ -543,18 +556,18 @@
     if (ok) {
       P.money += a.pay;
       G.sys(`${b ? b.name : 'They'} paid you ${coin(a.pay)} for the help.`);
-      if (b) S.pending.push({ at: now() + 1500, bot: b.id, ch: a.guild ? 'guild' : 'whisper', text: voice(b, pick(['thanks so much!! sent u the gold', 'done! ty, here u go', 'couldnt have done it without u', 'gg, gold sent'])) });
+      if (b) S.pending.push({ at: now() + 1500, bot: b.id, ch: a.guild ? 'guild' : 'whisper', text: voice(b, pick(['thanks so much!! sent u the gold', 'done! ty, here u go', 'couldnt have done it without u', 'gg, gold sent', 'that was quick, ty!', 'u saved me an hour'])) });
       if (a.guild) addStanding(25, 'helped a guildmate');
       else if (G.addMarks) G.addMarks(2, 'helped another player');
       befriend(b, a.place); weekProgress('help', 1);
-    } else if (b) S.pending.push({ at: now() + 1500, bot: b.id, ch: a.guild ? 'guild' : 'whisper', text: voice(b, pick(['no worries, gotta go', 'ok ill find someone else', 'np, maybe later'])) });
+    } else if (b) S.pending.push({ at: now() + 1500, bot: b.id, ch: a.guild ? 'guild' : 'whisper', text: voice(b, pick(['no worries, gotta go', 'ok ill find someone else', 'np, maybe later', 'np, ill manage'])) });
     G.emitChange();
   }
   function finishTeam(m, ok) {
     const a = m.act, S = G.S, b = botById(a.bot);
     a.accepted = false;
     leaveParty(b);
-    if (ok && b) { S.pending.push({ at: now() + 1500, bot: b.id, ch: 'whisper', text: voice(b, pick(['done! ty for the group', 'that was way faster, thx', 'gg, good luck out there', 'ty! add me if u need help'])) }); befriend(b, a.place); if (G.addMarks) G.addMarks(1, 'teamed up'); }
+    if (ok && b) { S.pending.push({ at: now() + 1500, bot: b.id, ch: 'whisper', text: voice(b, pick(['done! ty for the group', 'that was way faster, thx', 'gg, good luck out there', 'ty! add me if u need help', 'quest done, ty for the group', 'gg, see u around'])) }); befriend(b, a.place); if (G.addMarks) G.addMarks(1, 'teamed up'); }
     G.emitChange();
   }
   function leaveParty(b) {
@@ -572,7 +585,7 @@
     for (const m of openActs((a) => a.kind === 'help_kill' && a.accepted && a.mob === mob)) {
       m.act.got++;
       if (m.act.got >= m.act.n) { m.act.state = 'done'; finishHelp(m, true); }
-      else if (m.act.got === Math.ceil(m.act.n / 2)) { const b = botById(m.act.bot); if (b) S.pending.push({ at: now() + 800, bot: b.id, ch: 'party', text: voice(b, pick(['halfway there', 'nice, keep going', `${m.act.got}/${m.act.n}`, 'we got this'])) }); }
+      else if (m.act.got === Math.ceil(m.act.n / 2)) { const b = botById(m.act.bot); if (b) S.pending.push({ at: now() + 800, bot: b.id, ch: 'party', text: voice(b, pick(['halfway there', 'nice, keep going', `${m.act.got}/${m.act.n}`, 'we got this', 'almost there', 'couple more'])) }); }
     }
     for (const m of openActs((a) => a.kind === 'rare' && a.mob === mob)) {
       m.act.state = 'done';

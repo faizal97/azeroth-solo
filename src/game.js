@@ -1551,7 +1551,9 @@
     const req = { id: 'hw' + t, act, role, startIdx: stuck, firstTimers, poster: poster.id, posterName: poster.name, expires: t + HW_LIFE };
     S.helpWanted.push(req);
     const what = stuck ? `stuck on ${Dg.pulls[stuck].label}` : 'full run';
-    B.post(S, 'lfg', poster, `LF1M ${role} ${A.name}, ${what}${firstTimers ? ', first time here pls be patient' : ''}`);
+    // a real request in chat too: tapping it joins, same as the Group Finder's Help Wanted
+    const hm = B.post(S, 'lfg', poster, `LF1M ${role} ${A.name}, ${what}${firstTimers ? ', first time here pls be patient' : ''}`);
+    if (hm) hm.act = { kind: 'help_wanted', hw: req.id, bot: poster.id, state: 'open', posted: t, until: req.expires };
     emit('chat'); emit('helpWanted', req);
   }
   G.joinHelpWanted = function (id) {
@@ -1791,9 +1793,13 @@
   const INVITE_GAP = 10 * 60000, DECLINE_GAP = 20 * 60000;
   const partyRole = (cls) => cls === 'warrior' ? 'tank' : cls === 'priest' ? 'healer' : (cls === 'paladin' || cls === 'druid' || cls === 'shaman') ? pick(['healer', 'dps']) : 'dps';
   G.partySize = () => 1 + ((G.S.wparty && G.S.wparty.members.length) || 0);
-  function addToParty(bot) {
-    const S = G.S;
+  // opts.meet: the party forms for a request somewhere else, so it travels with you until you get there.
+  // opts.until: keep the party at least this long (a request's own time window).
+  function addToParty(bot, opts) {
+    const S = G.S; opts = opts || {};
     if (!S.wparty) S.wparty = { members: [], place: S.player.place, until: now() + rnd(4, 8) * 60000 };
+    if (opts.meet && opts.meet !== S.player.place) { S.wparty.place = opts.meet; S.wparty.meet = true; }
+    if (opts.until) S.wparty.until = Math.max(S.wparty.until, opts.until);
     if (S.wparty.members.length >= PARTY_MAX - 1 || S.wparty.members.some((m) => m.bot.id === bot.id)) return;
     const b = JSON.parse(JSON.stringify(bot)); b.role = partyRole(b.cls);
     const ch = G.botChar(b);
@@ -1802,7 +1808,7 @@
     S.pending.push({ at: now() + 1500, bot: b.id, ch: 'party', text: B.partyLine(b, 'hello'), fromName: ch.name });
     emit('change');
   }
-  G.addToParty = (bot) => addToParty(bot);
+  G.addToParty = (bot, opts) => addToParty(bot, opts);
   // A group from chat (LFG post or guild request) summons you, like Help Wanted. opts: { leader, guild, soc }
   G.joinChatGroup = function (act, role, opts) {
     const S = G.S; opts = opts || {};
@@ -1865,7 +1871,8 @@
   function partyTick() {
     const S = G.S, P = S.player, t = now();
     if (S.wparty) {
-      if (P.place !== S.wparty.place) return disbandParty('You left the area, so your party went their own way.');
+      if (S.wparty.meet) { if (P.place === S.wparty.place) S.wparty.meet = false; }
+      else if (P.place !== S.wparty.place) return disbandParty('You left the area, so your party went their own way.');
       if (t >= S.wparty.until && !G.fight) return disbandParty('Your party has disbanded.');
       // members recover between fights
       for (const m of S.wparty.members) if (m.hp != null) { const st = E.statsFor(m); m.hp = Math.min(st.maxHp, m.hp + st.maxHp * 0.06); if (m.hp >= st.maxHp) m.hp = null; if (m.res != null) m.res = null; }

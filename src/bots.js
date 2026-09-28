@@ -195,101 +195,132 @@
   B.sloppy = (bot, s) => sloppy(bot, s);
 
 
-  const GENERAL = [
+  // ---------- ambient chat: flavour only. Anything that asks the player for something lives in social.js as a
+  // real request (m.act); nothing here may read like one (sim/chatcheck.js enforces that).
+  // c: ctx() plus c.me, the bot talking.
+  const GENERAL_ANY = [
     (c) => `where is ${c.namedMob}?`,
     (c) => `anyone know where ${c.questNpc} is`,
-    () => 'how do i get to stormwind',
     () => 'is there a way to reset talents',
     () => 'what level can i ride a mount',
     () => 'server feels packed tonight',
-    () => 'this music in elwynn tho',
     (c) => `${c.mobName} drop rate is a joke`,
     (c) => `who is camping ${c.namedMob}, i've been waiting 20 min`,
-    () => 'anyone selling bags?',
-    (c) => `WTS ${link('Linen Cloth')} x20, cheap`,
-    (c) => `WTB ${link(c.greenItem, 2)} pst`,
-    () => 'hunters should be banned from pulling in goldshire',
-    () => 'is this server pvp? i keep seeing flagged ppl',
-    () => 'finally got my first green lol',
-    () => 'anyone want to duel outside the inn?',
-    () => 'kobolds really said you no take candle and meant it',
-    () => 'where do i learn cooking',
-    () => 'how much does a mount cost',
-    () => 'lol someone just trained 6 kobolds into goldshire',
-    () => 'fresh server hype',
-    () => 'gl everyone',
+    (c) => `died to ${c.namedMob} again. third time today`,
+    (c) => `gz to whoever just took down ${c.namedMob}`,
+    (c) => `the music in ${c.zone} tho`,
+    (c) => `${c.zone} at night is so pretty`,
+    (c) => `${c.town} inn is the comfiest inn, fight me`,
+    (c) => `ding ${c.me.level}!`,
     () => 'why is my mana always empty',
-    () => 'mages pls conjure water ty',
-    () => 'what does "pst" mean',
+    () => 'gl everyone',
+    () => 'lost my corpse again lol',
+    () => 'my bags are always full, how',
+    () => 'rested xp is a gift from the gods',
+    () => 'logged in to finish one quest, did six',
+    () => 'auction house prices are wild today',
+    () => 'why are all the good names taken',
+    () => 'is war mode worth it? keep getting ganked',
+    () => 'mentor marks are so good for alts',
+    () => 'roulette gave me the same dungeon three days in a row',
+    () => 'honestly the sunsets in this game',
+    () => 'brb dinner',
+    () => 'fresh server hype',
     () => 'anyone from indo here?',
     () => 'lag?',
+    (c) => `${c.classA} or ${c.classB} for my next alt?`,
+    (c) => `every ${c.mobName} in this zone hates me personally`,
+    () => 'just repaired, 3 gold. pain',
+    () => 'the theater replay of the story is so good',
+    () => 'finally beat a par time, feels great',
+  ];
+  const GENERAL_ALLI = [
+    () => 'how do i get to stormwind',
+    () => 'stormwind music hits different',
+    () => 'ironforge is too dark for me',
+    () => 'darnassus is so far from everything',
+    () => 'goldshire at night is a vibe',
+    () => 'westfall broke my heart, those poor farmers',
+    () => 'the defias are literally everywhere',
+    () => 'hunters should be banned from pulling in goldshire',
+    () => 'for the alliance!',
+    () => 'deeprun tram is the best thing gnomes ever built',
   ];
   const GENERAL_HORDE = [
-    (c) => `where is ${c.namedMob}?`, () => 'how do i get to orgrimmar', () => 'zug zug', () => "lok'tar ogar!", () => 'for the horde',
-    () => 'anyone know where the cactus apples are', () => 'the valley of trials is so crowded lol', () => 'who keeps killing all the boars',
-    (c) => `WTS ${link('Linen Cloth')} x20, cheap`, (c) => `WTB ${link(c.greenItem, 2)} pst`, () => 'razor hill inn is the best inn', () => 'where do i learn cooking',
-    () => 'those kul tiras humans need to leave durotar', () => 'thrall is the best warchief', () => 'anyone from indo here?', () => 'lag?', () => 'fresh server hype',
-    () => 'how much does a wolf mount cost', () => 'zalazane keeps killing me', () => 'do trolls really regenerate that fast lol',
+    () => 'how do i get to orgrimmar', () => 'zug zug', () => "lok'tar ogar!", () => 'for the horde',
+    () => 'the valley of trials is so crowded lol', () => 'who keeps killing all the boars', () => 'razor hill inn is the best inn',
+    () => 'thrall is the best warchief', () => 'thunder bluff elevators scare me', () => 'undercity has a smell and i love it',
+    () => 'crossroads is always under attack lol', () => 'barrens chat is a way of life', () => "grom'gol boat is taking forever",
   ];
-  const LFG_HORDE = [() => 'LF2M Zalazane, need heals', () => 'LFM RFC need tank and heals', () => 'LF1M RFC heals then go', () => 'LFG RFC, lvl 10 warrior', () => 'LF healer for RFC', () => 'LF1M zalazane'];
+  // what people talk about at your stage of the game
+  const GENERAL_BAND = [
+    [() => 'finally got my first green lol', () => 'my first bag!! 6 slots of luxury', () => 'kobolds really said you no take candle and meant it', () => 'just found out what rested xp is', () => 'where do i learn cooking'],
+    [() => 'talents are so confusing', () => 'first pug dungeon went... ok', () => 'the wetlands raptors are no joke', () => 'saving up for my mount already', (c) => `${c.zone} quests are kinda long`],
+    [() => 'stranglethorn with war mode on is chaos', () => 'finally got riding, roads feel so short now', () => 'tanaris sand gets everywhere', () => "zul'farrak stairs event is wild", () => 'how much does a mount cost'],
+    [() => 'blackrock depths is a maze', () => 'scholomance gives me the creeps', () => 'stratholme in the rain, perfect', () => 'winterspring yetis again', () => 'is it just me or is the sea acting weird lately'],
+  ];
   const ANSWERS = [
-    { q: /where is (.+)\?/, a: (m) => [`${m[1]}? ${B.whereIs(m[1])}`, 'google it', 'same question lol'] },
-    { q: /how do i get to stormwind/, a: () => ['follow the road north out of goldshire', 'take the road north, you cant miss it', 'hearth lol'] },
+    { q: /where is (.+)\?/, a: (m) => [`${m[1]}? ${B.whereIs(m[1])}`, 'no idea sorry', 'same question lol'] },
+    { q: /how do i get to stormwind/, a: () => ['follow the road north out of goldshire', 'take the road north, you cant miss it', 'hearth lol', 'open your world map, it shows the route'] },
     { q: /how do i get to orgrimmar/, a: () => ['go north from razor hill', 'the big gate north of razor hill', 'follow the road north'] },
     { q: /zug zug|lok'tar|for the horde/, a: () => ['zug zug', "lok'tar!", 'FOR THE HORDE', 'dabu'] },
-    { q: /reset talents/, a: () => ['no talents till 10', 'you dont have talents yet mate'] },
-    { q: /mount/, a: () => ['40', 'lvl 40 and like 90g', '40, start saving now'] },
-    { q: /bags/, a: () => ['check the AH in stormwind', 'tailors will sell you linen bags', 'i can make linen bags, pst'] },
+    { q: /for the alliance/, a: () => ['for the alliance!', 'FOR THE KING', 'o7'] },
+    { q: /reset talents/, a: () => ['not that i know of, pick carefully', 'no talents till 10 anyway', 'plan them before you spend lol'] },
+    { q: /(level|lvl).*mount|mount cost/, a: () => ['40', 'lvl 40, about 50g all in', '40, start saving now', 'riding at 40, 40g plus the mount'] },
     { q: /cooking/, a: () => ['innkeeper area in town', 'there is a cook in the inn'] },
     { q: /indo/, a: () => ['hadir', 'ada bang', 'wkwkwk ada', 'me'] },
     { q: /lag/, a: () => ['no', 'fine here', 'yes'] },
     { q: /mana/, a: () => ['drink between pulls', 'spirit gear', 'sit and drink my friend'] },
+    { q: /war mode/, a: () => ['the 10% bonus is nice', 'only if you like pain', 'turn it off while questing lol', 'honor titles are worth it'] },
+    { q: /next alt/, a: () => ['whatever looks cool', 'the one you will actually play', 'hunter, always hunter', 'go the one you keep dying to lol'] },
+    { q: /worth it at/, a: () => ['yes, the quests alone are worth it', 'for the loot, yes', 'go with a guild group', 'if you have the quests, yes'] },
+    { q: /drop anything good/, a: () => ['check the codex after a clear', 'mostly cloth iirc', 'one nice trinket', 'not really, go for the quest'] },
+    { q: /sea acting weird/, a: () => ['i heard the same', 'storms off the coast, yeah', 'sailors in menethil wont shut up about it'] },
   ];
-  const LFG = [
-    (c) => `LF2M ${c.hogger ? 'Hogger' : 'Garrick Padfoot'}, need heals`,
-    () => 'LFM Deadmines need tank and heals',
-    () => 'LF1M DM need heals then go',
-    () => 'LFG DM, lvl 10 rogue',
-    () => 'tank LFG deadmines',
-    () => 'LF healer for DM, full run',
-    () => 'LFG anything',
-    () => 'LF1M hogger',
-    () => 'any priest wanna do DM?',
+  // LFG channel between the real posts: groups that filled, runs that went well or badly, questions about a dungeon
+  const LFG_CHATTER = [
+    (c) => `${c.act} group full, ty all`,
+    (c) => `gg ${c.act}, that was fast`,
+    (c) => `${c.act} done, 0 wipes, love this group`,
+    (c) => `is ${c.act} worth it at ${c.me.level}?`,
+    (c) => `does ${c.boss} drop anything good for ${c.me.cls}s?`,
+    (c) => `our tank pulled half of ${c.act} lol`,
+    () => 'found a group, ty',
+    () => 'nvm group full',
+    (c) => `${c.act} took us an hour, never again`,
+    (c) => `beat the par time in ${c.act}!`,
+    (c) => `${c.boss} is a wall for new players`,
+    () => 'first time tanking, went better than expected',
+    (c) => `grats to whoever got the ${c.boss} drop`,
+    (c) => `flawless ${c.act}, finally`,
+    () => 'the group finder is so good honestly',
+    (c) => `wiped on ${c.boss} 3 times, still got it`,
   ];
   const SAY_NEAR = [
-    (c) => `anyone want to group for ${c.mobName}s?`,
-    () => 'inv pls',
-    () => 'hey',
-    () => 'ty for the buff',
-    () => 'argh, respawn is so slow',
-    () => 'u can have this one',
-    () => 'lol',
-    () => 'got it',
-    () => 'my bags are full already',
-    () => 'brb',
-    (c) => `watch out, ${c.mobName} packs here`,
+    () => 'hey', () => 'o/', () => 'ty for the buff', () => 'argh, respawn is so slow', () => 'u can have this one', () => 'lol', () => 'got it', () => 'brb', () => 'ok back',
+    () => 'my bags are full already', (c) => `watch out, ${c.mobName} packs here`, (c) => `${c.mobName} again...`, () => 'nice pull', () => 'oops sorry, thought that was mine',
+    () => 'these spawns are so fast lol', () => 'gl with the quest', () => 'phew, almost died there', () => 'just one more and im done', () => 'where did all the mobs go',
+    (c) => `this ${c.zone} music tho`, () => 'ow', () => 'rip', () => 'nice one', () => 'close call lol', () => 'ty!', () => 'np', () => 'ding!', () => 'gz',
+    (c) => `${c.mobName}s everywhere`, () => 'finally, the last one', () => 'omg that crit', () => 'who pulled that lol', () => 'sorry, tagged it by accident',
+    (c) => `anyone else doing ${c.zone} quests? so many`, () => 'oom, sitting', () => 'love this spot', () => 'run!!', (c) => `heading back to ${c.town} after this`,
   ];
   const GUILD = [
-    () => 'evening all',
-    () => 'anyone up for DM later?',
-    () => 'grats on the ding!',
-    () => 'who has spare linen, making bandages',
-    () => 'guild bank when',
-    () => 'lol',
-    () => 'recruiting, tell your friends',
-    () => 'finally 10',
-    () => 'running DM at 9, need a healer',
-    () => 'anyone wanna run Hogger',
-    () => 'gn guys',
+    () => 'evening all', () => 'morning guild', () => 'grats on the ding!', () => 'guild bank when', () => 'lol', () => 'gn guys', (c) => `finally ${c.me.level}!`,
+    () => 'that last run was fun', (c) => `who's in ${c.zone}? just got here`, () => 'brb food', () => 'love this guild', () => 'gz on the drop earlier',
+    () => 'our tank is a legend', () => 'rip my repair bill', (c) => `just saw ${c.namedMob} lol, ran away`, () => 'the AH is crazy today',
+    () => 'ty for the help earlier', () => 'long day at work, finally home', () => 'what did everyone get from the roulette today?', () => 'weekly goal is getting close',
   ];
   const WHISPER = [
-    (c) => `hey can you help me kill ${c ? c.namedMob : 'this rare'}? it keeps killing me`,
-    () => 'u want to group?',
     () => 'nice gear lol',
-    () => 'can i have 1 silver pls',
-    () => 'Hello friend! Cheapest gold on the server, 1000g for $10, visit our site!',
     () => 'r u a bot?',
-    () => 'join our guild? we are chill',
+    () => 'Hello friend! Cheapest gold on the server, 1000g for $10, visit our site!',
+    () => 'WOW GOLD FAST DELIVERY 100% SAFE, visit our site',
+    () => 'ty for the buff earlier!',
+    (c) => `was that u in ${c.zone}? saw u fighting ${c.mobName}s`,
+    () => 'wrong window sorry',
+    () => 'lol sorry, meant that for someone else',
+    () => 'gl out there!',
+    () => 'ur name is so good',
   ];
 
   B.whereIs = function (name) {
@@ -316,10 +347,18 @@
     const q = Object.keys(S.player.quests || {});
     const zoneNpcs = Object.values(D.PLACES).filter((p) => (p.region || 'elwynn') === (P.region || 'elwynn')).flatMap((p) => p.npcs || []);
     const npc = q.length ? D.NPCS[D.QUESTS[q[0]].turnin].name : D.NPCS[pick(zoneNpcs.length ? zoneNpcs : Object.keys(D.NPCS))].name;
-    const affix = pick(D.AFFIXES).name;
+    const L = S.player.level;
+    const inns = Object.values(D.PLACES).filter((p) => (p.region || 'elwynn') === region && p.inn);
+    const G0 = root.G;
+    const acts = Object.keys(D.ACTIVITIES).filter((k) => { const A = D.ACTIVITIES[k]; return !A.needQuest && A.minLvl <= L + 3 && A.maxLvl >= L - 3 && !(G0 && G0.activityBlock && G0.activityBlock(k) === 'hidden'); });
+    const A = D.ACTIVITIES[acts.length ? pick(acts) : 'hogger'];
+    const Dg = A.dungeon && D.DUNGEONS[A.dungeon]; const lastBoss = Dg && Dg.pulls.filter((p) => p.boss).pop();
+    const bossKey = A.boss || (lastBoss && lastBoss.mobs[0]);
+    const clsNames = Object.values(D.CLASSES).map((x) => x.name.toLowerCase());
     return {
+      zone: P.zone || 'the wilds', town: inns.length ? pick(inns).name : 'the', band: L < 15 ? 0 : L < 30 ? 1 : L < 45 ? 2 : 3,
+      act: A.name, boss: bossKey && D.MOBS[bossKey] ? D.MOBS[bossKey].name : 'the last boss', classA: pick(clsNames), classB: pick(clsNames),
       mobName: mobs.length ? D.MOBS[pick(mobs)].name : 'Kobold', namedMob: D.MOBS[pick(namedAll)].name, questNpc: npc,
-      greenItem: `${pick(['Linen', 'Rawhide', 'Chainmail'])} ${pick(['Gloves', 'Boots', 'Belt'])} ${affix}`,
       hogger: S.player.level >= 8,
     };
   }
@@ -358,9 +397,10 @@
       }
     }
     if (due('general', 9, 22)) {
-      const b = onl();
+      const b = onl(); c.me = b;
       const ai = root.AI && chance(0.7) ? root.AI.take('general', root.AI.zoneKey()) : null;
-      const text = sloppy(b, ai || pick(c.horde ? GENERAL_HORDE : GENERAL)(c));
+      const pool = GENERAL_ANY.concat(c.horde ? GENERAL_HORDE : GENERAL_ALLI, GENERAL_BAND[c.band], GENERAL_BAND[c.band]);
+      const text = sloppy(b, ai || pick(pool)(c));
       B.post(S, 'general', b, text);
       // sometimes someone answers
       for (const A of ANSWERS) {
@@ -373,23 +413,25 @@
         }
       }
     }
-    if (due('lfg', 18, 40)) {
-      const b = onl();
-      const ai = root.AI && chance(0.6) ? root.AI.take('lfg', root.AI.zoneKey()) : null;
-      if (b.level >= 6) B.post(S, 'lfg', b, sloppy(b, ai || pick(c.horde ? LFG_HORDE : LFG)(c)));
+    if (S.player.level >= 8 && due('lfg', 40, 90)) {
+      const b = onl(); c.me = b;
+      if (b.level >= 6) {
+        const text = sloppy(b, pick(LFG_CHATTER)(c));
+        B.post(S, 'lfg', b, text);
+        for (const A of ANSWERS) { const mm = lower(text).match(A.q); if (mm && chance(0.6)) { const r = onl(); S.pending = S.pending || []; S.pending.push({ at: now + 3000 + Math.random() * 5000, bot: r.id, ch: 'lfg', text: sloppy(r, pick(A.a(mm))) }); break; } }
+      }
     }
     if (due('say', 16, 38)) {
       const near = B.onlineIn(S, S.player.place, date).filter((b) => B.factionOf(b) === B.factionOf(S.player));
-      if (near.length && !D.PLACES[S.player.place].safe || near.length > 2) { const b = pick(near.length ? near : [onl()]); B.post(S, 'say', b, sloppy(b, pick(SAY_NEAR)(c))); }
+      if (near.length && !D.PLACES[S.player.place].safe || near.length > 2) { const b = pick(near.length ? near : [onl()]); c.me = b; B.post(S, 'say', b, sloppy(b, pick(SAY_NEAR)(c))); }
     }
     if (S.player.guild != null && S.player.guild >= 0 && due('guild', 30, 70)) {
       const mates = S.bots.filter((b) => b.guild === S.player.guild && B.isOnline(b, date));
-      if (mates.length) { const b = pick(mates); B.post(S, 'guild', b, sloppy(b, pick(GUILD)(c))); }
+      if (mates.length) { const b = pick(mates); c.me = b; B.post(S, 'guild', b, sloppy(b, pick(GUILD)(c))); }
     }
     if (due('whisper', 200, 480)) {
-      const b = onl();
-      const text = pick(WHISPER)(c);
-      if (!(text.includes('guild') && S.player.guild >= 0)) B.post(S, 'whisper', b, text);
+      const b = onl(); c.me = b;
+      B.post(S, 'whisper', b, pick(WHISPER)(c));
     }
   };
 

@@ -2,7 +2,7 @@
 (function () {
   const { D, E, B, G } = window;
   const app = document.getElementById('app');
-  const ui = { sheet: null, sheetFn: null, bagSel: null, chatTab: 'all', chatCh: 'say', spriteEls: {}, dialog: null, lastQuestDot: false, rollEl: null };
+  const ui = { sheet: null, sheetFn: null, bagSel: null, chatCh: 'say', spriteEls: {}, dialog: null, lastQuestDot: false, rollEl: null };
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const now = () => Date.now();
 
@@ -155,7 +155,10 @@
     app.innerHTML = '';
     els.frames = h('div', { class: 'frames' });
     els.scene = h('div', { class: 'scene' });
-    els.chat = h('div', { class: 'chat', onclick: (e) => { const ln = e.target.closest('.ln.tap'); const m = ln && G.S.chat.find((x) => String(x.id) === ln.dataset.mid); if (m) { e.stopPropagation(); msgDialog(m); } else openSocial('chat'); } });
+    // the strip: tap a request line to act on it; the Chat button (or any other line) opens the full chat
+    els.chatLines = h('div', { class: 'chat-lines' });
+    els.chatOpen = h('button', { class: 'chat-open', 'aria-label': 'Open chat', onclick: (e) => { e.stopPropagation(); openSocial('chat'); } });
+    els.chat = h('div', { class: 'chat', onclick: (e) => { const ln = e.target.closest('.ln.tap'); const m = ln && G.S.chat.find((x) => String(x.id) === ln.dataset.mid); if (m) { e.stopPropagation(); msgDialog(m); } else openSocial('chat'); } }, els.chatLines, els.chatOpen);
     els.panel = h('div', { class: 'panel' });
     els.bar = h('div', { class: 'actionbar' });
     els.bottom = h('div', { class: 'bottom-wrap' }, els.bar);
@@ -451,10 +454,62 @@
     const tap = open || (m.from && !m.me && m.ch !== 'combat') || /\[\[\d\|/.test(m.text);
     return `<div class="ln${tap ? ' tap' : ''}${open ? ' act' : ''}" data-mid="${m.id || ''}" style="color:${color}">${open ? '<span class="act-mark">▸</span>' : ''}${pre}${richText(m.text)}</div>`;
   }
+  // ---------- chat tabs: your own named filters over the channels, kept on this phone for every character
+  const CHAT_KEY = 'azsolo.chattabs';
+  // channel groups you can pick for a tab ('say' also shows yells and creature speech; 'loot' also shows combat)
+  const CHAT_GROUPS = [['general', 'General', ['general', 'defense']], ['lfg', 'LFG', ['lfg']], ['guild', 'Guild', ['guild']], ['whisper', 'Whispers', ['whisper']],
+    ['party', 'Party', ['party']], ['say', 'Say', ['say', 'yell', 'monster']], ['system', 'System', ['system']], ['loot', 'Loot', ['loot', 'combat']]];
+  const CHAT_DEFAULT = () => ({ tabs: [{ name: 'General', chs: ['general', 'say', 'whisper', 'party', 'system'] }, { name: 'LFG', chs: ['lfg'] }, { name: 'Guild', chs: ['guild'] }], active: 0 });
+  const CHAT_MAX_TABS = 6;
+  function chatPrefs() {
+    if (ui.chatPrefs) return ui.chatPrefs;
+    let p = null; try { p = JSON.parse(localStorage.getItem(CHAT_KEY) || 'null'); } catch (e) { p = null; }
+    if (!p || !Array.isArray(p.tabs) || !p.tabs.length) p = CHAT_DEFAULT();
+    if (p.active !== 'requests' && !(p.active >= 0 && p.active < p.tabs.length)) p.active = 0;
+    return (ui.chatPrefs = p);
+  }
+  function saveChatPrefs() { try { localStorage.setItem(CHAT_KEY, JSON.stringify(ui.chatPrefs)); } catch (e) { } }
+  const isOpenReq = (m) => m.act && m.act.state === 'open';
+  function chatFilter(active) {
+    if (active === 'requests') return isOpenReq;
+    const tab = chatPrefs().tabs[active]; if (!tab) return () => true;
+    const chs = new Set(); for (const [k, , list] of CHAT_GROUPS) if (tab.chs.includes(k)) list.forEach((c) => chs.add(c));
+    // combat spam stays out of the strip unless it's XP; a full "Loot" tab shows it all
+    return (m) => chs.has(m.ch) && (m.ch !== 'combat' || tab.chs.length === 1 || m.text.startsWith('You gain'));
+  }
+  const chatTabName = (active) => active === 'requests' ? 'Requests' : ((chatPrefs().tabs[active] || {}).name || 'Chat');
+  function setChatTab(active) { chatPrefs().active = active; saveChatPrefs(); renderChat(); if (ui.sheet === 'social' && ui.sheetFn) ui.sheetFn(); }
+  function editChatTabs(scroll) {
+    const p = chatPrefs();
+    // redraw after each change, keeping the list where it was ('end' after adding a tab)
+    const done = (to) => { const at = list.scrollTop; saveChatPrefs(); renderChat(); if (ui.sheet === 'social' && ui.sheetFn) ui.sheetFn(); editChatTabs(to || at); };
+    const list = h('div', { class: 'ctab-list' });
+    p.tabs.forEach((tab, i) => {
+      const name = h('input', { type: 'text', value: tab.name, maxlength: '14', 'aria-label': 'Tab name', class: 'ctab-name' });
+      name.addEventListener('change', () => { tab.name = name.value.trim() || 'Tab'; saveChatPrefs(); renderChat(); if (ui.sheet === 'social' && ui.sheetFn) ui.sheetFn(); });
+      const chips = h('div', { class: 'chips' });
+      for (const [k, label] of CHAT_GROUPS) chips.append(h('button', { class: 'chip' + (tab.chs.includes(k) ? ' gold' : ''), onclick: () => {
+        if (tab.chs.includes(k)) { if (tab.chs.length === 1) return toast('A tab needs at least one channel.'); tab.chs = tab.chs.filter((x) => x !== k); } else tab.chs.push(k);
+        done();
+      } }, label));
+      const btns = h('div', { class: 'ctab-btns' },
+        i > 0 ? h('button', { class: 'chip', 'aria-label': 'Move left', onclick: () => { p.tabs.splice(i - 1, 0, p.tabs.splice(i, 1)[0]); if (p.active === i) p.active = i - 1; else if (p.active === i - 1) p.active = i; done(); } }, '←') : null,
+        h('button', { class: 'chip', disabled: p.tabs.length <= 1, onclick: () => { p.tabs.splice(i, 1); if (p.active !== 'requests' && p.active >= p.tabs.length) p.active = p.tabs.length - 1; else if (p.active !== 'requests' && p.active > i) p.active--; done(); } }, 'Remove'));
+      list.append(h('div', { class: 'ctab' }, h('div', { class: 'ctab-top' }, name, btns), chips));
+    });
+    showDialog([h('h3', null, 'Chat tabs'), h('p', { class: 'ai-note', style: { margin: '0 0 8px' } }, 'Pick which channels each tab shows. The strip on the main screen shows the tab you have open.'), list,
+      h('div', { class: 'btn-row', style: { marginTop: '10px' } },
+        h('button', { class: 'btn alt', disabled: p.tabs.length >= CHAT_MAX_TABS, onclick: () => { p.tabs.push({ name: 'New tab', chs: CHAT_GROUPS.map((g) => g[0]).filter((k) => k !== 'loot') }); p.active = p.tabs.length - 1; done('end'); } }, '+ Add tab'),
+        h('button', { class: 'btn alt', onclick: () => { ui.chatPrefs = CHAT_DEFAULT(); done(); } }, 'Reset')),
+      h('button', { class: 'btn wide', style: { marginTop: '8px' }, onclick: closeDialog }, 'Done')], true);
+    if (scroll) list.scrollTop = scroll === 'end' ? list.scrollHeight : scroll;
+  }
   function renderChat() {
     if (!els.chat) return;
-    const lines = G.S.chat.filter((m) => m.ch !== 'combat' || m.text.startsWith('You gain')).slice(-5);
-    els.chat.innerHTML = lines.map(chatLineHtml).join('');
+    const lines = G.S.chat.filter(chatFilter(chatPrefs().active)).slice(-5);
+    els.chatLines.innerHTML = lines.map(chatLineHtml).join('');
+    const nReq = G.S.chat.filter((m) => m.act && m.act.state === 'open').length;
+    els.chatOpen.innerHTML = `<span>Chat</span><small>${esc(chatTabName(chatPrefs().active))}</small>${nReq ? `<b class="tnum">${nReq}</b>` : ''}`;
     if (ui.sheet === 'social' && ui.socialTab === 'chat') refreshChatLog();
   }
 
@@ -670,7 +725,7 @@
         h('div', { class: 'role' }, m.role === 'tank' ? 'TANK' : m.role === 'healer' ? 'HEAL' : 'DPS')));
     }
     const left = Math.max(0, S.wparty.until - Date.now());
-    p.append(h('div', { class: 'sec-h' }, 'Party', h('small', null, C ? 'XP is shared' : `about ${Math.ceil(left / 60000)} min left`)), pf);
+    p.append(h('div', { class: 'sec-h' }, 'Party', h('small', null, C ? 'XP is shared' : S.wparty.meet ? `meeting at ${D.PLACES[S.wparty.place].name}` : `about ${Math.ceil(left / 60000)} min left`)), pf);
     if (!C) p.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => G.leaveParty() }, 'Leave party')));
   }
   function confirmInvite(b) {
@@ -865,7 +920,10 @@
       const hi = ab.dmg.base ? ab.dmg.base[1] + (ab.dmg.perLvl || 0) * L + (ab.dmg.coef || 0) * st.sp : ab.dmg.bonus ? ab.dmg.bonus[1] + ab.dmg.perLvl * L : 0;
       d = d.replace('{b}', lo === hi ? f(lo) : `${f(lo)} to ${f(hi)}`);
     }
-    if (ab.heal) d = d.replace('{h}', `${f(ab.heal.base[0] + ab.heal.perLvl * L + ab.heal.coef * st.sp)} to ${f(ab.heal.base[1] + ab.heal.perLvl * L + ab.heal.coef * st.sp)}`);
+    if (ab.heal) {
+      const hl = (i) => f(ab.heal.base[i] + (ab.heal.perLvl || 0) * L + (ab.heal.coef || 0) * st.sp);
+      d = d.replace('{h}', hl(0) === hl(1) ? hl(0) : `${hl(0)} to ${hl(1)}`);
+    }
     if (ab.dot) d = d.replace('{d}', f((ab.dot.dmg + ab.dot.perLvl * L) * ab.dot.ticks));
     if (ab.hot) d = d.replace('{hh}', f((ab.hot.heal + ab.hot.perLvl * L) * ab.hot.ticks));
     if (ab.shield) d = d.replace('{s}', f(ab.shield.base + ab.shield.perLvl * L));
@@ -1032,7 +1090,7 @@
     if (window.SND) window.SND.play('click', { vol: 0.6 });
     const body = h('div', { class: 'sheet-b' });
     const titleEl = h('h2', null, title, sub ? h('small', null, sub) : null);
-    const sheet = h('div', { class: 'sheet', onclick: (e) => e.stopPropagation() }, h('div', { class: 'sheet-h' }, titleEl, h('button', { class: 'x', onclick: closeSheet, 'aria-label': 'Close' }, '×')), body);
+    const sheet = h('div', { class: 'sheet sheet-' + name, onclick: (e) => e.stopPropagation() }, h('div', { class: 'sheet-h' }, titleEl, h('button', { class: 'x', onclick: closeSheet, 'aria-label': 'Close' }, '×')), body);
     const back = h('div', { class: 'sheet-back', onclick: closeSheet }, sheet);
     app.append(back);
     ui.sheet = name; ui.sheetEl = back; ui.sheetBody = body; ui.sheetTitle = titleEl;
@@ -1654,98 +1712,117 @@
   }
 
   // ---------- hero
-  function openHero() {
+  function openHero(tab) {
+    if (tab && typeof tab === 'string') ui.heroTab = tab;
+    ui.heroTab = ui.heroTab || 'char';
     openSheet('hero', G.S.player.name, `Level ${G.S.player.level} ${(D.RACES[G.S.player.race] || D.RACES.human).name} ${D.CLASSES[G.S.player.cls].name} · ${D.REALM}`, (b) => {
       const P = G.S.player, st = G.stats(), v = G.vitals();
       const need = D.XP_TO_LEVEL[P.level];
-      b.append(h('div', { class: 'btn-row' },
-        h('button', { class: 'btn', onclick: () => { if (G.fight) return toast('You are in combat.'); G.logout(); showSelect(); } }, 'Switch character'),
-        h('button', { class: 'btn alt', onclick: () => openTheater() }, 'Theater')));
-      if (window.UPD) b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: manualUpdateCheck }, `Check for updates · v${UPD.current()}`)));
       const tp = G.talentPoints(P);
-      if (P.riding) {
-        const row = h('div', { class: 'chips' }, h('button', { class: 'chip' + (!P.mount ? ' gold' : ''), onclick: () => { G.setMount(null); ui.sheetFn(); } }, 'On foot'));
-        for (const k of (P.mounts || [])) row.append(h('button', { class: 'chip' + (P.mount === k ? ' gold' : ''), onclick: () => { G.setMount(k); ui.sheetFn(); } }, img(art('icon', 'mount_' + k)), ' ', D.MOUNTS[k].name));
-        b.append(h('div', { class: 'sec-h' }, 'Mount', h('small', null, P.mount ? 'roads are 40% faster' : 'walking')), row);
-      }
-      b.append(h('button', { class: 'btn wide alt', onclick: () => openProfessions() }, Object.keys(G.profs()).length ? 'Professions · ' + Object.entries(G.profs()).map(([k, p]) => `${D.PROFESSIONS[k].name} ${p.skill}`).join(', ') : 'Professions (learn from a trainer in a city)'));
-      b.append(h('button', { class: 'btn wide' + (tp.free ? '' : ' alt'), onclick: () => openTalents() }, P.level < D.TALENT_START ? `Talents (from level ${D.TALENT_START})` : tp.free ? `Talents · ${tp.free} point${tp.free > 1 ? 's' : ''} to spend` : `Talents · ${tp.spent} spent`));
-      b.append(h('div', { class: 'hero-top' }, img(art('hero', looks(P))),
-        h('div', { class: 'stats' },
-          ...[['Health', v.maxHp], [D.CLASSES[P.cls].resource === 'mana' ? 'Mana' : D.CLASSES[P.cls].resource === 'rage' ? 'Rage' : 'Energy', Math.round(v.maxRes)], ['Strength', st.str], ['Agility', st.agi], ['Stamina', st.sta], ['Intellect', st.int], ['Spirit', st.spi], ['Armor', st.armor], ['Attack Power', Math.round(st.apTotal)], ['Spell Power', st.sp], ['Crit', st.crit.toFixed(1) + '%'], ['Dodge', st.dodgeTotal.toFixed(1) + '%']]
-            .map(([k, val]) => h('div', null, h('span', null, k), h('b', { class: 'tnum' }, val))))));
-      b.append(h('div', { class: 'stats' },
-        h('div', null, h('span', null, 'Experience'), h('b', { class: 'tnum' }, P.level >= D.LEVEL_CAP ? 'Max level' : `${P.xp}/${need}`)),
-        h('div', null, h('span', null, 'Rested'), h('b', { class: 'tnum' }, P.level >= D.LEVEL_CAP ? '-' : Math.round(P.rested))),
-        h('div', null, h('span', null, 'Money'), h('b', { html: moneyHtml(P.money) })),
-        h('div', null, h('span', null, 'Played'), h('b', { class: 'tnum' }, fmtTime(P.played * 1000))),
-        h('div', null, h('span', null, 'Kills'), h('b', { class: 'tnum' }, P.kills)),
-        h('div', null, h('span', null, 'Deaths'), h('b', { class: 'tnum' }, P.deaths))));
-      const RC = D.RACIALS[P.race || 'human'];
-      if (RC) {
-        const ra = D.ABILITIES[RC.active];
-        b.append(h('div', { class: 'sec-h' }, 'Racial traits', h('small', null, (D.RACES[P.race || 'human'] || {}).name)),
-          h('div', { class: 'list' },
-            h('div', { class: 'row' }, h('div', { class: 'ic' }, img(abIcon(RC.active))), h('div', { class: 't' }, h('b', null, ra.name), h('small', { style: { whiteSpace: 'normal' } }, ra.desc)), h('div', { class: 'r' }, 'Active')),
-            ...RC.text.map((tx) => h('div', { class: 'row', style: { minHeight: '36px' } }, h('div', { class: 'ic' }, '•'), h('div', { class: 't' }, h('b', { style: { fontWeight: 600 } }, tx)), h('div', { class: 'r' }, 'Passive')))));
-      }
-      b.append(h('div', { class: 'sec-h' }, 'Equipment', h('small', null, 'tap to inspect')));
-      const gear = h('div', { class: 'gear' });
-      for (const slot of D.GEAR_SLOTS) {
-        const it = P.equip[slot];
-        gear.append(h('button', { class: 'row' + (it ? '' : ' off'), onclick: () => { if (it) showDialog(itemTip(it, h('div', { class: 'btn-row', style: { marginTop: '8px' } }, h('button', { class: 'btn alt', onclick: () => { G.unequip(slot); closeDialog(); ui.sheetFn(); } }, 'Unequip'))), true); } },
-          h('div', { class: 'ic' }, it ? img(art('icon', it.icon)) : ''),
-          h('div', { class: 't' }, h('b', { class: it ? 'q' + it.q : '' }, it ? it.name : 'Empty'), h('small', null, D.SLOT_LABEL[slot])), h('div')));
-      }
-      b.append(gear);
-      b.append(h('div', { class: 'sec-h' }, 'Abilities'));
-      const abl = h('div', { class: 'list' });
-      for (const id of D.CLASSES[P.cls].abilities) {
-        const ab = D.ABILITIES[id]; const known = ab.lvl <= P.level; const t = abilityText(id);
-        abl.append(h('div', { class: 'row' + (known ? '' : ' off') }, h('div', { class: 'ic' }, img(abIcon(id))), h('div', { class: 't' }, h('b', null, ab.name), h('small', { style: { whiteSpace: 'normal' } }, known ? t.d : `Learned at level ${ab.lvl}`)), h('div', { class: 'r' }, t.cost)));
-      }
-      b.append(abl);
-      // Legends (v10): story, credit, and whether they join your groups
-      for (const key in (D.LEGENDS || {})) {
-        const L = D.LEGENDS[key], on = G.legendUnlocked(key);
-        const started = Object.keys(P.done).concat(Object.keys(P.quests)).some((q) => D.QUESTS[q] && D.QUESTS[q].legend === key);
-        b.append(h('div', { class: 'sec-h' }, 'Legend: ' + L.name, h('small', null, on ? (G.legendOn(key) ? 'joins your groups' : 'resting') : started ? 'story in progress' : 'not met yet')));
-        const box = h('div', { class: 'ai-box' }, h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', 'legend_' + key))), h('div', { class: 't' }, h('b', { style: { color: '#ff8000' } }, L.name), h('small', null, L.title))));
-        if (on || started) for (const para of L.story) box.append(h('p', { style: { margin: '6px 0' } }, para));
-        else box.append(h('p', { style: { margin: '6px 0' } }, 'A high elf knight, said to have died five years ago, has been seen among the ashes of Silverleaf Lodge in the Arathi Highlands (level 37+).'));
-        if (on) box.append(h('p', { class: 'ai-note' }, `${L.short} takes a ${L.role} slot in your groups (a damage slot if you are the ${L.role}), with his own abilities: ${L.abilities.map((a) => D.ABILITIES[a].name).join(' and ')}.`));
-        box.append(h('p', { class: 'ai-note' }, L.credit));
-        b.append(box);
-        if (on) b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { G.setLegendOn(key, !G.legendOn(key)); ui.sheetFn(); } }, `${L.short} joins groups: ${G.legendOn(key) ? 'On' : 'Off'}`)));
-      }
-      const titles = D.TITLES.filter(G.titleUnlocked);
-      b.append(h('div', { class: 'sec-h' }, 'Title', h('small', null, `${titles.length}/${D.TITLES.length} unlocked · ${G.account().marks} Mentor Marks`)));
-      const tchips = h('div', { class: 'chips' }, h('button', { class: 'chip' + (!P.title ? ' gold' : ''), onclick: () => { G.setTitle(null); ui.sheetFn(); } }, 'None'));
-      for (const t of titles) tchips.append(h('button', { class: 'chip' + (P.title === t.id ? ' gold' : ''), onclick: () => { G.setTitle(t.id); ui.sheetFn(); } }, G.titleName(t, P.name)));
-      b.append(tchips);
-      const nextT = D.TITLES.filter((t) => !G.titleUnlocked(t)).slice(0, 3);
-      if (nextT.length) b.append(h('p', { class: 'ai-note' }, 'Still to earn: ' + nextT.map((t) => `${G.titleName(t, P.name)} (${t.how.toLowerCase()})`).join(' · ') + '.'));
-      const pv = G.pvpStats();
-      b.append(h('div', { class: 'sec-h' }, 'War Mode', h('small', null, G.S.flags.warMode ? '+10% experience and gold' : 'off')),
-        h('div', { class: 'ai-box' }, h('div', { class: 'ai-row' }, h('span', null, 'Honor'), h('b', { class: 'tnum' }, String(pv.honor))),
-          h('div', { class: 'ai-row' }, h('span', null, 'Enemy players defeated'), h('b', { class: 'tnum' }, `${pv.kills} · died ${pv.deaths} · escaped ${pv.escapes}`))),
-        h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { G.setWarMode(!G.S.flags.warMode); ui.sheetFn(); } }, 'War Mode: ' + (G.S.flags.warMode ? 'On' : 'Off'))),
-        h('p', { class: 'ai-note' }, P.level < 6 ? 'Enemy players start showing up from level 6.' : 'Enemy players show up now and then. Towns are rare and guarded; capitals and starting valleys are safe. Honor unlocks PvP titles (see Title above).'));
-      b.append(h('div', { class: 'sec-h' }, 'Party invites'), h('div', { class: 'btn-row' },
-        h('button', { class: 'btn alt', onclick: () => { G.setInvites(!!G.S.flags.noInvites); ui.sheetFn(); } }, 'Invites from nearby players: ' + (G.S.flags.noInvites ? 'Off' : 'On'))));
-      if (window.SND) {
-        const pr = window.SND.prefs;
-        b.append(h('div', { class: 'sec-h' }, 'Sound'), h('div', { class: 'btn-row' },
-          h('button', { class: 'btn alt', onclick: () => { window.SND.setPref('music', !pr.music); ui.sheetFn(); } }, 'Music: ' + (pr.music ? 'On' : 'Off')),
-          h('button', { class: 'btn alt', onclick: () => { window.SND.setPref('sfx', !pr.sfx); ui.sheetFn(); } }, 'Effects: ' + (pr.sfx ? 'On' : 'Off'))));
-      }
-      aiSection(b);
-      b.append(h('div', { class: 'sec-h' }, 'Save'));
-      b.append(h('div', { class: 'btn-row' },
-        h('button', { class: 'btn alt', onclick: exportSave }, 'Copy save code'),
-        h('button', { class: 'btn alt', onclick: importSave }, 'Load save code')));
+      // four pinned tabs instead of one long page; a dot marks unspent talent points
+      const tabs = h('div', { class: 'tabs' });
+      for (const [k, label, dot] of [['char', 'Character'], ['abil', 'Abilities', tp.free > 0], ['journey', 'Journey'], ['settings', 'Settings']])
+        tabs.append(h('button', { class: ui.heroTab === k ? 'on' : '', onclick: () => { ui.heroTab = k; ui.sheetFn(); ui.sheetBody.scrollTop = 0; } }, label, dot ? h('span', { class: 'tab-dot' }) : null));
+      b.append(h('div', { class: 'sheet-stick' }, tabs));
+      if (ui.heroTab === 'char') {
+        b.append(h('div', { class: 'hero-top' }, img(art('hero', looks(P))),
+          h('div', { class: 'stats' },
+            ...[['Health', v.maxHp], [D.CLASSES[P.cls].resource === 'mana' ? 'Mana' : D.CLASSES[P.cls].resource === 'rage' ? 'Rage' : 'Energy', Math.round(v.maxRes)], ['Strength', st.str], ['Agility', st.agi], ['Stamina', st.sta], ['Intellect', st.int], ['Spirit', st.spi], ['Armor', st.armor], ['Attack Power', Math.round(st.apTotal)], ['Spell Power', st.sp], ['Crit', st.crit.toFixed(1) + '%'], ['Dodge', st.dodgeTotal.toFixed(1) + '%']]
+              .map(([k, val]) => h('div', null, h('span', null, k), h('b', { class: 'tnum' }, val))))));
+        b.append(h('div', { class: 'stats' },
+          h('div', null, h('span', null, 'Experience'), h('b', { class: 'tnum' }, P.level >= D.LEVEL_CAP ? 'Max level' : `${P.xp}/${need}`)),
+          h('div', null, h('span', null, 'Rested'), h('b', { class: 'tnum' }, P.level >= D.LEVEL_CAP ? '-' : Math.round(P.rested))),
+          h('div', null, h('span', null, 'Money'), h('b', { html: moneyHtml(P.money) })),
+          h('div', null, h('span', null, 'Played'), h('b', { class: 'tnum' }, fmtTime(P.played * 1000))),
+          h('div', null, h('span', null, 'Kills'), h('b', { class: 'tnum' }, P.kills)),
+          h('div', null, h('span', null, 'Deaths'), h('b', { class: 'tnum' }, P.deaths))));
+        if (P.riding) {
+          const row = h('div', { class: 'chips' }, h('button', { class: 'chip' + (!P.mount ? ' gold' : ''), onclick: () => { G.setMount(null); ui.sheetFn(); } }, 'On foot'));
+          for (const k of (P.mounts || [])) row.append(h('button', { class: 'chip' + (P.mount === k ? ' gold' : ''), onclick: () => { G.setMount(k); ui.sheetFn(); } }, img(art('icon', 'mount_' + k)), ' ', D.MOUNTS[k].name));
+          b.append(h('div', { class: 'sec-h' }, 'Mount', h('small', null, P.mount ? 'roads are 40% faster' : 'walking')), row);
+        }
+        b.append(h('div', { class: 'sec-h' }, 'Equipment', h('small', null, 'tap to inspect')));
+        const gear = h('div', { class: 'gear' });
+        for (const slot of D.GEAR_SLOTS) {
+          const it = P.equip[slot];
+          gear.append(h('button', { class: 'row' + (it ? '' : ' off'), onclick: () => { if (it) showDialog(itemTip(it, h('div', { class: 'btn-row', style: { marginTop: '8px' } }, h('button', { class: 'btn alt', onclick: () => { G.unequip(slot); closeDialog(); ui.sheetFn(); } }, 'Unequip'))), true); } },
+            h('div', { class: 'ic' }, it ? img(art('icon', it.icon)) : ''),
+            h('div', { class: 't' }, h('b', { class: it ? 'q' + it.q : '' }, it ? it.name : 'Empty'), h('small', null, D.SLOT_LABEL[slot])), h('div')));
+        }
+        b.append(gear);
+      } else if (ui.heroTab === 'abil') {
+        b.append(h('button', { class: 'btn wide' + (tp.free ? '' : ' alt'), onclick: () => openTalents() }, P.level < D.TALENT_START ? `Talents (from level ${D.TALENT_START})` : tp.free ? `Talents · ${tp.free} point${tp.free > 1 ? 's' : ''} to spend` : `Talents · ${tp.spent} spent`));
+        b.append(h('button', { class: 'btn wide alt', onclick: () => openProfessions() }, Object.keys(G.profs()).length ? 'Professions · ' + Object.entries(G.profs()).map(([k, p]) => `${D.PROFESSIONS[k].name} ${p.skill}`).join(', ') : 'Professions (learn from a trainer in a city)'));
+        b.append(h('div', { class: 'sec-h' }, 'Abilities', h('small', null, 'learned automatically')));
+        const abl = h('div', { class: 'list' });
+        // what you know in full; what's still to learn as one line
+        const later = [];
+        for (const id of D.CLASSES[P.cls].abilities) {
+          const ab = D.ABILITIES[id]; const t = abilityText(id);
+          if (ab.lvl > P.level) { later.push(ab); continue; }
+          abl.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(abIcon(id))), h('div', { class: 't' }, h('b', null, ab.name), h('small', { style: { whiteSpace: 'normal' } }, t.d)), h('div', { class: 'r' }, t.cost)));
+        }
+        b.append(abl);
+        if (later.length) b.append(h('p', { class: 'ai-note' }, 'Coming up: ' + later.slice(0, 4).map((ab) => `${ab.name} (${ab.lvl})`).join(' · ') + (later.length > 4 ? ` and ${later.length - 4} more.` : '.')));
+        const RC = D.RACIALS[P.race || 'human'];
+        if (RC) {
+          const ra = D.ABILITIES[RC.active];
+          b.append(h('div', { class: 'sec-h' }, 'Racial traits', h('small', null, (D.RACES[P.race || 'human'] || {}).name)),
+            h('div', { class: 'list' },
+              h('div', { class: 'row' }, h('div', { class: 'ic' }, img(abIcon(RC.active))), h('div', { class: 't' }, h('b', null, ra.name), h('small', { style: { whiteSpace: 'normal' } }, ra.desc)), h('div', { class: 'r' }, 'Active')),
+              ...RC.text.map((tx) => h('div', { class: 'row', style: { minHeight: '36px' } }, h('div', { class: 'ic' }, '•'), h('div', { class: 't' }, h('b', { style: { fontWeight: 600 } }, tx)), h('div', { class: 'r' }, 'Passive')))));
+        }
+      } else if (ui.heroTab === 'journey') {
+          b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => openTheater() }, 'Theater · replay the story')));
+        // Legends (v10): story, credit, and whether they join your groups
+        for (const key in (D.LEGENDS || {})) {
+          const L = D.LEGENDS[key], on = G.legendUnlocked(key);
+          const started = Object.keys(P.done).concat(Object.keys(P.quests)).some((q) => D.QUESTS[q] && D.QUESTS[q].legend === key);
+          b.append(h('div', { class: 'sec-h' }, 'Legend: ' + L.name, h('small', null, on ? (G.legendOn(key) ? 'joins your groups' : 'resting') : started ? 'story in progress' : 'not met yet')));
+          const box = h('div', { class: 'ai-box' }, h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', 'legend_' + key))), h('div', { class: 't' }, h('b', { style: { color: '#ff8000' } }, L.name), h('small', null, L.title))));
+          if (on || started) {
+            const open = ui.heroStory === key;
+            if (open) for (const para of L.story) box.append(h('p', { style: { margin: '6px 0' } }, para));
+            box.append(h('button', { class: 'chip', style: { marginTop: '6px' }, onclick: () => { ui.heroStory = open ? null : key; ui.sheetFn(); } }, open ? 'Hide story' : 'Read his story'));
+          }
+          else box.append(h('p', { style: { margin: '6px 0' } }, 'A high elf knight, said to have died five years ago, has been seen among the ashes of Silverleaf Lodge in the Arathi Highlands (level 37+).'));
+          if (on) box.append(h('p', { class: 'ai-note' }, `${L.short} takes a ${L.role} slot in your groups (a damage slot if you are the ${L.role}), with his own abilities: ${L.abilities.map((a) => D.ABILITIES[a].name).join(' and ')}.`));
+          box.append(h('p', { class: 'ai-note' }, L.credit));
+          b.append(box);
+          if (on) b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { G.setLegendOn(key, !G.legendOn(key)); ui.sheetFn(); } }, `${L.short} joins groups: ${G.legendOn(key) ? 'On' : 'Off'}`)));
+        }
+        const titles = D.TITLES.filter(G.titleUnlocked);
+        b.append(h('div', { class: 'sec-h' }, 'Title', h('small', null, `${titles.length}/${D.TITLES.length} unlocked · ${G.account().marks} Mentor Marks`)));
+        const tchips = h('div', { class: 'chips' }, h('button', { class: 'chip' + (!P.title ? ' gold' : ''), onclick: () => { G.setTitle(null); ui.sheetFn(); } }, 'None'));
+        for (const t of titles) tchips.append(h('button', { class: 'chip' + (P.title === t.id ? ' gold' : ''), onclick: () => { G.setTitle(t.id); ui.sheetFn(); } }, G.titleName(t, P.name)));
+        b.append(tchips);
+        const nextT = D.TITLES.filter((t) => !G.titleUnlocked(t)).slice(0, 3);
+        if (nextT.length) b.append(h('p', { class: 'ai-note' }, 'Still to earn: ' + nextT.map((t) => `${G.titleName(t, P.name)} (${t.how.toLowerCase()})`).join(' · ') + '.'));
+        const pv = G.pvpStats();
+        b.append(h('div', { class: 'sec-h' }, 'War Mode', h('small', null, G.S.flags.warMode ? '+10% experience and gold' : 'off')),
+          h('div', { class: 'ai-box' }, h('div', { class: 'ai-row' }, h('span', null, 'Honor'), h('b', { class: 'tnum' }, String(pv.honor))),
+            h('div', { class: 'ai-row' }, h('span', null, 'Enemy players defeated'), h('b', { class: 'tnum' }, `${pv.kills} · died ${pv.deaths} · escaped ${pv.escapes}`))),
+          h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { G.setWarMode(!G.S.flags.warMode); ui.sheetFn(); } }, 'War Mode: ' + (G.S.flags.warMode ? 'On' : 'Off'))),
+          h('p', { class: 'ai-note' }, P.level < 6 ? 'Enemy players start showing up from level 6.' : 'Enemy players show up now and then. Towns are rare and guarded; capitals and starting valleys are safe. Honor unlocks PvP titles (see Title).'));
+      } else {
+          b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { if (G.fight) return toast('You are in combat.'); G.logout(); showSelect(); } }, 'Switch character')));
+          if (window.UPD) b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: manualUpdateCheck }, `Check for updates · v${UPD.current()}`)));
+        b.append(h('div', { class: 'sec-h' }, 'Party invites'), h('div', { class: 'btn-row' },
+          h('button', { class: 'btn alt', onclick: () => { G.setInvites(!!G.S.flags.noInvites); ui.sheetFn(); } }, 'Invites from nearby players: ' + (G.S.flags.noInvites ? 'Off' : 'On'))));
+        if (window.SND) {
+          const pr = window.SND.prefs;
+          b.append(h('div', { class: 'sec-h' }, 'Sound'), h('div', { class: 'btn-row' },
+            h('button', { class: 'btn alt', onclick: () => { window.SND.setPref('music', !pr.music); ui.sheetFn(); } }, 'Music: ' + (pr.music ? 'On' : 'Off')),
+            h('button', { class: 'btn alt', onclick: () => { window.SND.setPref('sfx', !pr.sfx); ui.sheetFn(); } }, 'Effects: ' + (pr.sfx ? 'On' : 'Off'))));
+        }
+        aiSection(b);
+        b.append(h('div', { class: 'sec-h' }, 'Save'));
+        b.append(h('div', { class: 'btn-row' },
+          h('button', { class: 'btn alt', onclick: exportSave }, 'Copy save code'),
+          h('button', { class: 'btn alt', onclick: importSave }, 'Load save code')));
 
-      b.append(h('button', { class: 'btn alt wide', style: { color: '#ff6a5a' }, onclick: () => { const S = G.S; confirmDeleteChar({ id: S.id, name: S.player.name, level: S.player.level, cls: S.player.cls }, () => showSelect()); } }, 'Delete character'));
+        b.append(h('button', { class: 'btn alt wide', style: { color: '#ff6a5a' }, onclick: () => { const S = G.S; confirmDeleteChar({ id: S.id, name: S.player.name, level: S.player.level, cls: S.player.cls }, () => showSelect()); } }, 'Delete character'));
+      }
     });
   }
   // Optional on-device AI chat pack. Only the Android app has the bridge.
@@ -1954,7 +2031,9 @@
     openSheet('social', 'Social', `${D.REALM} · ${B.onlineCount(G.S, new Date())} players online`, (b) => {
       const tabs = h('div', { class: 'tabs' });
       for (const [k, label] of [['group', 'Group Finder'], ['chat', 'Chat'], ['news', 'Realm News'], ['guild', 'Guild']]) tabs.append(h('button', { class: ui.socialTab === k ? 'on' : '', onclick: () => { ui.socialTab = k; ui.sheetFn(); } }, label));
-      b.append(tabs);
+      // pinned, so you can switch tabs even when the chat is scrolled to the newest line
+      ui.socialHead = h('div', { class: 'sheet-stick' }, tabs);
+      b.append(ui.socialHead);
       if (ui.socialTab === 'group') groupTab(b);
       else if (ui.socialTab === 'chat') chatTab(b);
       else if (ui.socialTab === 'news') newsTab(b);
@@ -2010,9 +2089,12 @@
   }
   function chatTab(b) {
     const tabs = h('div', { class: 'tabs' });
-    const nReq = G.S.chat.filter((m) => m.act && m.act.state === 'open').length;
-    for (const [k, label] of [['requests', nReq ? `Requests (${nReq})` : 'Requests'], ['all', 'All'], ['general', 'General'], ['lfg', 'LFG'], ['party', 'Party'], ['guild', 'Guild'], ['whisper', 'Whispers'], ['loot', 'Loot']]) tabs.append(h('button', { class: ui.chatTab === k ? 'on' : '', onclick: () => { ui.chatTab = k; ui.sheetFn(); } }, label));
-    b.append(tabs);
+    const p = chatPrefs();
+    const nReq = G.S.chat.filter(isOpenReq).length;
+    tabs.append(h('button', { class: p.active === 'requests' ? 'on' : '', onclick: () => setChatTab('requests') }, nReq ? `Requests (${nReq})` : 'Requests'));
+    p.tabs.forEach((tab, i) => tabs.append(h('button', { class: p.active === i ? 'on' : '', onclick: () => setChatTab(i) }, tab.name)));
+    tabs.append(h('button', { class: 'tab-edit', onclick: () => editChatTabs(), 'aria-label': 'Edit chat tabs' }, 'Edit'));
+    (ui.socialHead && ui.socialHead.isConnected ? ui.socialHead : b).append(tabs);
     ui.chatLog = h('div', { class: 'chat-full', onclick: (e) => { const ln = e.target.closest('.ln.tap'); const m = ln && G.S.chat.find((x) => String(x.id) === ln.dataset.mid); if (m) msgDialog(m); } });
     b.append(ui.chatLog);
     refreshChatLog();
@@ -2026,8 +2108,8 @@
   }
   function refreshChatLog() {
     if (!ui.chatLog || !ui.chatLog.isConnected) return;
-    const f = ui.chatTab;
-    const msgs = G.S.chat.filter((m) => f === 'requests' ? m.act && m.act.state === 'open' : f === 'all' ? m.ch !== 'combat' : f === 'loot' ? m.ch === 'loot' || m.ch === 'combat' : m.ch === f).slice(-80);
+    const f = chatPrefs().active;
+    const msgs = G.S.chat.filter(chatFilter(f)).slice(-80);
     const atBottom = ui.sheetBody.scrollHeight - ui.sheetBody.scrollTop - ui.sheetBody.clientHeight < 60;
     ui.chatLog.innerHTML = msgs.map(chatLineHtml).join('') || `<div class="ln" style="color:var(--muted)">${f === 'requests' ? 'No open requests. They show up in LFG, whispers, General and guild chat.' : 'Nothing here yet.'}</div>`;
     if (atBottom) ui.sheetBody.scrollTop = ui.sheetBody.scrollHeight;
@@ -2052,6 +2134,8 @@
     return out;
   }
   function msgDialog(m) {
+    // a nudge or goodbye ("still up for it?") opens the request it belongs to
+    if (m.ref && !m.act) { const orig = G.S.chat.find((x) => x.id === m.ref); if (orig) m = orig; }
     const a = m.act;
     const ch = D.CHANNELS[m.ch] || D.CHANNELS.system;
     const who = m.me ? 'You' : m.from || ch.label || 'System';
