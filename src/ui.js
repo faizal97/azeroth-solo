@@ -521,7 +521,7 @@
     if (S.run) { runPanel(p); p.scrollTop = scroll; return; }
     if (G.fight) { fightPanel(p); return; }
     if (P.ghostUntil) { p.append(h('div', { class: 'sec-h' }, 'Spirit')); p.append(h('p', null, 'Your spirit is returning to your body. You will come back with half health.')); return; }
-    if (P.travel) { p.append(h('div', { class: 'sec-h' }, 'On the road'), h('p', null, `Heading to ${D.PLACES[P.travel.to].name}.`)); tracker(p); return; }
+    if (P.travel) { p.append(h('div', { class: 'sec-h' }, 'On the road'), h('p', null, `Heading to ${D.PLACES[P.travel.to].name}.`)); taskCards(p); tracker(p); return; }
     if (S.queue) {
       p.append(h('div', { class: 'row', style: { gridTemplateColumns: '34px 1fr auto' } },
         h('div', { class: 'ic' }, img(art('icon', 'hearthstone'))),
@@ -531,9 +531,12 @@
     const place = D.PLACES[P.place];
     const mobs = G.placeMobs();
     // party strip, then tabs; only one short list shows at a time
+    taskCards(p);
     if (S.wparty) p.append(partyStrip());
     const TABS = [['fight', 'Fight'], ['people', 'People'], ['quests', 'Quests'], ['travel', 'Travel']];
     if (!ui.tab || (ui.tab === 'fight' && !mobs.length && ui.tabAuto !== P.place)) { ui.tab = mobs.length ? 'fight' : 'people'; ui.tabAuto = P.place; }
+    // arriving where a request you accepted takes place: straight to the fight
+    if (ui.tabAuto !== P.place && mobs.length && window.SOC && SOC.activeTasks().some((m) => m.act.place === P.place)) { ui.tab = 'fight'; ui.tabAuto = P.place; }
     const dots = {
       people: place.npcs.some((n) => G.npcMarker(n) === '!' || G.npcMarker(n) === '?'),
       quests: Object.keys(P.quests).some((q) => G.questState(q) === 'complete'),
@@ -548,6 +551,26 @@
     else if (ui.tab === 'quests') questsTab(body);
     else travelTab(body, place);
     p.scrollTop = scroll;
+  }
+  // a request you accepted stays in view: who, what, where, and a way to get there
+  function taskCards(p) {
+    if (!window.SOC) return;
+    const P = G.S.player;
+    for (const m of SOC.activeTasks().slice(0, 2)) {
+      const a = m.act, b = G.S.bots.find((x) => x.id === a.bot), who = b ? b.name : m.from;
+      const here = P.place === a.place || (P.travel && P.travel.to === a.place);
+      const Pl = D.PLACES[a.place];
+      let title, what;
+      if (a.kind === 'help_kill') { title = `Helping ${who}`; what = `Kill ${D.MOBS[a.mob].name}: ${Math.min(a.got, a.n)}/${a.n}`; }
+      else { const Q = D.QUESTS[a.qid]; title = `Teaming up with ${who}`; what = Q ? `"${Q.name}"` : 'your quest'; }
+      const where = P.place === a.place ? 'here' : `at ${Pl.name}${Pl.zone && Pl.zone !== (D.PLACES[P.place] || {}).zone ? ', ' + Pl.zone : ''}`;
+      const mins = Math.max(1, Math.ceil((a.until - Date.now()) / 60000));
+      p.append(h('div', { class: 'task' },
+        h('button', { class: 'task-b', onclick: () => msgDialog(m) },
+          h('div', { class: 'ic mob' }, img(a.mob ? mobArt(a.mob) : art('icon', 'chest_box'))),
+          h('div', { class: 't' }, h('b', null, title), h('span', null, what), h('small', null, `${where} · ${mins} min left`))),
+        here ? null : h('button', { class: 'chip gold', onclick: () => routeDialog(a.place) }, 'Go')));
+    }
   }
   function partyStrip() {
     const S = G.S;
@@ -690,7 +713,7 @@
     return r * 10 + (questMobKeys().has(m.key) ? 0 : 1);
   }
   function questMobKeys() {
-    const P = G.S.player, out = new Set();
+    const P = G.S.player, out = new Set(window.SOC ? SOC.taskMobs() : []);
     for (const qid in P.quests) {
       if (G.questState(qid) === 'complete') continue;
       for (const o of D.QUESTS[qid].objs) {

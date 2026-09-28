@@ -127,6 +127,9 @@
     const e = f[bot.id] || (f[bot.id] = { n: 0, where: null, last: 0 });
     e.n++; e.where = where || e.where; e.last = now();
   }
+  // requests you said yes to and are still doing (help with kills, quest team-ups), newest first, for the task card
+  SOC.activeTasks = () => G.S.chat.filter((m) => m.act && m.act.state === 'open' && m.act.accepted && (m.act.kind === 'help_kill' || m.act.kind === 'quest_team')).reverse();
+  SOC.taskMobs = () => new Set(SOC.activeTasks().map((m) => m.act.mob).filter(Boolean));
   SOC.friends = () => { const f = state().friends || {}; return Object.keys(f).map((id) => ({ bot: G.S.bots.find((b) => String(b.id) === id), ...f[id] })).filter((x) => x.bot).sort((a, b) => b.n - a.n); };
   SOC.isFriend = (botId) => !!((state().friends || {})[botId]);
 
