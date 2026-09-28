@@ -248,6 +248,27 @@
         actors: [{ a: 'mob:avatar_of_shalzua', x: 40, y: 0, w: 38, from: { y: -20, o: 0 }, dur: 2 }],
         lines: [{ t: 0.5, text: "Shal'zua's avatar rises from the altar, wearing the loa's face. Something else looks out through its eyes." }, { t: 5, who: "Avatar of Shal'zua", text: 'I... was a god...' }] },
     ] },
+    { id: 'mc_intro', instance: 'molten_core', title: 'The Molten Core', music: 'dungeon', shots: [
+      { bg: 'scene:molten_core_gate', dur: 10, cam: [[0, 2, 1.18], [0, 0, 1.02]], fx: ['fadein', 'embers'],
+        lines: [{ t: 0.5, text: 'Below Blackrock Depths lies a sea of fire. For two hundred years the Dark Iron dug towards it, for the master their sorcerer-thane called.' }, { t: 6, text: 'Thaurissan is dead now. Nothing keeps Ragnaros asleep.' }] },
+      { bg: 'scene:mc_halls', dur: 10, cam: [[-4, 0, 1.12], [4, 0, 1.12]], fx: ['embers'],
+        actors: [{ a: 'mob:core_hound', x: 26, y: 2, w: 24 }, { a: 'mob:majordomo_executus', x: 62, y: 2, w: 24, anim: 'breathe', from: { x: 80, o: 0 }, dur: 1.8 }],
+        lines: [{ t: 0.5, text: 'His lieutenants guard the runes that feed the fire: hounds of living lava, lords of flame, and the Majordomo who keeps his house.' }, { t: 6, who: 'Majordomo Executus', text: 'The Firelord\'s house is not open to the living.' }] },
+      { bg: 'scene:mc_lake', dur: 11, cam: [[0, 0, 1.0], [0, -2, 1.22]], fx: ['shake@5', 'fadeout'],
+        actors: [{ a: 'mob:ragnaros', x: 40, y: 0, w: 50, anim: 'breathe', from: { y: 18, o: 0 }, dur: 2 }],
+        lines: [{ t: 0.5, text: 'At the heart of the mountain, the lava lake begins to rise.' }, { t: 5.5, who: 'Ragnaros', text: 'Two hundred years they dug for me. Now the little ones come to put out the fire? Burn.' }] },
+    ] },
+    { id: 'onyxia_intro', instance: 'onyxias_lair', title: "Onyxia's Lair", music: 'dungeon', shots: [
+      { bg: 'scene:the_wyrmbog', dur: 10, cam: [[-4, 0, 1.12], [4, 0, 1.12]], fx: ['fadein', 'embers'],
+        actors: [{ a: 'mob:brood_dragonspawn', x: 58, y: 2, w: 22 }],
+        lines: [{ t: 0.5, text: 'For years Onyxia ruled Stormwind from a courtier\'s chair. When the mask fell, she flew home.' }, { t: 5.5, text: 'Home is the Wyrmbog, deep in Dustwallow Marsh, where her brood has waited all along.' }] },
+      { bg: 'scene:lair_tunnel', dur: 10, cam: [[0, 0, 1.18], [0, 0, 1.02]],
+        actors: [{ a: 'mob:onyxian_warder', x: 30, y: 2, w: 24 }, { a: 'mob:onyxian_warder', x: 66, y: 2, w: 24, flip: true }],
+        lines: [{ t: 0.5, text: 'Her warders hold the tunnel. Beyond them, the whelps of a whole new brood are hatching in the heat.' }, { t: 5.5, text: 'Over the sea, her storm still hides the risen isle. It will not break while she lives.' }] },
+      { bg: 'scene:lair_cavern', dur: 11, cam: [[0, 0, 1.0], [0, -2, 1.22]], fx: ['shake@5', 'fadeout'],
+        actors: [{ a: 'mob:onyxia', x: 40, y: 0, w: 48, anim: 'breathe', from: { y: -10, o: 0 }, dur: 1.4 }],
+        lines: [{ t: 0.5, text: 'The daughter of Deathwing waits on her nest of scorched stone.' }, { t: 5.5, who: 'Onyxia', text: 'You chased me across the sea for this? Little kingdoms send little heroes.' }] },
+    ] },
     { id: 'tidecrown_intro', instance: 'tidecrown_citadel', title: 'The Tidecrown Citadel', music: 'dungeon', shots: [
       { bg: 'scene:tidecrown_gate', dur: 9, cam: [[0, 0, 1.15], [0, 2, 1.02]], fx: ['fadein'],
         lines: [{ t: 0.5, text: "At the end of the causeway stands the Tidecrown Citadel, Prince Aeldran's seat. The Alliance and the Horde arrive at its gate on the same morning." }, { t: 5.5, text: 'For once, neither side draws on the other.' }] },
@@ -326,7 +347,7 @@
         actors: [{ a: 'hero:player', x: 38, y: 2, w: 26, anim: 'breathe' }],
         lines: [{ t: 0.5, text: 'Blackrock Depths waits under the mountain, {name}. The marshal is in its cells; his notes are on the Emperor\'s throne.' }, { t: 5.5, text: 'Whatever banner you fly, breaking the Dark Iron breaks her plans too.' }] },
     ] },
-    { id: 'ch6', level: 60, title: 'Chapter 6: The Brood Mother', music: 'dungeon', then: 'x1', shots: [
+    { id: 'ch6', level: 60, title: 'Chapter 6: The Brood Mother', music: 'dungeon', shots: [
       { bg: 'scene:brd_prison', dur: 10, cam: [[-3, 0, 1.12], [3, 0, 1.12]], fx: ['fadein', 'embers'],
         actors: [{ a: 'story:windsor', x: 40, y: 2, w: 32, anim: 'breathe', from: { o: 0 }, dur: 1.6 }],
         lines: [{ t: 0.5, text: 'The cell doors of Blackrock Depths stand open. Marshal Reginald Windsor walks out into the light.' }, { t: 5.2, who: 'Marshal Windsor', text: 'Stormwind. Now. Before she hears I am free.' }] },
@@ -343,13 +364,16 @@
         actors: [{ a: 'story:onyxia', x: 40, y: 0, w: 46, anim: 'breathe', from: { y: -10, o: 0 }, dur: 1.2 }],
         lines: [{ t: 0.5, text: 'The mask falls. Lady Katrana Prestor was Onyxia, daughter of Deathwing, all along.' }, { t: 5.5, who: 'Onyxia', text: 'You were never more than a court of fools. Enjoy your little kingdom while it lasts.' }] },
       { bg: 'story:stormveil_storm', dur: 11, cam: [[-4, 0, 1.12], [4, 0, 1.12]],
-        lines: [{ t: 0.5, text: 'Onyxia fled south across the sea. The storm she raised tore the waters open behind her.' }, { t: 5.5, text: 'When it cleared, sailors saw land where no land had been for ten thousand years.' }] },
+        lines: [{ t: 0.5, text: 'Onyxia fled south across the sea. The storm she raised tore the waters open behind her.' }, { t: 5.5, text: 'Out past the storm, sailors saw land where no land had been for ten thousand years. The storm did not clear.' }] },
       { bg: 'scene:@here', dur: 10, cam: [[0, 0, 1.12], [0, 0, 1.0]], fx: ['fadeout'],
         actors: [{ a: 'hero:player', x: 38, y: 2, w: 26, anim: 'breathe' }],
-        lines: [{ t: 0.5, text: 'The Brood Mother is gone from Stormwind, {name}. The Alliance and the Horde can both see the new isle on the horizon.' }, { t: 5.5, text: 'Everyone wants to reach it first.' }] },
+        lines: [{ t: 0.5, text: 'The Brood Mother has gone to ground in her lair in Dustwallow Marsh, {name}. While she lives, her storm hides the new isle.' }, { t: 5.5, text: 'Theramore and Brackenwall are already gathering. Look for her trail in your quest log.' }] },
     ] },
-    { id: 'x1', level: 60, title: 'The Drowned Crown', music: 'dungeon', needs: 'tidewatch', shots: [
-      { bg: 'story:stormveil_storm', dur: 10, cam: [[0, 2, 1.18], [0, 0, 1.04]], fx: ['fadein'],
+    // plays once Onyxia is dead (after: any of these quests done); her death breaks the storm over the isle
+    { id: 'x1', level: 60, title: 'The Drowned Crown', music: 'dungeon', needs: 'tidewatch', after: ['dw_onyxia_a', 'dw_onyxia_h'], shots: [
+      { bg: 'story:stormveil_storm', dur: 9, cam: [[-4, 0, 1.12], [4, 0, 1.12]], fx: ['fadein'],
+        lines: [{ t: 0.5, text: 'When the Brood Mother fell in her lair, the storm over the sea finally broke.' }, { t: 5, text: 'For the first time, ships could reach the isle it had hidden.' }] },
+      { bg: 'story:stormveil_storm', dur: 10, cam: [[0, 2, 1.18], [0, 0, 1.04]],
         lines: [{ t: 0.5, text: "Ten thousand years ago, when the Well of Eternity exploded, the Highborne city of Sael'anor sank beneath the sea." }, { t: 5.5, text: 'Its people should have drowned. Most of them did.' }] },
       { bg: 'scene:citadel_throne', dur: 11, cam: [[-3, 0, 1.12], [3, 0, 1.12]],
         actors: [{ a: 'story:aeldran', x: 40, y: 2, w: 34, anim: 'breathe', from: { o: 0 }, dur: 2 }],

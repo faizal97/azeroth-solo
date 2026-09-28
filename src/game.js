@@ -93,6 +93,11 @@
     S.pending = []; S.chatTimers = {};
     if (S.run && S.run.phase === 'fight') S.run.phase = 'rest', S.run.restUntil = now() + 3000;
     try { G.refreshHeirlooms(); } catch (e) { /* older save */ }
+    // v9.8: the isle is closed until Onyxia dies; anyone who already reached it keeps access
+    if (!S.flags.stormBroken) {
+      const onIsle = Object.keys(S.player.visited || {}).concat(Object.keys(S.player.done), Object.keys(S.player.quests)).some((k) => (D.PLACES[k] && STORM_REGIONS.has(D.PLACES[k].region)) || /^(x_to_|tw_|sr_|ar_|tp_|tc_)/.test(k));
+      if (onIsle) S.flags.stormBroken = true;
+    }
     // v5: v3.0–v4.2 reused three ids from earlier zones (Redridge's quests 'poachers' and 'gnoll_paws', and its murloc
     // fins). They have their own ids now. A Redridge-level Alliance character's copies move to the new ids.
     { const Pp = S.player, alliance = (D.RACES[Pp.race] || {}).faction !== 'horde';
@@ -668,6 +673,13 @@
   // v4.1 contested zones: a town belongs to a faction (its own `faction`, or its region's when the region is not contested).
   // Enemy towns are closed: the guards would kill you on sight, so you can't travel into them.
   G.myFaction = () => (D.RACES[G.S.player.race] || {}).faction || 'alliance';
+  // ---- Onyxia's storm (v9.8): after Chapter 6 the storm she raised hangs over the risen Stormveil Isle. No ship can
+  // land and the expansion's first quests stay closed until she dies in Onyxia's Lair (quest dw_onyxia_a / _h).
+  // Saves that were already on the isle before v9.8 keep their way in (flags.stormBroken, set in G.load).
+  const STORM_REGIONS = new Set(['tidewatch', 'skullreef', 'stormveil']);
+  G.stormBroken = () => { const S = G.S; return !!(S && (S.flags.stormBroken || S.player.done.dw_onyxia_a || S.player.done.dw_onyxia_h)); };
+  G.stormBlocks = (id) => { const p = D.PLACES[id]; return !!(p && STORM_REGIONS.has(p.region) && !G.stormBroken() && !STORM_REGIONS.has((D.PLACES[G.S.player.place] || {}).region)); };
+  G.STORM_TEXT = "Onyxia's storm still rages around the isle. No ship can land while she lives.";
   G.placeFaction = function (id) {
     const p = D.PLACES[id]; if (!p) return null;
     if (p.faction) return p.faction;
@@ -703,7 +715,7 @@
   G.setMount = function (key) { const P = G.S.player; if (key && !(P.mounts || []).includes(key)) return; P.mount = key || null; emit('change'); G.save(); };
   // Routes (v9.4): the quickest way to any place you can reach, skipping enemy towns. { path: [from, ..., to], secs }
   G.route = function (from, to) {
-    if (from === to || !D.PLACES[to] || G.enemyTown(to)) return null;
+    if (from === to || !D.PLACES[to] || G.enemyTown(to) || G.stormBlocks(to)) return null;
     const dist = { [from]: 0 }, prev = {}, done = new Set();
     const open = [from];
     while (open.length) {
@@ -711,7 +723,7 @@
       const a = open.shift(); if (done.has(a)) continue; done.add(a);
       if (a === to) break;
       for (const b in D.PLACES[a].links) {
-        if (done.has(b) || (G.enemyTown(b) && b !== to)) continue;
+        if (done.has(b) || (G.enemyTown(b) && b !== to) || G.stormBlocks(b)) continue;
         const d = dist[a] + (G.travelSecs(a, b) || D.PLACES[a].links[b]);
         if (dist[b] == null || d < dist[b]) { dist[b] = d; prev[b] = a; open.push(b); }
       }
@@ -737,6 +749,7 @@
     const secs = G.travelSecs(P.place, dest);
     if (!secs) return;
     if (G.enemyTown(dest)) return toast(`${D.PLACES[dest].name} is an enemy town. The guards would kill you on sight.`);
+    if (G.stormBlocks(dest)) return toast(G.STORM_TEXT);
     P.travel = { to: dest, from: P.place, start: now(), end: now() + secs * 1000 };
     stopActions();
     emit('change');
@@ -853,6 +866,7 @@
     if (P.quests[qid]) return G.questComplete(qid) ? 'complete' : 'active';
     const Q = D.QUESTS[qid];
     if ((Q.pre || []).some((p) => !P.done[p])) return 'locked';
+    if (Q.storm && !G.stormBroken()) return 'locked';
     if (Q.faction && Q.faction !== G.myFaction()) return 'locked'; // the other faction's quest (v7: contested hubs)
     if (P.level < Q.lvl - 2) return 'low';
     return 'available';
@@ -1947,11 +1961,11 @@
   const DESERTER = 10 * 60000;
   const reach = {};
   G.reachableRegions = function (from) {
-    const key = from + ':' + G.myFaction();
+    const key = from + ':' + G.myFaction() + ':' + (G.stormBroken() ? 1 : 0);
     if (reach[key]) return reach[key];
     const seen = new Set([from]), q = [from], regions = new Set();
     // roads through enemy towns are closed
-    while (q.length) { const k = q.shift(); regions.add(D.PLACES[k].region); for (const to in (D.PLACES[k].links || {})) if (D.PLACES[to] && !seen.has(to) && !G.enemyTown(to)) { seen.add(to); q.push(to); } }
+    while (q.length) { const k = q.shift(); regions.add(D.PLACES[k].region); for (const to in (D.PLACES[k].links || {})) if (D.PLACES[to] && !seen.has(to) && !G.enemyTown(to) && !G.stormBlocks(to)) { seen.add(to); q.push(to); } }
     regions.places = seen;
     return (reach[key] = regions);
   };
@@ -1960,6 +1974,7 @@
   G.activityBlock = function (act) {
     const S = G.S, P = S.player, A = D.ACTIVITIES[act];
     const region = A.where && D.PLACES[A.where].region;
+    if (A.where && G.stormBlocks(A.where) && P.level >= 60) return 'Requires Onyxia\'s defeat: her storm hides the isle'; // listed, but no group or summon can take you there
     if (A.where && !G.canReach(P.place, A.where)) return 'hidden';
     if (A.needQuest && !P.quests[A.needQuest]) return 'hidden'; // a legend's story fight shows only while you're on it
     if (P.level < A.minLvl) return `Requires level ${A.minLvl}`;

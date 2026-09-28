@@ -235,6 +235,28 @@
       prince_aeldran: 'The last prince of Sael\'anor, who bargained with the deep to keep his court alive. Proud and grieving, he wants the surface back, and he still does not know what he sold.',
       nalveshra: 'A spirit of the deep sea, older than the Highborne. She kept Sael\'anor alive for her own ends, swallowed the loa Shal\'zua, and ruled the isle through its prince for ten thousand years.',
     } },
+    dg_molten_core: { title: 'The Molten Core', section: 'dungeon', dungeon: 'molten_core', text: [
+      'Two hundred years ago the sorcerer-thane Thaurissan called Ragnaros to win the Dark Iron a war. The Firelord came, and he never left. His sea of fire lies beneath Blackrock Mountain, deeper than any mine, and the Dark Iron have been digging towards it ever since.',
+      'Down here the rock runs like water. Hounds of living lava prowl the caverns, fire elementals walk the rune-lit halls, and the flamewakers, his own tall and horned servants, keep the runes that feed the fire.',
+      'For all those years the Emperor held the mountain in the Firelord\'s name, and the Firelord slept. When Thaurissan fell, the mountain began to shake.',
+      'Alliance and Horde go down for the same reason. If Ragnaros climbs out of his lake, the Burning Steppes will only be the first land to burn.',
+    ], bosses: {
+      magmadar: 'Magmadar is the greatest of the core hounds, a two-headed beast of lava that the Firelord keeps like a favourite dog. It hunts the caverns nearest the gate.',
+      garr: 'Garr is a lord of living rock, bound to the Core when Ragnaros first came. His firesworn are pieces of his own body, and they burn when they break.',
+      baron_geddon: 'Baron Geddon is a fire lord who carries the heat of the lake inside him. He turns the living into bombs and lets them burn out among their friends.',
+      golemagg: 'Golemagg the Incinerator is a molten giant who guards the deep halls with his core ragers. He is slow, vast and patient, and nothing he strikes stays standing.',
+      sulfuron_harbinger: 'Sulfuron is the Harbinger, the Firelord\'s herald among the flamewakers. Where he walks, his priests follow, and they keep one another burning.',
+      majordomo_executus: 'Majordomo Executus runs the Firelord\'s house the way a steward runs a keep. He answers only to Ragnaros, and he carries the rune that can call his master up.',
+      ragnaros: 'Ragnaros the Firelord, a lord of elemental fire older than any kingdom. Thaurissan called him to win a war. Two hundred years later, the mountain still burns for it.',
+    } },
+    dg_onyxias_lair: { title: "Onyxia's Lair", section: 'dungeon', dungeon: 'onyxias_lair', text: [
+      'Long before she ever wore a woman\'s face, Onyxia made her nest in the black rock at the heart of the Wyrmbog. From there she sent her brood across the marsh and her agents across the sea, and waited.',
+      'When Marshal Windsor unmasked her in Stormwind, she did not run far. She flew home to the cave, to the warders and whelps she had been raising for years, and called up a storm over the sea behind her. The storm hid the isle it had torn from the deep, and it held for as long as she did.',
+      'The lair is a tunnel of cracked, glowing stone and a great cavern around a lake of fire. Her eggs lie everywhere. So do the bones of those who came before.',
+      'Theramore and Brackenwall sent their best into the dark for the same reason. While she lived, the sea stayed closed, and the court of fools she had laughed at would never be safe.',
+    ], bosses: {
+      onyxia: 'Onyxia, daughter of Deathwing, the Brood Mother. For years she was Lady Katrana Prestor, writing Stormwind\'s orders. In her own lair she needs no mask, only fire, and whelps to fill the air.',
+    } },
     // ------------------------------------------------------------ zones
     zn_northshire_valley: { title: 'Northshire Valley', section: 'zone', zone: 'Northshire Valley', text: [
       'Northshire Abbey has trained priests and soldiers for Stormwind for longer than anyone in the valley can remember. It is a quiet place by design, walled in by hills and vines.',
@@ -407,6 +429,10 @@
       'The Stormveil Reach is the heart of the risen isle. The Drowned Causeway runs out across the shallows from both landings, and at its end stands the Tidecrown Citadel, the seat of Prince Aeldran.',
       'Tidebound soldiers hold the causeway, and drowned Wavebreakers march beside them. Whatever serves the prince serves the Deepmother too, whether he knows it or not. Nal\'veshra waits beneath the citadel.',
       'The Alliance and the Horde reach the causeway from opposite shores. For once, neither side has strength to spare for the other.',
+    ] },
+    zn_dustwallow_marsh: { title: 'Dustwallow Marsh', section: 'zone', zone: 'Dustwallow Marsh', text: [
+      'Dustwallow Marsh is a long stretch of fog and black water on the coast south of the Barrens. Theramore stands on its island at the edge of the sea, a stone fort of the Alliance with blue banners on its towers. The Horde keeps Brackenwall Village in the swamp to the north-west, behind a palisade of sharpened logs.',
+      'Deeper in, the marsh belongs to black dragons. Whelps hatch in the Quagmire, drakonids burn the Scorched Fen, and something far larger has made its nest in the Wyrmbog. Neither side comes this far alone.',
     ] },
   });
 })(typeof window !== 'undefined' ? window : globalThis);

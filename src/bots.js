@@ -350,7 +350,8 @@
     const L = S.player.level;
     const inns = Object.values(D.PLACES).filter((p) => (p.region || 'elwynn') === region && p.inn);
     const G0 = root.G;
-    const acts = Object.keys(D.ACTIVITIES).filter((k) => { const A = D.ACTIVITIES[k]; return !A.needQuest && A.minLvl <= L + 3 && A.maxLvl >= L - 3 && !(G0 && G0.activityBlock && G0.activityBlock(k) === 'hidden'); });
+    // dungeons near your level; raids only once you are their level (Onyxia's name is a level-60 reveal)
+    const acts = Object.keys(D.ACTIVITIES).filter((k) => { const A = D.ACTIVITIES[k]; return !A.needQuest && A.minLvl <= L + 3 && A.maxLvl >= L - 3 && !(A.size >= 10 && L < A.minLvl) && !(G0 && G0.activityBlock && G0.activityBlock(k) === 'hidden'); });
     const A = D.ACTIVITIES[acts.length ? pick(acts) : 'hogger'];
     const Dg = A.dungeon && D.DUNGEONS[A.dungeon]; const lastBoss = Dg && Dg.pulls.filter((p) => p.boss).pop();
     const bossKey = A.boss || (lastBoss && lastBoss.mobs[0]);

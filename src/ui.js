@@ -834,6 +834,8 @@
     R.pulls.forEach((pl, i) => dots.append(h('i', { class: (pl.boss ? 'boss ' : '') + (i < R.idx ? 'done' : i === R.idx ? 'now' : '') })));
     const status = R.phase === 'fight' ? 'Fighting: ' + R.pulls[R.idx].label : R.phase === 'rest' && S.group.members.some((m) => m.gone) ? 'Looking for replacements...' : R.phase === 'rest' ? (G.role() === 'tank' ? 'You are the tank. Pull when ready.' : 'Resting. The tank will pull soon.') : R.phase === 'wipe' ? 'Running back...' : 'Dungeon complete.';
     p.append(h('div', { class: 'sec-h' }, R.name, h('small', null, `${Math.min(R.idx + (R.phase === 'done' ? 0 : 1), R.pulls.length)}/${R.pulls.length}${R.wipes ? ' · wipes ' + R.wipes : ''}`)), dots, h('div', { style: { color: 'var(--muted)', fontSize: '13px' } }, status));
+    // Pull / Ready / Leave sit right under the progress line and stay pinned there, so a 10-player raid's frames never push them off screen
+    const actions = h('div', { class: 'run-actions' }); p.append(actions);
     // party frames
     const pf = h('div', { class: 'pf' });
     const units = C ? C.allies : null;
@@ -865,8 +867,9 @@
       if (R.phase === 'rest') row.append(h('button', { class: 'btn', onclick: () => G.runReady() }, G.role() === 'tank' ? 'Pull' : 'Ready'));
       if (R.phase === 'done' && S.player.quests.defias_brotherhood === undefined && !S.player.done.defias_brotherhood && R.act === 'deadmines') row.append(h('div', { style: { fontSize: '13px', color: 'var(--muted)' } }, 'Tip: Marshal Dughan in Goldshire has a quest for VanCleef.'));
       row.append(h('button', { class: 'btn alt', onclick: () => G.leaveGroup() }, R.phase === 'done' ? 'Leave group' : 'Leave'));
-      p.append(row);
+      actions.append(row);
     }
+    if (!actions.childNodes.length) actions.remove();
   }
 
   // ============================================================ action bar
@@ -884,14 +887,25 @@
   function renderBar() {
     const bar = els.bar; bar.innerHTML = '';
     els.abs = {};
-    const slots = barSlots();
+    let slots = barSlots();
     // keep the usual button size: 7 per row (8 if it all fits on one), extra abilities wrap to a second row
     const cols = slots.length === 8 ? 8 : 7;
-    const n = Math.max(cols, Math.ceil(slots.length / cols) * cols);
+    // more than one row: a toggle folds the bar to its first row (+N) to give the panel room; saved on this device
+    const multi = slots.length > cols;
+    let collapsed = false; try { collapsed = multi && localStorage.getItem('azsolo.barCollapsed') === '1'; } catch (e) { }
+    const toggle = (hidden) => h('button', { class: 'ab ab-toggle', 'aria-label': collapsed ? `Show ${hidden} more abilities` : 'Fold the action bar', onclick: () => {
+      try { localStorage.setItem('azsolo.barCollapsed', collapsed ? '0' : '1'); } catch (e) { }
+      renderBar();
+    } }, collapsed ? h('span', null, '+' + hidden) : h('span', null, '▴'));
+    let tail = null;
+    if (multi && collapsed) { tail = toggle(slots.length - (cols - 1)); slots = slots.slice(0, cols - 1); }
+    else if (multi) { tail = toggle(0); }
+    const count = slots.length + (tail ? 1 : 0);
+    const n = Math.max(cols, Math.ceil(count / cols) * cols);
     bar.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     for (let i = 0; i < n; i++) {
       const id = slots[i];
-      if (!id) { bar.append(h('div', { class: 'ab empty' })); continue; }
+      if (!id) { if (tail && i === slots.length) { bar.append(tail); continue; } bar.append(h('div', { class: 'ab empty' })); continue; }
       const ab = D.ABILITIES[id];
       const btn = h('button', { class: 'ab', 'aria-label': ab.name }, img(abIcon(id)), h('div', { class: 'cd' }), h('div', { class: 'cdt tnum' }));
       if (id === 'eat' || id === 'drink' || id === 'potion') {
@@ -1108,19 +1122,25 @@
   }
 
   // ============================================================ sheets / dialogs
-  function openSheet(name, title, sub, fill) {
+  // A sheet opened from another sheet (Lore Journal or Talents from Hero, say) gets a Back button that reopens the one
+  // before it, where it was. ui.sheetStack holds the way back; closing with × clears it.
+  function openSheet(name, title, sub, fill, fromBack) {
+    const prev = ui.sheet && ui.sheetDef && ui.sheet !== name ? Object.assign({}, ui.sheetDef, { scroll: ui.sheetBody ? ui.sheetBody.scrollTop : 0 }) : null;
+    const stack = fromBack ? ui.sheetStack || [] : prev ? (ui.sheetStack || []).concat([prev]) : ui.sheet === name ? ui.sheetStack || [] : [];
     closeSheet();
+    ui.sheetStack = stack;
     if (window.SND) window.SND.play('click', { vol: 0.6 });
     const body = h('div', { class: 'sheet-b' });
     const titleEl = h('h2', null, title, sub ? h('small', null, sub) : null);
-    const sheet = h('div', { class: 'sheet sheet-' + name, onclick: (e) => e.stopPropagation() }, h('div', { class: 'sheet-h' }, titleEl, h('button', { class: 'x', onclick: closeSheet, 'aria-label': 'Close' }, '×')), body);
+    const backBtn = stack.length ? h('button', { class: 'sheet-backbtn', 'aria-label': 'Back', onclick: () => { const d = ui.sheetStack.pop(); openSheet(d.name, d.title, d.sub, d.fill, true); ui.sheetBody.scrollTop = d.scroll || 0; } }, '‹ Back') : null;
+    const sheet = h('div', { class: 'sheet sheet-' + name, onclick: (e) => e.stopPropagation() }, h('div', { class: 'sheet-h' }, backBtn, titleEl, h('button', { class: 'x', onclick: closeSheet, 'aria-label': 'Close' }, '×')), body);
     const back = h('div', { class: 'sheet-back', onclick: closeSheet }, sheet);
     app.append(back);
-    ui.sheet = name; ui.sheetEl = back; ui.sheetBody = body; ui.sheetTitle = titleEl;
+    ui.sheet = name; ui.sheetEl = back; ui.sheetBody = body; ui.sheetTitle = titleEl; ui.sheetDef = { name, title, sub, fill };
     ui.sheetFn = () => { const s = body.scrollTop; body.innerHTML = ''; fill(body, titleEl); body.scrollTop = s; };
     ui.sheetFn();
   }
-  function closeSheet() { if (ui.sheetEl) ui.sheetEl.remove(); ui.sheet = null; ui.sheetFn = null; ui.sheetEl = null; }
+  function closeSheet() { if (ui.sheetEl) ui.sheetEl.remove(); ui.sheet = null; ui.sheetFn = null; ui.sheetEl = null; ui.sheetDef = null; ui.sheetStack = []; }
   function showDialog(content, dismissable) {
     closeDialog();
     const d = h('div', { class: 'dialog', onclick: () => { if (dismissable) closeDialog(); } }, h('div', { class: 'card', onclick: (e) => e.stopPropagation() }, content));
@@ -2386,6 +2406,7 @@
       }
     });
   }
+  const chapterReady = (c) => !c.after || c.after.some((q) => G.S && G.S.player.done[q]);
   function openTheater() {
     openSheet('theater', 'Theater', 'Replay the story chapters you have reached', (b) => {
       const un = window.CS ? CS.unlocked() : new Set();
@@ -2524,7 +2545,7 @@
     if (!rep) return toast('That character could not be loaded.');
     start(); if (rep.away > 120000) showAway(rep);
     // a chapter added in an update after you passed its level plays the next time you come in
-    if (window.CS) { const seen = CS.unlocked(); const ch = CS.CHAPTERS.find((c) => c.shots && c.level > 1 && c.level <= G.S.player.level && !seen.has(c.id)); if (ch) ui.pendingChapter = ch.id; }
+    if (window.CS) { const seen = CS.unlocked(); const ch = CS.CHAPTERS.find((c) => c.shots && c.level > 1 && c.level <= G.S.player.level && !seen.has(c.id) && chapterReady(c)); if (ch) ui.pendingChapter = ch.id; }
   }
   function confirmDeleteChar(c, after) {
     const input = h('input', { type: 'text', placeholder: 'Type DELETE', style: { minHeight: '44px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', borderRadius: '3px', padding: '0 10px', width: '100%', fontSize: '16px' } });
@@ -2587,7 +2608,9 @@
     G.on('fightEnd', (d) => { renderAll(); if (d.result === 'lose' && !G.S.run) banner('You died'); });
     G.on('runUpdate', renderAll);
     G.on('runTick', () => {});
-    G.on('levelup', (d) => { const ch = window.CS && CS.CHAPTERS.find((c) => c.level === d.level && c.shots && c.id !== 'intro'); if (ch) ui.pendingChapter = ch.id; renderAll(); banner('Level ' + d.level, d.learned.length ? 'New: ' + d.learned.map((a) => D.ABILITIES[a].name).join(', ') : 'Health and mana restored'); });
+    // a chapter that waits on a quest (x1 waits for Onyxia) plays as soon as that quest is turned in
+    G.on('questDone', (d) => { const ch = d && d.qid && window.CS && CS.CHAPTERS.find((c) => c.after && c.after.includes(d.qid) && c.shots && G.S.player.level >= c.level && !CS.unlocked().has(c.id)); if (ch) ui.pendingChapter = ch.id; });
+    G.on('levelup', (d) => { const ch = window.CS && CS.CHAPTERS.find((c) => c.level === d.level && c.shots && c.id !== 'intro' && chapterReady(c)); if (ch) ui.pendingChapter = ch.id; renderAll(); banner('Level ' + d.level, d.learned.length ? 'New: ' + d.learned.map((a) => D.ABILITIES[a].name).join(', ') : 'Health and mana restored'); });
     G.on('combat', onCombat);
     G.on('instanceEnter', (d) => {
       const ch = d.dungeon && window.CS && CS.forInstance(d.dungeon);

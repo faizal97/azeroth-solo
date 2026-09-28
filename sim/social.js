@@ -2,7 +2,8 @@
 globalThis.localStorage = { getItem() { return null; }, setItem() {}, removeItem() {} };
 require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js'); require('../src/social.js');
 const { G, D, B, SOC } = globalThis;
-let t = Date.now(); Date.now = () => t;
+// start in the evening, when most simulated players are online, so the result doesn't depend on when the sim is run
+let t = new Date().setHours(18, 0, 0, 0); Date.now = () => t;
 let bad = 0; const fail = (m) => { console.log('FAIL ' + m); bad++; };
 G.newGame({ name: 'T', cls: 'priest', race: 'human' }); const S = G.S, P = S.player;
 P.level = 22; S.flags.warModeAsked = true; S.flags.warMode = false; P.place = 'darkshire'; P.money = 50000;
@@ -25,6 +26,7 @@ if (force('help_kill')) {
 }
 if (force('lfg')) { const x = run('lfg'); if (!S.run) fail('lfg did not start a run'); else { console.log('lfg ok:', x.m.text, '→ run', S.run.act); let g = 0; while (S.run && S.run.phase !== 'done' && g++ < 200000) { if (G.fight && G.pUnit && G.pUnit.kind === 'player') { G.pUnit.kind = 'bot'; G.pUnit.bot = { skill: 0.7, react: 0.5 }; G.pUnit.role = G.role(); } for (const r of (S.run.rolls || [])) if (!r.done && r.player && r.choice == null) { try { G.roll(S.run.rolls.indexOf(r), 'greed'); } catch (e) {} } if (S.run.phase === 'rest' && S.run.restUntil <= t) { try { G.runPull(); } catch (e) {} } G.update(0.1); t += 100; } console.log('  run finished:', S.run && S.run.phase); S.run = null; S.group = null; } }
 // guilds: apply to one you qualify for
+{ const d = new Date(t); if (d.getHours() < 18) d.setHours(18, 0, 0, 0); else { d.setDate(d.getDate() + 1); d.setHours(18, 0, 0, 0); } t = d.getTime(); } // the guild tests run in a guild's busy evening
 const gs = SOC.myGuilds(); console.log('guilds:', gs.map((g) => `${g.name} (${g.style} ${g.min}+, ${g.members})`).join(' · '));
 const ok = gs.find((g) => P.level >= g.min); SOC.apply(ok.g); for (let i = 0; i < 90; i++) { t += 1000; G.update(1); }
 if (P.guild !== ok.g) fail('application not accepted'); else console.log('applied and joined', ok.name);

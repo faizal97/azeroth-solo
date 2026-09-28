@@ -38,7 +38,7 @@ Years are counted back from the start of the game.
 | 4 years ago | The game's "fragile peace" begins. |
 | 2 years ago | The cabal learns Lyveus is alive. Silverleaf Lodge burns with his kin; the world is told the Syndicate did it. It was Lord Cassius Marrow. |
 | Recently | Varian vanishes on the way to Theramore. Lady Prestor rises at court. |
-| During the game | Westfall falls to the Defias (10–20); Marshal Windsor rides east and disappears into Blackrock Mountain (30); he is found alive in the Dark Iron cells (40–50); he is freed, returns with Lyveus and unmasks Prestor (60); Onyxia flees and the Stormveil Isle rises (60). |
+| During the game | Westfall falls to the Defias (10–20); Marshal Windsor rides east and disappears into Blackrock Mountain (30); he is found alive in the Dark Iron cells (40–50); he is freed, returns with Lyveus and unmasks Prestor (60); Onyxia flees to her lair in Dustwallow Marsh and her storm raises, and hides, the Stormveil Isle (60); with Emperor Thaurissan dead, Ragnaros stirs in the Molten Core (60); Onyxia dies in her lair, the storm breaks, and the isle can be reached (60). |
 
 ## The main story, by chapter
 
@@ -50,8 +50,9 @@ What the player knows at each point. Nothing later may be stated earlier (see Re
 - **Chapter 3 (30), "The Marshal's Road".** Black whelps in Redridge; Windsor rides east, learns who sold the Dragonmaw their chains, follows the trail to Blackrock Mountain and does not come out. The court says he deserted.
 - **Chapter 4 (40), "Blackrock Rising".** The Dark Iron dig for Ragnaros; Victor Nefarius commands the Blackrock orcs from the spire. Prestor (unnamed as a dragon) calls him "my brother". Windsor is alive, in chains.
 - **Chapter 5 (50), "The Masquerade".** Prestor admits, to herself, that she writes the court's orders. Windsor keeps notes in his cell; the Emperor holds them.
-- **Chapter 6 (60), "The Brood Mother".** Windsor walks free and brings Lyveus to court. Prestor is unmasked as Onyxia, daughter of Deathwing, and flees south across the sea. Her storm tears the waters open; land appears where none has been for ten thousand years.
-- **Expansion (60), "The Drowned Crown".** The Stormveil Isle rises: Sael'anor and its prince, the drowned Wavebreakers, and beneath them Nal'veshra. Alliance land at the Tidewatch Coast (from Menethil Harbor with Admiral Vane); the Horde at the Skullreef Isles (from Grom'gol on the Bloodtide ship). Both reach the Tidecrown Citadel on the same morning and, for once, do not fight each other.
+- **Chapter 6 (60), "The Brood Mother".** Windsor walks free and brings Lyveus to court. Prestor is unmasked as Onyxia, daughter of Deathwing, and flees south across the sea to her lair in Dustwallow Marsh. Her storm tears the waters open; land appears where none has been for ten thousand years, but the storm does not clear, and no ship can land while she lives.
+- **The endgame raids (60).** *Onyxia's Lair*: Alliance from Theramore, Horde from Brackenwall Village hunt the Brood Mother in the Wyrmbog. Her death breaks the storm and opens the expansion. *Molten Core*: with Emperor Thaurissan dead in Blackrock Depths, nothing holds Ragnaros asleep; players go down beneath the mountain and put the Firelord back in the fire. Molten Core is not a gate; it is the recommended gear step before the isle. The expansion's own raid, the Tidecrown Citadel, stays the strongest.
+- **Expansion (60), "The Drowned Crown".** Opens when Onyxia dies and her storm breaks. The Stormveil Isle: Sael'anor and its prince, the drowned Wavebreakers, and beneath them Nal'veshra. Alliance land at the Tidewatch Coast (from Menethil Harbor with Admiral Vane); the Horde at the Skullreef Isles (from Grom'gol on the Bloodtide ship). Both reach the Tidecrown Citadel on the same morning and, for once, do not fight each other.
 
 ### Dungeon intros (first entry)
 
@@ -64,7 +65,7 @@ Each one sets up the dungeon only. They may mention the main story's villains on
 - **Lady Katrana Prestor / Onyxia.** Court adviser, patient and contemptuous. Speaks of "little kingdoms" and "a court of fools". Never named as a dragon before 60.
 - **Highlord Bolvar Fordragon.** Regent. Honest, overworked, too trusting of Prestor. Believes Windsor in the end.
 - **Anduin Wrynn.** The boy king-in-waiting. Seen, rarely heard.
-- **Varian Wrynn.** Missing. Nobody in the game knows where he is. Do not resolve this.
+- **Varian Wrynn.** Missing. Nobody in the game knows where he is. Do not resolve this. Theramore is where he was sailing; nobody there speaks of him.
 - **Marshal Reginald Windsor.** Stubborn, brave, a note-taker. Wrongly called a deserter.
 - **Edwin VanCleef.** Leader of the Defias. Bitter, not mad: he believes Stormwind owes him.
 - **Victor Nefarius / Nefarian.** Lord of Blackrock Spire, Onyxia's brother. His identity as Nefarian is not stated outright before 60.
@@ -157,3 +158,9 @@ Proper names used in the story that are not already the name of an NPC, creature
 - **Scarlet Bastion** — the Crusade's stronghold in Stratholme
 - **King's Square** — the old market square of Stratholme
 - **Lion's Pride** — the inn at Goldshire
+- **Dustwallow Marsh / Dustwallow** — the marsh south of the Barrens; Theramore on its coast, Onyxia's lair in the Wyrmbog
+- **Brackenwall Village / Brackenwall** — the Horde camp in Dustwallow Marsh
+- **Scorchmaw** — a rare drake of Onyxia's brood in the Scorched Fen
+- **Brant Ashby** — Commander of Theramore's watch
+- **Durnak** — Warlord of Brackenwall Village
+- **Emberfall** — Ragnaros's lesser flame-forged hammer, a Molten Core drop

@@ -48,14 +48,14 @@
       'The cell doors of Blackrock Depths stand open. Marshal Windsor walked out into the light with his notes and rode straight for Stormwind, before anyone could warn the court.',
       'He did not come alone. Beside him stood a high elf knight the court had buried five years before: Lyveus Cloveus, who had heard the nobles plot in those same halls.',
       'Before the Highlord, Windsor read out what he had written. Then he turned to the lady beside the young king and asked her to say her true name. The mask fell. Katrana Prestor was Onyxia, daughter of Deathwing, and had been all along.',
-      'She did not stay to fight. She laughed at the court of fools she had ruled, and fled south across the sea. The storm she raised tore the waters open behind her, and when it cleared, sailors saw land where there had been none for ten thousand years.',
-      'The dragon is gone from Stormwind. Her work is not undone.',
+      'She did not stay to fight. She laughed at the court of fools she had ruled, and fled south across the sea to her lair in Dustwallow Marsh. The storm she raised tore the waters open behind her. Out past it, sailors saw land where there had been none for ten thousand years, but the storm did not clear, and no ship could reach that land.',
+      'The dragon is gone from Stormwind. Her work is not undone, and her storm will not break while she lives.',
     ] },
     x1: { title: 'The Drowned Crown', section: 'story', chapter: 'x1', lvl: 60, text: [
       'Ten thousand years ago, when the Well of Eternity exploded, the Highborne city of Sael\'anor sank beneath the sea. Its people should have drowned, and most of them did.',
       'Their prince, Aeldran, would not let his court die. In the dark he made a bargain with Nal\'veshra, the Deepmother, a spirit older than the Highborne: his people would live on beneath the waves. She kept her word, after a fashion. She does not give anything back.',
       'The Wavebreaker trolls sank with the isle, and their sea loa, Shal\'zua, sank with them. Now the tribe walks again, praying to a goddess who no longer answers like herself.',
-      'Onyxia\'s storm has raised the Stormveil Isle. Kul Tiran ships carry the Alliance from Menethil Harbor to the Tidewatch Coast; Darkspear and Forsaken crews sail from Grom\'gol to the Skullreef Isles. Everyone wants to reach the citadel at its heart first.',
+      'Onyxia\'s storm raised the Stormveil Isle, and hid it for as long as she lived. When she fell in her lair, the storm broke. Kul Tiran ships carry the Alliance from Menethil Harbor to the Tidewatch Coast; Darkspear and Forsaken crews sail from Grom\'gol to the Skullreef Isles. Everyone wants to reach the citadel at its heart first.',
     ] },
     lyveus_1: { title: 'The Exiled Knight', section: 'legend', legend: 'lyveus', open: true, lvl: 1, text: [
       'The high elves of the Arathi pines have their own name for Deathwing: Astaroth, the Black Ruin. He tore the world in the Second War, twenty-one years ago. He was driven off. He was never destroyed.',

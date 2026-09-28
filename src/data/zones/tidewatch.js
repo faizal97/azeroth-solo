@@ -46,7 +46,7 @@
   });
 
   const A = (id, q) => { q.faction = 'alliance'; D.QUESTS[id] = q; };
-  A('x_to_tidewatch', { name: 'The Drowned Crown', lvl: 60, giver: 'stoutfist', turnin: 'admiral_vane', text: 'An island rose from the sea in the storm the dragon left behind. Admiral Vane sails for it from this harbour. He needs every sword he can get.',
+  A('x_to_tidewatch', { name: 'The Drowned Crown', lvl: 60, storm: true, giver: 'stoutfist', turnin: 'admiral_vane', text: 'An island rose from the sea in the storm the dragon left behind. With the dragon dead, the storm has broken, and Admiral Vane sails for it from this harbour. He needs every sword he can get.',
     objs: [{ type: 'visit', place: 'brightwater_landing' }], reward: { money: 4000 } });
   A('tw_snappers', { name: 'Snappers on the Shore', lvl: 60, giver: 'sergeant_tamsin', turnin: 'sergeant_tamsin', text: 'Reefclaw snappers keep cutting my sentries. Kill 12.',
     objs: [{ type: 'kill', mob: 'reefclaw_snapper', n: 12 }], reward: { choice: ['fam_feet60'] } });

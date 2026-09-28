@@ -6,11 +6,12 @@ Azeroth Solo is a single-player "fake MMO" set in the world of classic World of 
 
 This document says where the game stands, how it is designed, and what comes next.
 
-## Where it stands (v9.6)
+## Where it stands (v9.8)
 
 - **Levels 1–60, both factions, all eight classic races and nine classes.** About 25 zones, from the starting valleys to Winterspring and the Western Plaguelands.
 - **Every classic dungeon along the way,** from Ragefire Chasm and the Deadmines to Blackrock Depths, Scholomance and Stratholme, each with a lore intro.
 - **The main story,** the Black Dragonflight conspiracy, told in six chapters at levels 10–60.
+- **The classic endgame raids at 60:** Molten Core, beneath Blackrock Mountain, and Onyxia's Lair in the new Dustwallow Marsh. Onyxia's death opens the expansion.
 - **An original expansion at 60, "The Drowned Crown":** two new zones, two dungeons and a 10-player raid.
 - **Legends:** hand-made characters with their own questline, who then fight at your side.
 - **A server that feels alive:** working chat, guilds, requests, trades, duels and rare sightings.
@@ -43,6 +44,8 @@ This document says where the game stands, how it is designed, and what comes nex
 | 9.3 | In-app updates |
 | 9.4 | World map with routes, NPCs in town scenes, easier selling |
 | 9.5–9.6 | Working chat and guilds; custom chat tabs, a tabbed Hero sheet |
+| 9.7 | The Lore Journal (story, dungeons, zones, books, quest stories), a browser version, save files, Discord |
+| 9.8 | Molten Core and Onyxia's Lair; Dustwallow Marsh |
 
 ## How the world works
 
@@ -80,6 +83,12 @@ This document says where the game stands, how it is designed, and what comes nex
 - **Every dungeon and raid has a lore intro** that plays the first time you enter.
 - **The Theater** replays everything you've unlocked, in sections for the story, Legends, and dungeons and raids.
 
+### The endgame raids (level 60)
+
+- **Onyxia's Lair.** After Chapter 6 the Brood Mother flies to her lair in the Wyrmbog, in Dustwallow Marsh. The Alliance gathers at Theramore (a ship from Menethil Harbor) and the Horde at Brackenwall Village (the road south from the Crossroads). Her storm hides the new isle; it breaks when she dies, and that opens the expansion.
+- **Molten Core.** With Emperor Thaurissan dead in Blackrock Depths, Ragnaros stirs beneath the mountain. Seven bosses, from Magmadar to the Firelord. Not a gate, but the recommended gear step before the isle.
+- Both are 10-player raids, open to both factions, just below the Tidecrown Citadel in power.
+
 ### The expansion: "The Drowned Crown" (level 60)
 
 - When Onyxia is unmasked and flees, the storm she raises tears the sea open. The **Stormveil Isle** rises: Sael'anor, a Highborne city that sank ten thousand years ago. Its prince, Aeldran Tidecrown, bargained with a sea spirit, Nal'veshra the Deepmother, to keep his court alive beneath the waves. The drowned Wavebreaker trolls rose with it, and their sea loa has been swallowed by the Deepmother.
@@ -114,7 +123,7 @@ This document says where the game stands, how it is designed, and what comes nex
 
 At the level cap, power stops climbing; what you collect and what you can do keeps growing.
 
-- **A power ceiling.** The endgame raids are the last real step up in power. Everything after that adds options and looks, not bigger numbers.
+- **A power ceiling.** The raids are the last real step up in power: Molten Core and Onyxia's Lair, then the Tidecrown Citadel at the top. Everything after that adds options and looks, not bigger numbers.
 - **Synced power everywhere.** Each dungeon and raid scales you to its level plus a small overgear bonus, so older content stays a real fight.
 - **Challenge is the loop.** Every dungeon returns as a level-60 keystone dungeon, with weekly rotating affixes and tiers that make enemies harder, not you stronger.
 - **Collections are the reward:** looks, titles, mounts, rare-boss trophies and a codex of every boss beaten, in a wardrobe shared by all your characters.
@@ -126,16 +135,15 @@ At the level cap, power stops climbing; what you collect and what you can do kee
 
 Roughly in priority order:
 
-1. **Endgame raids: Molten Core and Onyxia's Lair.** The payoff for the main story, since Onyxia is still out there after Chapter 6. The last step up in power.
-2. **Keystone dungeons and the account-wide wardrobe.** The core of the after-60 loop.
-3. **World bosses and level-60 rares,** with trophies.
-4. **Battlegrounds,** with Honor ranks for looks and titles.
-5. **Booty Bay and the Gurubashi Arena event** in southern Stranglethorn.
-6. **Expert professions** (skill 225) with new materials.
-7. **Drops with unique effects** (procs and set bonuses).
-8. **Server events:** a Darkmoon Faire week, guild server-first races, and town defences in War Mode.
-9. **More Legends.**
-10. **Friends in your world** (parked). Your real friends' characters would appear on your server as simulated players, via a small online service and friend codes.
+1. **Keystone dungeons and the account-wide wardrobe.** The core of the after-60 loop.
+2. **World bosses and level-60 rares,** with trophies.
+3. **Battlegrounds,** with Honor ranks for looks and titles.
+4. **Booty Bay and the Gurubashi Arena event** in southern Stranglethorn.
+5. **Expert professions** (skill 225) with new materials.
+6. **Drops with unique effects** (procs and set bonuses).
+7. **Server events:** a Darkmoon Faire week, guild server-first races, and town defences in War Mode.
+8. **More Legends.**
+9. **Friends in your world** (parked). Your real friends' characters would appear on your server as simulated players, via a small online service and friend codes.
 
 ## Open questions
 
