@@ -7,7 +7,7 @@
   const REPO = 'faizal97/azeroth-solo';
   const API = `https://api.github.com/repos/${REPO}/releases/latest`;
   const KEY = 'azsolo.update';
-  const EVERY = 6 * 3600 * 1000; // automatic checks at most every 6 hours
+  const EVERY = 30 * 60 * 1000; // automatic checks reuse the last answer for 30 min (GitHub allows 60 an hour)
   UPD.current = () => String(root.AZ_VERSION || '0.0.0');
   UPD.inApp = () => !!(root.AzUpd && root.AzUpd.postMessage);
 

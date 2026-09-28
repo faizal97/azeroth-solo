@@ -1125,7 +1125,7 @@
     const d = h('div', { class: 'dialog', onclick: () => { if (dismissable) closeDialog(); } }, h('div', { class: 'card', onclick: (e) => e.stopPropagation() }, content));
     app.append(d); ui.dialog = d;
   }
-  function closeDialog() { if (ui.dialog) ui.dialog.remove(); ui.dialog = null; }
+  function closeDialog() { if (ui.dialog) ui.dialog.remove(); ui.dialog = null; if (ui.updPending) { const r = ui.updPending; setTimeout(() => { if (!ui.dialog && ui.updPending === r) offerUpdate(r); }, 600); } }
 
   // ---------- item tooltip
   const statName = { str: 'Strength', agi: 'Agility', sta: 'Stamina', int: 'Intellect', spi: 'Spirit' };
@@ -2275,10 +2275,18 @@
     druid: 'Healer, tank or damage. Nature spells and heals; at level 10, Bear Form makes you a tank.',
   };
   // ============================================================ in-app updater (v9.3, src/update.js)
-  // Checks GitHub at most every 6 hours when the character list opens; Hero has a manual check.
+  // Checks when the character list opens and whenever you come back to the app (at most every 10 min here, and
+  // update.js reuses GitHub's answer for 30 min). If a dialog or a fight is in the way, the offer waits for it.
   function autoUpdateCheck() {
-    if (!window.UPD || ui.updChecked) return; ui.updChecked = true;
-    UPD.check(false).then((rel) => { if (rel && rel.newer && !rel.skipped && !ui.dialog) updateDialog(rel); }).catch(() => {});
+    if (!window.UPD) return;
+    const t = Date.now(); if (ui.updAt && t - ui.updAt < 10 * 60000) return; ui.updAt = t;
+    UPD.check(false).then((rel) => { if (rel && rel.newer && !rel.skipped) offerUpdate(rel); }).catch(() => {});
+  }
+  // an offer held back by a fight or a dialog shows once the way is clear
+  setInterval(() => { if (ui.updPending && !ui.dialog) offerUpdate(ui.updPending); }, 5000);
+  function offerUpdate(rel) {
+    if (ui.dialog || G.fight || (G.S && G.S.run && G.S.run.phase !== 'done')) { ui.updPending = rel; return; }
+    ui.updPending = null; updateDialog(rel);
   }
   function manualUpdateCheck() {
     if (!window.UPD) return;
@@ -2476,6 +2484,7 @@
     requestAnimationFrame(loop);
   }
   function resume() {
+    autoUpdateCheck();
     if (!G.S) return;
     const away = Date.now() - G.S.lastSeen;
     if (away > 120000 && !G.fight) { const rep = G.catchUp(); renderAll(); showAway(rep); }
