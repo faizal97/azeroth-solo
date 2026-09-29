@@ -179,6 +179,15 @@ img { max-width: 100%; display: block; }
 .panel .ptabs { top: -16px; margin-top: -16px; padding-top: 16px; }
 .panel .run-actions { top: -10px; }
 .portrait.tap { cursor: pointer; }
+/* the action bar editor */
+.bar-edit { border: 1px solid var(--edge); border-radius: 3px; }
+.bar-edit .ab.sel { box-shadow: 0 0 0 2px var(--gold), 0 0 10px rgba(255,209,0,.5); transform: translateY(-2px); }
+.bar-edit .ab.hid { opacity: .5; }
+.bar-edit .ab[data-i] { touch-action: none; user-select: none; -webkit-user-select: none; }
+.bar-edit .ab.dragging { opacity: .3; }
+.bar-edit .ab.drop { box-shadow: 0 0 0 2px #fff, 0 0 12px rgba(255,255,255,.5); }
+.ab.ab-ghost { position: fixed; z-index: 70; transform: translate(-50%, -60%) scale(1.12); pointer-events: none; box-shadow: 0 6px 16px rgba(0,0,0,.7), 0 0 0 2px var(--gold); }
+.ab-tag { position: absolute; left: 3px; top: 1px; font: 700 14px var(--body); color: #fff; text-shadow: 0 1px 2px #000, 0 0 2px #000; pointer-events: none; }
 .bar.xpmain { height: 13px; width: 100%; display: block; padding: 0; margin-top: 2px; cursor: pointer; }
 .bar.xpmain > i.rest { opacity: .8; background: repeating-linear-gradient(135deg, #2f78e6 0 6px, #2566c8 6px 12px); }
 .bar.xpmain b { font: 700 10.5px/12px var(--body); }

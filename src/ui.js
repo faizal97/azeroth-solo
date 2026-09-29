@@ -910,10 +910,79 @@
     const C = D.CLASSES[P.cls];
     // v2.0: no cap; past 8 buttons the bar wraps to two rows
     const pot = G.S.player.bags.some((b) => b.item.slot === 'potion') ? ['potion'] : [];
-    if (G.fight) { const r = G.racial(); return known.concat(r && !(G.pUnit && G.pUnit.form) ? [r] : [], pot); }
+    if (G.fight) { const r = G.racial(); return barArrange(known.concat(r && !(G.pUnit && G.pUnit.form) ? [r] : [], pot)); }
     const extras = ['eat'].concat(C.resource === 'mana' ? ['drink'] : [], pot);
     const ab = known.filter((a) => a !== 'taunt' && !D.ABILITIES[a].combatOnly);
-    return ab.concat(extras);
+    return barArrange(ab.concat(extras));
+  }
+  // the player's own bar layout, per character and saved with it: P.barOrder (ids in order) and P.barHide.
+  // Anything not in the order yet (a newly learned ability) goes at the end, in the default order.
+  function barPool() {
+    const P = G.S.player, C = D.CLASSES[P.cls], r = G.racial();
+    return [...new Set(G.knownAbilities().concat(r ? [r] : [], ['eat'], C.resource === 'mana' ? ['drink'] : [], ['potion']))];
+  }
+  function barArrange(list) {
+    const P = G.S.player, o = P.barOrder || [], hide = P.barHide || [];
+    return list.map((id, i) => [id, o.includes(id) ? o.indexOf(id) : 1000 + i]).sort((a, b) => a[1] - b[1]).map((x) => x[0]).filter((id) => !hide.includes(id));
+  }
+  // Hero → Abilities → Arrange action bar: tap one button, then another, to swap them (no dragging on a phone)
+  function openBarEditor() {
+    let pick = null;
+    openSheet('bareditor', 'Arrange action bar', 'drag a button to move it, or tap two to swap them', (b) => {
+      const P = G.S.player, r = G.racial();
+      const pool = barPool(), shown = barArrange(pool), hidden = pool.filter((id) => (P.barHide || []).includes(id));
+      if (pick != null && pick >= shown.length) pick = null;
+      const changed = () => { pick = null; G.save(); renderBar(); ui.sheetFn(); };
+      const tile = (id, fn, cls) => h('button', { class: 'ab' + (cls || ''), 'aria-label': D.ABILITIES[id].name, onclick: fn }, img(abIcon(id)),
+        D.ABILITIES[id].combatOnly || id === 'taunt' || id === r ? h('span', { class: 'ab-tag' }, '⚔') : null);
+      const grid = h('div', { class: 'actionbar bar-edit', style: { gridTemplateColumns: 'repeat(7, 1fr)' } });
+      let dragged = false;
+      shown.forEach((id, i) => {
+        const t = tile(id, () => {
+          if (dragged) { dragged = false; return; }
+          if (pick == null || pick === i) { pick = pick === i ? null : i; return ui.sheetFn(); }
+          const n = shown.slice(); [n[pick], n[i]] = [n[i], n[pick]]; P.barOrder = n.concat(hidden); changed();
+        }, pick === i ? ' sel' : '');
+        t.dataset.i = i;
+        // drag and drop: hold and move a button, drop it on another spot to move it there
+        t.addEventListener('pointerdown', (e) => {
+          const x0 = e.clientX, y0 = e.clientY; let ghost = null, over = null;
+          const move = (ev) => {
+            if (!ghost) {
+              if (Math.hypot(ev.clientX - x0, ev.clientY - y0) < 8) return;
+              const r = t.getBoundingClientRect();
+              ghost = t.cloneNode(true); ghost.className = 'ab ab-ghost'; ghost.style.width = r.width + 'px'; ghost.style.height = r.height + 'px';
+              document.body.append(ghost); t.classList.add('dragging');
+            }
+            ghost.style.left = ev.clientX + 'px'; ghost.style.top = ev.clientY + 'px';
+            const el = document.elementFromPoint(ev.clientX, ev.clientY);
+            const tgt = el && el.closest('.bar-edit .ab[data-i]');
+            if (over && over !== tgt) over.classList.remove('drop');
+            over = tgt && tgt !== t ? tgt : null; if (over) over.classList.add('drop');
+          };
+          const up = () => {
+            window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+            if (!ghost) return;
+            ghost.remove(); t.classList.remove('dragging'); dragged = true; setTimeout(() => { dragged = false; }, 0);
+            if (!over) return;
+            const n = shown.slice(); n.splice(+over.dataset.i, 0, n.splice(i, 1)[0]); P.barOrder = n.concat(hidden); changed();
+          };
+          window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+        });
+        grid.append(t);
+      });
+      b.append(grid);
+      if (pick != null) {
+        b.append(h('p', { class: 'ai-note', style: { margin: 0 } }, `${D.ABILITIES[shown[pick]].name}: tap another button to swap places, or hide it.`),
+          shown.length > 1 ? h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { P.barOrder = shown.concat(hidden); P.barHide = (P.barHide || []).concat(shown[pick]); changed(); } }, 'Hide it'), h('button', { class: 'btn alt', onclick: () => { pick = null; ui.sheetFn(); } }, 'Cancel')) : null);
+      } else b.append(h('p', { class: 'ai-note', style: { margin: 0 } }, 'The first row stays when you fold the bar. ⚔ shows only in combat; Eat and Drink only out of it.'));
+      if (hidden.length) {
+        const hg = h('div', { class: 'actionbar bar-edit', style: { gridTemplateColumns: 'repeat(7, 1fr)' } });
+        for (const id of hidden) hg.append(tile(id, () => { P.barHide = P.barHide.filter((x) => x !== id); changed(); }, ' hid'));
+        b.append(h('div', { class: 'sec-h' }, 'Hidden', h('small', null, 'tap to put it back')), hg);
+      }
+      if (P.barOrder || P.barHide) b.append(h('button', { class: 'btn alt wide', onclick: () => { delete P.barOrder; delete P.barHide; changed(); } }, 'Reset to default'));
+    });
   }
   function renderBar() {
     const bar = els.bar; bar.innerHTML = '';
@@ -1878,6 +1947,7 @@
       } else if (ui.heroTab === 'abil') {
         b.append(h('button', { class: 'btn wide' + (tp.free ? '' : ' alt'), onclick: () => openTalents() }, P.level < D.TALENT_START ? `Talents (from level ${D.TALENT_START})` : tp.free ? `Talents · ${tp.free} point${tp.free > 1 ? 's' : ''} to spend` : `Talents · ${tp.spent} spent`));
         b.append(h('button', { class: 'btn wide alt', onclick: () => openProfessions() }, Object.keys(G.profs()).length ? 'Professions · ' + Object.entries(G.profs()).map(([k, p]) => `${D.PROFESSIONS[k].name} ${p.skill}`).join(', ') : 'Professions (learn from a trainer in a city)'));
+        b.append(h('button', { class: 'btn wide alt', onclick: () => openBarEditor() }, 'Arrange action bar'));
         b.append(h('div', { class: 'sec-h' }, 'Abilities', h('small', null, 'learned automatically')));
         const abl = h('div', { class: 'list' });
         // what you know in full; what's still to learn as one line
