@@ -309,25 +309,25 @@
   "kind": "region",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Greenfen"
  },
  "Stranglethorn Vale": {
   "kind": "region",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "The Vinewild"
  },
  "Arathi Highlands": {
   "kind": "region",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Brannock Highlands"
  },
  "Tanaris": {
   "kind": "region",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Sirocco"
  },
  "Feralas": {
   "kind": "region",
@@ -1017,85 +1017,85 @@
   "kind": "place",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Reedgill Marsh"
  },
  "Whelgar's Excavation": {
   "kind": "place",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Torvald's Dig"
  },
  "Saltspray Glen": {
   "kind": "place",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Seawrack Glen"
  },
  "Dun Modr": {
   "kind": "place",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Kaldhelm"
  },
  "Angerfang Encampment": {
   "kind": "place",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Wyrmchain Camp"
  },
  "Rebel Camp": {
   "kind": "place",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Grom'gol Base Camp": {
   "kind": "place",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Camp Skarn"
  },
  "Nesingwary's Expedition": {
   "kind": "place",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Wexley's Expedition"
  },
  "Lake Nazferiti": {
   "kind": "place",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Lake Omunde"
  },
  "Ruins of Zul'Daia": {
   "kind": "place",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Ruins of Tazzu"
  },
  "Kurzen Compound": {
   "kind": "place",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Drayke Compound"
  },
  "Venture Co. Base Camp": {
   "kind": "place",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Deepgold Company Base Camp"
  },
  "Ruins of Balia'mah": {
   "kind": "place",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Ruins of Umbaa"
  },
  "Ruins of Zul'Kunda": {
   "kind": "place",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Ruins of Mokkari"
  },
  "Gates of Gnomeregan": {
   "kind": "place",
@@ -1113,49 +1113,49 @@
   "kind": "place",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Holdfast Point"
  },
  "Hammerfall": {
   "kind": "place",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Chainbreak"
  },
  "The Highland Plains": {
   "kind": "place",
   "region": "Arathi Highlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Drywhisker Gorge": {
   "kind": "place",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Candlegrub Gorge"
  },
  "Witherbark Village": {
   "kind": "place",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Rotbough Village"
  },
  "Stromgarde Keep": {
   "kind": "place",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Highhold Keep"
  },
  "Boulderfist Hall": {
   "kind": "place",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Rockbrow Hall"
  },
  "Circle of West Binding": {
   "kind": "place",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "The West Binding Stones"
  },
  "Scarlet Monastery": {
   "kind": "place",
@@ -1173,49 +1173,49 @@
   "kind": "place",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Pumpworks Field"
  },
  "Thistleshrub Valley": {
   "kind": "place",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Spinebush Valley"
  },
  "Lost Rigger Cove": {
   "kind": "place",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Rotten Plank Cove"
  },
  "The Noxious Lair": {
   "kind": "place",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "The Stinging Hive"
  },
  "Eastmoon Ruins": {
   "kind": "place",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Dawnstone Ruins"
  },
  "Dunemaul Compound": {
   "kind": "place",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Sandbrute Compound"
  },
  "Zul'Farrak": {
   "kind": "place",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "The Dune Temple"
  },
  "Feathermoon Stronghold": {
   "kind": "place",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Starfeather Hold"
  },
  "Camp Mojache": {
   "kind": "place",
@@ -2301,199 +2301,199 @@
   "kind": "npc",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Captain Brynjar"
  },
  "Glorin Steelbrow": {
   "kind": "npc",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Gunnar Hallsson"
  },
  "Rethiel the Greenwarden": {
   "kind": "npc",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Ysra Fenwatch"
  },
  "Prospector Whelgar": {
   "kind": "npc",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Prospector Torvald"
  },
  "Innkeeper Helbrek": {
   "kind": "npc",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Sif"
  },
  "Murndan Derth": {
   "kind": "npc",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Mund Derrsson"
  },
  "Barnil Stonepot": {
   "kind": "npc",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Bjarni Kettilsson"
  },
  "Lieutenant Doren": {
   "kind": "npc",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Lieutenant Garrow"
  },
  "Sergeant Yohwa": {
   "kind": "npc",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Sergeant Tove"
  },
  "Corporal Bluth": {
   "kind": "npc",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Corporal Tibbs"
  },
  "Nimboya": {
   "kind": "npc",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Zaja"
  },
  "Commander Aggro'gosh": {
   "kind": "npc",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Commander Brugh"
  },
  "Kin'weelay": {
   "kind": "npc",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Kiwa"
  },
  "Innkeeper Thulbek": {
   "kind": "npc",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Tulga"
  },
  "Uthok": {
   "kind": "npc",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Ogg"
  },
  "Hemet Nesingwary": {
   "kind": "npc",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Ambrose Wexley"
  },
  "Ajeck Rouack": {
   "kind": "npc",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Jackard Rook"
  },
  "Sir S. J. Erlgadin": {
   "kind": "npc",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Sir Percy Tallow"
  },
  "Captain Nials": {
   "kind": "npc",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Captain Oswyn"
  },
  "Sergeant Maclear": {
   "kind": "npc",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Sergeant Brody"
  },
  "Shards": {
   "kind": "npc",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Flint"
  },
  "Quartermaster Taruga": {
   "kind": "npc",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Quartermaster Rukka"
  },
  "Drum Fel": {
   "kind": "npc",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Drum Ashka"
  },
  "Tor'gan": {
   "kind": "npc",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Vrenn"
  },
  "Gorn": {
   "kind": "npc",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Mogg"
  },
  "Innkeeper Adegwa": {
   "kind": "npc",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Duva"
  },
  "Urda": {
   "kind": "npc",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Hesk"
  },
  "Marin Noggenfogger": {
   "kind": "npc",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Mayor Fizzik Coinsworth"
  },
  "Chief Engineer Bilgewhizzle": {
   "kind": "npc",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Chief Engineer Sprockit"
  },
  "Sprinkle": {
   "kind": "npc",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Nubbin"
  },
  "Senior Surveyor Fizzledowser": {
   "kind": "npc",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Senior Surveyor Digwhistle"
  },
  "Innkeeper Fizzgrimble": {
   "kind": "npc",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Grubbs"
  },
  "Blizrik Buckshot": {
   "kind": "npc",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Kip Buckley"
  },
  "Shandris Feathermoon": {
   "kind": "npc",
@@ -3338,14 +3338,14 @@
  "Young Night Web Spider": {
   "kind": "monster",
   "region": "Tirisfal Glades",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Young Spinner Spider"
  },
  "Night Web Spider": {
   "kind": "monster",
   "region": "Tirisfal Glades",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Spinner Spider"
  },
  "Darkhound": {
   "kind": "monster",
@@ -3368,8 +3368,8 @@
  "Rot Hide Mongrel": {
   "kind": "monster",
   "region": "Tirisfal Glades",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Mangecoat Mongrel"
  },
  "Maggot Eye": {
   "kind": "boss or named",
@@ -3380,14 +3380,14 @@
  "Scarlet Convert": {
   "kind": "monster",
   "region": "Tirisfal Glades",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Pyre Convert"
  },
  "Scarlet Warrior": {
   "kind": "monster",
   "region": "Tirisfal Glades",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Pyre Warrior"
  },
  "Captain Perrine": {
   "kind": "boss or named",
@@ -4028,14 +4028,14 @@
  "Splinter Fist Warrior": {
   "kind": "monster",
   "region": "Duskwood",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Knotjaw Warrior"
  },
  "Splinter Fist Taskmaster": {
   "kind": "monster",
   "region": "Duskwood",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Knotjaw Taskmaster"
  },
  "Nightbane Dark Runner": {
   "kind": "monster",
@@ -4088,14 +4088,14 @@
  "Syndicate Rogue": {
   "kind": "monster",
   "region": "Hillsbrad Foothills",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Black Ledger Rogue"
  },
  "Syndicate Mercenary": {
   "kind": "monster",
   "region": "Hillsbrad Foothills",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Black Ledger Mercenary"
  },
  "Gray Bear": {
   "kind": "monster",
@@ -4322,14 +4322,14 @@
  "Bluegill Raider": {
   "kind": "monster",
   "region": "Wetlands",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Reedgill Raider"
  },
  "Bluegill Oracle": {
   "kind": "monster",
   "region": "Wetlands",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Reedgill Oracle"
  },
  "Mottled Raptor": {
   "kind": "monster",
@@ -4347,37 +4347,37 @@
   "kind": "monster",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Mudcoat Gnoll"
  },
  "Mosshide Mystic": {
   "kind": "monster",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Mudcoat Mystic"
  },
  "Dark Iron Dwarf": {
   "kind": "monster",
   "region": "Wetlands",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Slagborn Dwarf"
  },
  "Dark Iron Saboteur": {
   "kind": "monster",
   "region": "Wetlands",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Slagborn Saboteur"
  },
  "Dragonmaw Grunt": {
   "kind": "monster",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Wyrmchain Grunt"
  },
  "Dragonmaw Shadowcaster": {
   "kind": "monster",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Wyrmchain Shadowcaster"
  },
  "Crimson Whelp": {
   "kind": "monster",
@@ -4389,67 +4389,67 @@
   "kind": "boss or named",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Gorlag Ashskull"
  },
  "Razormaw Matriarch": {
   "kind": "boss or named",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Longtooth Matriarch"
  },
  "Stranglethorn Raptor": {
   "kind": "monster",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Vinewild Raptor"
  },
  "Stranglethorn Tiger": {
   "kind": "monster",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Vinewild Tiger"
  },
  "Bloodscalp Warrior": {
   "kind": "monster",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Scaldback Warrior"
  },
  "Bloodscalp Axe Thrower": {
   "kind": "monster",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Scaldback Axe Thrower"
  },
  "Kurzen Commando": {
   "kind": "monster",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Drayke Commando"
  },
  "Kurzen Medicine Man": {
   "kind": "monster",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Drayke Medicine Man"
  },
  "Venture Co. Mechanic": {
   "kind": "monster",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Deepgold Company Mechanic"
  },
  "Venture Co. Enforcer": {
   "kind": "monster",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Deepgold Company Enforcer"
  },
  "Shadowmaw Panther": {
   "kind": "monster",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Inkclaw Panther"
  },
  "Jungle Stalker": {
   "kind": "monster",
@@ -4461,13 +4461,13 @@
   "kind": "monster",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Bonegrin Warrior"
  },
  "Skullsplitter Witch Doctor": {
   "kind": "monster",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Bonegrin Witch Doctor"
  },
  "Colonel Kurzen": {
   "kind": "boss or named",
@@ -4479,13 +4479,13 @@
   "kind": "boss or named",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Old Stripes"
  },
  "King Bangalash": {
   "kind": "boss or named",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "King Ghostpelt"
  },
  "Irradiated Leper Gnome": {
   "kind": "monster",
@@ -4604,56 +4604,56 @@
  "Highland Fleshstalker": {
   "kind": "monster",
   "region": "Arathi Highlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Drywhisker Kobold": {
   "kind": "monster",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Candlegrub Kobold"
  },
  "Drywhisker Digger": {
   "kind": "monster",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Candlegrub Digger"
  },
  "Witherbark Headhunter": {
   "kind": "monster",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Rotbough Headhunter"
  },
  "Witherbark Shadowcaster": {
   "kind": "monster",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Rotbough Shadowcaster"
  },
  "Syndicate Highwayman": {
   "kind": "monster",
   "region": "Arathi Highlands",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Black Ledger Highwayman"
  },
  "Syndicate Magus": {
   "kind": "monster",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Black Ledger Magus"
  },
  "Boulderfist Brute": {
   "kind": "monster",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Rockbrow Brute"
  },
  "Boulderfist Magus": {
   "kind": "monster",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Rockbrow Magus"
  },
  "Burning Exile": {
   "kind": "monster",
@@ -4671,31 +4671,31 @@
   "kind": "boss or named",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Kobbo"
  },
  "Nimar the Slayer": {
   "kind": "boss or named",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Ghast the Slayer"
  },
  "Molok the Crusher": {
   "kind": "boss or named",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Gorm the Crusher"
  },
  "Scarlet Monk": {
   "kind": "monster",
   "region": "Tirisfal Glades",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Pyre Monk"
  },
  "Scarlet Chaplain": {
   "kind": "monster",
   "region": "Tirisfal Glades",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Pyre Chaplain"
  },
  "Scarlet Wizard": {
   "kind": "monster",
@@ -4767,85 +4767,85 @@
   "kind": "monster",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Dustcloak Bandit"
  },
  "Wastewander Shadow Mage": {
   "kind": "monster",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Dustcloak Shadow Mage"
  },
  "Thistleshrub Rootshaper": {
   "kind": "monster",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Spinebush Rootshaper"
  },
  "Southsea Pirate": {
   "kind": "monster",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Blackgull Pirate"
  },
  "Southsea Cannoneer": {
   "kind": "monster",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Blackgull Cannoneer"
  },
  "Centipaar Worker": {
   "kind": "monster",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Hivecrawler Worker"
  },
  "Centipaar Stinger": {
   "kind": "monster",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Hivecrawler Stinger"
  },
  "Scorpid Dunestalker": {
   "kind": "monster",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Scorpion Dunestalker"
  },
  "Dunemaul Brute": {
   "kind": "monster",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Sandbrute Brute"
  },
  "Dunemaul Ogre Mage": {
   "kind": "monster",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Sandbrute Ogre Mage"
  },
  "Caliph Scorpidsting": {
   "kind": "boss or named",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Caliph Stingtail"
  },
  "Kregg Keelhaul": {
   "kind": "boss or named",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Captain Rusk Hookhand"
  },
  "Sandfury Blood Drinker": {
   "kind": "monster",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Duneskin Blood Drinker"
  },
  "Sandfury Shadowcaster": {
   "kind": "monster",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Duneskin Shadowcaster"
  },
  "Zul'Farrak Zombie": {
   "kind": "monster",
@@ -7539,127 +7539,127 @@
   "kind": "quest",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "The Reedgill"
  },
  "Fins for Supper": {
   "kind": "quest",
   "region": "Wetlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Oracles": {
   "kind": "quest",
   "region": "Wetlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Raptor Eggs": {
   "kind": "quest",
   "region": "Wetlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Clear the Dig": {
   "kind": "quest",
   "region": "Wetlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Screecher Crests": {
   "kind": "quest",
   "region": "Wetlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Mosshide": {
   "kind": "quest",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "The Mudcoat"
  },
  "Mosshide Bounty": {
   "kind": "quest",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Mudcoat Bounty"
  },
  "Rattles in the Glen": {
   "kind": "quest",
   "region": "Wetlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Dark Iron": {
   "kind": "quest",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "The Slagborn"
  },
  "Dark Iron Scraps": {
   "kind": "quest",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Slagborn Scraps"
  },
  "Saboteurs": {
   "kind": "quest",
   "region": "Wetlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Angerfang": {
   "kind": "quest",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Wyrmchain Camp"
  },
  "The Dragonmaw": {
   "kind": "quest",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "The Wyrmchain"
  },
  "Dragonmaw Insignias": {
   "kind": "quest",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Wyrmchain Insignias"
  },
  "Chained Wings": {
   "kind": "quest",
   "region": "Wetlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Shadowcasters": {
   "kind": "quest",
   "region": "Wetlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Marsh Patrol": {
   "kind": "quest",
   "region": "Wetlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Hold the Dig": {
   "kind": "quest",
   "region": "Wetlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Keep Them Busy": {
   "kind": "quest",
   "region": "Wetlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Wanted: Razormaw Matriarch": {
   "kind": "quest",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Wanted: Longtooth Matriarch"
  },
  "The Rebels": {
   "kind": "quest",
@@ -7676,79 +7676,79 @@
  "Tiger Mastery": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Raptor Mastery": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Talons for the Wall": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Tiger Hunt": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Panther Mastery": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Stalker Mastery": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Big Game Hunter": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Panther Hunt": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Lake Shore": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Last Stalkers": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Kurzen Commandos": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Drayke Commandos"
  },
  "The Colonel's Orders": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Jungle Remedies": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Venture Co.": {
@@ -7760,91 +7760,91 @@
  "Follow the Money": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Bloodscalp": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "The Scaldback"
  },
  "The Skullsplitters": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "The Bonegrins"
  },
  "Tusks of Zul'Kunda": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Tusks of Mokkari"
  },
  "Troll Charms": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Hold the Line": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Shut Down the Camp": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Bloodscalp Tusks": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Scaldback Tusks"
  },
  "Voodoo Charms": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Kurzen": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "The Drayke"
  },
  "Goblin Ledgers": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Skullsplitter Tusks": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Bonegrin Tusks"
  },
  "Kurzen Medicine": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Drayke Medicine"
  },
  "Zul'Daia Patrol": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Tazzu Patrol"
  },
  "Break the Company": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Grand Betrayal": {
@@ -7887,109 +7887,109 @@
   "kind": "quest",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "The League of Brannock"
  },
  "Highland Thrashers": {
   "kind": "quest",
   "region": "Arathi Highlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Raptor Claws": {
   "kind": "quest",
   "region": "Arathi Highlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Fleshstalkers": {
   "kind": "quest",
   "region": "Arathi Highlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Wax and Ore": {
   "kind": "quest",
   "region": "Arathi Highlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Witherbark": {
   "kind": "quest",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "The Rotbough"
  },
  "Shrunken Heads": {
   "kind": "quest",
   "region": "Arathi Highlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Witherbark Tusks": {
   "kind": "quest",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Rotbough Tusks"
  },
  "Stromgarde": {
   "kind": "quest",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Highhold"
  },
  "The Syndicate Magi": {
   "kind": "quest",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "The Black Ledger Magi"
  },
  "Syndicate Documents": {
   "kind": "quest",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Black Ledger Documents"
  },
  "The Two-Headed Magi": {
   "kind": "quest",
   "region": "Arathi Highlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Circle of Binding": {
   "kind": "quest",
   "region": "Arathi Highlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Bound Cores": {
   "kind": "quest",
   "region": "Arathi Highlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Plains Patrol": {
   "kind": "quest",
   "region": "Arathi Highlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Gorge Again": {
   "kind": "quest",
   "region": "Arathi Highlands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Hold Stromgarde": {
   "kind": "quest",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Hold Highhold"
  },
  "Wanted: Molok the Crusher": {
   "kind": "quest",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": null
+  "new": "Wanted: Gorm the Crusher"
  },
  "Mythology of the Titans": {
   "kind": "quest",
@@ -8019,127 +8019,127 @@
   "kind": "quest",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Dustcloak Justice"
  },
  "Water Pouch Bounty": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Shadow Mages": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Thistleshrub Dew": {
   "kind": "quest",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Spinebush Dew"
  },
  "Walking Cacti": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Pirate Hats Ahoy!": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Stolen Doubloons": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Silence the Cannons": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Wanted: Kregg Keelhaul": {
   "kind": "quest",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Wanted: Captain Rusk Hookhand"
  },
  "Thinning the Hive": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Venom Samples": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Dunestalkers": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Dunemaul": {
   "kind": "quest",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "The Sandbrute"
  },
  "Two Heads, No Brains": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Sandfury": {
   "kind": "quest",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "The Duneskin"
  },
  "Keep the Wells Safe": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Clear the Cove": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Ogre Patrol": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Sandfury Chief": {
   "kind": "quest",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "The Duneskin Chief"
  },
  "Voodoo Totem": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Feathermoon": {
   "kind": "quest",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Starfeather"
  },
  "Frayfeather Hippogryphs": {
   "kind": "quest",
@@ -8276,7 +8276,7 @@
  "The Crater": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Bloodpetal Sprouts": {
@@ -8702,13 +8702,13 @@
  "The Smuggler's Ledger": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Marshal's Page": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Protecting the Herd: Vagash": {
@@ -15484,5 +15484,179 @@
   "region": "Ashenvale",
   "status": "rename",
   "new": "Grey Wolf Vale"
+ },
+ "Grim Batol": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Drakestone Hold"
+ },
+ "Thandol Span": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Harrow Span"
+ },
+ "Arathor": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Brannock"
+ },
+ "Arathi": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Brannock"
+ },
+ "Skullsplitter": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Bonegrin"
+ },
+ "Bloodscalp": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Scaldback"
+ },
+ "Witherbark": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Rotbough"
+ },
+ "Sandfury": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Duneskin"
+ },
+ "Ukorz Sandscalp": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Chief Uzzak"
+ },
+ "Nesingwary": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Wexley"
+ },
+ "Stranglethorn": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Vinewild"
+ },
+ "Shadowmaw": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Inkclaw"
+ },
+ "The Earth Mother": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "the Grass Mother"
+ },
+ "Earth Mother": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Grass Mother"
+ },
+ "Bluegill": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Reedgill"
+ },
+ "Mosshide": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Mudcoat"
+ },
+ "Drywhisker": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Candlegrub"
+ },
+ "Boulderfist": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Rockbrow"
+ },
+ "Wastewander": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Dustcloak"
+ },
+ "Southsea": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Blackgull"
+ },
+ "Centipaar": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hivecrawler"
+ },
+ "Thistleshrub": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Spinebush"
+ },
+ "Dunemaul": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Sandbrute"
+ },
+ "Whelgar": {
+  "kind": "lore",
+  "region": "Wetlands",
+  "status": "rename",
+  "new": "Torvald"
+ },
+ "Zul'Daia": {
+  "kind": "lore",
+  "region": "Stranglethorn Vale",
+  "status": "rename",
+  "new": "Tazzu"
+ },
+ "Balia'mah": {
+  "kind": "lore",
+  "region": "Stranglethorn Vale",
+  "status": "rename",
+  "new": "Umbaa"
+ },
+ "Zul'Kunda": {
+  "kind": "lore",
+  "region": "Stranglethorn Vale",
+  "status": "rename",
+  "new": "Mokkari"
+ },
+ "Eastmoon": {
+  "kind": "lore",
+  "region": "Tanaris",
+  "status": "rename",
+  "new": "Dawnstone"
+ },
+ "Noggenfogger": {
+  "kind": "lore",
+  "region": "Tanaris",
+  "status": "rename",
+  "new": "Coinsworth"
  }
 }
