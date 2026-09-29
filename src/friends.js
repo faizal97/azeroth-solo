@@ -246,7 +246,7 @@
     databaseURL: 'https://compelling-cat-510114-p4-default-rtdb.asia-southeast1.firebasedatabase.app' };
   const SDK = 'https://www.gstatic.com/firebasejs/12.19.0/';
   FRIENDS.firebase = function () {
-    let fb = null, loading = null, gis = null, gisPending = null;
+    let fb = null, loading = null, gis = null, gisPending = null, gisLoading = null;
     const inApp = () => !!(root.UPD && UPD.inApp && UPD.inApp() && root.AzCloud);
     // the app: our own calls on the AzCloud bridge (ids of our own; every other reply goes on to cloud.js)
     let seq = 800000, hooked = false; const mine = {};
@@ -299,7 +299,7 @@
       await db.set(conn, e);
     };
     return {
-      prepare() { const p = load(); if (!inApp()) loadGis().then(initGis).catch(() => {}); return p; },
+      prepare() { const p = load(); if (!inApp() && !gisLoading) gisLoading = loadGis().then(initGis).catch(() => { gisLoading = null; }); return p; },
       signedIn: () => !!(fb && fb.A.currentUser),
       async signIn(interactive) {
         if (fb && fb.A.currentUser) return;
