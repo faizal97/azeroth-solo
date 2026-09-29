@@ -5,28 +5,40 @@
 (function (root) {
   const UPD = root.UPD = {};
   const REPO = 'faizal97/azeroth-solo';
-  const API = `https://api.github.com/repos/${REPO}/releases/latest`;
+  const API = `https://api.github.com/repos/${REPO}/releases/latest`; // ignores pre-releases
+  const API_ALL = `https://api.github.com/repos/${REPO}/releases?per_page=15`; // pre-releases too (the beta channel)
+  // The beta channel (v9.9): test builds go out as GitHub pre-releases (tag vX.Y.Z-beta.N). In the app it is a switch
+  // saved on this device; in a browser it is the /beta/ page, which publish_web.sh also refreshes on every normal
+  // release so it is never behind. Same site, so both pages share the same characters.
+  UPD.WEB = 'https://faizal97.github.io/azeroth-solo/';
+  UPD.WEB_BETA = UPD.WEB + 'beta/';
+  UPD.onBetaPage = () => /\/beta\/(index\.html)?$/.test((root.location && root.location.pathname) || '');
+  UPD.onSite = () => /github\.io$/.test((root.location && root.location.hostname) || '');
   const KEY = 'azsolo.update';
   const EVERY = 30 * 60 * 1000; // automatic checks reuse the last answer for 30 min (GitHub allows 60 an hour)
   UPD.current = () => String(root.AZ_VERSION || '0.0.0');
   UPD.inApp = () => !!(root.AzUpd && root.AzUpd.postMessage);
+  UPD.isBetaBuild = () => /-/.test(UPD.current());
 
   const store = () => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } };
   const save = (o) => { try { localStorage.setItem(KEY, JSON.stringify(Object.assign(store(), o))); } catch (e) { } };
   UPD.skip = (tag) => save({ skip: tag });
+  UPD.beta = () => (UPD.inApp() ? store().beta === true : UPD.onBetaPage());
+  UPD.setBeta = (on) => save({ beta: !!on, at: 0 }); // at: 0 so the next check asks the right channel
 
-  // "v9.10.0" > "v9.2.0"
-  UPD.newer = function (a, b) {
-    const p = (v) => String(v).replace(/^v/i, '').split(/[.+-]/).map((x) => parseInt(x, 10) || 0);
+  // "v9.10.0" > "v9.2.0"; a pre-release comes before its release: v9.10.0-beta.1 < v9.10.0-beta.2 < v9.10.0
+  UPD.cmp = function (a, b) {
+    const p = (v) => { const m = String(v).match(/^v?(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:-[a-z]*\.?(\d*))?/i) || []; return [+m[1] || 0, +m[2] || 0, +m[3] || 0, m[4] === undefined ? Infinity : +m[4] || 0]; };
     const x = p(a), y = p(b);
-    for (let i = 0; i < 3; i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0); }
-    return false;
+    for (let i = 0; i < 4; i++) if (x[i] !== y[i]) return x[i] > y[i] ? 1 : -1;
+    return 0;
   };
+  UPD.newer = (a, b) => UPD.cmp(a, b) > 0;
 
   // Resolves { latest, name, notes, url, apk, size, newer, skipped } or null when offline / GitHub unreachable.
   UPD.check = async function (force) {
-    const st = store();
-    if (!force && st.at && Date.now() - st.at < EVERY) {
+    const st = store(), chan = UPD.beta() ? 'beta' : 'stable';
+    if (!force && st.at && st.chan === chan && Date.now() - st.at < EVERY) {
       if (!st.rel) return null;
       return Object.assign({}, st.rel, { newer: UPD.newer(st.rel.latest, UPD.current()), skipped: st.skip === st.rel.latest });
     }
@@ -34,14 +46,17 @@
     try {
       const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
       const t = ctl ? setTimeout(() => ctl.abort(), 8000) : null;
-      const res = await fetch(API, { headers: { Accept: 'application/vnd.github+json' }, signal: ctl ? ctl.signal : undefined });
+      const res = await fetch(chan === 'beta' ? API_ALL : API, { headers: { Accept: 'application/vnd.github+json' }, signal: ctl ? ctl.signal : undefined });
       if (t) clearTimeout(t);
       if (!res.ok) return null;
       r = await res.json();
+      // beta: the highest version among releases and pre-releases
+      if (Array.isArray(r)) r = r.filter((x) => !x.draft).sort((a, b) => UPD.cmp(b.tag_name, a.tag_name))[0];
+      if (!r) return null;
     } catch (e) { return null; }
     const apk = (r.assets || []).find((a) => /\.apk$/i.test(a.name));
-    const rel = { latest: r.tag_name, name: r.name || r.tag_name, notes: r.body || '', url: r.html_url, apk: apk ? apk.browser_download_url : null, size: apk ? apk.size : 0 };
-    save({ at: Date.now(), rel });
+    const rel = { latest: r.tag_name, beta: !!r.prerelease, name: r.name || r.tag_name, notes: r.body || '', url: r.html_url, apk: apk ? apk.browser_download_url : null, size: apk ? apk.size : 0 };
+    save({ at: Date.now(), chan, rel });
     return Object.assign({}, rel, { newer: UPD.newer(rel.latest, UPD.current()), skipped: st.skip === rel.latest });
   };
 

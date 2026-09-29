@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 # Publish the browser version: puts dist/index.html (run build.py first) on the gh-pages branch, which GitHub Pages
 # serves at https://faizal97.github.io/azeroth-solo/. A normal commit and push on that branch, never a force-push.
-# Usage: tools/publish_web.sh   (run from the repo root, after build.py)
+# Usage: tools/publish_web.sh          a normal release: the main page, and beta/ too unless beta/ holds a newer test build
+#        tools/publish_web.sh --beta   a test build: only the beta page (https://faizal97.github.io/azeroth-solo/beta/)
+# (run from the repo root, after build.py)
 set -euo pipefail
+BETA=0; [ "${1:-}" = "--beta" ] && BETA=1
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SRC="$ROOT/dist/index.html"
 [ -f "$SRC" ] || { echo "no dist/index.html: run python3 build.py first"; exit 1; }
@@ -15,11 +18,21 @@ if "${GIT[@]}" ls-remote --exit-code --heads "$URL" gh-pages >/dev/null 2>&1; th
 else
   mkdir "$TMP/site" && git -C "$TMP/site" init --quiet -b gh-pages && git -C "$TMP/site" remote add origin "$URL"
 fi
-cp "$SRC" "$TMP/site/index.html"
+ver_of() { [ -f "$1" ] && grep -o 'AZ_VERSION *= *"[^"]*"' "$1" | head -1 | sed 's/.*"\(.*\)"/\1/' || echo ""; }
+mkdir -p "$TMP/site/beta"
+if [ "$BETA" = 1 ]; then
+  cp "$SRC" "$TMP/site/beta/index.html"; WHERE="beta page"
+else
+  cp "$SRC" "$TMP/site/index.html"; WHERE="main page"
+  # the beta page follows a normal release, unless it already has a newer test build
+  OLD="$(ver_of "$TMP/site/beta/index.html")"
+  NEWER="$(node -e "global.window=global;global.localStorage={getItem(){return null},setItem(){}};require('$ROOT/src/update.js');console.log(process.argv[1]&&UPD.cmp(process.argv[1],process.argv[2])>0?1:0)" "$OLD" "$VER")"
+  if [ "$NEWER" = 1 ]; then echo "beta page kept at v$OLD (newer than v$VER)"; else cp "$SRC" "$TMP/site/beta/index.html"; WHERE="main and beta pages"; fi
+fi
 touch "$TMP/site/.nojekyll" # serve the file as it is
 cd "$TMP/site"
-git add index.html .nojekyll
+git add -A
 if git diff --cached --quiet; then echo "web version already up to date (v$VER)"; exit 0; fi
-git commit --quiet -m "Web build v$VER"
+git commit --quiet -m "Web build v$VER ($WHERE)"
 "${GIT[@]}" push --quiet origin gh-pages
-echo "published v$VER to gh-pages"
+echo "published v$VER to the $WHERE"

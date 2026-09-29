@@ -2059,6 +2059,21 @@
             h('button', { class: 'btn alt', onclick: () => { window.SND.setPref('music', !pr.music); ui.sheetFn(); } }, 'Music: ' + (pr.music ? 'On' : 'Off')),
             h('button', { class: 'btn alt', onclick: () => { window.SND.setPref('sfx', !pr.sfx); ui.sheetFn(); } }, 'Effects: ' + (pr.sfx ? 'On' : 'Off')))]));
         }
+        if (window.UPD && (UPD.inApp() || UPD.onSite())) {
+          // beta: test versions before everyone else (GitHub pre-releases in the app, the /beta/ page in a browser)
+          const on = UPD.beta();
+          const kids = UPD.inApp()
+            ? [h('p', { class: 'ai-note', style: { margin: 0 } }, 'Get test versions before everyone else. They can have bugs, so please report what you find. If you turn this off, you keep your version until the next normal update.'),
+              h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { UPD.setBeta(!on); ui.sheetFn(); if (!on) manualUpdateCheck(); else toast('Beta updates off.'); } }, 'Beta updates: ' + (on ? 'On' : 'Off')))]
+            : [h('p', { class: 'ai-note', style: { margin: 0 } }, on ? 'You are on the beta page: test versions come here first. Your characters are the same on both pages.' : 'Test versions go to a separate beta page first. They can have bugs, so please report what you find. Your characters are the same on both pages.'),
+              h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: async () => {
+                if (on) { if (G.S) G.save(); location.href = UPD.WEB; return; }
+                let ok = false; try { ok = (await fetch(UPD.WEB_BETA, { method: 'HEAD', cache: 'no-store' })).ok; } catch (e) { }
+                if (!ok) return toast('There is no beta version right now.');
+                if (G.S) G.save(); location.href = UPD.WEB_BETA;
+              } }, on ? 'Back to the normal version' : 'Open the beta version'))];
+          b.append(...foldSec('set.beta', 'Beta updates', on ? 'On' : 'Off', kids));
+        }
         b.append(...foldSec('set.save', 'Save', 'save codes', [h('div', { class: 'btn-row' },
           h('button', { class: 'btn alt', onclick: exportSave }, 'Copy save code'),
           h('button', { class: 'btn alt', onclick: importSave }, 'Load save code'))]));
@@ -2794,7 +2809,7 @@
       }
     } }, web ? 'Reload to update' : inApp ? `Update now${rel.size ? ` (${(rel.size / 1048576).toFixed(0)} MB)` : ''}` : 'Open the release page');
     row.append(go, later, skip);
-    showDialog([h('h3', null, 'Update available'), h('p', null, h('b', { style: { color: 'var(--gold)' } }, rel.name), h('br'), `You have v${cur}.`), notes, bar, status, row], false);
+    showDialog([h('h3', null, rel.beta ? 'Beta update available' : 'Update available'), h('p', null, h('b', { style: { color: 'var(--gold)' } }, rel.name), h('br'), `You have v${cur}.`), notes, bar, status, row], false);
   }
 
   const discordLink = () => window.UPD ? h('button', { class: 'discord-link', onclick: () => UPD.open(UPD.DISCORD) }, 'Join us on Discord') : null;
