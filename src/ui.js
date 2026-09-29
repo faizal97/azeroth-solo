@@ -2276,46 +2276,92 @@
       else guildTab(b);
     });
   }
+  // ---- the Group Finder (v10): role and queue first, then For You and one tab per kind (Dungeons, Raids, Wanted).
+  // For You holds only what you can do now; each kind tab folds what is still to come and what you have outlevelled.
+  const actKind = (A) => ((A.size || 5) > 5 ? 'raid' : A.dungeon ? 'dungeon' : 'wanted');
+  const KIND_LABEL = { dungeon: 'Dungeon', raid: 'Raid', wanted: 'Wanted' };
+  const ROLE_NAME = { tank: 'Tank', healer: 'Healer', dps: 'Damage' };
   function groupTab(b) {
     const S = G.S, P = S.player;
     if (S.run) { b.append(h('p', null, `You are in a group for ${S.run.name}.`), h('button', { class: 'btn alt wide', onclick: () => confirmLeaveGroup(() => ui.sheetFn && ui.sheetFn()) }, 'Leave group')); return; }
-    // Help Wanted: groups that need a helper; they summon you
+    // your role, and what you are queued for
+    const top = h('div', { class: 'gf-top' });
+    const roles = G.roles(), roleRow = h('div', { class: 'gf-roles' }, h('span', { class: 'gf-lbl' }, 'Queue as'));
+    for (const r of roles) roleRow.append(roles.length > 1
+      ? h('button', { class: 'chip' + (G.role() === r ? ' gold' : ''), disabled: !!S.queue, onclick: () => { G.setRole(r); ui.sheetFn(); } }, ROLE_NAME[r] || r)
+      : h('span', { class: 'chip gold' }, ROLE_NAME[r] || r));
+    if (roles.length > 1) roleRow.append(h('span', { class: 'gf-hint' }, 'tanks and healers find groups faster'));
+    top.append(roleRow);
+    if (S.queue) top.append(h('div', { class: 'gf-queue' }, h('span', null, 'In queue: ', h('b', null, D.ACTIVITIES[S.queue.act].name)),
+      h('button', { class: 'chip', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave')));
+    b.append(top);
+    // everything this character can see, with why it can't be done yet
+    const all = Object.keys(D.ACTIVITIES).map((k) => ({ k, A: D.ACTIVITIES[k], why: G.activityBlock(k) })).filter((x) => x.why !== 'hidden');
+    const travel = (x) => /^Go to /.test(x.why || '');
+    const doable = (x) => !x.why || travel(x) || /^Deserter/.test(x.why);
+    const atLevel = (x) => doable(x) && P.level <= x.A.maxLvl;
     const hw = (S.helpWanted || []).filter((r) => r.expires > Date.now());
-    b.append(h('div', { class: 'sec-h' }, 'Help Wanted', h('small', null, `Mentor Marks: ${G.account().marks}`)));
-    if (!hw.length) b.append(h('div', { class: 'people' }, 'No group needs help right now. Groups post here now and then for dungeons you have cleared or outlevelled. They summon you, wherever you are.'));
-    for (const r of hw) {
-      const A = D.ACTIVITIES[r.act], Dg = D.DUNGEONS[A.dungeon];
-      const marks = `${10 + (r.firstTimers ? 5 : 0) + (r.startIdx ? 3 : 0)}–${15 + (r.firstTimers ? 5 : 0) + (r.startIdx ? 3 : 0)} Marks`;
-      b.append(h('div', { class: 'row hw', style: { gridTemplateColumns: '34px 1fr auto' } },
+    const kinds = ['dungeon', 'raid', 'wanted'];
+    const tab = ui.gfTab || 'you';
+    const tabs = h('div', { class: 'tabs gf-tabs' });
+    for (const [k, label] of [['you', 'For You'], ['dungeon', 'Dungeons'], ['raid', 'Raids'], ['wanted', 'Wanted']]) {
+      const n = k === 'you' ? hw.length : 0;
+      tabs.append(h('button', { class: (tab === k ? 'on' : '') + (n ? ' dot' : ''), onclick: () => { ui.gfTab = k; ui.sheetFn(); } }, label));
+    }
+    b.append(tabs);
+    const row = (x, showKind) => {
+      const A = x.A, queued = S.queue && S.queue.act === x.k, kind = actKind(A);
+      const synced = !x.why && P.level > A.maxLvl ? `synced to level ${A.maxLvl}` : '';
+      const note = travel(x) ? `${A.desc.split('.')[0]}. ${x.why}.` : x.why || [A.desc, synced].filter(Boolean).join(' · ');
+      const btn = queued ? h('button', { class: 'chip', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave')
+        : travel(x) ? h('button', { class: 'chip', disabled: !!S.queue, onclick: () => { closeSheet(); G.travelRoute(A.where); renderAll(); } }, 'Travel')
+        : h('button', { class: 'chip gold', disabled: !!x.why || !!S.queue, onclick: () => { G.queueFor(x.k); ui.sheetFn(); } }, 'Queue');
+      return h('div', { class: 'row gf-row' + (!doable(x) ? ' gf-locked' : '') + (queued ? ' gf-queued' : '') },
         h('div', { class: 'ic mob' }, img(mobArt(A.boss || finalBoss(A) || 'vancleef'))),
-        h('div', { class: 't' }, h('b', null, `${A.name} needs a ${r.role === 'dps' ? 'damage dealer' : r.role}`),
-          h('small', { style: { whiteSpace: 'normal' } }, `${r.posterName}: ${r.startIdx ? 'stuck on ' + Dg.pulls[r.startIdx].label : 'full run'}${r.firstTimers ? ' · first-timers' : ''} · ${marks} · ${Math.ceil((r.expires - Date.now()) / 60000)} min left`)),
-        h('button', { class: 'chip gold', disabled: !!S.queue, onclick: () => { closeSheet(); G.joinHelpWanted(r.id); renderAll(); } }, 'Help')));
+        h('div', { class: 't' }, h('b', null, A.name, h('span', { class: 'gf-lvl tnum' }, A.minLvl === A.maxLvl ? String(A.minLvl) : `${A.minLvl}–${A.maxLvl}`)),
+          h('small', null, showKind ? h('span', { class: 'gf-kind k-' + kind }, KIND_LABEL[kind]) : null, note)),
+        btn);
+    };
+    const byLevel = (a, c) => a.A.minLvl - c.A.minLvl || kinds.indexOf(actKind(a.A)) - kinds.indexOf(actKind(c.A));
+    if (tab === 'you') {
+      // groups asking for help, the daily roulette, then what you can do at your level right now
+      if (hw.length) {
+        b.append(h('div', { class: 'sec-h' }, 'Help Wanted', h('small', null, `Mentor Marks: ${G.account().marks}`)));
+        for (const r of hw) {
+          const A = D.ACTIVITIES[r.act], Dg = D.DUNGEONS[A.dungeon];
+          const marks = `${10 + (r.firstTimers ? 5 : 0) + (r.startIdx ? 3 : 0)}–${15 + (r.firstTimers ? 5 : 0) + (r.startIdx ? 3 : 0)} Marks`;
+          b.append(h('div', { class: 'row hw gf-row' },
+            h('div', { class: 'ic mob' }, img(mobArt(A.boss || finalBoss(A) || 'vancleef'))),
+            h('div', { class: 't' }, h('b', null, `${A.name} needs a ${r.role === 'dps' ? 'damage dealer' : r.role}`),
+              h('small', { style: { whiteSpace: 'normal' } }, `${r.posterName}: ${r.startIdx ? 'stuck on ' + Dg.pulls[r.startIdx].label : 'full run'}${r.firstTimers ? ' · first-timers' : ''} · ${marks} · ${Math.ceil((r.expires - Date.now()) / 60000)} min left`)),
+            h('button', { class: 'chip gold', disabled: !!S.queue, onclick: () => { closeSheet(); G.joinHelpWanted(r.id); renderAll(); } }, 'Help')));
+        }
+      }
+      const rr = G.rouletteReady(), ropts = G.rouletteOptions();
+      if (ropts.length) b.append(h('div', { class: 'row gf-row gf-roulette' },
+        h('div', { class: 'ic' }, img(art('icon', 'hearthstone'))),
+        h('div', { class: 't' }, h('b', null, 'Dungeon Roulette', h('span', { class: 'gf-lvl' }, rr ? 'daily' : 'done today')),
+          h('small', null, `A random dungeon from ${ropts.length} you can reach: +15 Mentor Marks, a bonus blue and gold.`)),
+        h('button', { class: 'chip gold', disabled: !rr || !!S.queue, onclick: () => { closeSheet(); G.startRoulette(); renderAll(); } }, rr ? 'Go' : 'Tomorrow')));
+      let mine = all.filter(atLevel).sort(byLevel);
+      b.append(h('div', { class: 'sec-h' }, 'At your level', h('small', null, `level ${P.level}`)));
+      if (!mine.length) {
+        // between brackets: offer the closest you have outlevelled, synced down
+        mine = all.filter(doable).sort((a, c) => c.A.maxLvl - a.A.maxLvl).slice(0, 4);
+        b.append(h('p', { class: 'ai-note', style: { margin: 0 } }, mine.length ? 'Nothing is made for your level right now. These are the closest; you are synced down to fit.' : 'Nothing to queue for yet. Keep levelling: the first groups open at level 8.'));
+      }
+      for (const x of mine) b.append(row(x, true));
+      const next = all.filter((x) => !doable(x) && /^Requires level/.test(x.why)).sort(byLevel)[0];
+      if (next) b.append(h('p', { class: 'ai-note', style: { margin: 0 } }, `Next to open: ${next.A.name} (${KIND_LABEL[actKind(next.A)].toLowerCase()}) at level ${next.A.minLvl}.`));
+    } else {
+      const ofKind = all.filter((x) => actKind(x.A) === tab).sort(byLevel);
+      const now = ofKind.filter(atLevel), up = ofKind.filter((x) => !doable(x)), low = ofKind.filter((x) => doable(x) && P.level > x.A.maxLvl);
+      b.append(h('div', { class: 'sec-h' }, 'At your level', h('small', null, `level ${P.level}`)));
+      if (!now.length) b.append(h('p', { class: 'ai-note', style: { margin: 0 } }, up.length ? `None at your level. The next opens at level ${up[0].A.minLvl}.` : 'You have outlevelled all of these; they are below, synced to fit.'));
+      for (const x of now) b.append(row(x, false));
+      if (up.length) b.append(...foldSec('gf.up.' + tab, 'Coming up', `${up.length} more from level ${up[0].A.minLvl}`, up.map((x) => row(x, false)), false));
+      if (low.length) b.append(...foldSec('gf.low.' + tab, 'Earlier', `${low.length} you have outlevelled · synced to fit`, low.map((x) => row(x, false)), false));
     }
-    // Daily Roulette
-    const rr = G.rouletteReady(), ropts = G.rouletteOptions();
-    b.append(h('div', { class: 'sec-h' }, 'Dungeon Roulette', h('small', null, rr ? 'once a day' : 'done today')),
-      h('div', { class: 'row', style: { gridTemplateColumns: '1fr auto' } },
-        h('div', { class: 't' }, h('b', null, 'A random dungeon, with bonus rewards'), h('small', { style: { whiteSpace: 'normal' } }, ropts.length ? `+15 Mentor Marks, a bonus blue and gold on top of the usual loot. Picks one of ${ropts.length} dungeon${ropts.length > 1 ? 's' : ''} you can reach.` : 'Reach a dungeon\'s level to join.')),
-        h('button', { class: 'chip gold', disabled: !rr || !ropts.length || !!S.queue, onclick: () => { closeSheet(); G.startRoulette(); renderAll(); } }, rr ? 'Go' : 'Tomorrow')));
-    b.append(h('div', { class: 'sec-h' }, 'Group Finder', h('small', null, 'queue from the zone')));
-    for (const k in D.ACTIVITIES) {
-      const A = D.ACTIVITIES[k];
-      const why = G.activityBlock(k);
-      if (why === 'hidden') continue; // the other faction's world elites
-      const queued = S.queue && S.queue.act === k;
-      const synced = !why && P.level > A.maxLvl ? ` · you are synced to level ${A.maxLvl}` : '';
-      b.append(h('div', { class: 'row', style: { gridTemplateColumns: '34px 1fr auto' } },
-        h('div', { class: 'ic mob' }, img(mobArt(A.boss || finalBoss(A) || 'vancleef'))),
-        h('div', { class: 't' }, h('b', null, A.name, h('span', { style: { color: 'var(--muted)', fontWeight: 400 } }, `  ${A.minLvl}–${A.maxLvl}`)), h('small', { style: why ? { color: '#ff8a6a' } : null }, why || A.desc + synced)),
-        queued ? h('button', { class: 'chip', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave') : h('button', { class: 'chip gold', disabled: !!why || !!S.queue, onclick: () => { G.queueFor(k); ui.sheetFn(); } }, 'Queue')));
-    }
-    if (G.roles().length > 1) {
-      const rr = h('div', { class: 'btn-row' });
-      for (const r of G.roles()) rr.append(h('button', { class: 'btn' + (G.role() === r ? '' : ' alt'), disabled: !!S.queue, onclick: () => { G.setRole(r); ui.sheetFn(); } }, r === 'tank' ? 'Tank' : r === 'healer' ? 'Healer' : 'Damage'));
-      b.append(h('div', { class: 'sec-h' }, 'Your role'), rr);
-    }
-    b.append(h('p', { style: { color: 'var(--muted)', fontSize: '13px', margin: 0 } }, `You queue as ${G.role() === 'tank' ? 'a Tank' : G.role() === 'healer' ? 'a Healer' : 'Damage'}. Tanks and healers get groups faster.`));
   }
   // a dungeon's picture in the group finder is its last boss
   function finalBoss(A) {

@@ -16,9 +16,9 @@
   // ------------------------------------------------------------- names
   const SYL_A = ['Ael', 'Bran', 'Cor', 'Dar', 'El', 'Fen', 'Gal', 'Hal', 'Ith', 'Jor', 'Kel', 'Lor', 'Mar', 'Nor', 'Or', 'Per', 'Quel', 'Ro', 'Syl', 'Tor', 'Ul', 'Val', 'Wyn', 'Yor', 'Zan', 'Bel', 'Thal', 'Mor', 'Ser', 'Kal'];
   const SYL_B = ['a', 'ia', 'or', 'in', 'wen', 'dor', 'ric', 'eth', 'ius', 'ara', 'on', 'ys', 'iel', 'ok', 'rim', 'as', 'en', 'ith', 'anor', 'wyn'];
-  const MEME = ['Legolasxx', 'Healzplz', 'Stabbyjoe', 'Pwnzor', 'Xxshadowxx', 'Tankyboi', 'Frostyfingers', 'Dotsndots', 'Lootgoblin', 'Critmonster',
-    'Bubblehearth', 'Gankalot', 'Noobslayer', 'Manadrinker', 'Pumpkinpie', 'Kobolddad', 'Candlethief', 'Muffinz', 'Sneakysneak', 'Holyguacamole',
-    'Arthaslol', 'Sylvanasbff', 'Leeroyy', 'Fireballz', 'Shieldbro', 'Stabwound', 'Renewbie', 'Smitehappens', 'Backstabber', 'Polymorphine',
+  const MEME = ['Arrowxx', 'Healzplz', 'Stabbyjoe', 'Pwnzor', 'Xxshadowxx', 'Tankyboi', 'Frostyfingers', 'Dotsndots', 'Lootgoblin', 'Critmonster',
+    'Bubblehearth', 'Gankalot', 'Noobslayer', 'Manadrinker', 'Pumpkinpie', 'Kobolddad', 'Coinpurse', 'Muffinz', 'Sneakysneak', 'Holyguacamole',
+    'Lanternlol', 'Ledgerbff', 'Chargeyy', 'Fireballz', 'Shieldbro', 'Stabwound', 'Renewbie', 'Smitehappens', 'Backstabber', 'Polymorphine',
     'Budidps', 'Asepheals', 'Ucoktank', 'Kakashiii', 'Mamangmage', 'Jokowarrior', 'Tehpucuk', 'Nasgorheal', 'Satebandit', 'Kopisusu'];
   B.makeName = function (used) {
     for (let i = 0; i < 50; i++) {

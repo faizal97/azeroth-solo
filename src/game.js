@@ -102,6 +102,8 @@
       const walk = (o, depth) => {
         if (!o || typeof o !== 'object' || depth > 8 || seen.has(o)) return; seen.add(o);
         if (typeof o.id === 'string' && o.slot && D.ITEMS[o.id]) { const d = D.ITEMS[o.id]; o.name = d.name; if (d.desc) o.desc = d.desc; if (d.source) o.source = d.source; }
+        // simulated players whose joke name borrowed another world's heroes get a new one
+        if (typeof o.name === 'string' && o.cls && /^(arthas|sylvanas|leeroy|legolas|candlethief)/i.test(o.name) && root.B && B.makeName) o.name = B.makeName(new Set());
         if (typeof o.realm === 'string' && o.realm !== D.REALM && !OTHER_REALMS.includes(o.realm)) { let h = 0; for (const c of o.realm) h = (h * 31 + c.charCodeAt(0)) >>> 0; o.realm = OTHER_REALMS[h % OTHER_REALMS.length]; }
         for (const k in o) walk(o[k], depth + 1);
       };
