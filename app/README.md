@@ -1,4 +1,4 @@
-# azeroth_solo
+# Realm of Loner (Android app)
 
 A new Flutter project.
 

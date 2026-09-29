@@ -1,4 +1,4 @@
-"""Azeroth Solo — original game music and sound effects, composed in code.
+"""Realm of Loner — original game music and sound effects, composed in code.
 
 Voices come from the vault's compose_example_bigbreak_v1_synth.py (the raw-synth sound he prefers):
 saw plucks, square/sine lead, sine+square bass, detuned-saw pads, noise. No samples, nothing licensed.

@@ -1,6 +1,6 @@
-# Azeroth Solo
+# Realm of Loner
 
-A single-player fake MMO in World of Warcraft Classic's world: every other "player" is a simulated bot. It's a personal game for Faizal, played on his **Android** phone. It is not channel content and has nothing to do with the Gaming News vault.
+A single-player fake MMO set in its own world, Caldreth: every other "player" is a simulated bot. It's a personal game for Faizal, played on his **Android** phone. It is not channel content and has nothing to do with the Gaming News vault.
 
 ## Layout
 
@@ -37,7 +37,7 @@ cd app && JAVA_HOME=/opt/homebrew/opt/openjdk@17 flutter build apk --release
 ```
 
 1. Bump `version:` in `app/pubspec.yaml` for every release.
-2. Copy the APK to `~/Library/Mobile Documents/com~apple~CloudDocs/Azeroth Solo/AzerothSolo-vX.apk`, remove the previous APK there, and confirm `ubiquitousItemIsUploaded` is true.
+2. Copy the APK to `~/Library/Mobile Documents/com~apple~CloudDocs/Azeroth Solo/RealmOfLoner-vX.apk`, remove the previous APK there, and confirm `ubiquitousItemIsUploaded` is true.
 3. Faizal installs it from icloud.com → Recents on his phone.
 4. Publish the browser version: `tools/publish_web.sh` (puts `dist/index.html` on the `gh-pages` branch, served at https://faizal97.github.io/realm-of-loner/). Every GitHub release also needs the APK attached, or the in-app updater won't see it.
 

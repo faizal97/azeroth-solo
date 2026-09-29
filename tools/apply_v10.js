@@ -68,7 +68,7 @@ const sub = (line, js) => line.replace(chatFile ? reChat : reOther, (m, w, suf, 
 const files = [];
 const walk = (d) => { for (const f of fs.readdirSync(d)) { const p = path.join(d, f); if (fs.statSync(p).isDirectory()) walk(p); else if (/\.(js|html|json)$/.test(f)) files.push(p); } };
 walk(path.join(ROOT, 'src'));
-for (const f of ['README.md', 'docs/lore/canon.md', 'app/pubspec.yaml', 'app/android/app/src/main/AndroidManifest.xml', 'app/lib/main.dart']) if (fs.existsSync(path.join(ROOT, f))) files.push(path.join(ROOT, f));
+for (const f of ['README.md', 'SPEC.md', 'docs/lore/canon.md', 'app/pubspec.yaml', 'app/android/app/src/main/AndroidManifest.xml', 'app/lib/main.dart']) if (fs.existsSync(path.join(ROOT, f))) files.push(path.join(ROOT, f));
 
 let total = 0; const per = [];
 for (const f of files) {
