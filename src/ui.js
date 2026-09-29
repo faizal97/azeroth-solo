@@ -1946,9 +1946,9 @@
         const cur = P.equip[it.slot];
         // the buttons stay pinned to the bottom of the sheet, so selling never needs a scroll (v9.4)
         const price = !it.noSell && it.slot !== 'quest' ? h('small', { html: ' · sells for ' + moneyHtml((it.sell || 1) * sel.n) }) : null;
-        b.append(h('div', { class: 'bag-acts' }, h('div', { class: 'bag-acts-t' }, h('b', { class: 'q' + (it.q || 0) }, it.name + (sel.n > 1 ? ' x' + sel.n : '')), price), acts));
-        b.append(itemTip(it));
-        if (cur && D.GEAR_SLOTS.includes(it.slot)) b.append(h('div', { class: 'sec-h' }, 'Currently equipped'), itemTip(cur));
+        // v10.1.1: the description is pinned too, above the buttons, in its own capped scroll so the grid stays in view
+        const tipBox = h('div', { class: 'bag-tip' }, itemTip(it), cur && D.GEAR_SLOTS.includes(it.slot) ? h('div', { class: 'sec-h' }, 'Currently equipped') : null, cur && D.GEAR_SLOTS.includes(it.slot) ? itemTip(cur) : null);
+        b.append(h('div', { class: 'bag-acts' }, tipBox, h('div', { class: 'bag-acts-t' }, h('b', { class: 'q' + (it.q || 0) }, it.name + (sel.n > 1 ? ' x' + sel.n : '')), price), acts));
       } else b.append(h('p', { style: { color: 'var(--muted)', margin: 0 } }, 'Tap an item to inspect it. A green arrow means an upgrade.'));
       const vendorNow = D.PLACES[P.place].vendor || D.PLACES[P.place].gearVendor;
       const junk = P.bags.filter((x) => x.item.q === 0 && !x.item.noSell).length;
