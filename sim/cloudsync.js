@@ -135,6 +135,14 @@ const ok = (cond, what) => { if (cond) pass++; else { fail++; console.log('FAIL'
   const code = await G.encodeSave(char(one.id)); const back = await G.decodeSave(code);
   ok(back.player.name === 'Cyl' && back.player.cls === 'mage' && JSON.stringify(back.player.bags) === JSON.stringify(char(one.id).player.bags), 'a save survives the round trip');
 
+  // 11. on the game's own sites cloud.js must load without errors and offer sign-in; elsewhere it stays off
+  const vm = require('vm'), src = require('fs').readFileSync(require('path').join(__dirname, '../src/cloud.js'), 'utf8');
+  for (const [origin, want] of [['https://faizal97.github.io', true], ['http://127.0.0.1:8778', true], ['https://example.com', false]]) {
+    const win = { location: { origin }, localStorage: mem() }; win.window = win;
+    let threw = null; try { vm.runInNewContext(src, win); } catch (e) { threw = e; }
+    ok(!threw && win.CLOUD && win.CLOUD.available() === want, `cloud.js on ${origin}: loads, sign-in ${want ? 'offered' : 'off'}${threw ? ' (' + threw.message + ')' : ''}`);
+  }
+
   console.log(`cloudsync: ${pass}/${pass + fail} checks pass`);
   process.exit(fail ? 1 : 0);
 })().catch((e) => { console.error(e); process.exit(1); });

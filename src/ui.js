@@ -2078,6 +2078,7 @@
           b.append(...foldSec('set.beta', 'Beta updates', on ? 'On' : 'Off', kids));
         }
         b.append(...foldSec('set.about', 'About', 'Realm of Loner', [h('p', { class: 'ai-note', style: { margin: 0 } }, ABOUT_NOTE)]));
+        if (window.CLOUD) b.append(...foldSec('set.cloud', 'Cloud save', cloudSummary(), cloudKids()));
         b.append(...foldSec('set.save', 'Save', 'save codes', [h('div', { class: 'btn-row' },
           h('button', { class: 'btn alt', onclick: exportSave }, 'Copy save code'),
           h('button', { class: 'btn alt', onclick: importSave }, 'Load save code'))]));
@@ -2227,6 +2228,101 @@
         h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); G.resetTalents(); ui.sheetFn(); } }, 'Reset'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true) }, cost ? `Reset (${G.moneyText(cost)})` : 'Reset (free)')));
     });
   }
+  // ---------- cloud save (cloud.js): an optional copy of every character in the player's own Google Drive
+  const agoText = (ms) => (!ms ? 'never' : Date.now() - ms < 90000 ? 'just now' : fmtTime(Date.now() - ms).trim() + ' ago');
+  const devName = (d) => (d === 'phone' ? 'your phone' : 'the browser');
+  const cloudNote = (t) => h('p', { class: 'ai-note', style: { margin: 0 } }, t);
+  function cloudError(e) {
+    if (e && e.code === 'cancelled') return;
+    toast((e && e.message) || 'Cloud save did not work. Try again.');
+    if (ui.sheet === 'hero' && ui.sheetFn) ui.sheetFn();
+  }
+  // from a tap: make sure there is a Google token (may open Google's window), then run fn
+  function withCloud(fn) { return CLOUD.token(true).then(fn).catch(cloudError); }
+  function cloudSummary() {
+    if (!CLOUD.available()) return 'not here';
+    if (!CLOUD.on()) return 'Off';
+    const st = CLOUD.state();
+    if (st.lastError && st.lastError.code === 'auth') return 'Reconnect';
+    return st.lastBackup ? 'On · ' + agoText(st.lastBackup) : 'On';
+  }
+  function cloudKids() {
+    if (!CLOUD.available()) return [cloudNote(UPD.inApp() ? 'Cloud save is coming to the app in a later update. Save codes (below) work in the meantime.' : `Cloud save works on the game's own page, ${UPD.WEB}. Save codes (below) work everywhere.`)];
+    CLOUD.prepare(); // load Google's script now, so a tap can open its window straight away
+    const testing = CLOUD.TESTING ? cloudNote('Testing: only invited Google accounts can sign in for now.') : null;
+    const refresh = () => { if (ui.sheetFn) ui.sheetFn(); };
+    if (!CLOUD.on()) return [cloudNote('Keep a copy of your characters in your own Google Drive, so you can pick them up on another phone or in a browser. Optional: the game works the same without it.'), testing,
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => cloudSignIn(refresh) }, 'Sign in with Google'))];
+    const st = CLOUD.state(), expired = st.lastError && st.lastError.code === 'auth';
+    const status = expired ? 'The Google sign-in ran out. Tap Reconnect to carry on backing up.'
+      : `Signed in · last backup ${agoText(st.lastBackup)}${st.lastBackup ? ` (this ${CLOUD.device()})` : ''}.` + (st.lastError ? ` Last try: ${st.lastError.message}` : '');
+    return [cloudNote(status), testing,
+      h('div', { class: 'btn-row' },
+        expired ? h('button', { class: 'btn', onclick: () => withCloud(() => cloudBackupAll(refresh)) }, 'Reconnect') : null,
+        h('button', { class: 'btn alt', onclick: () => withCloud(() => cloudBackupAll(refresh)) }, 'Back up now'),
+        h('button', { class: 'btn alt', onclick: () => openRestore(refresh) }, 'Restore…'),
+        h('button', { class: 'btn alt', onclick: () => { CLOUD.signOut(); toast('Signed out on this device. Your characters and their cloud copies stay.', true); refresh(); } }, 'Sign out')),
+      cloudNote('Saves go only to a hidden folder in your own Google Drive that only this game can see. Backups also happen by themselves while you play.')];
+  }
+  function cloudSignIn(after) {
+    CLOUD.signIn().then(async () => {
+      const cl = await CLOUD.list();
+      await cloudBackupAll(null, true);
+      toast('Signed in. Your characters are backed up.', true);
+      if (after) after();
+      if (cl.some((c) => !G.readSave(c.id))) openRestore(after); // characters from another device: offer them straight away
+    }).catch(cloudError);
+  }
+  // Back up now: every character; each conflict is asked about in turn
+  async function cloudBackupAll(after, quiet) {
+    const conflicts = await CLOUD.backupAll();
+    const next = () => { const r = conflicts.shift(); if (r) askConflict(r, next); else { if (!quiet) toast('Backed up to Google Drive.', true); if (after) after(); } };
+    next();
+  }
+  // Two different saves for one character: this device's, the cloud's, or both (the cloud's becomes its own character)
+  function askConflict(r, after) {
+    const L = r.local, C = r.cloud, playing = G.S && G.S.id === L.id;
+    const pick = (choice) => { closeDialog();
+      CLOUD.resolve(L.id, choice).then((x) => {
+        if (x.what === 'both') toast(`Kept both: the cloud's ${x.copy.name} is now a separate character.`, true);
+        if (playing && (!G.S || G.S.id !== L.id)) enterNow(L.id); // the one being played was replaced: open it again
+      }).catch(cloudError).finally(() => { if (after) after(); });
+    };
+    showDialog([h('h3', null, `Two different saves for ${L.name}`),
+      h('p', null, `This ${CLOUD.device()}: level ${L.level}, last played ${agoText(L.at)}.`),
+      h('p', null, `Google Drive (from ${devName(C.dev)}): level ${C.level}, saved ${agoText(C.at)}.`),
+      cloudNote('Keep both makes the Drive one a separate character, so nothing is lost.'),
+      h('div', { class: 'btn-row' },
+        h('button', { class: 'btn', onclick: () => pick('local') }, `Keep this ${CLOUD.device()}'s`),
+        h('button', { class: 'btn alt', onclick: () => pick('cloud') }, 'Keep the Drive one'),
+        h('button', { class: 'btn alt', onclick: () => pick('both') }, 'Keep both'))]);
+  }
+  // Restore: the characters in the player's Drive; signs in first when needed
+  function openRestore(after) {
+    showDialog([h('h3', null, 'Restore from Google Drive'), h('p', null, 'Looking in your Drive…')], true);
+    const first = CLOUD.on() ? CLOUD.token(true) : CLOUD.signIn();
+    first.then(() => CLOUD.list()).then((cl) => {
+      const rows = h('div', { class: 'list' });
+      const fresh = cl.filter((c) => !G.readSave(c.id));
+      const done = (res) => {
+        const pending = res.filter((x) => x.what === 'conflict'); const got = res.filter((x) => x.what === 'restored' || x.what === 'pulled');
+        const next = () => { const r = pending.shift(); if (r) askConflict(r, next); else { if (got.length) toast(`Restored ${got.map((x) => x.local.name).join(', ')}.`, true); if (after) after(); } };
+        closeDialog(); next();
+      };
+      for (const c of cl) {
+        const have = !!G.readSave(c.id), cn = D.CLASSES[c.cls] ? D.CLASSES[c.cls].name : c.cls;
+        rows.append(h('div', { class: 'row' },
+          h('div', { class: 't' }, h('b', { class: 'cls-' + c.cls }, c.name), h('small', null, `Level ${c.level} ${cn} · saved ${agoText(c.at)} from ${devName(c.dev)}${have ? ' · on this device' : ''}`)),
+          h('button', { class: 'btn alt', onclick: () => CLOUD.restore([c.id]).then(done).catch(cloudError) }, have ? 'Check' : 'Restore')));
+      }
+      if (!cl.length) rows.append(h('div', { class: 'people' }, 'Nothing in your Drive yet. Characters appear here after their first backup.'));
+      showDialog([h('h3', null, 'Restore from Google Drive'), rows,
+        fresh.length > 1 ? h('button', { class: 'btn wide', onclick: () => CLOUD.restore(fresh.map((c) => c.id)).then(done).catch(cloudError) }, `Restore all ${fresh.length} new`) : null,
+        h('button', { class: 'btn alt wide', onclick: () => { closeDialog(); if (after) after(); } }, 'Close')], true);
+    }).catch((e) => { closeDialog(); cloudError(e); });
+  }
+  // (signed-out players never load Google's script until they tap this, so nobody contacts Google without asking to)
+  const restoreButton = (after) => (window.CLOUD && CLOUD.available() ? h('button', { class: 'btn alt', onclick: () => openRestore(after) }, 'Restore from Google Drive') : null);
   function exportSave() {
     const ta = h('textarea', { readonly: true, style: { width: '100%', height: '120px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', fontSize: '12px' } });
     const note = h('p', { class: 'ai-note', style: { margin: 0 } }, 'Preparing your code...');
@@ -2878,6 +2974,7 @@
   function showSelect() {
     closeDialog(); closeSheet();
     setTimeout(autoUpdateCheck, 1200);
+    if (window.CLOUD && CLOUD.on()) CLOUD.prepare(); // Google's script ready before Enter World, so its window may open from that tap
     const list = G.characters();
     if (!list.length) return showCreate();
     app.innerHTML = '';
@@ -2903,12 +3000,29 @@
           h('button', { class: 'btn alt', disabled: list.length >= G.MAX_CHARS, onclick: () => showCreate(true) }, 'Create New'),
           h('button', { class: 'btn alt', onclick: () => { if (!G.S) { const r = G.load(sel); if (!r) return; } openTheater(); } }, 'Theater'),
           h('button', { class: 'btn alt', style: { color: '#ff6a5a' }, onclick: () => confirmDeleteChar(cur, () => showSelect()) }, 'Delete')),
-        h('button', { class: 'btn alt wide', onclick: importSave }, 'Load save code'),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: importSave }, 'Load save code'), restoreButton(() => showSelect())),
         discordLink());
     };
     draw();
   }
+  // Enter World: when signed in to cloud save, first renew Google's token (from this tap) and pick up a newer save
+  // from another device. Never keeps the player waiting: after 8 s, or on any failure, the local save opens.
   function enter(id) {
+    if (!(window.CLOUD && CLOUD.on() && CLOUD.available())) return enterNow(id);
+    let done = false;
+    const go = (after) => { if (done) return; done = true; clearTimeout(timer); enterNow(id); if (after) after(); };
+    const timer = setTimeout(() => go(), 8000);
+    CLOUD.token(true).then(() => CLOUD.sync(id)).then((r) => {
+      const loaded = () => toast(`Loaded your latest save from ${devName(r.cloud.dev)} (level ${r.local.level}).`, true);
+      // Google answered after the fallback already opened the local save (say the player took a while to pick an
+      // account): a newer save loaded underneath, so open it again; a conflict is asked about in the world
+      if (done) { if (r.what === 'pulled') { enterNow(id); loaded(); } else if (r.what === 'conflict') askConflict(r); return; }
+      if (r.what === 'pulled') return go(loaded);
+      if (r.what === 'conflict') { done = true; clearTimeout(timer); return askConflict(r, () => { if (!G.S) enterNow(id); }); }
+      go();
+    }).catch(() => go());
+  }
+  function enterNow(id) {
     const rep = G.load(id);
     if (!rep) return toast('That character could not be loaded.');
     start(); if (rep.away > 120000) showAway(rep);
@@ -2918,9 +3032,15 @@
   function confirmDeleteChar(c, after) {
     const input = h('input', { type: 'text', placeholder: 'Type DELETE', style: { minHeight: '44px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', borderRadius: '3px', padding: '0 10px', width: '100%', fontSize: '16px' } });
     const err = h('p', { style: { color: '#ff6a5a' } });
-    showDialog([h('h3', null, `Delete ${c.name}?`), h('p', null, `Level ${c.level} ${D.CLASSES[c.cls] ? D.CLASSES[c.cls].name : ''}. The character, gear and quests are gone for good.`), input, err,
+    const inCloud = window.CLOUD && CLOUD.on() && CLOUD.state().chars[c.id];
+    const alsoCloud = inCloud ? h('input', { type: 'checkbox' }) : null;
+    showDialog([h('h3', null, `Delete ${c.name}?`), h('p', null, `Level ${c.level} ${D.CLASSES[c.cls] ? D.CLASSES[c.cls].name : ''}. The character, gear and quests are gone for good${inCloud ? ' from this device' : ''}.`), input,
+      inCloud ? h('label', { class: 'ai-note', style: { display: 'flex', gap: '8px', alignItems: 'center' } }, alsoCloud, 'Also delete the copy in Google Drive') : null, err,
       h('div', { class: 'btn-row' },
-        h('button', { class: 'btn', onclick: () => { if (input.value.trim().toUpperCase() !== 'DELETE') { err.textContent = 'Type DELETE to confirm.'; return; } G.deleteCharacter(c.id); closeDialog(); after(); } }, 'Delete'),
+        h('button', { class: 'btn', onclick: () => { if (input.value.trim().toUpperCase() !== 'DELETE') { err.textContent = 'Type DELETE to confirm.'; return; }
+          G.deleteCharacter(c.id); closeDialog();
+          if (inCloud) { if (alsoCloud.checked) withCloud(() => CLOUD.deleteCloud(c.id)).then(() => toast('Deleted from Google Drive too.', true)); else CLOUD.forget(c.id); }
+          after(); } }, 'Delete'),
         h('button', { class: 'btn alt', onclick: closeDialog }, 'Keep'))]);
   }
   function showCreate(fromSelect) {
@@ -2960,6 +3080,7 @@
         h('div', { class: 'sub', style: { fontSize: '12px', marginTop: '0' } }, 'Everyone else on this realm is simulated. The world keeps going while you are away.'));
       root.append(h('div', { class: 'btn-row' },
         h('button', { class: 'btn alt', onclick: importSave }, 'Load save code'),
+        restoreButton(() => { if (G.characters().length) showSelect(); }),
         G.characters().length ? h('button', { class: 'btn alt', onclick: () => showSelect() }, 'Back to characters') : null));
       root.append(discordLink());
     };
@@ -3033,13 +3154,14 @@
     buildLayout(); bind(); renderAll();
     if (G.S.player.level <= 3) setTimeout(() => tip('start'), 1500);
   }
-  let last = performance.now();
+  let last = performance.now(), cloudTick = 0;
   function loop(t) {
     const dt = (t - last) / 1000; last = t;
     if (G.S) {
       if (dt > 20) resume();
       if (ui.pendingChapter && !G.fight && !ui.dialog && !(window.CS && CS.playing)) { const id = ui.pendingChapter; ui.pendingChapter = null; closeSheet(); setTimeout(() => playChapter(id), 2600); }
       G.update(Math.min(dt, 1));
+      cloudTick += dt; if (cloudTick > 30) { cloudTick = 0; cloudAuto(false); }
       frame();
       panelTick += dt;
       // refresh the idle panel now and then so respawns and people show up
@@ -3065,7 +3187,8 @@
     resume: () => { if (window.SND) window.SND.resume(); resume(); },
     back: () => { if (ui.dialog) closeDialog(); else if (ui.sheet) closeSheet(); },
   };
-  document.addEventListener('visibilitychange', () => { if (document.hidden) { G.save(); if (window.SND) window.SND.pause(); } else { if (window.SND) window.SND.resume(); resume(); } });
+  const cloudAuto = (force) => { if (window.CLOUD && CLOUD.on()) CLOUD.maybeBackup(force); };
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { G.save(); cloudAuto(true); if (window.SND) window.SND.pause(); } else { if (window.SND) window.SND.resume(); resume(); } });
   window.addEventListener('pagehide', () => G.save());
 
   function boot() {

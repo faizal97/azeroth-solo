@@ -130,6 +130,54 @@
     catch (e) { patch({ lastError: { code: e.code || 'drive', message: e.message, at: Date.now() } }); return { what: 'error', error: e }; }
   };
 
+  // ---- browser sign-in: Google Identity Services, loaded only when a player opens Cloud save or is signed in. The
+  // token (about an hour) lives in memory only. The popup must open straight from a tap, so prepare() loads Google's
+  // script ahead of time and token(true) is called from the tap itself.
+  CLOUD.WEB_CLIENT = '862031054528-shfi3s50vefl7nd0g6clotqaehqampvt.apps.googleusercontent.com';
+  CLOUD.SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
+  // the sites registered with Google for this client (anything else would only get Google's error page)
+  const WEB_ORIGINS = ['https://faizal97.github.io', 'http://127.0.0.1:8778', 'http://localhost:8778'];
+  CLOUD.webOk = () => !!(root.location && WEB_ORIGINS.includes(root.location.origin)) && !(root.UPD && UPD.inApp && UPD.inApp());
+  CLOUD.webAuth = function () {
+    let tok = null, exp = 0, client = null, loading = null, pending = null;
+    const ready = () => !!(root.google && google.accounts && google.accounts.oauth2);
+    const load = () => loading || (loading = new Promise((res, rej) => {
+      if (ready()) return res();
+      const s = document.createElement('script');
+      s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
+      s.onload = () => res(); s.onerror = () => { loading = null; rej(err('offline', 'Could not reach Google. Check the connection and try again.')); };
+      document.head.appendChild(s);
+    }));
+    const init = () => {
+      if (client || !ready()) return;
+      client = google.accounts.oauth2.initTokenClient({
+        client_id: CLOUD.WEB_CLIENT, scope: CLOUD.SCOPE,
+        callback: (r) => { const p = pending; pending = null; if (!p) return;
+          if (r.error || !r.access_token) return p.rej(err('auth', 'Google did not sign you in. Try again.'));
+          if (google.accounts.oauth2.hasGrantedAllScopes && !google.accounts.oauth2.hasGrantedAllScopes(r, CLOUD.SCOPE)) return p.rej(err('denied', 'Cloud save needs the Google Drive permission. Try again and allow it.'));
+          tok = r.access_token; exp = Date.now() + (+r.expires_in || 3600) * 1000; p.res(tok); },
+        error_callback: (e) => { const p = pending; pending = null; if (p) p.rej(err(e && e.type === 'popup_closed' ? 'cancelled' : 'auth', e && e.type === 'popup_failed_to_open' ? 'The browser blocked Google\'s sign-in window. Allow pop-ups for this page and try again.' : 'Sign-in was cancelled.')); },
+      });
+    };
+    return {
+      prepare: () => load().then(init).catch(() => {}),
+      fresh: () => !!tok && Date.now() < exp - 60000,
+      async token(interactive) {
+        if (tok && Date.now() < exp - 60000) return tok;
+        if (!interactive) throw err('auth', 'The Google sign-in has run out. Reconnect to carry on.');
+        if (!client) { await load(); init(); } // only when prepare() was not called in time: the browser may block this popup
+        return new Promise((res, rej) => { pending = { res, rej }; client.requestAccessToken(CLOUD.on() ? { prompt: '' } : {}); });
+      },
+      signOut() { tok = null; exp = 0; }, // this device only: Google keeps the permission, so other devices stay signed in
+    };
+  };
+  CLOUD.available = () => !!auth;
+  CLOUD.TESTING = true; // Google's consent screen is in Testing mode: only invited accounts can sign in (false once published)
+  // a token for Drive; from a tap, interactive may open Google's window (called synchronously so the popup is allowed)
+  CLOUD.token = (interactive) => (auth ? auth.token(interactive) : Promise.reject(err('unavailable', 'Cloud save is not available here.')));
+  CLOUD.prepare = () => (auth && auth.prepare ? auth.prepare() : Promise.resolve());
+  CLOUD.fresh = () => !!(auth && auth.fresh && auth.fresh());
+
   // ---- the real Drive: plain REST calls, only ever in the app-data folder
   const API = 'https://www.googleapis.com/drive/v3', UP = 'https://www.googleapis.com/upload/drive/v3';
   CLOUD.driveREST = function (getToken) {
@@ -162,4 +210,7 @@
       async remove(id) { await call(`${API}/files/${encodeURIComponent(id)}`, { method: 'DELETE' }); },
     };
   };
+  // the browser's sign-in, ready to use on the registered sites (the app gets its own later). Last, so everything
+  // it uses above is defined.
+  if (CLOUD.webOk()) CLOUD.setAuth(CLOUD.webAuth());
 })(typeof window !== 'undefined' ? window : globalThis);
