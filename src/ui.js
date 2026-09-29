@@ -117,13 +117,18 @@
   const img = (src, cls) => h('img', { src, class: cls, alt: '', draggable: 'false' });
 
   // ------------------------------------------------------------ formatting
-  function moneyHtml(c) {
+  // money as coins, like the original: "12 (gold) 4 (silver) 30 (copper)"; the words stay for screen readers.
+  // compact (the player frame): only the two largest coins, so it fits beside the name
+  function moneyHtml(c, compact, noZero) {
     const m = G.money(c);
-    const parts = [];
-    if (m.g) parts.push(`<span class="g">${m.g}g</span>`);
-    if (m.s || m.g) parts.push(`<span class="s">${m.s}s</span>`);
-    parts.push(`<span class="c">${m.c}c</span>`);
-    return `<span class="money tnum">${parts.join(' ')}</span>`;
+    let parts = [];
+    if (m.g) parts.push(['g', m.g]);
+    if (m.s || m.g) parts.push(['s', m.s]);
+    parts.push(['c', m.c]);
+    if (noZero) parts = parts.filter(([, v]) => v);
+    if (compact) parts = parts.slice(0, 2);
+    const word = { g: 'gold', s: 'silver', c: 'copper' };
+    return `<span class="money tnum" aria-label="${parts.map(([k, v]) => v + ' ' + word[k]).join(' ')}">${parts.map(([k, v]) => `<span class="${k}">${v}<i class="coin ${k}"></i></span>`).join(' ')}</span>`;
   }
   function conColor(lvl) {
     const d = lvl - G.S.player.level;
@@ -181,7 +186,7 @@
     const pf = h('div', { class: 'uf' },
       h('div', { class: 'portrait' }, h('div', { class: 'pclip' }, img(art('portrait', looks(P)))), h('span', { class: 'lvl tnum', id: 'pf-lvl' }, P.level)),
       h('div', { class: 'uf-body' },
-        h('div', { class: 'uf-name cls-' + P.cls }, G.displayName()),
+        h('div', { class: 'uf-namerow' }, h('div', { class: 'uf-name cls-' + P.cls }, G.displayName()), (els.pMoney = h('span', { class: 'pmoney' }))),
         (els.pHp = barEl('hp')), (els.pRes = barEl(D.CLASSES[P.cls].resource)),
         (els.pXp = h('button', { class: 'bar xp xpmain', 'aria-label': 'Experience', onclick: xpDetail }, h('i', { class: 'rest' }), h('i', { class: 'fill' }), h('b', { class: 'tnum' }))),
         (els.pBuffs = h('div', { class: 'buffs' }))));
@@ -203,7 +208,6 @@
       tf.classList.add('empty');
       tf.style.opacity = '1';
       tf.append(h('div', { class: 'uf-body', style: { textAlign: 'right', alignContent: 'center' } },
-        h('div', { html: moneyHtml(P.money) }),
         P.rested > 0 && P.level < D.LEVEL_CAP ? h('div', { style: { color: '#6fa8ff', font: '700 12px var(--body)' } }, 'Rested') : null,
         G.S.queue ? h('div', { style: { color: 'var(--gold)', font: '700 12px var(--body)' } }, 'In queue') : null),
         h('div'));
@@ -899,22 +903,22 @@
     let slots = barSlots();
     // keep the usual button size: 7 per row (8 if it all fits on one), extra abilities wrap to a second row
     const cols = slots.length === 8 ? 8 : 7;
-    // more than one row: a toggle folds the bar to its first row (+N) to give the panel room; saved on this device
+    // more than one row: a handle on the bar's top edge folds it to its first row to give the panel room; saved on this device
     const multi = slots.length > cols;
     let collapsed = false; try { collapsed = multi && localStorage.getItem('azsolo.barCollapsed') === '1'; } catch (e) { }
-    const toggle = (hidden) => h('button', { class: 'ab ab-toggle', 'aria-label': collapsed ? `Show ${hidden} more abilities` : 'Fold the action bar', onclick: () => {
+    const hidden = collapsed ? slots.length - cols : 0;
+    if (collapsed) slots = slots.slice(0, cols);
+    if (els.abHandle) els.abHandle.remove();
+    els.abHandle = multi ? h('button', { class: 'ab-handle', 'aria-label': collapsed ? `Show ${hidden} more abilities` : 'Fold the action bar', onclick: () => {
       try { localStorage.setItem('azsolo.barCollapsed', collapsed ? '0' : '1'); } catch (e) { }
       renderBar();
-    } }, collapsed ? h('span', null, '+' + hidden) : h('span', null, '▴'));
-    let tail = null;
-    if (multi && collapsed) { tail = toggle(slots.length - (cols - 1)); slots = slots.slice(0, cols - 1); }
-    else if (multi) { tail = toggle(0); }
-    const count = slots.length + (tail ? 1 : 0);
-    const n = Math.max(cols, Math.ceil(count / cols) * cols);
+    } }, h('span', { class: 'arr' }, collapsed ? '▴' : '▾'), collapsed ? h('small', { class: 'tnum' }, '+' + hidden) : null) : null;
+    if (els.abHandle) els.bottom.append(els.abHandle);
+    const n = Math.max(cols, Math.ceil(slots.length / cols) * cols);
     bar.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     for (let i = 0; i < n; i++) {
       const id = slots[i];
-      if (!id) { if (tail && i === slots.length) { bar.append(tail); continue; } bar.append(h('div', { class: 'ab empty' })); continue; }
+      if (!id) { bar.append(h('div', { class: 'ab empty' })); continue; }
       const ab = D.ABILITIES[id];
       const btn = h('button', { class: 'ab', 'aria-label': ab.name }, img(abIcon(id)), h('div', { class: 'cd' }), h('div', { class: 'cdt tnum' }));
       if (id === 'eat' || id === 'drink' || id === 'potion') {
@@ -1016,9 +1020,24 @@
     const f = h('span', { class: 'xpfloat tnum' }, `+${d.amount.toLocaleString()} XP` + (d.bonus ? ` (${d.bonus.toLocaleString()} rested)` : ''));
     els.pXp.parentNode.append(f); setTimeout(() => f.remove(), 1500);
   }
+  // money: kept current in the player frame; a change floats up beside it (+ gold in, − red out)
+  function moneyTick(S) {
+    const P = S.player, el = els.pMoney;
+    if (!el || !el.isConnected) return;
+    const same = ui.moneySeen && ui.moneySeen.id === S.id;
+    if (same && ui.moneySeen.v === P.money && el.firstChild) return;
+    const d = same ? P.money - ui.moneySeen.v : 0;
+    ui.moneySeen = { id: S.id, v: P.money };
+    el.innerHTML = moneyHtml(P.money, true);
+    if (!d) return;
+    if (ui.moneyFloat) ui.moneyFloat.remove();
+    const f = ui.moneyFloat = h('span', { class: 'moneyfloat' + (d < 0 ? ' out' : ''), html: (d < 0 ? '−' : '+') + moneyHtml(Math.abs(d), false, true) });
+    el.parentNode.parentNode.append(f); setTimeout(() => f.remove(), 1600);
+  }
   function frame() {
     const S = G.S; if (!S || !els.pHp) return;
     const P = S.player;
+    moneyTick(S);
     if (window.SND) window.SND.music(ui.csMusic ? ui.csMusic : S.run ? 'dungeon' : P.travel ? 'elwynn' : D.PLACES[P.place].safe ? 'town' : 'elwynn');
     const v = G.vitals();
     setBar(els.pHp, v.hp, v.maxHp);

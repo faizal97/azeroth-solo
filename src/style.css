@@ -155,7 +155,11 @@ img { max-width: 100%; display: block; }
 .run-actions .btn-row { margin: 0; }
 .sheet-backbtn { flex: none; min-height: 40px; margin-right: 10px; padding: 4px 10px 4px 6px; border: 1px solid #5c4526; border-radius: 3px; font: 700 14px var(--body); color: var(--gold); }
 .sheet-h h2 { flex: 1; min-width: 0; }
-.ab-toggle { display: grid; place-items: center; color: var(--gold); font: 700 16px var(--body); background: linear-gradient(#2a1f12, #140f09); }
+/* the fold handle: a small tab centred on the action bar's top border */
+.ab-handle { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); z-index: 6; display: flex; align-items: center; gap: 3px; height: 18px; min-width: 44px; padding: 0 10px; justify-content: center; border: 1px solid var(--edge-hi); border-bottom: 0; border-radius: 8px 8px 0 0; background: linear-gradient(#34271a, #2a1f12); color: var(--gold); font: 700 12px var(--body); line-height: 1; }
+.ab-handle::before { content: ''; position: absolute; inset: -12px -10px -6px; } /* a thumb-sized tap area */
+.ab-handle .arr { font-size: 11px; }
+.ab-handle small { font: 700 11px var(--body); color: var(--muted); }
 .bar.xpmain { height: 13px; width: 100%; display: block; padding: 0; margin-top: 2px; cursor: pointer; }
 .bar.xpmain > i.rest { opacity: .8; background: repeating-linear-gradient(135deg, #2f78e6 0 6px, #2566c8 6px 12px); }
 .bar.xpmain b { font: 700 10.5px/12px var(--body); }
@@ -178,7 +182,7 @@ img { max-width: 100%; display: block; }
 .rc-need { color: #ffd46a; background: rgba(240, 199, 94, .12); } .rc-greed { color: #8fe08f; background: rgba(90, 200, 90, .12); } .rc-pass { color: var(--muted); }
 .rc-row b { font: 800 15px var(--body); text-align: right; }
 .rc-tap { font-size: 12px; color: var(--muted); text-align: center; }
-@media (prefers-reduced-motion: reduce) { .rc-row { transition: none; } .xpfloat { animation: none; opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .rc-row { transition: none; } .xpfloat, .moneyfloat { animation: none; opacity: 0; } }
 .report-pre { margin: 0; max-height: 120px; overflow: auto; padding: 6px 8px; background: #0c0906; border: 1px solid #3b2d18; border-radius: 3px; font: 12px/1.4 ui-monospace, Menlo, monospace; color: var(--muted); white-space: pre-wrap; }
 .err-note { position: absolute; left: 8px; right: 8px; top: 8px; z-index: 58; display: flex; gap: 8px; align-items: center; padding: 8px 10px; background: rgba(40, 12, 8, .96); border: 1px solid #a8352a; border-radius: 4px; box-shadow: 0 6px 20px #000; font: 700 14px var(--body); color: #ffb3a6; }
 .err-note span { flex: 1; }
@@ -310,7 +314,19 @@ img { max-width: 100%; display: block; }
 .hero-top { display: grid; grid-template-columns: 110px 1fr; gap: 12px; align-items: end; }
 .hero-top img { width: 110px; }
 .money { font: 700 14px var(--body); white-space: nowrap; }
-.money .g { color: #ffd100; } .money .s { color: #d8d8d8; } .money .c { color: #e08a4a; }
+.money > span { white-space: nowrap; }
+.money .coin { display: inline-block; width: .72em; height: .72em; margin: 0 1px 0 2px; border-radius: 50%; vertical-align: -.02em; box-shadow: inset 0 -1px 0 rgba(0,0,0,.45), 0 0 0 1px rgba(0,0,0,.55); }
+.money .coin.g { background: radial-gradient(circle at 35% 30%, #fff3a8, #ffd100 45%, #a87a00); }
+.money .coin.s { background: radial-gradient(circle at 35% 30%, #ffffff, #c9ccd2 45%, #7c8088); }
+.money .coin.c { background: radial-gradient(circle at 35% 30%, #ffd2a8, #d27a3c 45%, #7d3f16); }
+.uf-namerow { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.uf-namerow .uf-name { flex: 1; min-width: 0; }
+.pmoney { flex: none; }
+.pmoney .money { font: 700 12px var(--body); color: #f1e6cf; }
+.moneyfloat { position: absolute; right: 0; top: 17px; z-index: 3; pointer-events: none; padding: 0 5px; border-radius: 3px; background: rgba(0,0,0,.78); font: 800 12px/16px var(--body); color: #ffd84a; white-space: nowrap; animation: moneyin 1.6s ease-out forwards; }
+@keyframes moneyin { 0% { transform: translateY(-4px); opacity: 0; } 12% { opacity: 1; } 75% { opacity: 1; } 100% { transform: translateY(8px); opacity: 0; } }
+.moneyfloat.out { color: #ff6a5a; }
+.moneyfloat .money { font: inherit; color: #fff; }
 .tabs { display: flex; gap: 4px; overflow-x: auto; }
 .tabs button { padding: 8px 12px; border: 1px solid #3b2d18; border-radius: 3px; font: 700 13px var(--body); white-space: nowrap; color: var(--muted); }
 .tabs button.on { color: var(--gold); border-color: var(--gold); }
