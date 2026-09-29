@@ -730,7 +730,7 @@
     o += P(pd([q(-15, -6), q(-4, -2), q(-6, 2), q(-14, 0)], true), dd, 1 * s) + P(pd([q(15, -6), q(4, -2), q(6, 2), q(14, 0)], true), dd, 1 * s);
     o += P(pd([q(-3, -4), q(3, -4), q(5, 8), q(0, 10), q(-5, 8)], true), c.cel(lt(col, 0.06)), 1.2 * s);
     o += P(pd([q(-12, 12), q(12, 12), q(10, 19), q(-10, 19)], true), dd, 1 * s) + L('M' + pt(q(-6, 12)) + 'L' + pt(q(-6, 19)) + 'M' + pt(q(0, 12)) + 'L' + pt(q(0, 19)) + 'M' + pt(q(6, 12)) + 'L' + pt(q(6, 19)), lt(col, 0.1), 1 * s);
-    o += P(pd([q(-12, 16), q(-18, 1), q(-8, 13)], true), c.cel('#d8d0b4'), 1.1 * s) + P(pd([q(12, 16), q(18, 1), q(8, 13)], true), c.cel('#c8c0a4'), 1.1 * s);
+    o += P(pd([q(-11, 17), q(-13, 9), q(-8, 15)], true), c.cel('#d8d0b4'), 1.1 * s) + P(pd([q(11, 17), q(13, 9), q(8, 15)], true), c.cel('#c8c0a4'), 1.1 * s);
     return o;
   }
   // square troll pillar with a carved zigzag band; broken tops are jagged
@@ -1245,32 +1245,47 @@
     if (st) s += L((o.lift ? 'M38,96 l6,2 M32,100 l4,4' : 'M40,100 l6,1 M36,108 l5,2') + ' M98,96 l6,-2 M100,104 l6,0', st, 2.2);
     return o.tf ? G(s, o.tf) : s;
   }
-  // ---- jungle troll head (facing left): long hooked nose, swept ears, tall mohawk, big tusks ----
+  // ---- jungle troll head (facing left), Realm of Loner design: lean long face, short straight nose, modest ear,
+  //      small lower tusks, hair gathered in a bone-pinned topknot with beaded braids, shell earring ----
+  function trBraid(x0, y0, x1, y1, col, bead) {
+    var s = '';
+    for (var k = 0; k < 5; k++) { var t = k / 4; s += E(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, 2.8 - t * 0.5, 2.6, c_(col), 1.2); }
+    return s + L('M' + pt([x1, y1 + 2]) + 'L' + pt([x1 + 0.5, y1 + 6]), col, 1.6) + C(x1, y1 + 3.4, 2.1, bead || BONE, 1.1);
+  }
   function jtHead(c, x, y, o) {
-    var sk = o.skin, s = '', pc = o.paintCol || BSRED;
-    s += P('M' + pt([x + 6, y - 2]) + 'L' + pt([x + 32, y - 15]) + 'L' + pt([x + 27, y - 7]) + 'L' + pt([x + 10, y + 7]) + 'Z', c.cel(sk), 2) + F('M' + pt([x + 11, y - 1]) + 'L' + pt([x + 27, y - 11]) + 'L' + pt([x + 12, y + 3]) + 'Z', dk(sk, 0.3), 0.8);
-    if (o.earring) s += L(ellD(x + 24, y - 6, 2.2, 2.6), OL, 2.4) + L(ellD(x + 24, y - 6, 2.2, 2.6), GOLD, 1.2);
-    if (o.hair) s += P(pd([[x - 6, y - 12], [x - 12, y - 28], [x - 1, y - 20], [x + 1, y - 38], [x + 7, y - 21], [x + 15, y - 34], [x + 14, y - 16], [x + 24, y - 22], [x + 14, y - 5]], true), c.cel(o.hair), 2) + L('M' + pt([x - 2, y - 16]) + 'L' + pt([x + 1, y - 30]) + 'M' + pt([x + 7, y - 16]) + 'L' + pt([x + 13, y - 28]), dk(o.hair, 0.35), 1.1);
-    var d = 'M' + pt([x - 6, y - 12]) + 'C' + pt([x, y - 17]) + ' ' + pt([x + 11, y - 14]) + ' ' + pt([x + 12, y - 4]) + 'L' + pt([x + 11, y + 9]) + 'C' + pt([x + 8, y + 15]) + ' ' + pt([x, y + 16]) + ' ' + pt([x - 5, y + 14]) + 'L' + pt([x - 12, y + 11]) + 'C' + pt([x - 14, y + 8]) + ' ' + pt([x - 13, y + 6]) + ' ' + pt([x - 11, y + 5]) +
-      'L' + pt([x - 22, y + 6]) + 'C' + pt([x - 27, y + 6]) + ' ' + pt([x - 26, y + 1]) + ' ' + pt([x - 21, y - 1]) + 'L' + pt([x - 9, y - 5]) + 'Z';
+    var sk = o.skin, s = '', pc = o.paintCol || BSRED, hc = o.hair || '#2e2620';
+    s += trBraid(x + 10, y, x + 19, y + 24, dk(hc, 0.12), o.bead || BONE);
+    s += P('M' + pt([x + 7, y - 2]) + 'L' + pt([x + 21, y - 10]) + 'L' + pt([x + 18, y - 4]) + 'L' + pt([x + 10, y + 6]) + 'Z', c.cel(sk), 2) + F('M' + pt([x + 11, y - 1]) + 'L' + pt([x + 18, y - 7]) + 'L' + pt([x + 12, y + 3]) + 'Z', dk(sk, 0.3), 0.8);
+    var d = 'M' + pt([x - 7, y - 12]) + 'C' + pt([x - 1, y - 18]) + ' ' + pt([x + 11, y - 15]) + ' ' + pt([x + 12, y - 4]) + 'L' + pt([x + 11, y + 9]) + 'C' + pt([x + 8, y + 16]) + ' ' + pt([x, y + 17]) + ' ' + pt([x - 5, y + 15]) + 'L' + pt([x - 11, y + 12]) + 'C' + pt([x - 13, y + 9]) + ' ' + pt([x - 12, y + 6]) + ' ' + pt([x - 11, y + 5]) +
+      'L' + pt([x - 16, y + 4]) + 'C' + pt([x - 18, y + 3]) + ' ' + pt([x - 17, y]) + ' ' + pt([x - 15, y - 1]) + 'L' + pt([x - 9, y - 5]) + 'Z';
     var paint = '';
     if (o.paint === 'stripes') paint = F(pd([[x - 14, y - 7], [x + 4, y - 8], [x + 5, y - 3], [x - 12, y - 1]], true) + pd([[x - 2, y + 3], [x + 8, y + 1], [x + 8, y + 4], [x - 1, y + 7]], true) + pd([[x + 1, y + 9], [x + 9, y + 7], [x + 8, y + 10], [x + 1, y + 12]], true), pc, 0.95);
-    else if (o.paint === 'skull') paint = F(ellD(x - 6, y - 5, 5.6, 4.4), '#f0ece0', 0.95) + F(pd([[x - 12, y + 9], [x + 6, y + 9], [x + 8, y + 14], [x - 4, y + 15], [x - 12, y + 12]], true), '#f0ece0', 0.9) + L('M' + pt([x - 9, y + 9]) + 'l0,5 M' + pt([x - 4, y + 9.4]) + 'l0,5.4 M' + pt([x + 1, y + 9.4]) + 'l0,5', OL, 1, 0.8) + F(pd([[x - 22, y + 1], [x - 16, y - 1], [x - 14, y + 4], [x - 21, y + 5]], true), '#f0ece0', 0.8);
+    else if (o.paint === 'skull') paint = F(ellD(x - 6, y - 5, 5.6, 4.4), '#f0ece0', 0.95) + F(pd([[x - 12, y + 10], [x + 6, y + 10], [x + 8, y + 15], [x - 4, y + 16], [x - 12, y + 13]], true), '#f0ece0', 0.9) + L('M' + pt([x - 9, y + 10]) + 'l0,5 M' + pt([x - 4, y + 10.4]) + 'l0,5.4 M' + pt([x + 1, y + 10.4]) + 'l0,5', OL, 1, 0.8) + F(pd([[x - 17, y + 1], [x - 13, y - 1], [x - 12, y + 4], [x - 16, y + 4]], true), '#f0ece0', 0.8);
     s += body(c, d, sk, F('M' + pt([x + 3, y - 18]) + 'L' + pt([x + 16, y - 18]) + 'L' + pt([x + 16, y + 18]) + 'L' + pt([x, y + 18]) + 'C' + pt([x + 7, y + 8]) + ' ' + pt([x + 7, y - 6]) + ' ' + pt([x + 3, y - 18]) + 'Z', dk(sk, 0.25), 0.8) + paint, 2.2);
-    s += P('M' + pt([x - 22, y + 5]) + 'C' + pt([x - 23, y + 10]) + ' ' + pt([x - 19, y + 11]) + ' ' + pt([x - 17, y + 6]) + 'Z', c.cel(dk(sk, 0.1)), 1.3);
-    s += L('M' + pt([x - 13, y - 8]) + 'L' + pt([x - 1, y - 5]), OL, 2.6);
+    // shell earring hanging from the lobe
+    s += L('M' + pt([x + 12, y + 4]) + 'L' + pt([x + 12.5, y + 8]), '#3a2a1a', 1.2) + E(x + 12.5, y + 10, 2, 2.8, c.cel(o.earring ? GOLD : '#f2e6cc'), 1.1);
+    // hair cap swept into a topknot, bone pin through it
+    s += P('M' + pt([x - 9, y - 9]) + 'C' + pt([x - 6, y - 20]) + ' ' + pt([x + 10, y - 21]) + ' ' + pt([x + 13, y - 7]) + 'L' + pt([x + 13, y + 1]) + 'C' + pt([x + 10, y - 4]) + ' ' + pt([x + 4, y - 10]) + ' ' + pt([x - 9, y - 9]) + 'Z', c.cel(hc), 2) +
+      L('M' + pt([x - 4, y - 15]) + 'C' + pt([x + 1, y - 18]) + ' ' + pt([x + 7, y - 16]) + ' ' + pt([x + 11, y - 8]), dk(hc, 0.35), 1, 0.8);
+    s += E(x + 4, y - 21, 5, 4, c.cel(hc), 1.8) + L('M' + pt([x - 2, y - 19]) + 'L' + pt([x + 10, y - 22]), OL, 3.4) + L('M' + pt([x - 2, y - 19]) + 'L' + pt([x + 10, y - 22]), BONE, 1.8);
+    s += L('M' + pt([x - 12, y - 8]) + 'L' + pt([x - 1, y - 5]), OL, 2.4);
     s += o.glow ? glowEye(c, x - 6, y - 3, 1.8, o.eye) : C(x - 6, y - 3, 1.9, o.eye || '#ffcc30', 1) + C(x - 6.4, y - 3.4, 0.6, '#fff');
-    s += L('M' + pt([x - 12, y + 11]) + 'L' + pt([x - 2, y + 11]), OL, 1.4);
-    s += P('M' + pt([x - 7, y + 12.5]) + 'C' + pt([x - 14, y + 13]) + ' ' + pt([x - 19, y + 7]) + ' ' + pt([x - 18, y - 1]) + 'C' + pt([x - 15, y + 5]) + ' ' + pt([x - 11, y + 7.5]) + ' ' + pt([x - 3, y + 9.5]) + 'Z', c.cel('#f4ecd6'), 1.6);
+    s += L('M' + pt([x - 11, y + 11]) + 'L' + pt([x - 2, y + 11]), OL, 1.4);
+    // small lower tusks
+    s += P('M' + pt([x - 10, y + 12]) + 'L' + pt([x - 11.5, y + 6]) + 'L' + pt([x - 7.5, y + 11.5]) + 'Z', c.cel('#f4ecd6'), 1.2);
     return s;
   }
-  // ---- jungle troll (facing left): tall, hunched, bent digitigrade legs, long arms ----
+  // cloth foot-wraps over a soft sole
+  function wraps(x, y, col) {
+    return boot(x, y, col) + L('M' + n(x - 5) + ',' + n(y - 7) + ' L' + n(x + 5) + ',' + n(y - 4) + ' M' + n(x - 6) + ',' + n(y - 3) + ' L' + n(x + 5) + ',' + n(y - 1), lt(col, 0.35), 1.2) + L('M' + n(x - 9) + ',' + n(y + 1) + ' L' + n(x + 6) + ',' + n(y + 1), '#3a2a1a', 1.6);
+  }
+  // ---- jungle troll (facing left): tall and lean, upright, straight legs in foot-wraps ----
   function jTroll(c, o) {
     var sk = o.skin;
     return biped(c, {
-      skin: sk, shirt: sk, pants: sk, sleeve: sk, forearm: o.forearm || sk, glove: o.glove, feet: toes2, boots: dk(sk, 0.25), digi: true, legW: o.legW || 9.5, armW: o.armW || 8.5,
-      hx: 44, hy: 38, hipY: 86, neckCol: sk, shadowR: 34,
-      torsoD: 'M42,56 C44,44 70,40 82,48 L82,68 L76,88 L52,88 L46,72 Z',
+      skin: sk, shirt: sk, pants: sk, sleeve: sk, forearm: o.forearm || sk, glove: o.glove, feet: wraps, boots: o.wraps || '#7a6448', legW: o.legW || 9.5, armW: o.armW || 8.5,
+      hx: 50, hy: 32, hipY: 86, neckCol: sk, shadowR: 34,
+      torsoD: 'M44,54 C48,44 72,42 82,50 L81,68 L77,88 L51,88 L47,72 Z',
       head: function (c, x, y) { return jtHead(c, x, y, o) + (o.headX ? o.headX(c, x, y) : ''); },
       back: o.back, chest: function (c) { return L('M58,66 Q64,70 70,66', dk(sk, 0.3), 1.4) + (o.chest ? o.chest(c) : ''); },
       front: function (c) { return body(c, 'M50,84 L78,84 L80,100 L70,97 L64,104 L58,97 L48,100 Z', o.loin || '#6a3a24', L('M50,86 L78,86', OL, 2.4) + (o.loinTrim ? L('M50,98 L58,95 L64,101 L70,95 L79,98', o.loinTrim, 1.8) : ''), 1.8) + (o.front ? o.front(c) : ''); },
@@ -1398,7 +1413,7 @@
   // ============================================================
   //  MOBS
   // ============================================================
-  var BSKIN = '#4a8c80', SSKIN = '#687a8c', SHAIR = '#2a3450';
+  var BSKIN = '#7f9a86', SSKIN = '#b8a27a', SHAIR = '#2e2620', BHAIR = '#6a2a1e';
   var MOBS = {
     stranglethorn_tiger: function (c) {
       return cat(c, { col: '#e27626', belly: '#f8ecd4', cheek: '#faf2e2', stripe: '#1a0f08', eye: '#f0c030', tf: at(0.98, 64, 122) });
@@ -1420,7 +1435,7 @@
     },
     bloodscalp_warrior: function (c) {
       return jTroll(c, {
-        skin: BSKIN, hair: BSRED, paint: 'stripes', eye: '#ffcc30', earring: true, loin: '#6a3a24', loinTrim: BSRED,
+        skin: BSKIN, hair: BHAIR, paint: 'stripes', eye: '#ffcc30', earring: true, loin: '#6a3a24', loinTrim: BSRED,
         chest: function (c) { return F(wedge(48, 54, 16, 0.55, 4.4) + wedge(49, 63, 18, 0.35, 4.4) + wedge(50, 73, 16, 0.2, 4), BSRED, 0.9) + L('M80,50 L54,86', OL, 5.4) + L('M80,50 L54,86', '#5a3a22', 3.2) + skull(c, 68, 66, 0.5); },
         pads: function (c) { return body(c, 'M34,60 C32,48 54,44 58,54 L54,62 L38,64 Z', '#6a4428', L('M36,58 C44,52 52,52 56,56', BSRED, 1.6), 1.8) + P(pd([[38, 52], [34, 42], [42, 50]], true), c.cel(BONE), 1.1) + P(pd([[46, 48], [45, 38], [50, 47]], true), c.cel(BONE), 1.1); },
         top: function (c) { return L('M30,44 l6,-3 M27,40 l6,-3', BSRED, 2) + L('M89,70 l6,2 M90,78 l6,1', BSRED, 2); },
@@ -1431,7 +1446,7 @@
     bloodscalp_axe_thrower: function (c) {
       var tAxe = function (c, p, ang) { return axe(c, p, 13, ang, 8, '#b8bcc2', false, '#6a4428') + L('M' + pt(p) + 'l-2,6 M' + pt(p) + 'l3,6', BSRED, 1.4); };
       return jTroll(c, {
-        skin: BSKIN, hair: BSRED, paint: 'stripes', eye: '#ffcc30', loin: '#7a4428', loinTrim: '#e8d8a0', armW: 8,
+        skin: BSKIN, hair: BHAIR, paint: 'stripes', eye: '#ffcc30', loin: '#7a4428', loinTrim: '#e8d8a0', armW: 8,
         headX: function (c, x, y) { return L('M' + pt([x - 7, y - 11]) + 'L' + pt([x + 12, y - 9]), OL, 3.4) + L('M' + pt([x - 7, y - 11]) + 'L' + pt([x + 12, y - 9]), '#e8d8a0', 1.8) + feathers(x + 12, y - 9, [BSRED, '#1a1009', '#e8d8a0'], 0.7, 0.6); },
         chest: function (c) {
           var o = F(wedge(50, 60, 14, 0.4, 4) + wedge(51, 70, 14, 0.25, 3.6), BSRED, 0.9) + L('M46,52 L80,84', OL, 5.6) + L('M46,52 L80,84', '#6a4428', 3.6);
@@ -1457,7 +1472,7 @@
     },
     skullsplitter_witch_doctor: function (c) {
       return jTroll(c, {
-        skin: '#6e8092', hair: SHAIR, paint: 'skull', eye: VOO, glow: true, loin: '#3a3a44', armW: 8,
+        skin: '#a8946e', hair: SHAIR, paint: 'skull', eye: VOO, glow: true, loin: '#3a3a44', armW: 8,
         headX: function (c, x, y) {
           var o = '';
           ['#e8e4d8', '#3a7a3a', '#e8e4d8', '#6ad04a', '#e8e4d8'].forEach(function (col, i) { o += feather(c, x + 12, y - 12, -PI / 2 + 1.0 - i * 0.34, 27 - Math.abs(i - 2) * 2.5, col, i % 2 ? '#1a1009' : '#3a7a3a'); });

@@ -270,6 +270,20 @@
         S('M-2.5,-48.5 L-2.5,-47 M0,-48.5 L0,-47 M2.5,-48.5 L2.5,-47', OL, 0.8);
     }
   };
+  /* mireling reed spear: bound reed shaft, a sharpened bone point */
+  WP.reedspear = function (c) {
+    return P('M-1.7,30 L-1.9,-40 L1.9,-40 L1.7,30 Z', c.cel('#a8a060'), 1.8) +
+      S('M-1.9,-12 L1.9,-12 M-1.9,8 L1.9,8', dk('#a8a060', 0.4), 1, 0.8) +
+      P('M0,-60 C3.6,-54 4.6,-46 2.8,-40 L-2.8,-40 C-4.6,-46 -3.6,-54 0,-60 Z', c.cel('#e6dcc0'), 1.8) +
+      S('M-2.4,-41 L2.4,-38 M-2.4,-38 L2.4,-35 M-2.4,-35 L2.4,-32', '#6a4a2a', 1.3);
+  };
+  /* shipwright's adze: ash handle, a curved steel blade across the top, a short poll behind */
+  WP.adze = function (c) {
+    return P('M-2.3,12 L-2.6,-38 L2.6,-38 L2.3,12 Z', c.cel(WOOD), 2) + S('M-2.4,2 L2.4,4 M-2.4,6 L2.4,8', dk(WOOD, 0.45), 1, 0.8) +
+      P('M-5,-43 L5,-43 L5,-35 L-5,-35 Z', c.cel('#5d6269'), 1.8) +
+      P('M4,-42 C10,-43 16,-40 19,-33 C20,-30 19,-27 18,-26 L15,-27 C14,-32 10,-36 4,-36 Z', c.lg(STEEL, 0, 0, 1, 1), 2) +
+      P('M-5,-42 L-10,-41 L-10,-37 L-5,-36 Z', c.cel('#6d737a'), 1.6) + S('M15.5,-28 C15,-31 12.5,-34 8,-35.5', '#ffffff', 0.9, 0.6);
+  };
   function wpn(c, k, x, y, a, s) {
     return G((WP[k] || WP.sword)(c), 'translate(' + r1(x) + ',' + r1(y) + ') rotate(' + a + ')' + (s && s !== 1 ? ' scale(' + s + ')' : ''));
   }
@@ -305,11 +319,11 @@
     var x = f[0], y = f[1] + 5, k = o.feet || 'boot';
     if (k === 'thoof') return taurenHoof(c, o, x, y);
     if (k === 'ttoe') {
-      /* troll: boot to the instep, two big bare toes out front */
-      var tk = f[0] < 64 ? dk(o.skin, 0.18) : o.skin;
-      return E(x + 8.4, y - 4.6, 3.2, 2.4, c.cel(dk(tk, 0.1)), 2) + E(x + 9.8, y - 2.2, 3.8, 2.6, c.cel(tk), 2.2) + E(x + 12, y - 2.6, 1.2, 0.9, lt(tk, 0.45), 0) +
-        P(D`M${x - 5},${y - 9} L${x + 3},${y - 9} C${x + 5},${y - 6} ${x + 7.5},${y - 5} ${x + 7.5},${y - 1.5} L${x + 7.5},${y} L${x - 5.5},${y} Z`, c.cel(col), 2.2) +
-        S(D`M${x - 4.5},${y - 6.5} L${x + 4},${y - 6.5}`, dk(col, 0.4), 1.1, 0.8);
+      /* troll (key kept for old saves): a soft boot bound with cloth wraps up the ankle */
+      var wr = f[0] < 64 ? '#b8a888' : '#d8ccae';
+      return P(D`M${x - 5},${y - 10} L${x + 3},${y - 10} C${x + 5},${y - 6} ${x + 10.5},${y - 5} ${x + 10.5},${y - 1.5} L${x + 10.5},${y} L${x - 5.5},${y} Z`, c.cel(col), 2.2) +
+        S(D`M${x - 5},${y - 8.5} L${x + 3.5},${y - 7} M${x - 5},${y - 5.5} L${x + 4.5},${y - 4} M${x - 4.5},${y - 3} L${x + 1},${y - 2}`, OL, 2.6) +
+        S(D`M${x - 5},${y - 8.5} L${x + 3.5},${y - 7} M${x - 5},${y - 5.5} L${x + 4.5},${y - 4} M${x - 4.5},${y - 3} L${x + 1},${y - 2}`, wr, 1.4);
     }
     if (k === 'hoof') return P(D`M${x - 5},${y - 8} L${x + 5},${y - 8} L${x + 7.5},${y} L${x - 6},${y} Z`, '#2d2420', 2.2) + S(D`M${x + 1.5},${y - 7} L${x + 2},${y}`, '#000', 1.2);
     if (k === 'boot') return P(D`M${x - 5},${y - 9} L${x + 3},${y - 9} C${x + 5},${y - 6} ${x + 11},${y - 5} ${x + 11},${y - 1.5} L${x + 11},${y} L${x - 5.5},${y} Z`, c.cel(col), 2.2);
@@ -549,12 +563,16 @@
       out += P('M' + q(1.04, 0.68) + ' L' + q(1.12, 0.34) + ' L' + q(1.23, 0.66) + ' Z', '#efe4c8', 1.2) + P('M' + q(0.7, 0.78) + ' L' + q(0.77, 0.5) + ' L' + q(0.88, 0.76) + ' Z', '#efe4c8', 1.1);
       return out;
     },
+    /* mob troll head (frostmane): pointed ears, long nose, small tusks, white hair pulled back into braids */
     troll: function (c, g, o) {
-      var X = g.X, Y = g.Y, r = g.r, sk = o.skin, hc = o.mane || '#e8f0f8', out = '';
+      var X = g.X, Y = g.Y, r = g.r, sk = o.skin, hc = o.mane || '#e2e4de', out = '';
       function q(u, v) { return D`${X + r * u},${Y + r * v}`; }
-      var ear = 'M' + q(-0.25, -0.1) + ' C' + q(-0.8, -0.38) + ' ' + q(-1.5, -0.6) + ' ' + q(-2.25, -0.55) + ' C' + q(-1.6, -0.1) + ' ' + q(-1.0, 0.36) + ' ' + q(-0.3, 0.42) + ' Z';
-      out += P(ear, c.cel(sk), 2) + F('M' + q(-0.4, 0.02) + ' C' + q(-0.9, -0.2) + ' ' + q(-1.4, -0.4) + ' ' + q(-1.9, -0.45) + ' C' + q(-1.4, -0.1) + ' ' + q(-0.9, 0.2) + ' ' + q(-0.4, 0.26) + ' Z', dk(sk, 0.35), 0.6);
-      if (o.earRing) out += '<circle cx="' + r1(X - r * 1.2) + '" cy="' + r1(Y - r * 0.05) + '" r="' + r1(r * 0.16) + '" fill="none" stroke="' + OL + '" stroke-width="2.6"/><circle cx="' + r1(X - r * 1.2) + '" cy="' + r1(Y - r * 0.05) + '" r="' + r1(r * 0.16) + '" fill="none" stroke="' + GOLD + '" stroke-width="1.2"/>';
+      /* braids hanging behind the head */
+      var hl0 = o.maneLen || 1;
+      out += braidG(c, hpl(g, [[-0.7, -0.4], [-1.2, 0.5], [-1.2, 0.9 + 1.1 * hl0]]), r * 0.3, hc, '#c8a060') + braidG(c, hpl(g, [[-0.4, -0.6], [-0.9, 0.3], [-0.85, 0.7 + 1.2 * hl0]]), r * 0.26, dk(hc, 0.08), '#e8dcc0');
+      var ear = 'M' + q(-0.25, -0.1) + ' C' + q(-0.7, -0.34) + ' ' + q(-1.2, -0.54) + ' ' + q(-1.7, -0.52) + ' C' + q(-1.25, -0.1) + ' ' + q(-0.85, 0.34) + ' ' + q(-0.3, 0.42) + ' Z';
+      out += P(ear, c.cel(sk), 2) + F('M' + q(-0.4, 0.02) + ' C' + q(-0.76, -0.18) + ' ' + q(-1.1, -0.36) + ' ' + q(-1.44, -0.42) + ' C' + q(-1.1, -0.1) + ' ' + q(-0.76, 0.2) + ' ' + q(-0.4, 0.26) + ' Z', dk(sk, 0.35), 0.6);
+      if (o.earRing) out += S(D`M${X - r * 0.95},${Y + r * 0.02} L${X - r * 0.97},${Y + r * 0.26}`, '#8a6038', 1.1) + E(X - r * 0.98, Y + r * 0.4, r * 0.12, r * 0.17, c.cel('#f2ead6'), 1.1);
       var d = 'M' + q(-0.9, 0.1) + ' C' + q(-0.95, -0.95) + ' ' + q(0.35, -1.15) + ' ' + q(0.78, -0.55) + ' L' + q(0.95, -0.35) + ' C' + q(1.35, -0.2) + ' ' + q(1.85, 0.15) + ' ' + q(1.8, 0.55) +
         ' C' + q(1.75, 0.74) + ' ' + q(1.45, 0.74) + ' ' + q(1.2, 0.62) + ' C' + q(1.3, 0.82) + ' ' + q(1.25, 1.1) + ' ' + q(0.95, 1.22) + ' C' + q(0.35, 1.4) + ' ' + q(-0.45, 1.1) + ' ' + q(-0.8, 0.7) +
         ' C' + q(-0.9, 0.5) + ' ' + q(-0.92, 0.3) + ' ' + q(-0.9, 0.1) + ' Z';
@@ -566,14 +584,13 @@
       out += S('M' + q(1.3, 0.55) + ' q' + r1(r * 0.1) + ',' + r1(r * 0.05) + ' ' + r1(r * 0.22) + ',0', '#1a1009', 1.2);
       out += S('M' + q(0.45, 0.92) + ' Q' + q(0.85, 0.98) + ' ' + q(1.15, 0.8), OL, 1.5);
       if (o.tusk !== 0) {
-        var t = o.tusk || 1;
+        var t = (o.tusk || 1) * 0.45;
         out += P('M' + q(0.76, 1.02) + ' C' + q(1.05 + 0.1 * t, 1.0) + ' ' + q(1.2 + 0.3 * t, 0.8 - 0.1 * t) + ' ' + q(1.2 + 0.35 * t, 0.9 - 0.75 * t) + ' C' + q(1.1 + 0.25 * t, 0.85 - 0.35 * t) + ' ' + q(1.0 + 0.1 * t, 0.78) + ' ' + q(0.74, 0.82) + ' Z', c.lg(['#fbf6e8', '#e2d8c0', '#b8aa8a'], 0, 0, 1, 1), 1.6);
       }
-      var hl = o.maneLen || 1;
-      var mh = 'M' + q(0.35, -0.85) + ' C' + q(0.4, -1.7 - 0.3 * hl) + ' ' + q(-0.6, -2.0 - 0.3 * hl) + ' ' + q(-1.5, -1.5 - 0.2 * hl) + ' L' + q(-1.15, -1.2) + ' L' + q(-1.85, -0.85) + ' L' + q(-1.2, -0.62) +
-        ' L' + q(-1.7, -0.1) + ' L' + q(-1.05, -0.05) + ' L' + q(-1.3, 0.55) + ' C' + q(-0.9, 0.3) + ' ' + q(-0.6, -0.3) + ' ' + q(-0.42, -0.72) + ' Z';
-      out += P(mh, c.cel(hc)) + S('M' + q(0.1, -1.05) + ' C' + q(-0.1, -1.6) + ' ' + q(-0.6, -1.75) + ' ' + q(-1.1, -1.5), lt(hc, 0.5), r * 0.1, 0.8) +
-        S('M' + q(-0.5, -0.9) + ' C' + q(-0.8, -1.1) + ' ' + q(-1.0, -1.0) + ' ' + q(-1.3, -0.9), dk(hc, 0.25), r * 0.07, 0.8);
+      /* hair pulled back tight over the crown, tied off behind */
+      var mh = 'M' + q(0.72, -0.62) + ' C' + q(0.5, -1.32) + ' ' + q(-1.0, -1.36) + ' ' + q(-0.94, 0.12) + ' L' + q(-0.68, 0.28) + ' C' + q(-0.68, -0.3) + ' ' + q(-0.3, -0.72) + ' ' + q(0.3, -0.76) + ' Z';
+      out += P(mh, c.cel(hc), 2) + S('M' + q(0.4, -0.9) + ' C' + q(0.0, -1.1) + ' ' + q(-0.5, -1.05) + ' ' + q(-0.8, -0.7), lt(hc, 0.5), r * 0.08, 0.7) +
+        S('M' + q(0.2, -0.86) + ' C' + q(-0.2, -0.95) + ' ' + q(-0.55, -0.7) + ' ' + q(-0.72, -0.2), dk(hc, 0.25), r * 0.06, 0.8) + E(X - r * 0.74, Y - r * 0.36, r * 0.18, r * 0.24, c.cel('#8a5a2a'), 1.4, null, 30);
       if (o.feathers) out += G(P('M0,0 C4,-4 5,-14 0,-20 C-5,-14 -4,-4 0,0 Z', c.cel(o.feathers[0]), 1.5) + S('M0,-1 L0,-17', dk(o.feathers[0], 0.4), 0.8), 'translate(' + r1(X - r * 1.0) + ',' + r1(Y - r * 1.1) + ') rotate(-50) scale(' + r1(r / 11) + ')') +
         G(P('M0,0 C4,-4 5,-14 0,-20 C-5,-14 -4,-4 0,0 Z', c.cel(o.feathers[1]), 1.5) + S('M0,-1 L0,-17', dk(o.feathers[1], 0.4), 0.8), 'translate(' + r1(X - r * 1.1) + ',' + r1(Y - r * 0.9) + ') rotate(-80) scale(' + r1(r / 12) + ')');
       return out;
@@ -878,7 +895,7 @@
     for (k in bd) o.body[k] = bd[k];
     o.beard = false;
     if (race === 'dwarf') { o.skin = DSKIN[si]; o.hair = { c: HAIRC[hi], style: f ? DHAIRF[hi] : HAIRM[hi], band: DBAND[hi] }; o.dbeard = f ? null : DBEARD[hi]; }
-    else if (race === 'nightelf') { o.skin = NSKIN[si]; o.hair = { c: NHAIRC[hi], style: (f ? NHAIRF : NHAIRM)[hi] }; o.nface = f ? NTATTOO[hi] : NMFACE[hi]; o.tatC = si === 3 ? '#8ff0e2' : '#2a1454'; }
+    else if (race === 'nightelf') { o.skin = NSKIN[si]; o.hair = { c: NHAIRC[hi], style: (f ? NHAIRF : NHAIRM)[hi] }; o.nface = f ? NTATTOO[hi] : NMFACE[hi]; o.tatC = dk(o.skin, 0.32); o.eyeC = NEYEC[hi]; }
     else if (race === 'orc' || race === 'troll') raceSetup2(o, race, si, hi, f);
     else if (race === 'tauren' || race === 'undead') raceSetup3(o, race, si, hi, f);
     else { o.skin = GSKIN[si]; o.hair = { c: GHAIRC[hi], style: (f ? GHAIRF : GHAIRM)[hi], streak: hi === 3 }; o.stache = !f && hi % 2 === 0; }
@@ -1066,9 +1083,11 @@
     if (o.race === 'nightelf' && o.hair && o.hair.style === 'nbraid' && !o.hood) return braidG(c, hpl(g, [[-0.35, 0.55], [-0.05, 1.6], [0.12, 2.9]]), g.r * 0.3, o.hair.c, '#d8e4f0');
     return '';
   }
-  /* ---- night elf: long swept ears, glowing pupil-less eyes, long flowing hair, tattoos / sharp jaw ---- */
-  var NSKIN = ['#c2a8e2', '#a6b6e4', '#9676cc', '#65479a'];
-  var NHAIRC = ['#34c4bc', '#e2e8f4', '#3f944e', '#2e429c', '#9c62de'];
+  /* ---- wood elf (race key 'nightelf'): long swept ears, natural skin and hair, almond eyes with a coloured iris,
+     long flowing hair, faint freckle / face-paint marks (NTATTOO) or a sharp jaw ---- */
+  var NSKIN = ['#f1d3b8', '#c8a07a', '#8c5e3c', '#e0b894'];
+  var NHAIRC = ['#5a3a24', '#c4c6c8', '#8a3a22', '#1e1a18', '#d8b060'];
+  var NEYEC = ['#4a7a3a', '#5a6a7a', '#6a4a2a', '#3a5a2a', '#6a5a2a'];
   var NHAIRM = ['nmane', 'ntail', 'nflow', 'nflow', 'ntail'];
   var NHAIRF = ['nflow', 'ntail', 'nbraid', 'nmane', 'nflow'];
   var NMFACE = ['side', 'goatee', null, 'both', null];
@@ -1082,19 +1101,19 @@
       S(D`M${X - r * 0.56},${Y - r * 0.44} C${X - r * 1.1},${Y - r * 0.8} ${X - r * 1.6},${Y - r * 1.12} ${X - r * 2.1},${Y - r * 1.44}`, lt(sk, 0.45), r * 0.1, 0.8);
   }
   function nelfTattoo(c, g, o, ex, ey) {
-    var X = g.X, r = g.r, t = o.tatC || '#2a1454', k = o.nface;
-    if (k === 'band') return F(D`M${X - r * 0.2},${ey - r * 0.24} C${X + r * 0.3},${ey - r * 0.4} ${X + r * 0.75},${ey - r * 0.34} ${X + r * 1.02},${ey - r * 0.2} L${X + r * 1.0},${ey + r * 0.14} C${X + r * 0.7},${ey + r * 0.24} ${X + r * 0.3},${ey + r * 0.3} ${X - r * 0.14},${ey + r * 0.2} Z`, t, 0.85) +
-      F(D`M${X - r * 0.14},${ey - r * 0.2} L${X - r * 0.55},${ey - r * 0.02} L${X - r * 0.14},${ey + r * 0.16} Z`, t, 0.85);
-    if (k === 'claw') return S(D`M${ex - 3.2},${ey - 5.2} Q${ex - 3.8},${ey} ${ex - 2.4},${ey + 5.6} M${ex},${ey - 5.8} Q${ex - 0.4},${ey} ${ex + 0.8},${ey + 6.2} M${ex + 3},${ey - 4.8} Q${ex + 2.8},${ey} ${ex + 3.4},${ey + 4.8}`, t, 1.6, 0.9);
-    if (k === 'vine') return S(D`M${X - r * 0.3},${ey - r * 0.3} Q${ex - 1.5},${ey - r * 0.5} ${ex + 3.2},${ey - r * 0.36} M${ex - 2.6},${ey + 2.2} Q${ex},${ey + 4} ${ex + 3},${ey + 2.4}`, t, 1.4, 0.9) +
-      G(F('M0,0 C2,-1.6 2,-5 0,-7 C-2,-5 -2,-1.6 0,0 Z', t, 0.8), 'translate(' + r1(ex) + ',' + r1(ey + 3.4) + ') rotate(180)') +
-      G(F('M0,0 C1.6,-1.3 1.6,-4 0,-5.6 C-1.6,-4 -1.6,-1.3 0,0 Z', t, 0.8), 'translate(' + r1(ex - 2.6) + ',' + r1(ey + 2.4) + ') rotate(215)');
+    /* wood elves: freckles ('band'), two short green cheek lines ('claw'), a thin painted vine at the temple ('vine') */
+    var X = g.X, r = g.r, t = o.tatC || '#6a4a30', k = o.nface, gp = '#4a6a32';
+    if (k === 'band') return C(ex - 1.5, ey + 3.6, 0.55, t, 0, 0.7) + C(ex + 0.8, ey + 3.2, 0.5, t, 0, 0.7) + C(ex + 2.8, ey + 3.9, 0.5, t, 0, 0.7) + C(ex - 0.2, ey + 5, 0.5, t, 0, 0.6) + C(ex + 2, ey + 5.4, 0.45, t, 0, 0.6);
+    if (k === 'claw') return S(D`M${ex - 2.4},${ey + 3.4} L${ex + 1.6},${ey + 4.6} M${ex - 2.2},${ey + 5.4} L${ex + 1.2},${ey + 6.4}`, gp, 1.2, 0.75);
+    if (k === 'vine') return S(D`M${X - r * 0.3},${ey - r * 0.3} Q${ex - 1.5},${ey - r * 0.5} ${ex + 3.2},${ey - r * 0.36}`, gp, 1.1, 0.7) +
+      G(F('M0,0 C1.6,-1.3 1.6,-4 0,-5.6 C-1.6,-4 -1.6,-1.3 0,0 Z', gp, 0.7), 'translate(' + r1(ex - 2.6) + ',' + r1(ey - r * 0.44) + ') rotate(-60)');
     return '';
   }
   function nelfEye(c, g, o, ex, ey, bc) {
     var out = o.gender === 'f' ? nelfTattoo(c, g, o, ex, ey) : '';
-    out += C(ex + 0.4, ey - 0.2, 6.4, c.rg([[0, '#f4fffd', 0.95], [0.4, '#9ff4e6', 0.5], [1, '#8ff0e0', 0]]), 0);
-    out += P(D`M${ex - 2.4},${ey + 0.3} Q${ex + 0.1},${ey - 2.3} ${ex + 2.8},${ey - 0.8} Q${ex + 0.6},${ey + 1.7} ${ex - 2.4},${ey + 0.3} Z`, c.rg([[0, '#ffffff'], [0.6, '#dcfff9'], [1, '#86e8da']], 0.55, 0.45, 0.6), 1.1);
+    /* almond eye, white with a coloured iris and dark pupil; upswept brow */
+    out += P(D`M${ex - 2.4},${ey + 0.3} Q${ex + 0.1},${ey - 2.1} ${ex + 2.8},${ey - 0.8} Q${ex + 0.6},${ey + 1.6} ${ex - 2.4},${ey + 0.3} Z`, '#fbf6ee', 1.1) +
+      C(ex + 0.7, ey - 0.3, 1.25, o.eyeC || '#4a7a3a', 0) + C(ex + 0.85, ey - 0.3, 0.6, '#141008', 0);
     if (o.gender === 'f') out += S(D`M${ex + 2.7},${ey - 0.9} l1.5,-1.1`, OL, 1);
     out += S(D`M${ex + 3.1},${ey - 3.1} Q${ex - 0.4},${ey - 4.3} ${ex - 4.4},${ey - 6.4}`, bc, 1.8);
     return out;
@@ -1153,8 +1172,10 @@
   var OHAIRM = ['omohawk', 'otop', 'obraids', 'omohawk', 'oponytail'];
   var OHAIRF = ['oponytail', 'obraids', 'otop', 'obraids', 'oponytail'];
   var OBEARD = [null, 'goatee', 'braid', null, 'full'];
-  var TSKIN = ['#3c9cb2', '#46a88a', '#92bcdc', '#6a6ec2'];
-  var THAIRC = ['#e2402a', '#3a7ae8', '#46c050', '#eef2f4', '#f4901e'];
+  /* trolls (the Kessari and the other tribes): tall and lean, grey-green or sand skin, small tusks, braided hair,
+     shell and bone jewellery, wrapped boots. Hair style keys are kept for old saves; each is now a braided cut. */
+  var TSKIN = ['#7f9a86', '#b8a27a', '#94a890', '#8e7a58'];
+  var THAIRC = ['#2a2420', '#5a3a26', '#8a3a22', '#dcd6cc', '#4a4034'];
   var THAIRM = ['tmohawk', 'tmane', 'tspikes', 'tcrest', 'tmohawk'];
   var THAIRF = ['ttail', 'tmane', 'ttail', 'tcrest', 'tmane'];
   RACEB.orc = {
@@ -1163,9 +1184,9 @@
     f: { shW: 17.2, waistW: 10.6, belly: 0.5, armW: 9.3, legW: 10.2, hipY: 82, shY: 51.5, headX: 71, headY: 35.5, headR: 11.8, stance: 7.5, neck: 8.4, lean: 2 }
   };
   RACEB.troll = {
-    s: 1, swk: 1, armK: 1.32, footK: 1.1, handK: 1.06, shadow: 31, pZ: 0.98, pY: 41, pX: 28, padK: 1, lean: 6, topK: 0.9,
-    m: { shW: 15.6, waistW: 8.6, armW: 7.9, legW: 8.6, hipY: 72, shY: 45.5, headX: 79, headY: 29.5, headR: 11, stance: 8.5, neck: 7.2, lean: 6 },
-    f: { shW: 13.6, waistW: 7.8, armW: 7.1, legW: 8, hipY: 73, shY: 46.5, headX: 77, headY: 31, headR: 10.6, stance: 8, neck: 6.4, lean: 5 }
+    s: 1, swk: 1, armK: 1.26, footK: 1.1, handK: 1.06, shadow: 31, pZ: 1.02, pY: 38, pX: 30, padK: 1, lean: 3, topK: 0.9,
+    m: { shW: 15.2, waistW: 8.4, armW: 7.7, legW: 8.4, hipY: 72, shY: 44.5, headX: 75, headY: 27.5, headR: 11, stance: 8.5, neck: 7, lean: 3 },
+    f: { shW: 13.4, waistW: 7.6, armW: 7, legW: 7.9, hipY: 73, shY: 45.5, headX: 74, headY: 29, headR: 10.6, stance: 8, neck: 6.2, lean: 3 }
   };
   RACES.push('orc', 'troll');
   function raceSetup2(o, race, si, hi, f) {
@@ -1176,15 +1197,15 @@
     } else {
       o.skin = TSKIN[si]; o.hair = { c: THAIRC[hi], style: (f ? THAIRF : THAIRM)[hi] };
       o.earring = hi !== 2; o.head = 'ptroll'; o.feet = 'ttoe';
-      o.late = trollTusks;
-      if (o.hair.style === 'ttail') o.hairBack = function (c, g, o) { return o.hood ? '' : trollHair(c, g, o, 'back'); };
+      o.late = function (c, g, o) { return trollTusks(c, g, o) + trollBeads(c, g, o); };
+      o.hairBack = function (c, g, o) { return o.hood ? '' : trollHair(c, g, o, 'back'); };
     }
     o.hump = raceHump; o.headLate = true;
   }
   /* raised trapezius / upper back behind the neck: the hunch */
   function raceHump(c, g, o) {
     var b = g.b, x = g.scx, y = g.sy, col = o.torsoC || o.sleeve || '#777777', t = o.race === 'troll';
-    var d = t ? D`M${x - b.shW + 1},${y + 9} C${x - b.shW - 3},${y - 3} ${x - 7},${y - 10} ${x + 4},${y - 6} L${x + 6},${y + 4} Z`
+    var d = t ? D`M${x - b.shW + 2},${y + 8} C${x - b.shW},${y - 1} ${x - 6},${y - 6} ${x + 4},${y - 4} L${x + 6},${y + 4} Z`
       : D`M${x - b.shW + 2},${y + 8} C${x - b.shW - 1},${y - 4} ${x - 6},${y - 9} ${x + 4},${y - 5} L${x + 6},${y + 4} Z`;
     return P(d, c.cel(col));
   }
@@ -1283,43 +1304,53 @@
     out += headWear(c, g, o, ex, ey);
     return out;
   };
-  /* ---- troll head: long ears, sloped brow, long nose, jutting jaw, big curved tusks, tall wild hair ---- */
+  /* ---- troll head: swept ears, sloped brow, long straight nose, small lower tusks, braided hair ---- */
   function trollHair(c, g, o, layer) {
     var X = g.X, Y = g.Y, r = g.r, h = o.hair, hc = h.c, st = h.style, out = '';
     function q(u, v) { return D`${X + r * u},${Y + r * v}`; }
-    var hi = lt(hc, 0.45), sh = dk(hc, 0.25), band = '#8a5a2a';
+    var hi = lt(hc, 0.4), band = '#e8dcc0', wrap = '#8a5a2a';
     if (layer === 'back') {
-      if (st === 'ttail') out += P('M' + q(-0.72, -0.72) + ' C' + q(-1.7, -0.7) + ' ' + q(-2.15, 0.5) + ' ' + q(-1.96, 1.8) + ' C' + q(-1.9, 2.3) + ' ' + q(-1.62, 2.6) + ' ' + q(-1.3, 2.8) +
-        ' C' + q(-1.52, 2.0) + ' ' + q(-1.36, 0.9) + ' ' + q(-0.72, 0.08) + ' Z', c.cel(hc)) + S('M' + q(-1.2, -0.5) + ' C' + q(-1.75, 0.2) + ' ' + q(-1.8, 1.2) + ' ' + q(-1.62, 2.2), hi, r * 0.09, 0.6);
+      /* braids hanging down the back, drawn behind the body */
+      if (st === 'ttail') out += braidG(c, hpl(g, [[-0.8, -0.3], [-1.35, 0.9], [-1.3, 2.6]]), r * 0.36, hc, band);
+      else if (st === 'tmane') [[-0.55, 0], [-0.8, -0.2], [-1.0, -0.4], [-0.35, 0.15]].forEach(function (b, i) {
+        out += braidG(c, hpl(g, [[b[0], b[1]], [b[0] - 0.35, b[1] + 1.1], [b[0] - 0.3 + i * 0.05, 2.1 + i * 0.12]]), r * 0.2, i % 2 ? dk(hc, 0.1) : hc, i === 1 ? '#c8a060' : band);
+      });
+      else if (st === 'tspikes') out += braidG(c, hpl(g, [[-0.5, -1.05], [-1.3, -0.4], [-1.5, 0.9], [-1.35, 2.2]]), r * 0.3, hc, '#c8a060');
+      else if (st === 'tcrest') out += braidG(c, hpl(g, [[-0.9, -0.1], [-1.2, 1.0], [-1.1, 1.9]]), r * 0.26, hc, band) + braidG(c, hpl(g, [[-0.6, 0.1], [-0.8, 1.1], [-0.7, 2.0]]), r * 0.24, dk(hc, 0.1), band);
+      else out += braidG(c, hpl(g, [[-0.4, -1.2], [-1.1, -1.0], [-1.45, 0.3], [-1.35, 1.6]]), r * 0.28, hc, band);
       return out;
     }
-    var pts;
-    if (st === 'tmohawk') pts = [[0.6, -0.8], [0.9, -1.6], [0.36, -1.24], [0.44, -2.28], [-0.04, -1.36], [-0.2, -2.62], [-0.44, -1.32], [-0.9, -2.3], [-0.82, -1.04], [-1.46, -1.62], [-1.02, -0.6], [-1.66, -0.62], [-0.98, -0.2], [-0.72, -0.74], [-0.2, -0.98], [0.3, -0.92]];
-    else if (st === 'tspikes') pts = [[0.62, -0.76], [1.08, -1.4], [0.36, -1.12], [0.5, -2.0], [-0.04, -1.28], [-0.26, -2.18], [-0.46, -1.18], [-1.14, -1.94], [-0.88, -0.9], [-1.76, -1.1], [-1.02, -0.48], [-1.66, -0.12], [-0.98, 0.02], [-0.7, -0.62], [0.0, -0.96]];
-    else if (st === 'ttail') pts = [[0.58, -0.8], [0.74, -1.36], [0.3, -1.12], [0.26, -1.72], [-0.12, -1.24], [-0.36, -1.76], [-0.5, -1.16], [-0.96, -1.44], [-0.86, -0.82], [-0.5, -1.02], [0.1, -1.02]];
-    if (pts) {
-      out += P(qpoly(g, pts), c.cel(hc), 2.1);
-      out += S('M' + q(0.3, -1.1) + ' L' + q(0.36, -1.8) + ' M' + q(-0.2, -1.2) + ' L' + q(-0.2, -2.0) + ' M' + q(-0.66, -1.1) + ' L' + q(-0.84, -1.7), hi, r * 0.08, 0.7) +
-        S('M' + q(-0.6, -0.9) + ' L' + q(-1.1, -1.2) + ' M' + q(-0.84, -0.6) + ' L' + q(-1.3, -0.5), sh, r * 0.07, 0.7);
-      if (st === 'ttail') out += E(X - r * 0.9, Y - r * 0.68, r * 0.2, r * 0.26, c.cel(band), 1.5, null, 30);
+    /* front: hair drawn back tight over the crown */
+    var cap = 'M' + q(0.78, -0.58) + ' C' + q(0.5, -1.34) + ' ' + q(-1.02, -1.38) + ' ' + q(-0.96, 0.14) + ' L' + q(-0.7, 0.3) + ' C' + q(-0.7, -0.3) + ' ' + q(-0.32, -0.72) + ' ' + q(0.3, -0.76) + ' Z';
+    if (st === 'tspikes') {
+      /* shaved sides: a narrow plaited ridge over the crown */
+      out += CG(F(cap, hc, 0.22), c.clip(trollSkullD(g, o.gender === 'f'))) +
+        braidG(c, hpl(g, [[0.55, -0.82], [0.0, -1.14], [-0.5, -1.05]]), r * 0.28, hc, null);
       return out;
     }
-    if (st === 'tmane') {
-      /* big swept-back mane falling to the shoulders */
-      out += P('M' + q(0.62, -0.8) + ' L' + q(0.84, -1.36) + ' L' + q(0.34, -1.26) + ' L' + q(0.3, -1.98) + ' L' + q(-0.12, -1.5) + ' L' + q(-0.42, -2.22) + ' L' + q(-0.66, -1.6) + ' L' + q(-1.2, -2.14) + ' L' + q(-1.16, -1.5) + ' L' + q(-1.9, -1.62) + ' L' + q(-1.36, -1.16) + ' L' + q(-2.3, -0.86) + ' L' + q(-1.42, -0.5) + ' L' + q(-2.1, -0.02) +
-        ' L' + q(-1.28, 0.08) + ' L' + q(-1.74, 0.72) + ' L' + q(-1.0, 0.44) + ' L' + q(-1.1, 1.08) + ' L' + q(-0.66, 0.36) + ' C' + q(-0.56, -0.3) + ' ' + q(-0.2, -0.76) + ' ' + q(0.62, -0.8) + ' Z', c.cel(hc), 2.1) +
-        S('M' + q(0.3, -1.1) + ' C' + q(-0.1, -1.6) + ' ' + q(-0.8, -1.8) + ' ' + q(-1.5, -1.45), hi, r * 0.1, 0.75) + S('M' + q(-0.6, -0.9) + ' C' + q(-1.0, -1.0) + ' ' + q(-1.4, -0.8) + ' ' + q(-1.7, -0.5), sh, r * 0.07, 0.8);
-      return out;
+    out += P(cap, c.cel(hc), 2) + S('M' + q(0.42, -0.9) + ' C' + q(0.0, -1.12) + ' ' + q(-0.5, -1.06) + ' ' + q(-0.8, -0.7), hi, r * 0.08, 0.65) +
+      S('M' + q(0.2, -0.86) + ' C' + q(-0.2, -0.95) + ' ' + q(-0.55, -0.7) + ' ' + q(-0.72, -0.2), dk(hc, 0.3), r * 0.06, 0.7);
+    if (st === 'tmohawk') {
+      /* high topknot bound with a bone ring */
+      out += P(blob(X - r * 0.3, Y - r * 1.38, r * 0.34, r * 0.3, 7, rnd(41), 0.2), c.cel(hc), 2) + E(X - r * 0.2, Y - r * 1.06, r * 0.28, r * 0.14, c.cel(band), 1.5, null, -10);
+    } else if (st === 'tcrest') {
+      /* hair wrapped in a cloth band */
+      out += P('M' + q(0.66, -0.66) + ' C' + q(0.4, -0.98) + ' ' + q(-0.5, -1.02) + ' ' + q(-0.9, -0.5) + ' L' + q(-0.84, -0.3) + ' C' + q(-0.4, -0.76) + ' ' + q(0.3, -0.76) + ' ' + q(0.62, -0.46) + ' Z', c.cel(wrap), 1.6) +
+        C(X - r * 0.9, Y - r * 0.42, r * 0.14, c.cel(band), 1.2);
+    } else if (st === 'ttail' || st === 'tmane') {
+      out += E(X - r * 0.8, Y - r * 0.3, r * 0.2, r * 0.26, c.cel(wrap), 1.5, null, 30);
     }
-    /* tcrest: one huge swept flame-shaped crest */
-    out += P('M' + q(0.62, -0.8) + ' C' + q(0.8, -1.9) + ' ' + q(-0.2, -2.86) + ' ' + q(-1.6, -2.56) + ' C' + q(-1.0, -2.3) + ' ' + q(-0.74, -2.0) + ' ' + q(-0.72, -1.72) +
-      ' C' + q(-1.2, -1.9) + ' ' + q(-1.9, -1.62) + ' ' + q(-2.24, -1.0) + ' C' + q(-1.7, -1.1) + ' ' + q(-1.3, -1.0) + ' ' + q(-1.02, -0.72) +
-      ' C' + q(-1.3, -0.6) + ' ' + q(-1.5, -0.3) + ' ' + q(-1.56, 0.1) + ' C' + q(-1.1, -0.1) + ' ' + q(-0.8, -0.4) + ' ' + q(-0.64, -0.7) + ' C' + q(-0.3, -0.92) + ' ' + q(0.2, -0.94) + ' ' + q(0.62, -0.8) + ' Z', c.cel(hc), 2.1) +
-      S('M' + q(0.4, -1.1) + ' C' + q(0.3, -1.8) + ' ' + q(-0.3, -2.3) + ' ' + q(-1.1, -2.4), hi, r * 0.1, 0.75) + S('M' + q(-0.5, -1.3) + ' C' + q(-1.0, -1.5) + ' ' + q(-1.5, -1.3) + ' ' + q(-1.9, -1.0), sh, r * 0.07, 0.8);
     return out;
   }
+  /* shell and bone jewellery: a cord of cowrie shells and one bone bead at the throat */
+  function trollBeads(c, g, o) {
+    if (o.hood && o.mask) return '';
+    var x = g.scx + 3, y = g.sy, d = D`M${x - 8},${y + 1} Q${x + 1},${y + 9} ${x + 9},${y + 0.5}`, out = S(d, OL, 2.4) + S(d, '#8a6038', 1.1);
+    [[-5, 4.2], [-1.6, 6], [2.2, 6], [5.6, 3.8]].forEach(function (p) { out += E(x + p[0], y + p[1], 1.4, 1.9, c.cel('#f2ead6'), 1) + S(D`M${x + p[0]},${y + p[1] - 1.2} L${x + p[0]},${y + p[1] + 1.2}`, '#8a7a5a', 0.6); });
+    return out + P(D`M${x - 0.4},${y + 6.4} L${x + 1.6},${y + 6.4} L${x + 1.2},${y + 11} L${x},${y + 11} Z`, c.cel('#e6dcc0'), 1);
+  }
   function trollSkullD(g, f) {
-    var X = g.X, Y = g.Y, r = g.r, n = f ? 0.8 : 1;
+    var X = g.X, Y = g.Y, r = g.r, n = f ? 0.5 : 0.62;
     function q(u, v) { return D`${X + r * u},${Y + r * v}`; }
     return 'M' + q(-0.9, 0.1) + ' C' + q(-0.95, -1.0) + ' ' + q(0.3, -1.15) + ' ' + q(0.8, -0.55) + ' L' + q(0.98, -0.3) +
       ' C' + q(1.0 + 0.3 * n, -0.18) + ' ' + q(1.0 + 0.72 * n, 0.2) + ' ' + q(1.0 + 0.84 * n, 0.52) +
@@ -1328,9 +1359,9 @@
       ' C' + q(-0.88, 0.52) + ' ' + q(-0.92, 0.3) + ' ' + q(-0.9, 0.1) + ' Z';
   }
   function trollTusks(c, g, o) {
-    var X = g.X, Y = g.Y, r = g.r, k = o.gender === 'f' ? 0.7 : 1;
-    /* big tusks jutting forward and curling up out of the lower jaw, in front of the snout */
-    var bx = X + r * 1.0, by = Y + r * 1.1;
+    var X = g.X, Y = g.Y, r = g.r, k = o.gender === 'f' ? 0.3 : 0.4;
+    /* small tusks poking up out of the lower jaw */
+    var bx = X + r * 0.92, by = Y + r * 1.0;
     function tusk(dx, dy, fill, w) {
       var ox = bx + dx * r, oy = by + dy * r;
       function t(u, v) { return D`${ox + r * u * k},${oy + r * v * k}`; }
@@ -1351,16 +1382,17 @@
       var hair = trollHair(c, g, o, 'front');
       out += o.top ? scaleAt(hair, 0.72, X - r * 0.2, Y - r * 0.9) : hair;
     }
-    /* long ear swept back */
-    var ear = 'M' + q(-0.2, -0.14) + ' C' + q(-0.8, -0.42) + ' ' + q(-1.7, -0.66) + ' ' + q(-2.5, -0.64) + ' C' + q(-1.82, -0.12) + ' ' + q(-1.1, 0.36) + ' ' + q(-0.3, 0.42) + ' Z';
-    out += P(ear, c.cel(sk), 2) + F('M' + q(-0.36, 0.0) + ' C' + q(-0.9, -0.22) + ' ' + q(-1.5, -0.42) + ' ' + q(-2.05, -0.5) + ' C' + q(-1.5, -0.1) + ' ' + q(-0.9, 0.2) + ' ' + q(-0.4, 0.26) + ' Z', dk(sk, 0.35), 0.6);
-    if (o.earring && !o.hood) out += hoop(X - r * 0.5, Y + r * 0.5, r * 0.15);
+    /* pointed ear swept back (shorter than the old troll ear) */
+    var ear = 'M' + q(-0.2, -0.14) + ' C' + q(-0.66, -0.36) + ' ' + q(-1.2, -0.56) + ' ' + q(-1.72, -0.6) + ' C' + q(-1.3, -0.1) + ' ' + q(-0.84, 0.34) + ' ' + q(-0.3, 0.42) + ' Z';
+    out += P(ear, c.cel(sk), 2) + F('M' + q(-0.36, 0.0) + ' C' + q(-0.74, -0.2) + ' ' + q(-1.1, -0.38) + ' ' + q(-1.44, -0.46) + ' C' + q(-1.1, -0.1) + ' ' + q(-0.74, 0.2) + ' ' + q(-0.4, 0.26) + ' Z', dk(sk, 0.35), 0.6);
+    /* shell earring on a short cord */
+    if (o.earring && !o.hood) out += S(D`M${X - r * 0.52},${Y + r * 0.38} L${X - r * 0.54},${Y + r * 0.6}`, '#8a6038', 1.1) + E(X - r * 0.55, Y + r * 0.74, r * 0.12, r * 0.17, c.cel('#f2ead6'), 1.1);
     var ex = X + r * 0.6, ey = Y - r * 0.14;
     out += P(D`M${ex - 2.3},${ey + 0.4} Q${ex + 0.2},${ey - 1.9} ${ex + 2.7},${ey - 0.6} Q${ex + 0.5},${ey + 1.5} ${ex - 2.3},${ey + 0.4} Z`, '#f6ecc0', 1.1) + C(ex + 0.6, ey - 0.2, 1, '#1a0a04', 0);
     if (f) out += S(D`M${ex + 2.6},${ey - 0.7} l1.4,-1`, OL, 1);
     out += S('M' + q(0.16, -0.58) + ' L' + q(1.0, -0.3), OL, f ? 1.8 : 2.4);
-    out += S('M' + q(1.46, 0.6) + ' q' + r1(r * 0.1) + ',' + r1(r * 0.05) + ' ' + r1(r * 0.22) + ',0', OL, 1.2);
-    if (!o.mask) out += S('M' + q(0.45, 0.94) + ' Q' + q(0.85, 1.0) + ' ' + q(1.2, 0.82), OL, 1.4);
+    out += S('M' + q(1.22, 0.54) + ' q' + r1(r * 0.08) + ',' + r1(r * 0.05) + ' ' + r1(r * 0.18) + ',0', OL, 1.2);
+    if (!o.mask) out += S('M' + q(0.45, 0.94) + ' Q' + q(0.8, 0.98) + ' ' + q(1.1, 0.84), OL, 1.4);
     out += headWear(c, g, o, ex, ey);
     return out;
   };
@@ -1455,14 +1487,14 @@
   /* ================= v19 races: tauren, undead (Reclaimed) =================
      Hornfolk: the biggest race, broad and hunched, bovine head (HEAD.ptauren) with horns that change with the
      hair index, long ears, mane or braids, cloven hooves (foot kind 'thoof') and a tail (o.hairBack).
-     Undead: human height but gaunt and hunched (HEAD.pundead): glowing pinpoint eyes, exposed jaw on some hair
-     indexes, ribs through a torn gap in the clothes (o.raceTorso) and a bony forearm (o.armFx).
+     Undead: human height but gaunt and hunched (HEAD.pundead): grey skin, a whole jaw, sunken faintly glowing eyes,
+     stitched cloth patches on the clothes (o.raceTorso) and a linen-wrapped forearm (o.armFx). No bone shows.
      RACEB[race].fin runs after the gear, so it also adjusts named weapons and cloaks. */
   var TFUR = ['#8a5a36', '#3e3430', '#cdc6ba', '#c08c4c'];
   var TMANE = ['#201a18', '#5c3a22', '#ece6da', '#a4441e', '#8e8a86'];
   var TAURM = ['mane', 'braids', 'long', 'mane', 'braids'];
   var TAURF = ['braids', 'braid1', 'braids', 'long', 'braid1'];
-  var USKIN = ['#a2b092', '#9cb2c0', '#8a9c7e', '#b6c0c6'];
+  var USKIN = ['#a8aca6', '#9ca2a8', '#8e928c', '#b8bcbc'];
   var UHAIRC = ['#1e1c1c', '#a8965e', '#8e8c88', '#6a2622', '#e4e0d6'];
   var UHAIRM = ['ustring', 'ubald', 'umohawk', 'ulong', 'ubald'];
   var UHAIRF = ['ulong', 'ustring', 'utail', 'ubald', 'ulong'];
@@ -1483,11 +1515,11 @@
   function raceSetup3(o, race, si, hi, f) {
     if (race === 'tauren') {
       o.skin = TFUR[si]; o.hair = { c: TMANE[hi], style: (f ? TAURF : TAURM)[hi] };
-      o.horn = hi; o.noseRing = f ? hi === 2 : hi % 2 === 0; o.tbeard = !f && (hi === 1 || hi === 3);
+      o.horn = hi; o.noseRing = false; o.tbeard = !f && (hi === 1 || hi === 3 || hi === 4);
       o.head = 'ptauren'; o.feet = 'thoof'; o.hairBack = taurenTail;
     } else {
       o.skin = USKIN[si]; o.hair = { c: UHAIRC[hi], style: (f ? UHAIRF : UHAIRM)[hi] };
-      o.ujaw = hi === 0 || hi === 2 || hi === 3; o.head = 'pundead';
+      o.ujaw = false; o.head = 'pundead';
       o.raceTorso = undeadTorso; o.armFx = boneArm;
     }
     o.hump = race === 'tauren' ? taurenHump : undeadHump; o.headLate = true;
@@ -1531,33 +1563,27 @@
     }
     return pl(L.concat(Rr.reverse())) + 'Z';
   }
-  /* horn shapes by hair index, in head-radius units: [base, control, tip] */
-  var THORN = [
-    [[-0.1, -0.74], [-1.75, -0.95], [-0.95, -2.0]],
-    [[-0.05, -0.8], [-0.55, -2.0], [0.95, -1.9]],
-    [[-0.15, -0.72], [-2.1, -0.75], [-2.15, -1.95]],
-    [[-0.2, -0.62], [-2.0, -0.15], [-1.95, -1.45]],
-    [[-0.1, -0.8], [-0.75, -1.35], [-0.4, -1.8]]
-  ];
+  /* Hornfolk horns: curled ram horns, a tapering spiral with ridges, curling back around the ear.
+     By hair index: [size, sweep in turns, start angle offset] */
+  var THORN = [[1.0, 0.86, 0], [0.92, 1.0, 0.1], [1.12, 0.74, -0.1], [1.04, 0.92, 0.05], [0.82, 0.7, 0]];
   function taurenHorn(c, g, o, far) {
-    var X = g.X, Y = g.Y, r = g.r, sh = THORN[o.horn] || THORN[0], f = o.gender === 'f', k = f ? 0.62 : 1;
-    var ox = far ? 0.42 : 0, oy = far ? -0.1 : 0, kk = far ? k * 0.9 : k;
-    var b = sh[0];
-    function at(p) { return [X + r * (b[0] + ox + (p[0] - b[0]) * kk), Y + r * (b[1] + oy + (p[1] - b[1]) * kk)]; }
-    var p0 = at(sh[0]), p1 = at(sh[1]), p2 = at(sh[2]);
-    var w = r * (o.horn === 4 ? 0.8 : 0.68) * (f ? 0.78 : 1);
-    var d = taperQ(p0, p1, p2, w);
-    var fill = far ? c.lg(['#cfc2a0', '#9a8a66', '#5e5038'], 0, 0, 1, 1) : c.lg(['#f8f0da', '#d2bf94', '#8a7652'], 0, 0, 1, 1);
+    var X = g.X, Y = g.Y, r = g.r, sh = THORN[o.horn] || THORN[0], f = o.gender === 'f', k = (f ? 0.7 : 1) * sh[0] * (far ? 0.92 : 1);
+    var cx = X + r * (-0.62 + (far ? 0.4 : 0)), cy = Y + r * (-0.42 + (far ? -0.08 : 0));
+    var a0 = -0.72 + sh[2], sweep = sh[1] * Math.PI * 2, R0 = r * 0.86 * k, R1 = r * 0.26 * k, w0 = r * 0.62 * k * (f ? 0.8 : 1);
+    var n = 22, L = [], Rr = [], mid = [], i;
+    for (i = 0; i <= n; i++) {
+      var t = i / n, a = a0 - sweep * t, rad = R0 + (R1 - R0) * t, w = w0 * (1 - 0.82 * t) * 0.5 + 0.3;
+      var px = cx + Math.cos(a) * rad, py = cy + Math.sin(a) * rad, nx = Math.cos(a), ny = Math.sin(a);
+      L.push([px + nx * w, py + ny * w]); Rr.push([px - nx * w, py - ny * w]); mid.push([px, py, nx, ny, w]);
+    }
+    var d = pl(L.concat(Rr.reverse())) + 'Z';
+    var fill = far ? c.lg(['#cfc2a0', '#9a8a66', '#5e5038'], 0, 0, 1, 1) : c.lg(['#f4ead2', '#cdb890', '#8a7652'], 0, 0, 1, 1);
     var out = P(d, fill, 2.2);
     if (!far) {
-      /* a lighter ridge along the horn and a band near the base */
-      var m = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2], m2 = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
-      out += CG(S(D`M${p0[0]},${p0[1]} Q${m[0] + (m2[0] - m[0]) * 0.1},${m[1]} ${m2[0]},${m2[1]}`, '#ffffff', w * 0.18, 0.55), c.clip(d));
-      var q = [p0[0] + (p1[0] - p0[0]) * 0.32, p0[1] + (p1[1] - p0[1]) * 0.32];
-      var tx = p1[0] - p0[0], ty = p1[1] - p0[1], tl = Math.sqrt(tx * tx + ty * ty) || 1;
-      var nx = -ty / tl * w * 0.62, ny = tx / tl * w * 0.62;
-      if (o.horn !== 4) out += S(D`M${q[0] - nx},${q[1] - ny} L${q[0] + nx},${q[1] + ny}`, OL, w * 0.3) + S(D`M${q[0] - nx},${q[1] - ny} L${q[0] + nx},${q[1] + ny}`, o.horn % 2 ? '#7a4a24' : '#b88a3a', w * 0.14);
-      else out += P(D`M${p2[0] - w * 0.3},${p2[1] + w * 0.25} L${p2[0] + w * 0.25},${p2[1] - w * 0.05} L${p2[0] + w * 0.05},${p2[1] + w * 0.4} Z`, '#8a7652', 1.2);
+      /* transverse growth ridges and a lighter outer edge */
+      var rg = '';
+      for (i = 2; i < n; i += 2) { var m = mid[i]; rg += D`M${m[0] + m[2] * m[4] * 0.9},${m[1] + m[3] * m[4] * 0.9} L${m[0] - m[2] * m[4] * 0.9},${m[1] - m[3] * m[4] * 0.9} `; }
+      out += CG(S(rg, '#8a7652', 1, 0.8) + S(pl(L.slice(0, n - 3)), '#ffffff', w0 * 0.14, 0.45), c.clip(d));
     }
     return out;
   }
@@ -1567,13 +1593,15 @@
       S(D`M${X - r * 0.7},${Y - r * 0.78} Q${X - r * 0.1},${Y - r * 1.05} ${X + r * 0.5},${Y - r * 0.82}`, '#5a3a22', 1.2, 0.9);
   }
   function taurenSkullD(g, f) {
+    /* long, narrow goat-like face sloping down to a small muzzle */
     var X = g.X, Y = g.Y, r = g.r, m = f ? 0.88 : 1;
     function q(u, v) { return D`${X + r * u},${Y + r * v}`; }
     return 'M' + q(-0.95, 0.2) + ' C' + q(-1.02, -0.98) + ' ' + q(0.2, -1.2) + ' ' + q(0.72, -0.72) +
-      ' C' + q(0.95, -0.5) + ' ' + q(1.0 + 0.25 * m, -0.25) + ' ' + q(1.0 + 0.5 * m, 0.04) +
-      ' C' + q(1.0 + 0.7 * m, 0.24) + ' ' + q(1.0 + 0.74 * m, 0.7) + ' ' + q(1.0 + 0.6 * m, 0.92) +
-      ' L' + q(1.0 + 0.48 * m, 0.98) + ' C' + q(1.0 + 0.44 * m, 1.24) + ' ' + q(1.0, 1.42) + ' ' + q(0.55, 1.42) +
-      ' C' + q(0.0, 1.4) + ' ' + q(-0.55, 1.12) + ' ' + q(-0.8, 0.8) + ' C' + q(-0.92, 0.62) + ' ' + q(-0.96, 0.4) + ' ' + q(-0.95, 0.2) + ' Z';
+      ' C' + q(0.95, -0.5) + ' ' + q(1.0 + 0.2 * m, -0.12) + ' ' + q(1.0 + 0.46 * m, 0.34) +
+      ' C' + q(1.0 + 0.66 * m, 0.62) + ' ' + q(1.0 + 0.8 * m, 0.92) + ' ' + q(1.0 + 0.74 * m, 1.1) +
+      ' C' + q(1.0 + 0.66 * m, 1.26) + ' ' + q(1.0 + 0.44 * m, 1.3) + ' ' + q(1.0 + 0.28 * m, 1.26) +
+      ' C' + q(1.0, 1.38) + ' ' + q(0.8, 1.44) + ' ' + q(0.5, 1.4) +
+      ' C' + q(0.0, 1.36) + ' ' + q(-0.55, 1.12) + ' ' + q(-0.8, 0.8) + ' C' + q(-0.92, 0.62) + ' ' + q(-0.96, 0.4) + ' ' + q(-0.95, 0.2) + ' Z';
   }
   function taurenHair(c, g, o, layer) {
     var X = g.X, Y = g.Y, r = g.r, h = o.hair, hc = h.c, st = h.style, out = '', hi = lt(hc, 0.4), sh = dk(hc, 0.3);
@@ -1611,17 +1639,16 @@
     out += taurenHorn(c, g, o, true);
     var d = taurenSkullD(g, f);
     out += P(d, c.cel(sk));
-    var muz = mix(sk, '#e4d0bc', 0.45), nose = mix(dk(sk, 0.45), '#5a3c3c', 0.45), nx = 1.0 + 0.62 * m;
-    /* lighter muzzle, broad dark nose pad on the front, shaded heavy jaw, lit forehead */
-    var pad = 'M' + q(nx - 0.34, 0.02) + ' C' + q(nx - 0.1, -0.02) + ' ' + q(nx + 0.14, 0.14) + ' ' + q(nx + 0.14, 0.44) + ' C' + q(nx + 0.14, 0.72) + ' ' + q(nx - 0.02, 0.84) + ' ' + q(nx - 0.24, 0.84) +
-      ' C' + q(nx - 0.34, 0.62) + ' ' + q(nx - 0.44, 0.3) + ' ' + q(nx - 0.34, 0.02) + ' Z';
-    out += CG(E(X + r * (1.0 + 0.32 * m), Y + r * 0.7, r * 0.7 * m, r * 0.66, c.cel(muz), 0) +
+    var muz = mix(sk, '#e4d0bc', 0.4), nose = mix(dk(sk, 0.45), '#4a3434', 0.5), nx = 1.0 + 0.74 * m;
+    /* lighter muzzle at the end of the long face, a small dark nose, a pale stripe down the face, lit forehead */
+    out += CG(E(X + r * (1.0 + 0.5 * m), Y + r * 0.98, r * 0.44 * m, r * 0.4, c.cel(muz), 0) +
       F('M' + q(-1, 0.3) + ' C' + q(-0.6, 1.1) + ' ' + q(0.3, 1.45) + ' ' + q(1.4, 1.3) + ' L' + q(1.4, 1.7) + ' L' + q(-1, 1.7) + ' Z', dk(sk, 0.35), 0.45) +
-      P(pad, c.cel(nose), 1.4) +
+      S('M' + q(0.72, -0.62) + ' C' + q(1.0, -0.3) + ' ' + q(1.25, 0.1) + ' ' + q(nx - 0.12, 0.6), lt(sk, 0.3), r * 0.14, 0.6) +
+      E(X + r * (nx - 0.04), Y + r * 0.82, r * 0.14, r * 0.16, c.cel(nose), 1.2) +
       F('M' + q(-0.9, -0.2) + ' C' + q(-0.6, -0.9) + ' ' + q(0.2, -1.05) + ' ' + q(0.6, -0.72) + ' C' + q(0.1, -0.8) + ' ' + q(-0.5, -0.6) + ' ' + q(-0.9, -0.2) + ' Z', lt(sk, 0.18), 0.6), c.clip(d));
-    /* big comma nostril, mouth line, heavy brow over a small eye */
-    out += P('M' + q(nx - 0.1, 0.28) + ' C' + q(nx + 0.06, 0.26) + ' ' + q(nx + 0.08, 0.5) + ' ' + q(nx - 0.04, 0.56) + ' C' + q(nx - 0.12, 0.5) + ' ' + q(nx - 0.2, 0.36) + ' ' + q(nx - 0.1, 0.28) + ' Z', '#140a08', 0);
-    out += S('M' + q(0.86, 1.04) + ' Q' + q(1.2, 1.12) + ' ' + q(nx - 0.12, 0.98), OL, 1.5);
+    /* slit nostril and a short mouth line under the muzzle */
+    out += S('M' + q(nx - 0.08, 0.74) + ' L' + q(nx + 0.02, 0.86), '#140a08', 1.1);
+    out += S('M' + q(1.0 + 0.3 * m, 1.18) + ' Q' + q(1.0 + 0.5 * m, 1.2) + ' ' + q(nx - 0.08, 1.08), OL, 1.4);
     var ex = X + r * 0.66, ey = Y - r * 0.26;
     out += E(ex, ey, 1.9, 1.5, '#f0e2c0', 0) + C(ex + 0.5, ey + 0.1, 1.15, '#140a06', 0) + C(ex + 0.1, ey - 0.4, 0.45, '#ffffff', 0);
     out += P('M' + q(0.3, -0.46) + ' C' + q(0.55, -0.72) + ' ' + q(0.9, -0.66) + ' ' + q(1.08, -0.42) + ' C' + q(0.85, -0.46) + ' ' + q(0.6, -0.44) + ' ' + q(0.36, -0.36) + ' Z', dk(sk, 0.28), f ? 1.2 : 1.8);
@@ -1633,17 +1660,28 @@
     if (!o.hood) {
       var ear = 'M' + q(-0.12, -0.38) + ' C' + q(-0.55, -0.5) + ' ' + q(-1.1, -0.3) + ' ' + q(-1.5, 0.22) + ' C' + q(-1.05, 0.32) + ' ' + q(-0.55, 0.2) + ' ' + q(-0.12, -0.02) + ' Z';
       out += P(ear, c.cel(dk(sk, 0.06)), 2) + F('M' + q(-0.28, -0.26) + ' C' + q(-0.62, -0.34) + ' ' + q(-1.0, -0.16) + ' ' + q(-1.28, 0.16) + ' C' + q(-0.95, 0.18) + ' ' + q(-0.6, 0.08) + ' ' + q(-0.28, -0.08) + ' Z', mix(sk, '#c88080', 0.4), 0.85);
-      if (o.noseRing || o.horn === 3) out += hoop(X - r * 1.05, Y + r * 0.24, r * 0.11);
+      if (o.horn === 3) out += hoop(X - r * 1.05, Y + r * 0.24, r * 0.11);
     }
     if (h && !capped) out += taurenHair(c, g, o, 'front');
-    if (o.tbeard && !o.mask) out += braidG(c, hpl(g, [[1.0, 1.25], [1.1, 1.75], [1.0, 2.2]]), r * 0.26, h.c, '#e8dcc0');
+    /* goat beard: a tapering tuft under the chin */
+    if (o.tbeard && !o.mask) {
+      var bx0 = 1.0 + 0.3 * m;
+      out += P('M' + q(bx0 - 0.28, 1.22) + ' C' + q(bx0 - 0.3, 1.6) + ' ' + q(bx0 - 0.12, 1.95) + ' ' + q(bx0 + 0.02, 2.2) + ' C' + q(bx0 + 0.12, 1.9) + ' ' + q(bx0 + 0.34, 1.55) + ' ' + q(bx0 + 0.36, 1.2) + ' Z', c.cel(h.c), 1.8) +
+        S('M' + q(bx0 - 0.06, 1.34) + ' L' + q(bx0, 1.9), dk(h.c, 0.3), r * 0.06, 0.8);
+    }
     /* hoods sit on the cranium; the mask is widened to cover the muzzle */
     var mk = o.mask;
     o.mask = null; out += headWear(c, g, o, ex, ey); o.mask = mk;
     if (mk) out += headWear(c, { X: X + r * 0.5, Y: Y + r * 0.12, r: r * 1.2 }, { mask: mk, maskKnot: o.maskKnot, hood: o.hood }, ex, ey);
     out += taurenHorn(c, g, o, false);
-    if (o.noseRing && !mk) out += hoop(X + r * (1.0 + 0.6 * m), Y + r * 0.8, r * 0.2);
     return out;
+  };
+  /* the old mob Hornfolk head (Mr. Smite) now uses the race head: ram horns, long face, no nose ring */
+  HEAD.tauren = function (c, g, o) {
+    var o2 = {}, k;
+    for (k in o) o2[k] = o[k];
+    o2.horn = o.horn || 0; o2.noseRing = false; o2.hair = o.hair || { c: '#2a1a12', style: 'mane' }; o2.tbeard = o.tbeard != null ? o.tbeard : true;
+    return HEAD.ptauren(c, g, o2);
   };
   /* two-toed hoof with a fur fetlock (foot kind 'thoof') */
   function taurenHoof(c, o, x, y) {
@@ -1658,17 +1696,19 @@
     return P(D`M${x - b.shW + 1},${y + 10} C${x - b.shW - 4},${y - 3} ${x - 8},${y - 11} ${x + 4},${y - 7} L${x + 6},${y + 4} Z`, c.cel(col)) +
       S(D`M${x - b.shW + 1},${y + 2} C${x - b.shW + 2},${y - 3} ${x - 6},${y - 7} ${x - 1},${y - 7}`, lt(col, 0.3), 1, 0.6);
   }
-  /* torn gap in the clothes showing ribs, a small rip, frayed strips at the hips */
+  /* mended clothes: two stitched cloth patches on the torso, frayed strips at the hips (no exposed ribs) */
+  function patchG(c, d, col, pts) {
+    var st = '';
+    pts.forEach(function (p) { st += D`M${p[0] - 1.1},${p[1] - 1.1} L${p[0] + 1.1},${p[1] + 1.1} M${p[0] + 1.1},${p[1] - 1.1} L${p[0] - 1.1},${p[1] + 1.1} `; });
+    return P(d, c.cel(col), 1.4) + S(st, '#e6dcc6', 0.8, 0.9);
+  }
   function undeadTorso(c, g, o) {
     var x = g.scx - 3, y = g.sy + 11, col = o.torsoC || o.sleeve || '#777777', out = '';
-    var hole = D`M${x - 5},${y} L${x - 2.5},${y - 1.8} L${x - 0.5},${y + 0.4} L${x + 2},${y - 2} L${x + 4.5},${y + 0.6} L${x + 6},${y + 4} L${x + 4.6},${y + 7} L${x + 6.2},${y + 10} L${x + 3.4},${y + 12.6} L${x + 0.6},${y + 11} L${x - 2},${y + 13} L${x - 4.4},${y + 10.2} L${x - 6.2},${y + 6.6} L${x - 4.6},${y + 4} Z`;
-    var ribs = D`M${x - 6},${y + 2.6} Q${x},${y + 0.2} ${x + 6.5},${y + 3.4} M${x - 6.5},${y + 6.2} Q${x},${y + 3.8} ${x + 6.8},${y + 7} M${x - 6},${y + 9.8} Q${x},${y + 7.4} ${x + 6.5},${y + 10.6}`;
-    out += P(hole, '#1c1416', 1.6) + CG(S(ribs, OL, 3.6) + S(ribs, BONE, 1.9) + S(D`M${x - 5.5},${y + 1.6} L${x - 5.5},${y + 12}`, '#3a2c2c', 1.4, 0.8), c.clip(hole));
-    out += S(hole, dk(col, 0.35), 0.9, 0.8);
-    /* a second small rip lower on the torso */
+    var pc = mix(col, '#8a7a5a', 0.45);
+    out += patchG(c, D`M${x - 5},${y} L${x + 5},${y - 1} L${x + 6},${y + 8} L${x - 4.5},${y + 9} Z`, pc,
+      [[x - 5, y + 2], [x - 5, y + 6], [x + 5.5, y + 2], [x + 5.8, y + 6], [x, y - 0.5], [x + 0.6, y + 8.6]]);
     var rx = g.sx + 4, ry = g.hy - 12;
-    out += P(D`M${rx - 2.5},${ry} L${rx},${ry - 1.5} L${rx + 2.8},${ry + 0.4} L${rx + 1.2},${ry + 2.6} L${rx - 1.4},${ry + 2.2} Z`, '#2a1e20', 1.1);
-    /* frayed strips hanging from the torso hem */
+    out += patchG(c, D`M${rx - 3},${ry - 1} L${rx + 3},${ry - 2} L${rx + 3.4},${ry + 3} L${rx - 2.6},${ry + 3.6} Z`, mix(col, '#5a5a62', 0.5), [[rx - 3, ry + 1.2], [rx + 3.2, ry + 0.5]]);
     var hy = g.hy, wl = g.wl, wr = g.wr, fr = '';
     [[0.12, 7], [0.34, 5], [0.62, 8], [0.86, 5.5]].forEach(function (p) {
       var fx = wl + (wr - wl) * p[0];
@@ -1676,23 +1716,17 @@
     });
     return out + (o.robe ? '' : fr);
   }
-  /* bony forearm: the sleeve torn off below the elbow, radius and ulna showing; draws over the front forearm */
+  /* forearm bound in a stitched linen wrap (key kept: boneArm); draws over the front forearm */
   function boneArm(c, g, A, o) {
     var E0 = A[1], H = A[2], w = g.b.armW, bell = !!o.bell;
-    var t0 = bell ? 0.3 : 0.08, t1 = bell ? 0.9 : 0.72;
+    var t0 = bell ? 0.4 : 0.22, t1 = bell ? 0.88 : 0.7;
     var p0 = [E0[0] + (H[0] - E0[0]) * t0, E0[1] + (H[1] - E0[1]) * t0], p1 = [E0[0] + (H[0] - E0[0]) * t1, E0[1] + (H[1] - E0[1]) * t1];
-    var dx = p1[0] - p0[0], dy = p1[1] - p0[1], L = Math.sqrt(dx * dx + dy * dy) || 1, nx = -dy / L, ny = dx / L;
-    var hw = w * 0.52, out = '';
-    /* dark rotted gap */
-    out += P(pl([[p0[0] + nx * hw, p0[1] + ny * hw], [p1[0] + nx * hw * 0.8, p1[1] + ny * hw * 0.8], [p1[0] - nx * hw * 0.8, p1[1] - ny * hw * 0.8], [p0[0] - nx * hw, p0[1] - ny * hw]]) + 'Z', '#2a1e1e', 1.6);
-    var bw = w * 0.2, o1 = w * 0.2;
-    var b1 = D`M${p0[0] + nx * o1},${p0[1] + ny * o1} L${p1[0] + nx * o1 * 0.7},${p1[1] + ny * o1 * 0.7}`, b2 = D`M${p0[0] - nx * o1},${p0[1] - ny * o1} L${p1[0] - nx * o1 * 0.7},${p1[1] - ny * o1 * 0.7}`;
-    out += S(b1 + b2, OL, bw + 2.2) + S(b1, BONE, bw) + S(b2, dk(BONE, 0.12), bw);
-    /* ragged sleeve edge at the tear */
-    var sl = o.sleeve || '#777777', e = [];
-    for (var i = 0; i <= 6; i++) { var v = -1 + i / 3, j = i % 2 ? 2.4 : 0.4; e.push([p0[0] + nx * hw * 1.05 * v + dx / L * j, p0[1] + ny * hw * 1.05 * v + dy / L * j]); }
-    out += P(pl([[p0[0] + nx * hw * 1.05 - dx / L * 2.5, p0[1] + ny * hw * 1.05 - dy / L * 2.5]].concat(e.reverse(), [[p0[0] - nx * hw * 1.05 - dx / L * 2.5, p0[1] - ny * hw * 1.05 - dy / L * 2.5]])) + 'Z', bell ? (o.bell || sl) : sl, 1.4);
-    return out;
+    var dx = p1[0] - p0[0], dy = p1[1] - p0[1], L = Math.sqrt(dx * dx + dy * dy) || 1, nx = -dy / L, ny = dx / L, hw = w * 0.62;
+    var d = pl([[p0[0] + nx * hw, p0[1] + ny * hw], [p1[0] + nx * hw, p1[1] + ny * hw], [p1[0] - nx * hw, p1[1] - ny * hw], [p0[0] - nx * hw, p0[1] - ny * hw]]) + 'Z';
+    var bands = '', st = '', i;
+    for (i = 1; i < 4; i++) { var t = i / 4, bx = p0[0] + dx * t, by = p0[1] + dy * t; bands += D`M${bx + nx * hw - dx / L * 1.5},${by + ny * hw - dy / L * 1.5} L${bx - nx * hw + dx / L * 1.5},${by - ny * hw + dy / L * 1.5} `; }
+    for (i = 0; i < 4; i++) { var u = (i + 0.5) / 4, sx = p0[0] + dx * u, sy = p0[1] + dy * u; st += D`M${sx + nx * 0.8 - dx / L},${sy + ny * 0.8 - dy / L} L${sx - nx * 0.8 + dx / L},${sy - ny * 0.8 + dy / L} `; }
+    return P(d, c.cel('#cfc6ae'), 1.5) + CG(S(bands, '#8a8068', 1, 0.9) + S(st, '#5a4a3a', 0.8, 0.8), c.clip(d));
   }
   function undeadSkullD(g, f) {
     var X = g.X, Y = g.Y, r = g.r, j = f ? 0.92 : 1;
@@ -1718,7 +1752,7 @@
     if (st === 'ubald' || st === 'umohawk') {
       /* patchy scalp: a bare patch of skull bone on the crown */
       var sd = undeadSkullD(g, o.gender === 'f');
-      out += CG(P(blob(X - r * 0.12, Y - r * 0.9, r * 0.36, r * 0.2, 6, rnd(7), 0.5), c.cel(BONE), 1.3) + S('M' + q(-0.2, -1.05) + ' L' + q(-0.05, -0.85) + ' L' + q(-0.15, -0.72), dk(BONE, 0.4), 0.9) +
+      out += CG(F(blob(X - r * 0.12, Y - r * 0.9, r * 0.36, r * 0.2, 6, rnd(7), 0.5), dk(sk, 0.14), 0.8) + S('M' + q(-0.4, -1.0) + ' L' + q(0.2, -0.82), dk(sk, 0.45), 1) + S('M' + q(-0.3, -1.08) + ' l' + r1(r * 0.04) + ',' + r1(r * 0.14) + ' M' + q(-0.1, -1.0) + ' l' + r1(r * 0.04) + ',' + r1(r * 0.14) + ' M' + q(0.1, -0.94) + ' l' + r1(r * 0.04) + ',' + r1(r * 0.14), dk(sk, 0.5), 0.8) +
         F('M' + q(-1.1, 0.2) + ' C' + q(-1.1, -0.9) + ' ' + q(-0.6, -1.2) + ' ' + q(-0.5, -1.2) + ' L' + q(-0.62, -0.4) + ' Z', dk(sk, 0.2), 0.4), c.clip(sd));
       if (st === 'ubald') out += strand([hq(-0.62, -0.62), hq(-0.95, -0.2), hq(-1.05, 0.55)], 1.3, hc) + strand([hq(-0.4, -0.72), hq(-0.62, 0.0), hq(-0.62, 0.62)], 1.2, dk(hc, 0.12)) + strand([hq(-0.8, -0.35), hq(-1.15, 0.3), hq(-1.2, 0.9)], 1.1, hc);
       else out += P(qpoly(g, [[0.5, -0.9], [0.62, -1.28], [0.28, -1.18], [0.2, -1.52], [-0.1, -1.3], [-0.3, -1.55], [-0.45, -1.2], [-0.8, -1.3], [-0.78, -0.95], [-1.1, -0.9], [-0.95, -0.66], [-0.5, -0.96], [0.1, -1.08]]), c.cel(hc), 1.9) +
@@ -1758,19 +1792,20 @@
     } else if (!o.mask) out += S('M' + q(0.52, 0.8) + ' L' + q(0.96, 0.76), OL, 1.2) + S('M' + q(0.62, 0.8) + ' l0,1.4 M' + q(0.78, 0.79) + ' l0,1.4', OL, 0.7);
     /* sunken socket, glowing pinpoint eye */
     var ex = X + r * 0.6, ey = Y - r * 0.04;
-    out += E(ex, ey, r * 0.24, r * 0.19, '#1a1210', 0) + C(ex + r * 0.02, ey, r * 0.8, c.rg([[0, '#fffbd8', 1], [0.16, '#fff09a', 0.8], [0.45, '#ffd84a', 0.3], [1, '#ffd84a', 0]]), 0) +
-      C(ex + r * 0.03, ey, r * 0.12, '#fffef0', 0);
+    out += E(ex, ey + r * 0.02, r * 0.3, r * 0.24, dk(sk, 0.4), 0, 0.7) + E(ex, ey, r * 0.2, r * 0.16, '#1a1412', 0) +
+      C(ex + r * 0.02, ey, r * 0.38, c.rg([[0, '#fff6c8', 0.7], [0.4, '#f0e090', 0.25], [1, '#f0e090', 0]]), 0) +
+      C(ex + r * 0.03, ey, r * 0.08, '#f8f2d0', 0);
     out += S('M' + q(0.28, -0.3) + ' L' + q(1.0, -0.2), OL, f ? 1.5 : 2);
     if (f) out += S(D`M${ex + r * 0.2},${ey - r * 0.16} l1.4,-1`, OL, 0.9);
-    /* rotted nose */
-    out += F('M' + q(1.0, 0.1) + ' L' + q(1.14, 0.34) + ' L' + q(0.98, 0.38) + ' Z', '#2a1c1c', 0.8);
+    /* thin nose line */
+    out += S('M' + q(1.02, 0.14) + ' L' + q(1.1, 0.36) + ' L' + q(0.98, 0.4), dk(sk, 0.45), 0.9, 0.8);
     if (h && !capped) out += undeadHair(c, g, o, 'front');
     out += headWear(c, g, o, ex, ey);
     return out;
   };
 
   /* ================= named gear (opts.gear) ================= */
-  var MBLUE = '#2f5fa8', BLOOD = '#b81c1c', DRED = '#b82d31';
+  var MBLUE = '#2f5fa8', BLOOD = '#b81c1c', DRED = '#7a7e83'; /* DRED: the Grey Hoods' scarf grey (was a red mask) */
   function cog(cx, cy, n, ro, ri) {
     var d = '', s = Math.PI * 2 / n;
     for (var i = 0; i < n; i++) {
@@ -1963,16 +1998,13 @@
       P('M0,-60 C4,-54 5,-46 2.4,-40 L-2.4,-40 C-5,-46 -4,-54 0,-60 Z', c.lg(['#fbf6e8', '#e2d8c0', '#a89a7a'], 0, 0, 1, 0), 1.8) +
       S('M-2,-40 L2,-38 M-2,-37 L2,-35 M-2,-34 L2,-32', '#3a78c8', 1.3) + P('M2,-36 C6,-34 7,-30 5,-27 L3,-31 Z', c.cel('#e8f2fa'), 1.1);
   };
-  /* furbolg shaman's totem staff: forked wood, a green stone, feathers on a cord */
+  /* bearkin shaman's staff (key fbstaff): a plain gnarled branch, forked at the top, a tuft of moss */
   WP.fbstaff = function (c) {
     var wd = '#7a5a38';
     return P('M-2.2,38 C-3,14 -1,-16 -2.6,-42 L2.6,-42 C1.8,-16 3.2,14 2.2,38 Z', c.lg([lt(wd, 0.25), wd, dk(wd, 0.4)], 0, 0, 1, 0), 2) +
-      C(0, -52, 12, c.rg([[0, '#e8ffc0', 0.8], [0.45, '#b8e060', 0.35], [1, '#b8e060', 0]]), 0) +
-      S('M-2,-41 C-7,-46 -8,-54 -5,-60 M2,-41 C7,-46 8,-54 5,-60', OL, 5) + S('M-2,-41 C-7,-46 -8,-54 -5,-60 M2,-41 C7,-46 8,-54 5,-60', wd, 2.6) +
-      C(0, -51, 4.6, c.rg([[0, '#f4ffd0'], [0.5, '#9ae04a'], [1, '#3a7a1a']], 0.4, 0.35, 0.7), 1.6) +
-      S('M-2.4,-32 L2.4,-30 M-2.4,-28 L2.4,-26', '#b8342a', 1.4) +
-      S('M-2,-30 C-7,-26 -8,-20 -7,-14', '#c8a870', 0.9) +
-      G(P('M0,0 C3,-3 3.6,-9 0,-13 C-3.6,-9 -3,-3 0,0 Z', c.cel('#f0ece2'), 1.2), 'translate(-7,-14) rotate(170)') + G(P('M0,0 C3,-3 3.6,-9 0,-13 C-3.6,-9 -3,-3 0,0 Z', c.cel('#3a78c8'), 1.2), 'translate(-4,-15) rotate(192)');
+      S('M-2,-41 C-7,-46 -8,-54 -5,-60 M2,-41 C6,-47 9,-52 8,-58', OL, 5) + S('M-2,-41 C-7,-46 -8,-54 -5,-60 M2,-41 C6,-47 9,-52 8,-58', wd, 2.6) +
+      S('M-2,-20 C0,-22 1,-24 2,-27 M-1,6 C1,4 2,2 2,-2', dk(wd, 0.45), 1.1) + C(1.2, -10, 1.3, dk(wd, 0.45), 0) +
+      P(blob(0, -42, 4.6, 2.6, 6, rnd(12), 0.5), c.cel('#6a9a3a'), 1.4) + C(-1.5, -43, 0.9, '#a8d060', 0);
   };
   WP.seerstaff = function (c) {
     var wd = '#6a4a30';
@@ -2149,20 +2181,20 @@
   var GCHEST = {
     defias_armor: function (o) {
       o.torsoC = '#2c2527'; o.sleeve = '#352c2e';
-      o.belt = '#b0262a'; o.buckle = null;
+      o.belt = '#5d6166'; o.buckle = null;
       o.torsoFx = function (c, g) {
         var x = g.scx, y = g.sy, hy = g.hy;
         return CG(S(D`M${x + 7},${y - 2} L${g.sx + 6},${hy} M${x - 7},${y + 1} L${g.sx - 8},${hy}`, '#1a1416', 1.4) +
-          S(stitchLine(x + 9, y + 1, g.sx + 8, hy - 7, 3.4) + stitchLine(x - 9, y + 4, g.sx - 10, hy - 7, 3.4), '#d8403a', 1) +
+          S(stitchLine(x + 9, y + 1, g.sx + 8, hy - 7, 3.4) + stitchLine(x - 9, y + 4, g.sx - 10, hy - 7, 3.4), '#a8acb0', 1) +
           P(D`M${x - 6},${y - 3} L${x + 3},${y + 11} L${x + 12},${y - 1}`, 'none', 1.8), c.clip(g.torsoD)) +
-          S(D`M${x - 5},${y - 1.5} L${x + 3},${y + 9.5} L${x + 11},${y}`, '#d8403a', 1.2);
+          S(D`M${x - 5},${y - 1.5} L${x + 3},${y + 9.5} L${x + 11},${y}`, '#a8acb0', 1.2);
       };
       o.gTorso = function (c, g) {
         /* sash knot and hanging tails at the front hip */
         var x = g.sx + 6, y = g.hy - 3;
-        return P(D`M${x - 1},${y + 1} L${x - 4},${y + 15} L${x + 0.5},${y + 13.5} L${x + 2},${y + 2} Z`, c.cel('#a02226'), 1.6) +
-          P(D`M${x + 1},${y + 1} L${x + 6},${y + 13} L${x + 8},${y + 9.5} L${x + 3},${y} Z`, c.cel('#b82a2e'), 1.6) +
-          C(x + 1, y + 0.5, 2.8, c.cel('#c0302f'), 1.6);
+        return P(D`M${x - 1},${y + 1} L${x - 4},${y + 15} L${x + 0.5},${y + 13.5} L${x + 2},${y + 2} Z`, c.cel('#5f6368'), 1.6) +
+          P(D`M${x + 1},${y + 1} L${x + 6},${y + 13} L${x + 8},${y + 9.5} L${x + 3},${y} Z`, c.cel('#6b6f74'), 1.6) +
+          C(x + 1, y + 0.5, 2.8, c.cel('#767a7f'), 1.6);
       };
     },
     corsair_shirt: function (o) {
@@ -2237,7 +2269,7 @@
       P(D`M${X - r * 0.9},${Y + r * 0.58} L${X - r * 1.3},${Y + r * 1.6} L${X - r * 0.98},${Y + r * 1.55} Z`, dk(col, 0.22), 1.5) +
       C(X - r * 0.9, Y + r * 0.52, r * 0.2, c.cel(col), 1.4);
   }
-  var GMASK = { defias: DRED };
+  var GMASK = { defias: '#8a8e93' };
   /* ---- v18 looks: Dunescar / Scrublands drops ---- */
   var GW18 = {
     /* Mokku the Hexer's hex staff: gnarled crook, shrunken-head fetish on a cord, red and teal feathers */
@@ -2456,9 +2488,9 @@
   function mobH(c, o, rx) { return shadow(c, 64, rx || 30) + G(humanoid(c, o), MIRROR); }
   function defias(x) {
     var o = {
-      skin: SKIN[1], gender: 'm', hood: '#a3252a', mask: '#b82d31', angry: true,
+      skin: SKIN[1], gender: 'm', hood: '#6b6f74', mask: '#8a8e93', angry: true,
       torsoC: '#8d8474', sleeve: '#8d8474', hand: '#4a3526', pants: '#4b3a2b', boots: '#2a211a',
-      belt: '#2b2018', buckle: '#b9b1a0', torsoFx: vestFx('#6a4a2f'), armband: '#b82d31', body: {}
+      belt: '#2b2018', buckle: '#b9b1a0', torsoFx: vestFx('#6a4a2f'), armband: '#5d6166', body: {}
     };
     for (var k in x) o[k] = x[k];
     return o;
@@ -2613,10 +2645,17 @@
     out += C(36, 49.5, 2.8, '#120c08', 0) + C(35.2, 48.6, 0.95, '#fff', 0) + S('M31,45.5 L41,47.5', OL, 2);
     out += S('M20,59 L7,55 M20,61 L6,62 M21,63 L9,67', '#2a1a10', 0.8, 0.8);
     if (o.candle) {
-      out += C(47, 16, 15, c.rg([[0, '#fff2b0', 0.75], [0.35, '#ffb040', 0.35], [1, '#ff8a20', 0]]), 0);
-      out += E(47.5, 39.5, 7, 2.8, c.cel('#e8dcb0'), 2) + P('M44,39 L44,25 L51,25 L51,39 Z', c.cel('#f3e8c4'), 2) + F('M44.5,27 L46.5,27 L46.5,33 C45,34 44.5,32 44.5,30 Z', '#fffaf0', 0.9);
-      out += S('M47.5,25 L47.5,21.5', OL, 1.4);
-      out += P('M47.5,9 C51,14 52.5,17 51,20 C50,22.5 45,22.5 44,20 C42.5,17 44.5,13 47.5,9 Z', '#ff8a1e', 1.4) + F('M47.5,13.5 C49.5,16 50,18 49,19.6 C48.3,21 46.7,21 46,19.6 C45.2,18 46,16 47.5,13.5 Z', '#fff07a');
+      /* dented tin miner's helmet with a small oil lamp on the brow (the old `candle` option) */
+      var hd = 'M33,42 C30,30 38,21 49,21 C60,21 67,29 65,40 Z', tin = o.helmet || '#8f949a';
+      out += P(hd, c.cel(tin), 2.2);
+      out += CG(F('M36,30 C39,24 46,22 52,23 C46,25 41,28 38,34 Z', lt(tin, 0.45), 0.7) +
+        S('M55,26 Q57,29 55.5,32 M44,31 Q46.5,33 45.5,36', dk(tin, 0.45), 1.2, 0.85) + F('M54,27 Q56.5,29.5 55,32 Q53.5,29.5 54,27 Z', dk(tin, 0.25), 0.6) +
+        S('M49,21 L49,40', dk(tin, 0.22), 1.1, 0.6), c.clip(hd));
+      out += P('M28,43 C40,39 56,38 69,39.5 L68.5,43.5 C56,42.5 40,43 29,46.5 Z', c.cel(dk(tin, 0.12)), 2);
+      out += C(66, 41.2, 1, dk(tin, 0.5), 0) + C(31.5, 44.2, 1, dk(tin, 0.5), 0);
+      out += C(34, 33, 11, c.rg([[0, '#fff2b0', 0.7], [0.4, '#ffc050', 0.3], [1, '#ff9a30', 0]]), 0);
+      out += P('M36.5,28 L36.5,38 L33,38 C30,38 29,35.5 29,33 C29,30.5 30,28 33,28 Z', c.cel('#5d6269'), 1.8) +
+        E(31.2, 33, 2.4, 3.4, c.rg([[0, '#ffffff'], [0.5, '#ffe68a'], [1, '#ffab3a']], 0.4, 0.4, 0.7), 1.2);
     }
     if (o.fItem) out += o.fItem(c);
     out += tube([[57, 73], [49, 84], [41, 86]], 7, f, dk(f, 0.28)) + C(40, 86.5, 4.2, c.cel(f), 2);
@@ -2624,58 +2663,100 @@
     return scaleAt(out, o.scale || 1, 62, 123);
   }
 
-  /* murloc base (FACING LEFT) */
+  /* mireling base (FACING LEFT): an upright marsh newt with a frilled collar, eyes on top of the head,
+     smooth spotted skin, a long tail and webbed hands and feet. Options: skin, belly, fin (the frill colour),
+     apron, fItem. (`hat` is accepted and ignored.) */
+  function webFoot(c, x, y, col, k) {
+    var s = k || 1;
+    return P(D`M${x + 7 * s},${y - 5} L${x - 2 * s},${y - 5} L${x - 9 * s},${y - 1} L${x - 6 * s},${y} L${x - 8 * s},${y + 1.5} L${x - 3 * s},${y + 1.2} L${x - 4 * s},${y + 2.6} L${x + 8 * s},${y + 2.6} Z`, c.cel(col), 1.8) +
+      S(D`M${x - 1 * s},${y - 3.5} L${x - 6 * s},${y - 0.3} M${x + 1 * s},${y - 3} L${x - 2.5 * s},${y + 1.6}`, dk(col, 0.35), 0.9, 0.8);
+  }
+  function webHand(c, x, y, col) {
+    return P(D`M${x + 3},${y - 3.5} C${x - 1},${y - 4.5} ${x - 5},${y - 5} ${x - 8},${y - 3.5} L${x - 6},${y - 1.5} L${x - 9.5},${y} L${x - 6},${y + 1.5} L${x - 8},${y + 4} C${x - 4},${y + 4.5} ${x},${y + 4} ${x + 3},${y + 3} Z`, c.cel(col), 1.7) +
+      S(D`M${x - 1},${y - 2.5} L${x - 6},${y - 3} M${x - 1},${y} L${x - 7.5},${y} M${x - 1},${y + 2.3} L${x - 6.5},${y + 3.4}`, dk(col, 0.35), 0.8, 0.8);
+  }
   function murloc(c, o) {
-    var f = o.skin, fd = dk(f, 0.28), fin = o.fin, out = '';
-    var body = 'M30,66 C28,50 42,40 58,42 C76,44 90,56 90,76 C90,94 80,108 62,108 C46,108 36,98 34,86 C33,80 31,72 30,66 Z';
-    out += shadow(c, 62, 32);
-    out += P('M66,98 C74,90 88,94 88,104 C88,112 80,114 74,112 Z', c.cel(fd)) + tube([[80, 108], [86, 116], [78, 120]], 6.5, fd) + P('M66,118 L82,118 L86,123 L62,123 Z', c.cel(dk(fin, 0.2)), 2);
-    out += tube([[74, 76], [84, 88], [80, 96]], 5.5, fd);
-    out += P('M54,43 L56,30 L63,39 L69,27 L74,41 L82,33 L84,49 L93,45 L91,62 C87,54 74,44 54,43 Z', c.cel(fin)) + S('M60,40 L57,33 M68,40 L69,31 M76,44 L81,37 M84,51 L91,48', dk(fin, 0.35), 1.2);
+    var f = o.skin, fd = dk(f, 0.28), fin = o.fin || lt(f, 0.3), bl = o.belly || lt(f, 0.5), out = '';
+    out += shadow(c, 66, 38);
+    /* long tail sweeping back and curling along the ground */
+    var tail = 'M70,96 C82,104 96,110 108,110 C116,110 121,106 122,100 C124,108 118,117 106,118 C92,119 78,114 64,106 Z';
+    out += P(tail, c.cel(fd), 2.2) + CG(F('M66,104 C80,112 96,116 110,116 L110,122 L60,122 Z', dk(fd, 0.2), 0.6) + C(88, 110, 1.6, dk(fd, 0.3), 0, 0.7) + C(100, 112, 1.4, dk(fd, 0.3), 0, 0.7), c.clip(tail));
+    /* far leg and arm */
+    out += tube([[72, 98], [80, 108], [77, 117]], 6.5, fd) + webFoot(c, 76, 120, dk(fd, 0.1), 0.9);
+    out += tube([[70, 66], [79, 78], [76, 88]], 5, fd) + webHand(c, 76, 89, dk(fd, 0.05));
+    /* body: slim upright trunk */
+    var body = 'M50,62 C52,53 69,51 75,60 C81,71 82,90 77,101 C72,110 57,110 51,102 C45,92 45,72 50,62 Z';
     out += P(body, c.cel(f));
-    out += CG(F('M36,82 C40,98 52,106 64,106 C72,106 80,100 80,92 C68,98 50,94 40,78 Z', o.belly, 0.9) +
-      C(66, 56, 3, fd, 0, 0.6) + C(76, 62, 2.4, fd, 0, 0.6) + C(72, 72, 2, fd, 0, 0.5) + C(60, 50, 2, fd, 0, 0.5), c.clip(body));
-    out += P('M80,60 L92,56 L90,66 L96,68 L86,74 Z', c.cel(fin), 2);
-    if (o.apron) out += P('M44,84 C52,90 66,92 78,88 L76,104 C66,108 52,106 46,100 Z', c.cel('#f4f0e6'), 2);
-    out += P('M27,67 C36,73 48,73 58,69 C56,79 50,88 40,88 C34,88 29.5,82 28.5,74 Z', c.cel('#7a1a22'), 2.2);
-    out += F('M33,82 C37,86 45,86 50,82 C45,80 38,80 33,82 Z', '#d0566a', 0.9);
-    out += F('M31,69 l2,4.5 l2,-4 z M36,70.5 l2,4.5 l2,-4.3 z M41,71 l2,4.5 l2,-4.5 z M46,70.5 l2,4.2 l2,-4.5 z M51,69.5 l1.8,4 l1.8,-4.4 z', '#f6f0dc');
-    out += F('M36,87.5 l1.6,-3.5 l1.6,3.6 z M42,87.6 l1.6,-3.6 l1.6,3.4 z', '#f6f0dc');
-    out += C(55, 47, 5.2, '#f2ecb0', 2) + C(53.5, 47.5, 2.2, '#140c08', 0);
-    out += C(42, 51, 6.8, c.rg([[0, '#fffbe0'], [1, '#e8d880']], 0.4, 0.35, 0.7), 2.2) + E(39.5, 51.5, 2, 3.6, '#140c08', 0) + C(40.8, 49, 1.1, '#fff', 0);
-    out += S('M35,44 L46,46', OL, 2);
-    if (o.hat) out += P('M46,40 C40,40 38,30 44,28 C44,20 54,18 57,24 C62,19 71,23 68,31 C73,33 71,41 65,40 Z', c.cel('#fbfaf4'), 2) + P('M46,37 L66,37 L65,43 L47,43 Z', c.cel('#e8e4d8'), 2);
+    out += CG(F('M44,70 C48,88 54,102 64,108 C56,108 48,104 46,96 Z', bl, 0.9) + F('M46,74 C50,64 58,60 66,62 C58,66 52,72 50,84 Z', lt(f, 0.25), 0.5) +
+      C(68, 66, 2.2, fd, 0, 0.7) + C(74, 76, 1.8, fd, 0, 0.7) + C(70, 88, 2, fd, 0, 0.6) + C(76, 94, 1.5, fd, 0, 0.6), c.clip(body));
+    if (o.apron) out += P('M47,82 C54,86 66,87 76,84 L75,102 C66,108 54,107 49,100 Z', c.cel('#f4f0e6'), 2) + S('M49,82 C58,78 68,78 76,84', '#b8b0a0', 1.2, 0.8);
+    /* frilled collar fanning out around the neck, behind the head */
+    var frill = 'M52,58 C50,48 54,38 60,32 L63,37 L67,31 L68,38 L74,35 L72,42 L79,42 L74,48 L80,52 L73,55 L77,61 L69,61 L70,66 C63,66 56,63 52,58 Z';
+    out += P(frill, c.cel(fin), 2) + CG(S('M58,57 L61,35 M60,58 L68,34 M62,59 L74,39 M63,60 L77,47 M64,61 L76,57', dk(fin, 0.35), 1.1, 0.85) + F('M54,56 C54,50 56,44 60,38 C60,46 60,52 62,60 Z', lt(fin, 0.3), 0.6), c.clip(frill));
+    /* the collar wraps under the jaw on the near side */
+    var frill2 = 'M60,56 C60,63 56,69 50,72 L49,67 L44,71 L43,66 L37,67 L40,62 L34,60 C42,60 52,59 60,56 Z';
+    out += P(frill2, c.cel(dk(fin, 0.06)), 1.8) + CG(S('M58,58 L50,70 M56,59 L44,69 M52,60 L39,64', dk(fin, 0.38), 1, 0.85), c.clip(frill2));
+    /* head: broad flat newt head, round eyes set on top, small mouth line */
+    var hd = 'M60,52 C60,42 50,37 40,38 C30,39 21,43 18,49 C16,54 20,59 28,60 C38,62 52,62 57,58 C59,56 60,54 60,52 Z';
+    out += C(46, 37, 5, c.cel(dk(f, 0.08)), 2) + C(46.6, 36.4, 2.6, '#f2ecb0', 0) + C(46.2, 36.6, 1.5, '#140c08', 0);
+    out += P(hd, c.cel(f));
+    out += CG(F('M16,54 C22,60 36,62 50,61 L50,66 L16,66 Z', bl, 0.8) + C(44, 45, 1.6, fd, 0, 0.6) + C(52, 48, 1.3, fd, 0, 0.6) + C(36, 42, 1.1, fd, 0, 0.5), c.clip(hd));
+    out += C(33, 38.5, 5.6, c.cel(f), 2.2) + C(32.6, 38, 3.4, c.rg([[0, '#fffbe0'], [1, '#e8d880']], 0.4, 0.35, 0.7), 1.2) + C(32, 38.3, 1.9, '#140c08', 0) + C(31.4, 37.2, 0.8, '#fff', 0);
+    out += S('M19.5,52 C25,55 31,56 38,54.5', OL, 1.5) + C(21.5, 47.5, 0.8, '#1a1009', 0);
     if (o.fItem) out += o.fItem(c);
-    out += tube([[56, 80], [44, 90], [33, 92]], 5.5, f, fd);
-    out += P('M34,88 L25,86 L27,90 L22,92 L28,94 L25,98 L34,96 Z', c.cel(lt(f, 0.1)), 1.8);
-    out += P('M52,98 C60,88 76,92 78,102 C80,110 72,114 64,112 Z', c.cel(f)) + tube([[66, 108], [58, 115], [52, 119]], 7, f, fd) + P('M36,118 L56,118 L60,123 L32,123 L36,121 Z', c.cel(fin), 2.2) + S('M42,119 L40,123 M49,119 L48,123', dk(fin, 0.4), 1);
+    out += tube([[56, 70], [46, 82], [37, 90]], 5.5, f, fd) + webHand(c, 35, 91, lt(f, 0.08));
+    out += tube([[60, 98], [55, 109], [52, 117]], 7, f, fd) + webFoot(c, 50, 120, lt(f, 0.04));
     return scaleAt(out, o.scale || 1, 62, 123);
   }
 
-  /* goblin shredder (FACING LEFT) */
+  /* goblin logging machine (FACING LEFT): a tracked cart with a big circular saw on the front arm,
+     the goblin driver sitting up in an open, roll-barred cab, exhaust stack smoking behind */
   function shredder(c) {
-    var br = '#b0782f', out = '', st = '#8c949d';
-    out += shadow(c, 66, 46);
-    out += C(98, 16, 6, '#8a8a8a', 0, 0.55) + C(104, 9, 5, '#a0a0a0', 0, 0.45) + C(90, 12, 4.5, '#9a9a9a', 0, 0.5) + C(110, 4, 4, '#b0b0b0', 0, 0.35);
-    out += P('M86,38 L88,18 L96,18 L96,38 Z', c.cel('#5d6269'), 2) + R(85, 15, 13, 4, '#3d4248', 2);
-    out += P('M98,40 L101,24 L108,24 L107,42 Z', c.cel('#5d6269'), 2) + R(99.5, 21, 10, 4, '#3d4248', 2);
-    out += tube([[84, 86], [100, 100], [88, 116]], 10, dk(st, 0.3)) + P('M76,116 L98,116 L100,122.5 L72,122.5 Z', c.cel('#4a4f55'), 2.2);
-    out += tube([[98, 58], [112, 70], [110, 84]], 8, dk(st, 0.25)) + P('M104,82 L110,94 L114,84 Z M112,82 L120,90 L118,80 Z', c.cel('#6d737a'), 2);
-    out += P('M36,40 L96,34 C106,34 110,42 108,52 L102,84 C100,90 94,92 88,92 L48,92 C42,92 38,88 38,82 Z', c.cel(br));
-    out += CG(F('M36,78 L110,74 L110,96 L36,96 Z', dk(br, 0.35), 0.6) +
-      F('M60,84 L66,74 L72,74 L66,84 Z M72,84 L78,74 L84,74 L78,84 Z M84,84 L90,74 L96,74 L90,84 Z', '#f0c830', 0.9) +
-      F('M36,40 L96,34 L96,38 L36,44 Z', lt(br, 0.35), 0.6), c.clip('M36,40 L96,34 C106,34 110,42 108,52 L102,84 C100,90 94,92 88,92 L48,92 C42,92 38,88 38,82 Z'));
-    out += P('M42,45 L76,42 L74,66 L44,68 Z', '#241a14', 2.2);
-    out += P('M52,68 C48,60 52,54 58,54 C64,54 68,58 66,66 Z', c.cel('#6fae45'), 1.8) + P('M64,57 L80,50 L68,62 Z', c.cel('#6fae45'), 1.8) + P('M52,59 L44,58 L50,62 Z', '#6fae45', 1.5);
-    out += C(55, 58, 2.6, c.rg([[0, '#bfefff'], [1, '#2a7ab0']]), 1.4) + C(60.5, 58, 2.4, c.rg([[0, '#bfefff'], [1, '#2a7ab0']]), 1.4);
-    out += S('M42,45 L76,42 L74,66 L44,68 Z', '#d0d6dc', 1, 0.5);
-    [[44, 74], [54, 74], [96, 44], [98, 60], [44, 86], [100, 74]].forEach(function (p) { out += C(p[0], p[1], 1.4, '#e8c888', 1); });
-    out += R(80, 44, 16, 22, c.cel('#6d737a'), 2) + S('M83,49 L93,49 M83,54 L93,54 M83,59 L93,59', '#2a2e33', 1.6);
-    out += tube([[58, 86], [44, 100], [52, 116]], 10, st, dk(st, 0.3)) + P('M36,116 L58,116 L60,122.5 L32,122.5 Z', c.cel('#5d6269'), 2.2) + C(44, 100, 4.5, c.cel('#6d737a'), 2);
-    out += tube([[46, 70], [30, 78]], 9, st, dk(st, 0.3)) + C(46, 70, 6, c.cel('#6d737a'), 2);
-    out += P(star(20, 82, 14, 20, 15.5), c.cel('#c9d0d8'), 2) + C(20, 82, 14, 'none', 0) +
-      '<circle cx="20" cy="82" r="11" fill="none" stroke="#7c8793" stroke-width="1.4"/>' +
-      S('M8,70 A17,17 0 0 1 32,68 M6,94 A17,17 0 0 0 30,97', '#ffffff', 1.4, 0.55) + C(20, 82, 4.5, c.cel(br), 2) + C(20, 82, 1.6, '#3d4248', 0);
+    var br = '#b0782f', out = '', st = '#8c949d', gs = '#6fae45';
+    out += shadow(c, 66, 52);
+    /* smoke and exhaust stack */
+    out += C(104, 16, 6, '#8a8a8a', 0, 0.55) + C(110, 9, 5, '#a0a0a0', 0, 0.45) + C(97, 11, 4.5, '#9a9a9a', 0, 0.5) + C(116, 4, 4, '#b0b0b0', 0, 0.35);
+    out += P('M102,64 L104,26 L111,26 L111,66 Z', c.cel('#5d6269'), 2) + R(101, 22, 12, 4.5, '#3d4248', 2);
+    /* roll bar behind the driver and the seat back */
+    var cage = 'M100,72 L98,40 L62,37';
+    out += S(cage, OL, 5.6) + S(cage, '#6d737a', 3) + P('M90,74 L92,52 L100,52 L101,74 Z', c.cel('#5a3a22'), 2);
+    /* goblin driver: vest, head with goggles pushed up, long ear */
+    out += P('M76,74 C75,63 79,58 86,58 C92,58 95,63 95,74 Z', c.cel('#c8a86a'), 2) + S('M84,59 L82,74', '#8a6a3a', 1.4, 0.8);
+    out += P('M86,44 L101,33 C101,40 97,46 91,49 Z', c.cel(gs), 2) + F('M88,45 L98,37 C97,41 95,44 91,47 Z', dk(gs, 0.35), 0.7);
+    out += P('M92,50 C93,40 85,36 79,37 C73,38 70,43 70,48 C70,54 75,58 82,58 C88,58 92,55 92,50 Z', c.cel(gs));
+    out += P('M72,47 L62,50 L71,53 Z', c.cel(gs), 1.8);
+    out += S('M92,42 Q84,37 74,40', '#3a2a1e', 2.6) + C(82, 38, 3, c.rg([[0, '#bfefff'], [1, '#2a7ab0']], 0.4, 0.4, 0.6), 1.6) + C(76, 39.5, 2.8, c.rg([[0, '#bfefff'], [1, '#2a7ab0']], 0.4, 0.4, 0.6), 1.6);
+    out += E(77, 46.5, 2, 2, '#fff6c8', 0) + C(76.2, 46.6, 1.1, '#141008', 0) + S('M74,43.5 L80,44', OL, 1.6);
+    out += P('M73,52.5 Q77,55 81,53 Q78,56.5 74,55 Z', '#f6f0d8', 1.1);
+    /* dashboard, levers and hands */
+    out += S('M76,64 L66,56 M80,66 L70,54', OL, 3.6) + S('M76,64 L66,56 M80,66 L70,54', '#8a8f96', 1.8) + C(66, 56, 2, '#c83a2a', 1.2) + C(70, 54, 2, '#e8c040', 1.2);
+    out += C(75, 64, 3, c.cel(gs), 1.6);
+    out += P('M62,76 L64,62 L72,62 L74,76 Z', c.cel('#6d737a'), 2) + C(68, 67, 2, c.rg([[0, '#fff6c0'], [1, '#e0a020']]), 1.1);
+    out += S('M63,76 L62,37', OL, 5.2) + S('M63,76 L62,37', '#6d737a', 2.8);
+    /* chassis box with hazard stripes, rivets and a log strapped behind */
+    out += P('M104,62 C112,60 118,64 118,70 C118,76 112,78 104,76 Z', c.cel('#8a5a34'), 2) + E(104, 69, 3.2, 6.8, c.cel('#c8a070'), 1.6) + S('M104,64.5 Q106,69 104,73.5', '#8a5a34', 0.9);
+    var ch = 'M26,78 L110,72 C114,72 116,75 115,79 L112,100 L30,102 C27,102 25,99 25,96 Z';
+    out += P(ch, c.cel(br));
+    out += CG(F('M58,92 L64,78 L70,78 L64,92 Z M72,92 L78,78 L84,78 L78,92 Z M86,92 L92,78 L98,78 L92,92 Z M100,92 L106,78 L112,78 L106,92 Z', '#f0c830', 0.9) +
+      F('M24,92 L116,88 L116,104 L24,104 Z', dk(br, 0.35), 0.6) + F('M26,78 L110,72 L110,76 L26,82 Z', lt(br, 0.35), 0.6), c.clip(ch));
+    [[32, 84], [44, 83], [110, 78], [32, 96], [110, 96]].forEach(function (p) { out += C(p[0], p[1], 1.4, '#e8c888', 1); });
+    out += R(36, 86, 16, 9, c.cel('#6d737a'), 1.8) + S('M39,88.5 L49,88.5 M39,92.5 L49,92.5', '#2a2e33', 1.4);
+    /* tracks: steel road wheels inside a toothed tread */
+    var tr = 'M20,109 C20,102 26,99 33,99 L108,99 C116,99 121,103 121,110 C121,117 116,122 108,122 L33,122 C26,122 20,116 20,109 Z';
+    out += P(tr, c.cel('#3a3e44'), 2.4);
+    var teeth = '';
+    for (var x = 30; x <= 110; x += 6.6) teeth += D`M${x},${99} l0,-2.4 M${x},${122} l0,2.2`;
+    out += S(teeth, OL, 3.4) + S(teeth, '#5d6269', 1.6);
+    [[33, 110, 7.5], [53, 111, 6.5], [72, 111, 6.5], [91, 111, 6.5], [108, 110, 7.5]].forEach(function (w) {
+      out += C(w[0], w[1], w[2], c.cel(st), 2) + C(w[0], w[1], w[2] * 0.35, '#3d4248', 1.2);
+    });
+    out += S('M26,103 C24,108 25,114 29,118', '#6d737a', 1, 0.6);
+    /* saw arm and the big circular blade on the front */
+    out += tube([[42, 84], [30, 78], [22, 72]], 8, st, dk(st, 0.3)) + C(42, 84, 5.5, c.cel('#6d737a'), 2);
+    out += P(star(20, 70, 16, 21, 17), c.cel('#c9d0d8'), 2) +
+      '<circle cx="20" cy="70" r="13" fill="none" stroke="#7c8793" stroke-width="1.4"/>' +
+      S('M6,58 A19,19 0 0 1 32,55 M5,82 A19,19 0 0 0 31,86', '#ffffff', 1.4, 0.55) + C(20, 70, 5, c.cel(br), 2) + C(20, 70, 1.8, '#3d4248', 0);
+    out += P('M8,56 C14,46 30,46 36,56 L32,58 C27,51 17,51 12,58 Z', c.cel('#e8c040'), 2);
     return out;
   }
 
@@ -2730,7 +2811,7 @@
     for (var k in x) o[k] = x[k];
     return o;
   }
-  /* frostmane trolls: tall, lanky, pale blue, tusks, white mohawk, fur kilt */
+  /* frostmane trolls: tall, lanky, frost-pale grey-green skin, small tusks, white braids, fur kilt, wrapped boots */
   function furKilt(col, spot) {
     return function (c, g) {
       var d = D`M${g.wl - 2},${g.hy - 4} L${g.wr + 2.5},${g.hy - 4} L${g.wr + 4},${g.hy + 11} L${g.wr},${g.hy + 8} L${g.sx + 3},${g.hy + 14} L${g.sx},${g.hy + 9} L${g.sx - 4},${g.hy + 15} L${g.wl - 1},${g.hy + 9} L${g.wl - 4},${g.hy + 12} Z`;
@@ -2739,9 +2820,9 @@
     };
   }
   function troll(x) {
-    var sk = x.skin || '#8cb6ce';
+    var sk = x.skin || '#a4b4a6';
     var o = {
-      head: 'troll', skin: sk, sleeve: sk, torsoC: sk, hand: sk, pants: sk, feet: 'bare', mane: '#e8f0f8',
+      head: 'troll', skin: sk, sleeve: sk, torsoC: sk, hand: sk, pants: sk, feet: 'ttoe', boots: '#6a5a48', mane: '#e2e4de',
       body: { lean: 6, headX: 81, headY: 38, headR: 11, shY: 50, hipY: 81, shW: 14.5, waistW: 8.5, armW: 7.4, legW: 8, stance: 10, dig: 1, neck: 7, fEl: [9, 13], fHd: [15, 26], bEl: [-6, 15], bHd: [-2, 29] },
       torsoFx: function (c, g) {
         return CG(S(D`M${g.scx - 6},${g.sy + 14} Q${g.scx + 2},${g.sy + 17} ${g.scx + 10},${g.sy + 13} M${g.scx - 5},${g.sy + 19} Q${g.scx + 2},${g.sy + 22} ${g.scx + 9},${g.sy + 18} M${g.scx - 4},${g.sy + 24} Q${g.scx + 2},${g.sy + 26.5} ${g.scx + 8},${g.sy + 23}`, dk(sk, 0.35), 1.2, 0.8) +
@@ -2761,7 +2842,7 @@
     });
     return out + C(x + 1, y + 12.5, 2.6, c.rg([[0, '#ffffff'], [0.5, '#9ae0ff'], [1, '#2a7ac0']]), 1.3);
   }
-  /* wendigo: white shaggy yeti with horns and a blue face (FACING LEFT) */
+  /* wendigo: white shaggy yeti with a dark slate face, frost streaks and icicles matted into the fur (FACING LEFT) */
   function shagD(cx, cy, rx, ry, n, amp, R_, a0) {
     var d = '';
     a0 = a0 || 0;
@@ -2787,8 +2868,8 @@
       S(D`M${x - r * 0.6},${y + r * 0.6} l-3,4 M${x - r * 0.1},${y + r * 0.9} l-1.5,4.5 M${x + r * 0.5},${y + r * 0.7} l0,4.5`, claw, 1.8);
   }
   function wendigo(c, o) {
-    var f = o.fur || '#eef2f5', fb = mix(f, '#9fb4c8', 0.35), face = o.face || '#4f7fb8', claw = '#e8eef4', R_ = rnd(o.seed || 9), out = '';
-    var horn = c.lg(['#f2e8d0', '#c8b890', '#7a6a4e'], 0, 0, 1, 1);
+    var f = o.fur || '#eef2f5', fb = mix(f, '#9fb4c8', 0.35), face = o.face || '#4a4f58', claw = '#e8eef4', R_ = rnd(o.seed || 9), out = '';
+    var ice = '#a8d4ec';
     out += shadow(c, 64, 40);
     if (o.frost) out += C(64, 70, 62, c.rg([[0, '#dff4ff', 0.55], [0.6, '#9fd8ff', 0.2], [1, '#9fd8ff', 0]]), 0);
     out += furLimb(c, [[84, 92], [92, 106], [88, 116]], 15, fb, R_) + P('M78,114 L96,114 L99,122.5 L74,122.5 Z', c.cel(face), 2.2) + S('M76,122.5 l-3,-0.5 M81,122.5 l-3,0.3', claw, 1.6);
@@ -2797,13 +2878,13 @@
     out += P(bd, c.cel(f), 2.4);
     var fs = '';
     for (var i = 0; i < 14; i++) { var x = 46 + R_() * 46, y = 54 + R_() * 44; fs += D`M${x},${y} q${-2 + R_() * 4},4 ${-1 + R_() * 2},7`; }
-    out += CG(F('M40,86 C52,100 80,104 100,90 L100,110 L40,110 Z', fb, 0.55) + F('M44,60 C56,50 80,48 94,56 C80,54 60,56 46,68 Z', '#ffffff', 0.5) + S(fs, fb, 1.3, 0.8), c.clip(bd));
-    if (o.icicles) out += icicleRow(c, 50, 92, 98, 7, 11, 0.9);
+    out += CG(F('M40,86 C52,100 80,104 100,90 L100,110 L40,110 Z', fb, 0.55) + F('M44,60 C56,50 80,48 94,56 C80,54 60,56 46,68 Z', '#ffffff', 0.5) + S(fs, fb, 1.3, 0.8) +
+      S('M52,60 C54,70 52,80 55,92 M66,56 C68,66 66,78 69,90 M80,60 C82,70 80,82 84,94', ice, 2.2, 0.7) + S('M53,62 C55,70 53,78 55.5,86 M81,62 C83,70 81,80 84,88', '#ffffff', 0.9, 0.8), c.clip(bd));
+    out += icicleRow(c, 52, 88, 100, o.icicles ? 7 : 4, o.icicles ? 11 : 7, 0.85);
     out += furLimb(c, [[62, 94], [56, 107], [58, 116]], 15, f, R_) + P('M46,114 L64,114 L66,122.5 L42,122.5 Z', c.cel(face), 2.2) + S('M43,122.5 l-3,-0.5 M48,122.5 l-3,0.3', claw, 1.6);
-    /* head: far horn, fur hood, blue face, near horn */
-    out += P('M42,34 C38,24 42,15 51,13 C48,18 47,24 48,33 Z', c.lg(['#d8ccb0', '#a8987a', '#5a4e3a'], 0, 0, 1, 1), 2);
+    /* head: fur hood with frost streaks, dark face (no horns) */
     var hd = shagD(48, 45, 16, 15, 15, 0.17, R_, 0.1);
-    out += P(hd, c.cel(f), 2.4);
+    out += P(hd, c.cel(f), 2.4) + CG(S('M44,31 C48,34 52,36 58,35 M52,30 C56,33 60,38 62,44', ice, 2, 0.75) + S('M45,32 C48,34 51,35 56,34.5', '#ffffff', 0.8, 0.8), c.clip(hd));
     out += P('M36,38 C38,33 46,32 50,37 C54,43 53,52 49,58 C45,63 36,63 32,59 C28,54 29,47 32,43 Z', c.cel(face), 2.2);
     out += P('M31,53 C35,50 43,50 48,54 C46,60 38,62 33,59 Z', '#1a1830', 1.5) +
       F('M34,53.5 l1.3,3.4 l1.3,-3 z M41,53.2 l1.3,3.6 l1.3,-3.4 z M36,60 l1,-2.6 l1,2.6 z', '#f6f2e6');
@@ -2815,9 +2896,8 @@
       out += P(bdd, c.cel('#e6f2fa'), 2.2) + CG(S('M36,64 L39,84 M42,64 L44,86 M47,62 L49,80', '#9fbcd4', 1.3, 0.85), c.clip(bdd)) +
         P('M37,88 L38.5,96 L40,88 Z M43,90 L44.5,99 L46,90 Z M49,84 L50,91 L51.5,84 Z', c.cel('#cfeeff'), 1.2);
     }
-    out += P('M49,31 C53,20 66,16 73,23 C78,29 75,37 69,37 C72,32 69,27 64,28 C59,29 57,33 56,37 Z', horn, 2.2) + S('M60,21 l1,4 M66,20 l0,4 M71,24 l-2,3', '#7a6a4e', 1, 0.8);
     out += furLimb(c, [[52, 60], [38, 76], [30, 92]], 15, f, R_) + clawHand(c, 30, 95, 8, face, claw);
-    if (o.icicles) out += icicleRow(c, 36, 52, 80, 3, 8, 0.8) + icicleRow(c, 94, 104, 84, 2, 7, 0.8);
+    out += icicleRow(c, 36, 50, 80, o.icicles ? 3 : 2, o.icicles ? 8 : 6, 0.8) + icicleRow(c, 94, 104, 84, 2, o.icicles ? 7 : 5, 0.8);
     return scaleAt(out, o.scale || 1, 64, 123);
   }
   /* a row of hanging icicles between x0..x1 at y */
@@ -3002,7 +3082,16 @@
     out += twig([[54, 68], [42, 78], [34, 88]], 6, bark) + leaf(c, 40, 78, -50, 0.42, lf);
     return scaleAt(out, o.scale || 1, 62, 123);
   }
-  /* furbolg: upright bear-person with feathers and totems (FACING LEFT) */
+  /* bearkin (furbolg): upright bear-person, bark plates and moss grown into the fur (FACING LEFT).
+     Old options feathers/band/paint/necklace/gem are accepted and ignored. */
+  function barkPatch(c, x, y, w, h, a) {
+    var d = D`M${-w},${-h * 0.4} L${-w * 0.5},${-h} L${w * 0.4},${-h * 0.8} L${w},${-h * 0.1} L${w * 0.7},${h * 0.8} L${-w * 0.3},${h} L${-w * 0.9},${h * 0.5} Z`;
+    return G(P(d, c.cel('#6e5236'), 1.6) + S(D`M${-w * 0.5},${-h * 0.6} L${-w * 0.3},${h * 0.7} M${w * 0.1},${-h * 0.7} L${w * 0.2},${h * 0.8} M${w * 0.55},${-h * 0.3} L${w * 0.5},${h * 0.5}`, '#3e2a1a', 1, 0.85), 'translate(' + r1(x) + ',' + r1(y) + ') rotate(' + (a || 0) + ')');
+  }
+  function mossTuft(c, x, y, rx, ry, seed) {
+    var R_ = rnd(seed || 7);
+    return P(blob(x, y, rx, ry, 7, R_, 0.5), c.cel('#6a9a3a'), 1.5) + C(x - rx * 0.3, y - ry * 0.3, 0.9, '#b0d870', 0) + C(x + rx * 0.35, y - ry * 0.1, 0.8, '#b0d870', 0);
+  }
   function furbolg(c, o) {
     var f = o.fur || '#8a6240', fb = dk(f, 0.2), mz = o.muzzle || '#c8a47a', claw = '#efe6cf', R_ = rnd(o.seed || 21), out = '';
     out += shadow(c, 64, 38);
@@ -3015,14 +3104,10 @@
     var fs = '';
     for (var i = 0; i < 12; i++) { var x = 48 + R_() * 40, y = 56 + R_() * 40; fs += D`M${x},${y} q${-2 + R_() * 4},4 ${-1 + R_() * 2},7`; }
     out += CG(F('M42,74 C48,96 74,104 94,92 L94,110 L42,110 Z', mz, 0.55) + F('M46,58 C56,50 76,48 90,56 C76,54 60,56 48,66 Z', lt(f, 0.25), 0.55) + S(fs, dk(f, 0.3), 1.2, 0.75), c.clip(bd));
-    out += P('M46,92 L92,94 L91,100 L46,98 Z', c.cel('#4a3222'), 2) + P('M52,97 L68,98 L66,112 L60,108 L54,113 Z', c.cel(o.hide || '#b89a64'), 1.8) + C(60, 96, 2.8, c.cel('#d8c8a0'), 1.4);
-    if (o.necklace !== 0) {
-      var nd = 'M50,56 Q62,70 82,60', nk = S(nd, OL, 2.6) + S(nd, '#8a6038', 1.2);
-      [[54, 61, 30], [59, 64.5, 15], [65, 66, 0], [71, 65.5, -15], [77, 63, -30]].forEach(function (b, j) {
-        nk += G(P('M-1.7,0 L1.7,0 L0.9,7 Q0,8.5 -0.9,7 Z', c.cel(j === 2 && o.gem ? o.gem : '#f0e8d2'), 1.2), 'translate(' + b[0] + ',' + b[1] + ') rotate(' + b[2] + ')');
-      });
-      out += nk;
-    }
+    /* bark plates and moss grown into the fur */
+    out += CG(barkPatch(c, 76, 72, 7, 5.5, 20) + barkPatch(c, 60, 86, 5, 4, -15) + P(blob(64, 56, 11, 4.5, 7, rnd((o.seed || 21) + 3), 0.5), c.cel('#6a9a3a'), 1.5) +
+      C(60, 54, 0.9, '#b0d870', 0) + C(68, 55, 0.8, '#b0d870', 0) + F(blob(82, 86, 4, 3, 5, R_, 0.5), '#6a9a3a', 0.85), c.clip(bd));
+    out += P('M46,92 L92,94 L91,100 L46,98 Z', c.cel('#4a3222'), 2) + P('M52,97 L68,98 L66,112 L60,108 L54,113 Z', c.cel(o.hide || '#8a6a44'), 1.8);
     if (o.pad) out += pad(c, 80, 56, 11, o.pad, true, '#c8a050');
     out += furLimb(c, [[60, 94], [56, 107], [58, 116]], 15, f, R_) + P('M46,113 L65,113 L67,122.5 L42,122.5 Z', c.cel(dk(f, 0.22)), 2.2) + S('M43,122.5 l-3,-0.5 M48,122.5 l-3,0.3', claw, 1.6);
     /* head: bear skull, snout forward-left */
@@ -3041,13 +3126,11 @@
     if (o.eyeC) out += C(38, 41, 5, c.rg([[0, o.eyeC, 0.6], [1, o.eyeC, 0]]), 0);
     out += C(38, 41, 2.1, ey, 0) + (o.eyeC ? '' : C(37.4, 40.4, 0.7, '#fff', 0)) + S(o.angry ? 'M32,37 L43,39.5' : 'M32,38 L43,38', OL, 2.2);
     out += C(50, 29, 5.6, c.cel(f), 2) + C(50, 29.5, 2.6, '#5a3a30', 0);
-    if (o.feathers) {
-      out += S('M44,32 Q54,26 64,32', OL, 3.4) + S('M44,32 Q54,26 64,32', o.band || '#b8342a', 1.8);
-      o.feathers.forEach(function (fc, j) { out += G(P('M0,0 C4,-4 5,-14 0,-20 C-5,-14 -4,-4 0,0 Z', c.cel(fc), 1.5) + S('M0,-1 L0,-17', dk(fc, 0.4), 0.8), 'translate(' + (62 + j * 3) + ',' + (32 + j * 2) + ') rotate(' + (40 + j * 22) + ')'); });
-    }
-    if (o.paint) out += S('M40,46 L46,50 M38,50 L44,54', o.paint, 1.8, 0.9);
+    /* moss over the crown and a bark scab on the brow */
+    out += mossTuft(c, 57, 33, 7, 3.4, (o.seed || 21) + 5) + barkPatch(c, 50, 41, 3.4, 2.6, -25);
     if (o.fItem) out += o.fItem(c);
-    out += furLimb(c, [[54, 58], [40, 74], [32, 90]], 14, f, R_) + clawHand(c, 30, 93, 7.5, dk(f, 0.18), claw);
+    out += furLimb(c, [[54, 58], [40, 74], [32, 90]], 14, f, R_) + barkPatch(c, 41, 73, 4.5, 3.6, 40) + clawHand(c, 30, 93, 7.5, dk(f, 0.18), claw);
+    out += mossTuft(c, 54, 60, 6, 3, (o.seed || 21) + 9);
     if (o.fTop) out += o.fTop(c);
     return scaleAt(out, o.scale || 1, 64, 123);
   }
@@ -3112,26 +3195,39 @@
     kobold_worker: function (c) { return kobold(c, { fur: '#9a7248', cloth: '#8e7b52', candle: 1, scale: 0.95, fItem: function (c) { return wpn(c, 'shovel', 40, 86, -28, 0.9); } }); },
     kobold_laborer: function (c) { return kobold(c, { fur: '#8a6a4a', cloth: '#6e4c34', vest: '#6a5a3a', candle: 1, scale: 1, fItem: function (c) { return wpn(c, 'club', 40, 86, -34, 0.85); } }); },
     kobold_tunneler: function (c) { return kobold(c, { fur: '#7c5c40', cloth: '#5a4a3a', vest: '#5a4f48', candle: 1, scale: 1.05, fItem: function (c) { return wpn(c, 'pick', 40, 86, -24, 0.95); } }); },
-    murloc_streamrunner: function (c) { return murloc(c, { skin: '#3f9c96', belly: '#cfe3aa', fin: '#e07a4a', scale: 1, fItem: function (c) { return wpn(c, 'spear', 32, 92, -12, 0.85); } }); },
+    murloc_streamrunner: function (c) { return murloc(c, { skin: '#3f9c96', belly: '#cfe3aa', fin: '#e07a4a', scale: 1, fItem: function (c) { return wpn(c, 'reedspear', 33, 91, -12, 0.85); } }); },
     murloc_forager: function (c) { return murloc(c, { skin: '#7c9a3c', belly: '#e3dca0', fin: '#c85a8a', scale: 0.95, fItem: function (c) { return wpn(c, 'fish', 29, 94, 160, 0.9); } }); },
     cookie: function (c) { return murloc(c, { skin: '#4f8fb0', belly: '#d8e8c8', fin: '#e8a040', hat: 1, apron: 1, scale: 1.02, fItem: function (c) { return wpn(c, 'ladle', 31, 92, -20, 0.9); } }); },
     defias_thug: function (c) { return mobH(c, defias({ fItem: FI('club', 38) })); },
     defias_bandit: function (c) { return mobH(c, defias({ torsoFx: vestFx('#4e3a2a'), sleeve: '#6e6858', torsoC: '#6e6858', fItem: FI('sword', 34, 0.8), bItem: BI('dagger', 190) })); },
     garrick_padfoot: function (c) {
       return mobH(c, defias({
-        scale: 1.1, hood: '#2a2224', torsoFx: vestFx('#3a2a22'), sleeve: '#5a5248', torsoC: '#5a5248', cape: '#7a1c20',
-        pads: function (c, g) { return pad(c, g.bSh[0] - 1, g.sy + 2, 7.5, '#3a2e28', true) + pad(c, g.fSh[0] + 1, g.sy + 3, 9, '#4a3a30', true, '#b82d31'); },
+        scale: 1.1, hood: '#2a2224', torsoFx: vestFx('#3a2a22'), sleeve: '#5a5248', torsoC: '#5a5248', cape: '#4a4d52',
+        pads: function (c, g) { return pad(c, g.bSh[0] - 1, g.sy + 2, 7.5, '#3a2e28', true) + pad(c, g.fSh[0] + 1, g.sy + 3, 9, '#4a3a30', true, '#8a8e93'); },
         body: { shW: 17, armW: 9.5 }, fItem: FI('sword', 36, 1.05)
       }), 34);
     },
     defias_miner: function (c) { return mobH(c, defias({ hood: null, hair: { c: '#4a3222', style: 'short' }, cap: '#6a4a2e', torsoFx: vestFx('#6e5a44'), sleeve: SKIN[1], torsoC: '#a09884', fItem: FI('pick', 24, 0.95), armband: null })); },
-    defias_pirate: function (c) { return mobH(c, defias({ hood: null, mask: null, hair: { c: '#2b1d15', style: 'short' }, bandana: '#b82d31', eyepatch: 1, stubble: 1, sleeve: '#efe8dc', torsoC: '#efe8dc', pants: '#2f3a5a', torsoFx: function (c, g) { return CG(S(D`M20,${g.sy + 6} L110,${g.sy + 6} M20,${g.sy + 13} L110,${g.sy + 13} M20,${g.sy + 20} L110,${g.sy + 20} M20,${g.sy + 27} L110,${g.sy + 27}`, '#b82d31', 3.2), c.clip(g.torsoD)); }, belt: '#3a2a1e', buckle: GOLD, armband: null, fItem: FI('cutlass', 30) })); },
+    defias_pirate: function (c) { return mobH(c, defias({ hood: null, mask: null, hair: { c: '#2b1d15', style: 'short' }, bandana: '#6b6f74', eyepatch: 1, stubble: 1, sleeve: '#efe8dc', torsoC: '#efe8dc', pants: '#2f3a5a', torsoFx: function (c, g) { return CG(S(D`M20,${g.sy + 6} L110,${g.sy + 6} M20,${g.sy + 13} L110,${g.sy + 13} M20,${g.sy + 20} L110,${g.sy + 20} M20,${g.sy + 27} L110,${g.sy + 27}`, '#5a6068', 3.2), c.clip(g.torsoD)); }, belt: '#3a2a1e', buckle: GOLD, armband: null, fItem: FI('cutlass', 30) })); },
+    /* Corvin Blackwell, captain of the Grey Hoods: a tired shipwright in a grey hood, leather apron over a dark coat, adze in hand */
     vancleef: function (c) {
       return mobH(c, defias({
-        scale: 1.05, hood: null, hat: 'wide', mask: '#b82d31', torsoC: '#3a2628', sleeve: '#33222a', pants: '#2a1e20', boots: '#1a1414',
-        robe: '#2e1d1f', robeFx: robeHemFx('#8e1c22'), torsoFx: function (c, g) { return robeTrimFx('#b8242a', '#1e1416')(c, g); }, cape: '#8e1c22', belt: '#1a1414', buckle: GOLD,
-        pads: function (c, g) { return pad(c, g.bSh[0] - 1, g.sy + 2, 8, '#2a2226', true, GOLD) + pad(c, g.fSh[0] + 1, g.sy + 3, 10, '#3a3034', true, GOLD); },
-        body: { shW: 17, armW: 9 }, armband: null, fItem: FI('sword', 38), bItem: BI('sword', 205, 0.85)
+        scale: 1.05, hood: '#6b6f74', mask: null, angry: false, stubble: 1, hair: { c: '#6a6660', style: 'short' },
+        torsoC: '#2e3036', sleeve: '#34373d', pants: '#2a2c30', boots: '#1e1a16', hand: '#6a4a30',
+        robe: '#2a2c31', robeFx: robeHemFx('#3e4148'), torsoFx: function (c, g) { return robeTrimFx('#44474e', '#26282c')(c, g); }, belt: '#3a2a1e', buckle: '#9aa0a6',
+        mid: function (c, g) {
+          /* leather shipwright's apron: bib with a neck strap, long skirt over the coat, a pocket with a chisel */
+          var x = g.scx + 3, y = g.sy + 5, hy = g.hy, lea = '#7a5232';
+          var ap = D`M${x - 7},${y} L${x + 8},${y - 1} L${g.wr + 3},${hy - 4} L${g.wr + 7},${g.fy - 16} C${g.sx + 6},${g.fy - 12} ${g.sx - 4},${g.fy - 12} ${g.wl - 3},${g.fy - 15} L${g.wl},${hy - 4} Z`;
+          return S(D`M${x - 6},${y + 1} L${x - 2},${g.sy - 3} M${x + 7},${y} L${x + 5},${g.sy - 4}`, OL, 3.2) + S(D`M${x - 6},${y + 1} L${x - 2},${g.sy - 3} M${x + 7},${y} L${x + 5},${g.sy - 4}`, '#5a3a22', 1.6) +
+            P(ap, c.cel(lea), 2) + CG(S(stitchLine(g.wl + 1, hy - 3, g.wr + 2, hy - 4, 3.2), '#c8a878', 0.9, 0.8) +
+            F(D`M${g.wl - 4},${hy + 6} L${g.wr + 8},${hy + 4} L${g.wr + 8},${hy + 7} L${g.wl - 4},${hy + 9} Z`, '#000', 0.18) +
+            F(D`M${x - 5},${y + 2} L${x - 1},${y + 1} L${g.sx - 3},${g.fy - 14} L${g.wl},${g.fy - 15} Z`, lt(lea, 0.25), 0.4), c.clip(ap)) +
+            P(D`M${g.sx - 1},${hy + 1} L${g.sx + 9},${hy} L${g.sx + 9},${hy + 9} L${g.sx - 1},${hy + 10} Z`, c.cel(dk(lea, 0.15)), 1.5) +
+            P(D`M${g.sx + 2},${hy + 1} L${g.sx + 3},${hy - 7} L${g.sx + 5},${hy - 7} L${g.sx + 5},${hy + 1} Z`, c.cel('#8a8f96'), 1.2) + R(g.sx + 1.8, hy - 1, 3.6, 3.4, WOOD, 1);
+        },
+        pads: function (c, g) { return pad(c, g.bSh[0] - 1, g.sy + 2, 7.5, '#3a3c42', false) + pad(c, g.fSh[0] + 1, g.sy + 3, 8.5, '#44474e', false, '#6b6f74'); },
+        body: { shW: 17, armW: 9 }, armband: null, fItem: FI('adze', 28, 1.05)
       }), 36);
     },
     riverpaw_gnoll: function (c) {
@@ -3168,7 +3264,7 @@
         head: 'tauren', skin: '#6b4a33', sleeve: '#6b4a33', torsoC: '#6b4a33', hand: '#6b4a33', pants: '#4a3a5a', feet: 'hoof',
         scale: 1.06,
         body: { shW: 22, waistW: 14, belly: 3, hipY: 86, shY: 52, headX: 72, headY: 39, headR: 12.5, armW: 12, legW: 12, dig: 1, stance: 9, neck: 11, lean: 3, fEl: [9, 13], fHd: [15, 24] },
-        torsoFx: function (c, g) { return CG(P(D`M${g.scx - 26},${g.sy - 5} L${g.scx - 2},${g.sy - 5} L${g.sx - 2},${g.hy + 2} L${g.sx - 26},${g.hy + 2} Z`, c.cel('#2c3e66'), 2) + P(D`M${g.scx + 12},${g.sy - 5} L${g.scx + 30},${g.sy - 5} L${g.sx + 30},${g.hy + 2} L${g.sx + 11},${g.hy + 2} Z`, c.cel('#2c3e66'), 2) + P(D`M${g.scx - 20},${g.hy - 12} L${g.scx + 20},${g.hy - 16} L${g.scx + 20},${g.hy - 8} L${g.scx - 20},${g.hy - 4} Z`, '#b82d31', 2), c.clip(g.torsoD)); },
+        torsoFx: function (c, g) { return CG(P(D`M${g.scx - 26},${g.sy - 5} L${g.scx - 2},${g.sy - 5} L${g.sx - 2},${g.hy + 2} L${g.sx - 26},${g.hy + 2} Z`, c.cel('#2c3e66'), 2) + P(D`M${g.scx + 12},${g.sy - 5} L${g.scx + 30},${g.sy - 5} L${g.sx + 30},${g.hy + 2} L${g.sx + 11},${g.hy + 2} Z`, c.cel('#2c3e66'), 2) + P(D`M${g.scx - 20},${g.hy - 12} L${g.scx + 20},${g.hy - 16} L${g.scx + 20},${g.hy - 8} L${g.scx - 20},${g.hy - 4} Z`, '#6b6f74', 2), c.clip(g.torsoD)); },
         belt: '#3a2618', buckle: GOLD,
         pads: function (c, g) { return pad(c, g.fSh[0] + 2, g.sy + 3, 10, '#8a8f96', false, GOLD); },
         fItem: FI('hammer', 5, 0.92)
@@ -3209,21 +3305,21 @@
     frostmane_troll: function (c) { return mobH(c, troll({ fItem: FI('bonespear', 14) }), 30); },
     frostmane_headhunter: function (c) {
       return mobH(c, troll({
-        skin: '#84acc6', paint: '#f4f6f8', mane: '#cfe4f4', earRing: 1,
+        skin: '#98ac9c', paint: '#f4f6f8', mane: '#d8dcd4', earRing: 1,
         mid: function (c, g) { return furKilt('#d8cfbc', '#8a8070')(c, g) + wpn(c, 'taxe', g.wl + 1, g.hy + 4, 200, 0.8); },
         fItem: FI('taxe', 44, 1.15), bItem: BI('taxe', 150, 1.0)
       }), 30);
     },
     frostmane_seer: function (c) {
       return mobH(c, troll({
-        skin: '#9cc2d6', feathers: ['#3a78c8', '#f0f4f8'], earRing: 1, eyeC: '#9ae8ff', tusk: 0.8,
+        skin: '#b0beb0', feathers: ['#3a78c8', '#f0f4f8'], earRing: 1, eyeC: '#9ae8ff', tusk: 0.8,
         pads: mantle('#6a5038', '#3a78c8'),
         fItem: FI('seerstaff', 6), bItem: function (c, g) { return glowOrb(c, g.bHand[0] - 2, g.bHand[1] - 5, 4.5, '#7fd0ff'); }
       }), 30);
     },
     grik_nir: function (c) {
       return mobH(c, troll({
-        skin: '#7aa6c6', mane: '#bfe0f8', paint: '#f4f6f8', eyeC: '#9ae8ff', earRing: 1, feathers: ['#2a5aa8', '#f0f4f8'], tusk: 1.3, scale: 1.06,
+        skin: '#8ca092', mane: '#d4d8d0', paint: '#f4f6f8', eyeC: '#9ae8ff', earRing: 1, feathers: ['#2a5aa8', '#f0f4f8'], tusk: 1.3, scale: 1.06,
         body: { lean: 6, headX: 82, headY: 40, headR: 11.8, shY: 52, hipY: 82, shW: 16.5, waistW: 10, armW: 8.4, legW: 8.8, stance: 11, dig: 1, neck: 8, fEl: [8, 14], fHd: [12, 27], bEl: [-6, 15], bHd: [-2, 29] },
         gTorso: boneNecklace,
         pads: function (c, g) { return pad(c, g.bSh[0] - 1, g.sy + 2, 8, '#d8ccb0', true) + pad(c, g.fSh[0] + 1, g.sy + 3, 10, '#e6dcc4', true, '#3a78c8'); },
@@ -3240,12 +3336,12 @@
     vagash: function (c) { return quad(c, { kind: 'cat', fur: '#c89858', belly: '#eed8a8', muzzle: '#f2e2c4', backStripe: '#8a6232', eye: '#ffb020', snarl: 1, scars: 1, faceScar: 1, torn: 1, scale: 1.05 }); },
     young_wendigo: function (c) { return wendigo(c, { scale: 0.78, seed: 5 }); },
     wendigo: function (c) { return wendigo(c, { scale: 0.95, seed: 9 }); },
-    old_icebeard: function (c) { return wendigo(c, { scale: 1.12, seed: 13, fur: '#f4f8fb', face: '#3f6fb0', eyeC: '#bff4ff', beard: 1, icicles: 1, frost: 1 }); },
+    old_icebeard: function (c) { return wendigo(c, { scale: 1.12, seed: 13, fur: '#f4f8fb', face: '#3e434c', eyeC: '#bff4ff', beard: 1, icicles: 1, frost: 1 }); },
     leper_gnome: function (c) { return leperGnome(c); },
     /* ---- Greatbough ---- */
-    young_nightsaber: function (c) { return quad(c, { kind: 'cat', fur: '#3a3050', belly: '#4a4062', muzzle: '#5a5070', eye: '#c8f4ff', earIn: '#6a5a8a', pstripes: '#7a68a8', scale: 0.76 }); },
-    mangy_nightsaber: function (c) { return quad(c, { kind: 'cat', fur: '#423c50', belly: '#5a5268', muzzle: '#625a74', eye: '#b8e8f8', earIn: '#6a5a7a', patches: '#5c546e', pstripes: '#72688a', scars: 1, torn: 1, scale: 0.88 }); },
-    nightsaber: function (c) { return quad(c, { kind: 'cat', fur: '#2e2442', belly: '#3e345a', muzzle: '#4c4268', eye: '#d0f8ff', earIn: '#6a4a9a', pstripes: '#8a78c8', snarl: 1, scale: 1.0 }); },
+    young_nightsaber: function (c) { return quad(c, { kind: 'cat', fur: '#686b71', belly: '#8e9197', muzzle: '#a4a7ac', eye: '#efe39a', earIn: '#9a8a86', spots: '#3a3c42', scale: 0.76 }); },
+    mangy_nightsaber: function (c) { return quad(c, { kind: 'cat', fur: '#5d6066', belly: '#7e8187', muzzle: '#95989d', eye: '#e6d888', earIn: '#8a7a76', patches: '#74777c', spots: '#35373c', scars: 1, torn: 1, scale: 0.88 }); },
+    nightsaber: function (c) { return quad(c, { kind: 'cat', fur: '#53565c', belly: '#74777d', muzzle: '#8c8f94', eye: '#f4e8a0', earIn: '#8a7470', spots: '#2c2e33', snarl: 1, scale: 1.0 }); },
     young_thistle_boar: function (c) { return quad(c, { kind: 'boar', fur: '#7e5e44', belly: '#b0906e', mane: '#5a6a2e', thistle: 1, spine: 0.8, scale: 0.74 }); },
     thistle_boar: function (c) { return quad(c, { kind: 'boar', fur: '#6e503a', belly: '#a4845e', mane: '#56662a', thistle: 1, spine: 1.05, scale: 0.94 }); },
     grell: function (c) { return grell(c, { scale: 0.9 }); },
@@ -3707,10 +3803,49 @@
       P(D`M${x - w},${y0} C${x - w},${y0 - 7} ${x - w * 0.4},${y0 - 4} ${x},${y0 - 4} C${x + w * 0.4},${y0 - 4} ${x + w},${y0 - 7} ${x + w},${y0} Z`, c.cel('#e6e6f2'), 1.8) + R(x - w * 0.8, y1 - 5, w * 1.6, 5, c.cel('#d0d0e0'), 1.6);
   }
 
+  /* ---- wood-elf dusk palette: the Greatbough start-zone scenes keep their night composition, but every blue / violet
+     colour is remapped (after drawing, gradients included) to a warm green canopy, brown bark, olive moss, cream stone
+     and gold dusk light; greens, golds and reds pass through unchanged ---- */
+  var DUSKSKY = ['#24402e', '#4e6a3a', '#b0a04a', '#f0cc78'];
+  function hsl2hex(h, s, l) {
+    h = ((h % 360) + 360) % 360 / 360;
+    function f(p, q, t) { if (t < 0) t += 1; if (t > 1) t -= 1; return t < 1 / 6 ? p + (q - p) * 6 * t : t < 0.5 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p; }
+    var q = l < 0.5 ? l * (1 + s) : l + s - l * s, p2 = 2 * l - q;
+    return hex([f(p2, q, h + 1 / 3) * 255, f(p2, q, h) * 255, f(p2, q, h - 1 / 3) * 255]);
+  }
+  function duskCol(hx) {
+    var a = rgb(hx), r = a[0] / 255, g = a[1] / 255, b = a[2] / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn, h = 0, s = 0;
+    if (d > 0) {
+      s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+      h = mx === r ? ((g - b) / d + (g < b ? 6 : 0)) * 60 : mx === g ? ((b - r) / d + 2) * 60 : ((r - g) / d + 4) * 60;
+    }
+    if (s < 0.1) return l > 0.9 || l < 0.08 ? hx : hsl2hex(40, s + 0.14, l);
+    if (h < 170 || h >= 320) return hx;
+    if (l > 0.72) return s > 0.5 ? hsl2hex(44, 0.9, Math.max(l, 0.78)) : hsl2hex(42, 0.34, l);
+    if (h < 212) return hsl2hex(96 + (h - 170) * 0.3, Math.min(0.55, s * 0.8 + 0.12), Math.min(0.7, l * 1.08));
+    if (s < 0.3) return l > 0.45 ? hsl2hex(38, 0.24, l) : h < 245 ? hsl2hex(72, s * 0.9 + 0.12, l * 1.05) : hsl2hex(28, s + 0.14, l * 1.05);
+    if (h < 256) return hsl2hex(102, Math.min(0.5, s * 0.85), Math.min(0.62, l * 1.12));
+    return hsl2hex(26, Math.min(0.55, s * 0.9), l);
+  }
+  function duskStr(t) { return t.replace(/#[0-9a-fA-F]{6}\b/g, duskCol); }
+  function duskWrap(fn) {
+    return function (c) { var out = duskStr(fn(c)); c.defs = c.defs.map(duskStr); return out; };
+  }
+  /* low gold sun through the canopy gaps, in place of the moon */
+  function duskSun(c, x, y, r) {
+    return C(x, y, r * 5, c.rg([[0, '#fff0b8', 0.6], [0.3, '#ffd070', 0.24], [1, '#ffb040', 0]]), 0) + C(x, y, r, c.rg([[0, '#fffbe8'], [0.7, '#ffe8a0'], [1, '#f8c860']], 0.4, 0.38, 0.7), 0);
+  }
+  function duskLight(c, x, y) { return R(0, 0, 400, 240, c.rg([[0, '#ffe0a0', 0.3], [0.5, '#f0b860', 0.1], [1, '#1a2410', 0.25]], x || 0.5, y || 0.25, 0.85), 0); }
+  function motesG(c, seed, n, y1) {
+    var R_ = rnd(seed), out = '';
+    for (var i = 0; i < n; i++) { var x = R_() * 400, y = R_() * (y1 || 110), r = 0.5 + R_() * 1.0; out += C(x, y, r, '#fff2c8', 0, 0.3 + R_() * 0.4); }
+    return out;
+  }
+
   var SCENES = {
     /* ---- Greatbough ---- */
     shadowglen: function (c) {
-      var out = nightSky(c) + starsG(c, 301, 40, 90) + moonG(c, 60, 34, 11);
+      var out = nightSky(c, DUSKSKY) + motesG(c, 301, 30, 90) + duskSun(c, 60, 34, 11);
       out += ridge(c, 132, 22, '#22284a', 302, 7) + tTreeRow(c, 140, 12, 303, ['#2e3e62', '#3a3470', '#2a4658'], 0.8, 1.2, 0);
       out += bigTrunk(c, 26, 150, 34, '#2e2842', 304, { sw: 0, rimO: 0.12 }) + bigTrunk(c, 376, 148, 40, '#2e2842', 305, { sw: 0, rimO: 0.12 });
       /* Aldrassil: a colossal trunk with walkways spiralling up it and elven platforms */
@@ -3739,7 +3874,7 @@
       out += P('M170,150 C150,156 120,164 92,170 C110,172 140,170 176,164 Z', c.cel('#4e3e5c'), 2.2) + P('M318,150 C340,158 366,164 396,168 C376,172 346,170 312,164 Z', c.cel('#4e3e5c'), 2.2) +
         P('M196,156 C190,164 176,172 160,178 C178,178 196,172 210,162 Z', c.cel('#56466a'), 2) + P('M292,156 C300,164 312,170 330,174 C312,176 294,170 282,162 Z', c.cel('#56466a'), 2);
       out += wispsG(c, 310, 12, 20, 380, 40, 200);
-      out += moonLight(c, 0.2, 0.15);
+      out += duskLight(c, 0.2, 0.15);
       return out;
     },
     shadowthread_cave: function (c) {
@@ -3764,7 +3899,7 @@
       return out;
     },
     dolanaar: function (c) {
-      var out = nightSky(c, ['#1a1c44', '#34306c', '#5e5298', '#8e80bc']) + starsG(c, 331, 36, 80) + moonG(c, 330, 36, 12);
+      var out = nightSky(c, ['#26422e', '#56703a', '#bca450', '#f4d07c']) + motesG(c, 331, 26, 80) + duskSun(c, 330, 40, 12);
       out += bigTrunk(c, 120, 140, 30, '#2a2440', 332, { sw: 0, rimO: 0.1 }) + bigTrunk(c, 300, 138, 26, '#2a2440', 333, { sw: 0, rimO: 0.1 });
       out += ridge(c, 128, 18, '#232a4c', 334, 7) + tTreeRow(c, 142, 14, 335, ['#2e3e62', '#3e3474', '#2a4a5c'], 0.8, 1.2, 0);
       out += tTreeRow(c, 150, 4, 336, ['#3e3478', '#2a4a62'], 1.1, 1.4, 1.8, 90, 330);
@@ -3774,7 +3909,7 @@
       out += moonwellG(c, 202, 170, 0.8);
       out += lampG(c, 118, 170, 34) + lampG(c, 282, 170, 34);
       out += wispsG(c, 338, 9, 20, 380, 60, 160);
-      out += moonLight(c, 0.8, 0.15);
+      out += duskLight(c, 0.8, 0.15);
       return out;
     },
     lake_alameth: function (c) {
@@ -3849,7 +3984,7 @@
       return out;
     },
     darnassus: function (c) {
-      var out = nightSky(c, ['#1c2150', '#343a7a', '#6660a8', '#a498cc']) + starsG(c, 371, 40, 90) + moonG(c, 200, 36, 16);
+      var out = nightSky(c, ['#2a4632', '#5a7640', '#c4aa54', '#f6d888']) + motesG(c, 371, 30, 90) + duskSun(c, 200, 40, 16);
       out += bigTrunk(c, 34, 150, 60, '#3e3458', 372, { rimO: 0.2 }) + bigTrunk(c, 370, 150, 70, '#3e3458', 373, { rimO: 0.2 });
       out += canopyTop(c, 374, 34, ['#2a3a68', '#3a3478', '#2a4660']);
       out += tTreeRow(c, 138, 10, 375, ['#2e3e66', '#3a3478'], 0.9, 1.2, 0, 60, 340);
@@ -3875,7 +4010,7 @@
       out += F('M-10,160 L60,160 C40,190 20,215 0,245 L-10,245 Z M410,160 L350,160 C372,190 392,215 410,240 Z', '#2e4a4a', 0.6);
       out += E(214, 196, 60, 10, c.rg([[0, '#e8fbff', 0.6], [0.5, '#9ff0ff', 0.25], [1, '#9ff0ff', 0]]), 0);
       out += wispsG(c, 376, 10, 20, 380, 50, 190);
-      out += moonLight(c, 0.5, 0.12);
+      out += duskLight(c, 0.5, 0.12);
       return out;
     },
     northshire_abbey: function (c) {
@@ -4054,9 +4189,11 @@
       var hull = 'M92,112 L352,106 C348,130 338,148 318,156 L130,158 C112,150 98,134 92,112 Z';
       out += S('M178,108 L178,20 M252,106 L252,10 M318,104 L318,40', OL, 6) + S('M178,108 L178,20 M252,106 L252,10 M318,104 L318,40', '#5a3a22', 3.5);
       out += S('M60,98 L178,22 L252,12 L318,42 L346,90 M178,22 L100,110 M252,12 L200,108 M318,42 L290,106', '#2a1a10', 0.9, 0.8);
-      [[178, 30, 36, 30], [178, 64, 40, 32], [252, 20, 40, 32], [252, 56, 46, 36], [318, 48, 30, 26]].forEach(function (s) {
-        out += P(D`M${s[0] - s[2]},${s[1]} Q${s[0]},${s[1] - 5} ${s[0] + s[2]},${s[1]} Q${s[0] + s[2] + 5},${s[1] + s[3] / 2} ${s[0] + s[2] - 2},${s[1] + s[3]} Q${s[0]},${s[1] + s[3] + 6} ${s[0] - s[2] + 2},${s[1] + s[3]} Q${s[0] - s[2] + 6},${s[1] + s[3] / 2} ${s[0] - s[2]},${s[1]} Z`, c.cel('#9a2c26'), 2);
-        out += S(D`M${s[0] - s[2] * 0.4},${s[1] + 2} L${s[0] - s[2] * 0.35},${s[1] + s[3]} M${s[0] + s[2] * 0.4},${s[1] + 2} L${s[0] + s[2] * 0.35},${s[1] + s[3]}`, '#6a1a18', 1, 0.7);
+      [[178, 30, 36, 30], [178, 64, 40, 32], [252, 20, 40, 32], [252, 56, 46, 36], [318, 48, 30, 26]].forEach(function (s, si) {
+        out += P(D`M${s[0] - s[2]},${s[1]} Q${s[0]},${s[1] - 5} ${s[0] + s[2]},${s[1]} Q${s[0] + s[2] + 5},${s[1] + s[3] / 2} ${s[0] + s[2] - 2},${s[1] + s[3]} Q${s[0]},${s[1] + s[3] + 6} ${s[0] - s[2] + 2},${s[1] + s[3]} Q${s[0] - s[2] + 6},${s[1] + s[3] / 2} ${s[0] - s[2]},${s[1]} Z`, c.cel(si % 2 ? '#9a978e' : '#bcae8e'), 2);
+        out += S(D`M${s[0] - s[2] * 0.4},${s[1] + 2} L${s[0] - s[2] * 0.35},${s[1] + s[3]} M${s[0] + s[2] * 0.4},${s[1] + 2} L${s[0] + s[2] * 0.35},${s[1] + s[3]}`, '#6e6656', 1, 0.7);
+        /* weathered patches sewn on */
+        if (si !== 2) out += R(s[0] + (si % 2 ? -s[2] * 0.3 : s[2] * 0.1), s[1] + s[3] * 0.35, s[2] * 0.35, s[3] * 0.3, si % 2 ? '#b4a684' : '#8e8b82', 1.2, 0.95);
       });
       out += P('M252,10 L276,15 L252,21 Z', '#1a1414', 1.6);
       out += P(hull, c.cel('#5a3a24'));
@@ -4411,12 +4548,12 @@
     water: function (c) { return iconWrap(c, ITEM_BG, P('M26,8 L38,8 L38,18 C48,22 52,30 52,40 C52,52 44,58 32,58 C20,58 12,52 12,40 C12,30 16,22 26,18 Z', c.lg(['#e8f4ff', '#b8d0e0', '#7a98b0'], 0, 0, 1, 0), 2.2) + CG(F('M8,34 L56,34 L56,60 L8,60 Z', c.lg(['#8fe0ff', '#2a6ac8']), 0.9), c.clip('M26,8 L38,8 L38,18 C48,22 52,30 52,40 C52,52 44,58 32,58 C20,58 12,52 12,40 C12,30 16,22 26,18 Z')) + R(24, 4, 16, 6, c.cel('#8a6038'), 1.8) + S('M18,36 C18,44 22,50 26,52', '#ffffff', 2, 0.6)); },
     meat: function (c) { return iconWrap(c, ITEM_BG, S('M38,40 L50,52', OL, 7.5) + S('M38,40 L50,52', '#f4ecd6', 4.5) + C(52, 50, 4.5, '#f4ecd6', 2) + C(48, 55, 4.5, '#f4ecd6', 2) + P('M16,44 C6,34 12,14 28,12 C44,10 50,26 42,38 C38,44 30,48 24,48 Z', c.cel('#c0443a'), 2.4) + P('M20,36 C16,28 20,20 28,20 C36,20 38,28 34,34 C30,38 24,40 20,36 Z', '#e88070', 1.4) + F('M24,30 C24,26 28,24 30,26 C28,27 26,28 26,31 Z', '#fff0e8', 0.8)); },
     candle: function (c) { return iconWrap(c, ITEM_BG, C(32, 18, 16, c.rg([[0, '#fff2b0', 0.8], [1, '#ffb040', 0]]), 0) + E(32, 54, 13, 4, c.cel('#e8dcb0'), 2) + P('M25,54 L25,26 L39,26 L39,54 Z', c.cel('#f3e8c4'), 2.2) + F('M26,28 L29,28 L29,40 C27,41 26,38 26,36 Z', '#fffaf0') + S('M32,26 L32,22', OL, 1.6) + P('M32,6 C37,13 39,17 37,21 C36,24 28,24 27,21 C25,17 28,12 32,6 Z', '#ff8a1e', 1.6) + F('M32,12 C34.5,15.5 35,18 34,20 C33,22 31,22 30,20 C29,18 30,15.5 32,12 Z', '#fff07a')); },
-    bandana: function (c) { return iconWrap(c, ITEM_BG, P('M8,20 C20,16 44,16 56,20 L34,52 C33,54 31,54 30,52 Z', c.cel('#b82d31'), 2.2) + P('M8,20 L2,30 L10,28 Z M56,20 L62,30 L54,28 Z', '#8e1c22', 1.6) + C(24, 26, 1.8, '#f4ecd8', 0) + C(36, 24, 1.8, '#f4ecd8', 0) + C(30, 34, 1.8, '#f4ecd8', 0) + C(42, 30, 1.8, '#f4ecd8', 0) + C(34, 42, 1.8, '#f4ecd8', 0)); },
+    bandana: function (c) { return iconWrap(c, ITEM_BG, P('M8,20 C20,16 44,16 56,20 L34,52 C33,54 31,54 30,52 Z', c.cel('#7a7e83'), 2.2) + P('M8,20 L2,30 L10,28 Z M56,20 L62,30 L54,28 Z', '#55595e', 1.6) + C(24, 26, 1.8, '#f4ecd8', 0) + C(36, 24, 1.8, '#f4ecd8', 0) + C(30, 34, 1.8, '#f4ecd8', 0) + C(42, 30, 1.8, '#f4ecd8', 0) + C(34, 42, 1.8, '#f4ecd8', 0)); },
     fin: function (c) { return iconWrap(c, ITEM_BG, P('M12,52 C14,34 22,16 36,8 C38,18 46,24 56,26 C50,36 46,46 44,54 Z', c.cel('#3f9c96'), 2.2) + S('M16,50 L34,12 M22,52 L42,20 M30,53 L50,28 M38,54 L54,30', dk('#3f9c96', 0.4), 1.4) + P('M10,50 L46,52 L46,58 L10,56 Z', c.cel('#e07a4a'), 2)); },
     dust: function (c) { return iconWrap(c, ITEM_BG, P('M8,54 C12,40 22,32 32,32 C42,32 52,40 56,54 Z', c.cel('#9a8ab0'), 2.2) + C(24, 44, 1.5, '#ffffff', 0) + C(36, 40, 1.3, '#ffffff', 0) + C(44, 48, 1.5, '#ffffff', 0) + sparkle(20, 22, 5, '#e8d8ff') + sparkle(42, 16, 6, '#ffffff') + sparkle(50, 30, 3.5, '#e8d8ff') + C(32, 26, 1.4, '#e8d8ff', 0)); },
     head: function (c) { return iconWrap(c, ITEM_BG, P('M12,40 C10,20 22,10 32,10 C42,10 54,20 52,40 L52,52 L40,52 L38,40 L26,40 L24,52 L12,52 Z', c.lg(STEEL, 0.2, 0, 0.8, 1), 2.4) + P('M29,12 L35,12 L35,48 L29,48 Z', c.cel(GOLD), 1.8) + S('M16,30 C20,20 26,16 30,15', '#ffffff', 1.6, 0.7) + R(18, 32, 9, 4, '#1a1a22', 1.2) + R(37, 32, 9, 4, '#1a1a22', 1.2)); },
     claw: function (c) { return iconWrap(c, ITEM_BG, P('M16,58 C12,46 16,34 26,30 L40,30 C48,34 52,46 48,58 Z', c.cel('#8e5c38'), 2.2) + P('M20,34 C14,24 14,14 20,6 C22,16 26,24 28,31 Z', '#f0e8d0', 1.8) + P('M30,30 C28,20 30,10 36,4 C36,14 38,22 38,30 Z', '#f0e8d0', 1.8) + P('M40,32 C42,24 46,16 54,12 C50,20 48,28 46,34 Z', '#f0e8d0', 1.8)); },
-    armband: function (c) { return iconWrap(c, ITEM_BG, '<ellipse cx="32" cy="34" rx="20" ry="12" fill="none" stroke="#1a1009" stroke-width="13"/><ellipse cx="32" cy="34" rx="20" ry="12" fill="none" stroke="#b82d31" stroke-width="8.5"/>' + S('M16,28 A20,12 0 0 1 36,22', '#ff8a8a', 2, 0.7) + P('M44,40 L54,54 L48,54 L44,46 L40,56 L36,52 Z', c.cel('#8e1c22'), 1.8)); },
+    armband: function (c) { return iconWrap(c, ITEM_BG, '<ellipse cx="32" cy="34" rx="20" ry="12" fill="none" stroke="#1a1009" stroke-width="13"/><ellipse cx="32" cy="34" rx="20" ry="12" fill="none" stroke="#7a7e83" stroke-width="8.5"/>' + S('M16,28 A20,12 0 0 1 36,22', '#c8ccd0', 2, 0.7) + P('M44,40 L54,54 L48,54 L44,46 L40,56 L36,52 Z', c.cel('#55595e'), 1.8)); },
     grapes: function (c) {
       var g = '';
       [[26, 22], [36, 22], [46, 24], [22, 32], [32, 32], [42, 34], [28, 42], [38, 43], [33, 52]].forEach(function (p) { g += C(p[0], p[1], 6.2, c.rg([[0, '#c890e8'], [0.6, '#7a2a9a'], [1, '#3a0a4a']], 0.35, 0.35, 0.7), 1.8); });
@@ -4431,9 +4568,15 @@
       return iconWrap(c, ITEM_BG, C(32, 34, 24, c.rg([[0, '#ffe08a', 0.5], [1, '#ffe08a', 0]]), 0) + P('M8,30 L56,30 L54,56 L10,56 Z', c.cel('#8a5a30'), 2.4) + P('M8,30 C8,16 20,12 32,12 C44,12 56,16 56,30 Z', c.cel('#9a6838'), 2.4) +
         S('M18,14 L18,56 M46,14 L46,56 M8,30 L56,30', OL, 5) + S('M18,14 L18,56 M46,14 L46,56 M8,30 L56,30', GOLD, 3) + R(28, 28, 8, 10, c.cel(GOLD), 1.8) + C(32, 33, 1.4, OL, 0));
     },
+    /* waystone: a rough grey field stone with one carved rune glowing pale blue-white */
     hearthstone: function (c) {
-      return iconWrap(c, ['#4a5a7a', '#0c1220'], P('M14,22 C14,10 50,8 52,22 C56,34 54,50 40,56 C28,60 12,52 10,40 C9,32 12,28 14,22 Z', c.cel('#8a94a6'), 2.4) + C(32, 34, 16, c.rg([[0, '#dff4ff', 0.8], [1, '#69ccf0', 0]]), 0) +
-        S('M32,34 m-9,0 a9,9 0 1 1 9,9 a6,6 0 1 1 -6,-6 a3,3 0 1 1 3,3', '#e8fbff', 2.6) + F('M18,20 C22,14 30,12 36,13 C28,15 22,18 20,24 Z', '#ffffff', 0.5));
+      var st = 'M16,18 L28,10 L42,12 L52,22 L54,38 L48,52 L34,57 L20,54 L11,43 L10,28 Z';
+      var rune = 'M32,20 L32,48 M32,28 L24,21 M32,28 L40,21 M26,40 L32,34 L38,40';
+      return iconWrap(c, ['#4a5058', '#101216'], P(st, c.cel('#8a8c8e'), 2.4) +
+        CG(F('M16,18 L28,10 L42,12 L34,22 L20,26 Z', '#ffffff', 0.22) + F('M48,52 L54,38 L52,22 L44,30 L42,48 Z', '#000', 0.2) +
+          S('M20,26 L34,22 L44,30 M42,48 L44,30 M20,26 L18,44', '#5a5c5e', 1.1, 0.7) + C(22, 48, 1.4, '#6a6c6e', 0, 0.8) + C(46, 18, 1.2, '#6a6c6e', 0, 0.8) +
+          C(32, 34, 17, c.rg([[0, '#eaf6ff', 0.75], [0.5, '#a8d8f8', 0.3], [1, '#a8d8f8', 0]]), 0), c.clip(st)) +
+        S(rune, '#2a2c30', 5.4) + S(rune, '#bfe6ff', 3) + S(rune, '#ffffff', 1.2));
     }
   };
   /* ---- paladin / warlock / pet icons ---- */
@@ -5129,6 +5272,7 @@
 
   function safe(fn, fb) { try { return fn(); } catch (e) { try { return fb(); } catch (e2) { return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"></svg>'; } } }
 
+  ['shadowglen', 'dolanaar', 'darnassus', 'lake_alameth', 'banethil_barrow', 'fel_rock', 'shadowthread_cave'].forEach(function (k) { if (SCENES[k]) SCENES[k] = duskWrap(SCENES[k]); });
   W.ART = {
     mob: function (key) {
       return safe(function () { var c = new Ctx(); var f = MOBS.hasOwnProperty(key) ? MOBS[key] : phMob; return c.svg(128, 128, f(c)); },

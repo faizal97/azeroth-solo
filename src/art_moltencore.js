@@ -15,7 +15,8 @@
  * Looks: fire elementals are living fire in three hard tones around a dark stone core with lava cracks; core hounds are
  * two-headed lava dogs plated in black rock (Cinderhound the biggest; the core ragers have one head); flamewakers are tall,
  * horned, red-skinned fire humanoids with a snake's tail instead of legs; Steward Cindral is a ashbound lord in robes;
- * Vulcarn (after art_story.js: ragnaros) rises from the lava with his hammer raised, the biggest sprite in the raid.
+ * Vulcarn (after art_story.js: ragnaros) is a colossal basalt king awake on his throne in the lava, crowned with magma
+ * spikes, no weapon, the biggest sprite in the raid.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix mc<counter>_).
  */
@@ -860,36 +861,64 @@
       });
     },
     ragnaros: function (c) {
-      // the King Below (art_story.js: ragnaros) as a combat sprite: a vast torso of magma rising from the lava, hammer raised
-      var s = E(64, 60, 76, 72, glow(c, LAVA, 0.55));
-      s += fire(c, 66, 108, 114, 96, 7, 301, 3, FIRE3, 2.2);
-      // far arm down into the lava, the fist burning
-      s += rockLimb(c, [[98, 56], [118, 78], [112, 100]], 14, ROCK, 302) + boulder(c, 112, 104, 10, 9, ROCK, 303, 1) + fire(c, 112, 100, 16, 22, 2, 304, 1, FIREH, 1.2);
-      // the molten torso with black rock plates
-      var tor = 'M38,120 C34,98 28,78 28,62 C28,54 34,48 44,46 L86,46 C96,48 102,54 100,62 C100,78 94,98 90,120 Z';
-      s += P(tor, c.lg([[0, LAVAW], [0.25, LAVAL], [0.65, LAVA], [1, LAVAD]], 0.3, 0, 0.7, 1), 2.4);
-      var pl = 'M32,54 C40,48 56,48 62,52 L61,70 C52,76 40,74 35,66 Z M68,52 C74,48 90,48 96,54 L94,66 C88,74 77,76 69,70 Z';
-      [[80, 90], [93, 103], [106, 118]].forEach(function (yy, i) { var a = i * 3; pl += ' M' + (40 + a) + ',' + yy[0] + ' L62,' + (yy[0] - 1) + ' L62,' + (yy[1] - 2) + ' L' + (42 + a) + ',' + (yy[1] - 1) + ' Z M66,' + (yy[0] - 1) + ' L' + (90 - a) + ',' + yy[0] + ' L' + (88 - a) + ',' + (yy[1] - 1) + ' L66,' + (yy[1] - 2) + ' Z'; });
-      s += body(c, pl, ROCK, F('M66,40 L104,40 L104,124 L72,124 Z', dk(ROCK, 0.35), 0.75), 1.8);
-      s += L('M40,60 l7,4 l4,-3 M78,58 l6,5 l6,-2 M46,96 l6,3 M74,108 l7,2', LAVA, 1.3);
-      // shoulders
-      s += rockBody(c, 'M14,62 C12,46 26,38 40,44 C48,50 46,66 36,72 C26,76 16,72 14,62 Z', ROCK, 305, [12, 48, 38, 76], 2, 2.2) + rockBody(c, 'M116,60 C118,44 104,38 90,44 C82,50 84,66 94,72 C104,76 114,70 116,60 Z', dk(ROCK, 0.1), 306, [82, 118, 38, 76], 2, 2.2);
-      // head: horned brow, burning eyes, a beard of flame
-      s += fire(c, 64, 26, 42, 30, 4, 307, 0, FIREH, 1.6);
-      s += P(taper([[56, 22], [42, 14], [34, 4], [34, -4]], 9, 1.4, 6).d, c.cel(HORN), 2) + P(taper([[74, 22], [88, 14], [96, 4], [96, -4]], 9, 1.4, 6).d, c.cel(dk(HORN, 0.1)), 2);
-      s += rockBody(c, 'M52,26 C54,14 76,14 78,26 L80,40 C78,50 72,55 65,55 C58,55 52,50 50,40 Z', ROCK, 308, [50, 80, 14, 55], 1, 2);
-      s += P('M49,28 L63,36 L65,34 L67,36 L81,28 L78,23 L65,30 L52,23 Z', dk(ROCK, 0.35), 1.4);
-      s += E(58, 36, 8, 5, glow(c, EYEF, 0.95)) + E(72, 36, 8, 5, glow(c, EYEF, 0.95)) + P('M52,33 L62,37.4 L60.4,40 L53,37 Z', LAVAW, 0.9) + P('M78,33 L68,37.4 L69.6,40 L77,37 Z', LAVAW, 0.9);
-      s += P('M56,44 L74,44 L71.4,52 L58.6,52 Z', EMB, 1.4) + P('M58,44 l1.8,3.6 l1.8,-3.6 Z M64,44 l1.6,3 l1.6,-3 Z M69.8,44 l1.8,3.6 l1.8,-3.6 Z', dk(ROCK, 0.2), 0.8);
-      s += P('M56,52 C58,62 61,70 65,80 C69,70 72,62 74,52 Q65,57 56,52 Z', LAVA, 1.4) + P('M60,54 C62,62 63,68 65,74 C67,68 68,62 70,54 Q65,57 60,54 Z', LAVAL);
-      // near arm raised, the hammer held high
-      var hm = E(18, 22, 34, 30, glow(c, EMB, 0.7));
-      hm += limb('M20,118 L20,30', '#2a1a14', 5.6) + L('M20,54 L20,58 M20,84 L20,88 M20,108 L20,112', EMB, 5.6);
-      hm += P('M-1,8 L8,14 L32,12 L41,6 L43,40 L34,34 L10,36 L1,42 Z', c.cel(ROCK), 2) + P('M10,17 L31,15 L32,32 L12,34 Z', c.rg([[0, '#fff8c0'], [0.5, EMB], [1, '#e04a10']]), 1.4) + L('M15,20 l4,5 l-2,6 M26,18 l-3,6 l4,6', LAVAW, 1) + L('M2,14 L5,38 M40,10 L41,36', LAVA, 1.2, 0.8);
-      hm += fire(c, 21, 12, 24, 22, 3, 309, -2, FIREH, 1.2);
-      hm += rockLimb(c, [[38, 60], [18, 82], [20, 66]], 13, ROCK, 310) + boulder(c, 20, 64, 9, 8, ROCK, 311, 1);
-      s += G(hm, 'translate(5,3)');
-      // the lava he rises from, lapping at the front of the sprite
+      // the King Below (art_story.js: ragnaros) awake as a combat sprite: the basalt king leaning forward off his throne,
+      // magma crown flaring, eyes wide, the cracks across his stone body running bright. Drawn in the story actor's
+      // 160 space and scaled to fit.
+      var BAS = '#2e2a2c', BASL = '#4a4448', BASD = '#161314';
+      var MAG = c.lg([[0, LAVAW], [0.35, EMB], [0.75, '#ff6a14'], [1, LAVAD]]);
+      var cH = function (col) { return c.lg([[0, lt(col, 0.35)], [0.3, lt(col, 0.1)], [0.62, col], [0.63, dk(col, 0.18)], [1, dk(col, 0.4)]], 0, 0, 1, 0); };
+      var s = E(80, 80, 92, 88, glow(c, LAVA, 0.6));
+      s += fire(c, 80, 60, 150, 70, 7, 321, 0, FIRE3, 2.4);
+      // the throne columns behind him
+      [[18, 64, 16], [34, 42, 18], [108, 42, 18], [126, 64, 16]].forEach(function (k, i) {
+        var x = k[0], top = k[1], w = k[2];
+        s += R(x, top, w, 150 - top, cH(i % 3 ? BAS : dk(BAS, 0.15)), 2.2);
+        s += P('M' + x + ',' + top + 'L' + (x + w * 0.3) + ',' + (top - 4) + 'L' + (x + w * 0.9) + ',' + (top - 4) + 'L' + (x + w) + ',' + top + 'Z', c.cel(BASL), 2);
+        s += crackLine('M' + n(x + w * 0.4) + ',' + (top + 14) + 'l3,6l-2,7l3,6l-2,8', 1, 0.9);
+      });
+      s += P('M16,96 L52,96 L52,108 L16,108 Z', c.cel(BASL), 2.2) + P('M108,96 L144,96 L144,108 L108,108 Z', c.cel(BAS), 2.2);
+      // torso, split wide open by lava
+      s += P('M42,58 C40,50 50,46 60,46 L100,46 C110,46 120,50 118,58 C114,78 108,96 104,108 L56,108 C52,96 46,78 42,58 Z', c.lg([[0, lt(BAS, 0.25)], [0.4, BAS], [0.72, BAS], [1, dk(BAS, 0.42)]], 0.2, 0, 0.8, 1), 2.6);
+      s += C(80, 70, 18, glow(c, LAVAL, 0.7));
+      s += P('M50,56 C58,52 72,52 78,56 L77,72 C68,78 56,76 51,68 Z', c.cel(BASL), 2) + P('M82,56 C88,52 102,52 110,56 L109,68 C104,76 92,78 83,72 Z', c.cel(BAS), 2);
+      s += P('M58,100 L102,100 L104,110 L56,110 Z', c.cel(BASD), 2.2) + C(80, 105, 3.6, c.rg([[0, LAVAW], [0.5, EMB], [1, LAVAD]]), 1.4);
+      s += crackLine('M46,62L54,66L60,64L68,72L76,70L80,76L86,72L94,74L100,66L108,68L114,62', 1.8);
+      s += crackLine('M62,78L66,86L62,94M80,76L82,88L78,98M98,80L94,88L97,96M54,84L58,90M106,84L102,92', 1.4);
+      s += crackLine('M56,58L62,62L70,58M90,58L98,62L104,58', 1.1, 0.9);
+      // knees forward, shins into the fire
+      s += P('M48,112 L50,150 L74,150 L76,112 Z', cH(BAS), 2.4) + P('M84,112 L86,150 L110,150 L112,112 Z', cH(dk(BAS, 0.1)), 2.4);
+      s += E(62, 112, 16, 10, c.cel(BASL), 2.4) + E(98, 112, 16, 10, c.cel(BAS), 2.4);
+      s += crackLine('M54,110l6,3l5,-2l5,4M92,114l6,-3l6,3M60,124l2,8l-3,6M100,126l-2,7l3,7', 1.2);
+      // shoulders with flame pouring off them
+      s += fire(c, 36, 50, 26, 26, 3, 322, -4, FIREH, 1.6) + fire(c, 124, 50, 26, 26, 3, 323, 4, FIREH, 1.6);
+      s += P('M26,62 C24,48 36,42 48,46 C56,50 56,66 48,72 C38,76 28,72 26,62 Z', c.cel(BASL), 2.4) + P('M134,62 C136,48 124,42 112,46 C104,50 104,66 112,72 C122,76 132,72 134,62 Z', c.cel(BAS), 2.4);
+      s += crackLine('M32,54l6,4l2,7M128,54l-6,4l-2,7', 1.2);
+      // arms braced on the throne, hands gripping it, fists smouldering
+      s += limb('M36,66 L28,88 L32,100', BAS, 14) + limb('M124,66 L132,88 L128,100', dk(BAS, 0.1), 14);
+      s += crackLine('M32,72l-3,8l2,6M128,72l3,8l-2,6', 1.1);
+      s += P('M22,98 C22,92 30,90 38,92 C44,94 46,100 44,106 L42,114 L37,110 L36,116 L31,111 L29,116 L25,110 Z', c.cel(BASL), 2.2);
+      s += P('M138,98 C138,92 130,90 122,92 C116,94 114,100 116,106 L118,114 L123,110 L124,116 L129,111 L131,116 L135,110 Z', c.cel(BAS), 2.2);
+      s += crackLine('M28,100l6,2l4,-2M132,100l-6,2l-4,-2', 1) + fire(c, 32, 94, 12, 12, 2, 324, -1, FIREH, 1.2) + fire(c, 128, 94, 12, 12, 2, 325, 1, FIREH, 1.2);
+      // head: stone beard, eyes wide open and blazing, crown of magma flaring
+      var hd = P('M68,44 L92,44 L94,54 L66,54 Z', c.cel(BASD), 2.2);
+      hd += P('M64,26 C64,18 72,14 80,14 C88,14 96,18 96,26 L97,40 C96,48 89,54 80,54 C71,54 64,48 63,40 Z', c.cel(BASL), 2.4);
+      hd += P('M63.4,31 Q80,28 96.6,31 L96.4,33.6 Q80,31 63.6,33.6 Z', dk(BAS, 0.3), 1.4);
+      hd += P('M66,44 C66,56 70,66 80,74 C90,66 94,56 94,44 Q80,50 66,44 Z', c.cel(BAS), 2.2);
+      hd += crackLine('M72,48L73,62M80,50L80,70M88,48L87,62', 0.9);
+      hd += L('M73.4,43.4 L80,42.6 L86.6,43.4', OL, 3) + L('M73.4,43.4 L80,42.6 L86.6,43.4', EMB, 1.4);
+      hd += E(72, 37.6, 9, 6, glow(c, EYEF, 0.95)) + E(88, 37.6, 9, 6, glow(c, EYEF, 0.95));
+      hd += P('M66.4,35.6 L77.6,35.2 Q76,40.4 71.6,40.2 Q68,39.6 66.4,35.6 Z', LAVAW, 1.1) + P('M82.4,35.2 L93.6,35.6 Q92,39.6 88.4,40.2 Q84,40.4 82.4,35.2 Z', LAVAW, 1.1);
+      hd += P('M78.4,37 L80,33 L81.6,37 L80.8,40.6 L79.2,40.6 Z', dk(BASL, 0.2), 1.2);
+      hd += E(80, 10, 34, 20, glow(c, EMB, 0.85)) + fire(c, 80, 22, 40, 24, 5, 326, 0, FIREH, 1.6);
+      [[66, 22, -4, 11], [72, 20, -2, 14], [80, 19, 0, 18], [88, 20, 2, 14], [94, 22, 4, 11]].forEach(function (k) {
+        hd += P('M' + (k[0] - 3.4) + ',' + k[1] + 'L' + (k[0] + k[2]) + ',' + (k[1] - k[3]) + 'L' + (k[0] + 3.4) + ',' + k[1] + 'Z', MAG, 1.6);
+        hd += L('M' + k[0] + ',' + (k[1] - 1) + 'L' + n(k[0] + k[2] * 0.7) + ',' + n(k[1] - k[3] * 0.7), '#fff8d0', 0.9);
+      });
+      hd += P('M63,24 Q80,17 97,24 L97,29 Q80,22 63,29 Z', c.cel(BASD), 2) + C(80, 22.6, 2, LAVAL, 1);
+      s += G(hd, 'matrix(1.14,0,0,1.14,-11.2,-1.6)');
+      s += fire(c, 28, 146, 16, 22, 2, 328, -2, FIRE3, 1.4) + fire(c, 134, 146, 16, 24, 2, 329, 2, FIRE3, 1.4);
+      s = G(s, 'matrix(0.8,0,0,0.8,0,-2)');
+      // the lava lake boiling up around his feet
       s += E(64, 118, 66, 14, glow(c, LAVAL, 0.6)) + P('M3,121 C2,112 18,106 34,110 Q52,116 70,110 Q90,104 106,110 C120,108 126,114 125,121 C124,127 100,127 64,127 C28,127 4,127 3,121 Z', c.lg([[0, LAVAW], [0.3, LAVAL], [0.7, LAVA], [1, LAVAD]]), 2);
       s += L('M10,118 q6,-3 12,0 M50,120 q6,-3 12,0 M92,118 q6,-3 12,0', LAVAW, 1.3) + lavaBubbles(312, 5, 6, 122, 116, 124, 1.1);
       return s;

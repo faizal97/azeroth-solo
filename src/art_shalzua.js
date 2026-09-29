@@ -311,7 +311,7 @@
   var KELP = '#3e5c26', KELPL = '#6e8c36', BULB = '#8a9a3a';
   var CORAL = '#f27a8c', CORALL = '#ffb0bc', CORALD = '#c24a66';
   var BARN = '#dcd6c2', BARND = '#7a7462', NACRE = '#e4e0f0', PEARL = '#f6f2e6', SHELL = '#ecc4aa';
-  var WSKIN = '#a4cdc2', WSKD = '#6e9c96', WHAIR = '#56722e', WHAIRD = '#324a1c', WEYE = '#5cf4e2', DRIP = '#8ae8e0', BONE = '#e8e0c8', DRIFT = '#7a6e5a', ROPE = '#6a5a40';
+  var WSKIN = '#9aaaa6', WSKD = '#6e807c', WHAIR = '#56722e', WHAIRD = '#324a1c', WEYE = '#5cf4e2', DRIP = '#8ae8e0', BONE = '#e8e0c8', DRIFT = '#7a6e5a', ROPE = '#6a5a40';
   var VIO = '#9a44f0', VIOL = '#d4a0ff', VIOD = '#3a1262', ABYSS = '#070a18';
 
   // ============================================================
@@ -605,7 +605,8 @@
     var d = 'M' + pt([x, y]) + 'L' + pt([x - 3 * k, y - 9 * k]) + 'L' + pt([x - 7 * k, y - 13 * k]) + 'M' + pt([x - 3 * k, y - 9 * k]) + 'L' + pt([x + 1 * k, y - 15 * k]) + 'M' + pt([x + 2 * k, y - 1 * k]) + 'L' + pt([x + 7 * k, y - 10 * k]) + 'L' + pt([x + 6 * k, y - 15 * k]) + 'M' + pt([x + 7 * k, y - 10 * k]) + 'L' + pt([x + 11 * k, y - 12 * k]);
     return L(d, OL, 5 * k) + L(d, col, 2.6 * k) + [[-7, -13], [1, -15], [6, -15], [11, -12]].map(function (t) { return C(x + t[0] * k, y + t[1] * k, 1.5 * k, lt(col, 0.3)); }).join('');
   }
-  // ---- Wavebreaker troll head (facing left): the troll profile, drowned: pale teal skin, mottles, barnacles, seaweed dreads, teal glowing eyes ----
+  // ---- Wavebreaker troll head (facing left), Realm of Loner design, drowned: sea-grey skin, mottles, barnacles, lean face, short nose,
+  //      modest torn ear, small tusk, kelp-matted braids tied with shell and bone beads, teal glowing eyes ----
   function wtHead(c, x, y, o) {
     var sk = o.skin || WSKIN, s = '', hc = o.hair || WHAIR, hat = o.hat;
     if (hat === 'shell') s += shellCrown(c, x, y);
@@ -614,25 +615,25 @@
       var l = dl + (i % 2) * 7 - i, bx = x + 1 + 3 * i, by = y - 13 + 2.2 * i;
       var T = taper([[bx, by], [bx + 12, by + 1], [bx + 19 + i, by + l * 0.42], [bx + 15 + 3 * i, by + l * 0.72], [bx + 19 + 2 * i, by + l]], 6.4, 2.4, 4);
       s += P(T.d, c.cel(i % 2 ? (o.hair ? dk(hc, 0.14) : WHAIRD) : hc), 1.5) + L(along(T, 0.5), lt(hc, 0.3), 0.8, 0.7);
-      if (i % 2 === 0 && !o.noBulb) { var e = T.s[T.s.length - 1]; s += E(e[0], e[1] + 1.4, 2.2, 3, c.cel(BULB), 1); }
+      var bm = T.s[Math.floor(T.s.length * 0.55)]; s += L('M' + pt([bm[0] - 3, bm[1] - 1]) + 'L' + pt([bm[0] + 3, bm[1] + 1]), OL, 3.2) + L('M' + pt([bm[0] - 3, bm[1] - 1]) + 'L' + pt([bm[0] + 3, bm[1] + 1]), ROPE, 1.6);
+      if (i % 2 === 0 && !o.noBulb) { var e = T.s[T.s.length - 1]; s += E(e[0], e[1] + 1.4, 2.2, 3, c.cel(BULB), 1); } else { var e2 = T.s[T.s.length - 1]; s += C(e2[0], e2[1] + 1.5, 2, c.cel(i % 2 ? BONE : SHELL), 1); }
     }
     // ear: long, drooping back, torn, crusted with barnacles
-    s += P('M' + pt([x + 6, y - 3]) + 'L' + pt([x + 31, y - 9]) + 'L' + pt([x + 27, y - 4]) + 'L' + pt([x + 24, y - 5]) + 'L' + pt([x + 25, y - 1]) + 'L' + pt([x + 10, y + 7]) + 'Z', c.cel(sk), 2) + F('M' + pt([x + 11, y]) + 'L' + pt([x + 26, y - 6]) + 'L' + pt([x + 12, y + 4]) + 'Z', dk(sk, 0.3), 0.8);
-    s += barn(x + 18, y - 3, 1.6) + barn(x + 14, y + 1, 1.3);
-    if (o.earShell) s += L('M' + pt([x + 20, y - 1]) + 'L' + pt([x + 20, y + 5]), OL, 1) + scallop(c, x + 20, y + 5, 4.4, PI / 2, o.earShell);
+    s += P('M' + pt([x + 7, y - 2]) + 'L' + pt([x + 21, y - 8]) + 'L' + pt([x + 18, y - 4]) + 'L' + pt([x + 17, y - 3]) + 'L' + pt([x + 18, y]) + 'L' + pt([x + 10, y + 6]) + 'Z', c.cel(sk), 2) + F('M' + pt([x + 11, y - 1]) + 'L' + pt([x + 18, y - 5]) + 'L' + pt([x + 12, y + 3]) + 'Z', dk(sk, 0.3), 0.8);
+    s += barn(x + 14, y - 2, 1.4);
+    if (o.earShell) s += L('M' + pt([x + 13, y + 2]) + 'L' + pt([x + 13, y + 7]), OL, 1) + scallop(c, x + 13, y + 7, 4.4, PI / 2, o.earShell);
     var d = 'M' + pt([x - 6, y - 12]) + 'C' + pt([x, y - 17]) + ' ' + pt([x + 11, y - 14]) + ' ' + pt([x + 12, y - 4]) + 'L' + pt([x + 11, y + 9]) + 'C' + pt([x + 8, y + 15]) + ' ' + pt([x, y + 16]) + ' ' + pt([x - 5, y + 14]) + 'L' + pt([x - 12, y + 11]) + 'C' + pt([x - 14, y + 8]) + ' ' + pt([x - 13, y + 6]) + ' ' + pt([x - 11, y + 5]) +
-      'L' + pt([x - 22, y + 6]) + 'C' + pt([x - 27, y + 6]) + ' ' + pt([x - 26, y + 1]) + ' ' + pt([x - 21, y - 1]) + 'L' + pt([x - 9, y - 5]) + 'Z';
-    var mot = E(x + 3, y - 8, 4, 3, WSKD, 0, 0.7) + E(x - 16, y + 2, 3, 1.8, WSKD, 0, 0.6) + E(x + 6, y + 8, 3, 4, WSKD, 0, 0.6);
+      'L' + pt([x - 16, y + 4]) + 'C' + pt([x - 18, y + 3]) + ' ' + pt([x - 17, y]) + ' ' + pt([x - 15, y - 1]) + 'L' + pt([x - 9, y - 5]) + 'Z';
+    var mot = E(x + 3, y - 8, 4, 3, WSKD, 0, 0.7) + E(x - 13, y + 2, 2.4, 1.6, WSKD, 0, 0.6) + E(x + 6, y + 8, 3, 4, WSKD, 0, 0.6);
     if (o.paint) mot += F(pd([[x - 10, y - 9], [x + 6, y - 11], [x + 7, y - 8], [x - 9, y - 6]], true), o.paint, 0.9) + F(pd([[x - 1, y + 2], [x + 8, y + 1], [x + 8, y + 3.4], [x - 1, y + 4.4]], true), o.paint, 0.9);
     if (o.wrinkle) mot += L('M' + pt([x - 2, y + 4]) + 'q3,2 6,0 M' + pt([x - 4, y + 8]) + 'q3,2 6,0 M' + pt([x - 9, y - 8]) + 'q4,-1.6 8,0', dk(sk, 0.4), 0.9);
     s += body(c, d, sk, F('M' + pt([x + 3, y - 18]) + 'L' + pt([x + 16, y - 18]) + 'L' + pt([x + 16, y + 18]) + 'L' + pt([x, y + 18]) + 'C' + pt([x + 7, y + 8]) + ' ' + pt([x + 7, y - 6]) + ' ' + pt([x + 3, y - 18]) + 'Z', dk(sk, 0.25), 0.8) + mot, 2.2);
-    s += P('M' + pt([x - 22, y + 5]) + 'C' + pt([x - 23, y + 10]) + ' ' + pt([x - 19, y + 11]) + ' ' + pt([x - 17, y + 6]) + 'Z', c.cel(dk(sk, 0.1)), 1.3);
     s += barn(x + 6, y + 4, 1.7) + barn(x + 3, y + 7.4, 1.2);
     s += L('M' + pt([x - 13, y - 8]) + 'L' + pt([x - 1, y - 5]), OL, 2.6) + E(x - 6, y - 3, 3.2, 2.6, '#0c1414') + glowEye(c, x - 6, y - 3, 1.9, o.eye || WEYE);
     if (o.jaw) s += P('M' + pt([x - 12, y + 10]) + 'L' + pt([x - 2, y + 11]) + 'L' + pt([x - 4, y + 19]) + 'L' + pt([x - 11, y + 17]) + 'Z', '#12242a', 1.3) + L('M' + pt([x - 11, y + 12]) + 'l1.4,2 M' + pt([x - 8, y + 12]) + 'l1,2 M' + pt([x - 5, y + 12]) + 'l1,2', BONE, 1.1);
     else s += L('M' + pt([x - 12, y + 11]) + 'L' + pt([x - 2, y + 11]), OL, 1.4);
     var tk = o.tusk || 1;
-    s += P('M' + pt([x - 7, y + 12.5]) + 'C' + pt([x - 7 - 7 * tk, y + 13]) + ' ' + pt([x - 7 - 12 * tk, y + 12.5 - 6 * tk]) + ' ' + pt([x - 7 - 11 * tk, y + 12.5 - 13 * tk]) + 'C' + pt([x - 7 - 8 * tk, y + 12.5 - 7 * tk]) + ' ' + pt([x - 7 - 4 * tk, y + 12.5 - 5 * tk]) + ' ' + pt([x - 3, y + 9.5]) + 'Z', c.cel(o.tuskCol || '#e0dcc0'), 1.6) + barn(x - 10 - 4 * tk, y + 12 - 2 * tk, 1.2);
+    s += P('M' + pt([x - 10, y + 12]) + 'L' + pt([x - 10 - 1.6 * tk, y + 12 - 6.5 * tk]) + 'L' + pt([x - 7.5, y + 11.5]) + 'Z', c.cel(o.tuskCol || '#e0dcc0'), 1.2);
     if (o.coral !== false && hat !== 'shell' && hat !== 'nautilus') s += coralSprig(c, x + 1, y - 13, o.coralK || 1);
     if (hat === 'band') {
       var bd = 'M' + pt([x - 7, y - 12]) + 'Q' + pt([x + 3, y - 16]) + ' ' + pt([x + 12, y - 8]);
@@ -644,7 +645,7 @@
       var bd3 = 'M' + pt([x - 8, y - 11]) + 'Q' + pt([x + 3, y - 16]) + ' ' + pt([x + 12, y - 8]);
       s += L(bd3, OL, 4.8) + L(bd3, NACRE, 3) + C(x - 4, y - 12.6, 2.2, c.rg([[0, '#ffffff'], [1, '#9ad8d0']]), 1) + L('M' + pt([x - 9, y - 9]) + 'Q' + pt([x - 12, y - 2]) + ' ' + pt([x - 8, y + 2]), PEARL, 1.2, 0.9);
     }
-    return s + drops([[x - 9, y + 21, 0.9], [x - 20, y + 12, 0.7]]);
+    return s + drops([[x - 9, y + 21, 0.9], [x - 16, y + 10, 0.7]]);
   }
   // tall scallop-fan headdress with pearl tips and an inner teal fan (behind the head)
   function shellCrown(c, x, y) {
@@ -666,21 +667,25 @@
     if (shells !== false) [54, 64, 74].forEach(function (x, i) { o += scallop(c, x, 86, 3.6, PI / 2, i % 2 ? SHELL : NACRE); });
     return o;
   }
-  // long robe skirt with troll toes peeking out
+  // long robe skirt with wrapped feet peeking out
   function robe(c, col, trim) {
     var d = 'M48,84 L80,84 C84,98 90,110 94,118 L32,118 C38,108 44,98 48,84 Z';
-    var o = toes2(46, 121, dk(WSKIN, 0.25)) + toes2(70, 121, dk(WSKIN, 0.3));
+    var o = wraps(46, 121, '#3e5a50') + wraps(70, 121, '#34504a');
     o += body(c, d, col, F('M66,82 L98,82 L98,122 L70,122 C72,106 70,94 66,82 Z', dk(col, 0.3), 0.8) + L('M58,88 L48,116 M70,88 L78,116', dk(col, 0.35), 1.1) + L('M33,115 L93,115', trim || NACRE, 2.2), 2.2);
     for (var x = 38; x < 92; x += 9) o += C(x, 118.4, 1.6, PEARL, 0.7);
     return o + L('M49,86 L79,86', OL, 4.6) + L('M49,86 L79,86', trim || NACRE, 2.8);
   }
-  // ---- Wavebreaker troll (facing left): the troll rig of art_zulfarrak.js, drowned ----
+  // kelp-and-cloth foot-wraps over a soft sole
+  function wraps(x, y, col) {
+    return boot(x, y, col) + L('M' + n(x - 5) + ',' + n(y - 7) + ' L' + n(x + 5) + ',' + n(y - 4) + ' M' + n(x - 6) + ',' + n(y - 3) + ' L' + n(x + 5) + ',' + n(y - 1), lt(col, 0.35), 1.2) + L('M' + n(x - 9) + ',' + n(y + 1) + ' L' + n(x + 6) + ',' + n(y + 1), '#1e2a28', 1.6);
+  }
+  // ---- Wavebreaker troll (facing left): the troll rig of art_zulfarrak.js, drowned; tall, upright, feet in kelp wraps ----
   function wTroll(c, o) {
     var sk = o.skin || WSKIN;
     return biped(c, {
-      skin: sk, shirt: o.shirt || sk, pants: sk, sleeve: o.sleeve || sk, forearm: o.forearm || sk, glove: o.glove, feet: toes2, boots: dk(sk, 0.25), digi: true, legW: o.legW || 9.5, armW: o.armW || 8.5,
-      hx: o.hx || 44, hy: o.hy || 38, hipY: 86, neckCol: sk, shadowR: o.shadowR || 34, noLegs: o.noLegs,
-      torsoD: o.torsoD || 'M42,56 C44,44 70,40 82,48 L82,68 L76,88 L52,88 L46,72 Z',
+      skin: sk, shirt: o.shirt || sk, pants: sk, sleeve: o.sleeve || sk, forearm: o.forearm || sk, glove: o.glove, feet: wraps, boots: o.wraps || '#3e5a50', digi: o.digi, legW: o.legW || 9.5, armW: o.armW || 8.5,
+      hx: o.hx || 50, hy: o.hy || 32, hipY: 86, neckCol: sk, shadowR: o.shadowR || 34, noLegs: o.noLegs,
+      torsoD: o.torsoD || 'M44,54 C48,44 72,42 82,50 L81,68 L77,88 L51,88 L47,72 Z',
       head: function (c, x, y) { return wtHead(c, x, y, o) + (o.headX ? o.headX(c, x, y) : ''); },
       back: o.back, chest: function (c) { return L('M58,66 Q64,70 70,66', dk(o.shirt || sk, 0.3), 1.4) + E(72, 60, 3, 2, dk(sk, 0.2), 0, 0.8) + E(56, 76, 2.6, 1.8, dk(sk, 0.2), 0, 0.8) + (o.chest ? o.chest(c) : ''); },
       front: function (c) { return (o.skirt ? o.skirt(c) : kelpSkirt(c, o.kelp)) + (o.front ? o.front(c) : ''); },
@@ -814,7 +819,7 @@
     },
     high_priest_zanjin: function (c) {
       return wTroll(c, {
-        hat: 'shell', dreads: 3, dreadLen: 26, noLegs: true, hy: 42, earShell: NACRE, jaw: true, paint: '#f4f0e6', shirt: WSKIN,
+        hat: 'shell', dreads: 3, dreadLen: 26, noLegs: true, hy: 34, earShell: NACRE, jaw: true, paint: '#f4f0e6', shirt: WSKIN,
         skirt: function (c) { return robe(c, '#1e4658', NACRE); },
         back: function (c) { return body(c, 'M50,50 C66,44 86,46 92,56 C100,76 104,96 108,118 L96,114 L88,119 L78,114 L70,118 C68,96 62,72 50,50 Z', '#2a3e2e', L('M60,60 L96,112 M76,56 L102,100 M90,60 L74,116', '#6a8a5a', 0.9, 0.8) + L('M72,117 L80,113 L88,118 L96,113 L106,117', PEARL, 1.4), 2.2); },
         chest: function (c) { return shellNecklace(c, [[46, 52], [52, 60], [60, 64], [68, 62], [76, 54]], [PEARL, NACRE]) + C(64, 72, 7, c.rg([[0, '#ffffff'], [0.5, NACRE], [1, '#8ab8c8']]), 1.8) + L(spiralD(64, 72, 5, 2, -1), '#6a8aa0', 0.9); },

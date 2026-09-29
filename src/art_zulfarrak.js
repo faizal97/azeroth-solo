@@ -340,7 +340,7 @@
   // ============================================================
   var SAND = '#e4be82', SANDM = '#d0a062', SANDD = '#a8723e', SANDX = '#7a4a26', DUNE = '#f2d294';
   var RED = '#b8261c', REDD = '#7a1410', GOLD = '#e8b43a', GOLDD = '#a8761e', TURQ = '#2aa89a', BONE = '#ece0c4';
-  var TSKIN = '#d8b27e', THAIR = '#f0e2b4', SHADOW = '#a066ff', VOO = '#7aff5a', ICE = '#78c4ee', FROST = '#dcf6ff', BRONZE = '#c08a3a';
+  var TSKIN = '#bda57b', THAIR = '#efe0b8', SHADOW = '#a066ff', VOO = '#7aff5a', ICE = '#78c4ee', FROST = '#dcf6ff', BRONZE = '#c08a3a';
 
   // ============================================================
   //  SCENE PIECES (new here)
@@ -365,7 +365,7 @@
     o += P(pd([q(-15, -6), q(-4, -2), q(-6, 2), q(-14, 0)], true), eyeCol || dd, 1 * s) + P(pd([q(15, -6), q(4, -2), q(6, 2), q(14, 0)], true), eyeCol || dd, 1 * s);
     o += P(pd([q(-3, -4), q(3, -4), q(5, 8), q(0, 10), q(-5, 8)], true), c.cel(lt(col, 0.06)), 1.2 * s);
     o += P(pd([q(-12, 12), q(12, 12), q(10, 19), q(-10, 19)], true), dd, 1 * s) + L('M' + pt(q(-6, 12)) + 'L' + pt(q(-6, 19)) + 'M' + pt(q(0, 12)) + 'L' + pt(q(0, 19)) + 'M' + pt(q(6, 12)) + 'L' + pt(q(6, 19)), lt(col, 0.1), 1 * s);
-    o += P(pd([q(-12, 16), q(-18, 1), q(-8, 13)], true), c.cel(BONE), 1.1 * s) + P(pd([q(12, 16), q(18, 1), q(8, 13)], true), c.cel(dk(BONE, 0.08)), 1.1 * s);
+    o += P(pd([q(-11, 17), q(-13, 9), q(-8, 15)], true), c.cel(BONE), 1.1 * s) + P(pd([q(11, 17), q(13, 9), q(8, 15)], true), c.cel(dk(BONE, 0.08)), 1.1 * s);
     return o;
   }
   // standing troll idol, seen from the front, on a painted plinth (x = centre, y = ground)
@@ -384,7 +384,9 @@
     o += P(pd([q(-24, -36), q(10, -30), q(10, -24), q(-22, -30)], true), c.cel(lt(col, 0.06)), 1.3 * s) + P(pd([q(24, -38), q(-10, -32), q(-10, -26), q(22, -32)], true), c.cel(dk(col, 0.06)), 1.3 * s);
     o += C(x - 6 * s, yb - 29 * s, 2 * s, GOLD, 0.8 * s) + C(x + 6 * s, yb - 31 * s, 2 * s, GOLD, 0.8 * s);
     // ears and the carved head
-    o += P(pd([q(-14, -74), q(-34, -84), q(-26, -76), q(-15, -62)], true), c.cel(col), 1.3 * s) + P(pd([q(14, -74), q(34, -84), q(26, -76), q(15, -62)], true), c.cel(dk(col, 0.12)), 1.3 * s);
+    o += P(pd([q(-14, -74), q(-26, -80), q(-22, -74), q(-15, -63)], true), c.cel(col), 1.3 * s) + P(pd([q(14, -74), q(26, -80), q(22, -74), q(15, -63)], true), c.cel(dk(col, 0.12)), 1.3 * s);
+    // carved braids hanging beside the face, bead-tied
+    [-1, 1].forEach(function (k) { for (var j = 0; j < 4; j++) o += E(x + k * 17 * s, yb + (-64 + j * 6) * s, 3 * s, 3.2 * s, c.cel(k < 0 ? lt(col, 0.04) : dk(col, 0.1)), 1.1 * s); o += C(x + k * 17 * s, yb - 38 * s, 2.4 * s, k < 0 ? GOLD : RED, 0.9 * s); });
     o += carvedFace(c, x, yb - 68 * s, 0.7 * s, lt(col, 0.04), RED);
     if (eyeGlow) o += C(x - 6.5 * s, yb - 70 * s, 1.6 * s, eyeGlow, 0, 0.9) + C(x + 6.5 * s, yb - 70 * s, 1.6 * s, eyeGlow, 0, 0.9) + C(x - 6.5 * s, yb - 70 * s, 8 * s, glow(c, eyeGlow, 0.5)) + C(x + 6.5 * s, yb - 70 * s, 8 * s, glow(c, eyeGlow, 0.5));
     return o;
@@ -520,7 +522,13 @@
   // ============================================================
   //  MOB PIECES
   // ============================================================
-  // ---- desert troll head (facing left): long hooked nose, drooping ringed ears, bleached hair swept back or in dreads ----
+  // ---- desert troll head (facing left), Realm of Loner design: lean long face, short straight nose, modest ringed ear,
+  //      small lower tusks, bleached hair in a bone-pinned topknot with beaded braids (or long dread-braids) ----
+  function trBraid(x0, y0, x1, y1, col, bead) {
+    var s = '';
+    for (var k = 0; k < 5; k++) { var t = k / 4; s += E(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, 2.8 - t * 0.5, 2.6, c_(col), 1.2); }
+    return s + L('M' + pt([x1, y1 + 2]) + 'L' + pt([x1 + 0.5, y1 + 6]), col, 1.6) + C(x1, y1 + 3.4, 2.1, bead || BONE, 1.1);
+  }
   function dtHead(c, x, y, o) {
     var sk = o.skin || TSKIN, s = '', pc = o.paintCol || RED, hc = o.hair || THAIR, hat = o.hat;
     if (hat === 'scarab') {
@@ -540,11 +548,11 @@
       }
     }
     // ear: long, drooping back, pierced with gold rings
-    s += P('M' + pt([x + 6, y - 3]) + 'L' + pt([x + 31, y - 9]) + 'L' + pt([x + 27, y - 2]) + 'L' + pt([x + 10, y + 7]) + 'Z', c.cel(sk), 2) + F('M' + pt([x + 11, y]) + 'L' + pt([x + 27, y - 6]) + 'L' + pt([x + 12, y + 4]) + 'Z', dk(sk, 0.3), 0.8);
-    if (o.earring !== false) s += L(ellD(x + 22, y - 2, 2, 2.6), OL, 2.4) + L(ellD(x + 22, y - 2, 2, 2.6), GOLD, 1.2) + L(ellD(x + 17, y + 1, 1.8, 2.3), OL, 2.2) + L(ellD(x + 17, y + 1, 1.8, 2.3), GOLD, 1.1);
-    if (o.crest) s += P(pd([[x - 8, y - 11], [x + 2, y - 22], [x + 6, y - 15], [x + 16, y - 24], [x + 16, y - 15], [x + 28, y - 22], [x + 22, y - 10], [x + 32, y - 12], [x + 14, y - 4]], true), c.cel(hc), 2) + L('M' + pt([x + 2, y - 14]) + 'L' + pt([x + 14, y - 19]) + 'M' + pt([x + 10, y - 10]) + 'L' + pt([x + 24, y - 15]), dk(hc, 0.3), 1.1);
+    if (o.crest) s += trBraid(x + 10, y, x + 19, y + 24, dk(hc, 0.1), RED);
+    s += P('M' + pt([x + 7, y - 2]) + 'L' + pt([x + 21, y - 9]) + 'L' + pt([x + 18, y - 3]) + 'L' + pt([x + 10, y + 6]) + 'Z', c.cel(sk), 2) + F('M' + pt([x + 11, y - 1]) + 'L' + pt([x + 18, y - 6]) + 'L' + pt([x + 12, y + 3]) + 'Z', dk(sk, 0.3), 0.8);
+    if (o.earring !== false) s += L(ellD(x + 16, y - 3, 1.8, 2.3), OL, 2.2) + L(ellD(x + 16, y - 3, 1.8, 2.3), GOLD, 1.1) + L('M' + pt([x + 12, y + 4]) + 'L' + pt([x + 12.5, y + 8]), '#3a2a1a', 1.2) + E(x + 12.5, y + 10, 2, 2.8, c.cel('#f2e6cc'), 1.1);
     var d = 'M' + pt([x - 6, y - 12]) + 'C' + pt([x, y - 17]) + ' ' + pt([x + 11, y - 14]) + ' ' + pt([x + 12, y - 4]) + 'L' + pt([x + 11, y + 9]) + 'C' + pt([x + 8, y + 15]) + ' ' + pt([x, y + 16]) + ' ' + pt([x - 5, y + 14]) + 'L' + pt([x - 12, y + 11]) + 'C' + pt([x - 14, y + 8]) + ' ' + pt([x - 13, y + 6]) + ' ' + pt([x - 11, y + 5]) +
-      'L' + pt([x - 22, y + 6]) + 'C' + pt([x - 27, y + 6]) + ' ' + pt([x - 26, y + 1]) + ' ' + pt([x - 21, y - 1]) + 'L' + pt([x - 9, y - 5]) + 'Z';
+      'L' + pt([x - 16, y + 4]) + 'C' + pt([x - 18, y + 3]) + ' ' + pt([x - 17, y]) + ' ' + pt([x - 15, y - 1]) + 'L' + pt([x - 9, y - 5]) + 'Z';
     var paint = '', p = o.paint;
     if (p === 'blood') paint = F(pd([[x - 16, y - 7], [x + 6, y - 9], [x + 7, y - 2], [x - 13, y]], true), pc, 0.95) + F(pd([[x - 11, y + 10], [x - 4, y + 12], [x - 5, y + 16], [x - 7, y + 13], [x - 9, y + 17], [x - 11, y + 13]], true), pc, 0.9);
     else if (p === 'white') paint = C(x + 2, y + 4, 1.3, '#f4eee0') + C(x + 5, y + 7, 1.3, '#f4eee0') + C(x + 2, y + 10, 1.3, '#f4eee0') + F(pd([[x - 8, y - 12], [x - 3, y - 7], [x + 2, y - 13], [x + 2, y - 10], [x - 3, y - 4], [x - 8, y - 9]], true), '#f4eee0', 0.9);
@@ -552,8 +560,9 @@
     else if (p === 'war') paint = F(pd([[x - 14, y - 8], [x + 8, y - 10], [x + 9, y - 4], [x - 12, y - 1]], true), pc, 0.95) + F(pd([[x + 1, y + 1], [x + 10, y - 1], [x + 10, y + 3], [x + 2, y + 5]], true) + pd([[x + 1, y + 7], [x + 10, y + 5], [x + 9, y + 9], [x + 2, y + 10]], true), GOLD, 0.95);
     else if (p === 'dead') paint = E(x - 5, y - 3, 5, 4.2, dk(sk, 0.45), 0, 0.9) + L('M' + pt([x + 2, y - 10]) + 'l3,6 M' + pt([x + 5, y + 2]) + 'l4,3', dk(sk, 0.4), 1);
     s += body(c, d, sk, F('M' + pt([x + 3, y - 18]) + 'L' + pt([x + 16, y - 18]) + 'L' + pt([x + 16, y + 18]) + 'L' + pt([x, y + 18]) + 'C' + pt([x + 7, y + 8]) + ' ' + pt([x + 7, y - 6]) + ' ' + pt([x + 3, y - 18]) + 'Z', dk(sk, 0.25), 0.8) + paint, 2.2);
-    s += P('M' + pt([x - 22, y + 5]) + 'C' + pt([x - 23, y + 10]) + ' ' + pt([x - 19, y + 11]) + ' ' + pt([x - 17, y + 6]) + 'Z', c.cel(dk(sk, 0.1)), 1.3);
-    if (o.noseRing) s += L(ellD(x - 20, y + 8, 2, 2), OL, 2.2) + L(ellD(x - 20, y + 8, 2, 2), GOLD, 1.1);
+    if (o.noseRing) s += L(ellD(x - 15, y + 5.5, 1.7, 1.7), OL, 2.2) + L(ellD(x - 15, y + 5.5, 1.7, 1.7), GOLD, 1.1);
+    if (o.crest && !hat) s += P('M' + pt([x - 9, y - 9]) + 'C' + pt([x - 6, y - 20]) + ' ' + pt([x + 10, y - 21]) + ' ' + pt([x + 13, y - 7]) + 'L' + pt([x + 13, y + 1]) + 'C' + pt([x + 10, y - 4]) + ' ' + pt([x + 4, y - 10]) + ' ' + pt([x - 9, y - 9]) + 'Z', c.cel(hc), 2);
+    if (o.crest) s += E(x + 5, y - 20, 5, 4, c.cel(hc), 1.8) + L('M' + pt([x - 1, y - 18]) + 'L' + pt([x + 11, y - 21]), OL, 3.4) + L('M' + pt([x - 1, y - 18]) + 'L' + pt([x + 11, y - 21]), BONE, 1.8);
     if (hat !== 'skullmask') {
       s += L('M' + pt([x - 13, y - 8]) + 'L' + pt([x - 1, y - 5]), OL, 2.6);
       s += o.glow ? glowEye(c, x - 6, y - 3, 1.8, o.eye) : C(x - 6, y - 3, 1.9, o.eye || '#ffcc30', 1) + C(x - 6.4, y - 3.4, 0.6, '#fff');
@@ -561,8 +570,9 @@
     if (o.jaw) s += P('M' + pt([x - 12, y + 10]) + 'L' + pt([x - 2, y + 11]) + 'L' + pt([x - 4, y + 19]) + 'L' + pt([x - 11, y + 17]) + 'Z', '#2a140e', 1.3) + L('M' + pt([x - 11, y + 12]) + 'l1.4,2 M' + pt([x - 8, y + 12]) + 'l1,2 M' + pt([x - 5, y + 12]) + 'l1,2', BONE, 1.1);
     else s += L('M' + pt([x - 12, y + 11]) + 'L' + pt([x - 2, y + 11]), OL, 1.4);
     var tk = o.tusk || 1;
-    s += P('M' + pt([x - 7, y + 12.5]) + 'C' + pt([x - 7 - 7 * tk, y + 13]) + ' ' + pt([x - 7 - 12 * tk, y + 12.5 - 6 * tk]) + ' ' + pt([x - 7 - 11 * tk, y + 12.5 - 13 * tk]) + 'C' + pt([x - 7 - 8 * tk, y + 12.5 - 7 * tk]) + ' ' + pt([x - 7 - 4 * tk, y + 12.5 - 5 * tk]) + ' ' + pt([x - 3, y + 9.5]) + 'Z', c.cel(o.tuskCol || BONE), 1.6);
-    if (o.tuskCap) s += P(pd([[x - 7 - 11 * tk, y + 12.5 - 13 * tk], [x - 7 - 12.6 * tk, y + 12.5 - 8 * tk], [x - 7 - 9 * tk, y + 12.5 - 8.6 * tk]], true), c.cel(GOLD), 1);
+    // small lower tusks
+    s += P('M' + pt([x - 10, y + 12]) + 'L' + pt([x - 10 - 1.6 * tk, y + 12 - 6.5 * tk]) + 'L' + pt([x - 7.5, y + 11.5]) + 'Z', c.cel(o.tuskCol || BONE), 1.2);
+    if (o.tuskCap) s += C(x - 10.4 - 1.2 * tk, y + 12 - 5 * tk, 1.3, c.cel(GOLD), 0.9);
     // headgear
     if (hat === 'band') s += L('M' + pt([x - 7, y - 12]) + 'Q' + pt([x + 3, y - 16]) + ' ' + pt([x + 12, y - 8]), OL, 4.8) + L('M' + pt([x - 7, y - 12]) + 'Q' + pt([x + 3, y - 16]) + ' ' + pt([x + 12, y - 8]), o.bandCol || RED, 3) + C(x - 1, y - 13.4, 2.4, c.cel(GOLD), 1) +
       P(pd([[x + 11, y - 9], [x + 22, y - 3], [x + 19, y], [x + 24, y + 6], [x + 13, y - 3]], true), c.cel(o.bandCol || RED), 1.3);
@@ -600,13 +610,17 @@
     if (!rag) [54, 64, 74].forEach(function (x) { o += C(x, 86, 2.4, c.cel(GOLD), 1); });
     return o;
   }
-  // ---- desert troll (facing left): tall, hunched, bent digitigrade legs, long arms ----
+  // cloth foot-wraps over a soft sole
+  function wraps(x, y, col) {
+    return boot(x, y, col) + L('M' + n(x - 5) + ',' + n(y - 7) + ' L' + n(x + 5) + ',' + n(y - 4) + ' M' + n(x - 6) + ',' + n(y - 3) + ' L' + n(x + 5) + ',' + n(y - 1), lt(col, 0.35), 1.2) + L('M' + n(x - 9) + ',' + n(y + 1) + ' L' + n(x + 6) + ',' + n(y + 1), '#3a2a1a', 1.6);
+  }
+  // ---- desert troll (facing left): tall and lean, upright, straight legs in foot-wraps ----
   function dTroll(c, o) {
     var sk = o.skin || TSKIN;
     return biped(c, {
-      skin: sk, shirt: o.shirt || sk, pants: sk, sleeve: o.sleeve || sk, forearm: o.forearm || sk, glove: o.glove, feet: toes2, boots: o.boots || dk(sk, 0.25), digi: true, legW: o.legW || 9.5, armW: o.armW || 8.5,
-      hx: o.hx || 44, hy: o.hy || 38, hipY: 86, neckCol: sk, shadowR: o.shadowR || 34,
-      torsoD: o.torsoD || 'M42,56 C44,44 70,40 82,48 L82,68 L76,88 L52,88 L46,72 Z',
+      skin: sk, shirt: o.shirt || sk, pants: sk, sleeve: o.sleeve || sk, forearm: o.forearm || sk, glove: o.glove, feet: wraps, boots: o.boots || '#8a7050', legW: o.legW || 9.5, armW: o.armW || 8.5,
+      hx: o.hx || 50, hy: o.hy || 32, hipY: 86, neckCol: sk, shadowR: o.shadowR || 34,
+      torsoD: o.torsoD || 'M44,54 C48,44 72,42 82,50 L81,68 L77,88 L51,88 L47,72 Z',
       head: function (c, x, y) { return dtHead(c, x, y, o) + (o.headX ? o.headX(c, x, y) : ''); },
       back: o.back, chest: function (c) { return L('M58,66 Q64,70 70,66', dk(o.shirt || sk, 0.3), 1.4) + (o.chest ? o.chest(c) : ''); },
       front: function (c) { return (o.skirt ? o.skirt(c) : loin(c, o.loin || RED, o.loinTrim === undefined ? GOLD : o.loinTrim, o.rag)) + (o.front ? o.front(c) : ''); },
@@ -802,7 +816,7 @@
     theka_the_martyr: function (c) {
       return G(dTroll(c, {
         hat: 'scarab', paint: 'gold', glow: true, eye: '#ffd84a', armW: 8, legW: 9,
-        torsoD: 'M44,56 C46,45 70,42 80,48 L80,68 L75,88 L53,88 L48,72 Z',
+        torsoD: 'M45,54 C49,45 71,43 80,50 L80,68 L75,88 L53,88 L48,72 Z',
         chest: function (c) {
           var col = 'M44,52 C52,64 74,64 80,50 L78,58 C70,70 52,70 46,60 Z';
           return P(col, c.cel(GOLD), 1.6) + L('M47,57 C54,65 72,65 78,55', TURQ, 1.8) + L('M50,56 l1,4 M56,60 l0,4 M63,61 l0,4 M70,60 l0,4 M76,56 l-1,4', OL, 1) + scarab(c, 62, 70, 0.7, 0.7);
@@ -877,8 +891,8 @@
     },
     chief_ukorz_sandscalp: function (c) {
       return G(dTroll(c, {
-        hat: 'crown', dreads: 3, paint: 'war', tuskCap: true, tusk: 1.25, earring: true, noseRing: true, legW: 11.5, armW: 10.5, shadowR: 42, hy: 42,
-        torsoD: 'M38,58 C40,44 72,40 86,48 L86,68 L78,88 L50,88 L44,74 Z',
+        hat: 'crown', dreads: 3, paint: 'war', tuskCap: true, tusk: 1.25, earring: true, noseRing: true, legW: 11.5, armW: 10.5, shadowR: 42, hy: 34,
+        torsoD: 'M40,56 C44,44 74,42 86,50 L86,68 L78,88 L50,88 L44,74 Z',
         loin: RED, loinTrim: GOLD,
         back: function (c) { return body(c, 'M48,50 C66,44 84,46 90,54 C100,74 106,96 112,120 L100,116 L92,121 L82,116 L72,120 C70,98 62,72 48,50 Z', RED, F('M90,52 C100,74 108,96 114,122 L96,122 C92,96 88,72 82,52 Z', '#5a0e0e', 0.55) + L('M74,119 L82,115 L92,120 L100,115 L110,119', GOLD, 1.8), 2.2); },
         chest: function (c) { return L('M44,54 L76,86 M84,52 L60,84', OL, 5) + L('M44,54 L76,86 M84,52 L60,84', '#6a3a1e', 3) + C(66, 70, 5.4, c.cel(GOLD), 1.6) + C(66, 70, 2.2, c.cel(RED), 1) + F('M50,62 l6,-2 l1,4 Z M74,58 l6,1 l-2,4 Z', RED, 0.9); },

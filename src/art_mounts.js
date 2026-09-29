@@ -327,31 +327,36 @@
       return s;
     },
 
-    /* night elf: a purple-striped nightsaber in a teal and silver moon-crested saddle */
+    /* wood elf: a smoky grey rosetted forest cat in a teal and silver moon-crested saddle */
     nightsaber: function (c, o) {
-      var col = '#7a66ae', st = '#2e2448', bel = '#bcaede', teal = '#2a7a7c', silver = '#dce4ec', s = o.icon ? '' : shadow(c, 82, 58), dc = dk(col, 0.28);
+      var col = '#86878c', st = '#34343a', bel = '#d4d2cc', teal = '#2a7a7c', silver = '#dce4ec', s = o.icon ? '' : shadow(c, 82, 58), dc = dk(col, 0.28);
+      // leopard-like rosette: a broken dark ring round a slightly darker centre
+      var ros = function (x, y, r, a) {
+        var o2 = E(x, y, r * 0.7, r * 0.56, dk(col, 0.14), 0, 0.9), k;
+        for (k = 0; k < 3; k++) { var a0 = (a || 0) + k * 2.1, a1 = a0 + 1.45; o2 += L('M' + pt([x + Math.cos(a0) * r, y + Math.sin(a0) * r * 0.8]) + 'A' + n(r) + ',' + n(r * 0.8) + ' 0 0 1 ' + pt([x + Math.cos(a1) * r, y + Math.sin(a1) * r * 0.8]), st, r * 0.42); }
+        return o2;
+      };
+      var rosList = function (list) { return list.map(function (q) { return ros(q[0], q[1], q[2], q[3]); }).join(''); };
       s += leg([[56, 86], [60, 102, 11], [52, 116, 8]], dc) + paw(52, 121, dk(col, 0.4));
       s += leg([[104, 86], [108, 102, 10], [106, 116, 8]], dc) + paw(106, 121, dk(col, 0.4));
-      s += L('M56,102 l6,1 M54,110 l6,0 M104,100 l6,-1 M104,108 l6,0', st, 2.2);
+      s += C(58, 104, 1.8, st) + C(55, 111, 1.5, st) + C(106, 100, 1.8, st) + C(107, 108, 1.5, st);
       // tail, curling up behind
       var T = taper([[40, 68], [28, 64], [18, 52], [18, 38], [26, 30]], 10, 5.6, 5);
-      s += body(c, T.d, col, L(bands(T, 4, 3), st, 2.8) + F(tipD(T, 16), st, 0.95) + F(ribbonBand(T, 0.6, 1), dk(col, 0.22), 0.6), 2);
+      s += body(c, T.d, col, rosList([[36, 64, 3, 0.3], [26, 58, 2.8, 1.2], [20, 48, 2.6, 2], [20, 38, 2.2, 0.6]]) + F(tipD(T, 16), st, 0.95) + F(ribbonBand(T, 0.6, 1), dk(col, 0.22), 0.6), 2);
       // body
       var bd = 'M34,76 C32,62 44,57 56,58 C70,61 86,61 100,58 C112,56 124,62 126,72 C128,84 120,93 108,94 C96,96 84,92 70,95 C56,97 42,95 36,88 Z';
-      var stripes = '';
-      [[48, 57, 16, 0.12, 6], [58, 58, 18, -0.06, 6], [98, 58, 20, 0.06, 6.4], [108, 58, 18, -0.1, 6], [117, 62, 14, -0.3, 5.4]].forEach(function (k) { stripes += wedge(k[0], k[1], k[2], PI / 2 + k[3], k[4]); });
-      [[52, 97, 11, 0.1, 4.4], [66, 98, 11, -0.08, 4.4], [100, 96, 11, 0.12, 4.4]].forEach(function (k) { stripes += wedge(k[0], k[1], k[2], -PI / 2 + k[3], k[4]); });
-      s += body(c, bd, col, F('M28,86 C50,100 96,100 130,88 L130,106 L28,106 Z', bel, 0.9) + F(stripes, st) + F('M40,58 C54,56 70,62 86,62 L86,66 C70,66 54,62 40,64 Z', lt(col, 0.2), 0.5), 2.4);
+      var spots = rosList([[42, 70, 4, 0.2], [50, 80, 4.4, 1], [44, 88, 3.4, 2], [56, 66, 3.6, 2.4], [62, 88, 4, 0.6], [100, 70, 4.2, 1.4], [110, 66, 3.8, 0.4], [106, 80, 4.4, 2.2], [118, 74, 3.6, 1], [96, 88, 3.8, 0.2], [114, 88, 3.2, 1.8], [74, 90, 3.4, 1.2], [86, 92, 3.2, 2.6]]);
+      s += body(c, bd, col, F('M28,86 C50,100 96,100 130,88 L130,106 L28,106 Z', bel, 0.9) + spots + F('M40,58 C54,56 70,62 86,62 L86,66 C70,66 54,62 40,64 Z', lt(col, 0.2), 0.5), 2.4);
       // shoulder
-      s += P('M122,76 C122,64 112,58 102,62 C110,64 114,70 114,80 Z', c.cel(col), 1.8) + F(wedge(114, 60, 11, PI / 2 - 0.3, 4.4), st);
+      s += P('M122,76 C122,64 112,58 102,62 C110,64 114,70 114,80 Z', c.cel(col), 1.8) + ros(114, 68, 3.2, 0.8);
       // head (facing right)
       var h = '';
       h += P('M126,56 C124,44 132,42 136,52 Z', c.cel(dk(col, 0.15)), 1.8);
       var hd = 'M112,64 C114,54 126,50 136,53 C142,55 148,58 152,62 C157,65 160,71 158,76 C156,82 150,85 143,84 C135,88 123,86 117,80 C112,75 110,69 112,64 Z';
       h += body(c, hd, col, F('M112,54 L126,54 C116,62 116,78 124,88 L110,88 Z', dk(col, 0.22), 0.7) + F('M158,74 C152,83 142,86 130,84 L126,78 C136,80 146,78 154,70 Z', bel, 0.95) +
-        F(wedge(124, 52, 8, PI / 2 - 0.2, 3.4) + wedge(130, 51, 9, PI / 2, 3.4) + wedge(117, 57, 8, PI / 2 + 0.4, 3.2) + wedge(113, 66, 11, 0.1, 3.4) + wedge(114, 76, 9, -0.2, 3), st), 2.2);
-      h += P('M118,58 C118,46 128,46 128,56 Z', c.cel(col), 1.8) + P('M120.6,56 C121,50 125.6,50 125.8,55 Z', '#4a2a44', 0);
-      h += P('M158,72 C158,66 150,64 145,67 C142,70 143,76 147,78 C152,80 158,77 158,72 Z', bel, 1.4) + P('M159,67.6 L153,66.4 L154.6,71.4 Z', '#3a2030', 1.2);
+        C(126, 56, 1.4, st) + C(131, 55, 1.3, st) + C(136, 57, 1.2, st) + C(129, 60, 1.2, st) + ros(118, 70, 3, 1.1) + ros(120, 79, 2.6, 2.3) + C(140, 58, 1, st), 2.2);
+      h += P('M118,58 C118,46 128,46 128,56 Z', c.cel(col), 1.8) + P('M120.6,56 C121,50 125.6,50 125.8,55 Z', '#3a2a2a', 0);
+      h += P('M158,72 C158,66 150,64 145,67 C142,70 143,76 147,78 C152,80 158,77 158,72 Z', bel, 1.4) + P('M159,67.6 L153,66.4 L154.6,71.4 Z', '#2e2626', 1.2);
       h += L('M156,78 Q151,81 145,78', OL, 1.4) + P('M153,79 L152,84.4 L150.4,79.4 Z', '#fff', 0.8) + P('M148,79.2 L147,83.6 L145.6,79 Z', '#fff', 0.8);
       h += L('M149,61 L136.6,63', OL, 2.4) + glowEye(c, 142.6, 66, 2.2, '#a8ff9a') + L('M147,66.4 L138.6,66.4', OL, 0.8);
       h += L('M148,74 l10,-3 M148,76 l10,2', '#ffffff', 0.8, 0.9);
@@ -359,10 +364,10 @@
       // saddle: teal blanket with silver trim and a crescent moon
       var em = P('M78,72 C72,72 68,76 68,80 C68,85 72,88 78,88 C74,86 72,83 72,80 C72,76 74,73 78,72 Z', c.cel(silver), 1.3) + C(80, 76, 0.9, silver) + C(82, 81, 0.7, silver);
       var pat = L('M52,66 C60,70 66,64 72,68 C78,72 86,64 94,68', lt(teal, 0.3), 1.2, 0.8);
-      s += saddle(c, { leather: '#4a2e44', blanket: teal, trim: silver, metal: silver, emblem: em, rim: silver, pattern: pat });
+      s += saddle(c, { leather: '#3a3234', blanket: teal, trim: silver, metal: silver, emblem: em, rim: silver, pattern: pat });
       s += leg([[46, 86], [52, 102, 13], [44, 116, 9]], col) + paw(46, 121, dk(col, 0.35));
       s += leg([[116, 86], [118, 102, 12], [122, 116, 9]], col) + paw(124, 121, dk(col, 0.35));
-      s += L('M46,100 l6,1 M42,108 l6,1 M114,98 l7,0 M116,106 l7,1', st, 2.4);
+      s += ros(48, 100, 3, 0.4) + C(44, 109, 1.8, st) + ros(117, 98, 3, 1.6) + C(119, 107, 1.8, st);
       // silver bridle + reins
       s += L('M126,58 L138,72 L146,80 M138,72 L148,70', OL, 3.2) + L('M126,58 L138,72 L146,80 M138,72 L148,70', silver, 1.5) + C(146, 80, 1.8, silver, 1);
       s += reins([146, 80], [89, 57], teal, 4);
@@ -444,32 +449,32 @@
       return s;
     },
 
-    /* tauren: a massive grey kodo with a wooden howdah-like saddle, painted cloth and feathers */
+    /* hornfolk: a massive grey dustback (armoured, scute-backed lizard-beast, small brow horns, clubbed tail) with a wooden howdah-like saddle, painted cloth and feathers */
     kodo: function (c, o) {
       var col = '#8c857c', dc = dk(col, 0.28), bel = '#b4ac9e', plate = '#6a6258', wood = '#8a5a30', red = '#b4402a', cream = '#ecc878', s = o.icon ? '' : shadow(c, 80, 66);
       // far legs: thick columns with toenails
       var foot = function (x, cc) { return P('M' + pt([x - 9, 116]) + 'L' + pt([x + 9, 116]) + 'L' + pt([x + 10.4, 122]) + 'L' + pt([x - 10, 122]) + 'Z', cc, 2) + E(x - 4, 121, 2.4, 1.6, '#e8dcc0', 1) + E(x + 2, 121, 2.4, 1.6, '#e8dcc0', 1) + E(x + 7.6, 121, 2, 1.5, '#e8dcc0', 1); };
       s += leg([[52, 90], [52, 104, 18], [52, 116, 16]], dc) + foot(52, dk(dc, 0.1));
       s += leg([[100, 90], [101, 104, 18], [101, 116, 16]], dc) + foot(101, dk(dc, 0.1));
-      // stubby tail with a tuft
-      s += limb('M22,70 C14,74 12,82 12,88', col, 5) + P(shag(12, 92, 4.6, 6.4, 6, 0.3, 61), c.cel('#4a4038'), 1.4);
+      // short thick tail ending in a bony club
+      s += limb('M24,72 C14,76 10,84 10,92', col, 7) + body(c, 'M4,94 C3,88 10,86 15,89 C19,92 18,100 12,102 C7,103 4,99 4,94 Z', plate, E(10, 93, 2, 1.4, lt(plate, 0.4), 0, 0.8) + P('M4,95 L0,93 L4,91 Z', '#e8dcc0', 0), 2);
       // huge body with a shoulder hump
       var bd = 'M18,82 C14,64 24,52 40,52 C54,52 62,58 76,58 C90,58 100,46 114,46 C130,46 138,62 136,80 C134,96 122,102 106,102 C88,104 64,104 44,102 C28,100 20,94 18,82 Z';
       var wr = L('M28,72 C32,76 32,84 28,90 M40,74 C44,80 44,88 40,94 M112,58 C116,64 118,72 116,80 M122,56 C126,64 128,72 126,82', dk(col, 0.25), 1.3, 0.9);
       s += body(c, bd, col, wr + F('M12,92 C40,108 110,110 140,90 L140,110 L12,110 Z', bel, 0.85) + F('M22,62 C30,54 44,52 56,56 L56,60 C44,56 32,58 24,66 Z', lt(col, 0.2), 0.6), 2.6);
-      // back plates along the hump
-      s += P('M98,52 L104,40 L110,48 L116,38 L122,48 L128,44 L130,56 C118,52 108,52 98,56 Z', c.cel(plate), 1.8);
+      // armoured back: scute plates over the rump and the shoulder hump, bony knobs along the flank
+      var scu = function (list) { return list.map(function (q) { return body(c, ellD(q[0], q[1], q[2], q[3]), plate, C(q[0], q[1] - q[3] * 0.25, q[3] * 0.34, lt(plate, 0.35), 0, 0.9), 1.6); }).join(''); };
+      s += scu([[26, 62, 6.4, 4.2], [36, 56, 6.8, 4.4], [24, 74, 5, 3.6], [100, 50, 6.6, 4.2], [112, 47, 7, 4.4], [124, 52, 6.4, 4.2], [130, 62, 5, 3.6]]);
+      [[22, 86], [30, 92], [122, 76], [130, 82]].forEach(function (g) { s += P('M' + (g[0] - 3.6) + ',' + (g[1] - 1) + ' L' + g[0] + ',' + (g[1] + 5) + ' L' + (g[0] + 3.6) + ',' + (g[1] - 1) + ' Z', c.cel('#e8dcc0'), 1.3); });
       // head: heavy, low, beaked
       var hd = 'M114,60 C118,50 132,46 144,52 C152,56 156,64 158,74 C160,84 156,94 148,98 C142,101 134,98 130,92 C124,86 116,80 114,72 Z';
       s += body(c, hd, col, F('M146,48 L164,48 L164,104 L148,104 C158,90 156,64 146,48 Z', dk(col, 0.25), 0.8) + L('M122,62 C126,68 128,76 126,84', dk(col, 0.28), 1.3) + F('M150,88 C152,94 148,100 140,100 L136,104 L156,104 Z', bel, 0.9), 2.5);
-      // beak / mouth plate
-      s += P('M146,80 C152,80 158,84 158,92 C158,98 152,102 146,100 C150,96 150,88 146,80 Z', c.cel('#5a5048'), 1.6);
-      s += L('M140,92 C144,94 148,94 152,92', OL, 1.4);
-      // brow horns
-      // bony crest plate over the skull, then a pair of short horns curving forward from the side of the head
-      s += P('M112,60 C112,48 122,42 134,44 C142,45 148,50 150,56 C142,52 134,52 126,56 C120,58 116,62 114,66 Z', c.cel(plate), 1.8) + L('M118,54 C124,49 132,48 140,49 M116,60 C122,55 130,53 138,54', dk(plate, 0.35), 1.2);
-      var hn = 'M126,64 C126,56 132,50 142,48 C150,47 156,50 158,54 C152,53 146,54 140,57 C136,60 134,64 132,68 Z';
-      s += P(hn, c.cel('#e8dcc0'), 1.8) + L('M134,58 L136,62 M142,54 L143,58 M150,51 L150,54.6', dk('#e8dcc0', 0.35), 1.1);
+      // lizard mouth line and nostril
+      s += L('M136,90 C142,94 150,95 157,90', OL, 1.5) + E(154, 78, 1.3, 2, OL);
+      // small armour plates over the skull, then a short horn swept back above the eye
+      s += P('M112,60 C112,48 122,42 134,44 C142,45 148,50 150,56 C142,52 134,52 126,56 C120,58 116,62 114,66 Z', c.cel(plate), 1.8) + L(ellD(124, 50, 4.4, 2.6) + ellD(136, 48.6, 4.4, 2.6), dk(plate, 0.4), 1.1);
+      var hn = 'M136,58 C134,52 130,47 123,44 C129,49 130,54 130,60 Z';
+      s += P(hn, c.cel('#e8dcc0'), 1.8) + L('M130,51 L133,50', dk('#e8dcc0', 0.35), 1.1);
       s += L('M138,66 L148,68', OL, 2.2) + E(144, 70.4, 2, 1.5, '#e8a020', 1) + E(144.4, 70.4, 0.6, 1.2, OL);
       // howdah: cloth blanket with a zigzag border, wooden frame, feathers
       var bl = 'M44,57 L102,54 C106,68 106,82 104,94 C84,100 62,100 44,94 C40,82 40,68 44,57 Z';
@@ -486,9 +491,9 @@
       // near legs
       s += leg([[40, 92], [40, 106, 20], [40, 116, 18]], col) + foot(40, dk(col, 0.1));
       s += leg([[112, 92], [114, 106, 19], [114, 116, 17]], col) + foot(114, dk(col, 0.1));
-      // nose ring + reins
-      s += L(ellD(152, 86, 3, 3.6), OL, 3) + L(ellD(152, 86, 3, 3.6), '#d6a53c', 1.4);
-      s += reins([150, 88], [89, 57], '#5a3418', 10);
+      // rope halter round the snout + reins
+      s += L('M148,72 C150,80 150,88 146,96', OL, 3.2) + L('M148,72 C150,80 150,88 146,96', '#8a6a3a', 1.6) + C(148, 86, 2, c.cel('#c8a070'), 1);
+      s += reins([148, 86], [89, 57], '#5a3418', 10);
       return s;
     },
 
@@ -571,7 +576,7 @@
     horse: [134, 33, 0.98, ['#4a74c8', '#0c1430']],
     ram: [126, 52, 1.0, ['#8ab0d0', '#10202e']],
     mechanostrider: [128, 36, 1.08, ['#40b0b8', '#062024']],
-    nightsaber: [134, 68, 1.08, ['#8a5ac8', '#12082a']],
+    nightsaber: [134, 68, 1.08, ['#6a8a8e', '#0a1416']],
     wolf: [134, 58, 1.06, ['#c83a24', '#240604']],
     raptor: [134, 38, 1.04, ['#8ac848', '#0e2408']],
     kodo: [132, 70, 0.96, ['#d0a060', '#281808']],

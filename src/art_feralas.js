@@ -722,7 +722,7 @@
   // ============================================================
   //  FERALAS PIECES
   // ============================================================
-  var BARK = '#8e4a30', FERN = '#4e8a36', FOL = '#3a6a2e', MISTC = '#dfe6c8', ELF = '#9284b4', MOONC = '#e6eeff', NELF = '#4a3a8e', NTRIM = '#c8c0f0',
+  var BARK = '#8e4a30', FERN = '#4e8a36', FOL = '#3a6a2e', MISTC = '#dfe6c8', ELF = '#a4aaa6', MOONC = '#e6eeff', NELF = '#2e4a7a', NTRIM = '#c8d4e0',
     HIDE = '#c09060', TAUR = '#b0402a', TTEAL = '#3a8a8a', DES = '#8e887e', MARA = '#b45aff', COR = '#e0707a', NST = '#6e8e8a', OGR = '#9a3a24';
   function frSky(c, top, mid, bot) { return sky(c, top || '#9cbaa0', mid || '#d8dcae', bot || '#f0e2aa'); }
   function rain(seed, cnt, col, op, y0, y1) { var r = rng(seed), d = ''; y0 = y0 || 0; y1 = y1 || 240; for (var i = 0; i < cnt; i++) { var x = r() * 440 - 20, y = y0 + r() * (y1 - y0), l = 6 + r() * 9; d += 'M' + pt([x, y]) + 'l' + n(-l * 0.28) + ',' + n(l); } return L(d, col || '#e8eef4', 0.8, op || 0.5); }
@@ -764,7 +764,7 @@
     col = col || BARK; var d = 'M' + pt([x - 30 * s, y + 2]) + 'C' + pt([x - 20 * s, y - 8 * s]) + ' ' + pt([x - 6 * s, y - 10 * s]) + ' ' + pt([x + 4 * s, y - 6 * s]) + 'C' + pt([x + 14 * s, y - 10 * s]) + ' ' + pt([x + 26 * s, y - 6 * s]) + ' ' + pt([x + 34 * s, y + 2]) + 'Z';
     return body(c, d, col, F(pd([[x + 4 * s, y - 12 * s], [x + 36 * s, y - 12 * s], [x + 36 * s, y + 4], [x + 8 * s, y + 4]], true), dk(col, 0.3), 0.8) + L('M' + pt([x - 20 * s, y - 4 * s]) + 'Q' + pt([x - 8 * s, y - 8 * s]) + ' ' + pt([x + 2 * s, y - 4 * s]), lt(col, 0.25), 1.2 * s, 0.8), 1.6 * s);
   }
-  // ---- night-elf stone ----
+  // ---- elven stone ----
   // column: tapering fluted shaft, curled leaf capital, crescent finial; broken ones end in a jag with moss (x = centre, y = base)
   function elfColumn(c, x, y, w, h, col, seed, broken) {
     col = col || ELF; var hw = w / 2, top = y - h, o = E(x, y + 2, w * 1.1, 3.4, '#000', 0, 0.25);
@@ -774,7 +774,7 @@
     o += body(c, sh, col, L(fl, dk(col, 0.3), 1.1) + F(pd([[x + hw * 0.3, top - 4], [x + hw + 2, top - 4], [x + hw + 2, y], [x + hw * 0.36, y]], true), dk(col, 0.3), 0.8) + L('M' + pt([x - hw * 0.72, y - 8]) + 'L' + pt([x - hw * 0.62, top + 10]), lt(col, 0.3), 1.2, 0.7), 1.6);
     if (!broken) {
       o += P('M' + pt([x - hw * 0.9, top + 9]) + 'C' + pt([x - hw * 2, top + 7]) + ' ' + pt([x - hw * 2.3, top - 3]) + ' ' + pt([x - hw * 1.5, top - 6]) + 'C' + pt([x - hw * 1.3, top - 1]) + ' ' + pt([x - hw * 0.6, top]) + ' ' + pt([x, top + 2]) + 'C' + pt([x + hw * 0.6, top]) + ' ' + pt([x + hw * 1.3, top - 1]) + ' ' + pt([x + hw * 1.5, top - 6]) + 'C' + pt([x + hw * 2.3, top - 3]) + ' ' + pt([x + hw * 2, top + 7]) + ' ' + pt([x + hw * 0.9, top + 9]) + 'Z', c.cel(lt(col, 0.1)), 1.5);
-      o += P(crescentD(x, top - 5, Math.max(4, hw * 0.9)), c.cel('#d8d4f0'), 1.2);
+      o += P(crescentD(x, top - 5, Math.max(4, hw * 0.9)), c.cel('#d5dfef'), 1.2);
     } else o += mossTop(x - hw * 0.8, x + hw * 0.8, top + 10, seed, '#5e8a3e');
     return o;
   }
@@ -784,20 +784,20 @@
     var pts = [[x - hw, top + 6], [x - hw * 0.62, top - h * 0.3], [x, top - h * 0.46], [x + hw * 0.62, top - h * 0.3], [x + hw, top + 6]];
     var T = taper(broken ? pts.slice(0, 3).concat([[x + hw * 0.18, top - h * 0.36]]) : pts, 11, 9, 6);
     o += body(c, T.d, lt(col, 0.05), F(ribbonBand(T, 0.6, 1), dk(col, 0.25), 0.8) + L(bands(T, 4, 3), dk(col, 0.3), 1), 1.6);
-    if (!broken) o += P(crescentD(x, top - h * 0.46 - 8, 6), c.cel('#d8d4f0'), 1.2);
+    if (!broken) o += P(crescentD(x, top - h * 0.46 - 8, 6), c.cel('#d5dfef'), 1.2);
     o += elfColumn(c, x - hw, y, 12, h, col, seed) + elfColumn(c, x + hw, y, 12, broken ? h * 0.6 : h, col, (seed || 1) + 1, broken);
     return o;
   }
-  // tall night-elf tower: tapering walls, glowing arched windows, a sweeping leaf roof and crescent spire (x = centre, y = base)
+  // tall elven tower: tapering walls, glowing arched windows, a sweeping leaf roof and crescent spire (x = centre, y = base)
   function elfTower(c, x, y, w, h, col, roof) {
-    col = col || ELF; roof = roof || '#4e3e86'; var hw = w / 2, top = y - h, o = E(x, y + 2, w * 0.8, 4, '#000', 0, 0.25);
+    col = col || ELF; roof = roof || '#2e5a4a'; var hw = w / 2, top = y - h, o = E(x, y + 2, w * 0.8, 4, '#000', 0, 0.25);
     var d = pd([[x - hw, y], [x - hw * 0.82, top], [x + hw * 0.82, top], [x + hw, y]], true);
     o += body(c, d, col, F(pd([[x + hw * 0.2, top - 2], [x + hw + 2, top - 2], [x + hw + 2, y + 2], [x + hw * 0.3, y + 2]], true), dk(col, 0.28), 0.8) + L('M' + pt([x - hw * 0.5, y]) + 'L' + pt([x - hw * 0.4, top]) + 'M' + pt([x + hw * 0.5, y]) + 'L' + pt([x + hw * 0.4, top]), dk(col, 0.2), 1, 0.8) + L('M' + pt([x - hw, top + h * 0.34]) + 'L' + pt([x + hw, top + h * 0.34]) + 'M' + pt([x - hw, top + h * 0.7]) + 'L' + pt([x + hw, top + h * 0.7]), dk(col, 0.3), 1.4), 1.8);
-    [[0.2, 0.36], [0.55, 0.3]].forEach(function (wv) { var wy = top + h * wv[0] + 12, ww = w * wv[1] * 0.5; o += C(x, wy - 6, ww * 3, glow(c, '#d8d0ff', 0.45)) + archWin(x, wy, ww, 14, '#e4dcff', 1.2) + L('M' + pt([x, wy]) + 'L' + pt([x, wy - 10]), '#8a7ac8', 0.9); });
+    [[0.2, 0.36], [0.55, 0.3]].forEach(function (wv) { var wy = top + h * wv[0] + 12, ww = w * wv[1] * 0.5; o += C(x, wy - 6, ww * 3, glow(c, '#d2e3fd', 0.45)) + archWin(x, wy, ww, 14, '#deeafd', 1.2) + L('M' + pt([x, wy]) + 'L' + pt([x, wy - 10]), '#7e9ac4', 0.9); });
     var rw = hw * 1.5, rh = w * 1.3;
     o += P('M' + pt([x - rw, top + 5]) + 'C' + pt([x - rw * 0.7, top - 4]) + ' ' + pt([x - rw * 0.3, top - rh * 0.4]) + ' ' + pt([x, top - rh]) + 'C' + pt([x + rw * 0.3, top - rh * 0.4]) + ' ' + pt([x + rw * 0.7, top - 4]) + ' ' + pt([x + rw, top + 5]) + 'C' + pt([x + rw * 0.5, top]) + ' ' + pt([x - rw * 0.5, top]) + ' ' + pt([x - rw, top + 5]) + 'Z', c.cel(roof), 1.8);
     o += F('M' + pt([x, top - rh]) + 'C' + pt([x + rw * 0.3, top - rh * 0.4]) + ' ' + pt([x + rw * 0.7, top - 4]) + ' ' + pt([x + rw, top + 5]) + 'C' + pt([x + rw * 0.6, top + 1]) + ' ' + pt([x + rw * 0.2, top]) + ' ' + pt([x + 1, top]) + 'Z', dk(roof, 0.3), 0.8) + L('M' + pt([x - rw * 0.55, top + 1]) + 'C' + pt([x - rw * 0.3, top - rh * 0.3]) + ' ' + pt([x - 3, top - rh * 0.7]) + ' ' + pt([x - 1, top - rh + 4]), lt(roof, 0.3), 1.1, 0.8);
-    return o + limb('M' + pt([x, top - rh]) + 'L' + pt([x, top - rh - 8]), '#b8b0d8', 1.6) + P(crescentD(x, top - rh - 10, 5), c.cel('#e0dcf8'), 1.1);
+    return o + limb('M' + pt([x, top - rh]) + 'L' + pt([x, top - rh - 8]), '#b2c0d6', 1.6) + P(crescentD(x, top - rh - 10, 5), c.cel('#dde7f7'), 1.1);
   }
   // smooth wall with leaf-shaped merlons (x0..x1 at ground y)
   function elfWall(c, x0, x1, y, h, col) {
@@ -808,13 +808,13 @@
   // long violet banner hanging from a wall top, with a crescent (x = centre, y = top)
   function elfBanner(c, x, y, w, h) {
     var d = pd([[x - w / 2, y], [x + w / 2, y], [x + w / 2, y + h], [x, y + h + w * 0.6], [x - w / 2, y + h]], true);
-    return body(c, d, NELF, L(pd([[x - w / 2 + 2, y + 2], [x - w / 2 + 2, y + h]]) + pd([[x + w / 2 - 2, y + 2], [x + w / 2 - 2, y + h]]), NTRIM, 1.2) + F(pd([[x + w * 0.1, y], [x + w / 2 + 1, y], [x + w / 2 + 1, y + h + w], [x + w * 0.1, y + h + w]], true), '#000', 0.25), 1.4) + moonMark(x, y + h * 0.4, w / 14) + R(x - w / 2 - 2, y - 2, w + 4, 3.4, c.cel('#c8c0e8'), 1);
+    return body(c, d, NELF, L(pd([[x - w / 2 + 2, y + 2], [x - w / 2 + 2, y + h]]) + pd([[x + w / 2 - 2, y + 2], [x + w / 2 - 2, y + h]]), NTRIM, 1.2) + F(pd([[x + w * 0.1, y], [x + w / 2 + 1, y], [x + w / 2 + 1, y + h + w], [x + w * 0.1, y + h + w]], true), '#000', 0.25), 1.4) + moonMark(x, y + h * 0.4, w / 14) + R(x - w / 2 - 2, y - 2, w + 4, 3.4, c.cel('#c2d0e6'), 1);
   }
   // curved night-elf lamp post with a hanging moon-lantern (x = foot, y = ground)
   function moonLamp(c, x, y, s) {
     var d = 'M' + pt([x, y]) + 'C' + pt([x - 1 * s, y - 30 * s]) + ' ' + pt([x + 2 * s, y - 46 * s]) + ' ' + pt([x - 10 * s, y - 52 * s]) + 'C' + pt([x - 16 * s, y - 54 * s]) + ' ' + pt([x - 20 * s, y - 48 * s]) + ' ' + pt([x - 18 * s, y - 44 * s]);
     var lx = x - 18 * s, ly = y - 36 * s;
-    return E(x, y + 1, 7 * s, 2 * s, '#000', 0, 0.3) + C(lx, ly, 22 * s, glow(c, '#cfd8ff', 0.6)) + limb(d, '#8a7ab0', 2.4 * s) + L('M' + pt([lx, ly - 8 * s]) + 'L' + pt([lx, ly - 5 * s]), OL, 1 * s) + P(pd([[lx - 4.6 * s, ly - 3 * s], [lx, ly - 7 * s], [lx + 4.6 * s, ly - 3 * s], [lx + 3.4 * s, ly + 5 * s], [lx, ly + 8 * s], [lx - 3.4 * s, ly + 5 * s]], true), '#eef2ff', 1.1 * s) + C(lx, ly + 1 * s, 2 * s, '#ffffff') + P(pd([[lx - 5.6 * s, ly - 3 * s], [lx, ly - 8 * s], [lx + 5.6 * s, ly - 3 * s]], true), c.cel('#8a7ab0'), 1 * s);
+    return E(x, y + 1, 7 * s, 2 * s, '#000', 0, 0.3) + C(lx, ly, 22 * s, glow(c, '#cfd8ff', 0.6)) + limb(d, '#7d90ad', 2.4 * s) + L('M' + pt([lx, ly - 8 * s]) + 'L' + pt([lx, ly - 5 * s]), OL, 1 * s) + P(pd([[lx - 4.6 * s, ly - 3 * s], [lx, ly - 7 * s], [lx + 4.6 * s, ly - 3 * s], [lx + 3.4 * s, ly + 5 * s], [lx, ly + 8 * s], [lx - 3.4 * s, ly + 5 * s]], true), '#eef2ff', 1.1 * s) + C(lx, ly + 1 * s, 2 * s, '#ffffff') + P(pd([[lx - 5.6 * s, ly - 3 * s], [lx, ly - 8 * s], [lx + 5.6 * s, ly - 3 * s]], true), c.cel('#7d90ad'), 1 * s);
   }
   // ---- tauren camp ----
   // tall hide tent on long crossed poles with painted bands (x = centre, y = ground)
@@ -1001,24 +1001,24 @@
   // ============================================================
   var SCENES = {
     feathermoon_stronghold: function (c) {
-      var o = sky(c, '#2a2e5e', '#6a5e94', '#e0a8a0') + stars(1101, 40, 90) + moon(c, 318, 40, 13) + cloud(120, 56, 0.9, 0.35, '#b8a8d8') + cloud(250, 74, 0.7, 0.3, '#d8b0c0');
-      o += farPines(1103, 114, '#3a3a60', 16, 22, 40, -10, 130) + farPines(1104, 114, '#40406a', 10, 12, 20, 360, 410) + hills(c, 1105, 116, 6, '#3a3a5e', 30);
-      o += lake(c, 112, 190, '#8a82b4', '#2e2e5a', 1107, 34) + F(pd([[296, 112], [340, 112], [352, 190], [284, 190]], true), c.lg([[0, '#e8ecff', 0.35], [1, '#e8ecff', 0]]));
+      var o = sky(c, '#1c2e44', '#3e6072', '#b8c4a8') + stars(1101, 40, 90) + moon(c, 318, 40, 13) + cloud(120, 56, 0.9, 0.35, '#aabcd6') + cloud(250, 74, 0.7, 0.3, '#d8b0c0');
+      o += farPines(1103, 114, '#3c4a5e', 16, 22, 40, -10, 130) + farPines(1104, 114, '#425168', 10, 12, 20, 360, 410) + hills(c, 1105, 116, 6, '#3c495c', 30);
+      o += lake(c, 112, 190, '#8496b2', '#304058', 1107, 34) + F(pd([[296, 112], [340, 112], [352, 190], [284, 190]], true), c.lg([[0, '#e8ecff', 0.35], [1, '#e8ecff', 0]]));
       // island and fortress
-      o += body(c, 'M150,156 C160,140 200,134 260,134 C310,134 350,140 368,156 C340,162 180,162 150,156 Z', '#5a5a6e', F('M150,156 C170,150 330,150 368,156 L368,162 L150,162 Z', '#2e2e3e', 0.6), 1.8);
-      o += F('M156,160 C200,168 320,168 364,160 L364,178 C320,184 200,184 156,178 Z', '#6a5aa0', 0.25);
-      o += elfWall(c, 168, 356, 146, 18, '#8a7cae') + elfTower(c, 196, 144, 20, 50, '#9486ba') + elfTower(c, 330, 144, 18, 40, '#8e80b4');
-      o += elfTower(c, 262, 140, 30, 62, '#9a8cc0', '#56448e') + elfBanner(c, 230, 130, 10, 18) + elfBanner(c, 294, 130, 10, 18);
-      o += C(262, 120, 40, glow(c, '#cfc8ff', 0.25));
+      o += body(c, 'M150,156 C160,140 200,134 260,134 C310,134 350,140 368,156 C340,162 180,162 150,156 Z', '#5a5a6e', F('M150,156 C170,150 330,150 368,156 L368,162 L150,162 Z', '#2f353d', 0.6), 1.8);
+      o += F('M156,160 C200,168 320,168 364,160 L364,178 C320,184 200,184 156,178 Z', '#5e779c', 0.25);
+      o += elfWall(c, 168, 356, 146, 18, '#9aa29c') + elfTower(c, 196, 144, 20, 50, '#a8aea8') + elfTower(c, 330, 144, 18, 40, '#a0a8a2');
+      o += elfTower(c, 262, 140, 30, 62, '#b0b4ac', '#2a5444') + elfBanner(c, 230, 130, 10, 18) + elfBanner(c, 294, 130, 10, 18);
+      o += C(262, 120, 40, glow(c, '#cbdffc', 0.25));
       // shore and pier in front
       o += body(c, 'M-4,192 C60,184 140,186 210,192 C280,198 340,190 404,186 L404,242 L-4,242 Z', '#8a8274', R(-4, 180, 408, 64, c.lg([[0, '#b8ae98', 0.5], [1, '#2a2620', 0.9]])), 1.6);
       o += L('M-4,194 C60,186 140,188 206,194', '#e8ecff', 1.6, 0.6);
       var pier = pd([[250, 196], [372, 150], [384, 152], [274, 204]], true);
-      o += body(c, pier, '#7a6a8a', L('M270,190 L282,196 M294,182 L306,188 M318,173 L330,179 M342,164 L354,170', dk('#7a6a8a', 0.35), 1.2), 1.6) + limb('M262,202 L262,214 M378,151 L378,162', '#5a4a6a', 3);
+      o += body(c, pier, '#7a6a54', L('M270,190 L282,196 M294,182 L306,188 M318,173 L330,179 M342,164 L354,170', dk('#7a6a54', 0.35), 1.2), 1.6) + limb('M262,202 L262,214 M378,151 L378,162', '#5a4a3a', 3);
       o += moonLamp(c, 238, 206, 1.1) + moonLamp(c, 376, 154, 0.7) + flag(c, 60, 200, 64, 1.1, NELF, NTRIM, moonMark) + flag(c, 180, 198, 52, 0.85, NELF, NTRIM, moonMark);
       o += grass(1109, 196, 238, '#3e3e4a', 30, 0.6, 1.4, 1.1) + pebbles(1110, 200, 236, '#5e5a52', 12);
       o += redwood(c, -6, 238, 34, '#6a3e36', 1111) + fern(c, 30, 244, 1.1, '#3e5a4a') + fern(c, 396, 246, 1.2, '#3e5a4a') + fern(c, 150, 250, 0.8, '#44604e');
-      return o + fireflies(1113, 12, 0, 400, 150, 230) + vignette(c, '#c8c8ff', '#06060e');
+      return o + fireflies(1113, 12, 0, 400, 150, 230) + vignette(c, '#cbdffc', '#06090e');
     },
     camp_mojache: function (c) {
       var o = frSky(c, '#a8c4a0', '#e0dca8', '#f4e2a8');
@@ -1065,8 +1065,8 @@
       o += farTrunks(1501, 146, '#8a9a82', 12, 10, 16) + haze(c, 124, 50, 0.45, MISTC) + farTrunks(1503, 148, '#5e6a4e', 8, 14, 24);
       o += crowns(1505, 12, 0, 40, '#4e6a3e', '#7a9050');
       o += floor(c, 150, '#7e7a48', '#34301c', 1507);
-      o += elfArch(c, 150, 170, 60, 56, '#8e84a8', 1509) + elfColumn(c, 60, 176, 14, 66, '#8a80a4', 1511, true) + elfColumn(c, 224, 162, 12, 40, '#8a80a4', 1512, true);
-      o += rubble(c, 96, 180, 0.9, '#8a80a4', 1513) + rubble(c, 206, 176, 0.7, '#8a80a4', 1514);
+      o += elfArch(c, 150, 170, 60, 56, '#a0a49a', 1509) + elfColumn(c, 60, 176, 14, 66, '#9a9e94', 1511, true) + elfColumn(c, 224, 162, 12, 40, '#9a9e94', 1512, true);
+      o += rubble(c, 96, 180, 0.9, '#9a9e94', 1513) + rubble(c, 206, 176, 0.7, '#9a9e94', 1514);
       o += ogreHut(c, 326, 176, 1, '#8a6a4a') + ogreBanner(c, 250, 200, 60, 1) + ogreBanner(c, 40, 208, 56, 0.9);
       o += cauldron(c, 200, 206, 0.9) + barrel(c, 370, 212, 0.9, '#6a4a2a') + crate(c, 390, 220, 0.8) + skull(c, 120, 216, 1) + bone(136, 222, 16, 0.5, 0.9);
       o += grass(1515, 176, 238, '#3e4a22', 36, 0.6, 1.4, 1.1) + pebbles(1516, 180, 236, '#5a4e30', 12);

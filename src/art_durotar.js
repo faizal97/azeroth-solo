@@ -638,29 +638,65 @@
     }
     return s;
   }
+  // Kessari troll head (Realm of Loner design): tall lean face, modest ear, short nose, small lower tusks,
+  // hair pulled into a topknot with bead-tied braids down the back, bone earring
+  function braid(x0, y0, x1, y1, col, bead) {
+    var s = '', k, N = 5;
+    for (k = 0; k < N; k++) {
+      var t = k / (N - 1), bx = x0 + (x1 - x0) * t, by = y0 + (y1 - y0) * t;
+      s += E(bx, by, 2.7 - t * 0.5, 2.6, c_(col), 1.2);
+    }
+    s += L('M' + pt([x1, y1 + 2]) + 'L' + pt([x1 + 0.5, y1 + 6]), col, 1.6);
+    return s + C(x1, y1 + 3, 2, bead || '#ece4cc', 1.1);
+  }
   function trollHead(c, x, y, o) {
-    var sk = o.skin || '#5f9a52', s = '';
-    s += P('M' + pt([x + 6, y - 4]) + 'L' + pt([x + 26, y - 16]) + 'L' + pt([x + 10, y + 5]) + 'Z', c.cel(sk), 2);
-    if (o.hair) s += P('M' + pt([x - 6, y - 12]) + 'L' + pt([x - 8, y - 26]) + 'L' + pt([x, y - 18]) + 'L' + pt([x + 2, y - 30]) + 'L' + pt([x + 7, y - 18]) + 'L' + pt([x + 13, y - 27]) + 'L' + pt([x + 13, y - 13]) + 'L' + pt([x + 20, y - 18]) + 'L' + pt([x + 13, y - 4]) + 'Z', c.cel(o.hair), 2);
-    var d = 'M' + pt([x - 7, y - 11]) + 'C' + pt([x - 2, y - 17]) + ' ' + pt([x + 10, y - 15]) + ' ' + pt([x + 12, y - 5]) + 'L' + pt([x + 11, y + 8]) + 'C' + pt([x + 8, y + 14]) + ' ' + pt([x, y + 15]) + ' ' + pt([x - 5, y + 13]) + 'L' + pt([x - 13, y + 10]) + 'C' + pt([x - 15, y + 7]) + ' ' + pt([x - 12, y + 4]) + ' ' + pt([x - 9, y + 4]) + 'L' + pt([x - 21, y + 3]) + 'C' + pt([x - 22, y + 1]) + ' ' + pt([x - 16, y - 4]) + ' ' + pt([x - 8, y - 5]) + 'Z';
+    var sk = o.skin || '#7f9a86', hc = o.hair || '#2e2620', s = '';
+    // back braid (behind the head)
+    s += braid(x + 10, y, x + 18, y + 24, dk(hc, 0.15), '#ece4cc');
+    // ear: moderate and pointed, not the long swept blade
+    s += P('M' + pt([x + 7, y - 3]) + 'L' + pt([x + 19, y - 10]) + 'L' + pt([x + 10, y + 5]) + 'Z', c.cel(sk), 2);
+    var d = 'M' + pt([x - 8, y - 12]) + 'C' + pt([x - 3, y - 18]) + ' ' + pt([x + 10, y - 16]) + ' ' + pt([x + 12, y - 5]) + 'L' + pt([x + 11, y + 8]) + 'C' + pt([x + 8, y + 15]) + ' ' + pt([x, y + 16]) + ' ' + pt([x - 5, y + 14]) + 'L' + pt([x - 11, y + 11]) + 'C' + pt([x - 13, y + 8]) + ' ' + pt([x - 11, y + 5]) + ' ' + pt([x - 10, y + 4]) + 'L' + pt([x - 16, y + 2]) + 'C' + pt([x - 16, y - 1]) + ' ' + pt([x - 12, y - 5]) + ' ' + pt([x - 9, y - 6]) + 'Z';
     s += body(c, d, sk, F('M' + pt([x + 3, y - 18]) + 'L' + pt([x + 16, y - 18]) + 'L' + pt([x + 16, y + 18]) + 'L' + pt([x, y + 18]) + 'C' + pt([x + 7, y + 8]) + ' ' + pt([x + 7, y - 6]) + ' ' + pt([x + 3, y - 18]) + 'Z', dk(sk, 0.25), 0.8));
+    // bone earring
+    s += L('M' + pt([x + 11, y + 2]) + 'Q' + pt([x + 10, y + 7]) + ' ' + pt([x + 13, y + 7]), '#ece4cc', 1.6) + C(x + 13, y + 8, 1.6, '#ece4cc', 1);
+    // hair: close cap swept back into a topknot
+    if (!o.mask || o.mask === 'wood') {
+      s += P('M' + pt([x - 9, y - 9]) + 'C' + pt([x - 6, y - 19]) + ' ' + pt([x + 10, y - 20]) + ' ' + pt([x + 13, y - 7]) + 'L' + pt([x + 13, y + 1]) + 'C' + pt([x + 10, y - 4]) + ' ' + pt([x + 4, y - 10]) + ' ' + pt([x - 9, y - 9]) + 'Z', c.cel(hc), 2);
+      s += E(x + 4, y - 20, 4.6, 3.6, c.cel(hc), 1.8) + L('M' + pt([x + 1, y - 17]) + 'L' + pt([x + 7, y - 17]), '#ece4cc', 1.8);
+      s += L('M' + pt([x - 4, y - 15]) + 'C' + pt([x + 1, y - 17]) + ' ' + pt([x + 7, y - 15]) + ' ' + pt([x + 11, y - 8]), dk(hc, 0.35), 1, 0.8);
+    }
     if (o.mask === 'wood') {
-      s += body(c, 'M' + pt([x - 15, y - 12]) + 'C' + pt([x - 12, y - 18]) + ' ' + pt([x + 2, y - 18]) + ' ' + pt([x + 4, y - 10]) + 'L' + pt([x + 3, y + 3]) + 'C' + pt([x - 2, y + 9]) + ' ' + pt([x - 10, y + 9]) + ' ' + pt([x - 16, y + 3]) + 'Z', '#b8864a', L('M' + pt([x - 13, y - 1]) + 'L' + pt([x + 2, y - 1]) + 'M' + pt([x - 12, y + 3]) + 'L' + pt([x, y + 3]), '#c8302a', 1.6), 2);
-      s += P('M' + pt([x - 12, y - 8]) + 'L' + pt([x - 5, y - 6]) + 'L' + pt([x - 11, y - 4]) + 'Z', '#1a1009', 0) + C(x - 9, y - 6, 1.3, o.eye || '#b070ff');
+      s += body(c, 'M' + pt([x - 15, y - 11]) + 'C' + pt([x - 12, y - 17]) + ' ' + pt([x + 2, y - 17]) + ' ' + pt([x + 4, y - 9]) + 'L' + pt([x + 3, y + 3]) + 'C' + pt([x - 2, y + 9]) + ' ' + pt([x - 10, y + 9]) + ' ' + pt([x - 16, y + 3]) + 'Z', '#b8864a', L('M' + pt([x - 13, y - 1]) + 'L' + pt([x + 2, y - 1]) + 'M' + pt([x - 12, y + 3]) + 'L' + pt([x, y + 3]), '#c8302a', 1.6), 2);
+      s += P('M' + pt([x - 12, y - 7]) + 'L' + pt([x - 5, y - 5]) + 'L' + pt([x - 11, y - 3]) + 'Z', '#1a1009', 0) + C(x - 9, y - 5, 1.3, o.eye || '#b070ff');
     } else if (o.mask === 'skull') {
       s += body(c, 'M' + pt([x - 16, y - 10]) + 'C' + pt([x - 14, y - 22]) + ' ' + pt([x + 6, y - 22]) + ' ' + pt([x + 7, y - 9]) + 'L' + pt([x + 5, y + 2]) + 'L' + pt([x - 2, y + 6]) + 'L' + pt([x - 10, y + 6]) + 'L' + pt([x - 17, y + 1]) + 'Z', '#ece4cc',
         F('M' + pt([x + 1, y - 22]) + 'L' + pt([x + 10, y - 22]) + 'L' + pt([x + 10, y + 8]) + 'L' + pt([x - 1, y + 8]) + 'Z', '#b8ac90', 0.7), 2);
       s += E(x - 10, y - 6, 3.4, 3.2, '#1a1009') + E(x - 1, y - 6, 3, 3.2, '#1a1009') + C(x - 10, y - 6, 1.3, o.eye || '#7cff5a') + C(x - 1, y - 6, 1.2, o.eye || '#7cff5a');
       s += P('M' + pt([x - 7, y - 1]) + 'L' + pt([x - 5, y + 2]) + 'L' + pt([x - 9, y + 2]) + 'Z', '#1a1009', 0);
       s += L('M' + pt([x - 13, y + 4]) + 'L' + pt([x - 13, y + 7]) + 'M' + pt([x - 9, y + 5]) + 'L' + pt([x - 9, y + 8]) + 'M' + pt([x - 5, y + 5]) + 'L' + pt([x - 5, y + 8]) + 'M' + pt([x - 1, y + 4]) + 'L' + pt([x - 1, y + 7]), OL, 1.2);
+      // braided hair falling from under the skull
+      s += braid(x + 6, y - 4, x + 9, y + 16, o.hair || '#e8e0d0', '#c8302a');
     } else {
       s += L('M' + pt([x - 11, y - 6]) + 'L' + pt([x - 1, y - 5]), OL, 2.4);
       s += C(x - 5, y - 2.5, 1.7, o.eye || '#ffcc30', 1);
       if (o.paint) s += L('M' + pt([x - 3, y + 1]) + 'L' + pt([x + 3, y + 3]) + 'M' + pt([x - 2, y + 5]) + 'L' + pt([x + 3, y + 7]), o.paint, 1.6);
     }
-    // big upcurved tusks
-    s += P('M' + pt([x - 9, y + 12]) + 'C' + pt([x - 16, y + 10]) + ' ' + pt([x - 18, y + 2]) + ' ' + pt([x - 16, y - 4]) + 'C' + pt([x - 13, y + 2]) + ' ' + pt([x - 11, y + 6]) + ' ' + pt([x - 5, y + 9]) + 'Z', '#f4ecd6', 1.6);
+    // mouth and small lower tusks
+    s += L('M' + pt([x - 11, y + 10]) + 'L' + pt([x - 3, y + 10]), OL, 1.3);
+    s += P('M' + pt([x - 10, y + 11]) + 'L' + pt([x - 11, y + 5.5]) + 'L' + pt([x - 7.5, y + 10.5]) + 'Z', '#f4ecd6', 1.1);
     return s;
+  }
+  // cowrie-shell and bone-bead necklace
+  function shells(x, y) {
+    var s = L('M' + (x - 11) + ',' + y + ' Q' + x + ',' + (y + 9) + ' ' + (x + 11) + ',' + y, '#3a2a1a', 1.2);
+    [[-7, 3.6, 1], [0, 5.4, 0], [7, 3.6, 1]].forEach(function (b) {
+      s += b[2] ? C(x + b[0], y + b[1], 1.9, '#d8c8a8', 1) : E(x + b[0], y + b[1] + 1, 2.6, 3.4, '#f2e6cc', 1.1) + L('M' + n(x + b[0]) + ',' + n(y + b[1] - 1) + ' l0,4', OL, 0.9);
+    });
+    return s;
+  }
+  // cloth foot-wraps over a soft sole
+  function wraps(x, y, col) {
+    return boot(x, y, col) + L('M' + n(x - 5) + ',' + n(y - 7) + ' L' + n(x + 5) + ',' + n(y - 4) + ' M' + n(x - 6) + ',' + n(y - 3) + ' L' + n(x + 5) + ',' + n(y - 1), lt(col, 0.35), 1.2) + L('M' + n(x - 9) + ',' + n(y + 1) + ' L' + n(x + 6) + ',' + n(y + 1), '#3a2a1a', 1.6);
   }
   function humanHead(c, x, y, o) {
     var sk = o.skin || '#e8b890', s = '';
@@ -713,7 +749,7 @@
     s += hand(far[far.length - 1], c.cel(o.glove || sk));
     var hipY = o.hipY || 86;
     if (!o.robe) {
-      var toe = o.feet === 'toes' ? toes2 : boot;
+      var toe = o.feet === 'toes' ? toes2 : o.feet === 'wrap' ? wraps : boot;
       s += limb('M68,' + hipY + ' L71,103 L72,113', dk(pants, 0.18), legW) + toe(73, 121, o.boots || dk(pants, 0.3));
       s += limb('M56,' + hipY + ' L53,103 L52,113', pants, legW) + toe(52, 121, o.boots || dk(pants, 0.3));
     } else {
@@ -882,13 +918,13 @@
     return function (c, x, y) { return hood(c, x, y, o.hoodCol, o.trim) + hoodFace(c, x, y, o.skin || '#6a8a3a', o.eye || '#ff4a2a'); };
   }
   function trollBase(c, o) {
-    var sk = o.skin || '#5f9a52';
+    var sk = o.skin || '#7f9a86';
     return biped(c, {
-      skin: sk, shirt: sk, pants: sk, bareArms: true, feet: 'toes', boots: dk(sk, 0.2), loin: o.loin || '#8a5a32', legW: 9, armW: 8.5,
-      hx: o.hx || 54, hy: o.hy || 34, hipY: 84,
+      skin: sk, shirt: sk, pants: sk, bareArms: true, feet: 'wrap', boots: o.wraps || '#8a7458', loin: o.loin || '#8a5a32', legW: 9, armW: 8.5,
+      hx: o.hx || 54, hy: o.hy || 32, hipY: 84,
       torsoD: 'M46,52 C52,46 74,46 80,52 L78,70 L74,86 L52,86 L48,70 Z',
       head: function (c, x, y) { return trollHead(c, x, y, { skin: sk, hair: o.hair, mask: o.mask, eye: o.eye, paint: o.paint }); },
-      chest: function (c) { return L('M56,64 Q62,68 68,64', dk(sk, 0.3), 1.4) + L('M48,52 L76,82', '#6a4424', 3) + (o.chest ? o.chest(c) : ''); },
+      chest: function (c) { return L('M56,64 Q62,68 68,64', dk(sk, 0.3), 1.4) + L('M48,52 L76,82', '#6a4424', 3) + (o.pads ? '' : shells(62, 52)) + (o.chest ? o.chest(c) : ''); },
       near: o.near || [[48, 56], [38, 72], [30, 82]], far: o.far || [[78, 56], [86, 72], [86, 88]],
       wNear: o.wNear, wFar: o.wFar, wNearFront: o.wNearFront, pads: o.pads, back: o.back, top: o.top, tf: o.tf, shadowR: 30
     });
@@ -1014,7 +1050,7 @@
     },
     hexed_troll: function (c) {
       return trollBase(c, {
-        skin: '#5f9a52', hair: '#c8402a', mask: 'wood', eye: '#c070ff', loin: '#6a3a5a',
+        skin: '#7f9a86', hair: '#6a3226', mask: 'wood', eye: '#c070ff', loin: '#6a3a5a',
         back: function (c) { return C(64, 70, 44, glow(c, '#a050ff', 0.35)); },
         near: [[48, 56], [38, 70], [30, 78]],
         wNear: function (c, p) { return staff(p, [p[0] - 8, p[1] - 44], [p[0] + 6, p[1] + 38], '#6a4424') + P('M' + pt([p[0] - 8, p[1] - 44]) + 'L' + pt([p[0] - 14, p[1] - 58]) + 'L' + pt([p[0] - 3, p[1] - 46]) + 'Z', c.cel('#c8ccd2'), 1.6); },
@@ -1024,7 +1060,7 @@
     },
     voodoo_troll: function (c) {
       return trollBase(c, {
-        skin: '#5a9a5e', hair: '#2f8aa8', mask: 'wood', eye: '#7cff5a', loin: '#8a5a32',
+        skin: '#86a08a', hair: '#2e2620', mask: 'wood', eye: '#7cff5a', loin: '#8a5a32',
         near: [[48, 56], [40, 70], [32, 76]],
         wNear: function (c, p) { return voodooStaff(c, p, '#7cff5a'); },
         pads: function (c) { return necklace(62, 52); },
@@ -1033,7 +1069,7 @@
     },
     zalazane: function (c) {
       return G(trollBase(c, {
-        skin: '#5a9a5e', hair: '#e8e0d0', mask: 'skull', eye: '#7cff5a', loin: '#4a2a4a',
+        skin: '#78927e', hair: '#e8e0d0', mask: 'skull', eye: '#7cff5a', loin: '#4a2a4a',
         back: function (c) { return C(40, 30, 34, glow(c, '#7cff5a', 0.3)); },
         near: [[48, 56], [40, 70], [32, 76]],
         wNear: function (c, p) { return voodooStaff(c, p, '#7cff5a', true); },

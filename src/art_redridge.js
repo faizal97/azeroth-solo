@@ -102,7 +102,7 @@
   }
 
   // ---------- palette ----------
-  var DEF_RED = '#b82d31', DEF_HOOD = '#a3252a', STONE = '#b0a288', BEAM = '#5a3a24', PLASTER = '#ece2cc', ROOF = '#8e3e2a', WOODW = '#8e7456', WOOD = '#8a5a32';
+  var DEF_RED = '#8a8e93', DEF_HOOD = '#6b6f74', STONE = '#b0a288', BEAM = '#5a3a24', PLASTER = '#ece2cc', ROOF = '#8e3e2a', WOODW = '#8e7456', WOOD = '#8a5a32';
 
   // ============================================================
   //  SCENE PIECES (shared house style)
@@ -190,7 +190,7 @@
     var d = 'M' + pt([x - 10 * s, y]) + 'L' + pt([x - 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y]) + 'Z';
     return E(x, y + 1, 12 * s, 2.4 * s, '#000', 0, 0.22) + body(c, d, col, L('M' + pt([x - 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y]) + 'M' + pt([x - 10 * s, y - 8 * s]) + 'L' + pt([x + 10 * s, y - 8 * s]), dk(col, 0.4), 1.4 * s) + F('M' + pt([x + 4 * s, y - 18 * s]) + 'L' + pt([x + 12 * s, y - 18 * s]) + 'L' + pt([x + 12 * s, y + 2]) + 'L' + pt([x + 4 * s, y + 2]) + 'Z', dk(col, 0.4), 0.5), 1.6 * s);
   }
-  // Grey Hood crate: a red cloth tied over the lid
+  // Grey Hood crate: a grey cloth tied over the lid
   function defCrate(c, x, y, s) {
     return crate(c, x, y, s, '#9a6a3a') + P('M' + pt([x - 11 * s, y - 16 * s]) + 'L' + pt([x + 3 * s, y - 17 * s]) + 'L' + pt([x + 4 * s, y - 8 * s]) + 'L' + pt([x, y - 10 * s]) + 'L' + pt([x - 4 * s, y - 6 * s]) + 'L' + pt([x - 7 * s, y - 11 * s]) + 'L' + pt([x - 11 * s, y - 9 * s]) + 'Z', c.cel(DEF_RED), 1.3 * s);
   }
@@ -1015,7 +1015,7 @@
   }
 
   // ---- Grey Hood ----
-  // hooded head with the red Grey Hood mask over nose and mouth (facing left)
+  // hooded head with the grey Grey Hood scarf over nose and mouth (facing left)
   function defiasHead(c, x, y, o) {
     var sk = o.skin || '#e4b48a', hood = o.hood || DEF_HOOD, mask = o.mask || DEF_RED, s = '';
     // hood back / cowl hanging behind the neck
@@ -1044,30 +1044,54 @@
       F('M' + pt([x + 4, y - 24]) + 'L' + pt([x + 18, y - 24]) + 'L' + pt([x + 18, y + 8]) + 'L' + pt([x + 9, y + 8]) + 'C' + pt([x + 10, y - 6]) + ' ' + pt([x + 8, y - 16]) + ' ' + pt([x + 4, y - 24]) + 'Z', dk(hood, 0.3), 0.75) + L('M' + pt([x - 8, y - 12]) + 'Q' + pt([x, y - 17]) + ' ' + pt([x + 8, y - 14]), lt(hood, 0.2), 1, 0.7), 2);
     return s;
   }
-  // ---- murloc (same family shape as the Ambermoor murlocs, facing left) ----
-  function murloc(c, o) {
-    var f = o.skin, fd = dk(f, 0.28), fin = o.fin, out = '';
-    var bd = 'M30,66 C28,50 42,40 58,42 C76,44 90,56 90,76 C90,94 80,108 62,108 C46,108 36,98 34,86 C33,80 31,72 30,66 Z';
-    out += shadow(c, 62, 32);
+  // ---- mireling (marsh newt: frilled collar, round eyes on top of the head, long tail, webbed hands and feet; facing left, shared with the other zone packs) ----
+  function mireling(c, o) {
+    var f = o.skin, fd = dk(f, 0.28), fin = o.fin, bel = o.belly, out = '';
+    // webbed foot: three splayed toes joined by webbing, heel to the right
+    var wfoot = function (x, y, col) {
+      return P('M' + pt([x + 5, y - 5]) + 'L' + pt([x - 3, y - 5]) + 'L' + pt([x - 13, y + 0.5]) + 'Q' + pt([x - 9.5, y - 1]) + ' ' + pt([x - 7.5, y + 1.6]) + 'Q' + pt([x - 5, y - 0.6]) + ' ' + pt([x - 1.5, y + 1.8]) + 'Q' + pt([x + 1.5, y - 0.2]) + ' ' + pt([x + 6, y + 1.2]) + 'Z', c.cel(col), 1.8) +
+        C(x - 13, y + 0.2, 1.3, lt(col, 0.2), 0.9) + C(x - 7.5, y + 1.4, 1.2, lt(col, 0.2), 0.9) + C(x - 1.5, y + 1.6, 1.2, lt(col, 0.2), 0.9);
+    };
+    out += shadow(c, 66, 38);
     if (o.back) out += o.back(c);
-    out += P('M66,98 C74,90 88,94 88,104 C88,112 80,114 74,112 Z', c.cel(fd), 2.2) + tube([[80, 108], [86, 116], [78, 120]], 6.5, fd) + P('M66,118 L82,118 L86,123 L62,123 Z', c.cel(dk(fin, 0.2)), 2);
-    out += tube([[74, 76], [84, 88], [80, 96]], 5.5, fd);
-    out += P('M54,43 L56,30 L63,39 L69,27 L74,41 L82,33 L84,49 L93,45 L91,62 C87,54 74,44 54,43 Z', c.cel(fin), 2.2) + L('M60,40 L57,33 M68,40 L69,31 M76,44 L81,37 M84,51 L91,48', dk(fin, 0.35), 1.2);
-    out += body(c, bd, f, F('M36,82 C40,98 52,106 64,106 C72,106 80,100 80,92 C68,98 50,94 40,78 Z', o.belly, 0.9) +
-      C(66, 56, 3, fd, 0, 0.6) + C(76, 62, 2.4, fd, 0, 0.6) + C(72, 72, 2, fd, 0, 0.5) + C(60, 50, 2, fd, 0, 0.5) + (o.marks ? o.marks(c) : ''), 2.2);
-    out += P('M80,60 L92,56 L90,66 L96,68 L86,74 Z', c.cel(fin), 2);
-    out += P('M27,67 C36,73 48,73 58,69 C56,79 50,88 40,88 C34,88 29.5,82 28.5,74 Z', c.cel('#7a1a22'), 2.2);
-    out += F('M33,82 C37,86 45,86 50,82 C45,80 38,80 33,82 Z', '#d0566a', 0.9);
-    out += F('M31,69 l2,4.5 l2,-4 z M36,70.5 l2,4.5 l2,-4.3 z M41,71 l2,4.5 l2,-4.5 z M46,70.5 l2,4.2 l2,-4.5 z M51,69.5 l1.8,4 l1.8,-4.4 z', '#f6f0dc');
-    out += F('M36,87.5 l1.6,-3.5 l1.6,3.6 z M42,87.6 l1.6,-3.6 l1.6,3.4 z', '#f6f0dc');
-    out += C(55, 47, 5.2, '#f2ecb0', 2) + C(53.5, 47.5, 2.2, '#140c08', 0);
-    out += C(42, 51, 6.8, c.cel(o.eyeC || '#f6eeb8'), 2.2) + E(39.5, 51.5, 2, 3.6, '#140c08', 0) + C(40.8, 49, 1.1, '#fff', 0);
-    out += L('M35,44 L46,46', OL, 2);
+    // far leg and foot
+    out += tube([[72, 98], [82, 108], [78, 117]], 6.5, fd) + wfoot(80, 121, dk(fin, 0.25));
+    // long tail sweeping back along the ground, tip curling up, bright belly stripe underneath
+    var td = 'M80,84 C90,96 98,110 110,113 C116,114.5 120,111 119,105 C123,107 125,113 121,118 C116,123 104,122 94,118 C84,114 76,108 68,100 Z';
+    out += body(c, td, f, F('M68,100 C78,108 88,116 100,119 C110,121 118,120 122,114 L126,124 L60,124 Z', fin, 0.95) + C(96, 106, 1.8, fd, 0, 0.6) + C(106, 111, 1.5, fd, 0, 0.6) + C(88, 100, 2, fd, 0, 0.6), 2.2);
+    // far arm
+    out += tube([[68, 66], [78, 78], [74, 88]], 5, fd) + P('M74,86 L80,90 L77,92 L80,96 L74,95 L72,98 L70,91 Z', c.cel(fd), 1.6);
+    // upright torso with a pale belly
+    var bd = 'M46,58 C58,52 76,60 80,76 C84,92 78,106 64,108 C52,110 42,102 41,88 C40,76 41,64 46,58 Z';
+    out += body(c, bd, f, F('M40,64 C44,82 50,98 62,108 C50,111 40,104 38,90 Z', bel, 0.9) +
+      F('M66,56 L90,56 L90,110 L72,110 C80,96 78,74 66,56 Z', fd, 0.45) + C(70, 70, 2.6, fd, 0, 0.7) + C(74, 84, 2.2, fd, 0, 0.7) + C(64, 94, 2, fd, 0, 0.6) + C(60, 64, 1.8, fd, 0, 0.6) + (o.marks ? o.marks(c) : ''), 2.2);
+    // frilled collar around the neck and the sides of the head
+    var cx = 58, cy = 48, R = 17, lobes = [-120, -84, -48, -12, 24, 60, 96], fr = 'M' + pt([cx, cy]), rib = '';
+    lobes.forEach(function (a, i) {
+      var r0 = (a - 17) * Math.PI / 180, r1 = (a + 17) * Math.PI / 180, rm = a * Math.PI / 180, RR = R + (i % 2 ? 1.5 : 3);
+      var ca = (a - 19) * Math.PI / 180, cb = (a + 19) * Math.PI / 180;
+      fr += 'L' + pt([cx + Math.cos(r0) * R, cy + Math.sin(r0) * R]) + 'C' + pt([cx + Math.cos(ca) * RR * 1.42, cy + Math.sin(ca) * RR * 1.42]) + ' ' + pt([cx + Math.cos(cb) * RR * 1.42, cy + Math.sin(cb) * RR * 1.42]) + ' ' + pt([cx + Math.cos(r1) * R, cy + Math.sin(r1) * R]);
+      rib += 'M' + pt([cx + Math.cos(rm) * 7, cy + Math.sin(rm) * 7]) + 'L' + pt([cx + Math.cos(rm) * (RR + 3), cy + Math.sin(rm) * (RR + 3)]);
+    });
+    fr += 'Z';
+    out += body(c, fr, fin, L(rib, dk(fin, 0.35), 1.2) + F('M' + pt([cx, cy]) + 'L' + pt([cx + 40, cy - 10]) + 'L' + pt([cx + 40, cy + 40]) + 'Z', dk(fin, 0.22), 0.7), 2);
+    // broad flat newt head, round snout to the left
+    var hd = 'M22,49 C21,40 30,34 42,34 C54,34 64,39 65,47 C66,55 58,61 45,61 C32,61 23,57 22,49 Z';
+    out += body(c, hd, f, F('M22,51 C28,58 38,61 48,61 C40,57 30,55 22,51 Z', bel, 0.85) + F('M52,32 L70,32 L70,64 L50,64 C58,56 58,42 52,32 Z', fd, 0.4) + C(56, 44, 1.6, fd, 0, 0.6) + C(60, 50, 1.3, fd, 0, 0.6), 2.2);
+    // small mouth line and a nostril
+    out += L('M24,51 Q32,54.5 42,53', OL, 1.6) + C(25.5, 44.5, 0.9, OL, 0);
+    // round eyes sitting on top of the head
+    out += C(52, 33, 4.6, c.cel(f), 2) + C(51.4, 32.4, 2.8, c.cel(o.eyeC || '#f6eeb8'), 0) + C(50.6, 32.4, 1.4, '#140c08', 0);
+    out += C(38, 34, 5.8, c.cel(f), 2.2) + C(37.2, 33.2, 3.7, c.cel(o.eyeC || '#f6eeb8'), 0) + C(36, 33.4, 1.9, '#140c08', 0) + C(37.3, 31.9, 0.8, '#fff', 0);
+    out += L(o.angry ? 'M31,27 L44,31' : 'M32,28.5 Q38,26 44,29', OL, o.angry ? 2.4 : 1.6);
+    if (o.head) out += o.head(c);
     if (o.fItem) out += o.fItem(c);
-    out += tube([[56, 80], [44, 90], [33, 92]], 5.5, f, fd);
-    out += P('M34,88 L25,86 L27,90 L22,92 L28,94 L25,98 L34,96 Z', c.cel(lt(f, 0.1)), 1.8);
+    // near arm and webbed hand
+    out += tube([[52, 68], [44, 80], [34, 90]], 5.5, f, fd);
+    out += P('M36,87 L27,85 L28.5,89 L22,91 L28,93.5 L25,98 L35,96 Z', c.cel(lt(f, 0.1)), 1.8) + L('M28.5,89 L33,90.5 M28,93.5 L33,93', dk(f, 0.3), 0.9);
     if (o.front) out += o.front(c);
-    out += P('M52,98 C60,88 76,92 78,102 C80,110 72,114 64,112 Z', c.cel(f), 2.2) + tube([[66, 108], [58, 115], [52, 119]], 7, f, fd) + P('M36,118 L56,118 L60,123 L32,123 L36,121 Z', c.cel(fin), 2.2) + L('M42,119 L40,123 M49,119 L48,123', dk(fin, 0.4), 1);
+    // near leg: bent thigh, shin, webbed foot
+    out += P('M48,96 C54,88 70,92 70,102 C70,110 62,113 56,111 Z', c.cel(f), 2.2) + tube([[58, 106], [52, 114], [52, 118]], 6.5, f, fd) + wfoot(50, 121, fin);
     return G(out, at(o.scale || 1, 62, 123));
   }
 
@@ -1620,7 +1644,7 @@
     },
     // ---- Lake Calder murlocs ----
     murloc_flesheater: function (c) {
-      return murloc(c, {
+      return mireling(c, {
         skin: '#3a6a3c', belly: '#b8c890', fin: '#8e2a26', eyeC: '#ffd0a0', scale: 1.02,
         marks: function () { return E(48, 94, 4, 2.4, '#8a1a1a', 0, 0.8) + E(56, 100, 2.6, 1.6, '#8a1a1a', 0, 0.7) + E(70, 60, 3, 2, '#2a4a2a', 0, 0.7) + L('M40,84 l2,6 M46,86 l1,5', '#8a1a1a', 1.4, 0.8); },
         fItem: function (c) {
@@ -1632,7 +1656,7 @@
       });
     },
     murloc_tidecaller: function (c) {
-      return murloc(c, {
+      return mireling(c, {
         skin: '#2e6aa6', belly: '#d4e4ec', fin: '#f07a8e', eyeC: '#e8fff8', scale: 1,
         back: function (c) { return C(64, 80, 58, glow(c, '#6ad8ff', 0.35)) + swirl(c, 96, 60, 10, '#9ae8ff'); },
         marks: function () { return L('M58,56 q4,4 8,0 M68,62 q4,4 8,0 M62,70 q4,4 8,0', '#e8fff8', 1.2, 0.7); },
@@ -1648,7 +1672,7 @@
     squiddic: function (c) {
       var tn = '#b0508a';
       var tent = function (pts, w) { var d = 'M' + pt(pts[0]) + 'C' + pt(pts[1]) + ' ' + pt(pts[2]) + ' ' + pt(pts[3]); return L(d, OL, w + 4) + L(d, tn, w) + L(d, lt(tn, 0.35), w * 0.3, 0.7); };
-      return murloc(c, {
+      return mireling(c, {
         skin: '#76689a', belly: '#e0d8e8', fin: '#5a3a7a', eyeC: '#fff4a0', scale: 1.08,
         back: function (c) { return tent([[70, 36], [90, 30], [104, 44], [110, 64]], 6) + tent([[66, 38], [80, 20], [96, 18], [100, 30]], 5); },
         fItem: function (c) { return spear(c, [20, 42], [36, 118], 14, '#c8c0a8', '#6a5a44'); },
@@ -1833,8 +1857,8 @@
       var lea = '#2a2426';
       return biped(c, {
         skin: '#e4b48a', shirt: lea, pants: '#221c1c', sleeve: lea, glove: '#1a1414', boots: '#141010', belt: '#141010', buckle: '#d8b050', neckCol: DEF_HOOD,
-        head: function (c, x, y) { return defiasHead(c, x, y, { skin: '#e4b48a', hood: '#a3252a', mask: '#c02e30' }); }, hx: 60, hy: 30,
-        back: function (c) { return body(c, 'M50,46 C66,40 84,44 88,52 C94,72 96,96 98,116 L88,112 L80,117 L72,112 L62,116 C62,90 58,66 50,46 Z', '#8e1c22', F('M84,48 C92,70 96,94 100,118 L86,118 C84,92 82,70 78,48 Z', '#4a0c10', 0.6), 2.2); },
+        head: function (c, x, y) { return defiasHead(c, x, y, { skin: '#e4b48a', hood: '#56595e', mask: '#7c8085' }); }, hx: 60, hy: 30,
+        back: function (c) { return body(c, 'M50,46 C66,40 84,44 88,52 C94,72 96,96 98,116 L88,112 L80,117 L72,112 L62,116 C62,90 58,66 50,46 Z', '#4e5156', F('M84,48 C92,70 96,94 100,118 L86,118 C84,92 82,70 78,48 Z', '#2c2e32', 0.6), 2.2); },
         chest: function (c) { return L('M50,52 L78,86 M78,52 L52,86', '#141010', 2.4) + P('M74,48 L82,52 L56,90 L48,86 Z', c.cel(DEF_RED), 1.3) + C(64, 69, 2.4, c.cel('#d8b050'), 1); },
         pads: function (c) { return leatherPadR(c, 80, 52, '#3a2e2c', DEF_RED) + leatherPadR(c, 48, 52, '#3a3230', DEF_RED); },
         near: [[48, 54], [38, 66], [28, 70]], far: [[80, 54], [90, 60], [96, 50]],

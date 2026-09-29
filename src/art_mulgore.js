@@ -258,13 +258,16 @@
     o += body(c, 'M' + pt([x - 25 * s, y - 45 * s]) + 'L' + pt([x, y - 62 * s]) + 'L' + pt([x + 25 * s, y - 45 * s]) + 'L' + pt([x + 18 * s, y - 43 * s]) + 'L' + pt([x, y - 55 * s]) + 'L' + pt([x - 18 * s, y - 43 * s]) + 'Z', HIDE, F('M' + pt([x, y - 64 * s]) + 'L' + pt([x + 28 * s, y - 64 * s]) + 'L' + pt([x + 28 * s, y - 40 * s]) + 'Z', dk(HIDE, 0.25), 0.8) + L('M' + pt([x - 20 * s, y - 47 * s]) + 'L' + pt([x, y - 59 * s]) + 'L' + pt([x + 20 * s, y - 47 * s]), PAINT_R, 1.6 * s), 1.6 * s);
     return o;
   }
+  // distant dustback silhouettes: armoured scute back, small brow horn, clubbed tail
   function kodoSil(x, y, s, col, flip) {
     var d = 'M' + pt([x - 11 * s, y - 5 * s]) + 'C' + pt([x - 12 * s, y - 13 * s]) + ' ' + pt([x - 4 * s, y - 17 * s]) + ' ' + pt([x + 3 * s, y - 16 * s]) + 'C' + pt([x + 10 * s, y - 15 * s]) + ' ' + pt([x + 15 * s, y - 11 * s]) + ' ' + pt([x + 14 * s, y - 5 * s]) +
       'L' + pt([x + 13 * s, y]) + 'L' + pt([x + 10 * s, y]) + 'L' + pt([x + 10 * s, y - 3 * s]) + 'L' + pt([x + 6 * s, y - 3 * s]) + 'L' + pt([x + 6 * s, y]) + 'L' + pt([x + 3 * s, y]) + 'L' + pt([x + 3 * s, y - 3 * s]) +
       'L' + pt([x - 4 * s, y - 3 * s]) + 'L' + pt([x - 4 * s, y]) + 'L' + pt([x - 7 * s, y]) + 'L' + pt([x - 7 * s, y - 3 * s]) + 'L' + pt([x - 8 * s, y - 3 * s]) + 'L' + pt([x - 8 * s, y]) + 'L' + pt([x - 11 * s, y]) + 'Z' +
       'M' + pt([x - 9 * s, y - 12 * s]) + 'C' + pt([x - 15 * s, y - 13 * s]) + ' ' + pt([x - 20 * s, y - 9 * s]) + ' ' + pt([x - 20 * s, y - 4 * s]) + 'L' + pt([x - 15 * s, y - 2 * s]) + 'L' + pt([x - 9 * s, y - 5 * s]) + 'Z' +
-      'M' + pt([x - 14 * s, y - 11 * s]) + 'C' + pt([x - 16 * s, y - 15 * s]) + ' ' + pt([x - 19 * s, y - 17 * s]) + ' ' + pt([x - 22 * s, y - 17 * s]) + 'C' + pt([x - 19 * s, y - 14 * s]) + ' ' + pt([x - 18 * s, y - 12 * s]) + ' ' + pt([x - 17 * s, y - 9 * s]) + 'Z' +
-      'M' + pt([x + 14 * s, y - 9 * s]) + 'L' + pt([x + 18 * s, y - 4 * s]) + 'L' + pt([x + 16 * s, y - 3 * s]) + 'Z';
+      'M' + pt([x - 13 * s, y - 11 * s]) + 'C' + pt([x - 13.5 * s, y - 13.5 * s]) + ' ' + pt([x - 14.5 * s, y - 15 * s]) + ' ' + pt([x - 16 * s, y - 15.5 * s]) + 'C' + pt([x - 15.4 * s, y - 13.6 * s]) + ' ' + pt([x - 15.4 * s, y - 12 * s]) + ' ' + pt([x - 15.4 * s, y - 10 * s]) + 'Z' +
+      'M' + pt([x + 14 * s, y - 9 * s]) + 'L' + pt([x + 17 * s, y - 4 * s]) + 'L' + pt([x + 15 * s, y - 3 * s]) + 'Z' + ellD(x + 17.4 * s, y - 3.4 * s, 2.2 * s, 1.8 * s);
+    // armoured back: a row of scute bumps along the top line
+    [[-6, -15.4], [-1, -16.6], [4, -16.4], [9, -14.8], [12.6, -12]].forEach(function (b) { d += ellD(x + b[0] * s, y + b[1] * s, 2.4 * s, 1.6 * s); });
     return G(E(x, y, 16 * s, 1.6 * s, '#000', 0, 0.15) + F(d, col) + F('M' + pt([x - 6 * s, y - 15 * s]) + 'C' + pt([x, y - 17 * s]) + ' ' + pt([x + 8 * s, y - 16 * s]) + ' ' + pt([x + 12 * s, y - 12 * s]) + 'L' + pt([x + 4 * s, y - 13 * s]) + 'Z', lt(col, 0.2), 0.7), flip ? 'matrix(-1,0,0,1,' + n(2 * x) + ',0)' : '');
   }
   // savanna tree: twisted trunk, flat wide canopy
@@ -806,54 +809,67 @@
     s += limb('M48,84 L44,102 L44,116', col, 9.5) + paw(44, 121, dk(col, 0.35)) + limb('M92,82 L100,96 L94,108 L94,116', col, 9.5) + paw(94, 121, dk(col, 0.35));
     return s;
   }
+  // ---- longneck: an emu-like flightless runner, shaggy drooping plumage, long bare neck, short flat beak, thick scaly legs ----
   function plainstrider(c, o) {
-    var col = o.col, wing = o.wing, leg = o.leg || '#c8a070', s = shadow(c, 62, 28);
-    s += limb('M72,76 L82,96 L72,116', dk(leg, 0.2), 4.4) + birdFoot(72, 121, dk(leg, 0.2), o.big);
-    // tail plume
-    s += body(c, 'M90,56 C98,40 110,32 120,34 C114,40 110,46 108,52 C116,50 122,54 124,58 C114,60 104,64 94,70 Z', o.tail || dk(wing, 0.1), L('M94,62 C102,52 110,44 118,38 M96,66 C106,60 114,58 122,58', dk(o.tail || wing, 0.35), 1.2), 2);
-    // thighs
-    s += E(76, 72, 9, 8, c.cel(dk(col, 0.1)), 2);
-    var bd = 'M42,62 C44,48 66,42 84,46 C98,50 102,64 96,74 C88,84 62,86 50,80 C44,76 41,70 42,62 Z';
-    s += body(c, bd, col, F('M40,72 C54,84 84,84 100,72 L100,90 L40,90 Z', o.belly || lt(col, 0.3), 0.85) +
-      F('M52,56 C66,48 88,50 96,62 C88,68 72,72 56,68 Z', wing, 0.95) + L('M62,58 C70,62 80,64 90,62 M64,64 C72,67 82,68 92,66', dk(wing, 0.35), 1.2) + F('M50,50 C60,44 76,44 86,48 C74,48 62,50 52,56 Z', lt(col, 0.25), 0.6), 2.4);
-    // neck
-    s += L('M54,62 C44,56 38,46 38,32', OL, 13.5) + L('M54,62 C44,56 38,46 38,32', col, 9) + L('M52,66 C44,60 38,52 36,42', lt(col, 0.25), 3, 0.7);
-    // head + beak
-    var hx = o.hx || 38, hy = o.hy || 26;
-    s += P('M' + pt([hx + 4, hy - 6]) + 'L' + pt([hx + 14, hy - 14]) + 'L' + pt([hx + 8, hy - 4]) + 'L' + pt([hx + 16, hy - 6]) + 'L' + pt([hx + 8, hy]) + 'Z', c.cel(o.crest || wing), 1.6);
-    s += body(c, 'M' + pt([hx - 8, hy - 2]) + 'C' + pt([hx - 6, hy - 10]) + ' ' + pt([hx + 8, hy - 11]) + ' ' + pt([hx + 9, hy - 1]) + 'C' + pt([hx + 9, hy + 6]) + ' ' + pt([hx + 4, hy + 10]) + ' ' + pt([hx - 2, hy + 10]) + 'C' + pt([hx - 6, hy + 10]) + ' ' + pt([hx - 9, hy + 5]) + ' ' + pt([hx - 8, hy - 2]) + 'Z', col, F('M' + pt([hx + 2, hy - 12]) + 'L' + pt([hx + 12, hy - 12]) + 'L' + pt([hx + 12, hy + 12]) + 'L' + pt([hx + 2, hy + 12]) + 'Z', dk(col, 0.22), 0.8), 2);
-    s += P('M' + pt([hx - 6, hy - 3]) + 'C' + pt([hx - 16, hy - 3]) + ' ' + pt([hx - 26, hy + 1]) + ' ' + pt([hx - 32, hy + 5]) + 'C' + pt([hx - 24, hy + 8]) + ' ' + pt([hx - 14, hy + 8]) + ' ' + pt([hx - 5, hy + 6]) + 'Z', c.cel(o.beak || '#e0a848'), 1.8) + L('M' + pt([hx - 5, hy + 2.5]) + 'L' + pt([hx - 28, hy + 4.6]), OL, 1.2);
-    s += C(hx - 1, hy - 2, 2.2, '#fff8e0', 1.1) + C(hx - 1.6, hy - 2, 1.1, OL);
-    s += limb('M58,76 L66,96 L56,116', leg, 4.8) + birdFoot(56, 121, leg, o.big);
-    s += E(62, 74, 9, 8, c.cel(col), 2);
+    var col = o.col, wing = o.wing, leg = o.leg || '#c8a070', s = shadow(c, 62, 30), k = o.big ? 1.12 : 1;
+    var scale = function (x0, y0, x1, y1) { var d = ''; for (var i = 1; i < 5; i++) { var t = i / 5; d += 'M' + pt([x0 + (x1 - x0) * t - 2.4, y0 + (y1 - y0) * t]) + 'l4.8,0'; } return L(d, dk(leg, 0.4), 1, 0.8); };
+    // far leg
+    s += limb('M74,84 L80,100 L74,116', dk(leg, 0.2), 5.6) + scale(80, 100, 74, 116) + birdFoot(74, 121, dk(leg, 0.2), o.big);
+    // shaggy drooping tail tuft
+    s += body(c, 'M92,62 C104,60 114,66 118,76 L114,78 L117,86 L110,84 L110,92 L104,86 L100,92 L98,82 Z', o.tail || dk(wing, 0.1), L('M98,68 C106,70 110,76 112,84 M96,72 C102,76 104,82 104,88', dk(o.tail || wing, 0.35), 1.1), 2);
+    // body: a rounded mound of loose hanging feathers with a ragged hem
+    var hem = '', xs = [100, 94, 88, 82, 76, 70, 64, 58, 52, 46, 40];
+    xs.forEach(function (x, i) { hem += 'L' + pt([x, (i % 2 ? 84 : 90) + (i === 0 || i === xs.length - 1 ? -6 : 0)]); });
+    var bd = 'M40,66 C40,50 62,42 82,44 C98,46 106,58 102,76' + hem + 'C38,78 40,72 40,66 Z';
+    var fs = '';
+    [[50, 56, 46, 74], [58, 52, 54, 78], [66, 50, 64, 80], [74, 50, 74, 80], [82, 50, 84, 78], [90, 54, 94, 74]].forEach(function (f) { fs += 'M' + pt([f[0], f[1]]) + 'Q' + pt([f[0] - 2, (f[1] + f[3]) / 2]) + ' ' + pt([f[2], f[3]]); });
+    s += body(c, bd, col, F('M38,74 C52,84 86,86 104,72 L104,94 L38,94 Z', dk(col, 0.22), 0.8) + L(fs, dk(col, 0.32), 1.2) + F('M50,50 C60,44 76,44 86,48 C74,48 62,50 52,56 Z', lt(col, 0.25), 0.6) + F('M60,56 C70,54 84,56 92,64 C82,64 70,64 60,62 Z', wing, 0.7), 2.4);
+    // shaggy ruff where the neck meets the body
+    s += P('M46,58 L40,52 L46,52 L42,44 L50,48 L50,40 L56,48 L60,44 L60,56 Z', c.cel(dk(col, 0.08)), 1.6);
+    // long bare neck
+    var nk = 'M52,56 C44,50 40,38 40,26';
+    s += L(nk, OL, 10.5) + L(nk, o.neck || lt(col, 0.18), 6.6) + L('M50,52 C44,46 42,38 42,28', lt(o.neck || col, 0.3), 2, 0.6);
+    // head: small and rounded, short flat beak, big eye under a heavy brow
+    var hx = o.hx || 40, hy = o.hy || 21;
+    if (o.crest) s += L('M' + pt([hx + 2, hy - 7]) + 'q2,-6 6,-7 M' + pt([hx + 4, hy - 6]) + 'q4,-4 8,-3 M' + pt([hx, hy - 7]) + 'q0,-6 3,-9', OL, 3) + L('M' + pt([hx + 2, hy - 7]) + 'q2,-6 6,-7 M' + pt([hx + 4, hy - 6]) + 'q4,-4 8,-3 M' + pt([hx, hy - 7]) + 'q0,-6 3,-9', o.crest, 1.4);
+    s += body(c, 'M' + pt([hx - 7, hy - 1]) + 'C' + pt([hx - 6, hy - 8]) + ' ' + pt([hx + 6, hy - 9]) + ' ' + pt([hx + 8, hy - 1]) + 'C' + pt([hx + 8, hy + 5]) + ' ' + pt([hx + 3, hy + 8]) + ' ' + pt([hx - 2, hy + 8]) + 'C' + pt([hx - 6, hy + 8]) + ' ' + pt([hx - 8, hy + 4]) + ' ' + pt([hx - 7, hy - 1]) + 'Z', o.neck || lt(col, 0.18), F('M' + pt([hx + 2, hy - 10]) + 'L' + pt([hx + 10, hy - 10]) + 'L' + pt([hx + 10, hy + 10]) + 'L' + pt([hx + 2, hy + 10]) + 'Z', dk(col, 0.22), 0.7), 2);
+    s += P('M' + pt([hx - 6, hy - 1]) + 'C' + pt([hx - 12, hy - 2]) + ' ' + pt([hx - 17, hy]) + ' ' + pt([hx - 18, hy + 3]) + 'C' + pt([hx - 16, hy + 6]) + ' ' + pt([hx - 10, hy + 6]) + ' ' + pt([hx - 5, hy + 5]) + 'Z', c.cel(o.beak || '#e0a848'), 1.8) + L('M' + pt([hx - 5, hy + 2.4]) + 'L' + pt([hx - 16, hy + 3.2]), OL, 1.1);
+    s += C(hx - 1, hy - 1, 2.6, '#fff8e0', 1.1) + C(hx - 1.6, hy - 1, 1.3, OL) + L('M' + pt([hx - 5, hy - 4]) + 'L' + pt([hx + 3, hy - 4.6]), OL, 1.8);
+    // near leg
+    s += limb('M60,84 L66,100 L58,116', leg, 6.2) + scale(66, 100, 58, 116) + birdFoot(58, 121, leg, o.big);
+    s += E(62, 82, 8, 5, c.cel(dk(col, 0.1)), 1.8);
     return s;
   }
+  function ellD(x, y, rx, ry) { return 'M' + pt([x - rx, y]) + 'A' + n(rx) + ',' + n(ry) + ' 0 1,0 ' + pt([x + rx, y]) + 'A' + n(rx) + ',' + n(ry) + ' 0 1,0 ' + pt([x - rx, y]) + 'Z'; }
+  // ---- dustback: a huge horned lizard-beast with an armoured, scaled back (ankylosaur-like), small brow horns and a clubbed tail ----
   function kodoAncient(c) {
-    var col = '#968c80', dcol = dk(col, 0.3), bone = '#ece2c8', s = shadow(c, 64, 60);
+    var col = '#968c80', dcol = dk(col, 0.3), bone = '#ece2c8', arm = '#7a6e62', s = shadow(c, 64, 60);
     var legF = dk(col, 0.22);
     var foot = function (x, cc) { return P('M' + n(x - 9) + ',116 L' + n(x + 9) + ',116 L' + n(x + 10) + ',123 L' + n(x - 10) + ',123 Z', c.cel(cc), 2) + E(x - 6, 122, 2.4, 1.6, bone, 1) + E(x - 1, 122.4, 2.4, 1.6, bone, 1) + E(x + 4, 122.4, 2.4, 1.6, bone, 1); };
     s += limb('M50,90 L48,116', legF, 15) + foot(48, legF) + limb('M104,88 L108,116', legF, 15) + foot(108, legF);
-    s += L('M120,70 C126,76 126,86 122,92', OL, 5.5) + L('M120,70 C126,76 126,86 122,92', col, 2.6) + P('M122,90 L118,100 L126,98 Z', c.cel('#5a4a40'), 1.4);
+    // thick tail ending in a bony club
     var bd = 'M30,58 C36,34 64,24 92,28 C114,32 126,48 125,70 C124,90 112,100 94,100 C74,102 54,102 40,98 C28,94 24,78 30,58 Z';
-    var wr = L('M58,54 C60,66 60,80 58,94 M76,50 C78,64 78,80 76,96 M94,50 C96,62 96,80 94,94 M108,54 C110,66 110,78 108,90', dcol, 1.4, 0.7);
-    s += body(c, bd, col, F('M22,82 C50,100 96,102 128,84 L128,106 L22,106 Z', dcol, 0.85) + wr + F('M40,40 C60,28 92,26 112,38 C92,34 64,36 44,48 Z', lt(col, 0.25), 0.6) +
-      L('M70,64 L82,74 M74,60 L88,72 M96,70 L102,80', lt(col, 0.45), 1.8) + E(62, 40, 6, 3, '#7a8a5a', 0, 0.6) + E(98, 36, 5, 2.4, '#7a8a5a', 0, 0.6));
-    // bony back ridge
-    [[44, 38], [56, 30], [70, 26], [84, 25], [98, 27], [110, 33], [118, 42]].forEach(function (g, i) { s += P('M' + (g[0] - 6) + ',' + (g[1] + 4) + ' L' + (g[0] - 1) + ',' + (g[1] - 8 + (i % 2) * 2) + ' L' + (g[0] + 6) + ',' + (g[1] + 3) + ' Z', c.cel('#6a6058'), 1.8); });
-    // far horn
-    s += P('M40,46 C38,32 34,20 24,12 C36,18 46,30 50,46 Z', c.cel(dk(bone, 0.15)), 2);
-    // head
-    var hd = 'M44,48 C34,40 18,44 12,54 L4,70 C1,78 3,88 9,93 L22,100 C31,103 42,98 46,88 C51,76 52,56 44,48 Z';
-    s += body(c, hd, col, F('M34,42 L56,42 L56,104 L38,104 C48,90 46,62 34,42 Z', dcol, 0.75) + F('M4,84 C12,94 28,100 44,96 L44,106 L2,106 Z', dcol, 0.8) + L('M14,62 C20,64 24,70 24,76 M10,74 C14,76 16,80 16,84', dcol, 1.4, 0.8));
-    // forehead bone plate
-    s += body(c, 'M10,58 C16,46 34,42 44,50 L40,62 C30,58 20,60 12,68 Z', bone, F('M30,44 L46,44 L46,64 L34,64 Z', dk(bone, 0.25), 0.8) + L('M18,54 L24,60 M28,50 L32,58', dk(bone, 0.3), 1.2), 2);
-    // near horn
-    s += P('M24,54 C20,38 14,24 2,14 C4,12 8,12 10,14 C22,24 32,38 38,52 Z', c.cel(bone), 2.2) + L('M22,44 L28,42 M16,32 L21,29', dk(bone, 0.3), 1.2);
-    s += L('M10,70 L22,70', OL, 3) + C(16, 73, 2, '#ffd040', 1.2);
-    s += E(5, 80, 1.6, 2.4, OL);
-    // tusk
-    s += P('M16,96 C6,98 0,90 1,80 C5,86 10,90 20,92 Z', c.cel(bone), 1.8);
-    s += L('M8,92 C14,96 22,98 30,96', OL, 1.4);
+    var wr = L('M58,70 C60,78 60,86 58,94 M76,72 C78,80 78,88 76,96 M94,70 C96,78 96,86 94,94', dcol, 1.4, 0.7);
+    s += body(c, bd, col, F('M22,82 C50,100 96,102 128,84 L128,106 L22,106 Z', dcol, 0.85) + wr);
+    s += limb('M112,78 C120,82 124,90 122,100', col, 7) + body(c, 'M114,100 C114,94 122,92 126,96 C129,100 127,108 121,109 C116,109 114,105 114,100 Z', arm, E(121, 99, 2, 1.4, lt(arm, 0.4), 0, 0.8) + P('M114,101 L110,99 L114,97 Z', bone, 0), 2);
+    // armoured carapace over the back: rows of scutes, a spiked rim along the flank
+    var cp = 'M32,60 C36,36 64,24 92,27 C114,30 126,46 125,66 C110,62 90,60 70,62 C56,63 44,64 32,66 Z';
+    var sc = '';
+    [[46, 50, 7, 5], [60, 42, 8, 5.4], [76, 38, 8.4, 5.6], [92, 38, 8.4, 5.6], [108, 44, 7.6, 5.2], [118, 56, 5.6, 4.4], [52, 60, 6, 3.4], [68, 56, 7, 3.8], [86, 54, 7.4, 3.8], [104, 56, 6.6, 3.6]].forEach(function (q) { sc += L(ellD(q[0], q[1], q[2], q[3]), OL, 1.4) + C(q[0], q[1] - 0.6, q[3] * 0.34, lt(arm, 0.35), 0, 0.9); });
+    s += body(c, cp, arm, sc + F('M92,24 L128,24 L128,68 L100,64 C112,52 108,36 92,24 Z', dk(arm, 0.28), 0.7) + F('M40,44 C58,30 86,26 108,34 C88,32 62,36 46,50 Z', lt(arm, 0.2), 0.6), 2.2);
+    [[40, 65], [54, 64], [68, 62], [82, 61], [96, 61], [110, 63], [121, 66]].forEach(function (g, i) { s += P('M' + (g[0] - 5) + ',' + (g[1] - 1) + ' L' + (g[0] - 1) + ',' + (g[1] + 8 - (i % 2) * 2) + ' L' + (g[0] + 5) + ',' + (g[1] - 1) + ' Z', c.cel(bone), 1.5); });
+    // far brow horn
+    s += P('M37,50 C39,44 42,40 46,37 C45,42 44,46 43,52 Z', c.cel(dk(bone, 0.15)), 1.8);
+    // long, low reptile head
+    var hd = 'M46,50 C36,44 20,46 12,54 L3,64 C0,70 1,80 7,83 L24,88 C34,90 44,86 48,78 C52,70 52,58 46,50 Z';
+    s += body(c, hd, col, F('M34,42 L56,42 L56,94 L38,94 C48,84 46,60 34,42 Z', dcol, 0.75) + F('M3,78 C10,86 28,90 46,84 L46,96 L1,96 Z', dcol, 0.8) + L('M16,62 C20,64 22,68 22,72', dcol, 1.4, 0.8));
+    // small armour plates over the brow and snout
+    s += body(c, 'M12,56 C18,48 32,44 42,50 L38,58 C30,55 20,57 14,62 Z', arm, L(ellD(22, 54, 4, 2.4) + ellD(33, 51, 4, 2.4), OL, 1.1) + F('M30,44 L46,44 L46,60 L34,60 Z', dk(arm, 0.25), 0.8), 1.8);
+    // near brow horn: short, swept back
+    s += P('M27,52 C29,45 33,40 39,36 C38,42 37,47 36,52 Z', c.cel(bone), 2) + L('M30,46 L35,47', dk(bone, 0.3), 1.1);
+    s += L('M12,66 L24,66', OL, 3) + C(18, 69, 2, '#ffd040', 1.2);
+    s += E(4, 70, 1.4, 2, OL);
+    s += L('M3,78 C12,82 24,84 36,82', OL, 1.4);
     s += limb('M40,90 L38,116', col, 16) + foot(38, col) + limb('M92,90 L94,116', col, 16) + foot(94, col);
     return s;
   }
@@ -930,8 +946,8 @@
   //  MOBS
   // ============================================================
   var MOBS = {
-    plainstrider: function (c) { return G(plainstrider(c, { col: '#cda676', wing: '#9a6c42', leg: '#c8a070', tail: '#8a5a36', beak: '#e0b050' }), at(0.94, 64, 122)); },
-    adult_plainstrider: function (c) { return G(plainstrider(c, { col: '#a88450', wing: '#7a4e2c', leg: '#b8905a', tail: '#b84a2a', crest: '#b84a2a', beak: '#e8a838', belly: '#e0c89a', big: true }), at(1.08, 64, 122)); },
+    plainstrider: function (c) { return G(plainstrider(c, { col: '#8a6e4e', wing: '#6a5038', leg: '#8a7a6a', tail: '#5a4632', beak: '#3a3430', neck: '#9aa0b0' }), at(0.94, 64, 122)); },
+    adult_plainstrider: function (c) { return G(plainstrider(c, { col: '#5e4a3a', wing: '#4a3a2c', leg: '#7a6e62', tail: '#3e3028', crest: '#2e2620', beak: '#2e2a26', neck: '#7a8ea8', big: true }), at(1.08, 64, 122)); },
     prairie_wolf: function (c) { return G(wolf(c, { col: '#a88c68', belly: '#e0d0b0', mane: '#8a7050' }), at(0.9, 64, 122)); },
     prairie_stalker: function (c) { return wolf(c, { col: '#5e5044', belly: '#9a8a74', mane: '#3e342c', eye: '#ffd02a', scars: true }); },
     battleboar: function (c) { return G(armoredBoar(c, { col: '#8a6a52', mane: '#4a3428', plate: '#6e6258' }), at(0.98, 64, 122)); },

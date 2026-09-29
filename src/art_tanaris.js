@@ -792,13 +792,13 @@
     for (var x = x0; x < x1 - 4; x += 16) o += P(pd([[x, yb - h + 1], [x, yb - h - 6], [x + 3, yb - h - 6], [x + 3, yb - h - 10], [x + 9, yb - h - 10], [x + 9, yb - h - 6], [x + 12, yb - h - 6], [x + 12, yb - h + 1]], true), c.cel(lt(col, 0.05)), 1.3);
     return o + L('M' + pt([x0, yb - h * 0.55]) + 'L' + pt([x1, yb - h * 0.55]), dk(col, 0.4), 2.2) + L('M' + pt([x0, yb - h * 0.55 + 3]) + 'L' + pt([x1, yb - h * 0.55 + 3]), '#2a8a8a', 1.4, 0.8);
   }
-  // tiki-style carved troll face with tusks, framing a gate
+  // tiki-style carved troll face with small tusks, framing a gate
   function trollFace(c, x, y, s, col) {
     col = col || '#c88a4a'; var q = function (u, v) { return [x + u * s, y + v * s]; }, o = '';
     o += body(c, pd([q(-20, -22), q(20, -22), q(24, 10), q(14, 22), q(-14, 22), q(-24, 10)], true), col, F(pd([q(4, -24), q(26, -24), q(26, 24), q(6, 24)], true), dk(col, 0.25), 0.75), 1.8 * s);
     o += P(pd([q(-20, -8), q(-4, -12), q(-4, -4), q(-18, -2)], true) + pd([q(20, -8), q(4, -12), q(4, -4), q(18, -2)], true), '#1e1410', 1 * s) + gEye(c, x - 11 * s, y - 7 * s, 1.6 * s, '#5affd8') + gEye(c, x + 11 * s, y - 7 * s, 1.6 * s, '#5affd8');
     o += P(pd([q(-4, -4), q(4, -4), q(6, 6), q(-6, 6)], true), c.cel(dk(col, 0.1)), 1.2 * s) + P(pd([q(-14, 10), q(14, 10), q(10, 18), q(-10, 18)], true), '#2a1410', 1.2 * s);
-    o += P(pd([q(-12, 16), q(-18, -2), q(-8, 14)], true) + pd([q(12, 16), q(18, -2), q(8, 14)], true), c.cel(BONE), 1.2 * s);
+    o += P(pd([q(-11, 17), q(-13, 9), q(-8, 15)], true) + pd([q(11, 17), q(13, 9), q(8, 15)], true), c.cel(BONE), 1.2 * s);
     return o + L('M' + pt(q(-20, -16)) + 'L' + pt(q(20, -16)), '#2a8a8a', 2 * s) + L('M' + pt(q(-16, -20)) + 'L' + pt(q(-12, -26)) + 'L' + pt(q(-8, -20)) + 'M' + pt(q(8, -20)) + 'L' + pt(q(12, -26)) + 'L' + pt(q(16, -20)), OL, 1.4 * s);
   }
   function stepTower(c, x, yb, w, h, col) {

@@ -1096,31 +1096,43 @@
     s += gEye(c, 21, 74, 2.2, o.eye || gc) + L('M14,70 L26,71', OL, 2.2) + C(8, 79, 1, OL);
     return o.tf ? G(s, o.tf) : s;
   }
-  // ---- tauren (Sourhorn) ----
-  function hornP(c, x, y, dir, col) {
-    var d = 'M' + pt([x - 4, y + 2]) + 'C' + pt([x + dir * 14, y + 2]) + ' ' + pt([x + dir * 20, y - 8]) + ' ' + pt([x + dir * 16, y - 22]) + 'C' + pt([x + dir * 12, y - 12]) + ' ' + pt([x + dir * 6, y - 6]) + ' ' + pt([x + 4, y - 4]) + 'Z';
-    return body(c, d, col, E(x + dir * 16, y - 20, 4, 6, dk(col, 0.45), 0, 0.9) + L('M' + pt([x + dir * 8, y + 1]) + 'L' + pt([x + dir * 10, y - 4]) + 'M' + pt([x + dir * 13, y - 1]) + 'L' + pt([x + dir * 15, y - 7]), dk(col, 0.3), 1), 1.8);
+  // ---- hornfolk (Sourhorn), Realm of Loner design: big and horned, but curled ram horns and a long goat-like face, no nose ring ----
+  // spiral ram horn: root at the top of the head, curling back, down and forward round the ear (dir 1 = curl clockwise)
+  function ramHorn(c, cx, cy, R, dir, col) {
+    var PI = Math.PI, N = 22, out = [], inn = [], rid = '', a0 = -PI / 2 - 0.35 * dir;
+    for (var i = 0; i <= N; i++) {
+      var t = i / N, ang = a0 + dir * t * 1.72 * PI, rad = R * (1 - 0.64 * t), w = R * 0.62 * (1 - 0.6 * t) + 0.8;
+      var ca = Math.cos(ang), sa = Math.sin(ang);
+      out.push([cx + ca * (rad + w / 2), cy + sa * (rad + w / 2)]); inn.push([cx + ca * (rad - w / 2), cy + sa * (rad - w / 2)]);
+      if (i > 1 && i < N - 1 && i % 2 === 0) rid += 'M' + pt([cx + ca * (rad + w * 0.42), cy + sa * (rad + w * 0.42)]) + 'L' + pt([cx + ca * (rad - w * 0.42), cy + sa * (rad - w * 0.42)]);
+    }
+    var d = pd(out.concat(inn.reverse()), true);
+    return body(c, d, col, L(rid, dk(col, 0.32), 1) + F(pd([[cx - R * 1.6, cy + R * 0.2], [cx + R * 1.6, cy + R * 0.2], [cx + R * 1.6, cy + R * 1.6], [cx - R * 1.6, cy + R * 1.6]], true), dk(col, 0.2), 0.55), 1.8);
   }
   function taurenHead(c, x, y, o) {
     var fur = o.fur, s = '', hair = o.hair || dk(fur, 0.4), horn = o.horn || '#e8dcc0', mz = o.muzzle || lt(fur, 0.25);
     s += body(c, 'M' + pt([x + 2, y - 12]) + 'C' + pt([x + 18, y - 16]) + ' ' + pt([x + 28, y - 4]) + ' ' + pt([x + 28, y + 10]) + 'L' + pt([x + 33, y + 26]) + 'L' + pt([x + 24, y + 21]) + 'L' + pt([x + 22, y + 32]) + 'L' + pt([x + 15, y + 19]) + 'C' + pt([x + 10, y + 8]) + ' ' + pt([x + 4, y]) + ' ' + pt([x + 2, y - 12]) + 'Z', hair,
       L('M' + pt([x + 10, y - 10]) + 'Q' + pt([x + 22, y]) + ' ' + pt([x + 26, y + 20]) + 'M' + pt([x + 8, y - 2]) + 'Q' + pt([x + 16, y + 8]) + ' ' + pt([x + 18, y + 22]), dk(hair, 0.35), 1.2), 2);
-    s += hornP(c, x + 6, y - 12, 1, dk(horn, 0.12));
-    s += P('M' + pt([x + 8, y - 6]) + 'C' + pt([x + 16, y - 11]) + ' ' + pt([x + 24, y - 9]) + ' ' + pt([x + 27, y - 4]) + 'C' + pt([x + 20, y - 1]) + ' ' + pt([x + 12, y - 1]) + ' ' + pt([x + 8, y]) + 'Z', c.cel(fur), 1.8) + F('M' + pt([x + 12, y - 5]) + 'C' + pt([x + 17, y - 8]) + ' ' + pt([x + 22, y - 7]) + ' ' + pt([x + 24, y - 4]) + 'C' + pt([x + 18, y - 3]) + ' ' + pt([x + 14, y - 3]) + ' ' + pt([x + 12, y - 3]) + 'Z', '#b87a6a', 0.7);
-    var d = 'M' + pt([x + 12, y - 8]) + 'C' + pt([x + 6, y - 16]) + ' ' + pt([x - 8, y - 16]) + ' ' + pt([x - 12, y - 8]) + 'L' + pt([x - 18, y]) + 'C' + pt([x - 25, y + 4]) + ' ' + pt([x - 25, y + 17]) + ' ' + pt([x - 18, y + 20]) + 'L' + pt([x - 6, y + 21]) + 'C' + pt([x + 2, y + 21]) + ' ' + pt([x + 12, y + 14]) + ' ' + pt([x + 14, y + 4]) + 'Z';
-    s += body(c, d, fur, F(pd([[x + 3, y - 18], [x + 18, y - 18], [x + 18, y + 22], [x + 1, y + 22]], true), dk(fur, 0.25), 0.8) +
-      F('M' + pt([x - 13, y + 1]) + 'C' + pt([x - 20, y + 1]) + ' ' + pt([x - 27, y + 6]) + ' ' + pt([x - 25, y + 15]) + 'L' + pt([x - 12, y + 22]) + 'C' + pt([x - 6, y + 15]) + ' ' + pt([x - 6, y + 6]) + ' ' + pt([x - 13, y + 1]) + 'Z', mz, 0.95) +
-      (o.paint ? L('M' + pt([x - 10, y - 10]) + 'L' + pt([x - 4, y + 4]) + 'M' + pt([x - 4, y - 12]) + 'L' + pt([x + 2, y + 2]) + 'M' + pt([x + 4, y - 12]) + 'L' + pt([x + 8, y + 2]), o.paint, 2.4) : ''), 2.2);
-    s += E(x - 21, y + 7, 1.8, 2.6, OL) + E(x - 16, y + 6, 1.4, 2, OL) + L('M' + pt([x - 22, y + 15]) + 'Q' + pt([x - 16, y + 17]) + ' ' + pt([x - 10, y + 15]), OL, 1.4);
+    // far horn, behind the skull
+    s += ramHorn(c, x + 14, y - 2, 12, 1, dk(horn, 0.14));
+    // long goat-like face: narrow muzzle running forward and down, small chin beard
+    var d = 'M' + pt([x + 12, y - 8]) + 'C' + pt([x + 6, y - 16]) + ' ' + pt([x - 8, y - 16]) + ' ' + pt([x - 12, y - 8]) + 'L' + pt([x - 19, y + 6]) + 'C' + pt([x - 23, y + 13]) + ' ' + pt([x - 23, y + 21]) + ' ' + pt([x - 17, y + 23]) + 'L' + pt([x - 9, y + 22]) + 'C' + pt([x + 1, y + 20]) + ' ' + pt([x + 12, y + 13]) + ' ' + pt([x + 14, y + 3]) + 'Z';
+    s += P('M' + pt([x - 15, y + 21]) + 'C' + pt([x - 15, y + 28]) + ' ' + pt([x - 12, y + 32]) + ' ' + pt([x - 9, y + 34]) + 'C' + pt([x - 8, y + 29]) + ' ' + pt([x - 6, y + 25]) + ' ' + pt([x - 6, y + 20]) + 'Z', c.cel(hair), 1.6);
+    s += body(c, d, fur, F(pd([[x + 3, y - 18], [x + 18, y - 18], [x + 18, y + 24], [x + 1, y + 24]], true), dk(fur, 0.25), 0.8) +
+      F('M' + pt([x - 14, y + 4]) + 'C' + pt([x - 19, y + 6]) + ' ' + pt([x - 24, y + 14]) + ' ' + pt([x - 21, y + 22]) + 'L' + pt([x - 11, y + 24]) + 'C' + pt([x - 7, y + 16]) + ' ' + pt([x - 8, y + 8]) + ' ' + pt([x - 14, y + 4]) + 'Z', mz, 0.95) +
+      (o.paint ? L('M' + pt([x - 10, y - 10]) + 'L' + pt([x - 5, y + 3]) + 'M' + pt([x - 4, y - 12]) + 'L' + pt([x + 1, y + 1]) + 'M' + pt([x + 4, y - 12]) + 'L' + pt([x + 8, y + 1]), o.paint, 2.4) : ''), 2.2);
+    s += E(x - 19.5, y + 15, 1.2, 2, OL) + E(x - 16, y + 14.6, 1, 1.6, OL) + L('M' + pt([x - 20, y + 21]) + 'Q' + pt([x - 16, y + 22.4]) + ' ' + pt([x - 11, y + 21]), OL, 1.3);
+    // ear sticking out sideways under the horn
+    s += P('M' + pt([x + 6, y - 2]) + 'C' + pt([x + 14, y - 5]) + ' ' + pt([x + 22, y - 2]) + ' ' + pt([x + 24, y + 2]) + 'C' + pt([x + 17, y + 4]) + ' ' + pt([x + 10, y + 3]) + ' ' + pt([x + 6, y + 3]) + 'Z', c.cel(fur), 1.6) + F('M' + pt([x + 10, y - 1]) + 'C' + pt([x + 15, y - 3]) + ' ' + pt([x + 19, y - 1]) + ' ' + pt([x + 21, y + 1]) + 'C' + pt([x + 16, y + 2]) + ' ' + pt([x + 12, y + 2]) + ' ' + pt([x + 10, y + 1]) + 'Z', '#b87a6a', 0.7);
     if (o.mask) {
-      s += P('M' + pt([x + 8, y - 12]) + 'C' + pt([x - 2, y - 17]) + ' ' + pt([x - 12, y - 12]) + ' ' + pt([x - 14, y - 6]) + 'L' + pt([x - 21, y + 1]) + 'C' + pt([x - 25, y + 5]) + ' ' + pt([x - 24, y + 10]) + ' ' + pt([x - 20, y + 10]) + 'L' + pt([x - 10, y + 8]) + 'L' + pt([x - 2, y + 10]) + 'L' + pt([x + 8, y + 4]) + 'Z', c.cel('#e8e0cc'), 1.8) +
+      s += P('M' + pt([x + 8, y - 12]) + 'C' + pt([x - 2, y - 17]) + ' ' + pt([x - 12, y - 12]) + ' ' + pt([x - 14, y - 6]) + 'L' + pt([x - 19, y + 4]) + 'C' + pt([x - 22, y + 9]) + ' ' + pt([x - 21, y + 13]) + ' ' + pt([x - 17, y + 12]) + 'L' + pt([x - 9, y + 9]) + 'L' + pt([x - 2, y + 10]) + 'L' + pt([x + 8, y + 4]) + 'Z', c.cel('#e8e0cc'), 1.8) +
         P(pd([[x - 12, y - 4], [x - 3, y - 6], [x - 4, y + 1], [x - 11, y + 1]], true), '#10141e', 1) + C(x - 7, y - 2.4, 6, glow(c, o.eyeCol || '#6ab0ff', 0.8)) + C(x - 7, y - 2.4, 1.6, lt(o.eyeCol || '#6ab0ff', 0.4)) +
-        L('M' + pt([x - 20, y + 2]) + 'L' + pt([x - 14, y + 4]) + 'M' + pt([x - 2, y - 12]) + 'L' + pt([x - 1, y - 7]) + 'M' + pt([x + 3, y - 12]) + 'L' + pt([x + 3, y - 7]), '#9a927e', 1.2) + E(x - 20, y + 6, 1.3, 1.8, OL);
+        L('M' + pt([x - 18, y + 5]) + 'L' + pt([x - 13, y + 6]) + 'M' + pt([x - 2, y - 12]) + 'L' + pt([x - 1, y - 7]) + 'M' + pt([x + 3, y - 12]) + 'L' + pt([x + 3, y - 7]), '#9a927e', 1.2);
     } else {
-      s += E(x - 7, y - 3, 2.6, 2, o.eye || '#f4e070', 1) + C(x - 7.6, y - 3, 1, OL) + L('M' + pt([x - 13, y - 7]) + 'L' + pt([x - 1, y - 6]), OL, 2.6);
+      s += E(x - 7, y - 3, 2.6, 2, o.eye || '#f4e070', 1) + L('M' + pt([x - 8.6, y - 3]) + 'L' + pt([x - 5.4, y - 3]), OL, 1.2) + L('M' + pt([x - 13, y - 7]) + 'L' + pt([x - 1, y - 6]), OL, 2.6);
     }
-    s += hornP(c, x - 4, y - 12, -1, horn);
-    if (o.ring) s += L('M' + pt([x - 21, y + 11]) + 'a3.4,3.4 0 1,0 4,4', OL, 3.2) + L('M' + pt([x - 21, y + 11]) + 'a3.4,3.4 0 1,0 4,4', o.ring, 1.6);
+    // near horn: a heavy ram curl round the ear
+    s += ramHorn(c, x + 8, y + 1, 14, 1, horn);
     return s;
   }
   function tauren(c, o) {
@@ -1203,47 +1215,78 @@
   }
   function rivets(pts, col) { return pts.map(function (p) { return C(p[0], p[1], 1.2, col || '#f0d890') + C(p[0] + 0.4, p[1] + 0.4, 0.5, OL); }).join(''); }
   function dent(x, y, r, col) { return E(x, y, r, r * 0.7, dk(col, 0.3), 0, 0.8) + L('M' + pt([x - r * 0.8, y + r * 0.4]) + 'Q' + pt([x, y + r * 0.9]) + ' ' + pt([x + r * 0.8, y + r * 0.4]), lt(col, 0.35), 1, 0.8); }
-  // small logging walker: boxy cab, chicken legs, one saw arm, one claw
+  // crawler track: a stadium-shaped tread belt round road wheels (x0..x1 = belt ends, y0 = top, y1 = ground)
+  function tracks(c, x0, x1, y0, y1, nw) {
+    var r = (y1 - y0) / 2, cy = y0 + r, s = '';
+    var d = 'M' + pt([x0 + r, y0]) + 'L' + pt([x1 - r, y0]) + 'A' + n(r) + ',' + n(r) + ' 0 0 1 ' + pt([x1 - r, y1]) + 'L' + pt([x0 + r, y1]) + 'A' + n(r) + ',' + n(r) + ' 0 0 1 ' + pt([x0 + r, y0]) + 'Z';
+    var tr = '';
+    for (var x = x0 + r; x <= x1 - r + 0.1; x += 5) tr += 'M' + pt([x, y0]) + 'l0,2.6 M' + pt([x, y1]) + 'l0,-2.6';
+    s += body(c, d, '#3a3632', L(tr, '#141210', 1.4) + F(pd([[x0, cy + r * 0.3], [x1 + 2, cy + r * 0.3], [x1 + 2, y1 + 2], [x0, y1 + 2]], true), '#000', 0.25), 2.2);
+    s += P(pd([[x0 + r * 0.7, y0 + 3.4], [x1 - r * 0.7, y0 + 3.4], [x1 - r * 0.7, y1 - 3.4], [x0 + r * 0.7, y1 - 3.4]], true), '#24211e', 0);
+    for (var i = 0; i < nw; i++) {
+      var wx = x0 + r + (x1 - x0 - 2 * r) * (nw > 1 ? i / (nw - 1) : 0.5), wr = i === 0 || i === nw - 1 ? r * 0.7 : r * 0.56;
+      s += C(wx, cy, wr, c.cel('#6e6a62'), 1.4) + C(wx, cy, wr * 0.42, c.cel('#a8a49a'), 1) + C(wx, cy, wr * 0.14, OL);
+    }
+    return s;
+  }
+  // goblin driver seated in an open cab, head and shoulders over the cab wall, hands on the levers
+  function driver(c, x, y, o) {
+    var sk = '#6aa84a', sh = o.shirt || '#b86a3a', s = '';
+    s += body(c, pd([[x - 9, y + 6], [x + 9, y + 6], [x + 10, y + 20], [x - 10, y + 20]], true), sh, F(pd([[x + 3, y + 4], [x + 12, y + 4], [x + 12, y + 22], [x + 4, y + 22]], true), dk(sh, 0.25), 0.8));
+    s += limb('M' + pt([x - 6, y + 9]) + 'L' + pt([x - 14, y + 16]), sh, 5.4) + C(x - 15, y + 17, 3, c.cel(sk), 1.6);
+    s += G(gobHead(c, x, y - 2, { hat: o.hat || '#e8b830', hatStyle: 'hard', specs: o.specs, grin: o.grin, cigar: o.cigar }), at(0.82, x, y + 4));
+    return s;
+  }
+  // compact harvester: a small tracked logging cart, open cab at the back, one big saw on a boom at the front
   function harvester(c, o) {
-    var col = o.col || '#b88a34', rust = '#7a3e1a', s = shadow(c, 64, 40);
-    s += stack(c, 78, 48, 22, '#6a6868');
-    s += limb('M86,60 L102,70 L104,82', dk(IRON, 0.2), 5) + L('M104,82 l-5,7 M104,82 l5,6', OL, 4.4) + L('M104,82 l-5,7 M104,82 l5,6', '#8a8680', 2);
-    s += pistonLeg(c, [[76, 80], [88, 96], [78, 110], [80, 117]], dk(col, 0.15), 6);
-    var cab = 'M40,46 L88,46 L96,56 L94,84 L40,84 L36,72 Z';
-    s += body(c, cab, col, F('M74,44 L98,44 L98,86 L80,86 Z', dk(col, 0.3), 0.8) + E(84, 60, 7, 5, rust, 0, 0.75) + E(50, 78, 8, 3, rust, 0, 0.7) + E(66, 52, 4, 3, rust, 0, 0.6) +
-      L('M62,48 L62,84 M78,48 L78,84', dk(col, 0.35), 1.2) + rivets([[44, 50], [56, 50], [68, 50], [82, 50], [92, 58], [92, 70]]) + dent(70, 66, 4, col), 2.2);
-    s += hazard(c, 38, 76, 56, 8);
-    s += R(48, 64, 12, 4, '#2a2622', 1) + L('M50,66 L58,66', '#6a6460', 1);
-    s += C(47, 55, 6, c.cel(IRON), 1.6) + C(47, 55, 3.6, o.parked ? '#3a3632' : '#ff5a2a', 1) + (o.parked ? '' : C(47, 55, 10, glow(c, '#ff5a2a', 0.6)));
-    s += pistonLeg(c, [[54, 82], [62, 98], [52, 110], [54, 117]], col, 6.5);
-    s += limb('M52,68 L38,78 L26,72', IRON, 5) + C(38, 78, 3, c.cel(col), 1.2);
-    s += sawBlade(c, 18, 70, 15, 0.3);
-    if (!o.parked) s += L('M2,56 A18,18 0 0 0 4,86', '#ffffff', 1.6, 0.6) + L('M6,60 A14,14 0 0 0 8,82', '#ffffff', 1, 0.5) + E(18, 121, 10, 2.4, '#d8b878', 0, 0.8) + C(12, 118, 1, '#d8b878') + C(24, 116, 0.8, '#d8b878');
+    var col = o.col || '#b88a34', rust = '#7a3e1a', s = shadow(c, 66, 46);
+    s += stack(c, 96, 70, 20, o.parked ? null : '#6a6868');
+    // levers and roll bar behind the driver
+    s += limb('M72,80 L70,54 L96,54 L98,80', dk(IRON, 0.1), 3.2);
+    s += o.parked ? body(c, 'M76,72 L76,62 C76,58 92,58 92,62 L92,72 Z', '#6a4a2a', '', 1.8) : driver(c, 84, 60, { hat: '#e8b830', grin: true });
+    s += L('M68,82 L66,72 M72,82 L71,70', OL, 3.2) + L('M68,82 L66,72 M72,82 L71,70', '#8a8680', 1.4) + C(66, 71, 1.8, '#c8302a', 1) + C(71, 69, 1.8, '#3a6ac8', 1);
+    var hull = 'M34,82 L102,82 L104,100 L30,100 L28,92 Z';
+    s += body(c, hull, col, F('M86,80 L106,80 L106,102 L88,102 Z', dk(col, 0.3), 0.8) + E(90, 92, 6, 3, rust, 0, 0.7) + E(44, 96, 7, 2.4, rust, 0, 0.7) +
+      L('M60,82 L60,100', dk(col, 0.35), 1.2) + rivets([[36, 86], [48, 86], [72, 86], [84, 86], [98, 86]]) + dent(70, 93, 3.4, col), 2.2);
+    // low cab wall
+    s += body(c, 'M64,70 L100,70 L102,84 L62,84 Z', dk(col, 0.06), F('M88,68 L104,68 L104,86 L90,86 Z', dk(col, 0.3), 0.8) + rivets([[68, 74], [96, 74]]), 2);
+    s += hazard(c, 30, 94, 40, 6);
+    s += tracks(c, 30, 104, 102, 121, 4);
+    // headlamp
+    s += C(40, 86, 4, c.cel(IRON), 1.4) + C(40, 86, 2.4, o.parked ? '#3a3632' : '#ffd86a', 1) + (o.parked ? '' : C(40, 86, 9, glow(c, '#ffd86a', 0.55)));
+    // boom and saw
+    s += limb('M44,88 L26,82', IRON, 6) + limb('M44,96 L26,86', dk(IRON, 0.15), 4) + C(44, 90, 3.4, c.cel(col), 1.3);
+    s += sawBlade(c, 18, 82, 17, 0.3);
+    if (!o.parked) s += L('M0,68 A20,20 0 0 0 2,98', '#ffffff', 1.6, 0.6) + L('M4,72 A15,15 0 0 0 6,94', '#ffffff', 1, 0.5) + E(16, 121, 10, 2.4, '#d8b878', 0, 0.8) + C(10, 117, 1, '#d8b878') + C(24, 115, 0.8, '#d8b878');
     return o.tf ? G(s, o.tf) : s;
   }
-  // heavy shredder: armoured cab, visor, two big saw arms, piston legs
+  // heavy shredder: an armoured tracked logging cart, open cab up top with a goblin at the levers, a huge saw on a boom at the front
   function shredder(c, o) {
-    var col = o.col || '#e0b030', rust = '#8a4a1e', parked = o.parked, s = shadow(c, 64, 54);
-    if (!parked) s += C(64, 64, 70, glow(c, '#ff6a2a', 0.26));
-    s += stack(c, 80, 26, 20, parked ? null : '#2a2626') + stack(c, 94, 30, 16, parked ? null : '#3a3434');
-    s += limb('M94,44 L112,40 L112,28', dk(IRON, 0.2), 7) + C(112, 40, 4, c.cel(dk(col, 0.2)), 1.4);
-    s += sawBlade(c, 110, 20, 16, 0.5, parked ? '#9a948a' : '#c8ccd0');
-    s += pistonLeg(c, [[82, 86], [92, 102], [86, 114], [88, 117]], dk(col, 0.2), 9, 1.2);
-    var cab = 'M28,36 C30,24 44,18 64,18 C86,18 100,26 102,40 L104,78 C100,92 84,96 64,96 C44,96 30,92 26,80 Z';
-    s += body(c, cab, col, F('M80,14 L110,14 L110,100 L82,100 C94,80 94,40 80,14 Z', dk(col, 0.3), 0.8) +
-      E(86, 70, 9, 6, rust, 0, parked ? 0.9 : 0.65) + E(40, 84, 10, 4, rust, 0, 0.7) + E(66, 26, 6, 3, rust, 0, 0.6) + (parked ? E(56, 60, 12, 8, rust, 0, 0.8) + E(90, 40, 6, 9, rust, 0, 0.8) : '') +
-      R(70, 56, 16, 14, c.cel('#8a8680'), 1.2) + rivets([[72, 58], [84, 58], [72, 68], [84, 68]], '#d8d4cc') +
-      dent(50, 68, 5, col) + dent(90, 52, 4, col) + dent(60, 84, 3.5, col) + L('M34,50 L40,56 L36,60', '#2a2622', 1.4, 0.8) +
-      rivets([[34, 32], [46, 24], [60, 21], [74, 21], [88, 25], [98, 36], [100, 60]]), 2.6);
-    s += hazard(c, 30, 82, 72, 8);
-    s += P('M36,30 C38,22 48,18 56,18 C56,24 52,30 44,34 Z', c.cel('#8ab0c0'), 1.6) + L('M40,26 L46,22', '#ffffff', 1.2, 0.8);
-    var vis = 'M28,42 L62,40 L62,48 L30,50 Z';
-    s += P(vis, parked ? '#2a2622' : '#3a0a08', 1.8) + (parked ? '' : C(42, 45, 18, glow(c, '#ff3a1a', 0.7)) + L('M32,45 L58,43', '#ff6a3a', 2.4) + L('M34,45 L50,44', '#ffd0a0', 1));
-    s += body(c, 'M26,52 C24,42 36,38 44,42 C50,46 50,58 44,62 C36,66 28,62 26,52 Z', dk(col, 0.08), rivets([[32, 48], [40, 46], [44, 54]], '#d8d4cc') + F('M38,38 L52,38 L52,64 L42,64 Z', dk(col, 0.3), 0.7), 2);
-    s += pistonLeg(c, [[48, 88], [42, 104], [48, 114], [46, 117]], col, 10, 1.3);
-    s += limb('M38,58 L24,72 L20,82', dk(IRON, 0.1), 8) + C(24, 72, 4.4, c.cel(col), 1.4);
-    s += sawBlade(c, 22, 90, 18, 0.1, parked ? '#9a948a' : '#c8ccd0');
-    if (!parked) s += L('M-2,76 A22,22 0 0 0 4,110', '#ffffff', 1.8, 0.6) + L('M2,80 A18,18 0 0 0 8,106', '#ffffff', 1.1, 0.5) + spark4(34, 104, 2.4, '#ffd060') + spark4(4, 70, 2, '#ffd060');
+    var col = o.col || '#e0b030', rust = '#8a4a1e', parked = o.parked, s = shadow(c, 64, 56);
+    if (!parked) s += C(64, 70, 70, glow(c, '#ff6a2a', 0.22));
+    s += stack(c, 100, 50, 22, parked ? null : '#2a2626') + stack(c, 110, 56, 16, parked ? null : '#3a3434');
+    // roll cage over the open cab, driver inside
+    s += limb('M64,66 L64,34 L100,34 L102,66', dk(IRON, 0.1), 3.6) + limb('M64,40 L100,40', dk(IRON, 0.25), 2.2);
+    if (!parked) s += driver(c, 82, 44, { hat: '#e8b830', shirt: '#7a4a2a', specs: true, cigar: true });
+    else s += body(c, 'M72,58 L72,46 C72,42 90,42 90,46 L90,58 Z', '#6a4a2a', L('M76,48 L86,48', '#4a3020', 1.2), 1.8);
+    s += L('M70,68 L67,56 M75,68 L74,54', OL, 3.4) + L('M70,68 L67,56 M75,68 L74,54', '#8a8680', 1.6) + C(67, 55, 2, '#c8302a', 1) + C(74, 53, 2, '#3a6ac8', 1);
+    // armoured hull with a sloped front plate
+    var hull = 'M30,70 L60,62 L104,62 L110,70 L112,98 L22,98 L20,86 Z';
+    s += body(c, hull, col, F('M90,58 L114,58 L114,100 L92,100 Z', dk(col, 0.3), 0.8) +
+      E(96, 86, 8, 5, rust, 0, parked ? 0.9 : 0.65) + E(36, 92, 9, 3, rust, 0, 0.7) + (parked ? E(56, 80, 10, 6, rust, 0, 0.8) + E(84, 70, 5, 4, rust, 0, 0.8) : '') +
+      R(70, 76, 16, 12, c.cel('#8a8680'), 1.2) + rivets([[72, 78], [84, 78], [72, 86], [84, 86]], '#d8d4cc') +
+      L('M30,70 L44,90 M60,62 L60,98', dk(col, 0.32), 1.2) + dent(48, 80, 4, col) + dent(100, 74, 3.4, col) +
+      rivets([[26, 80], [34, 72], [48, 67], [62, 65], [90, 65], [106, 68], [108, 88]]), 2.6);
+    // cab wall
+    s += body(c, 'M60,58 L104,58 L106,70 L58,70 Z', dk(col, 0.08), F('M92,56 L108,56 L108,72 L94,72 Z', dk(col, 0.3), 0.8) + rivets([[64, 63], [100, 63]], '#d8d4cc'), 2);
+    s += hazard(c, 22, 92, 66, 6);
+    s += tracks(c, 18, 114, 99, 122, 5);
+    // searchlight
+    s += C(34, 76, 5.4, c.cel(IRON), 1.6) + C(34, 76, 3.4, parked ? '#2a2622' : '#ff6a3a', 1) + (parked ? '' : C(34, 76, 14, glow(c, '#ff5a2a', 0.65)));
+    // boom arms and the huge saw
+    s += limb('M40,80 L24,72', dk(IRON, 0.1), 8) + limb('M40,92 L24,78', dk(IRON, 0.2), 5) + C(40, 84, 4.6, c.cel(col), 1.4);
+    s += sawBlade(c, 22, 72, 21, 0.1, parked ? '#9a948a' : '#c8ccd0');
+    if (!parked) s += L('M-2,56 A24,24 0 0 0 4,92', '#ffffff', 1.8, 0.6) + L('M3,60 A19,19 0 0 0 8,88', '#ffffff', 1.1, 0.5) + spark4(40, 100, 2.4, '#ffd060') + spark4(4, 50, 2, '#ffd060') + E(20, 121, 12, 2.4, '#d8b878', 0, 0.8);
     return o.tf ? G(s, o.tf) : s;
   }
   function spark4(x, y, r, col) { return F('M' + pt([x, y - r * 2]) + 'L' + pt([x + r * 0.4, y - r * 0.4]) + 'L' + pt([x + r * 2, y]) + 'L' + pt([x + r * 0.4, y + r * 0.4]) + 'L' + pt([x, y + r * 2]) + 'L' + pt([x - r * 0.4, y + r * 0.4]) + 'L' + pt([x - r * 2, y]) + 'L' + pt([x - r * 0.4, y - r * 0.4]) + 'Z', col); }
@@ -1396,7 +1439,7 @@
     grimtotem_brute: function (c) {
       var fur = '#5e5250';
       return tauren(c, {
-        fur: fur, hair: '#221c1c', horn: '#d8ccb0', paint: '#1a2a44', loin: '#3a4a5a', belt: '#3a2a20', buckle: '#8a2a2a', ring: '#c8c4bc',
+        fur: fur, hair: '#221c1c', horn: '#d8ccb0', paint: '#1a2a44', loin: '#3a4a5a', belt: '#3a2a20', buckle: '#8a2a2a',
         pads: function (c) { return body(c, 'M30,48 C30,38 48,36 56,44 L54,56 C46,54 36,56 30,56 Z', '#4a5a6a', L('M34,46 L50,46', '#2a3440', 1.4), 2) + P('M34,42 L28,30 L40,40 Z', c.cel('#e8e0cc'), 1.3) + P('M44,40 L44,28 L50,40 Z', c.cel('#e8e0cc'), 1.3); },
         chest: function () { return L('M52,70 L72,74 M54,78 L74,82', '#1a2a44', 2.4) + L('M66,50 L50,90', '#3a2a20', 4); },
         near: [[46, 56], [30, 66], [17, 74]],
