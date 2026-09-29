@@ -2816,6 +2816,16 @@
   // shown on the character screens and in Settings → About (the README carries the same notice)
   const FAN_NOTE = 'Unofficial, non-commercial fan project. Not affiliated with or endorsed by Blizzard Entertainment. Warcraft and World of Warcraft are trademarks of Blizzard Entertainment, Inc. All art, music and code in this game are original.';
   const fanNote = () => h('p', { class: 'fan-note' }, FAN_NOTE);
+  // the title on the character screens: the lantern from the app icon over the lettering, and the tagline
+  const LANTERN_MARK = '<svg viewBox="-24 -46 48 80" aria-hidden="true"><defs><linearGradient id="tlg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff4c8"/><stop offset=".6" stop-color="#ffd67a"/><stop offset="1" stop-color="#f4a840"/></linearGradient></defs>'
+    + '<circle cx="0" cy="-37" r="5" fill="none" stroke="#140f09" stroke-width="5"/><circle cx="0" cy="-37" r="5" fill="none" stroke="#e6b450" stroke-width="2.4"/>'
+    + '<path d="M-13,-24 L13,-24 L9,-31 L-9,-31 Z" fill="#6a4c26" stroke="#140f09" stroke-width="3" stroke-linejoin="round"/>'
+    + '<path d="M-15,-24 L15,-24 L12,22 L-12,22 Z" fill="url(#tlg)" stroke="#140f09" stroke-width="3.4" stroke-linejoin="round"/>'
+    + '<path d="M-5.5,6 C-5.5,-3 0,-9 0,-15 C3.5,-8 6.5,-3 6.5,5 C6.5,10 3.5,13 0.5,13 C-3,13 -5.5,10 -5.5,6 Z" fill="#ff9a2e" stroke="#c85a10" stroke-width="1.3"/>'
+    + '<path d="M-14.5,-9 L14,-9 M-13.5,7 L13,7 M0,-24 L0,22" stroke="#6a4c26" stroke-width="2.2"/>'
+    + '<path d="M-16,22 L16,22 L12,29 L-12,29 Z" fill="#6a4c26" stroke="#140f09" stroke-width="3" stroke-linejoin="round"/></svg>';
+  const titleMark = () => [h('div', { class: 'title-lantern', html: LANTERN_MARK }),
+    h('h1', { class: 'title-word' }, 'Realm ', h('span', { class: 'of' }, 'of'), ' Loner'), h('div', { class: 'tagline' }, 'A World of Your Own')];
   const discordLink = () => window.UPD ? h('button', { class: 'discord-link', onclick: () => UPD.open(UPD.DISCORD) }, 'Join us on Discord') : null;
   function showSelect() {
     closeDialog(); closeSheet();
@@ -2837,7 +2847,7 @@
           h('div', { class: 'r' }, c.id === sel ? 'Play' : '')));
       }
       root.append(
-        h('h1', null, 'Realm of Loner'), h('div', { class: 'sub' }, `Realm: ${D.REALM} · ${list.length}/${G.MAX_CHARS} characters`),
+        ...titleMark(), h('div', { class: 'sub' }, `Realm: ${D.REALM} · ${list.length}/${G.MAX_CHARS} characters`),
         h('img', { class: 'preview', src: art('hero', { cls: cur.cls, race: cur.race || 'human', skin: cur.skin || 0, hair: cur.hair || 0, gender: cur.gender || 'm', gear: cur.gear || undefined }), alt: '' }),
         rows,
         h('button', { class: 'btn wide go', onclick: () => enter(sel) }, 'Enter World'),
@@ -2882,7 +2892,7 @@
       for (const c of D.RACES[st.race].classes) classes.append(h('button', { class: st.cls === c ? 'on' : '', onclick: () => { st.cls = c; draw(); } }, img(art('portrait', { cls: c, race: st.race, skin: st.skin, hair: st.hair, gender: st.gender })), h('span', { class: 'cls-' + c }, D.CLASSES[c].name), h('small', null, c === 'paladin' ? 'Heal / Tank' : c === 'druid' ? 'Any role' : c === 'shaman' ? 'Dmg / Heal' : D.CLASSES[c].role === 'dps' ? 'Damage' : D.CLASSES[c].role === 'tank' ? 'Tank' : 'Healer')));
       const cyc = (k, n, label) => h('button', { class: 'chip', onclick: () => { st[k] = (st[k] + 1) % n; draw(); } }, label, h('small', null, String(st[k] + 1)));
       root.append(
-        h('h1', null, 'Realm of Loner'), h('div', { class: 'sub' }, `Realm: ${D.REALM}`),
+        ...titleMark(), h('div', { class: 'sub' }, `Realm: ${D.REALM}`),
         factions,
         h('img', { class: 'preview', src: art('hero', { cls: st.cls, race: st.race, skin: st.skin, hair: st.hair, gender: st.gender }), alt: '' }),
         h('div', { class: 'desc' }, CLASS_BLURB[st.cls]),

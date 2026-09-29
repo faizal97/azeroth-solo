@@ -10,9 +10,9 @@ if subprocess.run(['node', os.path.join(R, 'tools', 'validate.js')]).returncode 
 # and the story must agree with the lore bible (docs/lore/canon.md): no spoilers, no stray names
 if subprocess.run(['node', os.path.join(R, 'tools', 'lorekeeper.js')]).returncode != 0:
     sys.exit('build stopped: fix the lore problems above (see docs/lore/canon.md)')
-# v10: no Blizzard name may appear in anything a player reads (the fan notice excepted)
+# v10: no name from the old world (tools/rename_v10.json) may appear in anything a player reads (the fan notice excepted)
 if subprocess.run(['node', os.path.join(R, 'tools', 'ipcheck.js'), '--brief', '--enforce']).returncode != 0:
-    sys.exit('build stopped: a Blizzard name is back in player text (node tools/ipcheck.js lists where)')
+    sys.exit('build stopped: an old-world name is back in player text (node tools/ipcheck.js lists where)')
 DATA = ['src/data/' + f for f in json.load(open(os.path.join(R, 'src', 'data', 'files.json')))]
 # music ships only once he has listened and approved the track
 APPROVED = set(open(os.path.join(R, 'audio', 'approved.txt')).read().split()) if os.path.exists(os.path.join(R, 'audio', 'approved.txt')) else set()
@@ -32,7 +32,9 @@ html = f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0e0b08">
-<title>Azeroth Solo</title>
+<title>Realm of Loner</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,{base64.b64encode(open(os.path.join(R, 'src', 'favicon.png'), 'rb').read()).decode()}">
+<link rel="apple-touch-icon" href="data:image/png;base64,{base64.b64encode(open(os.path.join(R, 'src', 'favicon.png'), 'rb').read()).decode()}">
 <style>{rd('fonts/fonts.local.css')}</style>
 <style>{rd('src/style.css')}</style>
 </head><body><div id="app"></div>

@@ -102,7 +102,7 @@ function files() {
   const list = [];
   const walk = (d) => { for (const f of fs.readdirSync(d)) { const p = path.join(d, f); if (fs.statSync(p).isDirectory()) walk(p); else if (/\.(js|html|css|json)$/.test(f)) list.push(p); } };
   walk(path.join(ROOT, 'src'));
-  for (const f of ['README.md', 'app/pubspec.yaml', 'app/android/app/src/main/AndroidManifest.xml', 'app/lib/main.dart']) if (fs.existsSync(path.join(ROOT, f))) list.push(path.join(ROOT, f));
+  for (const f of ['README.md', 'build.py', 'app/pubspec.yaml', 'app/android/app/src/main/AndroidManifest.xml', 'app/lib/main.dart']) if (fs.existsSync(path.join(ROOT, f))) list.push(path.join(ROOT, f));
   return list;
 }
 function scan(map, which) {
