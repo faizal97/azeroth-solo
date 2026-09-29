@@ -74,10 +74,11 @@ A profile is one document, a few kilobytes even with ten characters:
 
 | Path | Holds | Written by |
 |---|---|---|
-| `status/{uid}` | `{ on, at, char }`: online or not, since when, and the character id (or `null` when hidden) | the owner, and the server's `onDisconnect` |
+| `status/{uid}/{conn}` | `{ at, char }`: one entry per open game (phone, browser tab), with the character id when it is shared | the owner; the server removes it by `onDisconnect` |
 | `see/{uid}/{other}` | `true`: the friends allowed to read this player's status | the owner |
 
-Realtime Database rules cannot look into Firestore, so each player keeps their own `see` list. The game keeps it
+A player is online while `status/{uid}` has any entry, so closing the browser does not mark them offline while
+their phone is still playing; "playing" is the newest entry's character. Realtime Database rules cannot look into Firestore, so each player keeps their own `see` list. The game keeps it
 equal to their Firestore friend list every time it starts (adds the missing ones, removes the stale ones), so it
 repairs itself if a step was ever interrupted.
 
@@ -86,8 +87,15 @@ repairs itself if a step was ever interrupted.
 - **Profile:** when Friends is turned on, when a character is loaded, and after a change friends would notice
   (level, gear, talents, professions, guild, title, zone). Changes are gathered and written **at most once a
   minute**, and once more when the game goes to the background.
-- **Status:** `on: true` while the game is open and visible; `onDisconnect` sets `on: false` when the connection
-  drops; the game sets it offline itself when it is sent to the background.
+- **Status:** an entry while the game is open and visible; `onDisconnect` removes it when the connection drops,
+  and the game removes it itself when it goes to the background.
+
+### Several devices
+
+A player may have different characters on different devices (cloud save copies them only when asked). So a device
+never rewrites the whole profile: it updates only the characters it has (`chars.<id>`), and removes one only when it
+is deleted or hidden on that device. The **share switch is saved in the character itself** (`player.friendsHidden`),
+so cloud save carries it to the other devices.
 
 Rough cost: one player playing for two hours writes about 120 profile updates at most, often far fewer. The
 free plan's 20K writes a day covers about 150 such players a day. Reads grow with friends × updates; the same
@@ -120,7 +128,8 @@ themselves on someone's list without that person's request.
 
 **Realtime Database**
 
-- `status/$uid`: read by the owner or by anyone in `see/$uid`; write by the owner only, three known fields.
+- `status/$uid`: read by the owner or by anyone in `see/$uid`; each `$conn` written by the owner only, with `at`
+  and an optional `char`, nothing else.
 - `see/$uid`: read and write by the owner only.
 
 ## 4. How it fits in the game (to review)
