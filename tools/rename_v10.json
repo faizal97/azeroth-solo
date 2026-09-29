@@ -8,19 +8,19 @@
  "Warcraft": {
   "kind": "lore",
   "region": "",
-  "status": "rename",
+  "status": "forbid",
   "new": null
  },
  "World of Warcraft": {
   "kind": "lore",
   "region": "",
-  "status": "rename",
+  "status": "forbid",
   "new": null
  },
  "Blizzard": {
   "kind": "lore",
   "region": "",
-  "status": "rename",
+  "status": "forbid",
   "new": null
  },
  "Alliance": {
@@ -357,13 +357,13 @@
   "kind": "region",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Icewold"
  },
  "Dustwallow Marsh": {
   "kind": "region",
   "region": "Dustwallow Marsh",
   "status": "rename",
-  "new": null
+  "new": "Saltmarsh"
  },
  "Northshire Abbey": {
   "kind": "place",
@@ -687,7 +687,7 @@
   "kind": "place",
   "region": "Westfall",
   "status": "rename",
-  "new": "Ashby Farm"
+  "new": "Hartwell Farm"
  },
  "The Longshore": {
   "kind": "place",
@@ -1413,79 +1413,79 @@
   "kind": "place",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Coldcoin"
  },
  "Frostsaber Rock": {
   "kind": "place",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Snowcat Rock"
  },
  "Winterfall Village": {
   "kind": "place",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Icebrow Village"
  },
  "Lake Kel'Theril": {
   "kind": "place",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Lake Eluvain"
  },
  "Ice Thistle Hills": {
   "kind": "place",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Frostburr Hills"
  },
  "Frostwhisper Gorge": {
   "kind": "place",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Hoarwind Gorge"
  },
  "Mazthoril": {
   "kind": "place",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Crystalhall"
  },
  "Theramore Isle": {
   "kind": "place",
   "region": "Dustwallow Marsh",
   "status": "rename",
-  "new": null
+  "new": "Harborwatch Isle"
  },
  "Brackenwall Village": {
   "kind": "place",
   "region": "Dustwallow Marsh",
   "status": "rename",
-  "new": null
+  "new": "Mudwall Village"
  },
  "The Quagmire": {
   "kind": "place",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Scorched Fen": {
   "kind": "place",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Wyrmbog": {
   "kind": "place",
   "region": "Dustwallow Marsh",
   "status": "rename",
-  "new": null
+  "new": "The Dragonmire"
  },
  "Onyxia's Lair": {
   "kind": "place",
   "region": "Dustwallow Marsh",
   "status": "rename",
-  "new": null
+  "new": "Veshmira's Lair"
  },
  "The Molten Core": {
   "kind": "place",
@@ -2673,102 +2673,102 @@
   "kind": "npc",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Sorel Frostbrook"
  },
  "Witch Doctor Mauari": {
   "kind": "npc",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Witch Doctor Oka"
  },
  "Umi Rumplesnicker": {
   "kind": "npc",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Tilly Snickersnoot"
  },
  "Malyfous Darkhammer": {
   "kind": "npc",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Malvar Hrafnsson"
  },
  "Haleh": {
   "kind": "npc",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Isveth"
  },
  "Innkeeper Vizzie": {
   "kind": "npc",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Zibbi"
  },
  "Xizzer Fizzbolt": {
   "kind": "npc",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Zizzik Boltwhistle"
  },
  "Commander Brant Ashby": {
   "kind": "npc",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Orla Winfield": {
   "kind": "npc",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Scout Deren Holt": {
   "kind": "npc",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Innkeeper Mara Tolly": {
   "kind": "npc",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Armorer Bexley": {
   "kind": "npc",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Warlord Durnak": {
   "kind": "npc",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Seer Hanu Longrunner": {
   "kind": "npc",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Scout Vekra": {
   "kind": "npc",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Innkeeper Mogra": {
   "kind": "npc",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Gorvash": {
   "kind": "npc",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Artisan Hollis": {
@@ -3177,25 +3177,25 @@
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Smokepit Cavekin"
  },
  "Searing Blade Cultist": {
   "kind": "monster",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Hollow Eye Cultist"
  },
  "Earthborer": {
   "kind": "monster",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Oggleflint": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Skagg"
  },
  "Taragaman the Hungerer": {
   "kind": "boss or named",
@@ -3207,13 +3207,13 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Varrok the Invoker"
  },
  "Bazzalan": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ulzan"
  },
  "Plainstrider": {
   "kind": "monster",
@@ -3399,13 +3399,13 @@
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Miner"
  },
  "Defias Pirate": {
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Pirate"
  },
  "Goblin Engineer": {
   "kind": "monster",
@@ -3417,31 +3417,31 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Rukko the Foreman"
  },
  "Sneed's Shredder": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Snork's Shredder"
  },
  "Gilnid": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Gimble"
  },
  "Mr. Smite": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mr. Clobber"
  },
  "Cookie": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Crumbs"
  },
  "Young Goretusk": {
   "kind": "monster",
@@ -3693,31 +3693,31 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Lady Sythra"
  },
  "Kresh": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Old Shell"
  },
  "Lord Cobrahn": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Lord Vesk"
  },
  "Lord Pythas": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Lord Ophis"
  },
  "Mutanus the Devourer": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Gulgoth the Dreambane"
  },
  "Redridge Mongrel": {
   "kind": "monster",
@@ -3831,25 +3831,25 @@
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Convict"
  },
  "Defias Inmate": {
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Inmate"
  },
  "Defias Insurgent": {
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Insurgent"
  },
  "Defias Captive": {
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Captive"
  },
  "Targorr the Dread": {
   "kind": "boss or named",
@@ -3861,25 +3861,25 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Kalf Brandsson"
  },
  "Hamhock": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Porkchop"
  },
  "Dextren Ward": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Dexter Crowe"
  },
  "Bruegal Ironknuckle": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Hugo Knuckles"
  },
  "Bazil Thredd": {
   "kind": "boss or named",
@@ -4143,13 +4143,13 @@
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Greyhowl Moonwalker"
  },
  "Shadowfang Darksoul": {
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Greyhowl Darksoul"
  },
  "Haunted Servitor": {
   "kind": "monster",
@@ -4161,19 +4161,19 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Rotjaw"
  },
  "Razorclaw the Butcher": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Cleaver the Butcher"
  },
  "Baron Silverlaine": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Baron Ashcroft"
  },
  "Commander Springvale": {
   "kind": "boss or named",
@@ -4185,13 +4185,13 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grimwolf the Devourer"
  },
  "Archmage Arugal": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Archmage Cairn"
  },
  "Wrathtail Myrmidon": {
   "kind": "monster",
@@ -4275,7 +4275,7 @@
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Tidehollow Myrmidon"
  },
  "Twilight Acolyte": {
   "kind": "monster",
@@ -4287,13 +4287,13 @@
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Old Coilmaw Snapjaw"
  },
  "Ghamoo-ra": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Shellmaw"
  },
  "Lady Sarevess": {
   "kind": "boss or named",
@@ -4305,13 +4305,13 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Glubb"
  },
  "Twilight Lord Kelris": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Eclipse Lord Oreth"
  },
  "Aku'mai": {
   "kind": "boss or named",
@@ -4502,38 +4502,38 @@
  "Mechano-Tank": {
   "kind": "monster",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Dark Iron Agent": {
   "kind": "monster",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Slagborn Agent"
  },
  "Grubbis": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Gruzz"
  },
  "Viscous Fallout": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Glowing Sludge"
  },
  "Electrocutioner 6000": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Zapmaster 5000"
  },
  "Crowd Pummeler 9-60": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Riot Buster 8-40"
  },
  "Mekgineer Thermaplugg": {
   "kind": "boss or named",
@@ -4557,7 +4557,7 @@
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Warrens Bat"
  },
  "Death's Head Cultist": {
   "kind": "monster",
@@ -4569,7 +4569,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Hexer Brambletusk"
  },
  "Death Speaker Jargba": {
   "kind": "boss or named",
@@ -4581,13 +4581,13 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Overlord Snarltusk"
  },
  "Agathelos the Raging": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Rageback"
  },
  "Charlga Razorflank": {
   "kind": "boss or named",
@@ -4700,68 +4700,68 @@
  "Scarlet Wizard": {
   "kind": "monster",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Pyre Wizard"
  },
  "Scarlet Myrmidon": {
   "kind": "monster",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Pyre Myrmidon"
  },
  "Scarlet Abbot": {
   "kind": "monster",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Pyre Abbot"
  },
  "Scarlet Champion": {
   "kind": "monster",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Pyre Champion"
  },
  "Interrogator Vishas": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Interrogator Crell"
  },
  "Houndmaster Loksey": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Houndmaster Tobbs"
  },
  "Arcanist Doan": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Arcanist Veyne"
  },
  "Herod": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Sir Barrow"
  },
  "High Inquisitor Fairbanks": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "High Inquisitor Albright"
  },
  "Scarlet Commander Mograine": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Pyre Commander Aldric Vance"
  },
  "High Inquisitor Whitemane": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "High Inquisitor Seraphine Ashe"
  },
  "Wastewander Bandit": {
   "kind": "monster",
@@ -4851,43 +4851,43 @@
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Dune Temple Zombie"
  },
  "Antu'sul": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Antuzz"
  },
  "Theka the Martyr": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Vessa the Martyr"
  },
  "Witch Doctor Zum'rah": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Witch Doctor Zogo"
  },
  "Gahz'rilla": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grumblescale"
  },
  "Sergeant Bly": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Sergeant Kipp"
  },
  "Chief Ukorz Sandscalp": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Chief Uzzak"
  },
  "Frayfeather Stagwing": {
   "kind": "monster",
@@ -4989,30 +4989,30 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Sludgewell"
  },
  "Razorlash": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Thornlash"
  },
  "Lord Vyletongue": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Lord Venomlip"
  },
  "Celebras the Cursed": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Faolan the Cursed"
  },
  "Landslide": {
   "kind": "boss or named",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Princess Theradras": {
@@ -5169,55 +5169,55 @@
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Slagguard Warden"
  },
  "Shadowforge Flame Keeper": {
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashforge Flame Keeper"
  },
  "Ragereaver Golem": {
   "kind": "monster",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "High Interrogator Gerstahn": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "High Interrogator Brisa"
  },
  "Lord Roccor": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Lord Stonebrand"
  },
  "Bael'Gar": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Magmagor"
  },
  "General Angerforge": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "General Ashhelm"
  },
  "Golem Lord Argelmach": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Golemsmith Kragg"
  },
  "Magmus": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Slagmaw"
  },
  "Plaguehound": {
   "kind": "monster",
@@ -5277,13 +5277,13 @@
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Blackcloister Acolyte"
  },
  "Scholomance Necromancer": {
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Blackcloister Necromancer"
  },
  "Risen Construct": {
   "kind": "monster",
@@ -5301,25 +5301,25 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mirela Varga"
  },
  "Rattlegore": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Bonecrunch"
  },
  "Ras Frostwhisper": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Morvish the Frozen"
  },
  "Instructor Malicia": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Instructor Grimsby"
  },
  "Lord Alexei Barov": {
   "kind": "boss or named",
@@ -5331,7 +5331,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Headmaster Sallow"
  },
  "Crimson Guardsman": {
   "kind": "monster",
@@ -5361,31 +5361,31 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Nibbles the Cruel"
  },
  "Archivist Galford": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Archivist Penrose"
  },
  "Balnazzar": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Xazzarak"
  },
  "Baroness Anastari": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Baroness Vessaline"
  },
  "Ramstein the Gorger": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Bloatgut the Gorger"
  },
  "Baron Rivendare": {
   "kind": "boss or named",
@@ -5397,55 +5397,55 @@
   "kind": "monster",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Icebrow Ursa"
  },
  "Winterfall Shaman": {
   "kind": "monster",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Icebrow Shaman"
  },
  "Frostsaber Stalker": {
   "kind": "monster",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Snowcat Stalker"
  },
  "Ice Thistle Yeti": {
   "kind": "monster",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Frostburr Yeti"
  },
  "Chillwind Chimaera": {
   "kind": "monster",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Greyfrost Chimaera"
  },
  "Highborne Apparition": {
   "kind": "monster",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Starborn Apparition"
  },
  "Cobalt Scalebane": {
   "kind": "monster",
   "region": "Winterspring",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Grizzle Snowpaw": {
   "kind": "boss or named",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Old Frostmuzzle"
  },
  "Rak'shiri": {
   "kind": "boss or named",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Whiteclaw"
  },
  "Brood Whelp": {
   "kind": "monster",
@@ -5457,37 +5457,37 @@
   "kind": "monster",
   "region": "Dustwallow Marsh",
   "status": "rename",
-  "new": null
+  "new": "Brood Drakeborn"
  },
  "Brood Dragonspawn": {
   "kind": "monster",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Scorchmaw": {
   "kind": "boss or named",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Onyxian Warder": {
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Veshmiran Warder"
  },
  "Onyxian Whelp": {
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Veshmiran Whelp"
  },
  "Core Hound": {
   "kind": "monster",
   "region": "",
   "status": "keep",
-  "new": null
+  "new": "Cinderhound"
  },
  "Molten Giant": {
   "kind": "monster",
@@ -5505,12 +5505,12 @@
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashbound Guard"
  },
  "Firesworn": {
   "kind": "monster",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Core Rager": {
@@ -5523,19 +5523,19 @@
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashbound Priest"
  },
  "Flamewaker Elite": {
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashbound Elite"
  },
  "Flamewaker Healer": {
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashbound Healer"
  },
  "Son of Flame": {
   "kind": "monster",
@@ -5547,31 +5547,31 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Cinderhound"
  },
  "Garr": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Stonecore"
  },
  "Baron Geddon": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Baron Ashfall"
  },
  "Golemagg the Incinerator": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Magmahulk the Incinerator"
  },
  "Sulfuron Harbinger": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Brimstone Harbinger"
  },
  "Majordomo Executus": {
   "kind": "boss or named",
@@ -5588,13 +5588,13 @@
  "Avatar of Shal'zua": {
   "kind": "boss or named",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Nal'veshra the Deepmother": {
   "kind": "boss or named",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Wolves Across the Border": {
@@ -6321,7 +6321,7 @@
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": "Clearing Ashby Farm"
+  "new": "Clearing Hartwell Farm"
  },
  "Tidehunters": {
   "kind": "quest",
@@ -8583,79 +8583,79 @@
   "kind": "quest",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Icebrow Runners"
  },
  "Spirit Beads": {
   "kind": "quest",
   "region": "Winterspring",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Winterfall Shamans": {
   "kind": "quest",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "The Icebrow Shamans"
  },
  "Sick Frostsabers": {
   "kind": "quest",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Sick Snowcats"
  },
  "Frostsaber Pelts": {
   "kind": "quest",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Snowcat Pelts"
  },
  "Are We There, Yeti?": {
   "kind": "quest",
   "region": "Winterspring",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Thick Yeti Fur": {
   "kind": "quest",
   "region": "Winterspring",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Chillwind Horns": {
   "kind": "quest",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Greyfrost Horns"
  },
  "The Ghosts of Starfall": {
   "kind": "quest",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "The Ghosts of the Lake"
  },
  "Highborne Essence": {
   "kind": "quest",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Starborn Essence"
  },
  "Cobalt Scales": {
   "kind": "quest",
   "region": "Winterspring",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Caverns of Mazthoril": {
   "kind": "quest",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "The Caverns of Crystalhall"
  },
  "Wanted: Rak'shiri": {
   "kind": "quest",
   "region": "Winterspring",
   "status": "rename",
-  "new": null
+  "new": "Wanted: Whiteclaw"
  },
  "The Brood Mother": {
   "kind": "quest",
@@ -8666,25 +8666,25 @@
  "Whelps in the Quagmire": {
   "kind": "quest",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Drakonid Claws": {
   "kind": "quest",
   "region": "Dustwallow Marsh",
   "status": "rename",
-  "new": null
+  "new": "Drakeborn Claws"
  },
  "Black Brood Scales": {
   "kind": "quest",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Lair's Mouth": {
   "kind": "quest",
   "region": "Dustwallow Marsh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Firelord's Steward": {
@@ -8715,7 +8715,7 @@
   "kind": "dungeon or wanted",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "The Herd Killer: Snowfang"
  },
  "Ragefire Chasm": {
   "kind": "dungeon or wanted",
@@ -8763,13 +8763,13 @@
   "kind": "dungeon or wanted",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "The Pyre Abbey: Library"
  },
  "Scarlet Monastery: Cathedral": {
   "kind": "dungeon or wanted",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "The Pyre Abbey: Cathedral"
  },
  "Blackrock Depths": {
   "kind": "dungeon or wanted",
@@ -8786,13 +8786,13 @@
  "Krag'vesh": {
   "kind": "dungeon or wanted",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Worn Shortsword": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Bent Staff": {
@@ -8822,7 +8822,7 @@
  "Worn Shortbow": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Militia Longbow": {
@@ -8906,14 +8906,14 @@
  "Tarnished Coin": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Slimy Murloc Scale": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Slimy Mireling Scale"
  },
  "Thick Bear Fur": {
   "kind": "item",
@@ -8924,7 +8924,7 @@
  "Matted Gnoll Mane": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Linen Cloth": {
@@ -8949,12 +8949,12 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Head of Blackwell"
  },
  "Militia Shortsword": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Militia Dagger": {
@@ -8972,44 +8972,44 @@
  "Militia Warhammer": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Blackened Defias Armor": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Blackened Grey Hood Armor"
  },
  "Blackened Defias Leggings": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Blackened Grey Hood Leggings"
  },
  "Blackened Defias Boots": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Blackened Grey Hood Boots"
  },
  "Blackened Defias Belt": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Blackened Grey Hood Belt"
  },
  "Frostmane Tusk": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grimtooth Tusk"
  },
  "Rockjaw Pebble": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Gravelmaw Pebble"
  },
  "Thunder Ale": {
   "kind": "item",
@@ -9021,19 +9021,19 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Thornling Earring"
  },
  "Gnarlpine Charm": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mossback Charm"
  },
  "Moonberry Juice": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Starberry Juice"
  },
  "Mottled Tusk": {
   "kind": "item",
@@ -9044,7 +9044,7 @@
  "Hexed Trinket": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Haunch of Meat": {
@@ -9057,13 +9057,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Spinehide Tusk"
  },
  "Mulgore Spice Bread": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Greensward Spice Bread"
  },
  "Rotting Flesh": {
   "kind": "item",
@@ -9075,13 +9075,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Pallmoor Pumpkin"
  },
  "Moist Cornbread": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Buttered Cornbread"
  },
  "Mutton Chop": {
   "kind": "item",
@@ -9110,7 +9110,7 @@
  "Roasted Boar Meat": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Sparkling Spring Water": {
@@ -9134,14 +9134,14 @@
  "Hardened Mushroom": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Moonberry Cordial": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Starberry Cordial"
  },
  "Smoked Desert Dumplings": {
   "kind": "item",
@@ -9158,7 +9158,7 @@
  "Cured Ham Steak": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Homemade Cherry Pie": {
@@ -9171,7 +9171,7 @@
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Sparkling Seacombe Cider"
  },
  "Melon Juice": {
   "kind": "item",
@@ -9188,7 +9188,7 @@
  "Red Burlap Bandana": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Crate of Grapes": {
@@ -9201,7 +9201,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Jory's Head"
  },
  "Large Candle": {
   "kind": "item",
@@ -9219,12 +9219,12 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Torn Mireling Fin"
  },
  "Red Linen Bandana": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Brass Collar": {
@@ -9236,20 +9236,20 @@
  "Painted Gnoll Armband": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Huge Gnoll Claw": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Garrick's Bandit Cloak": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Jory's Bandit Cloak"
  },
  "Pumpkin Patch Trousers": {
   "kind": "item",
@@ -9260,7 +9260,7 @@
  "Gnollhide Cloak": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Kobold Mining Pick": {
@@ -9272,8 +9272,8 @@
  "Crystal Lake Clam": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Stillwater Lake Clam"
  },
  "Prowler Claw": {
   "kind": "item",
@@ -9284,8 +9284,8 @@
  "Felix's Journal": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Nib's Journal"
  },
  "Crag Boar Rib": {
   "kind": "item",
@@ -9296,38 +9296,38 @@
  "Wendigo Mane": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Restabilization Cog": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Gearhollow Cog"
  },
  "Fang of Vagash": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Fang of Snowfang"
  },
  "Grik'nir's Frozen Staff": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Skrell's Frozen Staff"
  },
  "Icebeard's Shaggy Cloak": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Rimehide's Shaggy Cloak"
  },
  "Claw of Vagash": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Claw of Snowfang"
  },
  "Ice Claw Pelt": {
   "kind": "item",
@@ -9339,55 +9339,55 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Webhollow Venom Sac"
  },
  "Nightsaber Pelt": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Shadowcat Pelt"
  },
  "Strigid Owl Feather": {
-  "kind": "item",
-  "region": "",
-  "status": "rename",
-  "new": null
- },
- "Timberling Seed": {
   "kind": "item",
   "region": "",
   "status": "keep",
   "new": null
  },
+ "Timberling Seed": {
+  "kind": "item",
+  "region": "",
+  "status": "rename",
+  "new": "Rootling Seed"
+ },
  "Githyiss's Silken Shroud": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Skitterfang's Silken Shroud"
  },
  "Oakenscowl's Totem Staff": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Old Barkjaw's Totem Staff"
  },
  "Melenas' Wicked Blade": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Varneth' Wicked Blade"
  },
  "Gnarlpine Totem": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mossback Totem"
  },
  "Grell Fang": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Thornling Fang"
  },
  "Cactus Apple": {
   "kind": "item",
@@ -9399,7 +9399,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Scorpion Worker Tail"
  },
  "Thunder Lizard Horn": {
   "kind": "item",
@@ -9417,31 +9417,31 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Brineholt Insignia"
  },
  "Zalazane's Head": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mokku the Hexer's Head"
  },
  "Taragaman the Hungerer's Heart": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Bazzak the Hungerer's Heart"
  },
  "Burning Blade Cloak": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Hollow Eye Cloak"
  },
  "Zalazane's Voodoo Staff": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mokku the Hexer's Voodoo Staff"
  },
  "Benedict's Cutlass": {
   "kind": "item",
@@ -9453,7 +9453,7 @@
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Cursed Gloomblade"
  },
  "Subterranean Cape": {
   "kind": "item",
@@ -9477,13 +9477,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Skagg's Inspirer"
  },
  "Bazzalan's Cord": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ulzan's Cord"
  },
  "Dire Boar Meat": {
   "kind": "item",
@@ -9501,19 +9501,19 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Brineholt Rum"
  },
  "Plainstrider Beak": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Longneck Beak"
  },
  "Battleboar Flank": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Tuskhog Flank"
  },
  "Trophy Swoop Quill": {
   "kind": "item",
@@ -9525,25 +9525,25 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Horn of Great Mother Dustback"
  },
  "Snagglespear's War Pike": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Rootgnasher's War Pike"
  },
  "Mazzranache Pelt Cloak": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Old Longclaw Pelt Cloak"
  },
  "Arra'chea Bone Totem": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Great Mother Dustback Bone Totem"
  },
  "Stringy Strider Meat": {
   "kind": "item",
@@ -9561,43 +9561,43 @@
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Deepgold Company Tools"
  },
  "Duskbat Wing": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Gravebat Wing"
  },
  "Scarlet Armband": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Pyre Armband"
  },
  "Maggot Eye's Paw": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Grubgut's Paw"
  },
  "Maggot Eye's Cleaver": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Grubgut's Cleaver"
  },
  "Perrine's Crusader Cape": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Aubert's Crusader Cape"
  },
  "Duskbat Pelt": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Gravebat Pelt"
  },
  "Cruel Barb": {
   "kind": "item",
@@ -9627,19 +9627,19 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Crumbs's Stirring Rod"
  },
  "Cookie's Tenderizer": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Crumbs's Tenderizer"
  },
  "Smelting Pants": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Forgeman's Trousers"
  },
  "Buzzer Blade": {
   "kind": "item",
@@ -9650,13 +9650,13 @@
  "Gold-flecked Gloves": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Lavishly Jeweled Ring": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Foreman's Girdle": {
@@ -9668,7 +9668,7 @@
  "Emberstone Staff": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Corsair's Overshirt": {
@@ -9693,7 +9693,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Razorhog Liver"
  },
  "Stringy Vulture Meat": {
   "kind": "item",
@@ -9705,48 +9705,48 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Razorhog Snout"
  },
  "Red Leather Bandana": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Fleshripper Talon": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Bonepicker Talon"
  },
  "Foe Reaper Power Core": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Grim Harvester Power Core"
  },
  "Defias Orders": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Orders"
  },
  "Foe Reaper's Scythe": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Grim Harvester's Scythe"
  },
  "Riverpaw Paw": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Tallgrass Paw"
  },
  "Tidehunter Scale": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "An Unsent Letter": {
@@ -9765,13 +9765,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Fenwick Insignia"
  },
  "Sealed Defias Letter": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Sealed Grey Hood Letter"
  },
  "Overseer Whip": {
   "kind": "item",
@@ -9788,80 +9788,80 @@
  "Rusted Golem Gear": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Brashclaw's War Banner": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mudjaw's War Banner"
  },
  "Brashclaw's Cleaver": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mudjaw's Cleaver"
  },
  "Zhevra Hoof": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Stripeback Hoof"
  },
  "Lashtail Raptor Claw": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Razormane Tusk": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Snoutspike Tusk"
  },
  "Snapjaw Shell Fragment": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Swiftmane's Hoof": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Quickhoof's Hoof"
  },
  "Kolkar Whip": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Galloran Whip"
  },
  "Swiftmane Striders": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Quickhoof Striders"
  },
  "Kodobane's Axe": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Herdbreaker's Axe"
  },
  "Kolkar Storm Charm": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Galloran Storm Charm"
  },
  "Stormsnout Hide": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Boomsnout Hide"
  },
  "Thunder Lizard Steak": {
   "kind": "item",
@@ -9873,7 +9873,7 @@
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Deepgold Company Contract"
  },
  "Geologist Crystal": {
   "kind": "item",
@@ -9884,50 +9884,50 @@
  "Scytheclaw Talon": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Crocolisk Steak": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Crocodile Steak"
  },
  "Thick Crocolisk Hide": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Thick Crocodile Hide"
  },
  "Dwarven Rifle Part": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Takk's Claw": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Skarr's Claw"
  },
  "Bael'dun Relic": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Stonegrave Relic"
  },
  "Bael'dun Orders": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Stonegrave Orders"
  },
  "Takk's Fang": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Skarr's Fang"
  },
  "Deviate Hide": {
   "kind": "item",
@@ -9945,7 +9945,7 @@
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Venomstep Boots"
  },
  "Serpent Gloves": {
   "kind": "item",
@@ -9957,7 +9957,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Vesk's Grasp"
  },
  "Leggings of the Fang": {
   "kind": "item",
@@ -9975,7 +9975,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Old Shell's Back"
  },
  "Turtle Scale Bracers": {
   "kind": "item",
@@ -9992,7 +9992,7 @@
  "Glowing Lizardscale Cloak": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Mutant Scale Breastplate": {
@@ -10017,7 +10017,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Great Razorhog Flank"
  },
  "Tarantula Silk": {
   "kind": "item",
@@ -10029,7 +10029,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Stoneharrow Gnoll Paw"
  },
  "Poacher's Bowstring": {
   "kind": "item",
@@ -10046,26 +10046,26 @@
  "Flesheater Fin": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Tidecaller Pearl": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Blackrock Medallion": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak Medallion"
  },
  "Blackrock Battle Orders": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak Battle Orders"
  },
  "Summoner's Tome": {
   "kind": "item",
@@ -10083,49 +10083,49 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Tarfur Pendant"
  },
  "Head of Gath'Ilzogg": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Head of Uzbrak"
  },
  "Ribchaser's Bone Necklace": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Bonegnaw's Bone Necklace"
  },
  "Squiddic's Tentacle": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Gulpfin's Tentacle"
  },
  "Bellygrub's Tusk": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Lardhide's Tusk"
  },
  "Head of Targorr": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Head of Ulgrak"
  },
  "Head of Bazil Thredd": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Head of Silas Crane"
  },
  "Head of Kam Deepfury": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Head of Kalf Brandsson"
  },
  "Riot Ringleader Ledger": {
   "kind": "item",
@@ -10137,19 +10137,19 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Bonegnaw's Cleaver"
  },
  "Tidecaller Staff": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Bellygrub Hide Vest": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Lardhide Hide Vest"
  },
  "Swine Herder's Belt": {
   "kind": "item",
@@ -10173,13 +10173,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Hugo's Brawler Belt"
  },
  "Targorr's Rusted Axe": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ulgrak's Rusted Axe"
  },
  "Broken Shackle Band": {
   "kind": "item",
@@ -10190,20 +10190,20 @@
  "Kam's Forge Hammer": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Deepfury Bracers": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Brandsson Bracers"
  },
  "Hamhock's Prison Leggings": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Porkchop's Prison Leggings"
  },
  "Ogre Cell Club": {
   "kind": "item",
@@ -10215,19 +10215,19 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Dexter's Cleaver"
  },
  "Blood-Stained Boots": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Thredd's Riot Mask": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Crane's Riot Mask"
  },
  "Ringleader's Shiv": {
   "kind": "item",
@@ -10251,19 +10251,19 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Deepvine Egg"
  },
  "Deepmoss Venom Sac": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Deepvine Venom Sac"
  },
  "Venture Co. Hard Hat": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Deepgold Company Hard Hat"
  },
  "Harvester Power Core": {
   "kind": "item",
@@ -10274,20 +10274,20 @@
  "Pumping Station Valve": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Pridewing Feather": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Highwing Feather"
  },
  "Bloodfury Talon": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Redclaw Talon"
  },
  "Storm Witch Plume": {
   "kind": "item",
@@ -10298,38 +10298,38 @@
  "Blackened Basilisk Scale": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Grimtotem Totem": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Sourhorn Totem"
  },
  "Grimtotem Battle Plan": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Sourhorn Battle Plan"
  },
  "Foreman Rigger's Megaphone": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Foreman Gritz's Megaphone"
  },
  "Sister Riven's Headdress": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Sister Rasp's Headdress"
  },
  "XT:9 Saw Blade": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Big Chopper Saw Blade"
  },
  "Rigger's Monkey Wrench": {
   "kind": "item",
@@ -10365,7 +10365,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Gloomfang Fang"
  },
  "Shadow Weaver Charm": {
   "kind": "item",
@@ -10412,8 +10412,8 @@
  "Splinter Fist Tooth": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Knotjaw Tooth"
  },
  "Taskmaster's Whip": {
   "kind": "item",
@@ -10437,19 +10437,19 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Skittra's Fang"
  },
  "Mor'Ladim's Skull": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Morlan the Unburied's Skull"
  },
  "Stitches' Cleaver": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Patchwork' Cleaver"
  },
  "Silk-Spun Leggings": {
   "kind": "item",
@@ -10461,12 +10461,12 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Morlan the Unburied's Greatsword"
  },
  "Stitched Hide Vest": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Abomination's Hook": {
@@ -10485,25 +10485,25 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Greymead Farm Deed"
  },
  "Farmhand's Scythe": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Syndicate Missive": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Black Ledger Missive"
  },
  "Syndicate Badge": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Black Ledger Badge"
  },
  "Gray Bear Tongue": {
   "kind": "item",
@@ -10520,44 +10520,44 @@
  "Ferocious Yeti Horn": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Moonrage Fang": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Howlmoor Fang"
  },
  "Foreman Bonds' Hammer": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Foreman Cutts' Hammer"
  },
  "Big Samras' Pelt": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Big Bruin' Pelt"
  },
  "Head of Arugal": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Head of Cairn"
  },
  "Springvale's Seal": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashdown's Seal"
  },
  "Deathstalker Adamant's Journal": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Gravestalker Adamant's Journal"
  },
  "Foreman's Ring": {
   "kind": "item",
@@ -10575,7 +10575,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Claw of Big Bruin"
  },
  "Bearskin Mantle": {
   "kind": "item",
@@ -10605,7 +10605,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashcroft's Rapier"
  },
  "Baron's Gloves": {
   "kind": "item",
@@ -10616,7 +10616,7 @@
  "Commander's Warhammer": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Boots of the Fallen Order": {
@@ -10629,7 +10629,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Pelt of Grimwolf"
  },
  "Fang of the Devourer": {
   "kind": "item",
@@ -10641,25 +10641,25 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Cairn's Staff"
  },
  "Worgen Hunter Leggings": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Werewolf Hunter Leggings"
  },
  "Shadowfang Mail": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Greyhowl Mail"
  },
  "Wrathtail Scale": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Scalelash Scale"
  },
  "Sea Witch's Pearl": {
   "kind": "item",
@@ -10671,13 +10671,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Elderglen Bear Claw"
  },
  "Ghostpaw Pelt": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mistpaw Pelt"
  },
  "Alpha Fang": {
   "kind": "item",
@@ -10689,24 +10689,24 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Briarpelt Totem"
  },
  "Bleakheart Horn": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Sourheart Horn"
  },
  "Fel Orb": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Gloom Orb"
  },
  "Smouldering Demon Heart": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Ursal's Bone Headdress": {
@@ -10719,25 +10719,25 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Skyrend's Claw"
  },
  "Head of Kelris": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Head of Oreth"
  },
  "Scale of Aku'mai": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Scale of Old Coilmaw"
  },
  "Sarevess's Serpent Crown": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Szira's Serpent Crown"
  },
  "Ursal's Maul": {
   "kind": "item",
@@ -10754,13 +10754,13 @@
  "Talonstrike Bow": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Skyrider Band": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Ancient Shell Vest": {
@@ -10779,7 +10779,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Szira's Longbow"
  },
  "Serpent Scale Gloves": {
   "kind": "item",
@@ -10791,12 +10791,12 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Glubb's Spear"
  },
  "Murkwater Cloak": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Twilight Cultist Robe": {
@@ -10833,13 +10833,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Old Coilmaw's Fang"
  },
  "Bluegill Fin": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Reedgill Fin"
  },
  "Oracle's Shell": {
   "kind": "item",
@@ -10863,13 +10863,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mudcoat Ear"
  },
  "Mosshide Rattle": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mudcoat Rattle"
  },
  "Blasting Powder": {
   "kind": "item",
@@ -10881,13 +10881,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Wyrmchain Insignia"
  },
  "Dragonmaw Orders": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Wyrmchain Orders"
  },
  "Broken Whelp Collar": {
   "kind": "item",
@@ -10899,7 +10899,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashskull's Helm"
  },
  "Matriarch's Claw": {
   "kind": "item",
@@ -10911,13 +10911,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashskull Flame Axe"
  },
  "Razormaw Hide Leggings": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Scalehide Hide Leggings"
  },
  "Matriarch Tooth Necklace": {
   "kind": "item",
@@ -10935,13 +10935,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Vinewild Tiger Fang"
  },
  "Shadowmaw Pelt": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Inkclaw Pelt"
  },
  "Jungle Raptor Talon": {
   "kind": "item",
@@ -10959,13 +10959,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Scaldback Tusk"
  },
  "Kurzen Battle Orders": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Drayke Battle Orders"
  },
  "Jungle Remedy": {
   "kind": "item",
@@ -10977,31 +10977,31 @@
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Deepgold Company Ledger"
  },
  "Skullsplitter Tusk": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Bonegrin Tusk"
  },
  "Sin'Dall's Pelt": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Old Stripes's Pelt"
  },
  "Colonel Kurzen's Head": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Colonel Drayke's Head"
  },
  "Pelt of King Bangalash": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Pelt of King Ghostpelt"
  },
  "Pale Tiger Cloak": {
   "kind": "item",
@@ -11013,7 +11013,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Drayke's Sabre"
  },
  "King's Hide Jerkin": {
   "kind": "item",
@@ -11025,7 +11025,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ghostpelt's Fang"
  },
  "White Tiger Mantle": {
   "kind": "item",
@@ -11037,7 +11037,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Chief Engineer Voltwhistle's Head"
  },
  "Prismatic Punch Card": {
   "kind": "item",
@@ -11049,13 +11049,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grimy Old Ring"
  },
  "Trogg Hide Vest": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Cavekin Hide Vest"
  },
  "Glowing Irradiated Cloak": {
   "kind": "item",
@@ -11072,32 +11072,32 @@
  "Electrocutioner Legs": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Zapmaster Legs"
  },
  "Electrocutioner Lagnut": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Zapmaster Lagnut"
  },
  "Crowd Pummeler Knuckles": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Riot Buster Knuckles"
  },
  "Pummeler Gauntlets": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Buster Gauntlets"
  },
  "Mekgineer Staff": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Chief Engineer Staff"
  },
  "Gnomish Mechanical Blade": {
   "kind": "item",
@@ -11121,25 +11121,25 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mother Grisla's Head"
  },
  "Blueleaf Tuber": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Rootbulb"
  },
  "Jargba's Skull Staff": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Harrok's Skull Staff"
  },
  "Thorncurse Circlet": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Brambletusk Circlet"
  },
  "Thorn Staff": {
   "kind": "item",
@@ -11163,7 +11163,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Snarltusk's Maul"
  },
  "Tusked Leggings": {
   "kind": "item",
@@ -11181,19 +11181,19 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Rageback Tusk"
  },
  "Charlga's Thornstaff": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grisla's Thornstaff"
  },
  "Razorflank Blade": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grisla Blade"
  },
  "Matriarch Hide Vest": {
   "kind": "item",
@@ -11204,7 +11204,7 @@
  "Thornplate Hauberk": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Highland Thrasher Claw": {
@@ -11216,26 +11216,26 @@
  "Fleshstalker Hide": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Drywhisker Candle": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Candlegrub Candle"
  },
  "Drywhisker Ore Sample": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Candlegrub Ore Sample"
  },
  "Witherbark Tusk": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Rotbough Tusk"
  },
  "Shrunken Head": {
   "kind": "item",
@@ -11247,13 +11247,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Black Ledger Magus Focus"
  },
  "Boulderfist Bead Necklace": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Rockbrow Bead Necklace"
  },
  "Bound Elemental Core": {
   "kind": "item",
@@ -11265,19 +11265,19 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Kobbo's Candle Crown"
  },
  "Nimar's Blade": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ghast's Blade"
  },
  "Molok's Head": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Gorm's Head"
  },
  "Waxen Band": {
   "kind": "item",
@@ -11295,7 +11295,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Gorm's Crusher"
  },
  "Ogre-Hide Girdle": {
   "kind": "item",
@@ -11307,31 +11307,31 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Robe of the Rockbrow Magi"
  },
  "Doan's Arcane Tome": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Veyne's Arcane Tome"
  },
  "Scarlet Crusade Insignia": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Order of the Pyre Insignia"
  },
  "Whitemane's Amulet": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashe's Amulet"
  },
  "Herod's Seal": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Sir Barrow's Seal"
  },
  "Interrogator's Lash": {
   "kind": "item",
@@ -11348,7 +11348,7 @@
  "Houndmaster's Crossbow": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Hound Handler Belt": {
@@ -11361,13 +11361,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Robe of Veyne"
  },
  "Mantle of Doan": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mantle of Veyne"
  },
  "Illusionary Rod": {
   "kind": "item",
@@ -11379,7 +11379,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Sir Barrow's Shoulder Guard"
  },
  "Inquisitor's Cuffs": {
   "kind": "item",
@@ -11397,19 +11397,19 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Vance's Might"
  },
  "Scarlet Leggings": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Pyre Leggings"
  },
  "Whitemane's Chapeau Staff": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashe's Chapeau Staff"
  },
  "Triune Robe": {
   "kind": "item",
@@ -11420,20 +11420,20 @@
  "Scarlet Leather Vest": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Pyre Leather Vest"
  },
  "Scarlet Blade": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Pyre Blade"
  },
  "Wastewander Bandana": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Dustcloak Bandana"
  },
  "Stolen Water Pouch": {
   "kind": "item",
@@ -11445,7 +11445,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Blackgull Tricorn"
  },
  "Stolen Pirate Doubloon": {
   "kind": "item",
@@ -11457,49 +11457,49 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Hivecrawler Carapace"
  },
  "Centipaar Venom Sac": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Hivecrawler Venom Sac"
  },
  "Dunemaul Tooth": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Sandbrute Tooth"
  },
  "Dunestalker Stinger": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Sandfury Scalp": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Duneskin Scalp"
  },
  "Caliph Scorpidsting's Helm": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Caliph Stingtail's Helm"
  },
  "Kregg Keelhaul's Hook": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Captain Rusk Hookhand's Hook"
  },
  "Scorpidsting Scimitar": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Stingtail Scimitar"
  },
  "Captain's Greatcoat": {
   "kind": "item",
@@ -11517,31 +11517,31 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Signet of the Blackgull"
  },
  "Chief Ukorz Sandscalp's Head": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Chief Uzzak's Head"
  },
  "Gahz'rilla Scale": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grumblescale Scale"
  },
  "Zum'rah's Voodoo Totem": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Zogo's Voodoo Totem"
  },
  "Antu'sul's Staff": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Antuzz's Staff"
  },
  "Basilisk Hide Boots": {
   "kind": "item",
@@ -11577,7 +11577,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grumblescale Fang"
  },
  "Hydra Scale Hauberk": {
   "kind": "item",
@@ -11589,7 +11589,7 @@
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Sergeant Kipp's Longbow"
  },
  "Mercenary Cape": {
   "kind": "item",
@@ -11607,49 +11607,49 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Uzzak Leggings"
  },
  "Robe of the Sandscalp": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Robe of the Uzzak"
  },
  "Sandscalp War Mail": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Uzzak War Mail"
  },
  "Frayfeather Plume": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Tatterwing Plume"
  },
  "Woodpaw Mane": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mossgut Mane"
  },
  "Gordunni Scroll": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Stonegut Scroll"
  },
  "Gordunni Tusk": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Stonegut Tusk"
  },
  "Hatecrest Scale": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Spitecoil Scale"
  },
  "Siren's Coral": {
   "kind": "item",
@@ -11661,7 +11661,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Greymuzzle Pelt"
  },
  "Ancient Bark": {
   "kind": "item",
@@ -11673,19 +11673,19 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Hisk's Talon"
  },
  "Grizzlegut's Hide": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Bramblebelly's Hide"
  },
  "Shalzaru's Crown": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Nazzir's Crown"
  },
  "Black Plume Cloak": {
   "kind": "item",
@@ -11697,13 +11697,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Bramblebelly's Paw"
  },
  "Shalzaru's Sword": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Nazzir's Sword"
  },
  "Robe of the Tides": {
   "kind": "item",
@@ -11715,19 +11715,19 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Spitecoil Scale Armor"
  },
  "Scepter of Celebras": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Scepter of Faolan"
  },
  "Gem of Theradras": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Gem of Ghesra"
  },
  "Noxious Shroud": {
   "kind": "item",
@@ -11757,13 +11757,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Venomlip's Treads"
  },
  "Staff of Celebras": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Staff of Faolan"
  },
  "Keeper's Robe": {
   "kind": "item",
@@ -11774,26 +11774,26 @@
  "Rockgrip Maul": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Stoneform Leggings": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Granite Skin Leggings"
  },
  "Theradras' Blade": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Ghesra' Blade"
  },
  "Princess's Silk Robe": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Duchess's Silk Robe"
  },
  "Earthen Leather Vest": {
   "kind": "item",
@@ -11804,14 +11804,14 @@
  "Crystal-Studded Hauberk": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Bloodpetal Sprout": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Redbloom Sprout"
  },
  "Thunderer Horn": {
   "kind": "item",
@@ -11829,13 +11829,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Skyjaw Egg"
  },
  "Gorishi Scent Gland": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Krizzik Scent Gland"
  },
  "Fire Plume Ember": {
   "kind": "item",
@@ -11853,7 +11853,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Greenmaw Gorilla Fang"
  },
  "Power Crystal": {
   "kind": "item",
@@ -11865,13 +11865,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Rex Scorchtail's Claw"
  },
  "King Mosh's Tooth": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "King Stomp's Tooth"
  },
  "Hive-Queen Band": {
   "kind": "item",
@@ -11883,13 +11883,13 @@
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Thundertooth Leggings"
  },
  "Devilsaur Gauntlets": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Thundertooth Gauntlets"
  },
  "Tyrant Tooth Blade": {
   "kind": "item",
@@ -11901,18 +11901,18 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Smokebelly Tusk"
  },
  "Blackrock Signet": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak Signet"
  },
  "Flamecaller's Tome": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Broodling Essence": {
@@ -11924,26 +11924,26 @@
  "Black Dragonspawn Scale": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Flamekin Ember": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Emberling Ember"
  },
  "Gorlash's Horn": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Old Smokejaw's Horn"
  },
  "Volchan's Core": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Scorch's Core"
  },
  "Cinder Cloak": {
   "kind": "item",
@@ -11954,13 +11954,13 @@
  "Staff of the Burning Steppes": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Staff of the The Cinderfields"
  },
  "Cinderfall Mail": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Ember Band": {
@@ -11978,14 +11978,14 @@
  "Windsor's Notes": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Hale's Notes"
  },
  "Thaurissan's Crown": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grimmark's Crown"
  },
  "Golem Core": {
   "kind": "item",
@@ -12002,7 +12002,7 @@
  "Rockfist Bracers": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Molten Cloak": {
@@ -12015,13 +12015,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashhelm Blade"
  },
  "Dark Iron Legguards": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Slagborn Legguards"
  },
  "Golem Handlers": {
   "kind": "item",
@@ -12039,7 +12039,7 @@
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Foebreaker"
  },
  "Staff of the Emperor": {
   "kind": "item",
@@ -12057,7 +12057,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashforge Jerkin"
  },
  "Imperial Plate Hauberk": {
   "kind": "item",
@@ -12068,7 +12068,7 @@
  "Plaguehound Fang": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Diseased Flesh": {
@@ -12093,12 +12093,12 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Morrowglen Badge"
  },
  "Lightsworn Writ": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Behemoth Bile": {
@@ -12111,13 +12111,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mangefang's Heart"
  },
  "Araj's Phylactery": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Vashti's Phylactery"
  },
  "Blighted Band": {
   "kind": "item",
@@ -12129,12 +12129,12 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Vashti's Scarab Staff"
  },
  "Plagueguard Hauberk": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Summoner's Shroud": {
@@ -12147,19 +12147,19 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Skreel's Blood"
  },
  "Darkmaster Gandling's Head": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Headmaster Sallow's Head"
  },
  "Barov Family Deed": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Varga Family Deed"
  },
  "Cloak of the Herald": {
   "kind": "item",
@@ -12171,7 +12171,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mirela's Gloves"
  },
  "Bone Ring Leggings": {
   "kind": "item",
@@ -12183,12 +12183,12 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Hoarwind Boots"
  },
  "Icy Tomb Spaulders": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Necromantic Dagger": {
@@ -12207,7 +12207,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Robe of the Headmaster"
  },
  "Skulk Hide Jerkin": {
   "kind": "item",
@@ -12218,31 +12218,31 @@
  "Deathbone Chestplate": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Balnazzar's Sigil": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Xazzarak's Sigil"
  },
  "Rivendare's Seal": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mortvale's Seal"
  },
  "Stratholme Archive Ledger": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Graymouth Archive Ledger"
  },
  "Grimgore Gauntlets": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Archivist Slippers": {
@@ -12255,7 +12255,7 @@
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Demon Lord's Edge"
  },
  "Crimson Felt Cloak": {
   "kind": "item",
@@ -12279,13 +12279,13 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Runeblade of Baron Mortvale"
  },
  "Deathcharger Staff": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Bonesteed Staff"
  },
  "Robe of the Baron": {
   "kind": "item",
@@ -12302,20 +12302,20 @@
  "Baron's Deathplate": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Winterfall Spirit Beads": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Icebrow Spirit Beads"
  },
  "Frostsaber Pelt": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Snowcat Pelt"
  },
  "Chimaera Horn": {
   "kind": "item",
@@ -12333,43 +12333,43 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Old Frostmuzzle's Heart"
  },
  "Rak'shiri's Fang": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Whiteclaw's Fang"
  },
  "Snowpaw Band": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Frostmuzzle Band"
  },
  "Rak'shiri's Claws": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Whiteclaw's Claws"
  },
  "Frostsaber Hide Tunic": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Snowcat Hide Tunic"
  },
  "Everfrost Mantle": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Drakonid Claw": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Drakeborn Claw"
  },
  "Black Brood Scale": {
   "kind": "item",
@@ -12380,20 +12380,20 @@
  "Scorchmaw's Fang": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Scorchmaw Band": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Head of Onyxia": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Head of Veshmira"
  },
  "Mantle of the Brood Mother": {
   "kind": "item",
@@ -12410,25 +12410,25 @@
  "Wyrmhide Tunic": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Blackscale Legguards": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Stormscale Girdle": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Talon-Stitched Gloves": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Slippers of the Masquerade": {
@@ -12441,43 +12441,43 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Lady Thorne's Signet"
  },
  "Wyrmfang Greatblade": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Katrana's Kiss": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Meriel's Kiss"
  },
  "Stormcaller's Staff": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Essence of the Firelord": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Essence of the King Below"
  },
  "Binding Rune of the Majordomo": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Binding Rune of the Steward"
  },
  "Legguards of the Core Hound": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Legguards of the Cinderhound"
  },
  "Cloak of the Molten Hound": {
   "kind": "item",
@@ -12488,19 +12488,19 @@
  "Bindings of the Firesworn": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Firesworn Signet": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Cinderwalkers of the Baron": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Inferno Grips": {
@@ -12518,7 +12518,7 @@
  "Magmaheart Greatblade": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Harbinger's Fang": {
@@ -12531,25 +12531,25 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashbound Priest's Cord"
  },
  "Staff of the Majordomo": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Staff of the Steward"
  },
  "Flamewaker Scepter": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ashbound Scepter"
  },
  "Emberfall, Hammer of the Firelord": {
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Emberfall, Hammer of the King Below"
  },
  "Robe of Living Flame": {
   "kind": "item",
@@ -12560,55 +12560,55 @@
  "Firehide Tunic": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Magmaforged Hauberk": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Old Brinescale's Heart": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Warden Ithrael's Seal": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Warden's Tideglaive": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Captain Saltbones' Hat": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Krag'vesh's Tusk": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Saltbones' Cutlass": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Vessaria's Tidequill": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Curator's Shroud": {
@@ -12620,13 +12620,13 @@
  "Ink-Stained Bracers": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Inkbound Gauntlets": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Slippers of the Deep Stacks": {
@@ -12638,31 +12638,31 @@
  "Lorekeeper's Edge": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Tidewoven Leggings": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Staff of the Tidescribe": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Tidecrown Scepter": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Robe of Drowned Knowledge": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Scaled Archivist Hauberk": {
@@ -12674,19 +12674,19 @@
  "Shal'zua's Pearl": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Oyala's Bone Fetish": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Hexmother's Mantle": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Bone-Bead Bracers": {
@@ -12704,31 +12704,31 @@
  "Tidefang Treads": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Zan'jin's Sacrificial Knife": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Wavebreaker Kilt": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Staff of the Drowned Loa": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Reefcleaver": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Loa-Touched Vest": {
@@ -12746,19 +12746,19 @@
  "Heart of the Deepmother": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Legplates of the Tide Commander": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Serathis's Coral Grips": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Band of the Twin Tides": {
@@ -12770,13 +12770,13 @@
  "Riptide Walkers": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Coralheart Girdle": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Living Coral Bracers": {
@@ -12788,25 +12788,25 @@
  "Tidecrown, Blade of the Prince": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Fang of the Drowned Court": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Prince's Drowned Mantle": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Nal'veshra's Abyssal Staff": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Robe of the Abyss": {
@@ -12824,7 +12824,7 @@
  "Deepmother Scale Hauberk": {
   "kind": "item",
   "region": "",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Smuggler's Ledger": {
@@ -12836,8 +12836,8 @@
  "A Torn Page of Windsor's Notes": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "A Torn Page of Hale's Notes"
  },
  "Lord Marrow's Signet": {
   "kind": "item",
@@ -12915,31 +12915,31 @@
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Softpetal"
  },
  "Earthroot": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Knotroot"
  },
  "Mageroyal": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Sageflower"
  },
  "Briarthorn": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Hookthorn"
  },
  "Bruiseweed": {
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Bramblewort"
  },
  "Light Leather": {
   "kind": "item",
@@ -13052,13 +13052,13 @@
  "Rough Sharpening Stone": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Coarse Sharpening Stone": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Light Armor Kit": {
@@ -13106,7 +13106,7 @@
  "Copper Shortsword": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Copper Chain Belt": {
@@ -13136,7 +13136,7 @@
  "Bronze Shortsword": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Silvered Bronze Boots": {
@@ -13160,25 +13160,25 @@
  "Handstitched Leather Boots": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Handstitched Leather Cloak": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Embossed Leather Vest": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Embossed Leather Gloves": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Fine Leather Belt": {
@@ -13208,7 +13208,7 @@
  "Toughened Leather Leggings": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Linen Cloak": {
@@ -13232,7 +13232,7 @@
  "Reinforced Linen Cape": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Woolen Cape": {
@@ -13280,7 +13280,7 @@
  "Pattern: Toughened Leather Leggings": {
   "kind": "item",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Pattern: Sorcerer's Woolen Robe": {
@@ -13292,1219 +13292,1219 @@
  "Heroic Strike": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Battle Shout": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Thunder Clap": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Seal of Righteousness": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Oath of Righteousness"
  },
  "Holy Light": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Devotion Aura": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Steadfast Aura"
  },
  "Judgement": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Verdict"
  },
  "Divine Protection": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Hammer of Justice": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Hammer of Order"
  },
  "Blessing of Might": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Lay on Hands": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Raptor Strike": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Savage Strike"
  },
  "Serpent Sting": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Venom Sting"
  },
  "Aspect of the Monkey": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Spirit of the Monkey"
  },
  "Arcane Shot": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Hunter's Mark": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Concussive Shot": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Wing Clip": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Multi-Shot": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Sinister Strike": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Slice and Dice": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Backstab": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Lesser Heal": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Power Word: Fortitude": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Word of Fortitude"
  },
  "Shadow Word: Pain": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Word of Pain"
  },
  "Power Word: Shield": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Word of Warding"
  },
  "Mind Blast": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Inner Fire": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Lightning Bolt": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Rockbiter Weapon": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Earthen Weapon"
  },
  "Healing Wave": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Earth Shock": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Stoneskin Totem": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Lightning Shield": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Searing Totem": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Flame Shock": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Strength of Earth Totem": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Frost Armor": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Frostbolt": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Fire Blast": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Arcane Missiles": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Frost Nova": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Arcane Explosion": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Shadow Bolt": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Demon Skin": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Life Tap": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Curse of Agony": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Searing Pain": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Shadow Ward": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Healing Touch": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Mark of the Wild": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Mark of the Grove"
  },
  "Moonfire": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Moonbeam"
  },
  "Bear Form": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Entangling Roots": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Thorns": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Bloodrage": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Flamestrike": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Mana Shield": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Psychic Scream": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Kidney Shot": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Retribution Aura": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Thorned Aura"
  },
  "Rain of Fire": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Demon Armor": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Rapid Fire": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Immolation Trap": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Frost Shock": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Flametongue Weapon": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Burning Weapon"
  },
  "Every Man for Himself": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Stoneform": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Granite Skin"
  },
  "Escape Artist": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Shield Block": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Intimidating Shout": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Cone of Cold": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Holy Fire": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Blade Flurry": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Blessing of Wisdom": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Shadowburn": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Death Coil": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Aspect of the Hawk": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Spirit of the Hawk"
  },
  "Feign Death": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Starfire": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Star Bolt"
  },
  "Insect Swarm": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Lesser Healing Wave": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Fire Nova Totem": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Blast Wave": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Mind Flay": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Flash Heal": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Cheap Shot": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Hammer of Wrath": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Holy Wrath": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Howl of Terror": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Soul Fire": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Aimed Shot": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Barkskin": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Chain Lightning": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Windfury Weapon": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Gale Weapon"
  },
  "Shield Wall": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Ice Block": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Pyroblast": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Inferno Blast"
  },
  "Holy Nova": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Greater Heal": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Holy Shock": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Seal of Command": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Oath of Command"
  },
  "Siphon Life": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Scatter Shot": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Trueshot Aura": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Keen Eye Aura"
  },
  "Magma Totem": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Chain Heal": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Mortal Strike": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Grievous Strike"
  },
  "Berserker Rage": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Arcane Power": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Fire Ward": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Shadowform": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Desperate Prayer": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Adrenaline Rush": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Ghostly Strike": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Blessing of Kings": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Avenging Wrath": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Radiant Wrath"
  },
  "Curse of Doom": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Hellfire": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Explosive Trap": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Swiftmend": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Quick Mend"
  },
  "Frenzied Regeneration": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Stormstrike": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Storm Blade"
  },
  "Mana Tide Totem": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Wellspring Totem"
  },
  "Ice Barrier": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Power Infusion": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Surge of Power"
  },
  "Prayer of Fortitude": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Cold Blood": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Crusader Strike": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Zealot Strike"
  },
  "Shadowfury": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Shadow Bolt Volley": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Wyvern Sting": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Sleep Sting"
  },
  "Feral Charge": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Gift of the Wild": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Gift of the Grove"
  },
  "Earth Shield": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Elemental Mastery": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Shield Slam": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Last Stand": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Arcane Brilliance": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Dragon's Breath": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Vampiric Embrace": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Pain Suppression": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Fan of Knives": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Cloak of Shadows": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Holy Shield": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Hammer of the Righteous": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Demonic Sacrifice": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Kill Command": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Bestial Wrath": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Starfall": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Falling Stars"
  },
  "Wild Growth": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Fire Elemental Totem": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Bladestorm": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Rallying Cry": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Arcane Blast": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Mirror Image": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Divine Hymn": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Killing Spree": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Shadow Dance": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Divine Storm": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Aura Mastery": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Chimera Shot": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Twinfang Shot"
  },
  "Rapid Killing": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Lifebloom": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Blossoming Life"
  },
  "Bloodlust": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Shadowmeld": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Shadow Fade"
  },
  "Blood Fury": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Berserking": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "War Stomp": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Will of the Forsaken": {
   "kind": "ability",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "Will of the Reclaimed"
  },
  "Ancients' Bulwark": {
   "kind": "ability",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Beast Mastery": {
   "kind": "talent",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s the Mentor": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s the Guide": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s the Flawless": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s the Swift": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Private %s": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Corporal %s": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Sergeant %s": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Knight %s": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s, Defender of the Realm": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s of Westfall": {
   "kind": "title",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "%s of Longfield"
  },
  "%s the Dreamwalker": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Warden %s": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s the Wolfslayer": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s of the Deeps": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s the Sandbreaker": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s of the Earthen Ring": {
   "kind": "title",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "%s of the Stone Circle"
  },
  "%s, Bane of the Dark Iron": {
   "kind": "title",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "%s, Bane of the Slagborn"
  },
  "Headmaster %s": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s the Argent": {
   "kind": "title",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "%s of the Lantern Watch"
  },
  "%s the Lorebound": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s, Loa-Breaker": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s, Champion of the Guild": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s the Oathkeeper": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s of the Drowned Crown": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s the Crusader's Bane": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s the Rider": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s, Liberator of Gnomeregan": {
   "kind": "title",
   "region": "",
   "status": "review",
-  "new": null
+  "new": "%s, Liberator of Gearhollow"
  },
  "%s the Thornbreaker": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "%s the Big Game Hunter": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Artisan %s": {
   "kind": "title",
   "region": "",
-  "status": "review",
+  "status": "keep",
   "new": null
  },
  "Azeroth Solo": {
@@ -15850,5 +15850,419 @@
   "region": "Western Plaguelands",
   "status": "rename",
   "new": "Vashti"
+ },
+ "Frostsaber": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Snowcat"
+ },
+ "Winterfall": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Icebrow"
+ },
+ "Ice Thistle": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Frostburr"
+ },
+ "Drakonid": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Drakeborn"
+ },
+ "Ragefire": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Smokepit"
+ },
+ "Anvilrage": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Slagguard"
+ },
+ "Shadowforge": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ashforge"
+ },
+ "Onyxian": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Veshmiran"
+ },
+ "Flamewaker": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ashbound"
+ },
+ "Kel'Theril": {
+  "kind": "lore",
+  "region": "Winterspring",
+  "status": "rename",
+  "new": "Eluvain"
+ },
+ "Frostwhisper": {
+  "kind": "lore",
+  "region": "Winterspring",
+  "status": "rename",
+  "new": "Hoarwind"
+ },
+ "Dustwallow": {
+  "kind": "lore",
+  "region": "Dustwallow Marsh",
+  "status": "rename",
+  "new": "Saltmarsh"
+ },
+ "Brackenwall": {
+  "kind": "lore",
+  "region": "Dustwallow Marsh",
+  "status": "rename",
+  "new": "Mudwall"
+ },
+ "Wyrmbog": {
+  "kind": "lore",
+  "region": "Dustwallow Marsh",
+  "status": "rename",
+  "new": "Dragonmire"
+ },
+ "Sneed": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Snork"
+ },
+ "Anacondra": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Sythra"
+ },
+ "Cobrahn": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Vesk"
+ },
+ "Pythas": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ophis"
+ },
+ "Lord Serpentis": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Lord Sibilus"
+ },
+ "Serpentis": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Sibilus"
+ },
+ "Deepfury": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Brandsson"
+ },
+ "Dextren": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Dexter"
+ },
+ "Bruegal": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hugo"
+ },
+ "Targorr": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ulgrak"
+ },
+ "Thredd": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Crane"
+ },
+ "Silverlaine": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ashcroft"
+ },
+ "Fenrus": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Grimwolf"
+ },
+ "Electrocutioner": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Zapmaster"
+ },
+ "Crowd Pummeler": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Riot Buster"
+ },
+ "Pummeler": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Buster"
+ },
+ "Thorncurse": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Brambletusk"
+ },
+ "Ramtusk": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Snarltusk"
+ },
+ "Agathelos": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Rageback"
+ },
+ "Razorflank": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Grisla"
+ },
+ "Doan": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Veyne"
+ },
+ "Mograine": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Vance"
+ },
+ "Whitemane": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ashe"
+ },
+ "Zum'rah": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Zogo"
+ },
+ "Sandscalp": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Uzzak"
+ },
+ "Gerstahn": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Brisa"
+ },
+ "Angerforge": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ashhelm"
+ },
+ "Galford": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Penrose"
+ },
+ "Golemagg": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Magmahulk"
+ },
+ "Sulfuron": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Brimstone"
+ },
+ "Garrick": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Jory"
+ },
+ "Icebeard": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Rimehide"
+ },
+ "Githyiss": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Skitterfang"
+ },
+ "Perrine": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Aubert"
+ },
+ "Brashclaw": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Mudjaw"
+ },
+ "Kodobane": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Herdbreaker"
+ },
+ "Takk": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Skarr"
+ },
+ "Sarevess": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Szira"
+ },
+ "Charskull": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ashskull"
+ },
+ "Razormaw": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Scalehide"
+ },
+ "Bangalash": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ghostpelt"
+ },
+ "Mekgineer": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Chief Engineer"
+ },
+ "Charlga": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Grisla"
+ },
+ "Nimar": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ghast"
+ },
+ "Molok": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Gorm"
+ },
+ "Rathtalon": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hisk"
+ },
+ "Grizzlegut": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Bramblebelly"
+ },
+ "Shalzaru": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Nazzir"
+ },
+ "Jandice": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Mirela"
+ },
+ "Darkmaster": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Headmaster"
+ },
+ "Snowpaw": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Frostmuzzle"
+ },
+ "Katrana": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Meriel"
+ },
+ "Majordomo": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Steward"
+ },
+ "Scorpidsting": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Stingtail"
+ },
+ "Earthen Ring": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Stone Circle"
  }
 }

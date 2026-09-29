@@ -5,7 +5,8 @@
 //   node tools/ipcheck.js --inventory  writes docs/plans/v10-names-inventory.md, the per-region checklist to review
 //   node tools/ipcheck.js --enforce    exits 1 if any name marked "rename" is still in player text (build.py at v10)
 // tools/rename_v10.json is also the rename map: each entry is { kind, region, status, new }. status "rename" needs a
-// new name, "keep" means we decided it is generic enough to stay, "review" (abilities, titles and so on) is undecided.
+// new name, "keep" means we decided it is generic enough to stay, "review" (abilities, titles and so on) is undecided,
+// "forbid" (Warcraft, Blizzard) has no new name and may only appear in the fan notice.
 // Names from our own content (the expansion, Legends) are left out; comments are counted apart from player text.
 const fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..');
@@ -162,14 +163,14 @@ if (arg('--inventory')) {
   process.exit(0);
 }
 
-const live = (v) => v.status === 'rename' || v.status === 'review';
+const live = (v) => v.status === 'rename' || v.status === 'review' || v.status === 'forbid';
 const { hits } = scan(map, (n) => live(map[n]));
 const text = hits.filter((h) => !h.comment), com = hits.filter((h) => h.comment);
 const byFile = {}; for (const h of text) byFile[h.file] = (byFile[h.file] || 0) + 1;
 const byName = {}; for (const h of text) byName[h.name] = (byName[h.name] || 0) + 1;
-const left = Object.keys(map).filter((n) => live(map[n]) && !map[n].new).length;
+const left = Object.keys(map).filter((n) => map[n].status !== 'forbid' && live(map[n]) && !map[n].new).length;
 console.log(`Blizzard names still to rename: ${left} of ${Object.keys(map).length} in the map`);
 console.log(`in player-facing code and data: ${text.length} places in ${Object.keys(byFile).length} files; in comments: ${com.length}`);
 if (!arg('--brief')) for (const [f, n] of Object.entries(byFile).sort((a, b) => b[1] - a[1]).slice(0, 15)) console.log(`  ${String(n).padStart(5)}  ${f}`);
 if (!arg('--brief')) console.log('most frequent: ' + Object.entries(byName).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([n, c]) => `${n} ${c}`).join(' · '));
-if (arg('--enforce') && text.some((h) => map[h.name] && map[h.name].status === 'rename')) process.exit(1);
+if (arg('--enforce') && text.some((h) => map[h.name] && ['rename', 'forbid'].includes(map[h.name].status))) process.exit(1);
