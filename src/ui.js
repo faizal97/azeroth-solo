@@ -2288,9 +2288,10 @@
         if (playing && (!G.S || G.S.id !== L.id)) enterNow(L.id); // the one being played was replaced: open it again
       }).catch(cloudError).finally(() => { if (after) after(); });
     };
+    const side = (lvl, xp, played) => `level ${lvl} (${Math.round(xp).toLocaleString()} XP into it), ${fmtTime(played * 1000).trim()} played in all`;
     showDialog([h('h3', null, `Two different saves for ${L.name}`),
-      h('p', null, `This ${CLOUD.device()}: level ${L.level}, last played ${agoText(L.at)}.`),
-      h('p', null, `Google Drive (from ${devName(C.dev)}): level ${C.level}, saved ${agoText(C.at)}.`),
+      h('p', null, h('b', null, `This ${CLOUD.device()}: `), `${side(L.level, L.xp, L.played)}; last played ${agoText(L.at)}.`),
+      h('p', null, h('b', null, `Google Drive (from ${devName(C.dev)}): `), `${side(C.level, C.xp || 0, C.played)}; saved ${agoText(C.at)}.`),
       cloudNote('Keep both makes the Drive one a separate character, so nothing is lost.'),
       h('div', { class: 'btn-row' },
         h('button', { class: 'btn', onclick: () => pick('local') }, `Keep this ${CLOUD.device()}'s`),
@@ -2312,7 +2313,8 @@
       for (const c of cl) {
         const have = !!G.readSave(c.id), cn = D.CLASSES[c.cls] ? D.CLASSES[c.cls].name : c.cls;
         rows.append(h('div', { class: 'row' },
-          h('div', { class: 't' }, h('b', { class: 'cls-' + c.cls }, c.name), h('small', null, `Level ${c.level} ${cn} · saved ${agoText(c.at)} from ${devName(c.dev)}${have ? ' · on this device' : ''}`)),
+          h('div', { class: 'ic' }, img(art('portrait', { cls: c.cls, race: c.race || 'human', gender: c.look[0] || 'm', skin: +c.look[1] || 0, hair: +c.look[2] || 0 }))),
+          h('div', { class: 't' }, h('b', { class: 'cls-' + c.cls }, c.name), h('small', { style: { whiteSpace: 'normal' } }, `Level ${c.level} ${cn} · saved ${agoText(c.at)} from ${devName(c.dev)}${have ? ' · already on this device' : ''}`)),
           h('button', { class: 'btn alt', onclick: () => CLOUD.restore([c.id]).then(done).catch(cloudError) }, have ? 'Check' : 'Restore')));
       }
       if (!cl.length) rows.append(h('div', { class: 'people' }, 'Nothing in your Drive yet. Characters appear here after their first backup.'));
@@ -3005,22 +3007,16 @@
     };
     draw();
   }
-  // Enter World: when signed in to cloud save, first renew Google's token (from this tap) and pick up a newer save
-  // from another device. Never keeps the player waiting: after 8 s, or on any failure, the local save opens.
+  // Enter World opens the character straight away. When signed in to cloud save, the same tap also renews Google's
+  // token and checks Drive in the background: a newer save from another device (with nothing played here since)
+  // replaces this one a moment later, with a note; two different saves are asked about in the world.
   function enter(id) {
-    if (!(window.CLOUD && CLOUD.on() && CLOUD.available())) return enterNow(id);
-    let done = false;
-    const go = (after) => { if (done) return; done = true; clearTimeout(timer); enterNow(id); if (after) after(); };
-    const timer = setTimeout(() => go(), 8000);
+    enterNow(id);
+    if (!(window.CLOUD && CLOUD.on() && CLOUD.available() && G.S && G.S.id === id)) return;
     CLOUD.token(true).then(() => CLOUD.sync(id)).then((r) => {
-      const loaded = () => toast(`Loaded your latest save from ${devName(r.cloud.dev)} (level ${r.local.level}).`, true);
-      // Google answered after the fallback already opened the local save (say the player took a while to pick an
-      // account): a newer save loaded underneath, so open it again; a conflict is asked about in the world
-      if (done) { if (r.what === 'pulled') { enterNow(id); loaded(); } else if (r.what === 'conflict') askConflict(r); return; }
-      if (r.what === 'pulled') return go(loaded);
-      if (r.what === 'conflict') { done = true; clearTimeout(timer); return askConflict(r, () => { if (!G.S) enterNow(id); }); }
-      go();
-    }).catch(() => go());
+      if (r.what === 'pulled') { enterNow(id); toast(`Loaded your latest save from ${devName(r.cloud.dev)} (level ${r.local.level}).`, true); }
+      else if (r.what === 'conflict') askConflict(r);
+    }).catch(() => {}); // offline or cancelled: play on; the next backup tries again
   }
   function enterNow(id) {
     const rep = G.load(id);

@@ -59,30 +59,38 @@ const ok = (cond, what) => { if (cond) pass++; else { fail++; console.log('FAIL'
   G.load(A); play(30, 0); r = await CLOUD.sync(A);
   ok(r.what === 'same' && cloudOf(A)[0].props.rev === '3', 'opening Aria for 30 s uploads nothing');
 
-  // 3. both devices played from the same revision: the game asks, and each answer does what it says
-  use(phone); G.load(A); play(1200, 500); // offline on the phone: xp 900
-  use(web); G.load(A); play(600, 70); await CLOUD.sync(A); // the browser uploads revision 4: xp 470
+  // 2b. standing in town for 20 minutes (time passes, nothing changes) does not count either: a newer copy still loads
+  use(phone); await CLOUD.sync(A); // the phone catches up to revision 3 first
+  G.load(A); t += 1200 * 1000; G.S.player.played += 1200; G.save(); // idle on the phone
+  use(web); G.load(A); play(300, 9); await CLOUD.sync(A); // the browser plays and uploads revision 4
   use(phone); r = await CLOUD.sync(A);
-  ok(r.what === 'conflict' && r.local.played > r.cloud.played - 99999 && char(A).player.xp === 900 && cloudOf(A)[0].props.rev === '4', 'a conflict changes nothing and shows both');
+  ok(r.what === 'pulled' && char(A).player.xp === 409, 'idle time is not progress: the phone loads the browser\'s revision without asking');
+  use(web); await CLOUD.sync(A);
+
+  // 3. both devices played from the same revision: the game asks, and each answer does what it says
+  use(phone); G.load(A); play(1200, 500); // offline on the phone: xp 909
+  use(web); G.load(A); play(600, 70); await CLOUD.sync(A); // the browser uploads revision 5: xp 479
+  use(phone); r = await CLOUD.sync(A);
+  ok(r.what === 'conflict' && r.local.played > r.cloud.played - 99999 && char(A).player.xp === 909 && cloudOf(A)[0].props.rev === '5', 'a conflict changes nothing and shows both');
   r = await CLOUD.resolve(A, 'local');
-  ok(r.what === 'pushed' && cloudOf(A)[0].props.rev === '5' && cloudOf(A)[0].props.dev === 'phone', 'Keep this device\'s: the phone\'s version becomes revision 5');
+  ok(r.what === 'pushed' && cloudOf(A)[0].props.rev === '6' && cloudOf(A)[0].props.dev === 'phone', 'Keep this device\'s: the phone\'s version becomes revision 6');
   use(web); r = await CLOUD.sync(A);
-  ok(r.what === 'pulled' && char(A).player.xp === 900, 'the browser, which uploaded 4 and has not played since, loads 5 by itself');
-  G.load(A); play(600, 11); // browser xp 911
-  use(phone); G.load(A); play(600, 22); await CLOUD.sync(A); // phone uploads revision 6: xp 922
+  ok(r.what === 'pulled' && char(A).player.xp === 909, 'the browser, which uploaded 5 and has not played since, loads 6 by itself');
+  G.load(A); play(600, 11); // browser xp 920
+  use(phone); G.load(A); play(600, 22); await CLOUD.sync(A); // phone uploads revision 7: xp 931
   use(web); r = await CLOUD.sync(A);
   ok(r.what === 'conflict', 'both played again: asked');
   r = await CLOUD.resolve(A, 'cloud');
-  ok(r.what === 'pulled' && char(A).player.xp === 922, 'Keep the cloud\'s: the browser takes the phone\'s version');
-  G.load(A); play(600, 11); // browser xp 933
-  use(phone); G.load(A); play(600, 22); await CLOUD.sync(A); // phone uploads revision 7: xp 944
+  ok(r.what === 'pulled' && char(A).player.xp === 931, 'Keep the cloud\'s: the browser takes the phone\'s version');
+  G.load(A); play(600, 11); // browser xp 942
+  use(phone); G.load(A); play(600, 22); await CLOUD.sync(A); // phone uploads revision 8: xp 953
   use(web); r = await CLOUD.sync(A);
   ok(r.what === 'conflict', 'a third conflict');
   const before = G.characters().length;
   r = await CLOUD.resolve(A, 'both');
   const copy = G.characters().find((c) => c.id !== A && c.name === 'Aria');
-  ok(r.what === 'both' && G.characters().length === before + 1 && copy && char(copy.id).player.xp === 944 && char(A).player.xp === 933, 'Keep both: the cloud\'s version becomes a second Aria');
-  ok(cloudOf(A)[0].props.rev === '8' && cloudOf(copy.id).length === 0, 'this device\'s version goes up as revision 8; the copy is its own, unsynced character');
+  ok(r.what === 'both' && G.characters().length === before + 1 && copy && char(copy.id).player.xp === 953 && char(A).player.xp === 942, 'Keep both: the cloud\'s version becomes a second Aria');
+  ok(cloudOf(A)[0].props.rev === '9' && cloudOf(copy.id).length === 0, 'this device\'s version goes up as revision 9; the copy is its own, unsynced character');
   await CLOUD.backupAll();
   ok(cloudOf(copy.id).length === 1 && cloudOf(copy.id)[0].props.rev === '1', 'Back up now gives the copy its own file');
 
@@ -93,7 +101,7 @@ const ok = (cond, what) => { if (cond) pass++; else { fail++; console.log('FAIL'
   ok(conflicts.length === 0 && list.length === 4, 'Back up now covers every character (four in the cloud)');
   use(tab); r = await CLOUD.restore(list.map((c) => c.id));
   ok(r.every((x) => x.what === 'restored') && G.characters().length === 4, 'a third device restores all four');
-  ok(char(A).player.xp === 933, 'with Aria at her latest revision');
+  ok(char(A).player.xp === 942, 'with Aria at her latest revision');
 
   // 5. a restore that would go over the character limit restores nothing
   const full = dev('full', 'browser'); use(full);

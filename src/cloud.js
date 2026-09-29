@@ -6,8 +6,16 @@
 // revision number and what the Restore list shows, so checks never download a save.
 (function (root) {
   const CLOUD = root.CLOUD = {};
-  const KEY = 'azsolo.cloud'; // { on, lastAuto, lastBackup, lastError, chars: { <id>: { fileId, rev, played, at } } }
-  const SLACK = 60; // seconds of play before a character counts as "played since the last sync" (just opening it does not)
+  const KEY = 'azsolo.cloud'; // { on, lastAuto, lastBackup, lastError, chars: { <id>: { fileId, rev, played, mark, at } } }
+  const SLACK = 60; // seconds of play that never count as "played since the last sync" (just opening a character)
+  // "Played since the last sync" means progress, not time: a character left standing in town is unchanged. The mark
+  // is a short fingerprint of what playing changes (level, XP, gold, gear, bags, quests, kills, where you are).
+  CLOUD.mark = function (S) {
+    const P = S.player;
+    const str = JSON.stringify([P.level, P.xp, P.money, P.kills, P.deaths, P.place, P.quests, Object.keys(P.done || {}).length, P.equip, P.bags, P.bank || null]);
+    let h = 5381; for (let i = 0; i < str.length; i++) h = ((h * 33) ^ str.charCodeAt(i)) >>> 0;
+    return h.toString(36) + '.' + str.length.toString(36);
+  };
   const EVERY = 10 * 60 * 1000; // automatic backups at most this often while playing
   const FILE = (id) => `char-${id}.azs`;
   const FILE_RE = /^char-(.+)\.azs$/;
@@ -30,8 +38,8 @@
   CLOUD.signOut = async function () { patch({ on: false }); if (auth && auth.signOut) try { await auth.signOut(); } catch (e) { } }; // sync records stay, so signing in again carries on
 
   // ---- what the cloud holds
-  const labels = (S, rev) => { const P = S.player; return { rev: String(rev), name: String(P.name).slice(0, 24), lvl: String(P.level), cls: P.cls, race: P.race || 'human', at: String(Date.now()), dev: CLOUD.device(), played: String(Math.floor(P.played || 0)) }; };
-  const entry = (f) => { const a = f.appProperties || {}; return { fileId: f.id, id: f.name.replace(FILE_RE, '$1'), rev: +a.rev || 0, name: a.name || '?', level: +a.lvl || 0, cls: a.cls, race: a.race, at: +a.at || 0, dev: a.dev, played: +a.played || 0 }; };
+  const labels = (S, rev) => { const P = S.player; return { rev: String(rev), name: String(P.name).slice(0, 24), lvl: String(P.level), xp: String(Math.floor(P.xp || 0)), cls: P.cls, race: P.race || 'human', look: `${P.gender || 'm'}.${P.skin || 0}.${P.hair || 0}`, at: String(Date.now()), dev: CLOUD.device(), played: String(Math.floor(P.played || 0)) }; };
+  const entry = (f) => { const a = f.appProperties || {}; return { fileId: f.id, id: f.name.replace(FILE_RE, '$1'), rev: +a.rev || 0, name: a.name || '?', level: +a.lvl || 0, xp: +a.xp || 0, cls: a.cls, race: a.race, look: (a.look || 'm.0.0').split('.'), at: +a.at || 0, dev: a.dev, played: +a.played || 0 }; };
   // every character in the cloud; if two devices once created the same character's file, the highest revision wins
   CLOUD.list = async function () {
     const best = {};
@@ -48,7 +56,7 @@
     if (!S) return c ? 'cloudOnly' : 'none';
     if (!c) return 'push';
     if (!r) return 'conflict'; // a cloud copy this device never synced with
-    const clean = (S.player.played || 0) <= r.played + SLACK;
+    const clean = (r.mark && CLOUD.mark(S) === r.mark) || (S.player.played || 0) <= r.played + SLACK;
     if (c.rev === r.rev) return clean ? 'same' : 'push';
     if (c.rev > r.rev) return clean ? 'pull' : 'conflict';
     return 'conflict'; // the cloud went back (replaced from somewhere else): ask
@@ -58,7 +66,7 @@
     const rev = Math.max(c ? c.rev : 0, (read().chars[S.id] || {}).rev || 0) + 1;
     const code = await G.encodeSave(S), props = labels(S, rev);
     const f = c ? await drv().update(c.fileId, props, code) : await drv().create(FILE(S.id), props, code);
-    record(S.id, { fileId: (f && f.id) || c.fileId, rev, played: Math.floor(S.player.played || 0), at: Date.now() });
+    record(S.id, { fileId: (f && f.id) || c.fileId, rev, played: Math.floor(S.player.played || 0), mark: CLOUD.mark(S), at: Date.now() });
     patch({ lastBackup: Date.now(), lastError: null });
   }
   // bring a cloud copy in; asCopy gives it a new id (Keep both), so it becomes its own character
@@ -66,11 +74,11 @@
     const S = await G.decodeSave(await drv().download(c.fileId));
     S.id = asCopy ? 'c' + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36) : c.id;
     G.writeSave(S);
-    if (!asCopy) record(c.id, { fileId: c.fileId, rev: c.rev, played: Math.floor(S.player.played || 0), at: Date.now() });
+    if (!asCopy) record(c.id, { fileId: c.fileId, rev: c.rev, played: Math.floor(S.player.played || 0), mark: CLOUD.mark(S), at: Date.now() });
     return S;
   }
   const local = (id) => { if (G.S && G.S.id === id) G.save(); return G.readSave(id); };
-  const brief = (S) => S && { id: S.id, name: S.player.name, level: S.player.level, cls: S.player.cls, played: S.player.played || 0, at: S.lastSeen || 0 };
+  const brief = (S) => S && { id: S.id, name: S.player.name, level: S.player.level, xp: Math.floor(S.player.xp || 0), cls: S.player.cls, played: S.player.played || 0, at: S.lastSeen || 0 };
 
   // One character: does whatever is safe and reports it. A 'conflict' changes nothing; the caller asks the player and
   // calls CLOUD.resolve. what: 'same' | 'pushed' | 'pulled' | 'newer' | 'conflict' | 'none'. With noPull (backups
