@@ -536,3 +536,32 @@ img { max-width: 100%; display: block; }
   .chat { height: 64px; }
 }
 
+
+/* ---- v9.9 effects ---- */
+/* low health: the screen edges pulse red */
+#app.lowhp::after { content: ''; position: absolute; inset: 0; z-index: 58; pointer-events: none; box-shadow: inset 0 0 80px 18px rgba(220,10,0,.7); animation: lowhp 1.1s ease-in-out infinite alternate; }
+@keyframes lowhp { from { opacity: .35; } to { opacity: 1; } }
+/* cooldown ready: a shine sweeps the button */
+.ab.ready::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.8) 50%, transparent 65%) no-repeat; background-size: 250% 100%; animation: shine .6s ease-out forwards; }
+.ab.ready { box-shadow: 0 0 0 1px #6b4d20, 0 0 10px rgba(255,230,140,.7); }
+@keyframes shine { from { background-position: 130% 0; } to { background-position: -80% 0; } }
+/* loot flying to the Bags button */
+.lootfly { position: fixed; left: 0; top: 0; z-index: 59; width: 34px; height: 34px; margin: -17px 0 0 -17px; pointer-events: none; border: 2px solid #9d9d9d; border-radius: 4px; overflow: hidden; background: #0d0a06; box-shadow: 0 4px 12px rgba(0,0,0,.7); }
+.lootfly img { width: 100%; height: 100%; display: block; }
+.lootfly.q2 { border-color: #1eff00; box-shadow: 0 0 12px rgba(30,255,0,.6); } .lootfly.q3 { border-color: #0070dd; box-shadow: 0 0 12px rgba(0,112,221,.7); } .lootfly.q4 { border-color: #a335ee; box-shadow: 0 0 14px rgba(163,53,238,.8); }
+.nav button.bump img { animation: bump .4s ease-out; }
+@keyframes bump { 0% { transform: scale(1); } 35% { transform: scale(1.35); } 60% { transform: scale(.92); } 100% { transform: scale(1); } }
+/* level up: a gold burst around your portrait */
+.lvlburst { position: absolute; inset: -4px; border-radius: 50%; pointer-events: none; z-index: 2; box-shadow: 0 0 0 3px #ffd100, 0 0 18px 6px rgba(255,209,0,.8); animation: lvlburst 1.3s ease-out forwards; }
+@keyframes lvlburst { 0% { transform: scale(.8); opacity: 1; } 60% { opacity: .8; } 100% { transform: scale(1.9); opacity: 0; } }
+#pf-lvl.pop { animation: bump .6s ease-out 2; }
+/* quest marks over people bob */
+.np .qmk { display: inline-block; margin-right: 3px; animation: qbob 1.2s ease-in-out infinite; }
+@keyframes qbob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+/* a quest just became ready: its tracker line flashes gold */
+.tracker .q.flash { animation: qflash .8s ease-in-out 3; }
+@keyframes qflash { 50% { color: #fff; text-shadow: 0 0 8px #ffd100, 0 0 2px #ffd100; } }
+/* your crit shakes the target frame */
+.uf.target.shake { animation: shake .32s ease-out; }
+@keyframes shake { 20% { transform: translateX(-4px); } 40% { transform: translateX(4px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(2px); } }
+@media (prefers-reduced-motion: reduce) { #app.lowhp::after { animation: none; opacity: .7; } .np .qmk, .tracker .q.flash, .uf.target.shake, .lvlburst, #pf-lvl.pop, .nav button.bump img { animation: none; } }

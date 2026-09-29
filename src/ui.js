@@ -278,7 +278,7 @@
     list.forEach((n, i) => {
       const N = D.NPCS[n], mk = G.npcMarker(n);
       const src = n === 'hooded_stranger' && window.ART && ART.legend ? art('legend', 'lyveus_hooded') : N.legend && window.ART && ART.legend ? art('legend', N.legend) : art('hero', npcLooks(n, place));
-      const tag = h('div', { class: 'np', style: { fontSize: '10px' } }, mk ? h('span', { style: { color: mk === '…' ? '#bbb' : '#ffd100', fontWeight: 800 } }, (mk === '…' ? '?' : mk) + ' ') : null, h('span', { style: { color: '#ffd100' } }, N.name.split(' ').length > 2 ? N.name.split(' ').slice(-1)[0] : N.name));
+      const tag = h('div', { class: 'np', style: { fontSize: '10px' } }, mk ? h('span', { class: mk === '…' ? '' : 'qmk', style: { color: mk === '…' ? '#bbb' : '#ffd100', fontWeight: 800 } }, (mk === '…' ? '?' : mk) + ' ') : null, h('span', { style: { color: '#ffd100' } }, N.name.split(' ').length > 2 ? N.name.split(' ').slice(-1)[0] : N.name));
       const el = spriteEl(src, slots[i], 'idle flip npc tappable', tag);
       el.addEventListener('click', () => openNpc(n));
       sc.append(el);
@@ -437,12 +437,16 @@
         if (onAlly || mine || C.allies.length === 1) fct(e.tgt, (e.crit ? '' : '') + e.amount + (e.absorbed ? ` (${e.absorbed} absorbed)` : ''), (e.crit ? 'crit ' : '') + (onAlly ? 'me ' : '') + school + (!mine && !onAlly ? ' small' : ''));
         flash(e.tgt, 'hit');
         if (src) flash(e.src, src.side === 'ally' ? 'lunge-r' : 'lunge-l', 280);
+        // your critical hit on your target shakes its frame
+        if (e.crit && mine && els.tf && els.tUid === e.tgt) { els.tf.classList.remove('shake'); void els.tf.offsetWidth; els.tf.classList.add('shake'); }
       } else if (e.type === 'heal' && e.amount > 0) {
         fct(e.tgt, '+' + e.amount, 'heal' + (e.crit ? ' crit' : ''));
       } else if (e.type === 'avoid') {
         fct(e.tgt, e.what === 'dodge' ? 'Dodge' : e.what === 'resist' ? 'Resist' : 'Miss', 'small');
         if (src) flash(e.src, src.side === 'ally' ? 'lunge-r' : 'lunge-l', 280);
       } else if (e.type === 'die') {
+        const del = ui.spriteEls[e.uid], du = C.units[e.uid];
+        if (del && du && du.side !== 'ally') { const r = del.getBoundingClientRect(); ui.lastKill = { x: r.left + r.width / 2, y: r.top + r.height * 0.45, at: Date.now() }; }
         redraw = true;
       } else if (e.type === 'say') {
         B.post(G.S, 'monster', { name: e.name }, e.text);
@@ -751,7 +755,8 @@
     const t = h('div', { class: 'tracker' });
     for (const qid of qs.slice(0, all ? 20 : 4)) {
       const st = G.questState(qid);
-      t.append(h('div', { class: 'q' }, D.QUESTS[qid].name + (st === 'complete' ? ' (Complete)' : '')));
+      const fresh = ui.flashQ && ui.flashQ.qid === qid && Date.now() - ui.flashQ.at < 2500;
+      t.append(h('div', { class: 'q' + (fresh ? ' flash' : '') }, D.QUESTS[qid].name + (st === 'complete' ? ' (Complete)' : '')));
       if (st !== 'complete') for (const pr of G.questProgress(qid)) t.append(h('div', { class: 'o tnum' + (pr.have >= pr.n ? ' done' : '') }, `- ${pr.label}: ${pr.have}/${pr.n}`));
     }
     p.append(h('button', { style: { textAlign: 'left' }, onclick: () => openQuests() }, t));
@@ -1129,10 +1134,35 @@
     const f = ui.moneyFloat = h('span', { class: 'moneyfloat' + (d < 0 ? ' out' : ''), html: (d < 0 ? '−' : '+') + moneyHtml(Math.abs(d), false, true) });
     el.parentNode.parentNode.append(f); setTimeout(() => f.remove(), 1600);
   }
+  function v0hp(P) { const v = G.vitals(); return v.hp > 0 && v.hp / v.maxHp < 0.25; }
+  // loot flies from where the enemy fell into the Bags button, which bumps
+  function lootFly(d) {
+    const bag = els.nav && els.nav.querySelector('[data-nav="bags"]');
+    if (!bag) return;
+    const bump = () => { bag.classList.remove('bump'); void bag.offsetWidth; bag.classList.add('bump'); };
+    const items = (d.got || []).filter((it) => it && it.icon).slice(0, 3);
+    const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!items.length || still || !document.body.animate) return bump();
+    const from = ui.lastKill && Date.now() - ui.lastKill.at < 6000 ? ui.lastKill : (() => { const r = els.scene.getBoundingClientRect(); return { x: r.left + r.width * 0.72, y: r.top + r.height * 0.6 }; })();
+    const br = bag.getBoundingClientRect(), tx = br.left + br.width / 2, ty = br.top + 16;
+    items.forEach((it, i) => {
+      const f = h('div', { class: 'lootfly q' + (it.q || 1) }, img(art('icon', it.icon)));
+      document.body.append(f);
+      const sx = from.x + (i - (items.length - 1) / 2) * 26, sy = from.y;
+      const a = f.animate([
+        { transform: `translate(${sx}px, ${sy}px) scale(.4)`, opacity: 0 },
+        { transform: `translate(${sx}px, ${sy - 30}px) scale(1.15)`, opacity: 1, offset: 0.2 },
+        { transform: `translate(${(sx + tx) / 2}px, ${Math.min(sy, ty) - 90}px) scale(1)`, opacity: 1, offset: 0.55 },
+        { transform: `translate(${tx}px, ${ty}px) scale(.45)`, opacity: 0.7 }], { duration: 850, delay: i * 140, easing: 'cubic-bezier(.45,0,.55,1)', fill: 'both' });
+      a.onfinish = () => { f.remove(); bump(); };
+    });
+  }
   function frame() {
     const S = G.S; if (!S || !els.pHp) return;
     const P = S.player;
     moneyTick(S);
+    // low health in a fight: the screen edges glow red
+    app.classList.toggle('lowhp', !!G.fight && v0hp(P));
     if (window.SND) window.SND.music(ui.csMusic ? ui.csMusic : S.run ? 'dungeon' : P.travel ? 'elwynn' : D.PLACES[P.place].safe ? 'town' : 'elwynn');
     const v = G.vitals();
     setBar(els.pHp, v.hp, v.maxHp);
@@ -1232,6 +1262,8 @@
         } else if (id !== 'eat' && id !== 'drink' && id !== 'attack' && id !== 'potion') {
           nores = E.abCost(D.ABILITIES[id], P) > v.res + 0.01 && D.ABILITIES[id].target !== 'enemy';
         }
+        // a shine sweeps the button the moment a real cooldown (not the global one) ends
+        if (left > 0) btn._cd = true; else if (btn._cd) { btn._cd = false; btn.classList.remove('ready'); void btn.offsetWidth; btn.classList.add('ready'); setTimeout(() => btn.classList.remove('ready'), 700); }
         btn.querySelector('.cd').style.setProperty('--p', p);
         btn.querySelector('.cdt').textContent = left > 1.5 ? Math.ceil(left) : '';
         btn.classList.toggle('nores', nores);
@@ -2902,7 +2934,17 @@
     G.on('intruder', (it) => { toast(`Enemy player nearby: ${it.name}`); snd('error', { gap: 0.4, vol: 0.5 }); renderAll(); });
     G.on('partyInvite', (d) => { if (ui.dialog || (window.CS && CS.playing)) { G.declinePartyInvite(d.bot.id); return; } showPartyInvite(d); });
     G.on('roll', () => renderRolls());
-    G.on('questReady', () => { renderNavDots(); renderPanel(); });
+    G.on('questReady', (d) => {
+      ui.flashQ = { qid: d && d.qid, at: Date.now() }; renderNavDots(); renderPanel();
+      const qb = els.nav && els.nav.querySelector('[data-nav="quests"]'); if (qb) { qb.classList.remove('bump'); void qb.offsetWidth; qb.classList.add('bump'); }
+    });
+    G.on('lootGain', (d) => lootFly(d || {}));
+    // level up: a gold burst around your portrait, and the level number pops
+    G.on('levelup', () => setTimeout(() => {
+      const lv = document.getElementById('pf-lvl'); if (!lv) return;
+      const pt = lv.parentNode; pt.append(h('span', { class: 'lvlburst' })); lv.classList.add('pop');
+      setTimeout(() => { const b = pt.querySelector('.lvlburst'); if (b) b.remove(); lv.classList.remove('pop'); }, 1400);
+    }, 60));
     G.on('questDone', () => { toast('Quest complete', true); });
     G.on('selfheal', (n) => fct('me', '+' + n, 'heal'));
     G.on('xp', (d) => { if (G.pUnit && ui.spriteEls[G.pUnit.uid]) fct(G.pUnit.uid, '+' + d.amount + ' XP', 'xp'); xpFloat(d); });

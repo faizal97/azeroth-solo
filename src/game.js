@@ -1048,9 +1048,9 @@
   function giveLoot(l) {
     const P = G.S.player;
     if (l.money) { l.money = Math.round(l.money * (1 + racialPassive('lootMoneyPct') / 100) * G.warBonus()); P.money += l.money; loot(`You loot ${G.moneyText(l.money)}.`); }
-    let got = 0;
-    for (const it of l.items) if (G.addItem(it, 1)) { got++; loot(`You receive loot: ${B.link(it.name, it.q)}.`); }
-    if (l.money || got) emit('lootGain', { money: l.money, items: got });
+    let got = 0; const gotItems = [];
+    for (const it of l.items) if (G.addItem(it, 1)) { got++; gotItems.push(it); loot(`You receive loot: ${B.link(it.name, it.q)}.`); }
+    if (l.money || got) emit('lootGain', { money: l.money, items: got, got: gotItems });
     questCheck();
   }
 
@@ -1427,7 +1427,7 @@
     if (G.addItem(G.copyItem(N.item), n)) loot(`You receive item: ${B.link(D.ITEMS[N.item].name, D.ITEMS[N.item].q)}${n > 1 ? ' x' + n : ''}.`);
     if (N.extra && Math.random() < N.extra[1] && G.addItem(G.copyItem(N.extra[0]), 1)) loot(`You receive item: ${B.link(D.ITEMS[N.extra[0]].name)}.`);
     skillUp(N.prof, G.skillColor(p.skill, G.nodeSk(N)));
-    emit('lootGain', { items: 1 });
+    emit('lootGain', { items: 1, got: [D.ITEMS[N.item]] });
   }
   // --- skinning happens as you loot a beast; linen and wool come from humanoids
   function profLoot(mobKey, level, out) {
