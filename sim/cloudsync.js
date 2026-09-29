@@ -155,6 +155,15 @@ const ok = (cond, what) => { if (cond) pass++; else { fail++; console.log('FAIL'
   ok(G.account().marks === 0, 'a new device starts with no marks');
   await CLOUD.restore([]); // any restore also brings the account in
   ok(G.account().marks === 40 && G.account().heirlooms.length === 2, 'until it restores: then marks and heirlooms arrive');
+  // story scenes seen, lore pages read and tips shown travel too; the tips on/off setting stays on each device
+  use(phone); localStorage.setItem('azsolo.story', JSON.stringify(['intro', 'ch2'])); localStorage.setItem('azsolo.loreread', JSON.stringify(['lp_a'])); localStorage.setItem('azsolo.tips', JSON.stringify({ seen: ['start'], off: false }));
+  await CLOUD.syncAccount();
+  use(web); localStorage.setItem('azsolo.story', JSON.stringify(['ch3'])); localStorage.setItem('azsolo.tips', JSON.stringify({ seen: ['bags'], off: true }));
+  await CLOUD.syncAccount();
+  const rd = (k) => JSON.parse(localStorage.getItem(k));
+  ok(rd('azsolo.story').length === 3 && rd('azsolo.loreread')[0] === 'lp_a' && rd('azsolo.tips').seen.length === 2 && rd('azsolo.tips').off === true, 'scenes seen, pages read and tips shown combine; this device keeps its tips off');
+  use(phone); await CLOUD.syncAccount();
+  ok(rd('azsolo.story').includes('ch3') && rd('azsolo.tips').off === false, 'the phone gets the browser\'s scene and keeps its tips on');
   const accFiles = [...drive.files.values()].filter((f) => f.name === 'account.azs');
   ok(accFiles.length === 1 && (await CLOUD.list()).every((c) => c.name !== undefined && c.id !== 'account'), 'one account file, and it never shows up as a character');
 

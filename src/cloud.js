@@ -126,21 +126,40 @@
   // (G.account, azsolo.account) and belong to no save, so they get one file of their own, account.azs. Two devices
   // merge rather than choose: heirlooms combine, and the higher Mark balance wins, so a sync never loses either.
   // (Marks spent on one device can come back from another's higher balance; in a one-player game that is fine.)
+  // The same file carries what else only ever grows and belongs to no save: the story scenes seen (azsolo.story, which
+  // also stops seen chapters replaying), the Lore Journal pages read (azsolo.loreread) and the tips already shown
+  // (azsolo.tips .seen). Those merge by combining; whether tips are on stays a setting of each device.
   const ACCOUNT_FILE = 'account.azs';
+  const LISTS = ['heirlooms', 'story', 'lore', 'tips'];
+  const union = (x, y) => { const out = []; for (const id of (x || []).concat(y || [])) if (!out.includes(id)) out.push(id); return out; };
   CLOUD.mergeAccount = function (a, b) {
     a = a || {}; b = b || {};
-    const hl = [];
-    for (const id of (a.heirlooms || []).concat(b.heirlooms || [])) if (!hl.includes(id)) hl.push(id);
-    return Object.assign({}, b, a, { marks: Math.max(+a.marks || 0, +b.marks || 0), heirlooms: hl });
+    const m = Object.assign({}, b, a, { marks: Math.max(+a.marks || 0, +b.marks || 0) });
+    for (const k of LISTS) m[k] = union(a[k], b[k]);
+    return m;
   };
-  const same = (x, y) => JSON.stringify([+x.marks || 0, (x.heirlooms || []).slice().sort()]) === JSON.stringify([+y.marks || 0, (y.heirlooms || []).slice().sort()]);
+  const same = (x, y) => JSON.stringify([+x.marks || 0].concat(LISTS.map((k) => (x[k] || []).slice().sort()))) === JSON.stringify([+y.marks || 0].concat(LISTS.map((k) => (y[k] || []).slice().sort())));
+  const readList = (key, field) => { try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return (field ? v && v[field] : v) || []; } catch (e) { return []; } };
+  // everything the account file holds, as this device has it
+  const localAccount = () => Object.assign({}, G.account(), { story: readList('azsolo.story'), lore: readList('azsolo.loreread'), tips: readList('azsolo.tips', 'seen') });
+  function writeLocal(m) {
+    G.saveAccount({ marks: m.marks, heirlooms: m.heirlooms });
+    try {
+      localStorage.setItem('azsolo.story', JSON.stringify(m.story));
+      localStorage.setItem('azsolo.loreread', JSON.stringify(m.lore));
+      let t = null; try { t = JSON.parse(localStorage.getItem('azsolo.tips') || 'null'); } catch (e) { t = null; }
+      // a device that never had tip settings starts them the way the game would: off for anyone past level 5
+      if (!t) t = { off: (G.characters() || []).some((c) => c.level >= 5) };
+      t.seen = m.tips; localStorage.setItem('azsolo.tips', JSON.stringify(t));
+    } catch (e) { }
+  }
   CLOUD.syncAccount = async function (files) {
     if (!root.G || !G.account) return null;
     const f = (files || await drv().list()).find((x) => x.name === ACCOUNT_FILE) || null;
     let there = null;
     if (f) { try { there = JSON.parse(await drv().download(f.id)); } catch (e) { there = null; } }
-    const here = G.account(), merged = CLOUD.mergeAccount(here, there);
-    if (!same(merged, here)) G.saveAccount(merged);
+    const here = localAccount(), merged = CLOUD.mergeAccount(here, there);
+    if (!same(merged, here)) writeLocal(merged);
     if (!there || !same(merged, there)) {
       const props = { kind: 'account', marks: String(merged.marks), heirlooms: String(merged.heirlooms.length), at: String(Date.now()), dev: CLOUD.device() };
       if (f) await drv().update(f.id, props, JSON.stringify(merged)); else await drv().create(ACCOUNT_FILE, props, JSON.stringify(merged));

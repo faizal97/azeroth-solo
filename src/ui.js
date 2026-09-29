@@ -3158,7 +3158,7 @@
     const dt = (t - last) / 1000; last = t;
     if (G.S) {
       if (dt > 20) resume();
-      if (ui.pendingChapter && !G.fight && !ui.dialog && !(window.CS && CS.playing)) { const id = ui.pendingChapter; ui.pendingChapter = null; closeSheet(); setTimeout(() => playChapter(id), 2600); }
+      if (ui.pendingChapter && !G.fight && !ui.dialog && !(window.CS && CS.playing)) { const id = ui.pendingChapter; ui.pendingChapter = null; closeSheet(); setTimeout(() => { if (!(window.CS && CS.unlocked().has(id))) playChapter(id); }, 2600); } // seen on another device (cloud save) in the meantime: skip it
       G.update(Math.min(dt, 1));
       cloudTick += dt; if (cloudTick > 30) { cloudTick = 0; cloudAuto(false); }
       frame();
