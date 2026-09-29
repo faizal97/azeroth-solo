@@ -52,6 +52,8 @@ Each needs your pick before the next. Recommendations are marked.
 
 ### 2. The world's name (replaces Azeroth)
 
+**Decided (2026-09-29): Caldreth.** "Realm of Lone" is only the game's title; the world is Caldreth.
+
 | Option | Feel | Check |
 |---|---|---|
 | **Caldreth** (recommended) | Old, weathered, a little dark | Not a Warcraft name (only player characters use it); no game found |
