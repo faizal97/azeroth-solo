@@ -125,6 +125,14 @@ const ok = (cond, what) => { if (cond) pass++; else { fail++; console.log('FAIL'
   ok(r.what === 'pushed' && CLOUD.state().lastError === null, 'after reconnecting the backup goes through');
   const calls = drive.calls; r = await CLOUD.maybeBackup(false);
   ok(r === null && drive.calls === calls, 'and the next one waits its 10 minutes');
+  // 7b. the sign-in ran out while nothing changed: Back up now uploads nothing, but it went through, so Reconnect goes
+  G.logout(); await CLOUD.backupAll(); // settle: every character on the Drive as it is here
+  localStorage.setItem('azsolo.cloud', JSON.stringify(Object.assign(CLOUD.state(), { lastError: { code: 'auth', message: 'ran out', at: t } })));
+  let uploads = 0; const cr = drive.create, up = drive.update;
+  drive.create = function () { uploads++; return cr.apply(this, arguments); }; drive.update = function () { uploads++; return up.apply(this, arguments); };
+  t += 1000; await CLOUD.backupAll();
+  drive.create = cr; drive.update = up;
+  ok(uploads === 0 && CLOUD.state().lastError === null && CLOUD.state().lastBackup === t, 'Back up now with nothing to upload still clears Reconnect and counts as a backup');
 
   // 8. automatic backup during play never loads a newer copy over the character being played
   use(web); G.load(A); play(20, 0);

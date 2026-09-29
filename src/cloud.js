@@ -95,6 +95,9 @@
     const cl = await CLOUD.list(), out = [];
     for (const ch of G.characters()) { const r = await CLOUD.sync(ch.id, cl); if (r.what === 'conflict') out.push(r); }
     await CLOUD.syncAccount();
+    // it went through, so the sign-in works again: clear an old 'ran out' even when nothing needed uploading, and
+    // with no conflicts left the Drive holds every character as of now
+    patch(out.length ? { lastError: null } : { lastError: null, lastBackup: Date.now() });
     return out;
   };
   // The player's answer to a conflict: 'local' (this device's wins), 'cloud' (the cloud's wins), 'both' (keep the
