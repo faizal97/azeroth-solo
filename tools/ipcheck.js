@@ -4,6 +4,8 @@
 //   node tools/ipcheck.js              report: where those names still appear (game code, data, app, README); --brief: two lines
 //   node tools/ipcheck.js --inventory  writes docs/plans/v10-names-inventory.md, the per-region checklist to review
 //   node tools/ipcheck.js --enforce    exits 1 if any name marked "rename" is still in player text (build.py at v10)
+//   node tools/ipcheck.js --dist FILE  exits 1 if any rename or forbid name is anywhere in the built page, comments
+//                                      included: build.py inlines CSS and JS as they are, so a comment ships too
 // tools/rename_v10.json is also the rename map: each entry is { kind, region, status, new }. status "rename" needs a
 // new name, "keep" means we decided it is generic enough to stay, "review" (abilities, titles and so on) is undecided,
 // "forbid" (Warcraft, Blizzard) has no new name and may only appear in the fan notice.
@@ -161,6 +163,18 @@ if (arg('--inventory')) {
   fs.writeFileSync(path.join(ROOT, 'docs/plans/v10-names-inventory.md'), out.join('\n'));
   console.log(`wrote docs/plans/v10-names-inventory.md (${rows.length} names, ${regions.length} groups)`);
   process.exit(0);
+}
+
+if (arg('--dist')) {
+  const file = process.argv[process.argv.indexOf('--dist') + 1];
+  const names = Object.keys(map).filter((n) => ['rename', 'forbid'].includes(map[n].status)).sort((a, b) => b.length - a.length);
+  const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(`(?<![A-Za-z0-9_])(?:${names.map(esc).join('|')})(?![A-Za-z0-9_])`, 'g');
+  const found = [];
+  fs.readFileSync(file, 'utf8').split('\n').forEach((line, i) => { if (!NOTICE.test(line)) for (const m of line.matchAll(re)) found.push(`  line ${i + 1}: ${m[0]} … ${line.slice(Math.max(0, m.index - 40), m.index + 40).trim()}`); });
+  console.log(`old names in the built page: ${found.length}`);
+  for (const f of found.slice(0, 10)) console.log(f);
+  process.exit(found.length ? 1 : 0);
 }
 
 const live = (v) => v.status === 'rename' || v.status === 'review' || v.status === 'forbid';

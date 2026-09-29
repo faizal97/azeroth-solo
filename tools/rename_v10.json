@@ -16642,5 +16642,11 @@
   "region": "",
   "status": "rename",
   "new": "Spirit"
+ },
+ "WoW": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
  }
 }

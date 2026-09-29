@@ -45,5 +45,7 @@ os.makedirs(os.path.join(R, 'dist'), exist_ok=True)
 out = os.path.join(R, 'dist', 'index.html')
 open(out, 'w', encoding='utf-8').write(html)
 dst = os.path.join(R, 'app', 'assets', 'game', 'index.html')
+if subprocess.run(['node', os.path.join(R, 'tools', 'ipcheck.js'), '--dist', out]).returncode != 0:
+    sys.exit('build stopped: an old-world name is in the built page, maybe in a comment (listed above)')
 shutil.copy(out, dst)
 print('built', out, 'v' + VERSION, round(len(html) / 1024), 'KB;', 'art.js' if 'src/art.js' in js else 'NO ART (placeholders)', '; audio files:', len(aud))
