@@ -563,8 +563,8 @@
     // arriving where a request you accepted takes place: straight to the fight
     if (ui.tabAuto !== P.place && mobs.length && window.SOC && SOC.activeTasks().some((m) => m.act.place === P.place)) { ui.tab = 'fight'; ui.tabAuto = P.place; }
     const dots = {
-      people: place.npcs.some((n) => G.npcMarker(n) === '!' || G.npcMarker(n) === '?'),
-      quests: Object.keys(P.quests).some((q) => G.questState(q) === 'complete'),
+      people: place.npcs.some((n) => G.npcMarker(n) === '!' || G.npcMarker(n) === '?') || !!G.bountyMarker(P.place),
+      quests: Object.keys(P.quests).some((q) => G.questState(q) === 'complete') || G.myBounties().some((x) => x.complete),
     };
     const bar = h('div', { class: 'ptabs' });
     for (const [k, label] of TABS) bar.append(h('button', { class: (ui.tab === k ? 'on' : '') + (dots[k] ? ' dot' : ''), onclick: () => { ui.tab = k; ui.tabAuto = P.place; renderPanel(); els.panel.scrollTop = 0; } }, label));
@@ -654,13 +654,22 @@
     const S = G.S, P = S.player;
     if (S.wparty) partyBlock(b);
     const here = h('div', { class: 'mgrid' });
+    // v10.1.1: the hub's bounty board comes first, marked like a quest giver (! to take, ? to hand in)
+    const boardHere = G.isHub(P.place) && G.bounties(P.place).length;
+    if (boardHere) {
+      const mk = G.bountyMarker(P.place), open = G.bounties(P.place).filter((x) => G.bountyState(x) === 'available').length;
+      const ready = G.bounties(P.place).filter((x) => G.bountyState(x) === 'complete').length;
+      here.append(h('button', { class: 'mcard board-card', onclick: () => openBountyBoard() },
+        h('div', { class: 'ic' }, mk ? h('span', { class: 'mark' }, mk) : img(art('icon', 'claw'))),
+        h('div', { class: 't' }, h('b', { style: { color: '#ffd100' } }, 'Bounty Board'), h('small', null, ready ? `${ready} ready to hand in` : open ? `${open} bount${open === 1 ? 'y' : 'ies'} to take` : 'all taken today'))));
+    }
     for (const npc of place.npcs) {
       const N = D.NPCS[npc]; const mk = G.npcMarker(npc);
       here.append(h('button', { class: 'mcard', onclick: () => openNpc(npc) },
         h('div', { class: 'ic' }, mk ? h('span', { class: 'mark' + (mk === '…' ? ' grey' : '') }, mk === '…' ? '?' : mk) : img(art('icon', N.legend ? 'legend_' + N.legend : npc === place.vendor || npc === place.gearVendor ? 'coin' : 'hearthstone'))),
         h('div', { class: 't' }, h('b', { style: { color: '#ffd100' } }, N.name), h('small', null, N.title))));
     }
-    if (place.npcs.length) b.append(here); else b.append(h('div', { class: 'people' }, 'No one to talk to here.'));
+    if (place.npcs.length || boardHere) b.append(here); else b.append(h('div', { class: 'people' }, 'No one to talk to here.'));
     const partyIds = new Set(((S.wparty && S.wparty.members) || []).map((m) => m.bot.id));
     const near = B.onlineIn(S, P.place, new Date()).filter((x) => !partyIds.has(x.id) && B.factionOf(x) === G.myFaction());
     if (near.length) {
@@ -668,31 +677,31 @@
       for (const x of near.slice(0, 12)) chips.append(h('button', { class: 'chip', onclick: () => confirmInvite(x) }, h('span', { class: 'cls-' + x.cls }, x.name), h('small', null, `${x.level} ${raceClass(x)}`)));
       b.append(h('div', { class: 'sec-h' }, 'Players here', h('small', null, `${near.length} nearby · tap to invite`)), chips);
     }
-    // hub bounty board: 3 daily + 1 weekly, rotating with the real date
-    if (G.isHub(P.place)) {
-      const bs = G.bounties(P.place);
-      if (bs.length) {
-        b.append(h('div', { class: 'sec-h' }, 'Bounty Board', h('small', null, 'new every day · weekly on Monday')));
-        const list = h('div', { class: 'list' });
-        for (const bb of bs) {
-          const st = G.bountyState(bb), rec = (P.bounty || {})[bb.id];
-          const label = st === 'available' ? 'Take' : st === 'complete' ? 'Turn in' : st === 'done' ? 'Done' : `${rec.prog}/${bb.n}`;
-          list.append(h('button', { class: 'row' + (st === 'done' ? ' off' : ''), onclick: () => { if (st === 'available') G.acceptBounty(bb); else if (st === 'complete') G.turnInBounty(bb); renderPanel(); } },
-            h('div', { class: 'ic mob' }, img(mobArt(bb.mob))),
-            h('div', { class: 't' }, h('b', null, `${bb.weekly ? 'Weekly: ' : ''}${bb.n} ${D.MOBS[bb.mob].name}`), h('small', { style: { whiteSpace: 'normal' } }, `${bb.xp} XP · ${G.moneyText(bb.money)} · ${bb.marks} Mentor Marks${bb.weekly ? ' · a green item' : ''}`)),
-            h('div', { class: 'r' }, h('span', { class: st === 'complete' ? 'pill ready' : 'pill' }, label))));
-        }
-        b.append(list);
-      }
-    }
     const foe = G.intruderHere();
     if (foe) b.append(h('div', { class: 'sec-h foe-h' }, 'Enemy player', h('small', null, 'tap to attack')),
       h('div', { class: 'chips' }, h('button', { class: 'chip foe', onclick: () => confirmAttack(foe) }, h('span', null, '⚔ ' + foe.name), h('small', null, `${foe.level} ${D.CLASSES[foe.cls].name}`))));
   }
+  // the hub's board: 3 daily bounties and 1 weekly, rotating with the real date
+  function openBountyBoard() {
+    openSheet('bounty', 'Bounty Board', `${D.PLACES[G.S.player.place].name} · new every day · weekly on Monday · hold up to 6`, (b) => {
+      const P = G.S.player, list = h('div', { class: 'list' });
+      for (const bb of G.bounties(P.place)) {
+        const st = G.bountyState(bb), rec = (P.bounty || {})[bb.id];
+        const label = st === 'available' ? 'Take' : st === 'complete' ? 'Hand in' : st === 'done' ? 'Done' : `${rec.prog}/${bb.n}`;
+        list.append(h('button', { class: 'row' + (st === 'done' ? ' off' : ''), onclick: () => { if (st === 'available') G.acceptBounty(bb); else if (st === 'complete') G.turnInBounty(bb); ui.sheetFn(); renderPanel(); } },
+          h('div', { class: 'ic mob' }, img(mobArt(bb.mob))),
+          h('div', { class: 't' }, h('b', null, `${bb.weekly ? 'Weekly: ' : ''}${bb.n} ${D.MOBS[bb.mob].name}`), h('small', { style: { whiteSpace: 'normal' } }, `${bb.xp} XP · ${G.moneyText(bb.money)} · ${bb.marks} Mentor Marks${bb.weekly ? ' · bonus gear' : ''}`)),
+          h('div', { class: 'r' }, h('span', { class: st === 'complete' ? 'pill ready' : 'pill' }, label))));
+      }
+      b.append(list, h('p', { class: 'ai-note' }, 'Bounties you take show in your Quests tab. Hunt them anywhere in this zone, then hand them in here.'));
+    });
+  }
   function questsTab(b) {
     const P = G.S.player;
-    if (!Object.keys(P.quests).length) b.append(h('div', { class: 'people' }, 'No quests yet. Look for a yellow ! in People.'));
+    if (!Object.keys(P.quests).length && !G.myBounties().length) b.append(h('div', { class: 'people' }, 'No quests yet. Look for a yellow ! in People.'));
     else tracker(b, true);
+    const ready = G.myBounties().filter((x) => x.complete && x.hub === P.place);
+    if (ready.length) b.append(h('div', { class: 'btn-row' }, ...ready.map((x) => h('button', { class: 'btn', onclick: () => { G.turnInBounty({ id: x.id }); renderPanel(); } }, `Hand in: ${D.MOBS[x.mob].name}`))));
     questLeads(b);
     b.append(h('button', { class: 'btn alt wide', onclick: () => openQuests() }, 'Open quest log'));
   }
@@ -750,14 +759,18 @@
   }
   function tracker(p, all) {
     const P = G.S.player;
-    const qs = Object.keys(P.quests);
-    if (!qs.length) return;
+    const qs = Object.keys(P.quests), bs = G.myBounties();
+    if (!qs.length && !bs.length) return;
     const t = h('div', { class: 'tracker' });
     for (const qid of qs.slice(0, all ? 20 : 4)) {
       const st = G.questState(qid);
       const fresh = ui.flashQ && ui.flashQ.qid === qid && Date.now() - ui.flashQ.at < 2500;
       t.append(h('div', { class: 'q' + (fresh ? ' flash' : '') }, D.QUESTS[qid].name + (st === 'complete' ? ' (Complete)' : '')));
       if (st !== 'complete') for (const pr of G.questProgress(qid)) t.append(h('div', { class: 'o tnum' + (pr.have >= pr.n ? ' done' : '') }, `- ${pr.label}: ${pr.have}/${pr.n}`));
+    }
+    for (const x of bs.slice(0, all ? 6 : Math.max(0, 4 - qs.length))) {
+      t.append(h('div', { class: 'q' }, `${x.weekly ? 'Weekly bounty' : 'Bounty'}: ${D.MOBS[x.mob].name}` + (x.complete ? ' (Complete)' : '')));
+      t.append(h('div', { class: 'o tnum' + (x.complete ? ' done' : '') }, x.complete ? `- Hand in at ${x.hubName}` : `- ${D.MOBS[x.mob].name}: ${x.prog}/${x.n}`));
     }
     p.append(h('button', { style: { textAlign: 'left' }, onclick: () => openQuests() }, t));
   }

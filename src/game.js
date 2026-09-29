@@ -1064,6 +1064,25 @@
     if (st.weekly) { const it = G.genGear(pick(D.GEAR_SLOTS), P.level, 2); G.addItem(it, 1); loot(`Weekly bounty bonus: ${B.link(it.name, it.q)}.`); }
     emit('questDone', {}); emit('change'); G.save();
   };
+  // v10.1.1: the board shows like a quest giver (! something to take, ? something to hand in), and the bounties you
+  // hold are listed with your quests, each knowing its hub (the id starts with it)
+  G.bountiesHeld = () => Object.values((G.S.player.bounty || {})).filter((st) => !st.done).length;
+  G.bountyMarker = function (hub) {
+    if (!G.isHub(hub)) return null;
+    const bs = G.bounties(hub);
+    if (bs.some((b) => G.bountyState(b) === 'complete')) return '?';
+    if (G.bountiesHeld() < 6 && bs.some((b) => G.bountyState(b) === 'available')) return '!';
+    return null;
+  };
+  G.myBounties = function () {
+    const P = G.S.player, out = [];
+    for (const [id, st] of Object.entries(P.bounty || {})) {
+      if (st.done || st.day !== (st.weekly ? weekKey() : dayKey())) continue; // an old day's bounty has lapsed
+      const hub = id.split(':')[0];
+      out.push({ id, hub, hubName: D.PLACES[hub] ? D.PLACES[hub].name : hub, mob: st.mob, n: st.n, prog: st.prog, weekly: st.weekly, complete: st.prog >= st.n });
+    }
+    return out.sort((a, b) => (b.complete - a.complete) || (a.weekly - b.weekly));
+  };
   function bountyKill(mobKey) {
     const P = G.S.player; if (!P.bounty) return;
     // old days' bounties lapse; kills only count toward today's (and this week's)
