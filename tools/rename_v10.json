@@ -321,7 +321,7 @@
   "kind": "region",
   "region": "Arathi Highlands",
   "status": "rename",
-  "new": "Brannock Highlands"
+  "new": "Kinloch Highlands"
  },
  "Tanaris": {
   "kind": "region",
@@ -7887,7 +7887,7 @@
   "kind": "quest",
   "region": "Wetlands",
   "status": "rename",
-  "new": "The League of Brannock"
+  "new": "The League of Kinloch"
  },
  "Highland Thrashers": {
   "kind": "quest",
@@ -15501,13 +15501,13 @@
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": "Brannock"
+  "new": "Kinloch"
  },
  "Arathi": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": "Brannock"
+  "new": "Kinloch"
  },
  "Skullsplitter": {
   "kind": "lore",
