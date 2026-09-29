@@ -35,6 +35,9 @@ for (const t of ['NPCS', 'MOBS', 'PLACES', 'ITEMS', 'QUESTS', 'DUNGEONS', 'ACTIV
   for (const v of Object.values(D[t] || {})) { addName(v.name); addName(v.title); addName(v.zone); addName(v.short); }
 for (const p of Object.values(D.PLACES)) addName(p.zone);
 for (const n of NAMES) addName(n);
+// v10: the new names in the rename map are real names too (until the bible is rewritten with them)
+try { for (const v of Object.values(JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/rename_v10.json'), 'utf8')))) addName(v.new); } catch (e) { }
+for (const n of ['Accord', 'Krugar', 'Caldreth', 'Kingsmere', 'Long', 'Regent', 'Mistress', 'Ledger', 'Rise', 'Hoods']) addName(n);
 // every-day English, so a capital at the start of a sentence is not a name
 const dict = new Set();
 try { for (const w of fs.readFileSync('/usr/share/dict/words', 'utf8').split('\n')) if (w && w[0] === w[0].toLowerCase()) dict.add(w); } catch (e) { }
