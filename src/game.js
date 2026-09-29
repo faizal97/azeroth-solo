@@ -397,6 +397,16 @@
     sys(`Sold ${b.item.name}${b.n > 1 ? ' x' + b.n : ''} for ${G.moneyText(v)}.`);
     emit('sold', { money: v }); emit('change');
   };
+  // Throw away (v10.1.1): the whole stack, anywhere. The Waystone stays (it is how you get home).
+  G.canDiscard = (it) => !!it && it.id !== 'hearthstone';
+  G.discard = function (idx) {
+    const P = G.S.player, b = P.bags[idx];
+    if (!b || !G.canDiscard(b.item)) return false;
+    P.bags.splice(idx, 1);
+    sys(`You threw away ${b.item.name}${b.n > 1 ? ' x' + b.n : ''}.`);
+    emit('change');
+    return true;
+  };
   G.sellJunk = function () {
     const P = G.S.player;
     let v = 0;

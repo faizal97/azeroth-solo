@@ -1914,6 +1914,16 @@
     }
     return g;
   }
+  // Throw away: grey junk goes at once; anything better asks first, since it is gone for good
+  function throwAway(idx) {
+    const b = G.S.player.bags[idx]; if (!b) return;
+    const go = () => { if (G.discard(idx)) { ui.bagSel = null; if (ui.sheetFn) ui.sheetFn(); } };
+    if ((b.item.q || 0) === 0 && b.item.slot !== 'quest') return go();
+    const what = b.item.name + (b.n > 1 ? ' x' + b.n : '');
+    showDialog([h('h3', null, `Throw away ${what}?`),
+      h('p', null, b.item.slot === 'quest' ? 'It is gone for good. If a quest still needs it, you will have to find another.' : 'It is gone for good.'),
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); go(); } }, 'Throw away'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Keep'))], true);
+  }
   function openBags() {
     ui.bagSel = null;
     openSheet('bags', 'Backpack', null, (b, t) => {
@@ -1932,6 +1942,7 @@
         const vendorHere = D.PLACES[P.place].vendor || D.PLACES[P.place].gearVendor;
         if (vendorHere && !it.noSell && it.slot !== 'quest') acts.append(h('button', { class: 'btn alt', onclick: () => { G.sell(ui.bagSel); ui.bagSel = null; ui.sheetFn(); } }, 'Sell'));
         if (!it.noSell && it.slot !== 'quest' && !vendorHere) acts.append(h('div', { style: { color: 'var(--muted)', fontSize: '13px', alignSelf: 'center' } }, 'Sell it at a vendor.'));
+        if (G.canDiscard(it)) acts.append(h('button', { class: 'btn alt', style: { color: '#ff6a5a' }, onclick: () => throwAway(ui.bagSel) }, 'Throw away'));
         const cur = P.equip[it.slot];
         // the buttons stay pinned to the bottom of the sheet, so selling never needs a scroll (v9.4)
         const price = !it.noSell && it.slot !== 'quest' ? h('small', { html: ' · sells for ' + moneyHtml((it.sell || 1) * sel.n) }) : null;
