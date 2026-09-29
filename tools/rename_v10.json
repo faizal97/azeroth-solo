@@ -2864,7 +2864,7 @@
  "Princess": {
   "kind": "boss or named",
   "region": "Elwynn Forest",
-  "status": "rename",
+  "status": "keep",
   "new": "Duchess"
  },
  "Riverpaw Gnoll": {
