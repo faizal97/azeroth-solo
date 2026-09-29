@@ -2074,6 +2074,7 @@
               } }, on ? 'Back to the normal version' : 'Open the beta version'))];
           b.append(...foldSec('set.beta', 'Beta updates', on ? 'On' : 'Off', kids));
         }
+        b.append(...foldSec('set.about', 'About', 'unofficial fan project', [h('p', { class: 'ai-note', style: { margin: 0 } }, FAN_NOTE)]));
         b.append(...foldSec('set.save', 'Save', 'save codes', [h('div', { class: 'btn-row' },
           h('button', { class: 'btn alt', onclick: exportSave }, 'Copy save code'),
           h('button', { class: 'btn alt', onclick: importSave }, 'Load save code'))]));
@@ -2812,6 +2813,9 @@
     showDialog([h('h3', null, rel.beta ? 'Beta update available' : 'Update available'), h('p', null, h('b', { style: { color: 'var(--gold)' } }, rel.name), h('br'), `You have v${cur}.`), notes, bar, status, row], false);
   }
 
+  // shown on the character screens and in Settings → About (the README carries the same notice)
+  const FAN_NOTE = 'Unofficial, non-commercial fan project. Not affiliated with or endorsed by Blizzard Entertainment. Warcraft and World of Warcraft are trademarks of Blizzard Entertainment, Inc. All art, music and code in this game are original.';
+  const fanNote = () => h('p', { class: 'fan-note' }, FAN_NOTE);
   const discordLink = () => window.UPD ? h('button', { class: 'discord-link', onclick: () => UPD.open(UPD.DISCORD) }, 'Join us on Discord') : null;
   function showSelect() {
     closeDialog(); closeSheet();
@@ -2842,7 +2846,7 @@
           h('button', { class: 'btn alt', onclick: () => { if (!G.S) { const r = G.load(sel); if (!r) return; } openTheater(); } }, 'Theater'),
           h('button', { class: 'btn alt', style: { color: '#ff6a5a' }, onclick: () => confirmDeleteChar(cur, () => showSelect()) }, 'Delete')),
         h('button', { class: 'btn alt wide', onclick: importSave }, 'Load save code'),
-        discordLink());
+        discordLink(), fanNote());
     };
     draw();
   }
@@ -2899,7 +2903,7 @@
       root.append(h('div', { class: 'btn-row' },
         h('button', { class: 'btn alt', onclick: importSave }, 'Load save code'),
         G.characters().length ? h('button', { class: 'btn alt', onclick: () => showSelect() }, 'Back to characters') : null));
-      root.append(discordLink());
+      root.append(discordLink(), fanNote());
     };
     draw();
   }

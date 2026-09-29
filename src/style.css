@@ -198,7 +198,7 @@ img { max-width: 100%; display: block; }
 .bar.xpmain { height: 13px; width: 100%; display: block; padding: 0; margin-top: 2px; cursor: pointer; }
 .bar.xpmain > i.rest { opacity: .8; background: repeating-linear-gradient(135deg, #2f78e6 0 6px, #2566c8 6px 12px); }
 .bar.xpmain b { font: 700 10.5px/12px var(--body); }
-.xpfloat { position: absolute; right: 4px; bottom: 14px; z-index: 3; pointer-events: none; font: 800 12px var(--body); color: #d9a8ff; text-shadow: 0 1px 2px #000, 0 0 4px #000; animation: xpup 1.5s ease-out forwards; }
+.xpfloat { position: absolute; right: 0; top: 100%; z-index: 3; margin-top: 2px; padding: 0 5px; border-radius: 3px; background: rgba(0,0,0,.78); pointer-events: none; font: 800 12px/16px var(--body); color: #d9a8ff; white-space: nowrap; animation: moneyin 1.5s ease-out forwards; } /* below the XP bar, clear of the other bars */
 @keyframes xpup { 0% { transform: translateY(6px); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(-22px); opacity: 0; } }
 .uf-body { position: relative; }
 .rollcard { position: absolute; left: 8px; right: 8px; bottom: calc(100% + 6px); z-index: 13; background: rgba(12, 9, 5, .97); border: 1px solid var(--edge-hi); border-radius: 4px; padding: 10px; box-shadow: 0 6px 24px #000; display: grid; gap: 8px; animation: up .2s ease-out; }
@@ -565,3 +565,5 @@ img { max-width: 100%; display: block; }
 .uf.target.shake { animation: shake .32s ease-out; }
 @keyframes shake { 20% { transform: translateX(-4px); } 40% { transform: translateX(4px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(2px); } }
 @media (prefers-reduced-motion: reduce) { #app.lowhp::after { animation: none; opacity: .7; } .np .qmk, .tracker .q.flash, .uf.target.shake, .lvlburst, #pf-lvl.pop, .nav button.bump img { animation: none; } }
+
+.fan-note { margin: 14px auto 4px; max-width: 420px; font: 500 12px/1.45 var(--body); color: var(--muted); text-align: center; opacity: .85; }

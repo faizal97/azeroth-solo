@@ -145,10 +145,6 @@ Roughly in priority order:
 8. **More Legends.**
 9. **Friends in your world** (parked). Your real friends' characters would appear on your server as simulated players, via a small online service and friend codes.
 
-## Known issues
-
-- The "+XP" floater that rises from the XP bar sits over the mana bar for a moment. It should float clear of the other bars.
-
 ## Open questions
 
 - How keystone affixes should work with synced power.
