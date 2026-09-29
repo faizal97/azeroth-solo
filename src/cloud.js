@@ -94,6 +94,7 @@
   CLOUD.backupAll = async function () {
     const cl = await CLOUD.list(), out = [];
     for (const ch of G.characters()) { const r = await CLOUD.sync(ch.id, cl); if (r.what === 'conflict') out.push(r); }
+    await CLOUD.syncAccount();
     return out;
   };
   // The player's answer to a conflict: 'local' (this device's wins), 'cloud' (the cloud's wins), 'both' (keep the
@@ -118,8 +119,35 @@
     if (fresh.length > free) throw err('full', `That would make ${G.characters().length + fresh.length} characters, and the most is ${G.MAX_CHARS}. Delete ${fresh.length - free} first, or restore fewer.`);
     const out = [];
     for (const c of pick) out.push(fresh.includes(c) ? { what: 'restored', local: brief(await pull(c)), cloud: c } : await CLOUD.sync(c.id, cl));
+    await CLOUD.syncAccount();
     return out;
   };
+  // ---- the account (v10.1.1): Mentor Marks and heirlooms are shared by every character on a device
+  // (G.account, azsolo.account) and belong to no save, so they get one file of their own, account.azs. Two devices
+  // merge rather than choose: heirlooms combine, and the higher Mark balance wins, so a sync never loses either.
+  // (Marks spent on one device can come back from another's higher balance; in a one-player game that is fine.)
+  const ACCOUNT_FILE = 'account.azs';
+  CLOUD.mergeAccount = function (a, b) {
+    a = a || {}; b = b || {};
+    const hl = [];
+    for (const id of (a.heirlooms || []).concat(b.heirlooms || [])) if (!hl.includes(id)) hl.push(id);
+    return Object.assign({}, b, a, { marks: Math.max(+a.marks || 0, +b.marks || 0), heirlooms: hl });
+  };
+  const same = (x, y) => JSON.stringify([+x.marks || 0, (x.heirlooms || []).slice().sort()]) === JSON.stringify([+y.marks || 0, (y.heirlooms || []).slice().sort()]);
+  CLOUD.syncAccount = async function (files) {
+    if (!root.G || !G.account) return null;
+    const f = (files || await drv().list()).find((x) => x.name === ACCOUNT_FILE) || null;
+    let there = null;
+    if (f) { try { there = JSON.parse(await drv().download(f.id)); } catch (e) { there = null; } }
+    const here = G.account(), merged = CLOUD.mergeAccount(here, there);
+    if (!same(merged, here)) G.saveAccount(merged);
+    if (!there || !same(merged, there)) {
+      const props = { kind: 'account', marks: String(merged.marks), heirlooms: String(merged.heirlooms.length), at: String(Date.now()), dev: CLOUD.device() };
+      if (f) await drv().update(f.id, props, JSON.stringify(merged)); else await drv().create(ACCOUNT_FILE, props, JSON.stringify(merged));
+    }
+    return merged;
+  };
+
   // A character deleted on this device: forget its record; the cloud copy goes only if asked
   CLOUD.forget = (id) => record(id, null);
   CLOUD.deleteCloud = async function (id) {
@@ -134,7 +162,7 @@
     const st = read();
     if (!force && Date.now() - (st.lastAuto || 0) < EVERY) return null;
     patch({ lastAuto: Date.now() });
-    try { const r = await CLOUD.sync(G.S.id, null, true); patch({ lastError: null }); return r; }
+    try { const r = await CLOUD.sync(G.S.id, null, true); await CLOUD.syncAccount(); patch({ lastError: null }); return r; }
     catch (e) { patch({ lastError: { code: e.code || 'drive', message: e.message, at: Date.now() } }); return { what: 'error', error: e }; }
   };
 

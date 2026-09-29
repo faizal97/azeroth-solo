@@ -58,6 +58,8 @@ win silently. Switching devices by hand never does this.
 - Drive calls: plain REST on `https://www.googleapis.com/drive/v3` with `spaces=appDataFolder`. One file per
   character, `char-<id>.azs`, holding the save code (`G.encodeSave`). Small labels (`appProperties`: rev, name, level,
   class, race, saved at, device, play time) let the Restore list and the checks run without downloading saves.
+- Mentor Marks and heirlooms (per device, in no character save) go in one more file, `account.azs`. Devices merge it
+  rather than choose: heirlooms combine and the higher Mark balance wins (added in v10.1.1).
 - Sync state stays outside the character save, in `localStorage['azsolo.cloud']`, so cloud copies carry no
   per-device bookkeeping and old saves need no migration.
 - **Browser:** Google Identity Services (`accounts.google.com/gsi/client`), loaded only when a player opens Cloud save

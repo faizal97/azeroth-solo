@@ -3016,7 +3016,7 @@
   function enter(id) {
     enterNow(id);
     if (!(window.CLOUD && CLOUD.on() && CLOUD.available() && G.S && G.S.id === id)) return;
-    CLOUD.token(true).then(() => CLOUD.sync(id)).then((r) => {
+    CLOUD.token(true).then(() => CLOUD.sync(id)).then((r) => CLOUD.syncAccount().then(() => r, () => r)).then((r) => { // marks and heirlooms too
       if (r.what === 'pulled') { enterNow(id); toast(`Loaded your latest save from ${devName(r.cloud.dev)} (level ${r.local.level}).`, true); }
       else if (r.what === 'conflict') askConflict(r);
     }).catch(() => {}); // offline or cancelled: play on; the next backup tries again

@@ -143,6 +143,21 @@ const ok = (cond, what) => { if (cond) pass++; else { fail++; console.log('FAIL'
   const code = await G.encodeSave(char(one.id)); const back = await G.decodeSave(code);
   ok(back.player.name === 'Cyl' && back.player.cls === 'mage' && JSON.stringify(back.player.bags) === JSON.stringify(char(one.id).player.bags), 'a save survives the round trip');
 
+  // 10b. Mentor Marks and heirlooms (per device, in no save) travel as account.azs: heirlooms combine, higher marks win
+  use(phone); G.saveAccount({ marks: 40, heirlooms: ['hl_a'] });
+  use(web); G.saveAccount({ marks: 10, heirlooms: ['hl_b'] });
+  use(phone); await CLOUD.syncAccount();
+  use(web); let acc = await CLOUD.syncAccount();
+  ok(acc.marks === 40 && acc.heirlooms.includes('hl_a') && acc.heirlooms.includes('hl_b') && G.account().marks === 40, 'the browser gets the phone\'s 40 marks and keeps its own heirloom');
+  use(phone); acc = await CLOUD.syncAccount();
+  ok(acc.marks === 40 && G.account().heirlooms.length === 2, 'and the phone gets the browser\'s heirloom back');
+  const fresh = dev('fresh', 'browser'); use(fresh);
+  ok(G.account().marks === 0, 'a new device starts with no marks');
+  await CLOUD.restore([]); // any restore also brings the account in
+  ok(G.account().marks === 40 && G.account().heirlooms.length === 2, 'until it restores: then marks and heirlooms arrive');
+  const accFiles = [...drive.files.values()].filter((f) => f.name === 'account.azs');
+  ok(accFiles.length === 1 && (await CLOUD.list()).every((c) => c.name !== undefined && c.id !== 'account'), 'one account file, and it never shows up as a character');
+
   // 11. on the game's own sites cloud.js must load without errors and offer sign-in; elsewhere it stays off
   const vm = require('vm'), src = require('fs').readFileSync(require('path').join(__dirname, '../src/cloud.js'), 'utf8');
   for (const [origin, want] of [['https://faizal97.github.io', true], ['http://127.0.0.1:8778', true], ['https://example.com', false]]) {
