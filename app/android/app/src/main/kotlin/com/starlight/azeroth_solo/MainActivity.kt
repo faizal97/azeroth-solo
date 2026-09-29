@@ -195,8 +195,8 @@ class MainActivity : FlutterActivity() {
                 }
                 "openUrl" -> {
                     val url = call.argument<String>("url") ?: ""
-                    // only this game's own pages: its GitHub repo, its Discord invite and its tip pages
-                    if (ownRepo(url) || url in outsideLinks) startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                    // only this game's own pages: its GitHub repo, its web pages (privacy), its Discord invite and its tip pages
+                    if (ownRepo(url) || url in outsideLinks || url.startsWith("https://faizal97.github.io/realm-of-loner/")) startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                     result.success(true)
                 }
                 else -> result.notImplemented()

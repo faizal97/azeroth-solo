@@ -150,6 +150,7 @@ img { max-width: 100%; display: block; }
 .lore-boss p { margin: 2px 0 0; font: 400 14px/1.5 var(--body); color: var(--text); }
 .parch .qstory p { margin: 6px 0 2px; padding-left: 10px; border-left: 2px solid #b08a4a; font-style: italic; color: #4a3210; }
 .qstory-b { font: 700 13px var(--body); color: #6b3d0c; text-decoration: underline; padding: 2px 0; min-height: 28px; }
+.foot-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
 .discord-link { justify-self: center; min-height: 40px; padding: 6px 12px; font: 700 14px var(--body); color: #8ea1ff; text-decoration: underline; }
 .run-actions { position: sticky; top: -8px; z-index: 5; margin: 0 -12px; padding: 6px 12px; background: linear-gradient(#1e170e, #1a130b); border-bottom: 1px solid #3b2d18; }
 .run-actions .btn-row { margin: 0; }

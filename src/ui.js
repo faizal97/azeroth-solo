@@ -2077,7 +2077,7 @@
               } }, on ? 'Back to the normal version' : 'Open the beta version'))];
           b.append(...foldSec('set.beta', 'Beta updates', on ? 'On' : 'Off', kids));
         }
-        b.append(...foldSec('set.about', 'About', 'Realm of Loner', [h('p', { class: 'ai-note', style: { margin: 0 } }, ABOUT_NOTE)]));
+        b.append(...foldSec('set.about', 'About', 'Realm of Loner', [h('p', { class: 'ai-note', style: { margin: 0 } }, ABOUT_NOTE), privacyLink('Privacy: what the game does with data')]));
         if (window.CLOUD) b.append(...foldSec('set.cloud', 'Cloud save', cloudSummary(), cloudKids()));
         b.append(...foldSec('set.save', 'Save', 'save codes', [h('div', { class: 'btn-row' },
           h('button', { class: 'btn alt', onclick: exportSave }, 'Copy save code'),
@@ -2253,7 +2253,7 @@
     const testing = CLOUD.TESTING ? cloudNote('Testing: only invited Google accounts can sign in for now.') : null;
     const refresh = () => { if (ui.sheetFn) ui.sheetFn(); };
     if (!CLOUD.on()) return [cloudNote('Keep a copy of your characters in your own Google Drive, so you can pick them up on another phone or in a browser. Optional: the game works the same without it.'), testing,
-      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => cloudSignIn(refresh) }, 'Sign in with Google'))];
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => cloudSignIn(refresh) }, 'Sign in with Google')), privacyLink('How cloud save handles your data')];
     const st = CLOUD.state(), expired = st.lastError && st.lastError.code === 'auth';
     const status = expired ? 'The Google sign-in ran out. Tap Reconnect to carry on backing up.'
       : `Signed in · last backup ${agoText(st.lastBackup)}${st.lastBackup ? ` (this ${CLOUD.device()})` : ''}.` + (st.lastError ? ` Last try: ${st.lastError.message}` : '');
@@ -2263,7 +2263,7 @@
         h('button', { class: 'btn alt', onclick: () => withCloud(() => cloudBackupAll(refresh)) }, 'Back up now'),
         h('button', { class: 'btn alt', onclick: () => openRestore(refresh) }, 'Restore…'),
         h('button', { class: 'btn alt', onclick: () => { CLOUD.signOut(); toast('Signed out on this device. Your characters and their cloud copies stay.', true); refresh(); } }, 'Sign out')),
-      cloudNote('Saves go only to a hidden folder in your own Google Drive that only this game can see. Backups also happen by themselves while you play.')];
+      cloudNote('Saves go only to a hidden folder in your own Google Drive that only this game can see. Backups also happen by themselves while you play.'), privacyLink('How cloud save handles your data')];
   }
   function cloudSignIn(after) {
     CLOUD.signIn().then(async () => {
@@ -2974,6 +2974,8 @@
   const titleMark = () => [h('div', { class: 'title-lantern', html: LANTERN_MARK }),
     h('h1', { class: 'title-word' }, 'Realm ', h('span', { class: 'of' }, 'of'), ' Loner'), h('div', { class: 'tagline' }, 'A World of Your Own')];
   const discordLink = () => window.UPD ? h('button', { class: 'discord-link', onclick: () => UPD.open(UPD.DISCORD) }, 'Join us on Discord') : null;
+  const privacyLink = (label) => window.UPD ? h('button', { class: 'discord-link', onclick: () => UPD.open(UPD.PRIVACY) }, label || 'Privacy') : null;
+  const footLinks = () => h('div', { class: 'foot-links' }, discordLink(), privacyLink());
   function showSelect() {
     closeDialog(); closeSheet();
     setTimeout(autoUpdateCheck, 1200);
@@ -3004,7 +3006,7 @@
           h('button', { class: 'btn alt', onclick: () => { if (!G.S) { const r = G.load(sel); if (!r) return; } openTheater(); } }, 'Theater'),
           h('button', { class: 'btn alt', style: { color: '#ff6a5a' }, onclick: () => confirmDeleteChar(cur, () => showSelect()) }, 'Delete')),
         h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: importSave }, 'Load save code'), restoreButton(() => showSelect())),
-        discordLink());
+        footLinks());
     };
     draw();
   }
@@ -3079,7 +3081,7 @@
         h('button', { class: 'btn alt', onclick: importSave }, 'Load save code'),
         restoreButton(() => { if (G.characters().length) showSelect(); }),
         G.characters().length ? h('button', { class: 'btn alt', onclick: () => showSelect() }, 'Back to characters') : null));
-      root.append(discordLink());
+      root.append(footLinks());
     };
     draw();
   }

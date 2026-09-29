@@ -3,9 +3,11 @@
 # serves at https://faizal97.github.io/realm-of-loner/. A normal commit and push on that branch, never a force-push.
 # Usage: tools/publish_web.sh          a normal release: the main page, and beta/ too unless beta/ holds a newer test build
 #        tools/publish_web.sh --beta   a test build: only the beta page (https://faizal97.github.io/realm-of-loner/beta/)
+#        tools/publish_web.sh --pages  only the other pages in web/ (about, privacy); the game pages stay as they are
 # (run from the repo root, after build.py)
 set -euo pipefail
 BETA=0; [ "${1:-}" = "--beta" ] && BETA=1
+PAGES=0; [ "${1:-}" = "--pages" ] && PAGES=1
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SRC="$ROOT/dist/index.html"
 [ -f "$SRC" ] || { echo "no dist/index.html: run python3 build.py first"; exit 1; }
@@ -20,7 +22,9 @@ else
 fi
 ver_of() { [ -f "$1" ] && grep -o 'AZ_VERSION *= *"[^"]*"' "$1" | head -1 | sed 's/.*"\(.*\)"/\1/' || echo ""; }
 mkdir -p "$TMP/site/beta"
-if [ "$BETA" = 1 ]; then
+if [ "$PAGES" = 1 ]; then
+  WHERE="web pages"
+elif [ "$BETA" = 1 ]; then
   cp "$SRC" "$TMP/site/beta/index.html"; WHERE="beta page"
 else
   cp "$SRC" "$TMP/site/index.html"; WHERE="main page"
