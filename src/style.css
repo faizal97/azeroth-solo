@@ -179,6 +179,9 @@ img { max-width: 100%; display: block; }
 .rc-row b { font: 800 15px var(--body); text-align: right; }
 .rc-tap { font-size: 11px; color: var(--muted); text-align: center; }
 @media (prefers-reduced-motion: reduce) { .rc-row { transition: none; } .xpfloat { animation: none; opacity: 0; } }
+.report-pre { margin: 0; max-height: 120px; overflow: auto; padding: 6px 8px; background: #0c0906; border: 1px solid #3b2d18; border-radius: 3px; font: 12px/1.4 ui-monospace, Menlo, monospace; color: var(--muted); white-space: pre-wrap; }
+.err-note { position: absolute; left: 8px; right: 8px; top: 8px; z-index: 58; display: flex; gap: 8px; align-items: center; padding: 8px 10px; background: rgba(40, 12, 8, .96); border: 1px solid #a8352a; border-radius: 4px; box-shadow: 0 6px 20px #000; font: 700 14px var(--body); color: #ffb3a6; }
+.err-note span { flex: 1; }
 .tab-dot { display: inline-block; width: 7px; height: 7px; margin-left: 6px; border-radius: 50%; background: var(--gold); vertical-align: middle; }
 .sheet-stick { position: sticky; top: -12px; z-index: 3; display: grid; gap: 6px; background: var(--panel); margin: -12px -16px 0; padding: 12px 16px 8px; border-bottom: 1px solid #3b2d18; }
 .chat .ln { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

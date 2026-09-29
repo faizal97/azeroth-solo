@@ -1898,7 +1898,7 @@
       } else {
           b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { if (G.fight) return toast('You are in combat.'); G.logout(); showSelect(); } }, 'Switch character')));
           if (window.UPD) b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: manualUpdateCheck }, `Check for updates · v${UPD.current()}`)));
-        if (window.UPD) b.append(h('div', { class: 'sec-h' }, 'Community'), h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => UPD.open(UPD.DISCORD) }, 'Join the Discord')),
+        if (window.UPD) b.append(h('div', { class: 'sec-h' }, 'Community'), h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => UPD.open(UPD.DISCORD) }, 'Join the Discord'), window.REPORT ? h('button', { class: 'btn alt', onclick: () => reportDialog() }, 'Report a bug') : null),
           h('p', { class: 'ai-note', style: { margin: 0 } }, 'Talk about the game, report bugs and suggest ideas.'));
         b.append(h('div', { class: 'sec-h' }, 'Party invites'), h('div', { class: 'btn-row' },
           h('button', { class: 'btn alt', onclick: () => { G.setInvites(!!G.S.flags.noInvites); ui.sheetFn(); } }, 'Invites from nearby players: ' + (G.S.flags.noInvites ? 'Off' : 'On'))));
@@ -2375,6 +2375,31 @@
       setMusic: (m) => { ui.csMusic = m; G.paused = !!m || !!(window.CS && CS.playing); },
     }).then(() => { G.paused = false; P.story = P.story || {}; P.story[id] = true; G.save(); if (ch.then && CS.byId(ch.then) && !CS.unlocked().has(ch.then)) ui.pendingChapter = ch.then; });
   }
+  // ---------- bug reports (src/report.js): a prefilled GitHub issue, or a copy for Discord
+  function reportDialog(err) {
+    const what = h('textarea', { placeholder: 'What happened? What were you doing just before?', maxlength: '800', style: { width: '100%', height: '84px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', fontSize: '14px', padding: '6px' } });
+    const title = err ? `Error: ${err.message.slice(0, 80)}` : 'Bug report';
+    const preview = h('pre', { class: 'report-pre' }, REPORT.details().join('\n') + (REPORT.errors().length ? `\n\n${REPORT.errors().length} error(s) caught this session` : ''));
+    showDialog([h('h3', null, 'Report a bug'),
+      h('p', { class: 'ai-note', style: { margin: 0 } }, 'This opens a new issue on the game\'s GitHub with these details filled in (you need a GitHub account). No save data is sent. Or copy the report and paste it in the Discord.'),
+      what, preview,
+      h('div', { class: 'btn-row' },
+        h('button', { class: 'btn', onclick: () => { UPD.open(REPORT.issueUrl(title, what.value)); closeDialog(); } }, 'Open on GitHub'),
+        h('button', { class: 'btn alt', onclick: () => { const t = REPORT.text(what.value); try { navigator.clipboard.writeText(t).then(() => toast('Report copied', true), () => toast('Could not copy')); } catch (e) { toast('Could not copy'); } } }, 'Copy report')),
+      h('button', { class: 'btn alt wide', onclick: closeDialog }, 'Cancel')], true);
+  }
+  // an error while playing: a small notice (once per kind of error), never a blocking dialog
+  if (window.REPORT) REPORT.onError((e) => {
+    ui.reported = ui.reported || new Set(); if (ui.reported.has(e.message)) return; ui.reported.add(e.message);
+    setTimeout(() => {
+      if (!document.body) return;
+      const n = h('div', { class: 'err-note' }, h('span', null, 'Something went wrong.'),
+        h('button', { class: 'chip gold', onclick: () => { n.remove(); reportDialog(e); } }, 'Report'),
+        h('button', { class: 'chip', onclick: () => n.remove() }, 'Dismiss'));
+      (document.getElementById('app') || document.body).append(n);
+      setTimeout(() => n.remove(), 20000);
+    }, 50);
+  });
   // ---------- Lore Journal (src/data/lore*.js): story recaps, Legends, dungeons (first clear) and zones (first visit)
   const LORE_READ = 'azsolo.loreread';
   const loreRead = () => { try { return new Set(JSON.parse(localStorage.getItem(LORE_READ) || '[]')); } catch (e) { return new Set(); } };
