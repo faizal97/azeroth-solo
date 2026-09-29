@@ -1,9 +1,12 @@
 // Working chat and guilds: requests appear over time, and each kind of action does what it says.
 globalThis.localStorage = { getItem() { return null; }, setItem() {}, removeItem() {} };
+// seeded dice before anything loads (the data and the simulated players roll while they are built)
+{ let s = 0x5eed1e55 >>> 0; Math.random = () => { s = (s + 0x6D2B79F5) >>> 0; let x = s; x = Math.imul(x ^ (x >>> 15), x | 1); x ^= x + Math.imul(x ^ (x >>> 7), x | 61); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; }
 require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js'); require('../src/social.js');
 const { G, D, B, SOC } = globalThis;
-// start in the evening, when most simulated players are online, so the result doesn't depend on when the sim is run
-let t = new Date().setHours(18, 0, 0, 0); Date.now = () => t;
+// Reproducible (v10.1.1): a fixed evening (a Wednesday, when most simulated players are online) and seeded dice, so
+// the result never depends on the day it is run or on luck; a failure is a real change, not a bad roll.
+let t = new Date(2026, 8, 30, 18, 0, 0, 0).getTime(); Date.now = () => t;
 let bad = 0; const fail = (m) => { console.log('FAIL ' + m); bad++; };
 G.newGame({ name: 'T', cls: 'priest', race: 'human' }); const S = G.S, P = S.player;
 P.level = 22; S.flags.warModeAsked = true; S.flags.warMode = false; P.place = 'darkshire'; P.money = 50000;

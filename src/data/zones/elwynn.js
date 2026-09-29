@@ -25,13 +25,13 @@
   // creatures
   Object.assign(D.MOBS, {
     young_wolf: { name: 'Young Wolf', lvl: [1, 2], family: 'beast', drops: [['ruined_pelt', 0.35], ['wolf_fang', 0.25]], qdrops: [['wolf_meat', 0.75]] },
-    kobold_vermin: { name: 'Kobold Vermin', lvl: [1, 2], family: 'humanoid', drops: [['kobold_rag', 0.4], ['linen_cloth', 0.2]], aggro: 'You no take candle!' },
-    kobold_worker: { name: 'Kobold Worker', lvl: [3, 4], family: 'humanoid', drops: [['broken_candle', 0.35], ['linen_cloth', 0.25]], aggro: 'You no take candle!' },
+    kobold_vermin: { name: 'Kobold Vermin', lvl: [1, 2], family: 'humanoid', drops: [['kobold_rag', 0.4], ['linen_cloth', 0.2]], aggro: 'Our dig! Get out!' },
+    kobold_worker: { name: 'Kobold Worker', lvl: [3, 4], family: 'humanoid', drops: [['broken_candle', 0.35], ['linen_cloth', 0.25]], aggro: 'Out of the tunnels, tall one!' },
     defias_thug: { name: 'Grey Hood Thug', lvl: [3, 5], family: 'humanoid', drops: [['thieves_coin', 0.35], ['linen_cloth', 0.3]], qdrops: [['red_bandana', 0.7]], aggro: 'The Brotherhood will not tolerate your actions!' },
     garrick_padfoot: { name: 'Jory Blackthumb', lvl: [5, 5], family: 'humanoid', named: true, hpMult: 1.6, dmgMult: 1.2, drops: [['thieves_coin', 1], ['garrick_cloak', 0.35]], qdrops: [['garrick_head', 1]], aggro: "I'll gut you like a fish!" },
     mangy_wolf: { name: 'Mangy Wolf', lvl: [5, 6], family: 'beast', drops: [['ruined_pelt', 0.4], ['wolf_fang', 0.3]] },
-    kobold_laborer: { name: 'Kobold Laborer', lvl: [5, 6], family: 'humanoid', drops: [['broken_candle', 0.4], ['linen_cloth', 0.3]], qdrops: [['large_candle', 0.6], ['gold_dust', 0.5]], aggro: 'You no take candle!' },
-    kobold_tunneler: { name: 'Kobold Tunneler', lvl: [6, 7], family: 'humanoid', drops: [['broken_candle', 0.4], ['linen_cloth', 0.3]], qdrops: [['large_candle', 0.6], ['gold_dust', 0.5], ['kobold_pick', 0.55]], aggro: 'Yiiieeee! Me run!' },
+    kobold_laborer: { name: 'Kobold Laborer', lvl: [5, 6], family: 'humanoid', drops: [['broken_candle', 0.4], ['linen_cloth', 0.3]], qdrops: [['large_candle', 0.6], ['gold_dust', 0.5]], aggro: 'Dig-thief! Dig-thief!' },
+    kobold_tunneler: { name: 'Kobold Tunneler', lvl: [6, 7], family: 'humanoid', drops: [['broken_candle', 0.4], ['linen_cloth', 0.3]], qdrops: [['large_candle', 0.6], ['gold_dust', 0.5], ['kobold_pick', 0.55]], aggro: 'Tunnel-rats, to me!' },
     young_forest_bear: { name: 'Young Forest Bear', lvl: [7, 8], family: 'beast', hpMult: 1.15, drops: [['bear_hide', 0.4]] },
     prowler: { name: 'Prowler', lvl: [7, 8], family: 'beast', drops: [['ruined_pelt', 0.4], ['wolf_fang', 0.3]], qdrops: [['prowler_claw', 0.55]] },
     murloc_streamrunner: { name: 'Mireling Streamrunner', lvl: [7, 8], family: 'murloc', drops: [['murloc_eye', 0.45]], qdrops: [['murloc_fin', 0.6], ['crystal_clam', 0.5]], aggro: 'Mrrrggllll!' },

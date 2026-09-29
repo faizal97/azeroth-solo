@@ -61,7 +61,7 @@
     great_goretusk: { name: 'Great Razorhog', lvl: [18, 19], family: 'beast', hpMult: 1.1, drops: [['ruined_pelt', 0.4]], qdrops: [['goretusk_flank', 0.55]] },
     blackrock_outrunner: { name: 'Cinderpeak Outrunner', lvl: [21, 22], family: 'humanoid', drops: [['thieves_coin', 0.45], ['linen_cloth', 0.3]], qdrops: [['blackrock_medallion', 0.5]], aggro: 'For the Cinderpeak!' },
     blackrock_renegade: { name: 'Cinderpeak Renegade', lvl: [22, 23], family: 'humanoid', hpMult: 1.1, drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['blackrock_medallion', 0.5], ['blackrock_orders', 0.2]], aggro: 'Your kingdom will burn!' },
-    blackrock_champion: { name: 'Cinderpeak Champion', lvl: [23, 24], family: 'humanoid', hpMult: 1.2, drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['blackrock_medallion', 0.5], ['blackrock_orders', 0.3]], aggro: 'Blood and thunder!' },
+    blackrock_champion: { name: 'Cinderpeak Champion', lvl: [23, 24], family: 'humanoid', hpMult: 1.2, drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['blackrock_medallion', 0.5], ['blackrock_orders', 0.3]], aggro: 'Blood and dust!' },
     blackrock_summoner: { name: 'Cinderpeak Summoner', lvl: [24, 25], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.35]], qdrops: [['summoner_tome', 0.45]], aggro: 'The fire answers me!' },
     black_dragon_whelp: { name: 'Black Dragon Whelp', lvl: [22, 23], family: 'dragonkin', drops: [['ruined_pelt', 0.2]], qdrops: [['whelp_scale', 0.55]] },
     gathilzogg: { name: "Uzbrak", lvl: [25, 25], family: 'humanoid', named: true, hpMult: 2.2, dmgMult: 1.35, drops: [['thieves_coin', 1]], qdrops: [['gathilzogg_head', 1]], aggro: 'Watcher\'s Keep is ours! Stoneharrow will follow!' },

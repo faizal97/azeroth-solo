@@ -29,7 +29,7 @@
   Object.assign(D.MOBS, {
     highland_thrasher: { name: 'Highland Thrasher', lvl: [35, 36], family: 'beast', drops: [['ruined_pelt', 0.4]], qdrops: [['thrasher_claw', 0.55]] },
     highland_fleshstalker: { name: 'Highland Fleshstalker', lvl: [36, 37], family: 'beast', hpMult: 1.1, drops: [['ruined_pelt', 0.4]], qdrops: [['fleshstalker_hide', 0.55]] },
-    drywhisker_kobold: { name: 'Candlegrub Kobold', lvl: [35, 36], family: 'humanoid', drops: [['broken_candle', 0.4], ['linen_cloth', 0.3]], qdrops: [['kobold_candle', 0.55]], aggro: 'No take candle!' },
+    drywhisker_kobold: { name: 'Candlegrub Kobold', lvl: [35, 36], family: 'humanoid', drops: [['broken_candle', 0.4], ['linen_cloth', 0.3]], qdrops: [['kobold_candle', 0.55]], aggro: 'Lights out for you!' },
     drywhisker_digger: { name: 'Candlegrub Digger', lvl: [36, 37], family: 'humanoid', drops: [['broken_candle', 0.4], ['linen_cloth', 0.3]], qdrops: [['drywhisker_ore', 0.5]], aggro: 'You no dig here!' },
     witherbark_headhunter: { name: 'Rotbough Headhunter', lvl: [36, 37], family: 'humanoid', hpMult: 1.1, drops: [['troll_tusk', 0.45], ['linen_cloth', 0.3]], qdrops: [['witherbark_tusk', 0.55]], aggro: 'Your head is mine!' },
     witherbark_shadowcaster: { name: 'Rotbough Shadowcaster', lvl: [37, 38], family: 'humanoid', drops: [['troll_tusk', 0.4], ['linen_cloth', 0.35]], qdrops: [['shrunken_head', 0.45], ['witherbark_tusk', 0.3]], aggro: 'The shadows take you!' },

@@ -275,10 +275,13 @@
     const rank = (n) => { const mk = G.npcMarker(n); if (D.NPCS[n].legend || n === 'hooded_stranger') return -1; return mk === '?' ? 0 : mk === '!' ? 1 : /^(mentor|banker|auctioneer|crafts|stable)_/.test(n) ? 3 : 2; };
     const list = place.npcs.filter((n) => D.NPCS[n]).slice().sort((a, b) => rank(a) - rank(b)).slice(0, place.safe ? 3 : 1);
     const slots = place.safe ? [{ r: 4, b: 6, w: 19 }, { r: 23, b: 13, w: 16 }, { r: 11, b: 27, w: 13 }] : [{ l: 46, b: 26, w: 14 }];
+    // the tag over a townsperson: a long name shows its last word ("Shadow Hunter Zul'kesh" is Zul'kesh), and a quoted
+    // nickname shows the name before it (Pell "Twice Over" is Pell, not Over")
+    const sceneName = (nm) => { if (/ "/.test(nm)) return nm.split(' "')[0]; const w = nm.split(' '); return w.length > 2 ? w[w.length - 1] : nm; };
     list.forEach((n, i) => {
       const N = D.NPCS[n], mk = G.npcMarker(n);
       const src = n === 'hooded_stranger' && window.ART && ART.legend ? art('legend', 'lyveus_hooded') : N.legend && window.ART && ART.legend ? art('legend', N.legend) : art('hero', npcLooks(n, place));
-      const tag = h('div', { class: 'np', style: { fontSize: '10px' } }, mk ? h('span', { class: mk === '…' ? '' : 'qmk', style: { color: mk === '…' ? '#bbb' : '#ffd100', fontWeight: 800 } }, (mk === '…' ? '?' : mk) + ' ') : null, h('span', { style: { color: '#ffd100' } }, N.name.split(' ').length > 2 ? N.name.split(' ').slice(-1)[0] : N.name));
+      const tag = h('div', { class: 'np', style: { fontSize: '10px' } }, mk ? h('span', { class: mk === '…' ? '' : 'qmk', style: { color: mk === '…' ? '#bbb' : '#ffd100', fontWeight: 800 } }, (mk === '…' ? '?' : mk) + ' ') : null, h('span', { style: { color: '#ffd100' } }, sceneName(N.name)));
       const el = spriteEl(src, slots[i], 'idle flip npc tappable', tag);
       el.addEventListener('click', () => openNpc(n));
       sc.append(el);

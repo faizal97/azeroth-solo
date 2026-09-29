@@ -1030,8 +1030,14 @@
 
   // ============================================================ bounty boards (hubs): 3 daily bounties + 1 weekly
   // Picked from the hub's zone with a seed from the real date, so they change at midnight (weekly on Monday).
-  const dayKey = () => new Date(now()).toISOString().slice(0, 10);
-  const weekKey = () => { const d = new Date(now()); const day = (d.getDay() + 6) % 7; d.setDate(d.getDate() - day); return 'w' + d.toISOString().slice(0, 10); };
+  // v10.1.1: the day is the player's own (local midnight, and the weekly on local Monday); it used to be UTC's
+  const ymd = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const dayKey = () => ymd(new Date(now()));
+  const weekKey = () => { const d = new Date(now()); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return 'w' + ymd(d); };
+  // a bounty taken before the switch carries a UTC key; it stays good for that one day so nothing vanishes
+  const oldDayKey = () => new Date(now()).toISOString().slice(0, 10);
+  const oldWeekKey = () => { const d = new Date(now()); const day = (d.getDay() + 6) % 7; d.setDate(d.getDate() - day); return 'w' + d.toISOString().slice(0, 10); };
+  const bountyLive = (st) => (st.weekly ? [weekKey(), oldWeekKey()] : [dayKey(), oldDayKey()]).includes(st.day);
   const seeded = (str) => { let h = 2166136261; for (const c of str) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return ((h >>> 0) % 100000) / 100000; }; };
   G.isHub = (placeId) => { const p = D.PLACES[placeId]; return !!(p && p.inn && p.safe && !p.city); };
   G.bounties = function (hub) {
@@ -1077,7 +1083,7 @@
   G.myBounties = function () {
     const P = G.S.player, out = [];
     for (const [id, st] of Object.entries(P.bounty || {})) {
-      if (st.done || st.day !== (st.weekly ? weekKey() : dayKey())) continue; // an old day's bounty has lapsed
+      if (st.done || !bountyLive(st)) continue; // an old day's bounty has lapsed
       const hub = id.split(':')[0];
       out.push({ id, hub, hubName: D.PLACES[hub] ? D.PLACES[hub].name : hub, mob: st.mob, n: st.n, prog: st.prog, weekly: st.weekly, complete: st.prog >= st.n });
     }
@@ -1087,10 +1093,10 @@
     const P = G.S.player; if (!P.bounty) return;
     // old days' bounties lapse; kills only count toward today's (and this week's)
     for (const [id, st] of Object.entries(P.bounty)) {
-      if (!st.done && st.day !== (st.weekly ? weekKey() : dayKey())) { delete P.bounty[id]; continue; }
+      if (!st.done && !bountyLive(st)) { delete P.bounty[id]; continue; }
       if (!st.done && st.mob === mobKey && st.prog < st.n) { st.prog++; if (st.prog === st.n || st.prog % 5 === 0) sys(`Bounty: ${D.MOBS[mobKey].name} ${st.prog}/${st.n}`); }
     }
-    for (const [id, st] of Object.entries(P.bounty)) if (st.done && st.day !== (st.weekly ? weekKey() : dayKey())) delete P.bounty[id];
+    for (const [id, st] of Object.entries(P.bounty)) if (st.done && !bountyLive(st)) delete P.bounty[id];
   }
 
   // Loot for one kill. Returns list of {item,n} and copper.

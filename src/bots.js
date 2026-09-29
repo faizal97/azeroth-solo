@@ -254,7 +254,7 @@
   ];
   // what people talk about at your stage of the game
   const GENERAL_BAND = [
-    [() => 'finally got my first green lol', () => 'my first bag!! 6 slots of luxury', () => 'kobolds really said you no take candle and meant it', () => 'just found out what rested xp is', () => 'where do i learn cooking'],
+    [() => 'finally got my first green lol', () => 'my first bag!! 6 slots of luxury', () => 'the kobolds in that mine bite harder than they look', () => 'just found out what rested xp is', () => 'where do i learn cooking'],
     [() => 'talents are so confusing', () => 'first pug dungeon went... ok', () => 'the greenfen raptors are no joke', () => 'saving up for my mount already', (c) => `${c.zone} quests are kinda long`],
     [() => 'vinewild with war mode on is chaos', () => 'finally got riding, roads feel so short now', () => 'sirocco sand gets everywhere', () => "the dune temple stairs event is wild", () => 'how much does a mount cost'],
     [() => 'cinderpeak depths is a maze', () => 'the blackcloister gives me the creeps', () => 'graymouth in the rain, perfect', () => 'icewold yetis again', () => 'is it just me or is the sea acting weird lately'],
