@@ -4561,9 +4561,9 @@
  },
  "Death's Head Cultist": {
   "kind": "monster",
-  "region": "",
-  "status": "keep",
-  "new": null
+  "region": "The Barrens",
+  "status": "rename",
+  "new": "Bone Mask Cultist"
  },
  "Aggem Thorncurse": {
   "kind": "boss or named",
@@ -16660,5 +16660,17 @@
   "region": "",
   "status": "rename",
   "new": "Clockwork Trike"
+ },
+ "Death's Head": {
+  "kind": "lore",
+  "region": "The Barrens",
+  "status": "rename",
+  "new": "Bone Mask"
+ },
+ "Agamaggan": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
  }
 }

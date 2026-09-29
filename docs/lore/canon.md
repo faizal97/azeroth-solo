@@ -43,7 +43,7 @@ Years are counted back from the start of the game.
 | When | What happened |
 |---|---|
 | ~10,000 years ago | The Heartfire bursts (the Drowning). The Starborn city of Sael'anor sinks. Prince Aeldran bargains with Nal'veshra, the Deepmother, to keep his court alive under the sea. The Wavebreaker trolls and their sea spirit Shal'zua sink with the isle. The wood elves' moon temple on the Elderglen coast is swallowed (the Tidehollow Deeps). |
-| Long ago | The Great Boar falls in the southern Scrublands; the thorns of the Thorn Warrens grow from his blood. A wandering god dies, and the Stone Princess Ghesra carries him into the Gemfall Caves. |
+| Long ago | The Briarmother, a spirit of the thorns, lies down to sleep under the southern Scrublands; the Thorn Warrens grow from her roots. A wandering god dies, and the Stone Princess Ghesra carries him into the Gemfall Caves. |
 | Long before the Long War | The black dragon Ossarak tears the world open. The Kinloch elves call him the Black Ruin. He is driven off, never destroyed. |
 | ~12–20 years ago | The Long War between the Accord and the Krugar. |
 | ~12 years ago | The war ends. Everyone rebuilds on Ledger credit: Kingsmere's walls, Longfield's farms, the Slagborn empire, Blackwell's shipyard. Grask leads the orcs to Dunescar. The plague takes Wexmoor, the Hollow Host rises, the Order of the Pyre forms, Cairn makes werewolves of Needlewood, and Graymouth's lord bars its gates with the living inside. |
@@ -153,7 +153,8 @@ several sharing a line separated by " / ".
 - **Unmaking** — the demon army of old
 - **Heartfire** — its bursting sank Sael'anor ten thousand years ago
 - **Drowning** — the night the Heartfire burst
-- **Great Boar** — the spirit whose blood grew the Thorn Warrens
+- **Briarmother** — the thorn spirit asleep under the southern Scrublands; the Thorn Warrens are her roots, and the spinehide call them holy
+- **Bone Mask** — the masked death cult in the Thorn Warrens, serving the Hollow Host; Mother Grisla has chosen it
 - **Ossarak / Black Ruin** — the black dragon who tore the world open long ago
 - **Veshmira** — the Ledger's creditor (named at 60)
 - **Meriel Thorne / Thorne** — the Mistress of Coin

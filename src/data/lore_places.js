@@ -98,16 +98,16 @@
     } },
 
     dg_razorfen_kraul: { title: 'The Thorn Warrens', section: 'dungeon', dungeon: 'razorfen_kraul', text: [
-      'The spinehide believe the thorns of the Thorn Warrens are the living body of the Great Boar, and that every tribe sheltering inside them belongs to him. They have raided the southern Scrublands from the Warrens for as long as the hornfolk remember.',
-      'For most of that time the Warrens was ruled by its war leaders and its geomancers, who speak to the earth and the thorns. That has changed. Masked cultists of the Death\'s Head now walk the tunnels, and the tribe\'s dead do not stay buried. Some spinehide welcome it. Others have been fed to it.',
+      'The spinehide believe the thorns of the Thorn Warrens are the roots of the Briarmother, a spirit asleep under the southern Scrublands, and that every tribe sheltering in her thorns is hers to keep. They have raided the southern Scrublands from the Warrens for as long as the hornfolk remember.',
+      'For most of that time the Warrens was ruled by its war leaders and its geomancers, who speak to the earth and the thorns. That has changed. Masked cultists of the Bone Mask now walk the tunnels, and the tribe\'s dead do not stay buried. Some spinehide welcome it. Others have been fed to it.',
       'Mother Grisla holds the tribe together, and she has chosen the cult. Nobody outside the Warrens knows what she has bargained with. Its whispers only grow louder the deeper the tunnels go.',
       'To the Krugar at Dustfort, the Warrens is a threat on their own doorstep. Caravans vanish on the southern road, and the dead walk back out wrong. Grukk sends fighters south because nobody else will.',
     ], bosses: {
-      aggem_thorncurse: 'A geomancer who leads the Death\'s Head inside the Warrens. He was the first of the thorn-speakers to take up the cult, and he taught the thorns to answer it.',
+      aggem_thorncurse: 'A geomancer who leads the Bone Mask inside the Warrens. He was the first of the thorn-speakers to take up the cult, and he taught the thorns to answer it.',
       death_speaker_jargba: 'A spinehide necromancer who gives the cult its dead. He calls fallen warriors of the tribe back to guard the tunnels, whether they are willing or not.',
       overlord_ramtusk: 'The Warrens\'s war leader, loyal to Grisla above everything. He cares little for the cult, but he will kill anyone who threatens the matriarch or the thorns.',
-      agathelos: 'A great boar kept in the deepest dens. The spinehide say the Great Boar\'s blood runs in him, and they feed him the prisoners they have no other use for.',
-      charlga_razorflank: 'Matriarch of the Thorn Warrens, old and cunning. She turned her tribe towards the Death\'s Head and the power behind it, and she rules the Warrens from the thorn throne.',
+      agathelos: 'A monstrous boar the spinehide caught as a boarlet and raised on thorn-sap until it outgrew every den but the deepest. They feed him the prisoners they have no other use for.',
+      charlga_razorflank: 'Matriarch of the Thorn Warrens, old and cunning. She turned her tribe towards the Bone Mask and the Hollow Host behind it, and she rules the Warrens from the thorn throne.',
     } },
 
     dg_sm_library: { title: 'The Pyre Abbey: Library', section: 'dungeon', dungeon: 'sm_library', text: [
@@ -328,7 +328,7 @@
     zn_the_barrens: { title: 'The Scrublands', section: 'zone', zone: 'The Scrublands', text: [
       'The Scrublands is a long, hot plain of yellow grass and dry water holes. Dustfort sits in the middle of it, and the Krugar has held it with blades since the day it was built.',
       'The land fights back. Galloran centaurs raid the caravans, and the Snoutspike spinehide grow bolder near Hollow Tower. Deepgold Company goblins foul the Slick, and dwarves from Keldrun dig at the Stonegrave Dig.',
-      'In the south, the thorns of the Thorn Warrens grow from the blood of the Great Boar. The spinehide call them holy.',
+      'In the south, the thorns of the Thorn Warrens grow from the roots of the Briarmother. The spinehide call them holy.',
     ] },
     zn_redridge_mountains: { title: 'Stoneharrow Mountains', section: 'zone', zone: 'Stoneharrow Mountains', text: [
       'Stoneharrow is red hills and a long, clear lake, and Longbridge is a town built at the water\'s edge. The bridge across Lake Calder is half built, and the town badly needs it finished.',
