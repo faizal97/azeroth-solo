@@ -72,10 +72,10 @@ Valeera and Valdrakken), **Everwyn** (sounds like Elwynn).
 | Horde | **Krugar** | their own word; no Warcraft match (nearest: Krugah, Krug Skullsplit) |
 | Eastern Kingdoms | **Ostmarch** | "the eastern borderland" |
 | Stormwind City | **Kingsmere** | |
-| Kalimdor | *open* | not Kor-/Kar- (Korgzath rejected: too close to Kargath/Korgath) |
-| Orgrimmar | *open* | a proper name, not a label |
+| Kalimdor | **Redmarch** | pairs with Ostmarch; Korgzath was rejected (too close to Kargath/Korgath) |
+| Orgrimmar | **Vazhrak** | the Krugar capital; nearest Warcraft name is Vadrak (a minor NPC) |
 
-The proposal below (the Free Clans) was rejected; so were the Unbound and the Warbands (both Warcraft names).
+The proposal below (the Free Clans) was rejected; so were the Unbound and the Warbands (both Warcraft names). Also rejected in checks: Westreach (a WoW village), Ashvael (too close to Ashenvale), Emberreach (a WoW spell), Sunderwild (echoes the Sundering).
 
 - **The Accord** (recommended): the old kingdoms of humans, dwarves, gnomes and elves, bound by treaty.
 - **The Free Clans** (recommended): orcs, trolls and their allies, who answer to no crown.
