@@ -42,7 +42,7 @@ Each needs your pick before the next. Recommendations are marked.
 
 ### 1. The game's name
 
-**Decided (2026-09-29): Realm of Lone.** No existing game with that name was found.
+**Decided (2026-09-29): Realm of Loner** (first "Realm of Lone"). No game has this exact name; the nearest is *Loner*, a solo tabletop RPG and a Steam game.
 
 | Option | Why | Check |
 |---|---|---|
@@ -52,7 +52,7 @@ Each needs your pick before the next. Recommendations are marked.
 
 ### 2. The world's name (replaces Azeroth)
 
-**Decided (2026-09-29): Caldreth.** "Realm of Lone" is only the game's title; the world is Caldreth.
+**Decided (2026-09-29): Caldreth.** "Realm of Loner" is only the game's title; the world is Caldreth.
 
 | Option | Feel | Check |
 |---|---|---|

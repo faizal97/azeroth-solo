@@ -237,13 +237,13 @@
   "kind": "region",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Kaldvik"
  },
  "Teldrassil": {
   "kind": "region",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Greatbough"
  },
  "Durotar": {
   "kind": "region",
@@ -267,7 +267,7 @@
   "kind": "region",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Longfield"
  },
  "The Barrens": {
   "kind": "region",
@@ -279,7 +279,7 @@
   "kind": "region",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Stoneharrow Mountains"
  },
  "Stonetalon Mountains": {
   "kind": "region",
@@ -291,7 +291,7 @@
   "kind": "region",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Wraithwood"
  },
  "Hillsbrad Foothills": {
   "kind": "region",
@@ -447,43 +447,43 @@
   "kind": "place",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Brunhall"
  },
  "Coldridge Valley": {
   "kind": "place",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Rimefold Valley"
  },
  "Frostmane Cave": {
   "kind": "place",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Grimtooth Cave"
  },
  "Kharanos": {
   "kind": "place",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Bjornstad"
  },
  "The Grizzled Den": {
   "kind": "place",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "The Rimebone Den"
  },
  "Frostmane Hold": {
   "kind": "place",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Grimtooth Hold"
  },
  "Amberstill Ranch": {
   "kind": "place",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Ranson Ranch"
  },
  "Ironforge": {
   "kind": "place",
@@ -495,37 +495,37 @@
   "kind": "place",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Dewfern Glade"
  },
  "Shadowthread Cave": {
   "kind": "place",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Webhollow Cave"
  },
  "Dolanaar": {
   "kind": "place",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Ithrenne"
  },
  "Lake Al'Ameth": {
   "kind": "place",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Lake Seliwen"
  },
  "Ban'ethil Barrow Den": {
   "kind": "place",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Rootdeep Barrow"
  },
  "Fel Rock": {
   "kind": "place",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Gloomrock"
  },
  "Darnassus": {
   "kind": "place",
@@ -663,61 +663,61 @@
   "kind": "place",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Tuck's Pumpkin Farm"
  },
  "Saldean's Farm": {
   "kind": "place",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Wenham Farm"
  },
  "Sentinel Hill": {
   "kind": "place",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Warrick's Rise"
  },
  "Jangolode Mine": {
   "kind": "place",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Copperseam Mine"
  },
  "Molsen Farm": {
   "kind": "place",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Ashby Farm"
  },
  "The Longshore": {
   "kind": "place",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "The Saltstrand"
  },
  "The Dagger Hills": {
   "kind": "place",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "The Flint Hills"
  },
  "Gold Coast Quarry": {
   "kind": "place",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Gull Point Quarry"
  },
  "Moonbrook": {
   "kind": "place",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Fenwick"
  },
  "The Dead Acre": {
   "kind": "place",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "The Rustfield"
  },
  "Far Watch Post": {
   "kind": "place",
@@ -777,49 +777,49 @@
   "kind": "place",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Hob's Fork"
  },
  "Lakeshire": {
   "kind": "place",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Longbridge"
  },
  "Lake Everstill": {
   "kind": "place",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Lake Calder"
  },
  "Redridge Canyons": {
   "kind": "place",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Stoneharrow Canyons"
  },
  "Alther's Mill": {
   "kind": "place",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Pike's Mill"
  },
  "Render's Valley": {
   "kind": "place",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Scorched Valley"
  },
  "Stonewatch Keep": {
   "kind": "place",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Watcher's Keep"
  },
  "Galardell Valley": {
   "kind": "place",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Dunmore Valley"
  },
  "Malaka'jin": {
   "kind": "place",
@@ -873,7 +873,7 @@
   "kind": "place",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Lanternby"
  },
  "Brightwood Grove": {
   "kind": "place",
@@ -1101,7 +1101,7 @@
   "kind": "place",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Gates of Gearhollow"
  },
  "Razorfen Kraul": {
   "kind": "place",
@@ -1580,170 +1580,170 @@
  "Quartermaster Aldwin": {
   "kind": "npc",
   "region": "Teldrassil",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Banker Olwen": {
   "kind": "npc",
   "region": "Teldrassil",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Auctioneer Redmuse": {
   "kind": "npc",
   "region": "Teldrassil",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Sten Stoutarm": {
   "kind": "npc",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Arvid Halvarsson"
  },
  "Balir Frosthammer": {
   "kind": "npc",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Toke Ormsson"
  },
  "Talin Keeneye": {
   "kind": "npc",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Sigrun Eyvindsdottir"
  },
  "Adlin Pridedrift": {
   "kind": "npc",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Ulf Bjarnason"
  },
  "Ragnar Thunderbrew": {
   "kind": "npc",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Egil Maltsson"
  },
  "Innkeeper Belm": {
   "kind": "npc",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Gudrun"
  },
  "Pilot Stonegear": {
   "kind": "npc",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Pilot Nibby Sprocket"
  },
  "Senir Whitebeard": {
   "kind": "npc",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Old Halstein"
  },
  "Grawn Thromwyn": {
   "kind": "npc",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Grim Torsson"
  },
  "Rudra Amberstill": {
   "kind": "npc",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Hilde Ranson"
  },
  "Innkeeper Firebrew": {
   "kind": "npc",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Solvi"
  },
  "Tinkmaster Overspark": {
   "kind": "npc",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Tinkmaster Gizzlebolt"
  },
  "Bruuk Barleybeard": {
   "kind": "npc",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Knut Barlowsson"
  },
  "Conservator Ilthalaine": {
   "kind": "npc",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Keeper Aelith"
  },
  "Gilshalan Windwalker": {
   "kind": "npc",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Therin Aubren"
  },
  "Dirania Silvershine": {
   "kind": "npc",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Maelis Varre"
  },
  "Nyoma": {
   "kind": "npc",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Iselle"
  },
  "Tallonkai Swiftroot": {
   "kind": "npc",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Calen Thornwood"
  },
  "Zenn Foulhoof": {
   "kind": "npc",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Pym Crookhorn"
  },
  "Innkeeper Keldamyr": {
   "kind": "npc",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Lirien"
  },
  "Sentinel Kyra Starsong": {
   "kind": "npc",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Sentinel Aerin Ashbrook"
  },
  "Ilyenia Moonfire": {
   "kind": "npc",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Ilsa Brightwater"
  },
  "Denalan": {
   "kind": "npc",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Faelan"
  },
  "Innkeeper Saelienne": {
   "kind": "npc",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Meriwen"
  },
  "Mydrannul": {
   "kind": "npc",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Liraen"
  },
  "Quartermaster Grozka": {
   "kind": "npc",
@@ -1989,49 +1989,49 @@
   "kind": "npc",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Captain Merrow"
  },
  "Scout Galiaan": {
   "kind": "npc",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Scout Linnet"
  },
  "Innkeeper Heather": {
   "kind": "npc",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Bess"
  },
  "Quartermaster Lewis": {
   "kind": "npc",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Quartermaster Dunstan"
  },
  "Farmer Furlbrow": {
   "kind": "npc",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Farmer Tuck"
  },
  "Verna Furlbrow": {
   "kind": "npc",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Mabel Tuck"
  },
  "Farmer Saldean": {
   "kind": "npc",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Farmer Wenham"
  },
  "Salma Saldean": {
   "kind": "npc",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Rose Wenham"
  },
  "Thork": {
   "kind": "npc",
@@ -2079,37 +2079,37 @@
   "kind": "npc",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Magistrate Aldren"
  },
  "Marshal Marris": {
   "kind": "npc",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Marshal Corwin"
  },
  "Foreman Oslow": {
   "kind": "npc",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Foreman Gant"
  },
  "Darcy Parker": {
   "kind": "npc",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Maisie Cobb"
  },
  "Innkeeper Brianna": {
   "kind": "npc",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Agnes"
  },
  "Verner Osgood": {
   "kind": "npc",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Hob Tarrant"
  },
  "Warden Thelwater": {
   "kind": "npc",
@@ -2780,7 +2780,7 @@
  "Stablemaster Rowan": {
   "kind": "npc",
   "region": "Teldrassil",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Stablemaster Ogunaro": {
@@ -2883,13 +2883,13 @@
   "kind": "monster",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Gravelmaw Cavekin"
  },
  "Burly Rockjaw Trogg": {
   "kind": "monster",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Burly Gravelmaw Cavekin"
  },
  "Ragged Young Wolf": {
   "kind": "monster",
@@ -2907,13 +2907,13 @@
   "kind": "monster",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Grimtooth Troll Whelp"
  },
  "Grik'nir the Cold": {
   "kind": "boss or named",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Skrell the Cold"
  },
  "Crag Boar": {
   "kind": "monster",
@@ -2924,38 +2924,38 @@
  "Young Wendigo": {
   "kind": "monster",
   "region": "Dun Morogh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Wendigo": {
   "kind": "monster",
   "region": "Dun Morogh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Old Icebeard": {
   "kind": "boss or named",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Old Rimehide"
  },
  "Frostmane Troll": {
   "kind": "monster",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Grimtooth Troll"
  },
  "Frostmane Headhunter": {
   "kind": "monster",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Grimtooth Headhunter"
  },
  "Frostmane Seer": {
   "kind": "monster",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Grimtooth Seer"
  },
  "Elder Crag Boar": {
   "kind": "monster",
@@ -2985,13 +2985,13 @@
   "kind": "boss or named",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Snowfang"
  },
  "Young Nightsaber": {
   "kind": "monster",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Young Shadowcat"
  },
  "Young Thistle Boar": {
   "kind": "monster",
@@ -3003,7 +3003,7 @@
   "kind": "monster",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Mangy Shadowcat"
  },
  "Thistle Boar": {
   "kind": "monster",
@@ -3015,55 +3015,55 @@
   "kind": "monster",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Thornling"
  },
  "Webwood Spider": {
   "kind": "monster",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Webhollow Spider"
  },
  "Githyiss the Vile": {
   "kind": "boss or named",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Skitterfang the Vile"
  },
  "Nightsaber": {
   "kind": "monster",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Shadowcat"
  },
  "Strigid Owl": {
   "kind": "monster",
   "region": "Teldrassil",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Gnarlpine Ursa": {
   "kind": "monster",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Mossback Ursa"
  },
  "Gnarlpine Warrior": {
   "kind": "monster",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Mossback Warrior"
  },
  "Gnarlpine Shaman": {
   "kind": "monster",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Mossback Shaman"
  },
  "Oakenscowl": {
   "kind": "boss or named",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Old Barkjaw"
  },
  "Shadow Sprite": {
   "kind": "monster",
@@ -3075,13 +3075,13 @@
   "kind": "monster",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Vicious Thornling"
  },
  "Lord Melenas": {
   "kind": "boss or named",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Lord Varneth"
  },
  "Mottled Boar": {
   "kind": "monster",
@@ -3447,19 +3447,19 @@
   "kind": "monster",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Young Razorhog"
  },
  "Goretusk": {
   "kind": "monster",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Razorhog"
  },
  "Fleshripper": {
   "kind": "monster",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Bonepicker"
  },
  "Harvest Watcher": {
   "kind": "monster",
@@ -3471,43 +3471,43 @@
   "kind": "monster",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Trapper"
  },
  "Defias Smuggler": {
   "kind": "monster",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Smuggler"
  },
  "Defias Pathstalker": {
   "kind": "monster",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Pathstalker"
  },
  "Murloc Coastrunner": {
   "kind": "monster",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Mireling Coastrunner"
  },
  "Murloc Tidehunter": {
   "kind": "monster",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Mireling Tidehunter"
  },
  "Foe Reaper 4000": {
   "kind": "boss or named",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Grim Harvester 3000"
  },
  "Riverpaw Brute": {
   "kind": "monster",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Tallgrass Brute"
  },
  "Dust Devil": {
   "kind": "monster",
@@ -3519,25 +3519,25 @@
   "kind": "monster",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Digger"
  },
  "Defias Overseer": {
   "kind": "monster",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Overseer"
  },
  "Defias Knuckleduster": {
   "kind": "monster",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Knuckleduster"
  },
  "Defias Highwayman": {
   "kind": "monster",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Highwayman"
  },
  "Rusty Harvest Golem": {
   "kind": "monster",
@@ -3555,7 +3555,7 @@
   "kind": "boss or named",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Sergeant Mudjaw"
  },
  "Kolkar Drudge": {
   "kind": "monster",
@@ -3723,79 +3723,79 @@
   "kind": "monster",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Stoneharrow Mongrel"
  },
  "Redridge Poacher": {
   "kind": "monster",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Stoneharrow Poacher"
  },
  "Redridge Brute": {
   "kind": "monster",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Stoneharrow Brute"
  },
  "Redridge Mystic": {
   "kind": "monster",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Stoneharrow Mystic"
  },
  "Shadowhide Warrior": {
   "kind": "monster",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Tarfur Warrior"
  },
  "Shadowhide Darkweaver": {
   "kind": "monster",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Tarfur Darkweaver"
  },
  "Murloc Flesheater": {
   "kind": "monster",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Mireling Flesheater"
  },
  "Murloc Tidecaller": {
   "kind": "monster",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Mireling Tidecaller"
  },
  "Great Goretusk": {
   "kind": "monster",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Great Razorhog"
  },
  "Blackrock Outrunner": {
   "kind": "monster",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak Outrunner"
  },
  "Blackrock Renegade": {
   "kind": "monster",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak Renegade"
  },
  "Blackrock Champion": {
   "kind": "monster",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak Champion"
  },
  "Blackrock Summoner": {
   "kind": "monster",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak Summoner"
  },
  "Black Dragon Whelp": {
   "kind": "monster",
@@ -3807,25 +3807,25 @@
   "kind": "boss or named",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Uzbrak"
  },
  "Ribchaser": {
   "kind": "boss or named",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Bonegnaw"
  },
  "Squiddic": {
   "kind": "boss or named",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Gulpfin"
  },
  "Bellygrub": {
   "kind": "boss or named",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Lardhide"
  },
  "Defias Convict": {
   "kind": "monster",
@@ -4539,7 +4539,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Chief Engineer Voltwhistle"
  },
  "Razorfen Quilguard": {
   "kind": "monster",
@@ -5739,210 +5739,210 @@
   "kind": "quest",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Proper Gear"
  },
  "A New Threat": {
   "kind": "quest",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Cavekin at the Door"
  },
  "The Troll Cave": {
   "kind": "quest",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Whelps in the Cave"
  },
  "The Stolen Journal": {
   "kind": "quest",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Nib's Journal"
  },
  "Senir's Observations": {
   "kind": "quest",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Word for Old Halstein"
  },
  "Beer Basted Boar Ribs": {
   "kind": "quest",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Ribs for the Taproom"
  },
  "Operation Recombobulation": {
   "kind": "quest",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Cogs for Gearhollow"
  },
  "Hunting the Ranch": {
   "kind": "quest",
   "region": "Dun Morogh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Protecting the Herd": {
   "kind": "quest",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "The Herd Killer"
  },
  "The Wendigo Problem": {
   "kind": "quest",
   "region": "Dun Morogh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Frostmane Tusks": {
   "kind": "quest",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Grimtooth Tusks"
  },
  "Troll Trouble": {
   "kind": "quest",
   "region": "Dun Morogh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Boar Season": {
   "kind": "quest",
   "region": "Dun Morogh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Ice Claw Pelts": {
   "kind": "quest",
   "region": "Dun Morogh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Seers of the Frostmane": {
   "kind": "quest",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Seers of the Grimtooth"
  },
  "The Elder Boars": {
   "kind": "quest",
   "region": "Dun Morogh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "A Sad Duty": {
   "kind": "quest",
   "region": "Dun Morogh",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Westfall Needs You": {
   "kind": "quest",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Longfield Needs You"
  },
  "The Balance of Nature": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Thinning the Old"
  },
  "Fel Moss": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Gloom Moss"
  },
  "Webwood Venom": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Webhollow Venom"
  },
  "The Road to Dolanaar": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "The Road to Ithrenne"
  },
  "Zenn's Bidding": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Pym's Bidding"
  },
  "Timberling Seeds": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Rootling Seeds"
  },
  "Gnarlpine Corruption": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Mossback Corruption"
  },
  "The Elder Furbolg": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "The Elder Bearkin"
  },
  "Melenas' Head": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Varneth' Head"
  },
  "Crown of the Earth": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "The Heart of the Tree"
  },
  "The Nightsaber Hunt": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "The Shadowcat Hunt"
  },
  "Gnarlpine Totems": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Mossback Totems"
  },
  "The Ursa Threat": {
   "kind": "quest",
   "region": "Teldrassil",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Shadows at Fel Rock": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Shadows at Gloomrock"
  },
  "Grell Fangs": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Thornling Fangs"
  },
  "Shamans of the Gnarlpine": {
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Shamans of the Mossback"
  },
  "Across the Sea": {
   "kind": "quest",
   "region": "Teldrassil",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Cutting Teeth": {
@@ -6255,247 +6255,247 @@
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Poor Old Old Clover"
  },
  "Westfall Stew": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Longfield Stew"
  },
  "Goretusk Liver Pie": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Razorhog Liver Pie"
  },
  "The Harvest Watchers": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Scarecrows of Steel"
  },
  "The People's Militia": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "The Farmers' Watch"
  },
  "Fleshripper Talons": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Bonepicker Talons"
  },
  "The Jangolode Mine": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "The Copperseam Mine"
  },
  "Red Leather Bandanas": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Borrowed Hoods"
  },
  "The Coast Isn't Clear": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Raiders from the Saltstrand"
  },
  "Goretusk Snouts": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Razorhog Snouts"
  },
  "The People's Militia (2)": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "The Farmers' Watch (2)"
  },
  "Clearing Molsen Farm": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Clearing Ashby Farm"
  },
  "Tidehunters": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Defias Orders": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "The Grey Hood Orders"
  },
  "The Foe Reaper": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "The Grim Harvester"
  },
  "The Riverpaw Brutes": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "The Tallgrass Brutes"
  },
  "Dust Devils": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Tidehunter Scales": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Swirling Sand": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Gnoll Paws": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Patrolling the Hills": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Riverpaw Camp": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "The Tallgrass Camp"
  },
  "The Gold Coast Quarry": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "The Gull Point Quarry"
  },
  "Quarry Diggers": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Gold Coast Ore": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Gull Point Ore"
  },
  "Furlbrow's Deed": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Tuck's Deed"
  },
  "The Overseers": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Quarry Ledgers": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Knuckledusters": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Moonbrook Insignias": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Fenwick Insignias"
  },
  "Rust and Ruin": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Highwaymen": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Golem Gears": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Sealed Letter": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Harvest Reapers": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "No More Whips": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Patrolling Moonbrook": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Patrolling Fenwick"
  },
  "Oil for the Mill": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Wanted: Highwaymen": {
   "kind": "quest",
   "region": "Westfall",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Sweep the Dead Acre": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Sweep the Rustfield"
  },
  "The Unsent Letter": {
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "The Captain's Letter"
  },
  "Disrupt the Attacks": {
   "kind": "quest",
@@ -6753,162 +6753,162 @@
   "kind": "quest",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "To Stoneharrow"
  },
  "Redridge Goulash": {
   "kind": "quest",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Stoneharrow Goulash"
  },
  "Silk for the Bridge": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Gnoll Menace": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Paws for Proof": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Poachers": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Murlocs in the Lake": {
   "kind": "quest",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Mirelings in the Lake"
  },
  "The Tidecallers": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Pearls of Everstill": {
   "kind": "quest",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Pearls of Calder"
  },
  "Take Back the Mill": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Bone Charms": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Outrunners": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Blackrock Medallions": {
   "kind": "quest",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak Medallions"
  },
  "The Renegades": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Battle Orders": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Black Dragon Whelps": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Shadowhide": {
   "kind": "quest",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "The Tarfur"
  },
  "Shadowhide Pendants": {
   "kind": "quest",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Tarfur Pendants"
  },
  "Blackrock Champions": {
   "kind": "quest",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak Champions"
  },
  "The Summoners": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Wanted: Bellygrub": {
   "kind": "quest",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Wanted: Lardhide"
  },
  "Eight Legs Too Many": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Goretusk Herd": {
   "kind": "quest",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "The Razorhog Herd"
  },
  "Protect the Workers": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Silence the Mystics": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Whelps of the Black Flight": {
   "kind": "quest",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "Whelps of the Black Brood"
  },
  "Hold the Walls": {
   "kind": "quest",
   "region": "Redridge Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Stockade Riots": {
@@ -7089,7 +7089,7 @@
   "kind": "quest",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "The Lamplighters"
  },
  "The Nightbane": {
   "kind": "quest",
@@ -7425,7 +7425,7 @@
   "kind": "quest",
   "region": "Redridge Mountains",
   "status": "rename",
-  "new": null
+  "new": "A Call from the Forest"
  },
  "The Warsong Front": {
   "kind": "quest",
@@ -7851,19 +7851,19 @@
   "kind": "quest",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "The Engineer's Betrayal"
  },
  "Data Rescue": {
   "kind": "quest",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Punch Cards"
  },
  "The Grime-Encrusted Ring": {
   "kind": "quest",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "A Ring in the Ruins"
  },
  "The Razorflank Matriarch": {
   "kind": "quest",
@@ -8739,7 +8739,7 @@
   "kind": "dungeon or wanted",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Kingsmere Gaol"
  },
  "Shadowfang Keep": {
   "kind": "dungeon or wanted",
@@ -14511,7 +14511,7 @@
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": "Realm of Lone"
+  "new": "Realm of Loner"
  },
  "Stormwind": {
   "kind": "lore",
@@ -14740,5 +14740,221 @@
   "region": "Elwynn Forest",
   "status": "rename",
   "new": "Tallgrass"
+ },
+ "Frostmane": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Grimtooth"
+ },
+ "Rockjaw": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Gravelmaw"
+ },
+ "Gnarlpine": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Mossback"
+ },
+ "Shadowhide": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Tarfur"
+ },
+ "Timberling": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Rootling"
+ },
+ "Kaldorei": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Sylari"
+ },
+ "Fel": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Gloom"
+ },
+ "Thunderbrew": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Maltsson"
+ },
+ "Deeprun Tram": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Underrail"
+ },
+ "People's Militia": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Farmers' Watch"
+ },
+ "Black Flight": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Black Brood"
+ },
+ "Foe Reaper": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Grim Harvester"
+ },
+ "Stockade": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Gaol"
+ },
+ "Night Watch": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Lamplighters"
+ },
+ "Thermaplugg": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Voltwhistle"
+ },
+ "Felix": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Nib"
+ },
+ "Blanchy": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Old Clover"
+ },
+ "Amberstill": {
+  "kind": "lore",
+  "region": "Dun Morogh",
+  "status": "rename",
+  "new": "Ranson"
+ },
+ "Senir": {
+  "kind": "lore",
+  "region": "Dun Morogh",
+  "status": "rename",
+  "new": "Halstein"
+ },
+ "Grik'nir": {
+  "kind": "lore",
+  "region": "Dun Morogh",
+  "status": "rename",
+  "new": "Skrell"
+ },
+ "Webwood": {
+  "kind": "lore",
+  "region": "Teldrassil",
+  "status": "rename",
+  "new": "Webhollow"
+ },
+ "Ban'ethil": {
+  "kind": "lore",
+  "region": "Teldrassil",
+  "status": "rename",
+  "new": "Rootdeep"
+ },
+ "Zenn": {
+  "kind": "lore",
+  "region": "Teldrassil",
+  "status": "rename",
+  "new": "Pym"
+ },
+ "Melenas": {
+  "kind": "lore",
+  "region": "Teldrassil",
+  "status": "rename",
+  "new": "Varneth"
+ },
+ "Jangolode": {
+  "kind": "lore",
+  "region": "Westfall",
+  "status": "rename",
+  "new": "Copperseam"
+ },
+ "Longshore": {
+  "kind": "lore",
+  "region": "Westfall",
+  "status": "rename",
+  "new": "Saltstrand"
+ },
+ "Dagger Hills": {
+  "kind": "lore",
+  "region": "Westfall",
+  "status": "rename",
+  "new": "Flint Hills"
+ },
+ "Gold Coast": {
+  "kind": "lore",
+  "region": "Westfall",
+  "status": "rename",
+  "new": "Gull Point"
+ },
+ "Dead Acre": {
+  "kind": "lore",
+  "region": "Westfall",
+  "status": "rename",
+  "new": "Rustfield"
+ },
+ "Furlbrow": {
+  "kind": "lore",
+  "region": "Westfall",
+  "status": "rename",
+  "new": "Tuck"
+ },
+ "Saldean": {
+  "kind": "lore",
+  "region": "Westfall",
+  "status": "rename",
+  "new": "Wenham"
+ },
+ "Redridge": {
+  "kind": "lore",
+  "region": "Redridge Mountains",
+  "status": "rename",
+  "new": "Stoneharrow"
+ },
+ "Everstill": {
+  "kind": "lore",
+  "region": "Redridge Mountains",
+  "status": "rename",
+  "new": "Calder"
+ },
+ "Stonewatch": {
+  "kind": "lore",
+  "region": "Redridge Mountains",
+  "status": "rename",
+  "new": "Watcher's Keep"
+ },
+ "Galardell": {
+  "kind": "lore",
+  "region": "Redridge Mountains",
+  "status": "rename",
+  "new": "Dunmore"
+ },
+ "Sentinels": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Wood Elf Wardens"
  }
 }
