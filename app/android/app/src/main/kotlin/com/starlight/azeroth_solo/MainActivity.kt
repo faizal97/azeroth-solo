@@ -79,8 +79,10 @@ class MainActivity : FlutterActivity() {
     private val cloudScope = Scope("https://www.googleapis.com/auth/drive.appdata")
     private val cloudRequest = 4713
     private var pendingCloud: MethodChannel.Result? = null
-    private fun cloudToken(interactive: Boolean, result: MethodChannel.Result) {
-        val req = AuthorizationRequest.builder().setRequestedScopes(listOf(cloudScope)).build()
+    // "openid" alone (who is this, no email) is the only other scope the page may ask for: Firebase needs it
+    private fun cloudToken(interactive: Boolean, result: MethodChannel.Result, openid: Boolean = false) {
+        val scopes = if (openid) listOf(Scope("openid")) else listOf(cloudScope)
+        val req = AuthorizationRequest.builder().setRequestedScopes(scopes).build()
         Identity.getAuthorizationClient(this).authorize(req)
             .addOnSuccessListener { r ->
                 val token = r.accessToken
@@ -156,7 +158,7 @@ class MainActivity : FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "azsolo/cloud").setMethodCallHandler { call, result ->
             when (call.method) {
                 "available" -> result.success(GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS)
-                "token" -> cloudToken(call.argument<Boolean>("interactive") == true, result)
+                "token" -> cloudToken(call.argument<Boolean>("interactive") == true, result, call.argument<List<String>>("scopes")?.contains("openid") == true)
                 // an expired or refused token leaves Android's cache, so the next "token" fetches a fresh one
                 "clear" -> {
                     val t = call.argument<String>("token")
