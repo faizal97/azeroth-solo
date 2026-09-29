@@ -54,7 +54,7 @@
     x1: { title: 'The Drowned Crown', section: 'story', chapter: 'x1', lvl: 60, text: [
       'Ten thousand years ago, when the Heartfire exploded, the Starborn city of Sael\'anor sank beneath the sea. Its people should have drowned, and most of them did.',
       'Their prince, Aeldran, would not let his court die. In the dark he made a bargain with Nal\'veshra, the Deepmother, a spirit older than the Starborn: his people would live on beneath the waves. She kept her word, after a fashion. She does not give anything back.',
-      'The Wavebreaker trolls sank with the isle, and their sea loa, Shal\'zua, sank with them. Now the tribe walks again, praying to a goddess who no longer answers like herself.',
+      'The Wavebreaker trolls sank with the isle, and their sea spirit, Shal\'zua, sank with them. Now the tribe walks again, praying to a goddess who no longer answers like herself.',
       'Veshmira\'s storm raised the Stormveil Isle, and hid it for as long as she lived. When she fell in her lair, the storm broke. Brineholt ships carry the Accord from Gullhaven to the Tidewatch Coast; Kessari and Reclaimed crews sail from Camp Skarn to the Skullreef Isles. Everyone wants to reach the citadel at its heart first.',
     ] },
     lyveus_1: { title: 'The Exiled Knight', section: 'legend', legend: 'lyveus', open: true, lvl: 1, text: [

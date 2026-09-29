@@ -2240,7 +2240,7 @@
   var GMASK = { defias: DRED };
   /* ---- v18 looks: Dunescar / Scrublands drops ---- */
   var GW18 = {
-    /* Mokku the Hexer's voodoo staff: gnarled crook, shrunken-head fetish on a cord, red and teal feathers */
+    /* Mokku the Hexer's hex staff: gnarled crook, shrunken-head fetish on a cord, red and teal feathers */
     zalazane_staff: function (c) {
       var wd = '#5a3e26', fe = 'M0,0 C3.4,-3 4,-11 0,-16 C-4,-11 -3.4,-3 0,0 Z';
       return C(-1, -62, 12, c.rg([[0, '#d8ffb0', 0.6], [0.5, '#9a6ad8', 0.25], [1, '#9a6ad8', 0]]), 0) +

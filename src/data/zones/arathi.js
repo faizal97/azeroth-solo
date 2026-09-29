@@ -31,8 +31,8 @@
     highland_fleshstalker: { name: 'Highland Fleshstalker', lvl: [36, 37], family: 'beast', hpMult: 1.1, drops: [['ruined_pelt', 0.4]], qdrops: [['fleshstalker_hide', 0.55]] },
     drywhisker_kobold: { name: 'Candlegrub Kobold', lvl: [35, 36], family: 'humanoid', drops: [['broken_candle', 0.4], ['linen_cloth', 0.3]], qdrops: [['kobold_candle', 0.55]], aggro: 'No take candle!' },
     drywhisker_digger: { name: 'Candlegrub Digger', lvl: [36, 37], family: 'humanoid', drops: [['broken_candle', 0.4], ['linen_cloth', 0.3]], qdrops: [['drywhisker_ore', 0.5]], aggro: 'You no dig here!' },
-    witherbark_headhunter: { name: 'Rotbough Headhunter', lvl: [36, 37], family: 'humanoid', hpMult: 1.1, drops: [['troll_tusk', 0.45], ['linen_cloth', 0.3]], qdrops: [['witherbark_tusk', 0.55]], aggro: 'Your head be mine, mon!' },
-    witherbark_shadowcaster: { name: 'Rotbough Shadowcaster', lvl: [37, 38], family: 'humanoid', drops: [['troll_tusk', 0.4], ['linen_cloth', 0.35]], qdrops: [['shrunken_head', 0.45], ['witherbark_tusk', 0.3]], aggro: 'Da shadows take you!' },
+    witherbark_headhunter: { name: 'Rotbough Headhunter', lvl: [36, 37], family: 'humanoid', hpMult: 1.1, drops: [['troll_tusk', 0.45], ['linen_cloth', 0.3]], qdrops: [['witherbark_tusk', 0.55]], aggro: 'Your head is mine!' },
+    witherbark_shadowcaster: { name: 'Rotbough Shadowcaster', lvl: [37, 38], family: 'humanoid', drops: [['troll_tusk', 0.4], ['linen_cloth', 0.35]], qdrops: [['shrunken_head', 0.45], ['witherbark_tusk', 0.3]], aggro: 'The shadows take you!' },
     syndicate_highwayman: { name: 'Black Ledger Highwayman', lvl: [37, 38], family: 'humanoid', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.3]], qdrops: [['syndicate_documents', 0.45]], aggro: 'Highhold belongs to the Black Ledger!' },
     syndicate_magus: { name: 'Black Ledger Magus', lvl: [38, 39], family: 'humanoid', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.35]], qdrops: [['magus_focus', 0.45], ['syndicate_documents', 0.3]], aggro: 'Burn, intruder!' },
     boulderfist_brute: { name: 'Rockbrow Brute', lvl: [38, 39], family: 'giant', hpMult: 1.2, drops: [['thieves_coin', 0.55], ['linen_cloth', 0.3]], qdrops: [['ogre_bead', 0.5]], aggro: 'Me crush you!' },
@@ -99,7 +99,7 @@
     [{ type: 'collect', item: 'kovork_crown', n: 1 }], ['shards', { choice: ['fam_ring_rare40'] }], ['drum_fel', { choice: ['fam_ring_rare40'] }]);
   both('witherbark', 36, 'The Rotbough', ['Rotbough trolls raid the villages. Kill 12 headhunters.', 'Rotbough trolls kill our scouts. Kill 12 headhunters.'],
     [{ type: 'kill', mob: 'witherbark_headhunter', n: 12 }], ['sergeant_maclear', { choice: ['fam_chest38'] }], ['drum_fel', { choice: ['fam_chest38'] }]);
-  both('shadowcasters', 37, 'Shrunken Heads', ['Their shadowcasters shrink the heads of their victims. Kill 8 and bring me 5 heads so we can bury them.', 'Their shadowcasters use dark voodoo. Kill 8 and bring me 5 shrunken heads.'],
+  both('shadowcasters', 37, 'Shrunken Heads', ['Their shadowcasters shrink the heads of their victims. Kill 8 and bring me 5 heads so we can bury them.', 'Their shadowcasters use dark hex. Kill 8 and bring me 5 shrunken heads.'],
     [{ type: 'kill', mob: 'witherbark_shadowcaster', n: 8 }, { type: 'collect', item: 'shrunken_head', n: 5 }], ['captain_nials', { money: 2800 }], ['gorn', { money: 2800 }], 'witherbark');
   both('troll_tusks', 38, 'Rotbough Tusks', ['Bring me 10 tusks. The League pays a bounty.', 'Bring me 10 tusks. The Kessari want them.'],
     [{ type: 'collect', item: 'witherbark_tusk', n: 10 }], ['shards', { choice: ['fam_hands39'] }], ['drum_fel', { choice: ['fam_hands39'] }], 'witherbark');

@@ -115,7 +115,7 @@ ones the story leans on:
 - **Cinderpeak.** The burning mountain: Cinderpeak Depths (the Slagborn city of Ashforge), the Spire (the Ledger's vault), and the Magma Throne beneath.
 - **The Smugglers' Deep.** The old Fenwick mine and hidden cove where Blackwell builds the Ledger's fleet.
 - **Silverleaf Lodge.** A high elf village in the Kinloch pines; Lyveus's home, burned two years ago. Now a camp of the Ledger's enforcers until you clear it.
-- **Stormveil Isle.** The risen island. Holds the Tidewatch Coast (Accord landing), the Skullreef Isles (Krugar landing), the drowned city of Sael'anor, Loa's Rest, the causeway and the Tidecrown Citadel.
+- **Stormveil Isle.** The risen island. Holds the Tidewatch Coast (Accord landing), the Skullreef Isles (Krugar landing), the drowned city of Sael'anor, Spirit's Rest, the causeway and the Tidecrown Citadel.
 - **The Sunken Archive.** Sael'anor's great library (Accord dungeon).
 - **The Temple of Shal'zua.** The Wavebreakers' temple (Krugar dungeon).
 - **The Tidecrown Citadel.** Aeldran's seat; the 10-player raid, shared by both factions.

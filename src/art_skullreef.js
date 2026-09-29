@@ -1,6 +1,6 @@
 /* art_skullreef.js — Skullreef Isles art for Realm of Loner (expansion "The Drowned Crown", level 60, Krugar zone: a
  * tropical reef archipelago that rose from the sea after ten thousand years; the Kessari and Reclaimed camp at
- * Bloodtide Landing, Coralbone Beach, the Sunken Pier, the Screaming Grotto, the drowned troll village of Loa's Rest
+ * Bloodtide Landing, Coralbone Beach, the Sunken Pier, the Screaming Grotto, the drowned troll village of Spirit's Rest
  * and Shal'zua's Steps; reef makrura, the drowned Wavebreaker trolls and their hexers, drowned sailors, grotto sirens,
  * the skeletal Captain Saltbones and the sea giant Krag'vesh the Tidebeast).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the

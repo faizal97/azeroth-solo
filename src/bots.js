@@ -33,7 +33,7 @@
   };
 
   const GUILDS = ['Brackenford Legends', 'Crimson Vanguard', 'Knights of Ambermoor', 'Pumpkin Patrol', 'Grey Hood Dropouts', 'Lions Pride', 'Mireling Mafia', 'Starlight Vanguard',
-    'Blood and Thunder', 'Sons of the Storm', 'Dust Eaters', 'Bonewall Raiders', 'Kessari Voodoo'];
+    'Blood and Thunder', 'Sons of the Storm', 'Dust Eaters', 'Bonewall Raiders', 'Kessari Hexers'];
   const GUILD_FACTION = GUILDS.map((g, i) => (i < 8 ? 'alliance' : 'horde'));
   B.GUILDS = GUILDS; B.GUILD_FACTION = GUILD_FACTION;
   B.factionOf = (bot) => ((D.RACES[bot.race] || {}).faction || 'alliance');

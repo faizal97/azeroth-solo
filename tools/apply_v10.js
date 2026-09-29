@@ -17,7 +17,9 @@ const LOWER = { 'night elves': 'wood elves', 'night elf': 'wood elf', tauren: 'h
   worgen: 'werewolves', troggs: 'cavekin', trogg: 'cavekin', kodos: 'dustbacks', kodo: 'dustback', highborne: 'starborn', crocolisks: 'crocodiles', crocolisk: 'crocodile', zhevra: 'stripebacks',
   scorpids: 'scorpions', scorpid: 'scorpion', silithid: 'hiveborn', plainstriders: 'longnecks', plainstrider: 'longneck', devilsaurs: 'thundertooths', devilsaur: 'thundertooth', felguards: 'pit guards',
   felguard: 'pit guard', dreadlords: 'demon lords', dreadlord: 'demon lord', dragonflight: 'brood', drakonids: 'drakeborn', drakonid: 'drakeborn', 'wind riders': 'wyvern riders', 'wind rider': 'wyvern rider',
-  fel: 'gloom', forsaken: 'reclaimed' };
+  fel: 'gloom', forsaken: 'reclaimed',
+  // the trolls' faith: real-world words Warcraft gave its trolls (loa, voodoo) become our own
+  'sea loa': 'sea spirit', loas: 'spirits', loa: 'spirit', voodoo: 'hex' };
 // chat is written in lowercase ("how do i get to orgrimmar"): the lowercase form of a name that is not an everyday
 // word changes too, in prose only. Everyday words (wetlands, barrens, princess) keep their lowercase meaning.
 const dict = new Set(); try { for (const w of fs.readFileSync('/usr/share/dict/words', 'utf8').split('\n')) dict.add(w.toLowerCase()); } catch (e) { }
@@ -35,7 +37,10 @@ for (const [o, n] of Object.entries(CHAT_ONLY)) pairs.push([o, n]);
 pairs.sort((a, b) => b[0].length - a[0].length);
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 // an apostrophe may be escaped in the source (Gath\'Ilzogg inside '...'), so match both forms
-const re = new RegExp(`(?<![A-Za-z0-9_])(${pairs.map((p) => esc(p[0]).replace(/'/g, "\\\\?'")).join('|')})(s|\\\\?'s)?(?![A-Za-z0-9_])`, 'g');
+const mk = (list) => new RegExp(`(?<![A-Za-z0-9_])(${list.map((p) => esc(p[0]).replace(/'/g, "\\\\?'")).join('|')})(s|\\\\?'s)?(?![A-Za-z0-9_])`, 'g');
+// outside the chat files, chat-only words are not even candidates, so they cannot block a shorter real match
+const reChat = mk(pairs), reOther = mk(pairs.filter((p) => !CHAT_ONLY[p[0]]));
+const re = reOther;
 const lookup = Object.fromEntries(pairs);
 // inside a single-quoted JS string an apostrophe in a new name must be escaped: find which quote (if any) the match sits in
 const quoteAt = (line, off) => {
@@ -51,7 +56,7 @@ const quoteAt = (line, off) => {
 // the whole string a match sits in (from its opening quote to the closing one)
 const stringAt = (line, at) => { let i = at.start + 1; for (; i < line.length; i++) { if (line[i] === '\\') { i++; continue; } if (line[i] === at.q) break; } return line.slice(at.start + 1, i); };
 let chatFile = false;
-const sub = (line, js) => line.replace(re, (m, w, suf, off) => {
+const sub = (line, js) => line.replace(chatFile ? reChat : reOther, (m, w, suf, off) => {
   const key = w.replace(/\\'/g, "'"), at = js ? quoteAt(line, off) : null;
   if (CHAT_ONLY[key] && !chatFile) return m;
   if (PROSE_ONLY.has(key) && (!js || !at || !/\s/.test(stringAt(line, at)))) return m;
@@ -76,7 +81,7 @@ for (const f of files) {
     const r = sub(line, js).replace(/\b([Tt]he) The (?=[A-Z])/g, '$1 ')
       // a title the new name already carries: 'King King Rhodric', 'Poor Old Old Clover'
       .replace(/\b([A-Z][a-z]+(?: [A-Z][a-z]+)?) \1\b/g, (m, w) => w);
-    if (r !== line) n += (line.match(re) || []).length;
+    if (r !== line) n += (line.match(chatFile ? reChat : reOther) || []).length;
     return r;
   }).join('\n');
   if (n) { per.push([path.relative(ROOT, f), n]); total += n; if (!DRY) fs.writeFileSync(f, out); }

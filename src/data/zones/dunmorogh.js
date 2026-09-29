@@ -23,7 +23,7 @@
     ragged_young_wolf: { name: 'Ragged Young Wolf', lvl: [1, 2], family: 'beast', drops: [['ruined_pelt', 0.35], ['wolf_fang', 0.25]], qdrops: [['wolf_meat', 0.75]] },
     small_crag_boar: { name: 'Small Crag Boar', lvl: [2, 3], family: 'beast', drops: [['ruined_pelt', 0.3]], qdrops: [['crag_boar_rib', 0.5]] },
     frostmane_troll_whelp: { name: 'Grimtooth Troll Whelp', lvl: [3, 4], family: 'humanoid', drops: [['troll_tusk', 0.35], ['linen_cloth', 0.25]], aggro: 'You be dead soon!' },
-    grik_nir: { name: "Skrell the Cold", lvl: [5, 5], family: 'humanoid', named: true, hpMult: 1.7, dmgMult: 1.2, drops: [['troll_tusk', 1], ['griknir_staff', 0.35]], qdrops: [['felix_journal', 1]], aggro: 'Da ice will take ya!' },
+    grik_nir: { name: "Skrell the Cold", lvl: [5, 5], family: 'humanoid', named: true, hpMult: 1.7, dmgMult: 1.2, drops: [['troll_tusk', 1], ['griknir_staff', 0.35]], qdrops: [['felix_journal', 1]], aggro: 'The ice takes the careless!' },
     crag_boar: { name: 'Crag Boar', lvl: [5, 6], family: 'beast', drops: [['ruined_pelt', 0.4]], qdrops: [['crag_boar_rib', 0.55]] },
     young_wendigo: { name: 'Young Wendigo', lvl: [5, 6], family: 'yeti', drops: [['bear_hide', 0.3]], qdrops: [['wendigo_mane', 0.6]] },
     wendigo: { name: 'Wendigo', lvl: [7, 8], family: 'yeti', hpMult: 1.1, drops: [['bear_hide', 0.4]], qdrops: [['wendigo_mane', 0.65]] },

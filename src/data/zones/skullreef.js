@@ -1,5 +1,5 @@
 // EXPANSION "The Drowned Crown" (level 60). The Skullreef Isles are the Krugar side of the Stormveil Isle: Kessari and
-// Reclaimed crews hold Bloodtide Landing. The drowned Wavebreaker trolls, who served the sea loa Shal'zua, have risen with
+// Reclaimed crews hold Bloodtide Landing. The drowned Wavebreaker trolls, who served the sea spirit Shal'zua, have risen with
 // the isle. Also the Stormveil Reach (contested): the causeway out to the Tidecrown Citadel, where both sides meet.
 (function (root) {
   const D = root.D;
@@ -32,7 +32,7 @@
     coralbone_beach: { name: 'Coralbone Beach', zone: 'Skullreef Isles', region: 'skullreef', scene: 'coralbone_beach', lvl: [60, 60], mobs: [['reef_makrura', 7]], pool: 9, npcs: [], links: { bloodtide_landing: 16, screaming_grotto: 18 } },
     sunken_pier: { name: 'The Sunken Pier', zone: 'Skullreef Isles', region: 'skullreef', scene: 'sunken_pier', lvl: [60, 60], mobs: [['drowned_sailor', 7]], named: { captain_saltbones: 300 }, pool: 9, npcs: [], links: { bloodtide_landing: 18, loas_rest: 18 } },
     screaming_grotto: { name: 'The Screaming Grotto', zone: 'Skullreef Isles', region: 'skullreef', scene: 'screaming_grotto', lvl: [60, 60], mobs: [['grotto_siren', 6], ['reef_makrura', 2]], named: { kragvesh_the_tidebeast: 150 }, pool: 9, npcs: [], links: { coralbone_beach: 18, loas_rest: 18 } },
-    loas_rest: { name: "Loa's Rest", zone: 'Skullreef Isles', region: 'skullreef', scene: 'loas_rest', lvl: [60, 60], mobs: [['drowned_wavebreaker', 5], ['wavebreaker_hexer', 4]], pool: 10, npcs: [], links: { sunken_pier: 18, screaming_grotto: 18, temple_steps: 16, drowned_causeway: 20 } },
+    loas_rest: { name: "Spirit's Rest", zone: 'Skullreef Isles', region: 'skullreef', scene: 'loas_rest', lvl: [60, 60], mobs: [['drowned_wavebreaker', 5], ['wavebreaker_hexer', 4]], pool: 10, npcs: [], links: { sunken_pier: 18, screaming_grotto: 18, temple_steps: 16, drowned_causeway: 20 } },
     temple_steps: { name: "Shal'zua's Steps", zone: 'Skullreef Isles', region: 'skullreef', faction: 'horde', scene: 'temple_steps', lvl: [60, 60], safe: true, mobs: [], pool: 0, npcs: [], links: { loas_rest: 16 } },
     drowned_causeway: { name: 'The Drowned Causeway', zone: 'The Stormveil Reach', region: 'stormveil', scene: 'drowned_causeway', lvl: [60, 60], mobs: [['tidebound_sentinel', 4], ['drowned_wavebreaker', 4]], pool: 8, npcs: [], links: { sael_anor_outskirts: 20, loas_rest: 20, tidecrown_gate: 18 } },
     tidecrown_gate: { name: 'The Tidecrown Citadel', zone: 'The Stormveil Reach', region: 'stormveil', scene: 'tidecrown_gate', lvl: [60, 60], mobs: [['tidebound_sentinel', 3], ['tidebound_sorceress', 2]], pool: 5, npcs: [], links: { drowned_causeway: 18 } },
@@ -62,15 +62,15 @@
     objs: [{ type: 'kill', mob: 'grotto_siren', n: 10 }, { type: 'collect', item: 'siren_feather', n: 6 }], reward: { choice: ['fam_hands60'] } });
   H('sr_grotto_patrol', { name: 'Grotto Patrol', lvl: 60, giver: 'hexxer_mazu', turnin: 'hexxer_mazu', pre: ['sr_sirens'], text: '8 makrura and 8 sirens. Then the road is quiet.',
     objs: [{ type: 'kill', mob: 'reef_makrura', n: 8 }, { type: 'kill', mob: 'grotto_siren', n: 8 }], reward: { money: 9500 } });
-  H('sr_wavebreakers', { name: 'The Drowned Tribe', lvl: 60, giver: 'shadow_hunter_zulkesh', turnin: 'shadow_hunter_zulkesh', text: "The Wavebreaker tribe drowned with this isle ten thousand years ago. Now they walk again, and they pray to a loa that should be dead. Put 12 to rest.",
+  H('sr_wavebreakers', { name: 'The Drowned Tribe', lvl: 60, giver: 'shadow_hunter_zulkesh', turnin: 'shadow_hunter_zulkesh', text: "The Wavebreaker tribe drowned with this isle ten thousand years ago. Now they walk again, and they pray to a spirit that should be dead. Put 12 to rest.",
     objs: [{ type: 'kill', mob: 'drowned_wavebreaker', n: 12 }], reward: { choice: ['fam_legs60'] } });
   H('sr_fetishes', { name: 'Wavebreaker Fetishes', lvl: 60, giver: 'hexxer_mazu', turnin: 'hexxer_mazu', pre: ['sr_wavebreakers'], text: 'Their fetishes still hum with Shal\'zua\'s power. Bring me 8.',
     objs: [{ type: 'collect', item: 'wavebreaker_fetish', n: 8 }], reward: { money: 9500 } });
   H('sr_hexers', { name: 'The Hexers', lvl: 60, giver: 'shadow_hunter_zulkesh', turnin: 'shadow_hunter_zulkesh', pre: ['sr_wavebreakers'], text: "Their hexers lead the prayers. Kill 10.",
     objs: [{ type: 'kill', mob: 'wavebreaker_hexer', n: 10 }], reward: { choice: ['fam_chest60'] } });
-  H('sr_loas_rest', { name: "Hold Loa's Rest", lvl: 60, giver: 'shadow_hunter_zulkesh', turnin: 'shadow_hunter_zulkesh', pre: ['sr_hexers'], text: '8 wavebreakers and 6 hexers. Push them back to the causeway.',
+  H('sr_loas_rest', { name: "Hold Spirit's Rest", lvl: 60, giver: 'shadow_hunter_zulkesh', turnin: 'shadow_hunter_zulkesh', pre: ['sr_hexers'], text: '8 wavebreakers and 6 hexers. Push them back to the causeway.',
     objs: [{ type: 'kill', mob: 'drowned_wavebreaker', n: 8 }, { type: 'kill', mob: 'wavebreaker_hexer', n: 6 }], reward: { choice: ['fam_waist60'] } });
-  H('sr_causeway', { name: 'The Causeway', lvl: 60, giver: 'deathstalker_voss', turnin: 'deathstalker_voss', pre: ['sr_loas_rest'], text: 'Beyond Loa\'s Rest a causeway runs out to a citadel in the surf. The Accord is already looking at it. Go and look first.',
+  H('sr_causeway', { name: 'The Causeway', lvl: 60, giver: 'deathstalker_voss', turnin: 'deathstalker_voss', pre: ['sr_loas_rest'], text: 'Beyond Spirit\'s Rest a causeway runs out to a citadel in the surf. The Accord is already looking at it. Go and look first.',
     objs: [{ type: 'visit', place: 'drowned_causeway' }], reward: { money: 8000 } });
   H('sr_saltbones', { name: 'Captain Saltbones', lvl: 60, giver: 'deathstalker_voss', turnin: 'deathstalker_voss', text: 'A drowned captain still gives orders on the pier. Bring me his hat. It will look good on my wall.',
     objs: [{ type: 'collect', item: 'saltbones_hat', n: 1 }], reward: { choice: ['fam_ring_rare60'] } });

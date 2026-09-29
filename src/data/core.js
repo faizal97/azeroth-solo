@@ -462,7 +462,7 @@
     { id: 'scholomance', name: 'Headmaster %s', need: { clear: 'scholomance' }, how: 'Clear The Blackcloister' },
     { id: 'stratholme', name: '%s of the Lantern Watch', need: { clear: 'stratholme' }, how: 'Clear Graymouth' },
     { id: 'sunken_archive', name: '%s the Lorebound', need: { clear: 'sunken_archive' }, how: 'Clear the Sunken Archive' },
-    { id: 'shalzua', name: '%s, Loa-Breaker', need: { clear: 'shalzua_temple' }, how: "Clear the Temple of Shal'zua" },
+    { id: 'shalzua', name: '%s, Spirit-Breaker', need: { clear: 'shalzua_temple' }, how: "Clear the Temple of Shal'zua" },
     { id: 'guild_champion', name: '%s, Champion of the Guild', need: { guildRank: 4 }, how: 'Reach Champion rank in a guild' },
     { id: 'oathkeeper', name: '%s the Oathkeeper', need: { quest: 'lg_lyv_oath' }, how: "Finish Lyveus Cloveus's story" },
     { id: 'tidecrown', name: '%s of the Drowned Crown', need: { clear: 'tidecrown_citadel' }, how: 'Clear the Tidecrown Citadel' },

@@ -1,5 +1,5 @@
 /* art_shalzua.js — Temple of Shal'zua art for Realm of Loner (expansion "The Drowned Crown", Krugar dungeon, level 60:
- * the Wavebreaker trolls' temple to the sea loa Shal'zua, drowned for ten thousand years and risen with the Skullreef
+ * the Wavebreaker trolls' temple to the sea spirit Shal'zua, drowned for ten thousand years and risen with the Skullreef
  * Isles; the flooded courtyard of sacred tide pools under a storm sky, the drowned shrine hall with its serpent idols,
  * shell mosaic and offerings, and the loa's altar set in the lower jaw of a giant carved sea-serpent head over dark
  * water; the Wavebreaker zealots and spiritcallers and the tide serpents, and the bosses Hexmother Oyala, Tidefang,

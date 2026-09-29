@@ -9,12 +9,12 @@
   D.item('scorpid_stinger', { name: 'Scorpion Worker Tail', slot: 'quest', q: 1, icon: 'scorpid_stinger' });
   D.item('burning_medallion', { name: 'Hollow Eye Medallion', slot: 'quest', q: 1, icon: 'ring' });
   D.item('lizard_horn', { name: 'Thunder Lizard Horn', slot: 'quest', q: 1, icon: 'lizard_horn' });
-  D.item('voodoo_charm', { name: 'Voodoo Charm', slot: 'quest', q: 1, icon: 'voodoo_doll' });
+  D.item('voodoo_charm', { name: 'Hex Charm', slot: 'quest', q: 1, icon: 'voodoo_doll' });
   D.item('kultiras_insignia', { name: 'Brineholt Insignia', slot: 'quest', q: 1, icon: 'coin' });
   D.item('zalazane_head', { name: "Mokku the Hexer's Head", slot: 'quest', q: 1, icon: 'head' });
   D.item('taragaman_heart', { name: "Bazzak the Hungerer's Heart", slot: 'quest', q: 1, icon: 'venom' });
   D.item('burning_blade_cloak', { name: 'Hollow Eye Cloak', slot: 'back', q: 3, lvl: 5, armor: 9, stats: { int: 2, sta: 1 }, icon: 'cloak', sell: 130, source: 'Muzrak Hollowhand, Hollow Eye Coven', look: ['back', 'burning_blade_cloak'] });
-  D.item('zalazane_staff', { name: "Mokku the Hexer's Voodoo Staff", slot: 'weapon', wtype: 'staff', q: 3, lvl: 10, dmg: [16, 24], speed: 3, stats: { int: 4, spi: 3 }, sp: 9, icon: 'staff', sell: 800, source: 'Mokku the Hexer, Kessari Isles', look: ['weapon', 'zalazane_staff'] });
+  D.item('zalazane_staff', { name: "Mokku the Hexer's Hex Staff", slot: 'weapon', wtype: 'staff', q: 3, lvl: 10, dmg: [16, 24], speed: 3, stats: { int: 4, spi: 3 }, sp: 9, icon: 'staff', sell: 800, source: 'Mokku the Hexer, Kessari Isles', look: ['weapon', 'zalazane_staff'] });
   D.item('benedict_cutlass', { name: "Benedict's Cutlass", slot: 'weapon', wtype: 'sword', q: 3, lvl: 10, dmg: [11, 20], speed: 2.1, stats: { str: 3, sta: 2 }, icon: 'sword', sell: 800, source: 'Lieutenant Harwick, Saltwall Keep', look: ['weapon', 'benedict_cutlass'] });
   D.item('cursed_felblade', { name: 'Cursed Gloomblade', slot: 'weapon', wtype: 'sword', q: 3, lvl: 10, dmg: [13, 23], speed: 2.4, stats: { str: 4, agi: 2 }, icon: 'sword', sell: 900, look: ['weapon', 'cursed_felblade'], source: 'Bazzak the Hungerer, The Smoke Pit' });
   D.item('subterranean_cape', { name: 'Subterranean Cape', slot: 'back', q: 3, lvl: 10, armor: 18, stats: { sta: 3, spi: 2 }, icon: 'cloak', sell: 600, look: ['back', 'subterranean_cape'], source: 'Bazzak the Hungerer, The Smoke Pit' });
@@ -38,8 +38,8 @@
     thunder_lizard: { name: 'Thunder Lizard', lvl: [6, 8], family: 'beast', drops: [['ruined_pelt', 0.3]], qdrops: [['lizard_horn', 0.6]] },
     durotar_tiger: { name: 'Dunescar Tiger', lvl: [7, 8], family: 'beast', drops: [['ruined_pelt', 0.4]] },
     hexed_troll: { name: 'Hexed Troll', lvl: [8, 9], family: 'humanoid', drops: [['troll_trinket', 0.4], ['linen_cloth', 0.3]], qdrops: [['voodoo_charm', 0.6]], aggro: 'Mokku the Hexer will have your soul!' },
-    voodoo_troll: { name: 'Voodoo Troll', lvl: [8, 9], family: 'humanoid', drops: [['troll_trinket', 0.4], ['linen_cloth', 0.35]], qdrops: [['voodoo_charm', 0.6]] },
-    zalazane: { name: 'Mokku the Hexer', lvl: [11, 11], family: 'humanoid', elite: true, named: true, hpMult: 5.2, dmgMult: 2.5, drops: [['troll_trinket', 1]], qdrops: [['zalazane_head', 1]], special: 'hogger', loot: ['zalazane_staff'], aggro: 'You come to die on da Kessari Isles!' },
+    voodoo_troll: { name: 'Hex Troll', lvl: [8, 9], family: 'humanoid', drops: [['troll_trinket', 0.4], ['linen_cloth', 0.35]], qdrops: [['voodoo_charm', 0.6]] },
+    zalazane: { name: 'Mokku the Hexer', lvl: [11, 11], family: 'humanoid', elite: true, named: true, hpMult: 5.2, dmgMult: 2.5, drops: [['troll_trinket', 1]], qdrops: [['zalazane_head', 1]], special: 'hogger', loot: ['zalazane_staff'], aggro: 'You came to die on the Kessari Isles!' },
     kul_tiras_sailor: { name: 'Brineholt Sailor', lvl: [8, 9], family: 'humanoid', drops: [['thieves_coin', 0.4], ['linen_cloth', 0.35]], qdrops: [['kultiras_insignia', 0.55], ['kultiras_rum', 0.5]], aggro: 'For Brineholt!' },
     kul_tiras_marine: { name: 'Brineholt Marine', lvl: [9, 10], family: 'humanoid', drops: [['thieves_coin', 0.45], ['linen_cloth', 0.35]], qdrops: [['kultiras_insignia', 0.6], ['kultiras_rum', 0.5]], aggro: 'Hold the line!' },
     lieutenant_benedict: { name: 'Lieutenant Harwick', lvl: [10, 10], family: 'humanoid', named: true, hpMult: 1.9, dmgMult: 1.25, drops: [['thieves_coin', 1], ['benedict_cutlass', 0.35]], aggro: 'You filthy orcs will never take this keep!' },
@@ -103,7 +103,7 @@
       objs: [{ type: 'collect', item: 'kultiras_insignia', n: 8 }], reward: { choice: ['fam_wrist'] } },
     benedict_q: { name: 'Lieutenant Harwick', lvl: 10, giver: 'garthok', turnin: 'garthok', pre: ['kultiras_q'], text: 'Their commander, Lieutenant Harwick, must fall.',
       objs: [{ type: 'kill', mob: 'lieutenant_benedict', n: 1 }], reward: { choice: ['fam_back'] } },
-    voodoo_q: { name: 'Hexed Charms', lvl: 9, giver: 'vanira', turnin: 'vanira', text: 'Mokku the Hexer has hexed my people on the Kessari Isles. Bring me 8 of their voodoo charms so I can break the curse.',
+    voodoo_q: { name: 'Hexed Charms', lvl: 9, giver: 'vanira', turnin: 'vanira', text: 'Mokku the Hexer has hexed my people on the Kessari Isles. Bring me 8 of their hex charms so I can break the curse.',
       objs: [{ type: 'collect', item: 'voodoo_charm', n: 8 }], reward: { choice: ['fam_chest9'] } },
     zalazane_q: { name: 'Mokku the Hexer', lvl: 11, giver: 'vanira', turnin: 'vanira', group: 3, text: 'Mokku the Hexer himself must die. Bring me his head. He is too strong to face alone.',
       objs: [{ type: 'collect', item: 'zalazane_head', n: 1 }], reward: { choice: ['militia'] } },
@@ -123,7 +123,7 @@
       objs: [{ type: 'collect', item: 'kultiras_rum', n: 6 }], reward: { choice: ['fam_waist'] } },
     marines_q: { name: 'The Keep Marines', lvl: 9, giver: 'vikar', turnin: 'vikar', pre: ['tiger_hunt'], text: 'Saltwall marines patrol farther from the keep each day. Kill 8 and push them back.',
       objs: [{ type: 'kill', mob: 'kul_tiras_marine', n: 8 }], reward: { choice: ['fam_legs9'] } },
-    voodoo_trolls: { name: 'Voodoo on the Isles', lvl: 10, giver: 'kaplak', turnin: 'kaplak', text: 'The voodoo trolls on the Kessari Isles serve Mokku the Hexer now. Kill 8 of them.',
+    voodoo_trolls: { name: 'Hexes on the Isles', lvl: 10, giver: 'kaplak', turnin: 'kaplak', text: 'The hex trolls on the Kessari Isles serve Mokku the Hexer now. Kill 8 of them.',
       objs: [{ type: 'kill', mob: 'voodoo_troll', n: 8 }], reward: { choice: ['fam_hands9'] } },
     crossroads_durotar: { name: 'Report to Dustfort', lvl: 10, giver: 'garthok', turnin: 'thork', text: 'Dustfort guards the heart of the Scrublands. Grukk needs fighters. Go west through Hollow Tower.',
       objs: [{ type: 'visit', place: 'crossroads' }], reward: {} },

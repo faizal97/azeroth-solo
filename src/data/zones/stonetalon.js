@@ -75,7 +75,7 @@
   Object.assign(D.QUESTS, {
     crossroads_stonetalon: { name: 'Into the Mountains', lvl: 18, giver: 'thork', turnin: 'xenzilla', text: "Our scouts at Camp Vosh say the goblins are tearing Highcrag apart. Go west past the Silent Pools and report to Zessi.",
       objs: [{ type: 'visit', place: 'malakajin' }], reward: { money: 600 } },
-    webwinder_eggs: { name: 'The Silkline Nests', lvl: 18, giver: 'xenzilla', turnin: 'xenzilla', text: 'The spiders on the Silkline Path breed faster every season. Bring me 8 of their eggs before they hatch, mon.',
+    webwinder_eggs: { name: 'The Silkline Nests', lvl: 18, giver: 'xenzilla', turnin: 'xenzilla', text: 'The spiders on the Silkline Path breed faster every season. Bring me 8 of their eggs before they hatch. A nest left alone becomes a forest of legs.',
       objs: [{ type: 'collect', item: 'deepmoss_egg', n: 8 }], reward: { choice: ['fam_feet22'] } },
     report_sun_rock: { name: 'Tallstone Retreat', lvl: 18, giver: 'xenzilla', turnin: 'mastok', text: 'Take the Silkline Path north to Tallstone Retreat. Commander Rakko will want every blade he can get.',
       objs: [{ type: 'visit', place: 'sun_rock_retreat' }], reward: { money: 600 } },
@@ -129,7 +129,7 @@
       objs: [{ type: 'collect', item: 'grimtotem_totem', n: 8 }], reward: { money: 1300 } },
     grimtotem_plans: { name: 'The Battle Plan', lvl: 25, giver: 'mastok', turnin: 'mastok', pre: ['grimtotem_brutes'], text: 'The mystics carry their battle plans. Kill 10 mystics and bring me the plan.',
       objs: [{ type: 'kill', mob: 'grimtotem_mystic', n: 10 }, { type: 'collect', item: 'grimtotem_orders', n: 1 }], reward: { choice: ['fam_waist24'] } },
-    venomspitters: { name: 'Venomspitters', lvl: 19, giver: 'xenzilla', turnin: 'xenzilla', pre: ['webwinder_eggs'], text: 'Da venomspitters be worse than da creepers. Kill 10 of dem, mon.',
+    venomspitters: { name: 'Venomspitters', lvl: 19, giver: 'xenzilla', turnin: 'xenzilla', pre: ['webwinder_eggs'], text: 'The venomspitters are worse than the creepers. Kill 10 of them. Keep your mouth shut when they spit.',
       objs: [{ type: 'kill', mob: 'deepmoss_venomspitter', n: 10 }], reward: { money: 950 } },
     cragpool_patrol: { name: 'Break the Works', lvl: 22, giver: 'tsunaman', turnin: 'tsunaman', pre: ['operators'], text: 'Keep the goblins from rebuilding: 8 operators and 6 harvesters.',
       objs: [{ type: 'kill', mob: 'venture_operator', n: 8 }, { type: 'kill', mob: 'compact_harvester', n: 6 }], reward: { choice: ['fam_waist24'] } },

@@ -240,13 +240,13 @@
     ] },
     { id: 'shalzua_intro', instance: 'shalzua_temple', title: "Temple of Shal'zua", music: 'dungeon', shots: [
       { bg: 'scene:temple_steps', dur: 9, cam: [[0, 0, 1.15], [0, 2, 1.02]], fx: ['fadein'],
-        lines: [{ t: 0.5, text: "The Wavebreaker trolls once served Shal'zua, a loa of the sea. When the isle sank, they sank with it." }, { t: 5, text: 'They are praying again.' }] },
+        lines: [{ t: 0.5, text: "The Wavebreaker trolls once served Shal'zua, a spirit of the sea. When the isle sank, they sank with it." }, { t: 5, text: 'They are praying again.' }] },
       { bg: 'scene:shalzua_shrine', dur: 10, cam: [[-4, 0, 1.12], [4, 0, 1.12]],
         actors: [{ a: 'mob:wavebreaker_zealot', x: 56, y: 2, w: 22 }, { a: 'mob:wavebreaker_spiritcaller', x: 28, y: 2, w: 20, from: { x: 8, o: 0 }, dur: 2 }],
-        lines: [{ t: 0.5, text: 'Hexmother Oyala raised the drowned tribe. High Priest Zan\'jin feeds the altar.' }, { t: 5.5, text: 'But the thing they pray to does not answer like a loa.' }] },
+        lines: [{ t: 0.5, text: 'Hexmother Oyala raised the drowned tribe. High Priest Zan\'jin feeds the altar.' }, { t: 5.5, text: 'But the thing they pray to does not answer like a spirit.' }] },
       { bg: 'scene:shalzua_sanctum', dur: 10, cam: [[0, 0, 1.0], [0, -2, 1.2]], fx: ['shake@5', 'fadeout'],
         actors: [{ a: 'mob:avatar_of_shalzua', x: 40, y: 0, w: 38, from: { y: -20, o: 0 }, dur: 2 }],
-        lines: [{ t: 0.5, text: "Shal'zua's avatar rises from the altar, wearing the loa's face. Something else looks out through its eyes." }, { t: 5, who: "Avatar of Shal'zua", text: 'I... was a god...' }] },
+        lines: [{ t: 0.5, text: "Shal'zua's avatar rises from the altar, wearing the spirit's face. Something else looks out through its eyes." }, { t: 5, who: "Avatar of Shal'zua", text: 'I... was a god...' }] },
     ] },
     { id: 'mc_intro', instance: 'molten_core', title: 'The Magma Throne', music: 'dungeon', shots: [
       { bg: 'scene:molten_core_gate', dur: 10, cam: [[0, 2, 1.18], [0, 0, 1.02]], fx: ['fadein', 'embers'],
@@ -277,7 +277,7 @@
         lines: [{ t: 0.5, text: 'The prince waits on his coral throne, with his drowned court around him.' }, { t: 5, who: 'Prince Aeldran', text: 'Ten thousand years I waited. You will not take the surface from me.' }] },
       { bg: 'scene:citadel_abyss', dur: 10, cam: [[0, 0, 1.0], [0, -2, 1.22]], fx: ['shake@5', 'fadeout'],
         actors: [{ a: 'mob:nalveshra', x: 40, y: 0, w: 42, from: { y: 20, o: 0 }, dur: 2.4 }],
-        lines: [{ t: 0.5, text: 'Below the throne, the Deepmother waits in the dark.' }, { t: 5, who: "Nal'veshra", text: 'Little lights. I will swallow you as I swallowed the loa.' }] },
+        lines: [{ t: 0.5, text: 'Below the throne, the Deepmother waits in the dark.' }, { t: 5, who: "Nal'veshra", text: 'Little lights. I will swallow you as I swallowed the spirit.' }] },
     ] },
     { id: 'ch2', level: 20, title: 'Chapter 2: The Collector\'s Fleet', music: 'dungeon', shots: [
       { bg: 'story:stormwind_keep', dur: 10, cam: [[0, 2, 1.18], [0, 0, 1.04]], fx: ['fadein'],

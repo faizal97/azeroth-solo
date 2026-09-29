@@ -133,7 +133,7 @@
     bk_hymn: { title: 'Hymn to Shal\'zua', section: 'book', book: true, lvl: 60, faction: 'horde', from: { high_priest_zanjin: 0.45 }, text: [
       'Shal\'zua, mother of the deep water, hear the Wavebreakers singing. We give you the first fish of the season. We give you our dead, wrapped in kelp. You give us back the tide.',
       'When the storm is coming, your voice is in the shell. When the nets are empty, your hand is in the current. When a son goes under, the foam comes back to the shore, and so we know you took him gently.',
-      'The sea gives and the sea takes, and never one without the other. This is the law of the loa. This is the law of the reef. Sing it at the tide, and your children will sing it after you.',
+      'The sea gives and the sea takes, and never one without the other. This is the law of the spirit. This is the law of the reef. Sing it at the tide, and your children will sing it after you.',
       'The last verse, added after the waters closed: Deepmother, mother below the mother, hear us. We give, and you do not give back. We go down, and we do not come up. This is good. This is the new law. The dark is kind to those who stay.',
     ] },
   });

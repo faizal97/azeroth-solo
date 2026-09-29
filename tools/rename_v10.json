@@ -3146,8 +3146,8 @@
  "Voodoo Troll": {
   "kind": "monster",
   "region": "Durotar",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Hex Troll"
  },
  "Zalazane": {
   "kind": "boss or named",
@@ -6050,8 +6050,8 @@
  "Voodoo on the Isles": {
   "kind": "quest",
   "region": "Durotar",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Hexes on the Isles"
  },
  "Report to the Crossroads": {
   "kind": "quest",
@@ -7808,8 +7808,8 @@
  "Voodoo Charms": {
   "kind": "quest",
   "region": "Stranglethorn Vale",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Hex Charms"
  },
  "The Kurzen": {
   "kind": "quest",
@@ -8132,8 +8132,8 @@
  "Voodoo Totem": {
   "kind": "quest",
   "region": "Tanaris",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Hex Totem"
  },
  "Feathermoon": {
   "kind": "quest",
@@ -9410,8 +9410,8 @@
  "Voodoo Charm": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Hex Charm"
  },
  "Kul Tiras Insignia": {
   "kind": "item",
@@ -11564,8 +11564,8 @@
  "Voodoo Rattle Staff": {
   "kind": "item",
   "region": "",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Hex Rattle Staff"
  },
  "Witch Doctor's Band": {
   "kind": "item",
@@ -16594,5 +16594,53 @@
   "region": "",
   "status": "rename",
   "new": "Hollow Host"
+ },
+ "Loa's Rest": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Spirit's Rest"
+ },
+ "Loa-Breaker": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Spirit-Breaker"
+ },
+ "Drowned Loa": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Drowned Spirit"
+ },
+ "Loa-Touched": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Spirit-Touched"
+ },
+ "Voodoo Staff": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hex Staff"
+ },
+ "Kessari Voodoo": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Kessari Hexers"
+ },
+ "Voodoo": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hex"
+ },
+ "Loa": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Spirit"
  }
 }

@@ -140,7 +140,7 @@
       'Neither faction has a claim here. Krugar and Accord adventurers meet in Coppergulch, take contracts from the same goblins and walk into the same city. The Duneskin do not care which banner a corpse was carrying.',
     ], bosses: {
       antu_sul: 'An overseer of the Duneskin who keeps the city\'s basilisks. He raises them from the egg, loves them more than his own kin, and feeds them whoever comes over the wall.',
-      witch_doctor_zumrah: 'Master of the city\'s dead. He calls the Duneskin buried in the graveyard back to their feet, and his voodoo totem keeps them loyal long after death.',
+      witch_doctor_zumrah: 'Master of the city\'s dead. He calls the Duneskin buried in the graveyard back to their feet, and his hex totem keeps them loyal long after death.',
       theka_the_martyr: 'A Duneskin priest who gave his life to the tribe\'s gods and came back bound to the sacred scarabs. The trolls believe he can no longer truly die.',
       gahz_rilla: 'A great hydra kept in the sacred pool beneath the temple. The Duneskin honour it as a living god, and the priests alone decide when it is woken and fed.',
       sergeant_bly: 'Leader of the mercenary crew that came to rob the temple. The plan fell apart on the pyramid stairs, and now he trusts nobody who climbs up to join him.',
@@ -213,7 +213,7 @@
       lady_vessaria: 'Aeldran\'s scribe since before the Drowning, and mistress of the archive. She writes the prince\'s will into the water, and what she writes, the drowned obey.',
     } },
     dg_shalzua_temple: { title: 'Temple of Shal\'zua', section: 'dungeon', dungeon: 'shalzua_temple', text: [
-      'The Wavebreakers were a sea tribe, living off reef and tide. They gave their best catch and their dead to Shal\'zua, the loa of the deep water, and she gave them fair winds and full nets. The Kessari count them among their ancestors.',
+      'The Wavebreakers were a sea tribe, living off reef and tide. They gave their best catch and their dead to Shal\'zua, the spirit of the deep water, and she gave them fair winds and full nets. The Kessari count them among their ancestors.',
       'When the isle sank, the tribe went down with their temple, still praying. Something in the dark heard them. It kept them, and it taught their priests new rites.',
       'The priests changed first. The Hexmother\'s bone charms bind the risen tribe to the temple, and the High Priest\'s knife keeps the altar wet. The drowned trolls in the Skullreef shallows walk because this temple tells them to.',
       'For the Krugar, these are not strangers. Hexxer Mazu came to the Skullreef to lay the Kessari\'s lost kin to rest, and to set their goddess free, if anything of her is left to free.',
@@ -221,19 +221,19 @@
       hexmother_oyala: 'The tribe\'s eldest witch doctor, who drowned with her people and woke first. She raised the rest one by one and calls them her children. Her fetish holds them to the temple.',
       tidefang: 'A great eel kept in the tide pools as the temple\'s sacred beast. The Wavebreakers fed it for generations. It came through the sinking better than they did.',
       high_priest_zanjin: 'The last high priest of Shal\'zua, who kept her altar before the isle sank and keeps it still. He has not admitted that the goddess who answers him speaks with a different voice.',
-      avatar_of_shalzua: 'The loa\'s own form, raised from the altar. It still wears Shal\'zua\'s face, and some of her memory. Whatever moves it now is not the loa of the sea.',
+      avatar_of_shalzua: 'The spirit\'s own form, raised from the altar. It still wears Shal\'zua\'s face, and some of her memory. Whatever moves it now is not the spirit of the sea.',
     } },
     dg_tidecrown_citadel: { title: 'The Tidecrown Citadel', section: 'dungeon', dungeon: 'tidecrown_citadel', text: [
       'The citadel was the heart of Sael\'anor, the seat of the Tidecrown line and the tallest thing on the isle. It sank whole. Ten thousand years of coral have grown over its halls, and the court inside never stopped holding court.',
       'Prince Aeldran believes he saved his people. He kept them alive, after a fashion, with a bargain he never fully understood. The crown he wears commands every drowned thing on the isle, but it was never his. It belongs to Nal\'veshra, the Deepmother, a spirit of the deep sea older than the Starborn. The crown is how she rules through him.',
-      'She is the real power under the citadel. She kept the elves because they were useful to her. When the Wavebreakers\' prayers reached her in the dark, she ate their loa and put on her face. Everything that has walked out of the sea since Veshmira\'s storm has walked for her.',
+      'She is the real power under the citadel. She kept the elves because they were useful to her. When the Wavebreakers\' prayers reached her in the dark, she ate their spirit and put on her face. Everything that has walked out of the sea since Veshmira\'s storm has walked for her.',
       'The Accord came for the prince\'s crown and the Krugar for their lost goddess. Both found the same thing at the bottom of the citadel, and for one morning that was enough.',
     ], bosses: {
       commander_serathis: 'Captain of the prince\'s guard, who held the citadel gate on the day the sea came in. He is holding it still, in armour the coral grew over him.',
       tide_twin_myrel: 'Myrel and her sister Sorin, the prince\'s tidecallers, who once turned the sea around Sael\'anor for its ships. They drowned together and have never fought apart.',
       coralheart_colossus: 'A guardian of living coral that grew for ten thousand years in the gallery beneath the throne. The Deepmother\'s power runs through it like sap. Nobody made it. It grew.',
       prince_aeldran: 'The last prince of Sael\'anor, who bargained with the deep to keep his court alive. Proud and grieving, he wants the surface back, and he still does not know what he sold.',
-      nalveshra: 'A spirit of the deep sea, older than the Starborn. She kept Sael\'anor alive for her own ends, swallowed the loa Shal\'zua, and ruled the isle through its prince for ten thousand years.',
+      nalveshra: 'A spirit of the deep sea, older than the Starborn. She kept Sael\'anor alive for her own ends, swallowed the spirit Shal\'zua, and ruled the isle through its prince for ten thousand years.',
     } },
     dg_molten_core: { title: 'The Magma Throne', section: 'dungeon', dungeon: 'molten_core', text: [
       'Vulcarn, the King Below, has slept in the sea of fire beneath Cinderpeak for longer than the Slagborn have lived there. After the Long War they borrowed to rebuild, and they pay it back by digging, each hall a little deeper, each one a little closer to the fire.',
@@ -421,9 +421,9 @@
       'Past the Kelpwood, soldiers in coral armour march out of the sea. Prince Aeldran has not forgotten his city. He means to have it back.',
     ] },
     zn_skullreef_isles: { title: 'Skullreef Isles', section: 'zone', zone: 'Skullreef Isles', text: [
-      'The Skullreef Isles were home to the Wavebreaker trolls, who served the sea loa Shal\'zua. When the Heartfire exploded, the isle sank and took the tribe and their goddess with it.',
-      'The storm has brought them back. The Wavebreakers walk again, drowned and faithful, praying to a loa who wears Shal\'zua\'s face but no longer answers like her. Hexmother Oyala and High Priest Zan\'jin lead the prayers.',
-      'Hexxer Mazu has brought Kessari and Reclaimed crews to Bloodtide Landing. The trolls want the loa put to rest. The Reclaimed want to know what raises these dead.',
+      'The Skullreef Isles were home to the Wavebreaker trolls, who served the sea spirit Shal\'zua. When the Heartfire exploded, the isle sank and took the tribe and their goddess with it.',
+      'The storm has brought them back. The Wavebreakers walk again, drowned and faithful, praying to a spirit who wears Shal\'zua\'s face but no longer answers like her. Hexmother Oyala and High Priest Zan\'jin lead the prayers.',
+      'Hexxer Mazu has brought Kessari and Reclaimed crews to Bloodtide Landing. The trolls want the spirit put to rest. The Reclaimed want to know what raises these dead.',
     ] },
     zn_the_stormveil_reach: { title: 'The Stormveil Reach', section: 'zone', zone: 'The Stormveil Reach', text: [
       'The Stormveil Reach is the heart of the risen isle. The Drowned Causeway runs out across the shallows from both landings, and at its end stands the Tidecrown Citadel, the seat of Prince Aeldran.',

@@ -1,4 +1,4 @@
-// EXPANSION: The Temple of Shal'zua (Krugar dungeon, level 60). The Wavebreaker trolls' drowned temple to the sea loa
+// EXPANSION: The Temple of Shal'zua (Krugar dungeon, level 60). The Wavebreaker trolls' drowned temple to the sea spirit
 // Shal'zua, whose spirit was swallowed by the Deepmother. Entered from Shal'zua's Steps on the Skullreef Isles.
 (function (root) {
   const D = root.D;
@@ -11,13 +11,13 @@
   gear('tidefang_boots', 'Tidefang Treads', 'feet', { atype: 'mail', lvl: 60, armor: 364, stats: { str: 17, sta: 15 }, icon: 'boots', sell: 13000 });
   gear('zanjin_dagger', "Zan'jin's Sacrificial Knife", 'weapon', { wtype: 'dagger', lvl: 60, dmg: [50, 94], speed: 1.8, stats: { agi: 17, sta: 11 }, icon: 'dagger', sell: 13800 });
   gear('zanjin_legs', 'Wavebreaker Kilt', 'legs', { atype: 'cloth', lvl: 60, armor: 96, stats: { int: 20, spi: 15 }, sp: 24, icon: 'legs', sell: 13400 });
-  gear('avatar_staff', "Staff of the Drowned Loa", 'weapon', { wtype: 'staff', lvl: 60, dmg: [92, 136], speed: 3, stats: { int: 25, spi: 18 }, sp: 42, icon: 'staff', sell: 14000 });
+  gear('avatar_staff', "Staff of the Drowned Spirit", 'weapon', { wtype: 'staff', lvl: 60, dmg: [92, 136], speed: 3, stats: { int: 25, spi: 18 }, sp: 42, icon: 'staff', sell: 14000 });
   gear('avatar_axe', 'Reefcleaver', 'weapon', { wtype: 'axe', lvl: 60, dmg: [100, 150], speed: 3.4, stats: { str: 24, sta: 15 }, icon: 'axe', sell: 14000 });
-  gear('avatar_leather', "Loa-Touched Vest", 'chest', { atype: 'leather', lvl: 60, armor: 288, stats: { agi: 25, sta: 18 }, icon: 'chest_leather', sell: 13800 });
+  gear('avatar_leather', "Spirit-Touched Vest", 'chest', { atype: 'leather', lvl: 60, armor: 288, stats: { agi: 25, sta: 18 }, icon: 'chest_leather', sell: 13800 });
   gear('avatar_robe', 'Robe of the Tide Priest', 'chest', { atype: 'cloth', lvl: 60, armor: 128, stats: { int: 25, spi: 18 }, sp: 32, icon: 'chest_cloth', sell: 13800 });
 
   Object.assign(D.MOBS, {
-    wavebreaker_zealot: { name: 'Wavebreaker Zealot', lvl: [60, 60], family: 'undead', hpMult: 1.1, drops: [['thieves_coin', 0.55], ['linen_cloth', 0.3]], aggro: 'For the loa!' },
+    wavebreaker_zealot: { name: 'Wavebreaker Zealot', lvl: [60, 60], family: 'undead', hpMult: 1.1, drops: [['thieves_coin', 0.55], ['linen_cloth', 0.3]], aggro: 'For the spirit!' },
     tide_serpent: { name: 'Tide Serpent', lvl: [60, 60], family: 'beast', hpMult: 1.2, drops: [['light_leather', 0.3]] },
     wavebreaker_spiritcaller: { name: 'Wavebreaker Spiritcaller', lvl: [60, 60], family: 'undead', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.4]] },
     hexmother_oyala: { name: 'Hexmother Oyala', lvl: [60, 60], family: 'undead', boss: true, special: 'kelris', summon: 'wavebreaker_zealot', specialText: 'Oyala calls her drowned children!', loot: ['oyala_cloak', 'oyala_bracers'], qdrops: [['oyala_fetish', 1]], aggro: 'Mother is here, little ones.' },
@@ -27,7 +27,7 @@
   });
 
   const H = (id, q) => { q.faction = 'horde'; D.QUESTS[id] = q; };
-  H('tp_avatar', { name: 'A Drowned God', lvl: 60, giver: 'shadow_hunter_zulkesh', turnin: 'shadow_hunter_zulkesh', dungeon: 'shalzua_temple', text: "Shal'zua was a loa of the sea. Now something in the deep wears her like a mask. Free her. Bring me her pearl.",
+  H('tp_avatar', { name: 'A Drowned God', lvl: 60, giver: 'shadow_hunter_zulkesh', turnin: 'shadow_hunter_zulkesh', dungeon: 'shalzua_temple', text: "Shal'zua was a spirit of the sea. Now something in the deep wears her like a mask. Free her. Bring me her pearl.",
     objs: [{ type: 'collect', item: 'loa_pearl', n: 1 }], reward: { choice: ['fam_weapon60'] } });
   H('tp_oyala', { name: 'The Hexmother', lvl: 60, giver: 'hexxer_mazu', turnin: 'hexxer_mazu', dungeon: 'shalzua_temple', text: 'Hexmother Oyala raised the drowned tribe. Her bone fetish binds them. Break it, and bring it to Mazu.',
     objs: [{ type: 'collect', item: 'oyala_fetish', n: 1 }], reward: { choice: ['fam_back_rare60'] } });
@@ -38,7 +38,7 @@
       { scene: 'shalzua_pools', label: 'Tidefang', mobs: ['tidefang'], boss: true },
       { scene: 'shalzua_shrine', label: 'The drowned shrine', mobs: ['wavebreaker_spiritcaller', 'wavebreaker_zealot', 'wavebreaker_zealot'] },
       { scene: 'shalzua_shrine', label: "High Priest Zan'jin", mobs: ['high_priest_zanjin'], boss: true },
-      { scene: 'shalzua_sanctum', label: 'The loa\'s altar', mobs: ['wavebreaker_spiritcaller', 'tide_serpent'] },
+      { scene: 'shalzua_sanctum', label: 'The spirit\'s altar', mobs: ['wavebreaker_spiritcaller', 'tide_serpent'] },
       { scene: 'shalzua_sanctum', label: "Avatar of Shal'zua", mobs: ['avatar_of_shalzua'], boss: true },
     ] },
   });

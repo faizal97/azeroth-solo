@@ -10,7 +10,7 @@
   D.item('raptor_talon', { name: 'Jungle Raptor Talon', slot: 'quest', q: 1, icon: 'claw' });
   D.item('jungle_stalker_hide', { name: 'Jungle Stalker Hide', slot: 'quest', q: 1, icon: 'pelt' });
   D.item('bloodscalp_tusk', { name: 'Scaldback Tusk', slot: 'quest', q: 1, icon: 'tusk' });
-  D.item('troll_charm', { name: 'Voodoo Charm', slot: 'quest', q: 1, icon: 'voodoo_doll' });
+  D.item('troll_charm', { name: 'Hex Charm', slot: 'quest', q: 1, icon: 'voodoo_doll' });
   D.item('kurzen_orders', { name: 'Drayke Battle Orders', slot: 'quest', q: 1, icon: 'journal' });
   D.item('jungle_remedy', { name: 'Jungle Remedy', slot: 'quest', q: 1, icon: 'venom' });
   D.item('venture_ledger', { name: 'Deepgold Company Ledger', slot: 'quest', q: 1, icon: 'journal' });
@@ -29,8 +29,8 @@
   Object.assign(D.MOBS, {
     stranglethorn_raptor: { name: 'Vinewild Raptor', lvl: [30, 31], family: 'beast', drops: [['ruined_pelt', 0.35]], qdrops: [['raptor_talon', 0.55]] },
     stranglethorn_tiger: { name: 'Vinewild Tiger', lvl: [31, 32], family: 'beast', drops: [['ruined_pelt', 0.4]], qdrops: [['tiger_fang', 0.55]] },
-    bloodscalp_warrior: { name: 'Scaldback Warrior', lvl: [30, 31], family: 'humanoid', drops: [['troll_tusk', 0.4], ['linen_cloth', 0.3]], qdrops: [['bloodscalp_tusk', 0.55]], aggro: 'Scaldback gonna eat you, mon!' },
-    bloodscalp_axe_thrower: { name: 'Scaldback Axe Thrower', lvl: [31, 32], family: 'humanoid', drops: [['troll_tusk', 0.4], ['linen_cloth', 0.3]], qdrops: [['troll_charm', 0.45], ['bloodscalp_tusk', 0.3]], aggro: 'Catch dis!' },
+    bloodscalp_warrior: { name: 'Scaldback Warrior', lvl: [30, 31], family: 'humanoid', drops: [['troll_tusk', 0.4], ['linen_cloth', 0.3]], qdrops: [['bloodscalp_tusk', 0.55]], aggro: 'The Scaldback will eat you!' },
+    bloodscalp_axe_thrower: { name: 'Scaldback Axe Thrower', lvl: [31, 32], family: 'humanoid', drops: [['troll_tusk', 0.4], ['linen_cloth', 0.3]], qdrops: [['troll_charm', 0.45], ['bloodscalp_tusk', 0.3]], aggro: 'Catch this!' },
     kurzen_commando: { name: 'Drayke Commando', lvl: [31, 32], family: 'humanoid', drops: [['thieves_coin', 0.45], ['linen_cloth', 0.3]], qdrops: [['kurzen_orders', 0.4]], aggro: 'No one leaves the jungle!' },
     kurzen_medicine_man: { name: 'Drayke Medicine Man', lvl: [32, 33], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['jungle_remedy', 0.5]], aggro: 'The jungle takes you too!' },
     venture_mechanic: { name: 'Deepgold Company Mechanic', lvl: [32, 33], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['venture_ledger', 0.4]], aggro: 'Hands off the equipment!' },
@@ -38,7 +38,7 @@
     shadowmaw_panther: { name: 'Inkclaw Panther', lvl: [33, 34], family: 'beast', drops: [['ruined_pelt', 0.4]], qdrops: [['panther_pelt', 0.55]] },
     jungle_stalker: { name: 'Jungle Stalker', lvl: [34, 35], family: 'beast', hpMult: 1.1, drops: [['ruined_pelt', 0.4]], qdrops: [['jungle_stalker_hide', 0.55]] },
     skullsplitter_warrior: { name: 'Bonegrin Warrior', lvl: [34, 35], family: 'humanoid', hpMult: 1.15, drops: [['troll_tusk', 0.45], ['linen_cloth', 0.3]], qdrops: [['skullsplitter_tusk', 0.55]], aggro: 'Bonegrin split your skull!' },
-    skullsplitter_witch_doctor: { name: 'Bonegrin Witch Doctor', lvl: [34, 35], family: 'humanoid', drops: [['troll_tusk', 0.4], ['linen_cloth', 0.35]], qdrops: [['troll_charm', 0.45], ['skullsplitter_tusk', 0.3]], aggro: 'Da loa curse you!' },
+    skullsplitter_witch_doctor: { name: 'Bonegrin Witch Doctor', lvl: [34, 35], family: 'humanoid', drops: [['troll_tusk', 0.4], ['linen_cloth', 0.35]], qdrops: [['troll_charm', 0.45], ['skullsplitter_tusk', 0.3]], aggro: 'The spirits curse you!' },
     colonel_kurzen: { name: 'Colonel Drayke', lvl: [33, 33], family: 'humanoid', named: true, hpMult: 2.2, dmgMult: 1.35, drops: [['kurzen_sabre', 0.35], ['thieves_coin', 1]], qdrops: [['kurzen_head', 1]], aggro: 'Kingsmere abandoned us. So will you.' },
     sin_dall: { name: "Old Stripes", lvl: [34, 34], family: 'beast', named: true, hpMult: 2, dmgMult: 1.3, drops: [['sin_dall_cloak', 0.35], ['ruined_pelt', 1]], qdrops: [['sin_dall_pelt', 1]] },
     king_bangalash: { name: 'King Ghostpelt', lvl: [35, 35], family: 'beast', elite: true, named: true, hpMult: 5.5, dmgMult: 2.6, special: 'hogger', specialText: 'King Ghostpelt pounces!', drops: [['ruined_pelt', 1]], qdrops: [['bangalash_pelt', 1]], loot: ['bangalash_hide', 'bangalash_fang', 'bangalash_mantle'] },
@@ -137,11 +137,11 @@
   A('venture_patrol_a', { name: 'Shut Down the Camp', lvl: 34, giver: 'lieutenant_doren', turnin: 'lieutenant_doren', pre: ['venture_a'], text: 'The goblins are back at work. Kill 10 enforcers.',
     objs: [{ type: 'kill', mob: 'venture_enforcer', n: 10 }], reward: { choice: ['fam_legs33'] } });
   // Krugar: the jungle trolls, the Deepgold Company and the Drayke
-  H('bloodscalp_h', { name: 'The Scaldback', lvl: 30, giver: 'nimboya', turnin: 'nimboya', text: 'Da Scaldback be enemies of da Kessari. Kill 12 warriors, mon.',
+  H('bloodscalp_h', { name: 'The Scaldback', lvl: 30, giver: 'nimboya', turnin: 'nimboya', text: 'The Scaldback are old enemies of the Kessari. Kill 12 of their warriors. The jungle remembers who struck first.',
     objs: [{ type: 'kill', mob: 'bloodscalp_warrior', n: 12 }], reward: { choice: ['fam_weapon32'] } });
-  H('bloodscalp_tusks', { name: 'Scaldback Tusks', lvl: 31, giver: 'nimboya', turnin: 'nimboya', pre: ['bloodscalp_h'], text: 'Bring me 10 tusks. Da Kessari want proof.',
+  H('bloodscalp_tusks', { name: 'Scaldback Tusks', lvl: 31, giver: 'nimboya', turnin: 'nimboya', pre: ['bloodscalp_h'], text: 'Bring me 10 tusks. The Kessari want proof.',
     objs: [{ type: 'collect', item: 'bloodscalp_tusk', n: 10 }], reward: { money: 1900 } });
-  H('voodoo_charms', { name: 'Voodoo Charms', lvl: 32, giver: 'kin_weelay', turnin: 'kin_weelay', text: 'Da axe throwers carry charms. Kill 8 of dem and bring me 5 charms. I make good voodoo with dem.',
+  H('voodoo_charms', { name: 'Hex Charms', lvl: 32, giver: 'kin_weelay', turnin: 'kin_weelay', text: 'The axe throwers carry charms. Kill 8 of them and bring me 5 charms. I can turn their hexes back on them.',
     objs: [{ type: 'kill', mob: 'bloodscalp_axe_thrower', n: 8 }, { type: 'collect', item: 'troll_charm', n: 5 }], reward: { choice: ['fam_chest33'] } });
   H('kurzen_h', { name: 'The Drayke', lvl: 32, giver: 'commander_aggro', turnin: 'commander_aggro', text: 'Human deserters raid our scouts. Kill 12 Drayke commandos.',
     objs: [{ type: 'kill', mob: 'kurzen_commando', n: 12 }], reward: { money: 2000 } });
@@ -149,14 +149,14 @@
     objs: [{ type: 'kill', mob: 'venture_mechanic', n: 10 }, { type: 'kill', mob: 'venture_enforcer', n: 6 }], reward: { choice: ['fam_hands34'] } });
   H('venture_ledgers_h', { name: 'Goblin Ledgers', lvl: 33, giver: 'uthok', turnin: 'uthok', text: 'Their ledgers say where the ore goes. Bring me 5.',
     objs: [{ type: 'collect', item: 'venture_ledger', n: 5 }], reward: { money: 2200 } });
-  H('skullsplitter_h', { name: 'The Bonegrins', lvl: 34, giver: 'nimboya', turnin: 'nimboya', text: 'Da Bonegrin tribe be worst of all. Kill 10 warriors and 6 witch doctors at Mokkari.',
+  H('skullsplitter_h', { name: 'The Bonegrins', lvl: 34, giver: 'nimboya', turnin: 'nimboya', text: 'The Bonegrin are the worst of all. Kill 10 warriors and 6 witch doctors at Mokkari.',
     objs: [{ type: 'kill', mob: 'skullsplitter_warrior', n: 10 }, { type: 'kill', mob: 'skullsplitter_witch_doctor', n: 6 }], reward: { choice: ['fam_waist34'] } });
-  H('skullsplitter_tusks_h', { name: 'Bonegrin Tusks', lvl: 35, giver: 'kin_weelay', turnin: 'kin_weelay', pre: ['skullsplitter_h'], text: 'Bring me 10 of dem tusks. Da loa will be pleased.',
+  H('skullsplitter_tusks_h', { name: 'Bonegrin Tusks', lvl: 35, giver: 'kin_weelay', turnin: 'kin_weelay', pre: ['skullsplitter_h'], text: 'Bring me 10 of their tusks. The spirits will be pleased.',
     objs: [{ type: 'collect', item: 'skullsplitter_tusk', n: 10 }], reward: { choice: ['fam_weapon35'] } });
   H('kurzen_head_h', { name: 'Colonel Drayke', lvl: 33, giver: 'commander_aggro', turnin: 'commander_aggro', pre: ['kurzen_h'], text: 'Their colonel hides in the compound. Bring me his head.',
     objs: [{ type: 'collect', item: 'kurzen_head', n: 1 }], reward: { choice: ['fam_back_rare35'] } });
 
-  H('medicine_h', { name: 'Drayke Medicine', lvl: 32, giver: 'kin_weelay', turnin: 'kin_weelay', pre: ['kurzen_h'], text: 'Da Drayke medicine men got strong remedies. Kill 8 and bring me 5.',
+  H('medicine_h', { name: 'Drayke Medicine', lvl: 32, giver: 'kin_weelay', turnin: 'kin_weelay', pre: ['kurzen_h'], text: 'The Drayke medicine men carry strong remedies. Kill 8 and bring me 5.',
     objs: [{ type: 'kill', mob: 'kurzen_medicine_man', n: 8 }, { type: 'collect', item: 'jungle_remedy', n: 5 }], reward: { choice: ['fam_wrist32'] } });
   H('troll_patrol', { name: 'Tazzu Patrol', lvl: 32, giver: 'commander_aggro', turnin: 'commander_aggro', pre: ['bloodscalp_tusks'], text: 'Keep the Scaldback busy: 8 warriors and 6 axe throwers.',
     objs: [{ type: 'kill', mob: 'bloodscalp_warrior', n: 8 }, { type: 'kill', mob: 'bloodscalp_axe_thrower', n: 6 }], reward: { money: 2200 } });
