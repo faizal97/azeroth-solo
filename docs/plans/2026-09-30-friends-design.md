@@ -67,8 +67,12 @@ A profile is one document, a few kilobytes even with ten characters:
 - `lastSeen`: when the player was last in the game (for "last played 3 hours ago")
 - `chars`: one entry per **shared** character: `name`, `race`, `cls`, `look`, `level`, `role`, `talents` (the points
   per talent, as saved), `profs` (profession and skill), `guild` (`name`, `rank`), `title`, collection counts, and
-  `gear`: the equipped items **as saved** (each is the item's own copy, with its name, quality and stats). Storing
-  the item itself, not just its id, means a friend on an older version of the game still sees the right item.
+  `gear`: the equipped items. An item exactly like the game's own goes as its id; a rolled one (random
+  stats) goes whole, so friends see its real stats. A friend whose older game does not know an id sees "Unknown
+  item" and is asked to update. Keeping plain items as ids keeps profiles small, which matters because every
+  change sends the whole profile to each friend watching (free plan: 10 GiB a month).
+- Writes happen only when something friends see changes (level, gear, talents, professions, guild, title, place);
+  XP alone does not count. "Last played" moves at least every 10 minutes while playing.
 
 ### Realtime Database (Singapore)
 

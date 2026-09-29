@@ -24,7 +24,7 @@
   <p class="dim">Last updated 30 September 2026. Applies to the game in a browser (faizal97.github.io/realm-of-loner) and the Android app.</p>
 
   <div class="box">
-    <p><b>In short:</b> Realm of Loner has no accounts, no server and no analytics. Your characters are saved on your own device. If you turn on the optional cloud save, a copy goes to a hidden folder in <i>your own</i> Google Drive. We never receive your saves or anything else about you.</p>
+    <p><b>In short:</b> Realm of Loner has no analytics and needs no account. Your characters are saved on your own device. Two things are optional and off until you turn them on: <b>cloud save</b> puts a copy of your characters in a hidden folder in <i>your own</i> Google Drive, and <b>Friends</b> shares what you choose of your characters with the players you accept as friends, through Google's Firebase service. We never receive your saves.</p>
   </div>
 
   <h2>What the game keeps, and where</h2>
@@ -43,15 +43,29 @@
     <li>The game's use of information received from Google APIs follows the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including its Limited Use requirements: your data is used only to back up and restore your characters, and is never sold, shared or used for ads.</li>
   </ul>
 
+  <h2>Friends (optional)</h2>
+  <p>In Social → Friends you can add real players by friend code. If you never turn Friends on, nothing about you goes to Firebase.</p>
+  <ul>
+    <li><b>Sign-in:</b> Friends uses your Google sign-in, asking only for your Google account's ID (the permission Google calls "openid"), not your email address, name or photo. Firebase keeps a sign-in record with that ID.</li>
+    <li><b>What your friends see:</b> for each character you share (all of them, unless you switch one off in Friends → My sharing): its name, race, class, look, level, role, talents, professions and skill, guild name and rank, title, number of mounts and the gear it wears. Also which shared character you are playing and where (zone, place or dungeon), whether you are online, and when you last played.</li>
+    <li><b>What else is stored:</b> your friend code; your friend list (Firebase IDs and the date you became friends); friend requests (the name, class and level of the character a request was sent from); and, while the game is open, one online entry per open game, with the list of friends allowed to see it.</li>
+    <li><b>Where:</b> on Google's Firebase servers, in Jakarta (Cloud Firestore) and Singapore (Realtime Database), under <a href="https://firebase.google.com/support/privacy">Firebase's privacy and security terms</a>.</li>
+    <li><b>Who can see it:</b> only the players you have accepted as friends. The rules on Firebase refuse everyone else. As the owner of the game's Firebase project, the developer can also open the database; it is not used for anything but running Friends, and it is never sold or shared.</li>
+    <li><b>Firebase's code</b> is loaded from Google (www.gstatic.com) only when you open Friends or have it on.</li>
+  </ul>
+
   <h2>Removing your cloud data</h2>
   <ul>
     <li><b>One character:</b> in the game, Delete character and tick "Also delete the copy in Google Drive".</li>
     <li><b>Everything:</b> in Google Drive on the web, open Settings → Manage apps, find Realm of Loner, and choose Options → Delete hidden app data.</li>
+    <li><b>Friends, turned off:</b> in Social → Friends, Turn off Friends deletes your profile, online status and the requests you sent. Your friend list and code are kept (they point only to your Firebase ID), so turning it on again restores your friends.</li>
+    <li><b>Friends, everything:</b> Delete my Friends data also deletes your code and every friendship, on both sides.</li>
     <li><b>Take away the game's access:</b> in your Google Account, open Security → Your connections to third-party apps &amp; services, choose Realm of Loner, and remove its access. Signing out in the game only signs out that one device.</li>
   </ul>
 
   <h2>Other connections the game makes</h2>
   <ul>
+    <li><b>Firebase</b> (only with Friends on): see Friends above.</li>
     <li><b>Update checks:</b> the game asks GitHub (api.github.com) whether a newer version has been released. This is a plain request with nothing about you or your game in it; GitHub, like any website, sees your IP address.</li>
     <li><b>Hosting:</b> the web version is served by GitHub Pages. See <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>.</li>
     <li><b>Bug reports:</b> only if you choose to send one. The report is shown to you first and holds the game version, your device and browser type, and what you were doing in the game (never your save). You send it yourself, as a GitHub issue or by pasting it on Discord.</li>
