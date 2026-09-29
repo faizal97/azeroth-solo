@@ -94,6 +94,21 @@ Alternatives: the Concord and the Warbands.
 
 Human, Dwarf, Gnome, Orc and Troll stay.
 
+## World lexicon (decided by the lorekeeper, 2026-09-29)
+
+The recurring words every region shares. The full map, with every name, is `tools/rename_v10.json`
+(see `docs/plans/v10-names-inventory.md`).
+
+| Kind | Old → new |
+|---|---|
+| Cities | Stormwind → Kingsmere · Orgrimmar → Vazhrak · Ironforge → Keldrun · Darnassus → Nyrwen · Gnomeregan → Gearhollow · Thunder Bluff → Hornwind Mesa · Undercity → Gravenhold · Lordaeron → Wexmoor · Theramore → Harborwatch · Gadgetzan → Coppergulch |
+| Peoples | Night Elf → Wood Elf · Tauren → Hornfolk · Forsaken → Reclaimed · Highborne → Starborn · Murloc → Mireling · Quilboar → Spinehide · Furbolg → Bearkin · Worgen → Werewolf · Trogg → Cavekin · Kodo → Dustback |
+| Orders and powers | Defias → the Grey Hoods · Scourge → the Hollow Host · Scarlet Crusade → the Order of the Pyre · Argent Dawn → the Lantern Watch · Dark Iron → Slagborn · Blackrock → Cinderpeak · Burning Legion → the Unmaking · Well of Eternity → the Heartfire · Black Dragonflight → the Black Brood · Venture Co → Deepgold Company · Syndicate → the Black Ledger · Kul Tiras → Brineholt · Darkspear → Kessari · Hearthstone → Waystone |
+| The story's people | Deathwing → Ossarak · Katrana Prestor / Onyxia → Meriel Thorne / Veshmira · Bolvar Fordragon → Lord Regent Edmund Carrow · Varian / Anduin Wrynn → King Rhodric / Prince Tamlin Aldane · Reginald Windsor → Marshal Gideon Hale · Edwin VanCleef → Corvin Blackwell · Victor Nefarius / Nefarian → Lord Kethran Vale / Kethriax · Ragnaros, the Firelord → Vulcarn, the King Below · Dagran Thaurissan → Emperor Haldor Grimmark · Thrall → Grask |
+| Dungeons so far | The Deadmines → The Smugglers' Deep · Blackrock Depths / Spire → Cinderpeak Depths / Spire |
+
+Rejected in checks, on top of the ones above: Ravencourt (a Warcraft place) and Ignarak (a fire giant in Grim Dawn).
+
 ## Naming rules
 
 1. **No echoes.** A new name must not be a synonym, translation, anagram or sound-alike of the Blizzard name.

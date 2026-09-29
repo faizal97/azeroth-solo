@@ -3,7 +3,7 @@
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Caldreth"
  },
  "Warcraft": {
   "kind": "lore",
@@ -27,211 +27,211 @@
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Accord"
  },
  "Horde": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Krugar"
  },
  "Eastern Kingdoms": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ostmarch"
  },
  "Kalimdor": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Redmarch"
  },
  "Forsaken": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Reclaimed"
  },
  "Night Elf": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Wood Elf"
  },
  "Night Elves": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Wood Elves"
  },
  "Tauren": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Hornfolk"
  },
  "Highborne": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Starborn"
  },
  "Burning Legion": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "the Unmaking"
  },
  "Well of Eternity": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "the Heartfire"
  },
  "Deathwing": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ossarak"
  },
  "Black Dragonflight": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "the Black Brood"
  },
  "Dark Iron": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Slagborn"
  },
  "Blackrock": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak"
  },
  "Defias": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood"
  },
  "Scourge": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Hollow Host"
  },
  "Scarlet Crusade": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Order of the Pyre"
  },
  "Argent Dawn": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Lantern Watch"
  },
  "Kul Tiras": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Brineholt"
  },
  "Kul Tiran": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Brineholt"
  },
  "Darkspear": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Kessari"
  },
  "Hearthstone": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Waystone"
  },
  "Lady Katrana Prestor": {
   "kind": "character",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Lady Meriel Thorne"
  },
  "Onyxia": {
   "kind": "character",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Veshmira"
  },
  "Highlord Bolvar Fordragon": {
   "kind": "character",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Lord Regent Edmund Carrow"
  },
  "Anduin Wrynn": {
   "kind": "character",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Prince Tamlin Aldane"
  },
  "Varian Wrynn": {
   "kind": "character",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "King Rhodric Aldane"
  },
  "Marshal Reginald Windsor": {
   "kind": "character",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Marshal Gideon Hale"
  },
  "Edwin VanCleef": {
   "kind": "character",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Corvin Blackwell"
  },
  "Victor Nefarius": {
   "kind": "character",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Lord Kethran Vale"
  },
  "Nefarian": {
   "kind": "character",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Kethriax"
  },
  "Ragnaros, the Firelord": {
   "kind": "character",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Vulcarn, the King Below"
  },
  "Emperor Dagran Thaurissan": {
   "kind": "character",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Emperor Haldor Grimmark"
  },
  "Elwynn Forest": {
   "kind": "region",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Ambermoor"
  },
  "Dun Morogh": {
   "kind": "region",
@@ -369,78 +369,78 @@
   "kind": "place",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Halden Abbey"
  },
  "Northshire Valley": {
   "kind": "place",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Halden Vale"
  },
  "Echo Ridge Mine": {
   "kind": "place",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Tinder Hollow"
  },
  "Northshire Vineyards": {
   "kind": "place",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Halden Vineyards"
  },
  "Goldshire": {
   "kind": "place",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Brackenford"
  },
  "Fargodeep Mine": {
   "kind": "place",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Deepcut Mine"
  },
  "Crystal Lake": {
   "kind": "place",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Stillwater Lake"
  },
  "Brackwell Pumpkin Patch": {
   "kind": "place",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Tamsin's Pumpkin Patch"
  },
  "Forest's Edge": {
   "kind": "place",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Greywood Verge"
  },
  "Valley of Heroes": {
   "kind": "place",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Hall of Banners"
  },
  "Stormwind City": {
   "kind": "place",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Kingsmere"
  },
  "Trade District": {
   "kind": "place",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Market Ward"
  },
  "Bank and Auction House": {
   "kind": "place",
   "region": "Elwynn Forest",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Anvilmar": {
@@ -489,7 +489,7 @@
   "kind": "place",
   "region": "Dun Morogh",
   "status": "rename",
-  "new": null
+  "new": "Keldrun"
  },
  "Shadowglen": {
   "kind": "place",
@@ -531,7 +531,7 @@
   "kind": "place",
   "region": "Teldrassil",
   "status": "rename",
-  "new": null
+  "new": "Nyrwen"
  },
  "Valley of Trials": {
   "kind": "place",
@@ -573,7 +573,7 @@
   "kind": "place",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Vazhrak"
  },
  "Camp Narache": {
   "kind": "place",
@@ -615,7 +615,7 @@
   "kind": "place",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Hornwind Mesa"
  },
  "Deathknell": {
   "kind": "place",
@@ -657,7 +657,7 @@
   "kind": "place",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Gravenhold"
  },
  "Furlbrow's Pumpkin Farm": {
   "kind": "place",
@@ -1167,7 +1167,7 @@
   "kind": "place",
   "region": "Tanaris",
   "status": "rename",
-  "new": null
+  "new": "Coppergulch"
  },
  "Waterspring Field": {
   "kind": "place",
@@ -1347,7 +1347,7 @@
   "kind": "place",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak"
  },
  "Chillwind Camp": {
   "kind": "place",
@@ -1497,85 +1497,85 @@
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Marshal Aldous Venn"
  },
  "Deputy Willem": {
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Deputy Harlan"
  },
  "Eagan Peltskinner": {
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Rolf Tanner"
  },
  "Brother Danil": {
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Brother Cade"
  },
  "Milly Osworth": {
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Nell Harrow"
  },
  "Marshal Dughan": {
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Marshal Brede"
  },
  "Remy \"Two Times\"": {
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Pell \"Twice Over\""
  },
  "William Pestle": {
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Tobin Ashcombe"
  },
  "Innkeeper Farley": {
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Maudie"
  },
  "Corina Steele": {
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Gretta Holloway"
  },
  "Guard Thomas": {
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Guard Emmett"
  },
  "Ma Stonefield": {
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Old Ma Dunmere"
  },
  "Innkeeper Allison": {
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Rosalind"
  },
  "Thurman Schneider": {
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Oswin Ferrell"
  },
  "Quartermaster Aldwin": {
   "kind": "npc",
@@ -1983,7 +1983,7 @@
   "kind": "npc",
   "region": "Westfall",
   "status": "rename",
-  "new": null
+  "new": "Bram Oakhollow"
  },
  "Captain Danuvin": {
   "kind": "npc",
@@ -2115,7 +2115,7 @@
   "kind": "npc",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Warden Pryce"
  },
  "Xen'Zilla": {
   "kind": "npc",
@@ -2811,13 +2811,13 @@
   "kind": "monster",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Thug"
  },
  "Garrick Padfoot": {
   "kind": "boss or named",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Jory Blackthumb"
  },
  "Mangy Wolf": {
   "kind": "monster",
@@ -2847,37 +2847,37 @@
   "kind": "monster",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Mireling Streamrunner"
  },
  "Murloc Forager": {
   "kind": "monster",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Mireling Forager"
  },
  "Defias Bandit": {
   "kind": "monster",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Grey Hood Bandit"
  },
  "Princess": {
   "kind": "boss or named",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Duchess"
  },
  "Riverpaw Gnoll": {
   "kind": "monster",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Tallgrass Gnoll"
  },
  "Hogger": {
   "kind": "boss or named",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Old Snaggle"
  },
  "Rockjaw Trogg": {
   "kind": "monster",
@@ -3855,7 +3855,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ulgrak the Butcher"
  },
  "Kam Deepfury": {
   "kind": "boss or named",
@@ -3885,7 +3885,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Silas Crane"
  },
  "Deepmoss Creeper": {
   "kind": "monster",
@@ -5499,7 +5499,7 @@
   "kind": "monster",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "King Below"
  },
  "Flamewaker Guard": {
   "kind": "monster",
@@ -5583,7 +5583,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Vulcarn"
  },
  "Avatar of Shal'zua": {
   "kind": "boss or named",
@@ -5601,139 +5601,139 @@
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Wolves at the Abbey Wall"
  },
  "Kobold Camp Cleanup": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Vermin at the Abbey"
  },
  "Investigate Echo Ridge": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Trouble in Tinder Hollow"
  },
  "Brotherhood of Thieves": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Hoods in the Vineyard"
  },
  "Milly's Harvest": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Nell's Harvest"
  },
  "Bounty on Garrick Padfoot": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Bounty on Jory Blackthumb"
  },
  "Report to Goldshire": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "The Road to Brackenford"
  },
  "The Fargodeep Mine": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Scouting Deepcut Mine"
  },
  "Kobold Candles": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Wax for Tobin"
  },
  "Gold Dust Exchange": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Pell's Twice-Over Deal"
  },
  "Protect the Frontier": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Teeth by the Lake"
  },
  "Bounty on Murlocs": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Fins from Stillwater"
  },
  "Red Linen Goods": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Ma Dunmere's Linen"
  },
  "Princess Must Die!": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Duchess Has Eaten Her Last Pumpkin"
  },
  "Riverpaw Gnoll Bounty": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Tallgrass at the Verge"
  },
  "Wanted: Hogger": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Wanted: Old Snaggle"
  },
  "The Defias Brotherhood": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "The Grey Hoods"
  },
  "Wolves at the Door": {
   "kind": "quest",
   "region": "Elwynn Forest",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Kobold Picks": {
   "kind": "quest",
   "region": "Elwynn Forest",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Crystal Lake Clams": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Chowder Season"
  },
  "Prowler Claws": {
   "kind": "quest",
   "region": "Elwynn Forest",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Bandits at Brackwell": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Bandits in the Pumpkins"
  },
  "Report to Gryan Stoutmantle": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Report to Bram Oakhollow"
  },
  "Dwarven Outfitters": {
   "kind": "quest",
@@ -6915,12 +6915,12 @@
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Riot in the Gaol"
  },
  "The Riot Ledger": {
   "kind": "quest",
   "region": "Elwynn Forest",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Into the Mountains": {
@@ -7995,7 +7995,7 @@
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "The Forbidden Tome"
  },
  "Scarlet Insignias": {
   "kind": "quest",
@@ -8007,13 +8007,13 @@
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "Ashes of the Pyre"
  },
  "The Scarlet Champion": {
   "kind": "quest",
   "region": "Elwynn Forest",
   "status": "rename",
-  "new": null
+  "new": "The Pyre's Champion"
  },
  "Wastewander Justice": {
   "kind": "quest",
@@ -8660,7 +8660,7 @@
  "The Brood Mother": {
   "kind": "quest",
   "region": "Elwynn Forest",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Whelps in the Quagmire": {
@@ -8727,7 +8727,7 @@
   "kind": "dungeon or wanted",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "The Smugglers' Deep"
  },
  "Wailing Caverns": {
   "kind": "dungeon or wanted",
@@ -8757,7 +8757,7 @@
   "kind": "dungeon or wanted",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Gearhollow"
  },
  "Scarlet Monastery: Library": {
   "kind": "dungeon or wanted",
@@ -8775,7 +8775,7 @@
   "kind": "dungeon or wanted",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak Depths"
  },
  "Scholomance": {
   "kind": "dungeon or wanted",
@@ -14506,5 +14506,239 @@
   "region": "",
   "status": "review",
   "new": null
+ },
+ "Azeroth Solo": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Realm of Lone"
+ },
+ "Stormwind": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Kingsmere"
+ },
+ "Lordaeron": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Wexmoor"
+ },
+ "Theramore": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Harborwatch"
+ },
+ "Murloc": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Mireling"
+ },
+ "Murlocs": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Mirelings"
+ },
+ "Quilboar": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Spinehide"
+ },
+ "Furbolg": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Bearkin"
+ },
+ "Worgen": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Werewolf"
+ },
+ "Trogg": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Cavekin"
+ },
+ "Kodo": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Dustback"
+ },
+ "Blackrock Spire": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Cinderpeak Spire"
+ },
+ "Venture Co": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Deepgold Company"
+ },
+ "Syndicate": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Black Ledger"
+ },
+ "Katrana Prestor": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Meriel Thorne"
+ },
+ "Lady Prestor": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Lady Thorne"
+ },
+ "Prestor": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Thorne"
+ },
+ "Bolvar Fordragon": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Edmund Carrow"
+ },
+ "Bolvar": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Edmund"
+ },
+ "Fordragon": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Carrow"
+ },
+ "Highlord": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Lord Regent"
+ },
+ "Anduin": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Tamlin"
+ },
+ "Varian": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Rhodric"
+ },
+ "Wrynn": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Aldane"
+ },
+ "Reginald Windsor": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Gideon Hale"
+ },
+ "Windsor": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hale"
+ },
+ "VanCleef": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Blackwell"
+ },
+ "Nefarius": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Vale"
+ },
+ "Dagran Thaurissan": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Haldor Grimmark"
+ },
+ "Thaurissan": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Grimmark"
+ },
+ "Thrall": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Grask"
+ },
+ "Elwynn": {
+  "kind": "place",
+  "region": "Elwynn Forest",
+  "status": "rename",
+  "new": "Ambermoor"
+ },
+ "Northshire": {
+  "kind": "place",
+  "region": "Elwynn Forest",
+  "status": "rename",
+  "new": "Halden"
+ },
+ "Echo Ridge": {
+  "kind": "place",
+  "region": "Elwynn Forest",
+  "status": "rename",
+  "new": "Tinder Hollow"
+ },
+ "Fargodeep": {
+  "kind": "place",
+  "region": "Elwynn Forest",
+  "status": "rename",
+  "new": "Deepcut"
+ },
+ "Brackwell": {
+  "kind": "place",
+  "region": "Elwynn Forest",
+  "status": "rename",
+  "new": "Tamsin's"
+ },
+ "Milly": {
+  "kind": "place",
+  "region": "Elwynn Forest",
+  "status": "rename",
+  "new": "Nell"
+ },
+ "Remy": {
+  "kind": "place",
+  "region": "Elwynn Forest",
+  "status": "rename",
+  "new": "Pell"
+ },
+ "Riverpaw": {
+  "kind": "place",
+  "region": "Elwynn Forest",
+  "status": "rename",
+  "new": "Tallgrass"
  }
 }
