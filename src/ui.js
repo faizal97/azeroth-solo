@@ -1898,6 +1898,9 @@
       } else {
           b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { if (G.fight) return toast('You are in combat.'); G.logout(); showSelect(); } }, 'Switch character')));
           if (window.UPD) b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: manualUpdateCheck }, `Check for updates · v${UPD.current()}`)));
+        { const ts = tipState(); b.append(h('div', { class: 'sec-h' }, 'Tips', h('small', null, 'short help for new players')), h('div', { class: 'btn-row' },
+          h('button', { class: 'btn alt', onclick: () => { ts.off = !ts.off; saveTips(ts); ui.sheetFn(); } }, 'Tips: ' + (ts.off ? 'Off' : 'On')),
+          h('button', { class: 'btn alt', onclick: () => { saveTips({ seen: [], off: false }); toast('Tips will show again as you play.', true); ui.sheetFn(); } }, 'Show tips again'))); }
         if (window.UPD) b.append(h('div', { class: 'sec-h' }, 'Community'), h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => UPD.open(UPD.DISCORD) }, 'Join the Discord'), window.REPORT ? h('button', { class: 'btn alt', onclick: () => reportDialog() }, 'Report a bug') : null),
           h('p', { class: 'ai-note', style: { margin: 0 } }, 'Talk about the game, report bugs and suggest ideas.'));
         b.append(h('div', { class: 'sec-h' }, 'Party invites'), h('div', { class: 'btn-row' },
@@ -2375,6 +2378,43 @@
       setMusic: (m) => { ui.csMusic = m; G.paused = !!m || !!(window.CS && CS.playing); },
     }).then(() => { G.paused = false; P.story = P.story || {}; P.story[id] = true; G.save(); if (ch.then && CS.byId(ch.then) && !CS.unlocked().has(ch.then)) ui.pendingChapter = ch.then; });
   }
+  // ---------- first-hour tips: one short card at the moment it helps, once per device, always skippable
+  const TIPS = {
+    start: 'Welcome! Tap a creature in the Fight list to attack it. People with a yellow ! have quests for you.',
+    fight: 'Your abilities are on the bar at the bottom. Tap one to use it; press and hold to read what it does.',
+    quest: 'Quests go in your Quest Log. The creatures you need are marked with ◆ in the Fight list.',
+    questReady: 'Quest complete! Go back to whoever gave it to you (they show a ?) to hand it in.',
+    level: 'You levelled up. Your XP bar is under your health and mana: tap it to see how far you have to go.',
+    request: 'Chat messages marked ▸ are requests from other players. Tap one to help, trade or join a group.',
+    roll: 'Loot! Need if you will use it, Greed if you would sell it, Pass to leave it to others.',
+    dungeon: 'Dungeons are open. Social → Group Finder: queue from the dungeon\'s zone and the finder fills your group.',
+    run: 'In a group the tank pulls. Tap Pull (or Ready) when you are set; Tactics set the pace.',
+    talents: 'Talents are open: Hero → Abilities → Talents. You get a new point every level.',
+  };
+  const TIP_KEY = 'azsolo.tips';
+  function tipState() {
+    let s = null; try { s = JSON.parse(localStorage.getItem(TIP_KEY) || 'null'); } catch (e) { }
+    if (!s) { // first time on this version: players who already know the game start with tips off
+      const veteran = (G.characters() || []).some((c) => c.level >= 5);
+      s = { seen: [], off: veteran }; try { localStorage.setItem(TIP_KEY, JSON.stringify(s)); } catch (e) { }
+    }
+    return s;
+  }
+  const saveTips = (s) => { try { localStorage.setItem(TIP_KEY, JSON.stringify(s)); } catch (e) { } };
+  function tip(id) {
+    const s = tipState(); if (s.off || s.seen.includes(id) || !TIPS[id]) return;
+    s.seen.push(id); saveTips(s);
+    ui.tipQueue = (ui.tipQueue || []).concat([id]);
+    if (!ui.tipEl) nextTip();
+  }
+  function nextTip() {
+    const id = (ui.tipQueue || []).shift(); if (!id) { ui.tipEl = null; return; }
+    const close = () => { el.remove(); ui.tipEl = null; setTimeout(nextTip, 400); };
+    const el = h('div', { class: 'tip-card' }, h('div', { class: 'tip-t' }, TIPS[id]),
+      h('div', { class: 'tip-b' }, h('button', { class: 'chip gold', onclick: close }, 'Got it'),
+        h('button', { class: 'chip', onclick: () => { const s = tipState(); s.off = true; saveTips(s); ui.tipQueue = []; el.remove(); ui.tipEl = null; toast('Tips off. Hero → Settings can turn them back on.', true); } }, 'Skip all tips')));
+    ui.tipEl = el; (document.getElementById('app') || document.body).append(el);
+  }
   // ---------- bug reports (src/report.js): a prefilled GitHub issue, or a copy for Discord
   function reportDialog(err) {
     const what = h('textarea', { placeholder: 'What happened? What were you doing just before?', maxlength: '800', style: { width: '100%', height: '84px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', fontSize: '14px', padding: '6px' } });
@@ -2708,7 +2748,13 @@
     if (bound) return; bound = true;
     G.on('change', renderAll);
     G.on('arrive', (d) => { closeSheet(); renderAll(); if (d.first) banner(D.PLACES[d.place].name, D.PLACES[d.place].zone !== D.PLACES[d.place].name ? D.PLACES[d.place].zone : ''); });
-    G.on('fightStart', () => { renderAll(); });
+    G.on('fightStart', () => { renderAll(); tip('fight'); });
+    G.on('questAccept', () => tip('quest'));
+    G.on('questReady', () => tip('questReady'));
+    G.on('roll', () => tip('roll'));
+    G.on('runUpdate', () => { if (G.S && G.S.run && G.S.run.phase === 'rest') tip('run'); });
+    G.on('levelup', (d) => { if (d.level === 2) tip('level'); if (d.level === 8) tip('dungeon'); if (d.level === D.TALENT_START) tip('talents'); });
+    G.on('chat', () => { if (G.S && G.S.chat.some((m) => m.act && m.act.state === 'open' && !m.act.accepted)) tip('request'); });
     G.on('fightEnd', (d) => { renderAll(); if (d.result === 'lose' && !G.S.run) banner('You died'); });
     G.on('runUpdate', renderAll);
     G.on('runTick', () => {});
@@ -2749,6 +2795,7 @@
   function start() {
     closeDialog();
     buildLayout(); bind(); renderAll();
+    if (G.S.player.level <= 3) setTimeout(() => tip('start'), 1500);
   }
   let last = performance.now();
   function loop(t) {
