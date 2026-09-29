@@ -29,6 +29,8 @@ else
   NEWER="$(node -e "global.window=global;global.localStorage={getItem(){return null},setItem(){}};require('$ROOT/src/update.js');console.log(process.argv[1]&&UPD.cmp(process.argv[1],process.argv[2])>0?1:0)" "$OLD" "$VER")"
   if [ "$NEWER" = 1 ]; then echo "beta page kept at v$OLD (newer than v$VER)"; else cp "$SRC" "$TMP/site/beta/index.html"; WHERE="main and beta pages"; fi
 fi
+# the site's other pages (privacy.html, …) from web/, in either mode
+for f in "$ROOT"/web/*.html; do [ -f "$f" ] && cp "$f" "$TMP/site/"; done
 touch "$TMP/site/.nojekyll" # serve the file as it is
 cd "$TMP/site"
 git add -A

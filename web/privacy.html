@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Realm of Loner privacy</title>
+<style>
+  :root { --bg:#120e09; --panel:#1f1810; --gold:#e6b450; --text:#efe2c4; --dim:#a8977a; --line:#3b2d18; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 Georgia, 'Times New Roman', serif; }
+  main { max-width:720px; margin:0 auto; padding:32px 16px 48px; }
+  h1 { color:var(--gold); font-size:28px; margin:0 0 4px; }
+  h2 { color:var(--gold); font-size:20px; margin:32px 0 8px; border-bottom:1px solid var(--line); padding-bottom:4px; }
+  p, li { margin:8px 0; }
+  ul { padding-left:22px; }
+  a { color:var(--gold); }
+  .dim { color:var(--dim); font-size:14px; }
+  .box { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:12px 16px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Realm of Loner: privacy</h1>
+  <p class="dim">Last updated 29 September 2026. Applies to the game in a browser (faizal97.github.io/realm-of-loner) and the Android app.</p>
+
+  <div class="box">
+    <p><b>In short:</b> Realm of Loner has no accounts, no server and no analytics. Your characters are saved on your own device. If you turn on the optional cloud save, a copy goes to a hidden folder in <i>your own</i> Google Drive. We never receive your saves or anything else about you.</p>
+  </div>
+
+  <h2>What the game keeps, and where</h2>
+  <ul>
+    <li><b>Your characters and settings</b> are saved on your device: in your browser's storage on the web, and in the app's own storage on Android. They stay there until you delete them, clear your browser's site data, or uninstall the app.</li>
+    <li>Everyone else on the realm is simulated by the game on your device. There are no other real players, and nothing you do in the game is sent anywhere.</li>
+  </ul>
+
+  <h2>Cloud save (optional)</h2>
+  <p>In Settings → Cloud save you can sign in with Google to keep a copy of your characters in your Google Drive. If you never sign in, the game never contacts Google.</p>
+  <ul>
+    <li><b>What the game can see:</b> only its own hidden app folder in your Drive (the permission Google shows as "See, create and delete its own configuration data in your Google Drive"). It cannot see, open or change any of your other files.</li>
+    <li><b>What it stores there:</b> one file per character, holding that character's save, plus a few labels used to show and compare saves: the character's name, level, XP, class, race and look, total play time, when it was saved, whether it was saved from the app or a browser, and a revision number.</li>
+    <li><b>Who receives it:</b> nobody but you and Google, which stores the files in your Drive under <a href="https://policies.google.com/privacy">Google's privacy policy</a>. The files go straight from your device to your Drive; there is no server of ours in between. The game does not ask for your email address or profile.</li>
+    <li><b>Sign-in:</b> in a browser, Google's sign-in script is loaded from accounts.google.com only when you open Cloud save or are signed in, and the short-lived access it gives is kept in memory only. In the Android app, sign-in is handled by Google Play services on your phone.</li>
+    <li>The game's use of information received from Google APIs follows the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including its Limited Use requirements: your data is used only to back up and restore your characters, and is never sold, shared or used for ads.</li>
+  </ul>
+
+  <h2>Removing your cloud data</h2>
+  <ul>
+    <li><b>One character:</b> in the game, Delete character and tick "Also delete the copy in Google Drive".</li>
+    <li><b>Everything:</b> in Google Drive on the web, open Settings → Manage apps, find Realm of Loner, and choose Options → Delete hidden app data.</li>
+    <li><b>Take away the game's access:</b> in your Google Account, open Security → Your connections to third-party apps &amp; services, choose Realm of Loner, and remove its access. Signing out in the game only signs out that one device.</li>
+  </ul>
+
+  <h2>Other connections the game makes</h2>
+  <ul>
+    <li><b>Update checks:</b> the game asks GitHub (api.github.com) whether a newer version has been released. This is a plain request with nothing about you or your game in it; GitHub, like any website, sees your IP address.</li>
+    <li><b>Hosting:</b> the web version is served by GitHub Pages. See <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>.</li>
+    <li><b>Bug reports:</b> only if you choose to send one. The report is shown to you first and holds the game version, your device and browser type, and what you were doing in the game (never your save). You send it yourself, as a GitHub issue or by pasting it on Discord.</li>
+    <li><b>Links:</b> Discord, Ko-fi and SociaBuzz open in your browser only when you tap them. Those are other websites with their own privacy policies; the game sends them nothing.</li>
+  </ul>
+
+  <h2>Changes and contact</h2>
+  <p>If what the game does with data changes, this page changes with it, and the date at the top moves. Questions: ask on <a href="https://discord.gg/6xaVaXukeT">Discord</a> or open an issue on <a href="https://github.com/faizal97/realm-of-loner/issues">GitHub</a>.</p>
+
+  <p class="dim"><a href="https://faizal97.github.io/realm-of-loner/">Back to the game</a></p>
+</main>
+</body>
+</html>
