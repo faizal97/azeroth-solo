@@ -303,7 +303,7 @@
   "kind": "region",
   "region": "Ashenvale",
   "status": "rename",
-  "new": "Veilwood"
+  "new": "Elderglen"
  },
  "Wetlands": {
   "kind": "region",
@@ -4209,7 +4209,7 @@
   "kind": "monster",
   "region": "Ashenvale",
   "status": "rename",
-  "new": "Veilwood Bear"
+  "new": "Elderglen Bear"
  },
  "Ghostpaw Runner": {
   "kind": "monster",
