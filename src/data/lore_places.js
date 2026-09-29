@@ -19,16 +19,16 @@
 
     dg_deadmines: { title: 'The Smugglers\' Deep', section: 'dungeon', dungeon: 'deadmines', text: [
       'The Smugglers\' Deep were once the pride of Fenwick: a deep goldmine that kept the town fed for a generation. When the seam ran thin the owners walked away, and the tunnels were left to fill with water and rot.',
-      'Blackwell\'s masons knew how to cut stone and shore a tunnel, and they needed a place Kingsmere would never look. They reopened the mine and dug it deeper, down to a cove on the coast that no map shows.',
-      'Inside, the Brotherhood works like the guild it once was. There are foremen, smiths, cooks and quartermasters, and a pirate crew waiting for its ship to be finished.',
-      'To the people of Longfield the mine is the heart of their ruin. To Kingsmere it is a warship being built within a day\'s ride of the city, and nobody wants to learn where it sails first.',
+      'When the Ledger foreclosed on Fenwick, it took the old mine too. Blackwell\'s Grey Hoods reopened it and dug it deeper, down to a cove on the coast that no map shows.',
+      'Inside, the Grey Hoods work like the business they are. There are foremen, smiths, cooks and quartermasters, all paid in warm Ledger coin, and a pirate crew waiting for the fleet to be finished.',
+      'To the people of Longfield the mine is where their harvests go to disappear. To anyone who counts the ships, it is a fleet being built within a day\'s ride of Kingsmere, and nobody can say where it will sail.',
     ], bosses: {
-      rhahkzor: 'Rukko the Foreman is an ogre the Brotherhood hired to drive the miners and guard the first gate. He cares nothing for the masons\' cause. Blackwell pays well, and he enjoys the work.',
-      sneed_shredder: 'Snork is a goblin logger for hire who brought his shredder down to cut timber for the Juggernaut. He sits inside the machine and lets it do his talking.',
-      gilnid: 'Gimble is the goblin who runs the foundry, melting ore and stolen metal into fittings for the ship. He drives his workers harder than any Kingsmere noble ever drove the masons.',
+      rhahkzor: 'Rukko the Foreman is an ogre the Grey Hoods hired to drive the miners and guard the first gate. He cares nothing for debts or ledgers. Blackwell pays well, and he enjoys the work.',
+      sneed_shredder: 'Snork is a goblin logger for hire who brought his shredder down to cut timber for the fleet. He sits inside the machine and lets it do his talking.',
+      gilnid: 'Gimble is the goblin who runs the foundry, melting seized ore into fittings for the ships. He drives his workers harder than any collector ever drove a debtor.',
       mr_smite: 'Mr. Clobber is Blackwell\'s first mate, a hornfolk who went to sea long ago and never went back to the plains. He keeps the pirate crew in line.',
       cookie: 'Crumbs is a mireling who wandered in from the cove and stayed to cook for the crew. Nobody knows what goes into the pot, and nobody asks twice.',
-      vancleef: 'Corvin Blackwell was the master of the Stonemasons\' Guild. Kingsmere cheated him and his people, and he has spent every year since building the means to make the city pay.',
+      vancleef: 'Corvin Blackwell was the finest shipwright in Longfield until one bad season and one unpaid note. The Ledger took his yard and let him keep the debt. He collects for it now, and builds what it tells him to.',
     } },
 
     dg_wailing_caverns: { title: 'The Dreaming Caves', section: 'dungeon', dungeon: 'wailing_caverns', text: [
@@ -45,10 +45,10 @@
     } },
 
     dg_stockade: { title: 'Kingsmere Gaol', section: 'dungeon', dungeon: 'stockade', text: [
-      'Kingsmere Gaol was cut beneath the canals when Kingsmere was rebuilt, from the same stone the masons laid above. Some of the men who built its walls now sit behind them.',
+      'Kingsmere Gaol was cut beneath the canals when the city was rebuilt after the war. Lately it holds as many debtors as thieves.',
       'Its cells hold the worst the kingdom has caught: orcs from the Cinderpeak raids, traitors, murderers, and more Grey Hood every month as the trouble in Longfield drags on. The wardens are few, and the city above has had other things to spend its money on.',
       'The riot was planned. The blades came in past the guards, the doors opened together, and the Grey Hood inside knew exactly where to go. Who got those blades inside is a question the wardens would very much like answered.',
-      'For Kingsmere it is an old debt come due. The kingdom did not pay its masons, and it has not paid its wardens enough either. Now its own prison is a battlefield under its streets.',
+      'For Kingsmere it is one more bill it cannot pay. The crown owes the Ledger, it owes its wardens, and now its own prison is a battlefield under its streets.',
     ], bosses: {
       targorr: 'Ulgrak the Butcher is a Cinderpeak orc who butchered a village in the east before the guard dragged him here. He has spent his years in the cells promising to do it again.',
       kam_deepfury: 'Kalf Brandsson is a dwarf who sold the guard\'s patrol routes to the Cinderpeak for gold. Soldiers died on those roads. He has waited years for his chance to run.',
@@ -73,9 +73,9 @@
     } },
 
     dg_blackfathom: { title: 'The Tidehollow Deeps', section: 'dungeon', dungeon: 'blackfathom', text: [
-      'In its day the temple on the Elderglen coast was a place of quiet worship, where priestesses of Elune tended pools that held the moon\'s light. When the sea took it, the wood elves mourned it and let it go.',
+      'In its day the temple on the Elderglen coast was a place of quiet worship, where the moon priestesses tended pools that held the moon\'s light. When the sea took it, the wood elves mourned it and let it go.',
       'The ruins did not stay empty. Naga came in from the deep ocean and claimed the upper halls, and mirelings crept in behind them. Below them all, in the black water at the temple\'s roots, waited something that was never part of the wood elves\' faith.',
-      'The Twilight\'s Hammer wants no kingdom and no throne. It wants the world to end, and it will serve anything that promises to end it faster.',
+      'The Eclipse Cult wants no kingdom and no throne. It wants the world to end, and it will serve anything that promises to end it faster.',
       'For the Sylari, the Deeps are a holy place fouled, and Oreth makes it worse: he is one of their own. The Krugar has its own outposts on this coast, and the cult does not care whose.',
     ], bosses: {
       ghamoo_ra: 'Shellmaw is a giant turtle the cult found in the flooded halls. The acolytes feed it and call it blessed, and it has grown enormous on their offerings.',
@@ -94,11 +94,11 @@
       viscous_fallout: 'The radiation did not only poison the living. In the flooded lower tunnels it gathered into something thick and moving, and it has crept through the halls ever since.',
       electrocutioner_6000: 'A security machine built to guard the city\'s workshops. Its makers fled, but its orders never changed, and it still punishes every intruder it finds, gnome or otherwise.',
       crowd_pummeler: 'Built to keep order in a crowded city, it was among the last machines finished before the fall. Voltwhistle kept it running and set it to guard his halls.',
-      mekgineer_thermaplugg: 'Once a trusted adviser to the gnomes, now the self-crowned lord of their ruined city. He believes his machines will outlast everyone who turned against him.',
+      mekgineer_thermaplugg: 'Once the gnomes\' chief engineer, now the self-crowned lord of their ruined city. He believes his machines will outlast everyone who turned against him.',
     } },
 
     dg_razorfen_kraul: { title: 'The Thorn Warrens', section: 'dungeon', dungeon: 'razorfen_kraul', text: [
-      'The spinehide believe the thorns of the Thorn Warrens are the living body of Agamaggan, and that every tribe sheltering inside them belongs to him. They have raided the southern Scrublands from the Warrens for as long as the hornfolk remember.',
+      'The spinehide believe the thorns of the Thorn Warrens are the living body of the Great Boar, and that every tribe sheltering inside them belongs to him. They have raided the southern Scrublands from the Warrens for as long as the hornfolk remember.',
       'For most of that time the Warrens was ruled by its war leaders and its geomancers, who speak to the earth and the thorns. That has changed. Masked cultists of the Death\'s Head now walk the tunnels, and the tribe\'s dead do not stay buried. Some spinehide welcome it. Others have been fed to it.',
       'Mother Grisla holds the tribe together, and she has chosen the cult. Nobody outside the Warrens knows what she has bargained with. Its whispers only grow louder the deeper the tunnels go.',
       'To the Krugar at Dustfort, the Warrens is a threat on their own doorstep. Caravans vanish on the southern road, and the dead walk back out wrong. Grukk sends fighters south because nobody else will.',
@@ -106,7 +106,7 @@
       aggem_thorncurse: 'A geomancer who leads the Death\'s Head inside the Warrens. He was the first of the thorn-speakers to take up the cult, and he taught the thorns to answer it.',
       death_speaker_jargba: 'A spinehide necromancer who gives the cult its dead. He calls fallen warriors of the tribe back to guard the tunnels, whether they are willing or not.',
       overlord_ramtusk: 'The Warrens\'s war leader, loyal to Grisla above everything. He cares little for the cult, but he will kill anyone who threatens the matriarch or the thorns.',
-      agathelos: 'A great boar kept in the deepest dens. The spinehide say Agamaggan\'s blood runs in him, and they feed him the prisoners they have no other use for.',
+      agathelos: 'A great boar kept in the deepest dens. The spinehide say the Great Boar\'s blood runs in him, and they feed him the prisoners they have no other use for.',
       charlga_razorflank: 'Matriarch of the Thorn Warrens, old and cunning. She turned her tribe towards the Death\'s Head and the power behind it, and she rules the Warrens from the thorn throne.',
     } },
 
@@ -148,7 +148,7 @@
     } },
 
     dg_maraudon: { title: 'The Gemfall Caves', section: 'dungeon', dungeon: 'maraudon', text: [
-      'The centaur tribes of Mournwaste agree on little, but all of them trace their line to these caves. Zaetar has been dead for ages. The tribes tell different stories of how he died, and each one blames another.',
+      'The centaur tribes of Mournwaste agree on little, but all of them trace their line to these caves and to the wandering god the Stone Princess loved. He has been dead for ages. The tribes tell different stories of how he died, and each one blames another.',
       'Ghesra never left him. She has kept her grief in the deepest caverns for longer than anyone can count, and over that time it has turned to poison. The water that runs out of The Gemfall Caves carries it, and the land it touches withers.',
       'Others have come to feed on the rot. Satyrs, wood elves who once served the Legion, hold the upper halls under Lord Venomlip. Vines and slimes grow fat in the dark. The druids who knew Faolan still believe his scepter can bring him back to himself.',
       'Krugar and Accord each hold a corner of Mournwaste, and both have watched it die around them. Whatever else divides them, neither wants what lives in The Gemfall Caves to spread any further.',
@@ -158,7 +158,7 @@
       lord_vyletongue: 'A satyr lord who claimed the upper halls of The Gemfall Caves for his kind. He cares nothing for the centaur or the earth, only for the corruption and what he can make of it.',
       celebras_the_cursed: 'A keeper of the grove, twisted by the curse of the falls. What remains of him still tends the water, but he no longer knows what he is tending it for.',
       landslide: 'A great earth elemental that guards the way to the princess. It is less a servant than a piece of the mountain that woke up angry.',
-      princess_theradras: 'The elemental princess of earth and, by the centaur\'s telling, their mother. Her grief for Zaetar has poisoned her caverns and, through them, all of Mournwaste.',
+      princess_theradras: 'The elemental princess of earth and, by the centaur\'s telling, their mother. Her grief for the wandering god has poisoned her caves and, through them, all of Mournwaste.',
     } },
     dg_blackrock_depths: { title: 'Cinderpeak Depths', section: 'dungeon', dungeon: 'blackrock_depths', text: [
       'The Slagborn were the proudest of the dwarven clans, and the war with their kin went badly for them. Grimmark reached for a power none of them understood. The fire he woke broke their old capital apart, and its ruins still smoulder in the Cinderfields.',
@@ -172,10 +172,10 @@
       general_angerforge: 'Commander of the Slagborn armies. He drills his soldiers in the halls of Ashforge day and night, and he means to march them onto the surface one day.',
       golem_lord_argelmach: 'Master of the golem workshop. His machines guard the Emperor\'s halls, and at the heart of each one burns a core of the mountain\'s fire.',
       magmus: 'A giant of molten stone raised to guard the doors of the Imperial Seat. It has stood before them since the Emperor took his throne, and it has let nobody pass.',
-      emperor_dagran_thaurissan: 'Heir of the sorcerer-thane who called Vulcarn. He rules Ashforge in the King Below\'s name, keeps the marshal\'s notes beside his throne, and trusts nobody outside his mountain.',
+      emperor_dagran_thaurissan: 'Emperor of the Slagborn, who borrowed from the Ledger to rebuild his empire and pays it back by digging. He keeps the marshal\'s notes beside his throne and trusts nobody outside his mountain.',
     } },
     dg_scholomance: { title: 'The Blackcloister', section: 'dungeon', dungeon: 'scholomance', text: [
-      'Before the plague, Castle Ardmore was a quiet island keep on a lake, and the Vargas were one of Wexmoor\'s old noble houses. When the Cult of the Damned came with its offer, Lord Anton Varga signed the island away and took his family into the Cult\'s service.',
+      'Before the plague, Castle Ardmore was a quiet island keep on a lake, and the Vargas were one of Wexmoor\'s old noble houses, deep in debt. When the necromancers of the Hollow Host offered to buy the debt, Lord Anton Varga signed the island away and took his family into their service.',
       'The crypts became a school. Its students are living men and women who want power over death. Its teachers are the dead, or soon will be. They practise on the island\'s own people, and what they learn goes out across the Rotmoor, to Elmsworth and beyond.',
       'The Vargas walk the castle still, dressed for court, certain the deal was a good one.',
       'For the Accord, this is where the plague is taught, and closing it spares the next village. The Reclaimed were raised by lessons learned in these halls. For them, the Pale Queen\'s order is personal.',
@@ -199,7 +199,7 @@
       balnazzar: 'The power in the Pyre Bastion. The zealots believe they serve the Light through their Grand Crusader. They obey him without question. He is not what he seems.',
       baroness_anastari: 'A noblewoman of Graymouth who died with her city and rose as a banshee. She serves Mortvale now, and her wailing carries across the ziggurats at night.',
       ramstein_the_gorger: 'An abomination stitched together in the slaughterhouse and fed on the city\'s dead. It guards the way to Mortvale\'s hall, and it is never full.',
-      baron_rivendare: 'A lord of Wexmoor who gave himself to the Cult of the Damned before the plague came. The Lich King rewarded him with death and command of the ruined city.',
+      baron_rivendare: 'A lord of Wexmoor who gave himself to the Hollow Host before the plague came. It rewarded him with death and command of the ruined city.',
     } },
     dg_sunken_archive: { title: 'The Sunken Archive', section: 'dungeon', dungeon: 'sunken_archive', text: [
       'The Starborn of Sael\'anor wrote down everything they valued: star charts, songs, histories, the currents of every sea their ships crossed. They kept it all here. When the city sank, the library went down with its keepers still at their desks.',
@@ -236,7 +236,7 @@
       nalveshra: 'A spirit of the deep sea, older than the Starborn. She kept Sael\'anor alive for her own ends, swallowed the loa Shal\'zua, and ruled the isle through its prince for ten thousand years.',
     } },
     dg_molten_core: { title: 'The Magma Throne', section: 'dungeon', dungeon: 'molten_core', text: [
-      'Two hundred years ago the sorcerer-thane Grimmark called Vulcarn to win the Slagborn a war. The King Below came, and he never left. His sea of fire lies beneath Cinderpeak, deeper than any mine, and the Slagborn have been digging towards it ever since.',
+      'Vulcarn, the King Below, has slept in the sea of fire beneath Cinderpeak for longer than the Slagborn have lived there. After the Long War they borrowed to rebuild, and they pay it back by digging, each hall a little deeper, each one a little closer to the fire.',
       'Down here the rock runs like water. Hounds of living lava prowl the caverns, fire elementals walk the rune-lit halls, and the ashbounds, his own tall and horned servants, keep the runes that feed the fire.',
       'For all those years the Emperor held the mountain in the King Below\'s name, and the King Below slept. When Grimmark fell, the mountain began to shake.',
       'Accord and Krugar go down for the same reason. If Vulcarn climbs out of his lake, the Cinderfields will only be the first land to burn.',
@@ -250,12 +250,12 @@
       ragnaros: 'Vulcarn the King Below, a lord of elemental fire older than any kingdom. Grimmark called him to win a war. Two hundred years later, the mountain still burns for it.',
     } },
     dg_onyxias_lair: { title: "Veshmira's Lair", section: 'dungeon', dungeon: 'onyxias_lair', text: [
-      'Long before she ever wore a woman\'s face, Veshmira made her nest in the black rock at the heart of the Dragonmire. From there she sent her brood across the marsh and her agents across the sea, and waited.',
-      'When Marshal Hale unmasked her in Kingsmere, she did not run far. She flew home to the cave, to the warders and whelps she had been raising for years, and called up a storm over the sea behind her. The storm hid the isle it had torn from the deep, and it held for as long as she did.',
+      'Veshmira made her nest in the black rock at the heart of the Dragonmire long ago, on a hoard no one has ever counted but her. From there she lent it out, coin by warm coin, through the Black Ledger, and waited for the debts to grow.',
+      'When Marshal Hale laid her books open in Kingsmere, she came for her collateral and was beaten back. She flew home to the cave, to the warders and whelps she had been raising for years, and called up a storm over the sea behind her to guard the hoard. The storm hid the isle it had torn from the deep, and it held for as long as she did.',
       'The lair is a tunnel of cracked, glowing stone and a great cavern around a lake of fire. Her eggs lie everywhere. So do the bones of those who came before.',
-      'Harborwatch and Mudwall sent their best into the dark for the same reason. While she lived, the sea stayed closed, and the court of fools she had laughed at would never be safe.',
+      'Harborwatch and Mudwall sent their best into the dark for the same reason. While she lived, the sea stayed closed, and every kingdom that owed her would stay owned.',
     ], bosses: {
-      onyxia: 'Veshmira, daughter of Ossarak, the Brood Mother. For years she was Lady Meriel Thorne, writing Kingsmere\'s orders. In her own lair she needs no mask, only fire, and whelps to fill the air.',
+      onyxia: 'Veshmira of the Black Brood, the Ledger\'s creditor. She never needed a mask: Lady Thorne did her talking at court. In her own lair she needs only fire, gold, and whelps to fill the air.',
     } },
     // ------------------------------------------------------------ zones
     zn_northshire_valley: { title: 'Halden Vale', section: 'zone', zone: 'Halden Vale', text: [
@@ -263,8 +263,8 @@
       'The quiet is wearing thin. Kobolds dig at Tinder Hollow, and Grey Hood thugs have taken the vineyards and chased the pickers out. Marshal Aldous Venn holds the abbey with a handful of guards, and he does not expect more.',
     ] },
     zn_stormwind_city: { title: 'Kingsmere', section: 'zone', zone: 'Kingsmere', text: [
-      'Kingsmere was rubble after the Second War. The Stonemasons\' Guild raised it again, and the white walls still shine. Their bill was never paid.',
-      'The king\'s seat stands empty. Lord Regent Edmund Carrow rules as regent for the boy Tamlin. At court he leans more each month on a new adviser, Lady Thorne. The Market Ward is busy, the Hall of Banners is swept clean, and Kingsmere Gaol is full.',
+      'Kingsmere was half rubble at the end of the Long War. The crown rebuilt it on credit, and the white walls still shine. The bill has not been paid.',
+      'The king\'s seat stands empty. King Rhodric is dead, and Lord Regent Edmund Carrow rules until Prince Tamlin comes of age. At court he leans more each month on Lady Thorne, the Mistress of Coin. The Market Ward is busy, the Hall of Banners is swept clean, and Kingsmere Gaol is full of debtors.',
     ] },
     zn_coldridge_valley: { title: 'Rimefold Valley', section: 'zone', zone: 'Rimefold Valley', text: [
       'Rimefold Valley sits high in the snow, sheltered from the worst of the wind. Brunhall has trained the dwarves\' young fighters there for generations.',
@@ -281,10 +281,10 @@
     ] },
     zn_darnassus: { title: 'Nyrwen', section: 'zone', zone: 'Nyrwen', text: [
       'Nyrwen is the newest city of the Sylari and one of the oldest peoples in the world. It rests high in the crown of Greatbough, all pale stone and moonlit water.',
-      'The wood elves built it slowly and carefully, as they do everything, and they pray to Elune in its halls. They are wary of outsiders, but the Accord is welcome here, for now.',
+      'The wood elves built it slowly and carefully, as they do everything, and they keep the old moon rites in its halls. They are wary of outsiders, but the Accord is welcome here, for now.',
     ] },
     zn_durotar: { title: 'Dunescar', section: 'zone', zone: 'Dunescar', text: [
-      'Dunescar is red rock and dry thorn, and the orcs chose it anyway. Grask led them here after the Third War to build a home that belonged to nobody else.',
+      'Dunescar is red rock and dry thorn, and the orcs chose it anyway. Grask led them here after the Long War to build a home that belonged to nobody else, and owed nothing to anyone.',
       'That home is still threatened from within and without. Hollow Eye warlocks call up demons in the Blooding Grounds. Brineholt marines have dug in at Saltwall Keep. On the Kessari Isles, the witch doctor Mokku the Hexer has turned his own Kessari people into hexed slaves.',
       'Bonewall holds the road between them all. It is a hard land, and the Krugar means to keep it.',
     ] },
@@ -295,7 +295,7 @@
     zn_mulgore: { title: 'Greensward', section: 'zone', zone: 'Greensward', text: [
       'Greensward is wide grass and gentle hills, the homeland the hornfolk fought long years to reach. They hunt the plains as they always have, and give thanks to the Grass Mother for each kill.',
       'Others want the land too. Hollowtusk spinehide raid from the ravine below Calf Hill Camp. Ashpelt gnolls poach the herds from Ashpelt Rock, and the Deepgold Company is tearing open the ground for ore.',
-      'Ossa Village sits at the heart of it, where Tarro of Ossa, son of Cairne, watches over his people.',
+      'Ossa Village sits at the heart of it, where Tarro of Ossa, son of the old chief, watches over his people.',
     ] },
     zn_thunder_bluff: { title: 'Hornwind Mesa', section: 'zone', zone: 'Hornwind Mesa', text: [
       'Hornwind Mesa stands on tall mesas above the plains of Greensward. The hornfolk built it when their wandering finally ended, with bridges of rope and wood strung between the heights.',
@@ -303,7 +303,7 @@
     ] },
     zn_tirisfal_glades: { title: 'Pallmoor', section: 'zone', zone: 'Pallmoor', text: [
       'Pallmoor was the green heart of Wexmoor, until the plague came. Its farms are graveyards now, and not all of the dead rest easy.',
-      'The Reclaimed broke free of the Lich King and made this land their own. From Last Bell and Mossgate they put down the mindless, study the plague and hold the roads. Gnolls and spiders crawl through the ruins of Varden Mills and the old mines.',
+      'The Reclaimed are the dead who woke from the plague with their minds their own. They broke free of the Hollow Host and made this land theirs. From Last Bell and Mossgate they put down the mindless, study the plague and hold the roads. Gnolls and spiders crawl through the ruins of Varden Mills and the old mines.',
       'The Order of the Pyre calls every one of them a monster to be burned. It holds a watch post off the road and a monastery beyond it, and it does not stop coming.',
     ] },
     zn_undercity: { title: 'Gravenhold', section: 'zone', zone: 'Gravenhold', text: [
@@ -328,7 +328,7 @@
     zn_the_barrens: { title: 'The Scrublands', section: 'zone', zone: 'The Scrublands', text: [
       'The Scrublands is a long, hot plain of yellow grass and dry water holes. Dustfort sits in the middle of it, and the Krugar has held it with blades since the day it was built.',
       'The land fights back. Galloran centaurs raid the caravans, and the Snoutspike spinehide grow bolder near Hollow Tower. Deepgold Company goblins foul the Slick, and dwarves from Keldrun dig at the Stonegrave Dig.',
-      'In the south, the thorns of The Thorn Warrens grow from the blood of Agamaggan. The spinehide call them holy.',
+      'In the south, the thorns of the Thorn Warrens grow from the blood of the Great Boar. The spinehide call them holy.',
     ] },
     zn_redridge_mountains: { title: 'Stoneharrow Mountains', section: 'zone', zone: 'Stoneharrow Mountains', text: [
       'Stoneharrow is red hills and a long, clear lake, and Longbridge is a town built at the water\'s edge. The bridge across Lake Calder is half built, and the town badly needs it finished.',
@@ -386,8 +386,8 @@
       'The wilds belong to neither. Stonegut ogres hold the old roads, Mossgut gnolls raid the hills, harpies hunt the highlands and the Spitecoil naga come up from the sea.',
     ] },
     zn_desolace: { title: 'Mournwaste', section: 'zone', zone: 'Mournwaste', text: [
-      'Mournwaste is a grey waste of dust and bone. The centaur say it was not always so. Their tribes came from the demigod Zaetar and Ghesra, a princess of the earth.',
-      'Zaetar was killed, and Ghesra carried him down into the caves of The Gemfall Caves. Her grief has soaked into the ground ever since. The land above is poisoned, and the caves below have filled with twisted things.',
+      'Mournwaste is a grey waste of dust and bone. The centaur say it was not always so. Their tribes came from a wandering god and Ghesra, a princess of the earth.',
+      'The wandering god was killed, and Ghesra carried him down into the Gemfall Caves. Her grief has soaked into the ground ever since. The land above is poisoned, and the caves below have filled with twisted things.',
       'The Wood Elf Wardens of Starfeather and the hornfolk of Camp Ruga both send people into The Gemfall Caves. They go for the same reason. The poison is spreading.',
     ] },
     zn_un_goro_crater: { title: 'Greenmaw Crater', section: 'zone', zone: 'Greenmaw Crater', text: [
@@ -396,24 +396,24 @@
       'The crater answers back. Hiveborn swarm the Hive Scar, Smokeplume Ridge smokes at its heart, and the tar pits hold whatever the jungle has already killed.',
     ] },
     zn_burning_steppes: { title: 'The Cinderfields', section: 'zone', zone: 'The Cinderfields', text: [
-      'The Cinderfields were green when the Slagborn capital stood here. Two hundred years ago the sorcerer-thane Grimmark called Vulcarn to win a war, and the King Below burned the land black. The Ruins of Grimmark are what is left.',
+      'The Cinderfields were green when the Slagborn built their first city here. The deeper they dug under Cinderpeak, the hotter the ground grew, until the fields burned black. The Ruins of Grimmark are what is left.',
       'Cinderpeak looms over the steppes. The Slagborn dig beneath it, the Cinderpeak orcs hold their stronghold in Lord Kethran Vale\'s name, and black dragonspawn guard the Broodwing Path.',
       'Drummond\'s Vigil and Brand Crest watch the mountain from opposite ends of the steppes. The Accord has one more reason: Marshal Hale is inside, alive and in chains.',
     ] },
     zn_western_plaguelands: { title: 'West Rotmoor', section: 'zone', zone: 'West Rotmoor', text: [
       'The West Rotmoor were the farmland of Wexmoor. The plague took them first, and the Hollow Host came after. Elmsworth was a town of granaries. Now it is a town of the dead.',
-      'At Castle Ardmore the Varga family sold their keep to the Cult of the Damned, and The Blackcloister teaches necromancy in its halls. In Morrowglen the Order of the Pyre trusts no one, living or dead.',
+      'At Castle Ardmore the Varga family sold their keep to pay their debts, and the Blackcloister teaches necromancy in its halls. In Morrowglen the Order of the Pyre trusts no one, living or dead.',
       'The Accord holds Greyfrost Camp and the Reclaimed hold the Bulwark. Officers of the Lantern Watch stand in both, and keep one count for everyone.',
     ] },
     zn_eastern_plaguelands: { title: 'East Rotmoor', section: 'zone', zone: 'East Rotmoor', text: [
       'The East Rotmoor are where the plague did its worst. Nothing grows clean here, and the roads belong to the Hollow Host.',
-      'At their heart stands Graymouth, the city Arthas put to the sword before the plague could turn it. It was not enough. The Hollow Host walk its streets now, and the Order of the Pyre holds what it can of the rest, behind gates it will not open.',
+      'At their heart stands Graymouth, whose lord barred the gates with the living still inside, hoping to keep the plague out. It was not enough. The Hollow Host walk its streets now, and the Order of the Pyre holds what it can of the rest, behind gates it will not open.',
       'The Lantern Watch sends people in anyway. Someone has to count what is left.',
     ] },
     zn_winterspring: { title: 'Icewold', section: 'zone', zone: 'Icewold', text: [
       'Icewold is the far north of the wood elf lands, a valley of snow and old ruins. The Starborn once kept their halls by Lake Eluvain, and their ghosts have never quite left.',
       'Coldcoin is a goblin trading town in the drifts, open to anyone who pays. Hunters, furriers and scholars pass through, and the blue dragons of Crystalhall watch from their caves.',
-      'Something is wrong in the forest. The Icebrow bearkin have turned savage on a drink of their own brewing, and the snowcats are sick. The Cenarion Circle wants to know where the taint comes from.',
+      'Something is wrong in the forest. The Icebrow bearkin have turned savage on a drink of their own brewing, and the snowcats are sick. The druids of the Circle want to know where the taint comes from.',
     ] },
     zn_tidewatch_coast: { title: 'Tidewatch Coast', section: 'zone', zone: 'Tidewatch Coast', text: [
       'The Tidewatch Coast was the edge of Sael\'anor before the Heartfire exploded. It is dry land again after ten thousand years. Its orchards still stand, grey and dripping, and the husks that walk between them were Starborn once.',

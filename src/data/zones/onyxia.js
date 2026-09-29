@@ -1,4 +1,4 @@
-// Veshmira's Lair (raid, 10 players, level 60). Unmasked at the Kingsmere court, the Brood Mother fled south to her cave
+// Veshmira's Lair (raid, 10 players, level 60). Exposed at the Kingsmere court, the Brood Mother fled south to her cave
 // under the Dragonmire in Saltmarsh. The storm she raised over the sea will not break while she lives; her death opens
 // the way to the Stormveil Isle. Both factions queue from the lair's mouth. Loot sits a step below the Tidecrown Citadel.
 (function (root) {
@@ -11,7 +11,7 @@
   epic('onyx_legs', 'Blackscale Legguards', 'legs', { atype: 'mail', lvl: 60, armor: 468, stats: { str: 23, sta: 20 }, icon: 'legs', sell: 16200 });
   epic('onyx_belt', 'Stormscale Girdle', 'waist', { atype: 'mail', lvl: 60, armor: 360, stats: { str: 19, sta: 18 }, icon: 'belt', sell: 15300 });
   epic('onyx_gloves', 'Talon-Stitched Gloves', 'hands', { atype: 'leather', lvl: 60, armor: 144, stats: { agi: 19, sta: 13 }, icon: 'gloves', sell: 15300 });
-  epic('onyx_boots', 'Slippers of the Masquerade', 'feet', { atype: 'cloth', lvl: 60, armor: 76, stats: { int: 17, spi: 13 }, sp: 20, icon: 'boots', sell: 15300 });
+  epic('onyx_boots', 'Slippers of the Coronation', 'feet', { atype: 'cloth', lvl: 60, armor: 76, stats: { int: 17, spi: 13 }, sp: 20, icon: 'boots', sell: 15300 });
   epic('onyx_ring', "Lady Thorne's Signet", 'finger', { lvl: 60, stats: { sta: 14, int: 13 }, sp: 14, icon: 'ring', sell: 15300 });
   epic('onyx_sword', 'Wyrmfang Greatblade', 'weapon', { wtype: 'sword', lvl: 60, dmg: [94, 140], speed: 3.2, stats: { str: 24, sta: 16 }, icon: 'sword', sell: 18000 });
   epic('onyx_dagger', "Meriel's Kiss", 'weapon', { wtype: 'dagger', lvl: 60, dmg: [52, 95], speed: 1.8, stats: { agi: 19, sta: 12 }, icon: 'dagger', sell: 17600 });
