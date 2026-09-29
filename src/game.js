@@ -361,13 +361,13 @@
     const v = (b.item.sell || 1) * b.n;
     P.money += v; P.bags.splice(idx, 1);
     sys(`Sold ${b.item.name}${b.n > 1 ? ' x' + b.n : ''} for ${G.moneyText(v)}.`);
-    emit('change');
+    emit('sold', { money: v }); emit('change');
   };
   G.sellJunk = function () {
     const P = G.S.player;
     let v = 0;
     P.bags = P.bags.filter((b) => { if (b.item.q === 0 && !b.item.noSell) { v += (b.item.sell || 1) * b.n; return false; } return true; });
-    if (v) { P.money += v; sys(`Sold junk for ${G.moneyText(v)}.`); }
+    if (v) { P.money += v; sys(`Sold junk for ${G.moneyText(v)}.`); emit('sold', { money: v }); }
     emit('change');
     return v;
   };

@@ -2886,6 +2886,7 @@
     G.on('questDone', () => snd('quest_done'));
     G.on('questAccept', () => snd('quest_accept'));
     G.on('lootGain', (d) => { if (d.items) snd('loot'); else if (d.money) snd('coin'); });
+    G.on('sold', () => snd('coin'));
     G.on('pop', () => snd('pop'));
     G.on('error', () => snd('error', { gap: 0.4, vol: 0.6 }));
     G.on('chat', renderChat);
