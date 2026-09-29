@@ -26,7 +26,10 @@ class MainActivity : FlutterActivity() {
     private val updWorker = Executors.newSingleThreadExecutor()
     @Volatile private var updState = "idle"; @Volatile private var updDone = 0L; @Volatile private var updTotal = 0L; @Volatile private var updError: String? = null
     private fun updFile(): File = File(File(cacheDir, "updates").apply { mkdirs() }, "AzerothSolo-update.apk")
-    private val updPrefix = "https://github.com/faizal97/azeroth-solo/releases/download/"
+    // the repo is moving from azeroth-solo to realm-of-loner (v10); GitHub serves the old name as a redirect, so both are trusted
+    private val repoPrefixes = listOf("https://github.com/faizal97/azeroth-solo", "https://github.com/faizal97/realm-of-loner")
+    private fun ownRepo(url: String) = repoPrefixes.any { url == it || url.startsWith("$it/") }
+    private fun ownApk(url: String) = repoPrefixes.any { url.startsWith("$it/releases/download/") } && url.endsWith(".apk")
     private fun startDownload(url: String) {
         updState = "running"; updDone = 0; updTotal = 0; updError = null
         updWorker.execute {
@@ -116,7 +119,7 @@ class MainActivity : FlutterActivity() {
                 }
                 "download" -> {
                     val url = call.argument<String>("url") ?: ""
-                    if (!url.startsWith(updPrefix) || !url.endsWith(".apk")) { result.error("bad_url", "Only this game's GitHub release APKs can be downloaded", null); return@setMethodCallHandler }
+                    if (!ownApk(url)) { result.error("bad_url", "Only this game's GitHub release APKs can be downloaded", null); return@setMethodCallHandler }
                     if (updState == "running") { result.success(true); return@setMethodCallHandler }
                     startDownload(url); result.success(true)
                 }
@@ -137,7 +140,7 @@ class MainActivity : FlutterActivity() {
                 "openUrl" -> {
                     val url = call.argument<String>("url") ?: ""
                     // only this game's own pages: its GitHub repo and its Discord invite
-                    if (url.startsWith("https://github.com/faizal97/azeroth-solo") || url == "https://discord.gg/6xaVaXukeT") startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                    if (ownRepo(url) || url == "https://discord.gg/6xaVaXukeT") startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                     result.success(true)
                 }
                 else -> result.notImplemented()
