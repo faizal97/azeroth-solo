@@ -84,11 +84,13 @@ Alternatives: the Concord and the Warbands.
 
 ### 4. The peoples that need new identities
 
+**Decided (2026-09-29): Wood Elf, Hornfolk, and Undead stays** ("Undead" is generic; "Risen" was dropped: an existing game series, and WoW's name for undead monsters).
+
 | Today | Proposal | Idea |
 |---|---|---|
 | Night Elf | **Wood Elf** | a forest people; keeps the look, drops Blizzard's history |
 | Tauren | **Hornfolk** | tall, horned plains people with their own name and culture |
-| Undead (Forsaken) | **Risen** | the dead who woke with their minds their own |
+| Undead (Forsaken) | ~~Risen~~ **Undead** (kept) | the dead who woke with their minds their own |
 
 Human, Dwarf, Gnome, Orc and Troll stay.
 
