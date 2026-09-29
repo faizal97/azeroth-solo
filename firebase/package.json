@@ -1,0 +1,13 @@
+{
+  "name": "realm-of-loner-firebase",
+  "private": true,
+  "description": "Security rules for Friends and their emulator tests. Dev only; nothing here ships in the game.",
+  "scripts": {
+    "test": "JAVA_HOME=/opt/homebrew/opt/openjdk PATH=/opt/homebrew/opt/openjdk/bin:$PATH firebase emulators:exec --only firestore,database --project demo-friends 'node rules.test.js'"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "firebase": "^12.19.0",
+    "firebase-tools": "^15.32.0"
+  }
+}

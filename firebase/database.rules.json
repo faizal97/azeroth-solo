@@ -1,0 +1,23 @@
+{
+  "rules": {
+    "status": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('see').child($uid).child(auth.uid).val() === true)",
+        "$conn": {
+          ".write": "auth != null && auth.uid === $uid",
+          ".validate": "newData.hasChildren(['at'])",
+          "at": { ".validate": "newData.isNumber()" },
+          "char": { ".validate": "newData.isString() && newData.val().length <= 40" },
+          "$other": { ".validate": false }
+        }
+      }
+    },
+    "see": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "$other": { ".validate": "newData.val() === true" }
+      }
+    }
+  }
+}

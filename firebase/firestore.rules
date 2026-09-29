@@ -1,0 +1,37 @@
+rules_version = '2';
+// Friends (docs/plans/2026-09-30-friends-design.md). Tested by rules.test.js against the emulator: npm test.
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function me() { return request.auth != null ? request.auth.uid : ''; }
+    function only(keys) { return request.resource.data.keys().hasOnly(keys); }
+    function friendOf(owner) { return exists(/databases/$(db)/documents/friends/$(owner)/list/$(me())); }
+
+    // a friend code points to one player; anyone signed in may look one up, nobody may list them
+    match /codes/{code} {
+      allow get: if me() != '';
+      allow create: if me() != '' && code.matches('^[2-9A-HJKMNP-Z]{8}$') && only(['uid']) && request.resource.data.uid == me();
+      allow delete: if resource.data.uid == me();
+    }
+    // what friends see: read by the owner and their accepted friends only
+    match /profiles/{uid} {
+      allow read: if me() == uid || (me() != '' && friendOf(uid));
+      allow create, update: if me() == uid && only(['v', 'code', 'updatedAt', 'lastSeen', 'playing', 'chars'])
+        && request.resource.data.v is int && request.resource.data.chars is map && request.resource.data.chars.size() <= 12;
+      allow delete: if me() == uid;
+    }
+    // a friend request from {from} to {to}; Accept, Decline and Cancel all delete it
+    match /requests/{to}/in/{from} {
+      allow read, delete: if me() == to || me() == from;
+      allow create: if me() == from && from != to && only(['name', 'cls', 'level', 'at'])
+        && request.resource.data.name is string && request.resource.data.name.size() <= 24;
+    }
+    // {other} may read {owner}'s profile. The owner chooses their own list; {other} may add themselves only by
+    // accepting the owner's request (requests/{other}/in/{owner}). Either side may end it.
+    match /friends/{owner}/list/{other} {
+      allow read: if me() == owner || me() == other;
+      allow create: if only(['since']) && (me() == owner
+        || (me() == other && exists(/databases/$(db)/documents/requests/$(other)/in/$(owner))));
+      allow delete: if me() == owner || me() == other;
+    }
+  }
+}
