@@ -1,18 +1,18 @@
 // LEGENDS: hand-made characters with their own story, a questline across the levels, and a place in your group once you
 // finish it. D.LEGENDS[key] = { name, title, npc, unlock (the last quest), role, cls, race, abilities, story, credit }.
 // First legend: Lyveus Cloveus, the Exiled Knight (an original character by a friend of the developer, adapted to the
-// Black Brood story). A high elf paladin of the Kingsmere guard who overheard Lady Thorne's cabal, was condemned,
+// Black Brood story). A wood elf paladin of the Kingsmere guard who overheard Lady Thorne's cabal, was condemned,
 // saved when his comrade Vyn faked his death, and lost his home in the Kinloch Highlands to the cabal's hired blades.
 (function (root) {
   const D = root.D;
   D.LEGENDS = D.LEGENDS || {};
   D.LEGENDS.lyveus = {
     name: 'Lyveus Cloveus', short: 'Lyveus', nick: 'Lyv', title: 'The Exiled Knight', npc: 'lyveus', unlock: 'lg_lyv_oath',
-    cls: 'paladin', race: 'human', role: 'tank', abilities: ['oathbound_strike', 'ancients_bulwark'],
+    cls: 'paladin', race: 'nightelf', role: 'tank', abilities: ['oathbound_strike', 'ancients_bulwark'],
     credit: 'An original character created by a friend, adapted for Caldreth.',
     story: [
       'Long before the Long War, the black dragon Ossarak, whom the elves of the Kinloch forests call the Black Ruin, tore the world open. He was driven off, but never destroyed.',
-      'Lyveus grew up in Silverleaf Lodge, a high elf village in the Kinloch pines, learning blade, bow and the old grove oath of his people. Seven years ago, when a Kingsmere caravan was ambushed near the forest, the Light burst from him in its defence. Kingsmere took him into its guard, as a fighter and as a sign that the old alliance of men and elves still held.',
+      'Lyveus grew up in Silverleaf Lodge, a wood elf village in the Kinloch pines, learning blade, bow and the old grove oath of his people. Seven years ago, when a Kingsmere caravan was ambushed near the forest, the Light burst from him in its defence. Kingsmere took him into its guard, as a fighter and as a sign that the old alliance of men and elves still held.',
       'Five years ago, as a guard to the nobles of the court, he overheard a circle of them plotting to send the kingdom\'s soldiers to die for a dark master. They condemned him. His comrade Vyn faked his death, and Lyveus vanished.',
       'Two years ago the cabal learned he was alive. Silverleaf Lodge burned, and his kin with it. The world was told it was Black Ledger bandits. Lyveus knows better.',
       'Now the black brood stirs again, and the exiled knight has come home to the ashes.',

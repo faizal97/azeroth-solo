@@ -1,10 +1,10 @@
-/* art_legends.js — Legend characters for Realm of Loner. First legend: Lyveus Cloveus, the Exiled Knight, a high elf
+/* art_legends.js — Legend characters for Realm of Loner. First legend: Lyveus Cloveus, the Exiled Knight, a wood elf
  * paladin (an original character by a friend of the developer, redrawn from his reference drawing in the game's style).
  *   legend  lyveus               ART.legend(key): a party / world sprite in exactly the ART.hero format
  *                                (128x128, facing RIGHT, feet on y=122, shadow at y=122.5). ART.legend.keys lists the keys.
  *                                Unknown keys return ART.hero({ cls: 'paladin', race: 'human' }).
  *   actors  lyveus, vyn          ART.story.actor: 160x160 transparent, facing LEFT, feet on the bottom edge
- *   scene   silverleaf_lodge     ART.scene: 400x240, the high elf lodge in the Kinloch pines, burned two years ago, at sunset
+ *   scene   silverleaf_lodge     ART.scene: 400x240, the wood elf lodge in the Kinloch pines, burned two years ago, at sunset
  *   mob     lord_cassius_marrow  ART.mob: 128x128, facing LEFT, feet on y=122 (open-world elite, Lady Thorne's cabal)
  *   icons   legend_lyveus, oathbound_strike, ancients_bulwark, silverleaf_aegis   ART.icon: 64x64
  * Second batch (the hooded-wanderer stage and the Theater lore cutscene):

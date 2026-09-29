@@ -46,7 +46,7 @@
     ] },
     ch6: { title: 'The Creditor', section: 'story', chapter: 'ch6', lvl: 60, text: [
       'The cell doors of Cinderpeak Depths stand open. Marshal Hale walked out with his notes and rode for Kingsmere before the coronation.',
-      'He did not come alone. Beside him stood a high elf knight the court had buried five years before: Lyveus Cloveus, who had heard the nobles plot in those same halls.',
+      'He did not come alone. Beside him stood a wood elf knight the court had buried five years before: Lyveus Cloveus, who had heard the nobles plot in those same halls.',
       'Hale read his notes to the court. Every coin the Ledger lent the crown came from one purse, and the crown\'s whole debt falls due on the day the prince is crowned. Lady Thorne did not deny it. She handed the Regent the deed and told him the kingdom was already sold.',
       'Then the creditor came to collect: Veshmira of the Black Brood, a black dragon who lends her hoard instead of sleeping on it. Beaten back from Kingsmere, she flew south over the sea to her lair in Saltmarsh, and Lady Thorne went with her. A storm closed over the water behind them to guard the hoard. Out past it, sailors saw land where there had been none for ten thousand years, but no ship could reach it.',
       'The dragon is gone from Kingsmere. The debt is not paid, and her storm will not break while she lives.',
@@ -58,8 +58,8 @@
       'Veshmira\'s storm raised the Stormveil Isle, and hid it for as long as she lived. When she fell in her lair, the storm broke. Brineholt ships carry the Accord from Gullhaven to the Tidewatch Coast; Kessari and Reclaimed crews sail from Camp Skarn to the Skullreef Isles. Everyone wants to reach the citadel at its heart first.',
     ] },
     lyveus_1: { title: 'The Exiled Knight', section: 'legend', legend: 'lyveus', open: true, lvl: 1, text: [
-      'Long before the Long War, the black dragon Ossarak tore the world open. The high elves of the Kinloch pines call him the Black Ruin. He was driven off. He was never destroyed.',
-      'Lyveus Cloveus grew up in Silverleaf Lodge, a high elf village in those pines, learning the blade, the bow and the old grove oath of his people. Seven years ago, raiders struck a Kingsmere caravan near the forest. He ran to defend it, and the Light burst out of him. The crown took him into its guard.',
+      'Long before the Long War, the black dragon Ossarak tore the world open. The wood elves of the Kinloch pines call him the Black Ruin. He was driven off. He was never destroyed.',
+      'Lyveus Cloveus grew up in Silverleaf Lodge, a wood elf village in those pines, learning the blade, the bow and the old grove oath of his people. Seven years ago, raiders struck a Kingsmere caravan near the forest. He ran to defend it, and the Light burst out of him. The crown took him into its guard.',
       'In Kingsmere he met Vyn, a farm boy in the same guard. The two rose through the ranks together, until they were chosen to guard the nobles of the court.',
       'Five years ago, in a room he was never meant to enter, Lyveus heard a circle of nobles plot to sell the kingdom\'s soldiers to pay a master they had never met. They condemned him for it. Vyn faked his death and got him out of the city.',
       'For three years he lived quietly at home. Then the cabal learned the truth, and Silverleaf Lodge burned with his kin inside. The world was told that bandits from the hills did it. Lyveus knew better. He walks the roads under a hood now, and keeps watch.',

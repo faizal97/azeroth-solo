@@ -671,8 +671,8 @@
     const rac = u.race && D.RACIALS[u.race] && D.RACIALS[u.race].active;
     if (rac && Math.random() < 0.08 * (b.skill || 0.5)) {
       const rA = D.ABILITIES[rac];
-      const hurt = u.hp / u.maxHp < 0.4;
-      if ((rA.bloodFury || rA.berserk) || (rA.stompAll && en.length >= 2) || (hurt && (rA.cleanse || rA.dropThreat)) || (u.stunUntil > C.t && rA.freeOf)) { if (try_(rac)) return; }
+      const hurt = u.hp / u.maxHp < 0.4; // a tank never fades out of a fight: the enemies would turn on the healer
+      if ((rA.bloodFury || rA.berserk) || (rA.stompAll && en.length >= 2) || (hurt && (rA.cleanse || (rA.dropThreat && u.role !== 'tank'))) || (u.stunUntil > C.t && rA.freeOf)) { if (try_(rac)) return; }
     }
     const has = (id) => D.CLASSES[u.cls].abilities.includes(id) && D.ABILITIES[id].lvl <= u.level;
 

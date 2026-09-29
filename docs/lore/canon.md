@@ -96,7 +96,7 @@ may name her as the creditor, since it opens at 60.
 
 ### Legends and the expansion
 
-- **Lyveus Cloveus, the Exiled Knight** ("Lyv" to friends). A high elf paladin from Silverleaf Lodge in the Kinloch Highlands, once of the Kingsmere guard. Quiet, dry, patient; "They made me a ghost. Ghosts keep watch." Created by a friend of the developer and adapted for Caldreth.
+- **Lyveus Cloveus, the Exiled Knight** ("Lyv" to friends). A wood elf paladin from Silverleaf Lodge in the Kinloch Highlands, once of the Kingsmere guard. Quiet, dry, patient; "They made me a ghost. Ghosts keep watch." Created by a friend of the developer and adapted for Caldreth.
 - **Vyn.** Lyveus's friend from the guard, a human farm boy who rose with him. Faked Lyveus's death. Now writes from Coppergulch.
 - **Prince Aeldran Tidecrown.** Starborn prince of Sael'anor. Kept his court alive for ten thousand years through a bargain he does not fully understand. Proud, grieving, dangerous. "Ten thousand years I waited."
 - **Nal'veshra, the Deepmother.** A sea spirit older than the Starborn. The true power under the citadel. Swallowed the sea spirit Shal'zua. "Little lights."
@@ -114,7 +114,7 @@ ones the story leans on:
 - **Kingsmere.** The Accord's capital in Ostmarch, rebuilt on credit. **Vazhrak** is the Krugar capital in Redmarch.
 - **Cinderpeak.** The burning mountain: Cinderpeak Depths (the Slagborn city of Ashforge), the Spire (the Ledger's vault), and the Magma Throne beneath.
 - **The Smugglers' Deep.** The old Fenwick mine and hidden cove where Blackwell builds the Ledger's fleet.
-- **Silverleaf Lodge.** A high elf village in the Kinloch pines; Lyveus's home, burned two years ago. Now a camp of the Ledger's enforcers until you clear it.
+- **Silverleaf Lodge.** A wood elf village in the Kinloch pines, the one lodge of the Sylari on Ostmarch, founded by elves who crossed the sea to watch over the Black Ruin's old scar; Lyveus's home, burned two years ago. Now a camp of the Ledger's enforcers until you clear it.
 - **Stormveil Isle.** The risen island. Holds the Tidewatch Coast (Accord landing), the Skullreef Isles (Krugar landing), the drowned city of Sael'anor, Spirit's Rest, the causeway and the Tidecrown Citadel.
 - **The Sunken Archive.** Sael'anor's great library (Accord dungeon).
 - **The Temple of Shal'zua.** The Wavebreakers' temple (Krugar dungeon).

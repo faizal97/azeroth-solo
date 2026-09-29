@@ -51,7 +51,7 @@
         lines: [{ t: 0.5, text: 'Long before the Long War, the black dragon Ossarak tore the world open. The elves of the Kinloch pines call him the Black Ruin.' }, { t: 6, text: 'He was driven off. He was never destroyed.' }] },
       { bg: 'scene:silverleaf_lodge', dur: 10, cam: [[-3, 0, 1.12], [3, 0, 1.12]],
         actors: [{ a: 'story:lyveus', x: 40, y: 2, w: 32, anim: 'breathe', from: { o: 0 }, dur: 1.6 }],
-        lines: [{ t: 0.5, text: 'In Silverleaf Lodge, a high elf village in those pines, young Lyveus Cloveus learned the blade, the bow, and the old grove oath of his people.' }] },
+        lines: [{ t: 0.5, text: 'In Silverleaf Lodge, a wood elf village in those pines, young Lyveus Cloveus learned the blade, the bow, and the old grove oath of his people.' }] },
       { bg: 'story:caravan_road', dur: 11, cam: [[0, 0, 1.05], [0, -2, 1.2]], fx: ['shake@4'],
         actors: [{ a: 'story:lyveus', x: 40, y: 2, w: 32, anim: 'breathe', from: { x: 20, o: 0 }, dur: 1.2 }],
         lines: [{ t: 0.5, text: 'Seven years ago, raiders struck a Kingsmere caravan near the forest. Lyveus ran to defend it, and the Light burst out of him.' }, { t: 6, text: 'The crown took him into its guard: a fine sword, and a sign that the old bond between men and elves still held.' }] },

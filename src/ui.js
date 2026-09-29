@@ -2023,7 +2023,7 @@
             if (open) for (const para of L.story) box.append(h('p', { style: { margin: '6px 0' } }, para));
             box.append(h('button', { class: 'chip', style: { marginTop: '6px' }, onclick: () => { ui.heroStory = open ? null : key; ui.sheetFn(); } }, open ? 'Hide story' : 'Read his story'));
           }
-          else box.append(h('p', { style: { margin: '6px 0' } }, 'A high elf knight, said to have died five years ago, has been seen among the ashes of Silverleaf Lodge in the Kinloch Highlands (level 37+).'));
+          else box.append(h('p', { style: { margin: '6px 0' } }, 'A wood elf knight, said to have died five years ago, has been seen among the ashes of Silverleaf Lodge in the Kinloch Highlands (level 37+).'));
           if (on) box.append(h('p', { class: 'ai-note' }, `${L.short} takes a ${L.role} slot in your groups (a damage slot if you are the ${L.role}), with his own abilities: ${L.abilities.map((a) => D.ABILITIES[a].name).join(' and ')}.`));
           box.append(h('p', { class: 'ai-note' }, L.credit));
           b.append(box);

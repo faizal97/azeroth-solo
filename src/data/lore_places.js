@@ -373,7 +373,7 @@
     zn_arathi_highlands: { title: 'Kinloch Highlands', section: 'zone', zone: 'Kinloch Highlands', text: [
       'The Kinloch Highlands were the cradle of the first human kingdom. Highhold Keep still stands, but ogres and the Black Ledger hold most of it. The League of Kinloch fights from Holdfast Point to win it back.',
       'The Krugar holds Chainbreak. Its orcs remember the camps where humans once kept them, and they will not share the highlands. Rotbough trolls, Rockbrow ogres and the spirits loose at the West Binding Stones trouble both.',
-      'In the pines lies Silverleaf Lodge, a high elf village burned two years ago. The Black Ledger were blamed. Their camp stands in the ashes now.',
+      'In the pines lies Silverleaf Lodge, a wood elf village burned two years ago. The Black Ledger were blamed. Their camp stands in the ashes now.',
     ] },
     zn_tanaris: { title: 'Sirocco', section: 'zone', zone: 'Sirocco', text: [
       'Sirocco is sand to every horizon, and whoever holds the water holds the desert. In Coppergulch that is Baron Coinsworth, and his water works run day and night.',
