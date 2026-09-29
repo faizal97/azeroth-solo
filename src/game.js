@@ -418,7 +418,7 @@
     if (!G.addItem(copy, n)) return;
     P.money -= cost;
     sys(`Bought ${it.name}${n > 1 ? ' x' + n : ''} for ${G.moneyText(cost)}.`);
-    emit('change');
+    emit('bought', { money: cost }); emit('change');
   };
 
   // ============================================================ character
