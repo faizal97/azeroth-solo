@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Publish the browser version: puts dist/index.html (run build.py first) on the gh-pages branch, which GitHub Pages
-# serves at https://faizal97.github.io/azeroth-solo/. A normal commit and push on that branch, never a force-push.
+# serves at https://faizal97.github.io/realm-of-loner/. A normal commit and push on that branch, never a force-push.
 # Usage: tools/publish_web.sh          a normal release: the main page, and beta/ too unless beta/ holds a newer test build
-#        tools/publish_web.sh --beta   a test build: only the beta page (https://faizal97.github.io/azeroth-solo/beta/)
+#        tools/publish_web.sh --beta   a test build: only the beta page (https://faizal97.github.io/realm-of-loner/beta/)
 # (run from the repo root, after build.py)
 set -euo pipefail
 BETA=0; [ "${1:-}" = "--beta" ] && BETA=1

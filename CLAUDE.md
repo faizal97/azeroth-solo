@@ -39,7 +39,7 @@ cd app && JAVA_HOME=/opt/homebrew/opt/openjdk@17 flutter build apk --release
 1. Bump `version:` in `app/pubspec.yaml` for every release.
 2. Copy the APK to `~/Library/Mobile Documents/com~apple~CloudDocs/Azeroth Solo/AzerothSolo-vX.apk`, remove the previous APK there, and confirm `ubiquitousItemIsUploaded` is true.
 3. Faizal installs it from icloud.com → Recents on his phone.
-4. Publish the browser version: `tools/publish_web.sh` (puts `dist/index.html` on the `gh-pages` branch, served at https://faizal97.github.io/azeroth-solo/). Every GitHub release also needs the APK attached, or the in-app updater won't see it.
+4. Publish the browser version: `tools/publish_web.sh` (puts `dist/index.html` on the `gh-pages` branch, served at https://faizal97.github.io/realm-of-loner/). Every GitHub release also needs the APK attached, or the in-app updater won't see it.
 
 **Release cadence (since v9.9):** people play this now, so batch public releases (about one a week, not several a day); only a real bug fix goes out on its own.
 - **Beta:** a test build is a GitHub **pre-release** tagged `vX.Y.Z-beta.N` (`gh release create ... --prerelease`), with its APK attached, and pubspec `version: X.Y.Z-beta.N+code`. Publish it to the web with `tools/publish_web.sh --beta` (only the `/beta/` page). Only players with Settings → Beta updates on get it: the app then reads all releases, and in a browser beta is the `/beta/` page (same site, so it shares characters).

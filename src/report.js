@@ -1,10 +1,10 @@
 // Bug reports (v9.9): catches JavaScript errors while you play and builds a report you can send as a prefilled GitHub
-// issue (github.com/faizal97/azeroth-solo/issues/new) or copy for Discord. The report holds the version, the device
+// issue (github.com/faizal97/realm-of-loner/issues/new) or copy for Discord. The report holds the version, the device
 // and the game state needed to reproduce a bug (level, class, place, what you were doing); never the save itself.
 // UI lives in ui.js (reportDialog); this file has no DOM code.
 (function (root) {
   const REPORT = root.REPORT = {};
-  const REPO_ISSUES = 'https://github.com/faizal97/azeroth-solo/issues/new';
+  const REPO_ISSUES = 'https://github.com/faizal97/realm-of-loner/issues/new';
   const errors = []; // the last few, newest last
   let onError = null;
   REPORT.onError = (fn) => { onError = fn; };

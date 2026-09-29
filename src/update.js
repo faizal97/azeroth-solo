@@ -4,13 +4,13 @@
 // links to the release page. UI lives in ui.js (updateDialog); this file has no DOM code.
 (function (root) {
   const UPD = root.UPD = {};
-  const REPO = 'faizal97/azeroth-solo';
+  const REPO = 'faizal97/realm-of-loner';
   const API = `https://api.github.com/repos/${REPO}/releases/latest`; // ignores pre-releases
   const API_ALL = `https://api.github.com/repos/${REPO}/releases?per_page=15`; // pre-releases too (the beta channel)
   // The beta channel (v9.9): test builds go out as GitHub pre-releases (tag vX.Y.Z-beta.N). In the app it is a switch
   // saved on this device; in a browser it is the /beta/ page, which publish_web.sh also refreshes on every normal
   // release so it is never behind. Same site, so both pages share the same characters.
-  UPD.WEB = 'https://faizal97.github.io/azeroth-solo/';
+  UPD.WEB = 'https://faizal97.github.io/realm-of-loner/';
   UPD.WEB_BETA = UPD.WEB + 'beta/';
   UPD.onBetaPage = () => /\/beta\/(index\.html)?$/.test((root.location && root.location.pathname) || '');
   UPD.onSite = () => /github\.io$/.test((root.location && root.location.hostname) || '');

@@ -4,7 +4,7 @@ A single-player "MMO" for Android and the browser, set in Caldreth, a world of i
 
 It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sprites, real combat maths, gear, quests and dungeons.
 
-**Play it in your browser:** https://faizal97.github.io/azeroth-solo/ (desktop or phone; saves stay in your browser). Or install the Android app from [Releases](https://github.com/faizal97/azeroth-solo/releases).
+**Play it in your browser:** https://faizal97.github.io/realm-of-loner/ (desktop or phone; saves stay in your browser). Or install the Android app from [Releases](https://github.com/faizal97/realm-of-loner/releases).
 
 **Join the community on Discord:** https://discord.gg/6xaVaXukeT (talk about the game, report bugs, suggest ideas).
 
