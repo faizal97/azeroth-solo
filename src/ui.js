@@ -1308,7 +1308,7 @@
   function renderNavDots() {
     const q = Object.keys(G.S.player.quests).some((id) => G.questState(id) === 'complete');
     const b = els.nav.querySelector('[data-nav="quests"]'); if (b) b.classList.toggle('dot', q);
-    const s = els.nav.querySelector('[data-nav="social"]'); if (s) s.classList.toggle('dot', !!(G.S.queue && G.S.queue.popped));
+    const s = els.nav.querySelector('[data-nav="social"]'); if (s) s.classList.toggle('dot', !!(G.S.queue && G.S.queue.popped) || friendsWaiting());
     const hb = els.nav.querySelector('[data-nav="hero"]'); if (hb) hb.classList.toggle('dot', G.talentPoints(G.S.player).free > 0 || loreUnread() > 0);
     loreNotice();
   }
@@ -1342,16 +1342,17 @@
 
   // ---------- item tooltip
   const statName = { str: 'Strength', agi: 'Agility', sta: 'Stamina', int: 'Intellect', spi: 'Spirit' };
-  function itemTip(it, extra) {
-    const P = G.S.player;
+  // who: another player's character ({ level, equip }), for a friend's gear: no "can you use it" or compare lines
+  function itemTip(it, extra, who) {
+    const P = who || G.S.player;
     const t = h('div', { class: 'tooltip' });
     t.append(h('div', { class: 'nm q' + it.q }, it.name));
-    const why = blockReason(it);
+    const why = who ? null : blockReason(it);
     if (why) t.append(h('div', { class: 'red', style: { fontWeight: 800 } }, why.text));
     if (it.slot === 'quest') t.append(h('div', { class: 'st' }, 'Quest Item'));
     if (D.GEAR_SLOTS.includes(it.slot)) {
       const type = it.slot === 'weapon' ? { sword: 'Sword', axe: 'Axe', mace: 'Mace', dagger: 'Dagger', staff: 'Staff' }[it.wtype] : it.atype ? it.atype[0].toUpperCase() + it.atype.slice(1) : '';
-      t.append(h('div', { class: 'flex st' }, h('span', null, D.SLOT_LABEL[it.slot]), h('span', { class: G.canUseItem(it) ? '' : 'red' }, type)));
+      t.append(h('div', { class: 'flex st' }, h('span', null, D.SLOT_LABEL[it.slot]), h('span', { class: who || G.canUseItem(it) ? '' : 'red' }, type)));
       if (it.dmg) {
         t.append(h('div', { class: 'flex st' }, h('span', null, `${it.dmg[0]} - ${it.dmg[1]} Damage`), h('span', null, `Speed ${it.speed.toFixed(2)}`)));
         t.append(h('div', { class: 'st' }, `(${((it.dmg[0] + it.dmg[1]) / 2 / it.speed).toFixed(1)} damage per second)`));
@@ -1382,7 +1383,7 @@
     if (it.look || base.look) t.append(h('div', { style: { color: '#ff80ff' } }, 'Appearance: shows on your character'));
     if (it.source || base.source) t.append(h('div', { class: 'dim' }, (/^Quest/.test(it.source || base.source) ? '' : 'Drops from ') + (it.source || base.source)));
     if (it.sell && !it.noSell && it.slot !== 'quest') t.append(h('div', { class: 'dim', html: 'Sell Price: ' + moneyHtml(it.sell) }));
-    const cmp = compareBlock(it);
+    const cmp = who ? null : compareBlock(it);
     if (cmp) t.append(cmp);
     if (extra) t.append(extra);
     return t;
@@ -2255,6 +2256,200 @@
         h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); G.resetTalents(); ui.sheetFn(); } }, 'Reset'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true) }, cost ? `Reset (${G.moneyText(cost)})` : 'Reset (free)')));
     });
   }
+  // ---------- Friends (friends.js): real players, added by friend code. Social → Friends. The live view (fw) runs
+  // while Friends is on; the tab and the Social dot read it.
+  const fw = { view: null, stop: null, starting: false };
+  function friendsStart() {
+    if (!window.FRIENDS || !FRIENDS.available() || !FRIENDS.on() || fw.stop || fw.starting) return;
+    fw.starting = true;
+    FRIENDS.resume().then(() => {
+      fw.stop = FRIENDS.watch((v) => { fw.view = v; if (G.S) renderNavDots(); if (ui.sheet === 'social' && ui.socialTab === 'friends' && !ui.dialog) ui.sheetFn(); else if (ui.sheet === 'friend' && ui.sheetFn) ui.sheetFn(); });
+      FRIENDS.online(!document.hidden);
+    }).catch(() => {}).finally(() => { fw.starting = false; });
+  }
+  function friendsStop() { if (fw.stop) fw.stop(); fw.stop = null; fw.view = null; if (G.S) renderNavDots(); }
+  const friendsWaiting = () => !!(fw.view && fw.view.requests.length);
+  const friendErr = (e) => { if (e && e.code === 'cancelled') return; toast((e && e.message) || 'Friends did not answer. Try again.'); };
+  const friendNote = (t) => h('p', { class: 'ai-note', style: { margin: 0 } }, t);
+  // a friend's characters, newest first; the one they are playing leads
+  function friendChars(f) {
+    const p = f.profile; if (!p) return [];
+    const list = Object.entries(p.chars || {}).map(([id, c]) => Object.assign({ id }, c)).sort((a, b) => (b.at || 0) - (a.at || 0));
+    const cur = f.online && f.char ? list.findIndex((c) => c.id === f.char) : -1;
+    if (cur > 0) list.unshift(list.splice(cur, 1)[0]);
+    return list;
+  }
+  const charLine = (c) => `Level ${c.level} ${(D.RACES[c.race] || D.RACES.human).name} ${(D.CLASSES[c.cls] || { name: c.cls }).name}`;
+  const charPortrait = (c) => img(art('portrait', { cls: D.CLASSES[c.cls] ? c.cls : 'warrior', race: D.RACES[c.race] ? c.race : 'human', gender: c.look[0] || 'm', skin: +c.look[1] || 0, hair: +c.look[2] || 0 }));
+  function friendStatus(f) {
+    const p = f.profile;
+    if (!p) return 'Friends turned off';
+    const c = friendChars(f)[0];
+    if (f.online) {
+      const pl = p.playing;
+      if (!f.char || !pl || pl.char !== f.char) return 'Online';
+      const ch = (p.chars || {})[f.char];
+      return [ch ? charLine(ch) : 'Online', pl.run ? 'in ' + pl.run : pl.zone ? pl.zone + (pl.place && pl.place !== pl.zone ? ', ' + pl.place : '') : null].filter(Boolean).join(' · ');
+    }
+    return p.lastSeen ? `Last played ${agoText(p.lastSeen)}` : 'Offline';
+  }
+  function copyText(text, done) {
+    const fallback = () => showDialog([h('h3', null, 'Copy this'), h('input', { value: text, readonly: true, style: { width: '100%' }, onfocus: (e) => e.target.select() }), h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: closeDialog }, 'Done'))], true);
+    try { if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text).then(() => toast(done || 'Copied.', true), fallback); } catch (e) { }
+    fallback();
+  }
+  function friendAdd(prefill) {
+    const input = h('input', { placeholder: 'K7QM-P2XD', value: prefill || '', autocapitalize: 'characters', autocomplete: 'off', style: { width: '100%', fontSize: '18px', letterSpacing: '.08em', textTransform: 'uppercase' } });
+    const go = h('button', { class: 'btn', onclick: () => {
+      go.disabled = true;
+      FRIENDS.add(input.value).then((r) => { closeDialog(); toast(r.what === 'accepted' ? 'They had already asked you, so you are friends now.' : 'Request sent. You will be friends once they accept.', true); if (ui.sheetFn) ui.sheetFn(); })
+        .catch((e) => { go.disabled = false; friendErr(e); });
+    } }, 'Send request');
+    showDialog([h('h3', null, 'Add a friend'), h('p', null, 'Type or paste their friend code. They get a request and choose whether to accept.'), input,
+      h('div', { class: 'btn-row' }, go, h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true);
+    setTimeout(() => input.focus(), 50);
+  }
+  function friendsTab(b) {
+    if (!window.FRIENDS || !FRIENDS.available()) {
+      b.append(friendNote(UPD.inApp() ? 'Friends needs the newest version of the app.' : `Friends works in the app and on the game's own page, ${UPD.WEB}.`));
+      return;
+    }
+    FRIENDS.prepare().catch(() => {}); // load ahead, so a tap can open Google's window straight away
+    const code = ui.friendCode; // from a share link (#friend=…)
+    if (!FRIENDS.on()) {
+      const on = h('button', { class: 'btn', onclick: () => {
+        on.disabled = true; on.textContent = 'Turning on…';
+        FRIENDS.turnOn().then(() => { toast('Friends is on. Send your code to a friend.', true); friendsStart(); ui.sheetFn(); if (ui.friendCode) { const c = ui.friendCode; ui.friendCode = null; friendAdd(c); } })
+          .catch((e) => { friendErr(e); ui.sheetFn(); });
+      } }, 'Turn on Friends');
+      b.append(h('div', { class: 'sec-h' }, 'Friends', h('small', null, 'real players')),
+        h('p', null, 'Add the people you know by friend code, see their characters and gear, and see when they are playing.'),
+        friendNote('Optional, and off until you turn it on. It uses your Google sign-in (only to know it is you, not your email). Your friends see the characters you share: their level, gear, talents, professions and guild, where you are, and when you last played. Nobody else does.'),
+        ...(code ? [friendNote(`Turn on Friends to add ${FRIENDS.showCode(FRIENDS.cleanCode(code) || '')}.`)] : []),
+        h('div', { class: 'btn-row' }, on), privacyLink('How Friends handles your data'));
+      return;
+    }
+    friendsStart();
+    const st = FRIENDS.state(), v = fw.view;
+    if (code) { ui.friendCode = null; setTimeout(() => friendAdd(code), 0); }
+    b.append(h('div', { class: 'sec-h' }, 'Your friend code', h('small', null, 'send it to a friend')),
+      h('div', { class: 'fr-code' }, FRIENDS.showCode(st.code)),
+      h('div', { class: 'btn-row' },
+        h('button', { class: 'btn', onclick: () => friendAdd() }, 'Add a friend'),
+        h('button', { class: 'btn alt', onclick: () => copyText(FRIENDS.showCode(st.code), 'Code copied.') }, 'Copy code'),
+        h('button', { class: 'btn alt', onclick: () => copyText(`Add me in Realm of Loner: ${FRIENDS.link(st.code)}`, 'Link copied. Paste it to your friend.') }, 'Copy link')));
+    if (!v) { b.append(friendNote(FRIENDS.signedIn() ? 'Loading your friends…' : 'Connecting…'), h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { fw.stop = null; friendsSignIn(); } }, 'Reconnect'))); friendsFooter(b); return; }
+    if (v.requests.length) {
+      b.append(h('div', { class: 'sec-h' }, 'Requests', h('small', null, `${v.requests.length} waiting`)));
+      const list = h('div', { class: 'list' });
+      for (const r of v.requests) {
+        const busy = (btn, p) => { btn.disabled = true; p.catch(friendErr); };
+        const yes = h('button', { class: 'btn', onclick: () => busy(yes, FRIENDS.accept(r.from).then(() => toast(`You and ${r.name} are friends now.`, true))) }, 'Accept');
+        const no = h('button', { class: 'btn alt', onclick: () => busy(no, FRIENDS.decline(r.from)) }, 'Decline');
+        list.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, (r.name || '?')[0]), h('div', { class: 't' }, h('b', { class: 'cls-' + r.cls }, r.name), h('small', null, `Level ${r.level} ${(D.CLASSES[r.cls] || { name: '' }).name}`)), h('div', { class: 'r' }, yes, ' ', no)));
+      }
+      b.append(list);
+    }
+    const sent = v.sent.filter((s) => !v.friends.some((f) => f.uid === s.uid));
+    if (sent.length) {
+      b.append(h('div', { class: 'sec-h' }, 'Sent', h('small', null, 'waiting for them to accept')));
+      const list = h('div', { class: 'list' });
+      for (const s of sent) list.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, '?'), h('div', { class: 't' }, h('b', null, FRIENDS.showCode(s.code)), h('small', null, `sent ${agoText(s.at)}`)), h('div', { class: 'r' }, h('button', { class: 'btn alt', onclick: () => FRIENDS.cancel(s.uid).then(() => ui.sheetFn()).catch(friendErr) }, 'Cancel'))));
+      b.append(list);
+    }
+    const online = v.friends.filter((f) => f.online).length;
+    b.append(h('div', { class: 'sec-h' }, 'Friends', h('small', null, v.friends.length ? `${online} of ${v.friends.length} online` : '')));
+    if (!v.friends.length) b.append(friendNote('No friends yet. Send your code to someone, or add theirs.'));
+    else {
+      const list = h('div', { class: 'list' });
+      for (const f of v.friends) {
+        const c = friendChars(f)[0];
+        list.append(h('button', { class: 'row', onclick: () => openFriend(f.uid) },
+          h('div', { class: 'ic' }, c ? charPortrait(c) : ''),
+          h('div', { class: 't' }, h('b', { class: c ? 'cls-' + c.cls : '' }, h('span', { class: 'fr-dot' + (f.online ? ' on' : '') }), c ? c.name : 'A friend'), h('small', { style: { whiteSpace: 'normal' } }, friendStatus(f))), h('div')));
+      }
+      b.append(list);
+    }
+    // what friends see of each of your characters on this device
+    b.append(h('div', { class: 'sec-h' }, 'My sharing', h('small', null, 'what your friends see')));
+    const mine = h('div', { class: 'list' });
+    for (const ch of G.characters()) {
+      const S = G.S && G.S.id === ch.id ? G.S : G.readSave(ch.id), on = FRIENDS.shared(S);
+      mine.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('portrait', { cls: ch.cls, race: ch.race || 'human', gender: ch.gender || 'm', skin: +ch.skin || 0, hair: +ch.hair || 0 }))), h('div', { class: 't' }, h('b', { class: 'cls-' + ch.cls }, ch.name), h('small', null, `Level ${ch.level} ${raceClass(ch)}`)),
+        h('div', { class: 'r' }, h('button', { class: 'chip' + (on ? ' gold' : ''), onclick: () => FRIENDS.setShared(ch.id, !on).then(() => ui.sheetFn()) }, on ? 'Shared' : 'Hidden'))));
+    }
+    b.append(mine, friendNote('Hidden characters, and where you are while you play one, stay private. The switch travels with the character in cloud save.'));
+    friendsFooter(b);
+  }
+  function friendsSignIn() { FRIENDS.prepare().then(() => friendsStart()).catch(friendErr); }
+  function friendsFooter(b) {
+    b.append(h('div', { class: 'btn-row', style: { marginTop: '14px' } },
+      h('button', { class: 'btn alt', onclick: () => showDialog([h('h3', null, 'Turn off Friends?'),
+        h('p', null, 'Your profile, online status and sent requests are deleted from Firebase, and friends see you as "Friends turned off". Your friends and your code are kept, so turning it on again brings everything back.'),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); FRIENDS.turnOff().then(() => { friendsStop(); toast('Friends is off.', true); ui.sheetFn(); }).catch(friendErr); } }, 'Turn off'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))]) }, 'Turn off Friends'),
+      h('button', { class: 'btn alt', onclick: () => showDialog([h('h3', null, 'Delete your Friends data?'),
+        h('p', null, 'Everything Friends keeps about you is deleted: your profile, status, code, requests and every friendship (you leave your friends\' lists too). This cannot be undone; to be friends again, you would add each other again.'),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn', style: { background: '#a01010' }, onclick: () => { closeDialog(); FRIENDS.deleteAll().then(() => { friendsStop(); toast('Your Friends data is deleted.', true); ui.sheetFn(); }).catch(friendErr); } }, 'Delete'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))]) }, 'Delete my Friends data')),
+      privacyLink('How Friends handles your data'));
+  }
+  // a friend's profile: every character they share; tap one for its gear
+  function openFriend(uid) {
+    const find = () => fw.view && fw.view.friends.find((x) => x.uid === uid);
+    const f0 = find(), c0 = f0 && friendChars(f0)[0];
+    openSheet('friend', c0 ? c0.name : 'Friend', 'Friend', (b) => {
+      const f = find();
+      if (!f) { b.append(friendNote('You are no longer friends.')); return; }
+      b.append(h('p', { class: 'ai-note', style: { margin: '0 0 6px' } }, h('span', { class: 'fr-dot' + (f.online ? ' on' : '') }), friendStatus(f)));
+      const chars = friendChars(f);
+      if (!f.profile) b.append(friendNote('They have turned Friends off, so there is nothing to show for now.'));
+      else if (!chars.length) b.append(friendNote('They are not sharing any characters right now.'));
+      const list = h('div', { class: 'list' });
+      for (const c of chars) {
+        const extra = [c.guild ? `<${c.guild.name}>${c.guild.rank ? ' ' + c.guild.rank : ''}` : null, c.role ? ({ tank: 'Tank', healer: 'Healer', dps: 'Damage' }[c.role] || c.role) : null].filter(Boolean).join(' · ');
+        list.append(h('button', { class: 'row', onclick: () => openFriendChar(uid, c.id) },
+          h('div', { class: 'ic' }, charPortrait(c)),
+          h('div', { class: 't' }, h('b', { class: 'cls-' + c.cls }, friendTitle(c)), h('small', { style: { whiteSpace: 'normal' } }, charLine(c) + (extra ? ' · ' + extra : ''))), h('div', { class: 'r' }, f.online && f.char === c.id ? 'playing' : '')));
+      }
+      b.append(list);
+      const rm = h('button', { class: 'btn alt', onclick: () => showDialog([h('h3', null, 'Remove this friend?'), h('p', null, 'You leave each other\'s lists. To be friends again, one of you sends a new request.'),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); rm.disabled = true; FRIENDS.remove(uid).then(() => { toast('Removed.', true); closeSheet(); openSocial('friends'); }).catch(friendErr); } }, 'Remove'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))]) }, 'Remove friend');
+      b.append(h('div', { class: 'btn-row', style: { marginTop: '14px' } }, rm));
+    });
+  }
+  function friendTitle(c) {
+    const t = c.title && D.TITLES.find((x) => x.id === c.title);
+    if (!t) return c.name;
+    const horde = (D.RACES[c.race] || {}).faction === 'horde';
+    return (horde && t.horde ? t.horde : t.name).replace('%s', c.name);
+  }
+  // one of a friend's characters: gear (like your own Hero screen, read-only), talents, professions
+  function openFriendChar(uid, id) {
+    const get = () => { const f = fw.view && fw.view.friends.find((x) => x.uid === uid); return f && f.profile && f.profile.chars && f.profile.chars[id] ? Object.assign({ id }, f.profile.chars[id]) : null; };
+    const c0 = get();
+    openSheet('friendchar', c0 ? friendTitle(c0) : 'Character', c0 ? charLine(c0) : '', (b) => {
+      const c = get();
+      if (!c) { b.append(friendNote('This character is no longer shared.')); return; }
+      const who = { level: c.level, equip: {} };
+      for (const slot in c.gear || {}) { const it = FRIENDS.item(c.gear[slot]); if (it) who.equip[slot] = it; }
+      const facts = [c.guild ? `<${c.guild.name}>${c.guild.rank ? ', ' + c.guild.rank : ''}` : null, c.role ? 'Plays as ' + ({ tank: 'tank', healer: 'healer', dps: 'damage' }[c.role] || c.role) : null, c.mounts ? `${c.mounts} mount${c.mounts > 1 ? 's' : ''}` : null].filter(Boolean);
+      if (facts.length) b.append(h('p', { class: 'ai-note', style: { margin: '0 0 6px' } }, facts.join(' · ')));
+      const trees = D.TALENTS[c.cls] || [];
+      const spent = trees.map((tr) => tr.talents.reduce((n, t) => n + ((c.talents || {})[t.id] || 0), 0));
+      if (spent.some((n) => n > 0)) b.append(h('div', { class: 'sec-h' }, 'Talents', h('small', null, spent.join(' / '))), friendNote(trees.map((tr, i) => `${tr.name} ${spent[i]}`).join(' · ')));
+      const profs = Object.entries(c.profs || {}).filter(([k]) => D.PROFESSIONS[k]);
+      if (profs.length) b.append(h('div', { class: 'sec-h' }, 'Professions'), friendNote(profs.map(([k, n]) => `${D.PROFESSIONS[k].name} ${n}`).join(' · ')));
+      b.append(h('div', { class: 'sec-h' }, 'Equipment', h('small', null, 'tap to inspect')));
+      const gear = h('div', { class: 'gear' });
+      for (const slot of D.GEAR_SLOTS) {
+        const g = (c.gear || {})[slot], it = FRIENDS.item(g);
+        gear.append(h('button', { class: 'row' + (it ? '' : ' off'), onclick: () => { if (it) showDialog(itemTip(it, null, who), true); else if (g) toast('Update the game to see this item.'); } },
+          h('div', { class: 'ic' }, it ? img(art('icon', it.icon)) : ''),
+          h('div', { class: 't' }, h('b', { class: it ? 'q' + it.q : '' }, it ? it.name : g ? 'Unknown item' : 'Empty'), h('small', null, D.SLOT_LABEL[slot])), h('div')));
+      }
+      b.append(gear);
+    });
+  }
+
   // ---------- cloud save (cloud.js): an optional copy of every character in the player's own Google Drive
   const agoText = (ms) => (!ms ? 'never' : Date.now() - ms < 90000 ? 'just now' : fmtTime(Date.now() - ms).trim() + ' ago');
   const devName = (d) => (d === 'phone' ? 'your phone' : 'the browser');
@@ -2395,13 +2590,15 @@
     ui.socialTab = tab || ui.socialTab || 'group';
     openSheet('social', 'Social', `${D.REALM} · ${B.onlineCount(G.S, new Date())} players online`, (b) => {
       const tabs = h('div', { class: 'tabs' });
-      for (const [k, label] of [['group', 'Group Finder'], ['chat', 'Chat'], ['news', 'Realm News'], ['guild', 'Guild']]) tabs.append(h('button', { class: ui.socialTab === k ? 'on' : '', onclick: () => { ui.socialTab = k; ui.sheetFn(); } }, label));
+      for (const [k, label] of [['group', 'Group Finder'], ['chat', 'Chat'], ['news', 'Realm News'], ['guild', 'Guild'], ['friends', 'Friends']]) tabs.append(h('button', { class: (ui.socialTab === k ? 'on' : '') + (k === 'friends' && friendsWaiting() ? ' dot' : ''), onclick: () => { ui.socialTab = k; ui.sheetFn(); } }, label));
       // pinned, so you can switch tabs even when the chat is scrolled to the newest line
       ui.socialHead = h('div', { class: 'sheet-stick' }, tabs);
       b.append(ui.socialHead);
+      const onTab = tabs.querySelector('.on'); if (onTab && onTab.scrollIntoView) setTimeout(() => onTab.scrollIntoView({ block: 'nearest', inline: 'nearest' }), 0); // Friends sits past the edge on a phone
       if (ui.socialTab === 'group') groupTab(b);
       else if (ui.socialTab === 'chat') chatTab(b);
       else if (ui.socialTab === 'news') newsTab(b);
+      else if (ui.socialTab === 'friends') friendsTab(b);
       else guildTab(b);
     });
   }
@@ -3052,6 +3249,7 @@
     const rep = G.load(id);
     if (!rep) return toast('That character could not be loaded.');
     start(); if (rep.away > 120000) showAway(rep);
+    friendsEnter();
     // a chapter added in an update after you passed its level plays the next time you come in
     if (window.CS) { const seen = CS.unlocked(); const ch = CS.CHAPTERS.find((c) => c.shots && c.level > 1 && c.level <= G.S.player.level && !seen.has(c.id) && chapterReady(c)); if (ch) ui.pendingChapter = ch.id; }
   }
@@ -3064,7 +3262,7 @@
       inCloud ? h('label', { class: 'ai-note', style: { display: 'flex', gap: '8px', alignItems: 'center' } }, alsoCloud, 'Also delete the copy in Google Drive') : null, err,
       h('div', { class: 'btn-row' },
         h('button', { class: 'btn', onclick: () => { if (input.value.trim().toUpperCase() !== 'DELETE') { err.textContent = 'Type DELETE to confirm.'; return; }
-          G.deleteCharacter(c.id); closeDialog();
+          G.deleteCharacter(c.id); closeDialog(); if (window.FRIENDS && FRIENDS.on()) FRIENDS.forgetChar(c.id);
           if (inCloud) { if (alsoCloud.checked) withCloud(() => CLOUD.deleteCloud(c.id)).then(() => toast('Deleted from Google Drive too.', true)); else CLOUD.forget(c.id); }
           after(); } }, 'Delete'),
         h('button', { class: 'btn alt', onclick: closeDialog }, 'Keep'))]);
@@ -3118,6 +3316,8 @@
   function bind() {
     if (bound) return; bound = true;
     G.on('change', renderAll);
+    G.on('change', () => { if (G.S && window.FRIENDS && FRIENDS.on()) FRIENDS.touch(G.S.id); });
+    G.on('arrive', () => { if (G.S && window.FRIENDS && FRIENDS.on()) FRIENDS.touch(G.S.id); }); // a new place is news for friends
     G.on('arrive', (d) => { closeSheet(); renderAll(); if (d.first) banner(D.PLACES[d.place].name, D.PLACES[d.place].zone !== D.PLACES[d.place].name ? D.PLACES[d.place].zone : ''); });
     G.on('fightStart', () => { renderAll(); tip('fight'); });
     G.on('questAccept', () => tip('quest'));
@@ -3187,7 +3387,7 @@
       if (dt > 20) resume();
       if (ui.pendingChapter && !G.fight && !ui.dialog && !(window.CS && CS.playing)) { const id = ui.pendingChapter; ui.pendingChapter = null; closeSheet(); setTimeout(() => { if (!(window.CS && CS.unlocked().has(id))) playChapter(id); }, 2600); } // seen on another device (cloud save) in the meantime: skip it
       G.update(Math.min(dt, 1));
-      cloudTick += dt; if (cloudTick > 30) { cloudTick = 0; cloudAuto(false); }
+      cloudTick += dt; if (cloudTick > 30) { cloudTick = 0; cloudAuto(false); if (window.FRIENDS && FRIENDS.on()) FRIENDS.flush(false); }
       frame();
       panelTick += dt;
       // refresh the idle panel now and then so respawns and people show up
@@ -3209,15 +3409,28 @@
     if (away > 120000 && !G.fight) { const rep = G.catchUp(); renderAll(); showAway(rep); }
   }
   window.GAME = {
-    save: () => { G.save(); cloudAuto(true); if (window.SND) window.SND.pause(); },
-    resume: () => { if (window.SND) window.SND.resume(); resume(); },
+    save: () => { G.save(); cloudAuto(true); friendsAway(true); if (window.SND) window.SND.pause(); },
+    resume: () => { if (window.SND) window.SND.resume(); resume(); friendsAway(false); },
     back: () => { if (ui.dialog) closeDialog(); else if (ui.sheet) closeSheet(); },
   };
   const cloudAuto = (force) => { if (window.CLOUD && CLOUD.on()) CLOUD.maybeBackup(force); };
-  document.addEventListener('visibilitychange', () => { if (document.hidden) { G.save(); cloudAuto(true); if (window.SND) window.SND.pause(); } else { if (window.SND) window.SND.resume(); resume(); } });
+  // Friends: what changed goes out (gathered, once a minute), and the online dot follows the game being on screen
+  function friendsEnter() {
+    if (!window.FRIENDS || !FRIENDS.on()) { if (ui.friendCode && G.S) toast(`To add ${FRIENDS.showCode(FRIENDS.cleanCode(ui.friendCode) || '')}, open Social, then Friends.`, true); return; }
+    FRIENDS.touch(G.S.id); friendsStart();
+    FRIENDS.resume().then(() => { FRIENDS.online(!document.hidden); FRIENDS.flush(true); }).catch(() => {});
+    if (ui.friendCode) toast(`Friend code ${FRIENDS.showCode(FRIENDS.cleanCode(ui.friendCode) || '')}: open Social, then Friends, to send the request.`, true);
+  }
+  function friendsAway(away) {
+    if (!window.FRIENDS || !FRIENDS.on() || !FRIENDS.signedIn()) return;
+    if (away) { FRIENDS.flush(true); FRIENDS.online(false); } else if (G.S) FRIENDS.online(true);
+  }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { G.save(); cloudAuto(true); friendsAway(true); if (window.SND) window.SND.pause(); } else { if (window.SND) window.SND.resume(); resume(); friendsAway(false); } });
   window.addEventListener('pagehide', () => G.save());
 
   function boot() {
+    // a friend's share link (…#friend=K7QM-P2XD): kept for the Friends tab, and taken out of the address
+    try { const m = String(location.hash || '').match(/friend=([0-9A-Za-z-]+)/); if (m && window.FRIENDS && FRIENDS.cleanCode(m[1])) { ui.friendCode = m[1]; history.replaceState(null, '', location.pathname + location.search); } } catch (e) { }
     if (G.hasSave()) showSelect(); else showCreate();
     requestAnimationFrame(loop);
   }

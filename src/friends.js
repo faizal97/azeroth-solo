@@ -23,6 +23,10 @@
   let be = null;
   FRIENDS.setBackend = (b) => { be = b; };
   FRIENDS.available = () => !!be;
+  // load Firebase (and Google's script in a browser) ahead of a tap; resume() signs back in quietly on a later visit
+  FRIENDS.prepare = () => (be && be.prepare ? be.prepare() : Promise.resolve());
+  FRIENDS.signedIn = () => !!(be && be.signedIn && be.signedIn());
+  FRIENDS.resume = async () => { await FRIENDS.prepare(); await back().signIn(false); };
   const back = () => { if (!be) throw err('unavailable', 'Friends is not available here.'); return be; };
 
   // ---- friend codes: 8 characters, shown as K7QM-P2XD
@@ -233,4 +237,118 @@
   // how a friend's item is shown: the game's own item for an id, the stored one for a rolled item, or null when
   // this version of the game does not know it (the tab then asks to update)
   FRIENDS.item = (g) => (!g ? null : g.id && !g.name ? (root.D && D.ITEMS[g.id]) || null : g);
+
+  // ---- the real backend: Firebase, loaded from Google's CDN only once a player opens Friends. Sign-in is the Google
+  // sign-in cloud save uses, asking only for 'openid' ("who is this", no email): the app through the AzCloud bridge,
+  // the browser through a Google Identity Services token. Firebase then keeps its own sign-in in this page's storage.
+  const CFG = { apiKey: 'AIzaSyAZ-0zSk2uUlM4HumQXzqiFKjkhcunXhI4', authDomain: 'compelling-cat-510114-p4.firebaseapp.com',
+    projectId: 'compelling-cat-510114-p4', appId: '1:862031054528:web:9586a7431e9ef94e854f25',
+    databaseURL: 'https://compelling-cat-510114-p4-default-rtdb.asia-southeast1.firebasedatabase.app' };
+  const SDK = 'https://www.gstatic.com/firebasejs/12.19.0/';
+  FRIENDS.firebase = function () {
+    let fb = null, loading = null, gis = null, gisPending = null;
+    const inApp = () => !!(root.UPD && UPD.inApp && UPD.inApp() && root.AzCloud);
+    // the app: our own calls on the AzCloud bridge (ids of our own; every other reply goes on to cloud.js)
+    let seq = 800000, hooked = false; const mine = {};
+    const bridge = (cmd, args) => new Promise((res, rej) => {
+      if (!hooked) { hooked = true; const prev = root.AZCLOUD_REPLY;
+        root.AZCLOUD_REPLY = (s) => { let r; try { r = typeof s === 'string' ? JSON.parse(s) : s; } catch (e) { return; }
+          const w = mine[r.id]; if (!w) return prev && prev(s); delete mine[r.id];
+          if (r.ok) w.res(r.value); else { const v = r.value || {}; w.rej(err(v.code || 'auth', v.message || 'Google did not sign you in.')); } }; }
+      const id = ++seq; mine[id] = { res, rej }; root.AzCloud.postMessage(JSON.stringify({ id, cmd, args: args || {} }));
+    });
+    // the browser: Google's script, loaded ahead (prepare) so the window can open straight from the tap
+    const loadGis = () => new Promise((res, rej) => {
+      if (root.google && google.accounts && google.accounts.oauth2) return res();
+      const s = document.createElement('script'); s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
+      s.onload = () => res(); s.onerror = () => rej(err('offline', 'Could not reach Google. Check the connection and try again.'));
+      document.head.appendChild(s);
+    });
+    const initGis = () => {
+      if (gis || !(root.google && google.accounts && google.accounts.oauth2)) return;
+      gis = google.accounts.oauth2.initTokenClient({ client_id: root.CLOUD && CLOUD.WEB_CLIENT, scope: 'openid',
+        callback: (r) => { const p = gisPending; gisPending = null; if (p) (r.access_token ? p.res(r.access_token) : p.rej(err('auth', 'Google did not sign you in. Try again.'))); },
+        error_callback: (e) => { const p = gisPending; gisPending = null; if (p) p.rej(err(e && e.type === 'popup_closed' ? 'cancelled' : 'auth', e && e.type === 'popup_failed_to_open' ? 'The browser blocked Google\'s sign-in window. Allow pop-ups for this page and try again.' : 'Sign-in was cancelled.')); } });
+    };
+    // called synchronously from the tap (a browser only allows Google's window then)
+    const googleToken = () => {
+      if (inApp()) return bridge('token', { interactive: true, scopes: ['openid'] });
+      initGis();
+      if (!gis) return Promise.reject(err('offline', 'Google sign-in is still loading. Try again in a moment.'));
+      return new Promise((res, rej) => { gisPending = { res, rej }; gis.requestAccessToken({ prompt: '' }); });
+    };
+    const load = () => loading || (loading = (async () => {
+      const [app, auth, fs, db] = await Promise.all(['app', 'auth', 'firestore', 'database'].map((m) => import(SDK + `firebase-${m}.js`)));
+      const a = app.initializeApp(CFG, 'friends');
+      const A = auth.initializeAuth(a, { persistence: [auth.browserLocalPersistence, auth.inMemoryPersistence] });
+      await A.authStateReady();
+      fb = { auth, fs, db, A, F: fs.getFirestore(a), R: db.getDatabase(a) };
+      return fb;
+    })().catch((e) => { loading = null; throw e.code ? e : err('offline', 'Could not reach Friends. Check the connection and try again.'); }));
+    const f = () => { if (!fb) throw err('offline', 'Friends is still loading.'); return fb; };
+    const me = () => { const u = fb && fb.A.currentUser; if (!u) throw err('auth', 'Sign in to use Friends.'); return u.uid; };
+    const d = (...p) => f().fs.doc(f().F, ...p);
+    const col = (...p) => f().fs.collection(f().F, ...p);
+    const r = (p) => f().db.ref(f().R, p);
+    let conn = null, want = null, infoOff = null, linked = false;
+    const applyPresence = async () => {
+      const { db } = f();
+      if (!want) { if (conn) { const c = conn; conn = null; await db.remove(c); } return; }
+      if (!conn) { conn = db.push(r('status/' + me())); await db.onDisconnect(conn).remove(); }
+      const e = { at: Date.now() }; if (want.char) e.char = String(want.char).slice(0, 40);
+      await db.set(conn, e);
+    };
+    return {
+      prepare() { const p = load(); if (!inApp()) loadGis().then(initGis).catch(() => {}); return p; },
+      signedIn: () => !!(fb && fb.A.currentUser),
+      async signIn(interactive) {
+        if (fb && fb.A.currentUser) return;
+        if (!interactive) { await load(); if (fb.A.currentUser) return; throw err('auth', 'Sign in to use Friends.'); }
+        const tokP = googleToken(); // first, while still inside the tap
+        await load();
+        if (fb.A.currentUser) { tokP.catch(() => {}); return; }
+        const tok = await tokP;
+        await fb.auth.signInWithCredential(fb.A, fb.auth.GoogleAuthProvider.credential(null, tok));
+      },
+      async signOut() { if (fb) { want = null; await applyPresence().catch(() => {}); await fb.auth.signOut(fb.A); } },
+      uid: me,
+      async getCode(c) { const s = await f().fs.getDoc(d('codes', c)); return s.exists() ? s.data().uid : null; },
+      async createCode(c) { if (await this.getCode(c)) return false; await f().fs.setDoc(d('codes', c), { uid: me() }); return true; },
+      async deleteCode(c) { await f().fs.deleteDoc(d('codes', c)); },
+      async getProfile(u) { const s = await f().fs.getDoc(d('profiles', u)); return s.exists() ? s.data() : null; },
+      // each character's card replaces its own field whole (mergeFields), so an unequipped slot really goes
+      async updateProfile(fields) {
+        const { fs } = f(), data = {}, paths = [];
+        for (const k in fields) if (k !== 'chars') { data[k] = fields[k]; paths.push(k); }
+        if (fields.chars) { data.chars = {}; for (const id in fields.chars) { data.chars[id] = fields.chars[id] === null ? fs.deleteField() : fields.chars[id]; paths.push('chars.' + id); } }
+        await fs.setDoc(d('profiles', me()), data, { mergeFields: paths });
+      },
+      async deleteProfile() { await f().fs.deleteDoc(d('profiles', me())); },
+      async sendRequest(to, info) { await f().fs.deleteDoc(d('requests', to, 'in', me())).catch(() => {}); await f().fs.setDoc(d('requests', to, 'in', me()), info); },
+      async deleteRequest(to, from) { await f().fs.deleteDoc(d('requests', to, 'in', from)); },
+      async listRequests() { const s = await f().fs.getDocs(col('requests', me(), 'in')); return s.docs.map((x) => Object.assign({ from: x.id }, x.data())); },
+      async accept(from) {
+        const { fs } = f(), u = me(), b = fs.writeBatch(f().F), since = Date.now();
+        b.set(d('friends', u, 'list', from), { since }); b.set(d('friends', from, 'list', u), { since }); b.delete(d('requests', u, 'in', from));
+        await b.commit();
+      },
+      async listFriends() { const s = await f().fs.getDocs(col('friends', me(), 'list')); return s.docs.map((x) => x.id); },
+      async removeFriend(o) { const { fs } = f(), u = me(), b = fs.writeBatch(f().F); b.delete(d('friends', u, 'list', o)); b.delete(d('friends', o, 'list', u)); await b.commit(); },
+      async listSee() { const s = await f().db.get(r('see/' + me())); return Object.keys(s.val() || {}); },
+      async setSee(o, v) { if (v) await f().db.set(r(`see/${me()}/${o}`), true); else await f().db.remove(r(`see/${me()}/${o}`)); },
+      async clearSee() { await f().db.remove(r('see/' + me())); },
+      // one entry per open game; after a dropped connection the server has removed it, so it is made again
+      async presence(x) {
+        want = x;
+        if (!infoOff) { infoOff = f().db.onValue(r('.info/connected'), (s) => { const on = s.val() === true; if (on && !linked) { conn = null; applyPresence().catch(() => {}); } linked = on; }); return; }
+        if (linked) await applyPresence();
+      },
+      watchProfile: (u, cb) => f().fs.onSnapshot(d('profiles', u), (s) => cb(s.exists() ? s.data() : null), () => cb(null)),
+      watchStatus: (u, cb) => f().db.onValue(r('status/' + u), (s) => cb(s.val() || {}), () => cb({})),
+      watchFriends: (cb) => f().fs.onSnapshot(col('friends', me(), 'list'), (s) => cb(s.docs.map((x) => x.id)), () => cb([])),
+      watchRequests: (cb) => f().fs.onSnapshot(col('requests', me(), 'in'), (s) => cb(s.docs.map((x) => Object.assign({ from: x.id }, x.data()))), () => cb([])),
+    };
+  };
+  // the same places cloud save works: the app, and the game's own page (Google knows these sites)
+  if (root.CLOUD && ((CLOUD.appOk && CLOUD.appOk()) || (CLOUD.webOk && CLOUD.webOk()))) FRIENDS.setBackend(FRIENDS.firebase());
 })(typeof window !== 'undefined' ? window : globalThis);
