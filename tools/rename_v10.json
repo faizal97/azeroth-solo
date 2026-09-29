@@ -16510,5 +16510,89 @@
   "region": "",
   "status": "rename",
   "new": "The Watch"
+ },
+ "Darkshore": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Mistshore"
+ },
+ "Booty Bay": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Rumhook Bay"
+ },
+ "Thousand Needles": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Windgorge"
+ },
+ "Lion's Pride": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Bracken Arms"
+ },
+ "Gilded Rose": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "White Hart"
+ },
+ "Sundering": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Drowning"
+ },
+ "Legion": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Unmaking"
+ },
+ "Lyceum": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Forgehall"
+ },
+ "Imperial Seat": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Anvil Throne"
+ },
+ "Cenarion Circle": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Circle of the Grove"
+ },
+ "Cenarion": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Grove"
+ },
+ "Gurubashi": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Bloodsand"
+ },
+ "Cult of the Damned": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hollow Host"
+ },
+ "Lich King": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hollow Host"
  }
 }

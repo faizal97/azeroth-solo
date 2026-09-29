@@ -42,7 +42,7 @@
   D.PLACES.orgrimmar.links.everlook = 60; D.PLACES.orgrimmar.via = Object.assign(D.PLACES.orgrimmar.via || {}, { everlook: 'Wind Rider' });
 
   Object.assign(D.NPCS, {
-    donova_snowden: { name: 'Sorel Frostbrook', title: 'Cenarion Circle' },
+    donova_snowden: { name: 'Sorel Frostbrook', title: 'Circle of the Grove' },
     witch_doctor_mauari: { name: 'Witch Doctor Oka', title: 'Coldcoin' },
     umi_rumplesnicker: { name: 'Tilly Snickersnoot', title: 'Yeti Enthusiast' },
     malyfous_darkhammer: { name: 'Malvar Hrafnsson', title: 'Blacksmith' },
@@ -54,7 +54,7 @@
   const A = (id, q) => { q.faction = 'alliance'; D.QUESTS[id] = q; };
   const H = (id, q) => { q.faction = 'horde'; D.QUESTS[id] = q; };
   const Q = (id, q) => { D.QUESTS[id] = q; };
-  A('to_everlook_a', { name: 'Coldcoin', lvl: 57, giver: 'commander_ashlam', turnin: 'donova_snowden', text: 'The Cenarion Circle asks for fighters in Icewold. Fly from Nyrwen to Coldcoin and find Sorel Frostbrook.',
+  A('to_everlook_a', { name: 'Coldcoin', lvl: 57, giver: 'commander_ashlam', turnin: 'donova_snowden', text: 'The Circle of the Grove asks for fighters in Icewold. Fly from Nyrwen to Coldcoin and find Sorel Frostbrook.',
     objs: [{ type: 'visit', place: 'everlook' }], reward: { money: 3200 } });
   H('to_everlook_h', { name: 'Coldcoin', lvl: 57, giver: 'high_executor_derrington', turnin: 'donova_snowden', text: 'The goblins of Coldcoin trade with anyone who pays. Fly from Vazhrak and see what Icewold needs.',
     objs: [{ type: 'visit', place: 'everlook' }], reward: { money: 3200 } });

@@ -11,7 +11,7 @@
     cls: 'paladin', race: 'human', role: 'tank', abilities: ['oathbound_strike', 'ancients_bulwark'],
     credit: 'An original character created by a friend, adapted for Caldreth.',
     story: [
-      'Twenty-one years ago the black dragon Ossarak, whom the elves of the Kinloch forests call Astaroth, the Black Ruin, tore the world in the Second War. He was driven off, but never destroyed.',
+      'Long before the Long War, the black dragon Ossarak, whom the elves of the Kinloch forests call the Black Ruin, tore the world open. He was driven off, but never destroyed.',
       'Lyveus grew up in Silverleaf Lodge, a high elf village in the Kinloch pines, learning blade, bow and the old grove oath of his people. Seven years ago, when a Kingsmere caravan was ambushed near the forest, the Light burst from him in its defence. Kingsmere took him into its guard, as a fighter and as a sign that the old alliance of men and elves still held.',
       'Five years ago, as a guard to the nobles of the court, he overheard a circle of them plotting to send the kingdom\'s soldiers to die for a dark master. They condemned him. His comrade Vyn faked his death, and Lyveus vanished.',
       'Two years ago the cabal learned he was alive. Silverleaf Lodge burned, and his kin with it. The world was told it was Black Ledger bandits. Lyveus knows better.',

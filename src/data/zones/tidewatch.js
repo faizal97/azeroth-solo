@@ -1,6 +1,6 @@
 // EXPANSION "The Drowned Crown" (level 60, original story). The Tidewatch Coast is the Accord side of the Stormveil
 // Isle, which rose from the sea in the storm Veshmira left behind (Chapter 6). The Brineholt expedition holds Brightwater
-// Landing; inland lie the drowned orchards and outskirts of Sael'anor, a Starborn city that sank in the Sundering.
+// Landing; inland lie the drowned orchards and outskirts of Sael'anor, a Starborn city that sank in the Drowning.
 (function (root) {
   const D = root.D;
   D.zone('tidewatch', { name: 'Tidewatch Coast', faction: 'alliance' });

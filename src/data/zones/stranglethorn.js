@@ -1,6 +1,6 @@
 // Northern The Vinewild: contested, levels 30–35 (v5).
 // Rebel Camp (Accord) and Camp Skarn (Krugar) are closed to the other faction; Wexley's Expedition is a neutral
-// hunting camp that both factions use. The south (Booty Bay, the Gurubashi Arena) comes later.
+// hunting camp that both factions use. The south (Rumhook Bay, the Bloodsand Arena) comes later.
 (function (root) {
   const D = root.D;
   D.zone('stranglethorn', { name: 'The Vinewild', faction: 'contested' });

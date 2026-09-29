@@ -334,7 +334,7 @@
   D.item('apprentice_robe', { name: "Apprentice's Robe", slot: 'chest', atype: 'cloth', q: 1, lvl: 1, armor: 5, icon: 'chest_cloth', sell: 1 });
   D.item('neophyte_robe', { name: "Neophyte's Robe", slot: 'chest', atype: 'cloth', q: 1, lvl: 1, armor: 5, icon: 'chest_cloth', sell: 1 });
   D.item('footpad_shirt', { name: "Footpad's Vest", slot: 'chest', atype: 'leather', q: 1, lvl: 1, armor: 12, icon: 'chest_leather', sell: 1 });
-  D.item('hearthstone', { name: 'Waystone', slot: 'special', q: 1, lvl: 1, icon: 'hearthstone', noSell: true, desc: "Returns you to Lion's Pride Inn. 15 min cooldown." });
+  D.item('hearthstone', { name: 'Waystone', slot: 'special', q: 1, lvl: 1, icon: 'hearthstone', noSell: true, desc: "Returns you to Bracken Arms Inn. 15 min cooldown." });
   D.item('tough_bread', { name: 'Tough Hunk of Bread', slot: 'food', q: 1, lvl: 1, restore: 61, icon: 'bread', sell: 1, cost: 5 });
   D.item('fresh_bread', { name: 'Freshly Baked Bread', slot: 'food', q: 1, lvl: 5, restore: 243, icon: 'bread', sell: 6, cost: 25 });
   D.item('spring_water', { name: 'Refreshing Spring Water', slot: 'drink', q: 1, lvl: 1, restore: 151, icon: 'water', sell: 1, cost: 5 });

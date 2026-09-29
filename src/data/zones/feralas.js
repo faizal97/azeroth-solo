@@ -1,5 +1,5 @@
 // Ferndeep: contested, levels 44–50 (v6). Starfeather Hold (Accord) and Camp Ruga (Krugar); the road north
-// leads to the gate of The Gemfall Caves in Mournwaste. Thousand Needles joins it to Sirocco.
+// leads to the gate of The Gemfall Caves in Mournwaste. Windgorge joins it to Sirocco.
 (function (root) {
   const D = root.D;
   D.zone('feralas', { name: 'Ferndeep', faction: 'contested' });
@@ -45,12 +45,12 @@
     woodpaw_hills: { name: 'Mossgut Hills', zone: 'Ferndeep', region: 'feralas', scene: 'woodpaw_hills', lvl: [45, 47], mobs: [['woodpaw_reaver', 5], ['woodpaw_mystic', 4]], pool: 10, npcs: [], links: { camp_mojache: 16, frayfeather_highlands: 18, maraudon_gate: 35 }, via: { maraudon_gate: 'Road to Mournwaste' } },
     gordunni_outpost: { name: 'Stonegut Outpost', zone: 'Ferndeep', region: 'feralas', scene: 'gordunni_outpost', lvl: [46, 48], mobs: [['gordunni_ogre', 5], ['gordunni_mage_lord', 4]], pool: 10, npcs: [], links: { camp_mojache: 18, the_forgotten_coast: 20 } },
     the_forgotten_coast: { name: 'The Forgotten Coast', zone: 'Ferndeep', region: 'feralas', scene: 'the_forgotten_coast', lvl: [47, 49], mobs: [['hatecrest_warrior', 5], ['hatecrest_siren', 4]], named: { lord_shalzaru: 150 }, pool: 10, npcs: [], links: { feathermoon_stronghold: 16, gordunni_outpost: 20 } },
-    lower_wilds: { name: 'The Lower Wilds', zone: 'Ferndeep', region: 'feralas', scene: 'lower_wilds', lvl: [48, 50], mobs: [['longtooth_runner', 5], ['wandering_forest_walker', 4]], named: { old_grizzlegut: 300 }, pool: 10, npcs: [], links: { camp_mojache: 20, frayfeather_highlands: 20, thistleshrub_valley: 45 }, via: { thistleshrub_valley: 'Road through Thousand Needles' } },
+    lower_wilds: { name: 'The Lower Wilds', zone: 'Ferndeep', region: 'feralas', scene: 'lower_wilds', lvl: [48, 50], mobs: [['longtooth_runner', 5], ['wandering_forest_walker', 4]], named: { old_grizzlegut: 300 }, pool: 10, npcs: [], links: { camp_mojache: 20, frayfeather_highlands: 20, thistleshrub_valley: 45 }, via: { thistleshrub_valley: 'Road through Windgorge' } },
     maraudon_gate: { name: 'The Gemfall Caves', zone: 'Mournwaste', region: 'feralas', scene: 'maraudon_gate', lvl: [46, 50], mobs: [['putridus_trickster', 4], ['cavern_lurker', 3]], pool: 7, npcs: [], links: { woodpaw_hills: 35 }, via: { woodpaw_hills: 'Road to Ferndeep' } },
   });
   D.PLACES.darnassus.links.feathermoon_stronghold = 60; D.PLACES.darnassus.via.feathermoon_stronghold = 'Hippogryph';
   D.PLACES.thunder_bluff.links.camp_mojache = 55; D.PLACES.thunder_bluff.via = Object.assign(D.PLACES.thunder_bluff.via || {}, { camp_mojache: 'Wind Rider' });
-  D.PLACES.thistleshrub_valley.links.lower_wilds = 45; D.PLACES.thistleshrub_valley.via = Object.assign(D.PLACES.thistleshrub_valley.via || {}, { lower_wilds: 'Road through Thousand Needles' });
+  D.PLACES.thistleshrub_valley.links.lower_wilds = 45; D.PLACES.thistleshrub_valley.via = Object.assign(D.PLACES.thistleshrub_valley.via || {}, { lower_wilds: 'Road through Windgorge' });
 
   Object.assign(D.NPCS, {
     shandris: { name: 'Commander Ilara Starfeather', title: 'General of the Wood Elf Wardens' },
@@ -65,9 +65,9 @@
 
   const A = (id, q) => { q.faction = 'alliance'; D.QUESTS[id] = q; };
   const H = (id, q) => { q.faction = 'horde'; D.QUESTS[id] = q; };
-  A('tanaris_feralas_a', { name: 'Starfeather', lvl: 45, giver: 'noggenfogger', turnin: 'shandris', text: 'The wood elves of Starfeather Hold want help on the Forgotten Coast. Take the hippogryph from Nyrwen, or the road through Thousand Needles.',
+  A('tanaris_feralas_a', { name: 'Starfeather', lvl: 45, giver: 'noggenfogger', turnin: 'shandris', text: 'The wood elves of Starfeather Hold want help on the Forgotten Coast. Take the hippogryph from Nyrwen, or the road through Windgorge.',
     objs: [{ type: 'visit', place: 'feathermoon_stronghold' }], reward: { money: 1800 } });
-  H('tanaris_feralas_h', { name: 'Camp Ruga', lvl: 45, giver: 'noggenfogger', turnin: 'hadoken', text: 'The hornfolk of Camp Ruga in Ferndeep need hunters. Take the wyvern rider from Hornwind Mesa, or the road through Thousand Needles.',
+  H('tanaris_feralas_h', { name: 'Camp Ruga', lvl: 45, giver: 'noggenfogger', turnin: 'hadoken', text: 'The hornfolk of Camp Ruga in Ferndeep need hunters. Take the wyvern rider from Hornwind Mesa, or the road through Windgorge.',
     objs: [{ type: 'visit', place: 'camp_mojache' }], reward: { money: 1800 } });
   const both = (key, lvl, name, text, objs, ra, rh, pre) => {
     A('fa_' + key, Object.assign({ name, lvl, giver: ra[0], turnin: ra[0], text: text[0], objs, reward: ra[1] }, pre ? { pre: ['fa_' + pre] } : {}));

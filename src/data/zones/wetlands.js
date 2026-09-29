@@ -44,7 +44,7 @@
   // places
   Object.assign(D.PLACES, {
     menethil_harbor: { name: 'Gullhaven', zone: 'Greenfen', region: 'wetlands', scene: 'menethil_harbor', lvl: [25, 30], safe: true, inn: true, mobs: [], pool: 0, npcs: ['stoutfist', 'glorin', 'rethiel', 'whelgar', 'helbrek', 'murndan'], vendor: 'helbrek', gearVendor: 'murndan',
-      links: { bluegill_marsh: 14, whelgars_excavation: 18, saltspray_glen: 18, ironforge: 45, astranaar: 45 }, via: { ironforge: 'Gryphon', astranaar: 'Boat to Darkshore' } },
+      links: { bluegill_marsh: 14, whelgars_excavation: 18, saltspray_glen: 18, ironforge: 45, astranaar: 45 }, via: { ironforge: 'Gryphon', astranaar: 'Boat to Mistshore' } },
     bluegill_marsh: { name: 'Reedgill Marsh', zone: 'Greenfen', region: 'wetlands', scene: 'bluegill_marsh', lvl: [25, 27], mobs: [['bluegill_raider', 5], ['bluegill_oracle', 4]], pool: 10, npcs: [], links: { menethil_harbor: 14, saltspray_glen: 16 } },
     whelgars_excavation: { name: "Torvald's Dig", zone: 'Greenfen', region: 'wetlands', scene: 'whelgars_excavation', lvl: [25, 27], mobs: [['mottled_raptor', 5], ['mottled_screecher', 4]], named: { razormaw_matriarch: 150 }, pool: 10, npcs: [], links: { menethil_harbor: 18, dun_modr: 18 } },
     saltspray_glen: { name: 'Seawrack Glen', zone: 'Greenfen', region: 'wetlands', scene: 'saltspray_glen', lvl: [26, 28], mobs: [['mosshide_gnoll', 5], ['mosshide_mystic', 4]], pool: 10, npcs: [], links: { menethil_harbor: 18, bluegill_marsh: 16, dun_modr: 20 } },
@@ -52,7 +52,7 @@
     angerfang_encampment: { name: 'Wyrmchain Camp', zone: 'Greenfen', region: 'wetlands', scene: 'angerfang_encampment', lvl: [28, 30], mobs: [['dragonmaw_grunt', 4], ['dragonmaw_shadowcaster', 3], ['crimson_whelp', 3]], named: { garneg_charskull: 300 }, pool: 10, npcs: [], links: { dun_modr: 18 } },
   });
   D.PLACES.ironforge.links.menethil_harbor = 45; D.PLACES.ironforge.via = Object.assign(D.PLACES.ironforge.via || {}, { menethil_harbor: 'Gryphon' });
-  D.PLACES.astranaar.links.menethil_harbor = 45; D.PLACES.astranaar.via.menethil_harbor = 'Boat from Darkshore';
+  D.PLACES.astranaar.links.menethil_harbor = 45; D.PLACES.astranaar.via.menethil_harbor = 'Boat from Mistshore';
 
   // people
   Object.assign(D.NPCS, {

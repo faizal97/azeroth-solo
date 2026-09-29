@@ -21,7 +21,7 @@
     plaguehound: { name: 'Plaguehound', lvl: [55, 56], family: 'undead', drops: [['rotting_flesh', 0.4]], qdrops: [['plaguehound_fang', 0.55]] },
     diseased_ghoul: { name: 'Diseased Ghoul', lvl: [55, 56], family: 'undead', hpMult: 1.1, drops: [['rotting_flesh', 0.5]], qdrops: [['ghoul_flesh', 0.55]] },
     skeletal_executioner: { name: 'Skeletal Executioner', lvl: [56, 57], family: 'undead', hpMult: 1.1, drops: [['thieves_coin', 0.4]], qdrops: [['executioner_axe', 0.5]] },
-    scourge_warder: { name: 'Hollow Host Warder', lvl: [57, 58], family: 'undead', drops: [['thieves_coin', 0.45]], qdrops: [['warder_skull', 0.5]], aggro: 'The Lich King commands it!' },
+    scourge_warder: { name: 'Hollow Host Warder', lvl: [57, 58], family: 'undead', drops: [['thieves_coin', 0.45]], qdrops: [['warder_skull', 0.5]], aggro: 'The Hollow Host commands it!' },
     scarlet_sentinel: { name: 'Pyre Warden', lvl: [56, 57], family: 'humanoid', hpMult: 1.1, drops: [['thieves_coin', 0.55], ['linen_cloth', 0.3]], qdrops: [['scarlet_badge_wp', 0.5]], aggro: 'Morrowglen will be cleansed of your kind!' },
     scarlet_lightsworn: { name: 'Pyre Lightsworn', lvl: [57, 58], family: 'humanoid', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.35]], qdrops: [['lightsworn_writ', 0.45]], aggro: 'The Light judges you!' },
     rotting_behemoth: { name: 'Rotting Behemoth', lvl: [57, 58], family: 'undead', hpMult: 1.3, drops: [['rotting_flesh', 0.6]], qdrops: [['behemoth_bile', 0.5]] },

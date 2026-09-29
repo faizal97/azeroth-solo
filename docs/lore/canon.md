@@ -1,10 +1,16 @@
 # Realm of Loner lore bible
 
-This is the single source of truth for the game's story. Read it before writing any quest text, cutscene, Legend or lore page. The story is **our version** of classic World of Warcraft's world, plus original characters and an original expansion. Where Blizzard's canon and this file disagree, this file wins inside the game.
+This is the single source of truth for the game's story: the world of Caldreth and its story, **The Black Ledger**,
+plus the Legends and the Drowned Crown expansion. Read it before writing any quest text, cutscene, Legend or lore
+page. Since v10 the world is our own: no Warcraft names, people, places or history. `tools/ipcheck.js` (run by
+`build.py`) fails the build if a Blizzard name comes back, and `tools/rename_v10.json` holds every old → new name.
 
-> Unofficial, non-commercial fan project. Not affiliated with Blizzard Entertainment. All text is original: never copy Blizzard's quest or book text, even when retelling the same events.
+> All text is original. The game grew out of a fan project; the fan notice stays in the game and the README.
 
-`node tools/lorekeeper.js` checks the game's text against this file, and `build.py` runs it on every build. It reads two sections by their headings, **Reveals** (a table) and **Names** (a list), so keep those headings and formats as they are. The Lore Journal's pages live in `src/data/lore.js` (story and Legends), `lore_places.js` (dungeons, raids and zones) and `lore_books.js` (books found in the world); the optional quest stories are `D.QUEST_STORY` in `lore_quests.js`. The lorekeeper checks all of them.
+`node tools/lorekeeper.js` checks the game's text against this file, and `build.py` runs it on every build. It reads
+two sections by their headings, **Reveals** (a table) and **Names** (a list), so keep those headings and formats as
+they are. The Lore Journal's pages live in `src/data/lore.js` (story and Legends), `lore_places.js` (dungeons and
+zones), `lore_books.js` (books) and `lore_quests.js` (quest stories).
 
 ## Voice and style
 
@@ -17,9 +23,18 @@ This is the single source of truth for the game's story. Read it before writing 
 
 ## Premise
 
-Four years after the Unmaking was driven from Caldreth, the kingdoms rebuild under a fragile peace. King King Rhodric Aldane of Kingsmere has vanished on a voyage to Harborwatch. Lord Regent Edmund Carrow rules in his name for the boy Tamlin, and the court leans on a new adviser, Lady Meriel Thorne. She is the black dragon Veshmira, and she is using Kingsmere's neglect, the Grey Hood uprising and the Cinderpeak clans to weaken the kingdom from inside. The player, Accord or Krugar, keeps running into the edges of her plan until it is exposed at level 60. Her flight opens the sea and raises the drowned Starborn city of Sael'anor, which is the expansion.
+Twelve years ago the **Long War** between the **Accord** (humans, dwarves, gnomes, wood elves) and the **Krugar** (orcs,
+trolls, hornfolk, the Reclaimed) ended in exhaustion. Both sides rebuilt on borrowed gold. The lender was the **Black
+Ledger**, a guild of brokers and collectors with an office in every city and a debt in every house. It lent to
+farmers, towns, dwarf lords and to the crown of Kingsmere itself. Nobody has met its master.
 
-The Krugar's story runs alongside: the Krugar has its own enemies (the Hollow Eye, the Hollow Host, the Order of the Pyre), but the dragon's schemes reach the Scrublands too, and "whatever banner you fly, breaking the Slagborn breaks her plans".
+The master is **Veshmira**, a black dragon of the Black Brood, who lends her hoard instead of sleeping on it. She does
+not want to rule the Accord. She wants to own it. Her voice at court is **Lady Meriel Thorne**, the crown's Mistress of
+Coin: a human, and a true believer, who thinks debt is the only honest bond. The crown's whole debt falls due on the
+day Prince Tamlin is crowned.
+
+The Krugar's story runs alongside. They have their own enemies (the Hollow Eye, the Hollow Host, the Order of the
+Pyre), but they borrowed too, and "whatever banner you fly, the Ledger holds your debts".
 
 ## Timeline
 
@@ -27,67 +42,79 @@ Years are counted back from the start of the game.
 
 | When | What happened |
 |---|---|
-| ~10,000 years ago | The Heartfire explodes (the Sundering). The Starborn city of Sael'anor sinks. Prince Aeldran bargains with Nal'veshra, the Deepmother, to keep his court alive under the sea. The Wavebreaker trolls and their loa Shal'zua sink with the isle. The wood elves' temple to Elune on the Elderglen coast is swallowed (later The Tidehollow Deeps). |
-| ~10,000 years ago | The demigod Agamaggan falls in the southern Scrublands; the Thorn Warrens thorns grow from his blood. |
-| ~200 years ago | The Slagborn sorcerer-thane Grimmark calls Vulcarn to win a war. Cinderpeak burns ever since. (Our text says "two hundred years"; keep it.) |
-| ~21 years ago | The Second War. Ossarak tears the world; the elves of the Kinloch pines call him Astaroth, the Black Ruin. He is driven off, never destroyed. |
-| After the Second War | The Stonemasons' Guild rebuilds Kingsmere. The nobles refuse to pay; the masons become the Grey Hoods under Corvin Blackwell. |
+| ~10,000 years ago | The Heartfire bursts (the Drowning). The Starborn city of Sael'anor sinks. Prince Aeldran bargains with Nal'veshra, the Deepmother, to keep his court alive under the sea. The Wavebreaker trolls and their sea spirit Shal'zua sink with the isle. The wood elves' moon temple on the Elderglen coast is swallowed (the Tidehollow Deeps). |
+| Long ago | The Great Boar falls in the southern Scrublands; the thorns of the Thorn Warrens grow from his blood. A wandering god dies, and the Stone Princess Ghesra carries him into the Gemfall Caves. |
+| Long before the Long War | The black dragon Ossarak tears the world open. The Kinloch elves call him the Black Ruin. He is driven off, never destroyed. |
+| ~12–20 years ago | The Long War between the Accord and the Krugar. |
+| ~12 years ago | The war ends. Everyone rebuilds on Ledger credit: Kingsmere's walls, Longfield's farms, the Slagborn empire, Blackwell's shipyard. Grask leads the orcs to Dunescar. The plague takes Wexmoor, the Hollow Host rises, the Order of the Pyre forms, Cairn makes werewolves of Needlewood, and Graymouth's lord bars its gates with the living inside. |
 | 7 years ago | Lyveus Cloveus defends a Kingsmere caravan near Silverleaf Lodge and the Light wakes in him. He joins the Kingsmere guard and meets Vyn. |
-| 5 years ago | Lyveus overhears a circle of nobles plot to feed the kingdom's soldiers to a dark master. He is condemned; Vyn fakes his death. |
-| ~4–5 years ago | The Third War. The plague takes Wexmoor; Arthas purges Graymouth; the Hollow Host rises; the Vargas sell Castle Ardmore to the Cult of the Damned; Cairn makes werewolves of Needlewood; the Order of the Pyre forms. The Legion is driven out. |
-| 4 years ago | The game's "fragile peace" begins. |
-| 2 years ago | The cabal learns Lyveus is alive. Silverleaf Lodge burns with his kin; the world is told the Black Ledger did it. It was Lord Cassius Marrow. |
-| Recently | Rhodric vanishes on the way to Harborwatch. Lady Thorne rises at court. |
-| During the game | Longfield falls to the Grey Hood (10–20); Marshal Hale rides east and disappears into Cinderpeak (30); he is found alive in the Slagborn cells (40–50); he is freed, returns with Lyveus and unmasks Thorne (60); Veshmira flees to her lair in Saltmarsh and her storm raises, and hides, the Stormveil Isle (60); with Emperor Grimmark dead, Vulcarn stirs in the Magma Throne (60); Veshmira dies in her lair, the storm breaks, and the isle can be reached (60). |
+| 5 years ago | Lyveus overhears a circle of nobles plot to sell the kingdom's soldiers to pay a master they have never met. He is condemned; Vyn fakes his death. |
+| 2 years ago | The cabal learns Lyveus is alive. Silverleaf Lodge burns with his kin; the world is told bandits did it. It was Lord Cassius Marrow. |
+| Last winter | King Rhodric Aldane dies. Lord Regent Edmund Carrow rules until Prince Tamlin comes of age. |
+| During the game | The Grey Hoods take Longfield's farms (10–20); Marshal Hale follows the warm coins to Cinderpeak and disappears (30); he is alive in the Slagborn cells (40–50); he walks free with Lyveus, exposes the debt, and Veshmira comes to collect and is beaten back (60); she flees to her lair in Saltmarsh and her storm hides the Stormveil Isle (60); her death breaks the storm (expansion). |
 
 ## The main story, by chapter
 
-What the player knows at each point. Nothing later may be stated earlier (see Reveals).
+What the player knows at each point. Nothing later may be stated earlier (see Reveals). Warm coins, claw marks and
+whelps guarding the Ledger's strongboxes are hints; that the Ledger's master is a dragon is revealed at 60.
 
-- **Intro (1), "Shadows over Caldreth".** The peace, the missing king, Edmund, Tamlin, Thorne's influence, the cheated stonemasons, Vulcarn and Kethriax fighting over Cinderpeak, "someone pulling every string". Thorne is only an adviser.
-- **Chapter 1 (10), "The Brotherhood Stirs".** Longfield burns. Thorne persuades Edmund not to send soldiers. Blackwell's Brotherhood plans a ship. The player is sent to Warrick's Rise.
-- **Chapter 2 (20), "The Stonemasons' Revenge".** Why the Grey Hood rose. Someone else paid for the Juggernaut. "Behind the lady's smile, something older is watching": a hint, not a reveal. Rumours say someone at court feeds the chaos.
-- **Chapter 3 (30), "The Marshal's Road".** Black whelps in Stoneharrow; Hale rides east, learns who sold the Wyrmchain their chains, follows the trail to Cinderpeak and does not come out. The court says he deserted.
-- **Chapter 4 (40), "Cinderpeak Rising".** The Slagborn dig for Vulcarn; Lord Kethran Vale commands the Cinderpeak orcs from the spire. Thorne (unnamed as a dragon) calls him "my brother". Hale is alive, in chains.
-- **Chapter 5 (50), "The Masquerade".** Thorne admits, to herself, that she writes the court's orders. Hale keeps notes in his cell; the Emperor holds them.
-- **Chapter 6 (60), "The Brood Mother".** Hale walks free and brings Lyveus to court. Thorne is unmasked as Veshmira, daughter of Ossarak, and flees south across the sea to her lair in Saltmarsh. Her storm tears the waters open; land appears where none has been for ten thousand years, but the storm does not clear, and no ship can land while she lives.
-- **The endgame raids (60).** *Veshmira's Lair*: Accord from Harborwatch, Krugar from Mudwall Village hunt the Brood Mother in the Dragonmire. Her death breaks the storm and opens the expansion. *Magma Throne*: with Emperor Grimmark dead in Cinderpeak Depths, nothing holds Vulcarn asleep; players go down beneath the mountain and put the King Below back in the fire. Magma Throne is not a gate; it is the recommended gear step before the isle. The expansion's own raid, the Tidecrown Citadel, stays the strongest.
-- **Expansion (60), "The Drowned Crown".** Opens when Veshmira dies and her storm breaks. The Stormveil Isle: Sael'anor and its prince, the drowned Wavebreakers, and beneath them Nal'veshra. Accord land at the Tidewatch Coast (from Gullhaven with Admiral Vane); the Krugar at the Skullreef Isles (from Camp Skarn on the Bloodtide ship). Both reach the Tidecrown Citadel on the same morning and, for once, do not fight each other.
+- **Prologue (1), "The Borrowed Peace".** The truce and the borrowed gold; King Rhodric's funeral; the Regent and his Mistress of Coin ("Every stone of this city was bought on credit"); Blackwell collecting in Longfield; the Slagborn digging toward something vast that sleeps in the fire; a voice in the dark: "A kingdom in debt is a kingdom for sale."
+- **Chapter 1 (10), "Debts Come Due".** The Grey Hoods take Longfield's farms and keep them. Thorne: "The law is the law, and a debt is a debt." Blackwell loads the seized grain into ships. The Farmers' Watch gathers at Warrick's Rise.
+- **Chapter 2 (20), "The Collector's Fleet".** Blackwell's ruin (a shipwright who lost his yard to one note). The fleet in the Smugglers' Deep; the Ledger pays in warm coins stamped with a claw. Nobody asks where the grain goes.
+- **Chapter 3 (30), "The Audit".** Black whelps guard Ledger strongboxes in Stoneharrow. Marshal Hale, once the crown's auditor, follows the coins through Dunmore Valley and Greenfen (the Wyrmchain paid to breed drakes) to the Ledger's vault in Cinderpeak Spire, goes in to audit it and does not come out. Thorne's accounts say he fled with crown funds.
+- **Chapter 4 (40), "Cinderpeak Rising".** The Slagborn borrowed to rebuild and pay by digging toward Vulcarn. Lord Kethran Vale keeps the Ledger's vault in the Spire, guarded by the Cinderpeak orcs. Hale is alive, in chains.
+- **Chapter 5 (50), "Balancing the Books".** Hale has counted every warm coin to one purse; the Emperor keeps his notes. The coronation is set, and the Regent signs what Thorne writes.
+- **Chapter 6 (60), "The Creditor".** Hale walks free with Lyveus and reads his notes to the court. Thorne denies nothing and hands over the deed: the kingdom is already sold. Veshmira comes for her collateral, is beaten back, and flies south to her lair in Saltmarsh with Thorne. A storm closes over the sea behind her; land appears where none has been for ten thousand years, but no ship can reach it while she lives.
+- **The endgame raids (60).** *Veshmira's Lair*: the Accord from Harborwatch and the Krugar from Mudwall Village hunt the creditor in the Dragonmire. Her death breaks the storm and opens the expansion. *The Magma Throne*: with Emperor Grimmark dead in Cinderpeak Depths, nothing keeps Vulcarn asleep; players go down beneath the mountain to face the King Below and his Steward.
+- **Expansion (60), "The Drowned Crown".** Opens when Veshmira dies and her storm breaks. The Stormveil Isle: Sael'anor and its prince, the drowned Wavebreakers, and beneath them Nal'veshra. The Accord lands at the Tidewatch Coast (from Gullhaven, on Brineholt ships with Admiral Vane); the Krugar at the Skullreef Isles (from Camp Skarn with Mazu).
 
 ### Dungeon intros (first entry)
 
-Each one sets up the dungeon only. They may mention the main story's villains only as far as the chapter at that level allows. The Smugglers' Deep names Blackwell and the Juggernaut; Cinderpeak Depths names Grimmark and Vulcarn but not Thorne's link to the mountain; Graymouth says the Grand Crusader "is not what he seems" and no more.
+Each one sets up the dungeon only, and ties in the Ledger only where it touches the place: the Smugglers' Deep
+(Blackwell's fleet), Kingsmere Gaol (debtors as well as thieves), Cinderpeak Depths (Grimmark's debt), the Blackcloister
+(the Varga family's mortgage). Graymouth says the Grand Crusader "is not what he seems" and no more. Veshmira's Lair
+may name her as the creditor, since it opens at 60.
 
 ## Characters
 
-### From the world of Warcraft (our portrayal)
+### The Black Ledger
 
-- **Lady Meriel Thorne / Veshmira.** Court adviser, patient and contemptuous. Speaks of "little kingdoms" and "a court of fools". Never named as a dragon before 60.
-- **Lord Regent Edmund Carrow.** Regent. Honest, overworked, too trusting of Thorne. Believes Hale in the end.
-- **Prince Tamlin Aldane.** The boy king-in-waiting. Seen, rarely heard.
-- **King Rhodric Aldane.** Missing. Nobody in the game knows where he is. Do not resolve this. Harborwatch is where he was sailing; nobody there speaks of him.
-- **Marshal Gideon Hale.** Stubborn, brave, a note-taker. Wrongly called a deserter.
-- **Corvin Blackwell.** Leader of the Grey Hood. Bitter, not mad: he believes Kingsmere owes him.
-- **Lord Kethran Vale / Kethriax.** Lord of Cinderpeak Spire, Veshmira's brother. His identity as Kethriax is not stated outright before 60.
-- **Vulcarn, the King Below.** Asleep in the molten sea below Cinderpeak Depths. A threat, not yet a fight.
-- **Emperor Haldor Grimmark.** Rules the Slagborn from the Imperial Seat; holds Hale's notes.
+- **Lady Meriel Thorne.** Mistress of Coin at the Kingsmere court. Human. Patient, precise, never cruel for its own sake. Believes a debt is the most honest promise there is. Never says who the Ledger answers to before 60.
+- **Veshmira of the Black Brood.** The Ledger's creditor, a black dragon who lends her hoard. Speaks of owning, not ruling ("I do not want your little kingdom. I own it."). Unnamed before 60.
+- **Corvin Blackwell.** Captain of the Grey Hoods. A ruined shipwright working off his debt by collecting everyone else's. Tired, not evil; stopped asking questions long ago.
+- **Lord Kethran Vale.** Keeps the Ledger's vault in Cinderpeak Spire. Cold and practical ("A burning mountain is a cheap mine."). There is more to him than he shows (see Reveals).
+- **Lord Cassius Marrow.** A Kingsmere noble deep in the Ledger's debt; his seal is on the cabal's orders, his gold goes through Sirocco to the Slagborn, and he burned Silverleaf Lodge. Killed at level 60 at the grove where Lyveus took his oath.
 
-### Original characters
+### The crown and its people
 
-- **Lyveus Cloveus, the Exiled Knight** ("Lyv" to friends). A high elf paladin from Silverleaf Lodge in the Kinloch Highlands, once of the Kingsmere guard. Quiet, dry, patient; "They made me a ghost. Ghosts keep watch." Created by a friend of the developer and adapted for Caldreth: in the friend's lore his enemy is Astaroth; here Astaroth is the Kinloch elves' name for Ossarak, and the cabal is Thorne's circle at court. **Keep his core: exiled, presumed dead, loyal to the few who helped him, fights as a tank with the Light.** He is neutral: both factions can meet him. Before level 37 he appears only as the Hooded Stranger and is never named in quest text.
+- **Lord Regent Edmund Carrow.** Honest, overworked, too trusting of his Mistress of Coin. Believes Hale in the end.
+- **Prince Tamlin Aldane.** The boy king-in-waiting. Seen, rarely heard. His coronation is the day the debt falls due.
+- **King Rhodric Aldane.** Died last winter. Buried in Kingsmere; not a mystery.
+- **Marshal Gideon Hale.** The crown's auditor before he was a soldier. Stubborn, brave, counts everything. Wrongly called a thief.
+- **Emperor Haldor Grimmark.** Rules the Slagborn from the Anvil Throne. Borrowed to rebuild his empire and pays by digging; holds Hale's notes.
+- **Vulcarn, the King Below.** Asleep in the sea of fire under Cinderpeak Depths until the digging wakes him.
+
+### Legends and the expansion
+
+- **Lyveus Cloveus, the Exiled Knight** ("Lyv" to friends). A high elf paladin from Silverleaf Lodge in the Kinloch Highlands, once of the Kingsmere guard. Quiet, dry, patient; "They made me a ghost. Ghosts keep watch." Created by a friend of the developer and adapted for Caldreth.
 - **Vyn.** Lyveus's friend from the guard, a human farm boy who rose with him. Faked Lyveus's death. Now writes from Coppergulch.
-- **Lord Cassius Marrow.** The Kingsmere noble whose seal is on the cabal's orders. Ships gold through Sirocco to the Slagborn. Burned Silverleaf Lodge. Killed at level 60 at the grove where Lyveus took his oath.
 - **Prince Aeldran Tidecrown.** Starborn prince of Sael'anor. Kept his court alive for ten thousand years through a bargain he does not fully understand. Proud, grieving, dangerous. "Ten thousand years I waited."
-- **Nal'veshra, the Deepmother.** A sea spirit older than the Starborn. The true power under the citadel. Ate the loa Shal'zua. "Little lights."
+- **Nal'veshra, the Deepmother.** A sea spirit older than the Starborn. The true power under the citadel. Swallowed the sea spirit Shal'zua. "Little lights."
 - **Lady Vessaria, the Tidescribe.** Aeldran's scribe; mistress of the Sunken Archive. Her writing raises the drowned.
-- **Shal'zua.** A loa of the sea, once served by the Wavebreaker trolls, now swallowed; her avatar wears her face.
+- **Shal'zua.** A sea spirit once served by the Wavebreaker trolls, now swallowed; her avatar wears her face.
 - **Hexmother Oyala** and **High Priest Zan'jin.** Raised the drowned Wavebreakers and feed the altar in the Temple of Shal'zua.
 - **Admiral Vane** (Accord) and **Mazu** (Krugar). Lead each faction's landing on the isle.
 - **Lorekeeper Nerathil.** Keeps the Codex of Tides in the Sunken Archive.
 
 ## Places (original)
 
-- **Silverleaf Lodge.** A high elf village in the Kinloch pines; Lyveus's home, burned two years ago. Now a Black Ledger camp until you clear it.
+Every place in Caldreth is ours since v10; `docs/plans/v10-names-inventory.md` lists them by region. These are the
+ones the story leans on:
+
+- **Kingsmere.** The Accord's capital in Ostmarch, rebuilt on credit. **Vazhrak** is the Krugar capital in Redmarch.
+- **Cinderpeak.** The burning mountain: Cinderpeak Depths (the Slagborn city of Ashforge), the Spire (the Ledger's vault), and the Magma Throne beneath.
+- **The Smugglers' Deep.** The old Fenwick mine and hidden cove where Blackwell builds the Ledger's fleet.
+- **Silverleaf Lodge.** A high elf village in the Kinloch pines; Lyveus's home, burned two years ago. Now a camp of the Ledger's enforcers until you clear it.
 - **Stormveil Isle.** The risen island. Holds the Tidewatch Coast (Accord landing), the Skullreef Isles (Krugar landing), the drowned city of Sael'anor, Loa's Rest, the causeway and the Tidecrown Citadel.
 - **The Sunken Archive.** Sael'anor's great library (Accord dungeon).
 - **The Temple of Shal'zua.** The Wavebreakers' temple (Krugar dungeon).
@@ -110,56 +137,56 @@ A term here may not appear in any text a player can read below its level. "Allow
 
 ## Names
 
-Proper names used in the story that are not already the name of an NPC, creature, place, item, quest or zone in the game data. The lorekeeper treats anything else with a capital letter as a possible typo. Add a name here, with a line of what it is, before using it.
+Proper names used in the story that are not already the name of an NPC, creature, place, item, quest or zone in the
+game data. The lorekeeper treats anything else with a capital letter as a possible typo. One name per line, or
+several sharing a line separated by " / ".
 
 - **Accord / Krugar** — the two factions
 - **Caldreth** — the world
+- **Ostmarch / Redmarch** — the two continents
+- **Long War** — the war between the Accord and the Krugar, ended twelve years ago
+- **Black Ledger / Ledger** — the guild of lenders and collectors
+- **Grey Hoods / Hoods** — the Ledger's collectors in Longfield
+- **Black Brood / Brood** — Veshmira's dragonflight
+- **Mistress of Coin / Mistress** — Lady Thorne's office
 - **Sylari** — the wood elves' own name
-- **Elune** — the wood elves' goddess
-- **Unmaking / Legion** — the demon army driven out four years ago
-- **Second War** — about twenty-one years ago; Ossarak's war
-- **Heartfire** — its explosion sank Sael'anor ten thousand years ago
-- **Agamaggan** — boar demigod whose blood grew the Thorn Warrens
-- **Zaetar** — demigod, father of the centaur with Ghesra
-- **Ossarak** — the black dragon aspect; Veshmira and Kethriax's father
-- **Astaroth** — the Kinloch elves' name for Ossarak ("the Black Ruin"); from Lyveus's original lore
-- **Veshmira** — Lady Thorne's true self (revealed at 60)
-- **Brood Mother** — Veshmira's title in Chapter 6
-- **Meriel Thorne / Thorne** — Veshmira's disguise at the Kingsmere court
-- **Kethriax** — Veshmira's brother
-- **Lord Kethran Vale / Vale** — Kethriax's name as lord of Cinderpeak Spire
-- **Vulcarn / King Below** — the fire lord under Cinderpeak
-- **King Rhodric Aldane / Rhodric / Aldane** — the missing king of Kingsmere
-- **Tamlin** — Rhodric's son
-- **Edmund Carrow / Edmund / Carrow / Lord Regent** — the regent of Kingsmere
-- **Gideon Hale / Reginald** — Marshal Hale's first name
-- **Harborwatch** — where Rhodric was sailing when he vanished
+- **Unmaking** — the demon army of old
+- **Heartfire** — its bursting sank Sael'anor ten thousand years ago
+- **Drowning** — the night the Heartfire burst
+- **Great Boar** — the spirit whose blood grew the Thorn Warrens
+- **Ossarak / Black Ruin** — the black dragon who tore the world open long ago
+- **Veshmira** — the Ledger's creditor (named at 60)
+- **Meriel Thorne / Thorne** — the Mistress of Coin
+- **Kethriax** — who Lord Kethran Vale really is (revealed at 60)
+- **Lord Kethran Vale / Vale** — keeper of the Ledger's vault in Cinderpeak Spire
+- **Vulcarn / King Below** — the fire under Cinderpeak
+- **King Rhodric Aldane / Rhodric / Aldane** — the late king of Kingsmere
+- **Tamlin** — Rhodric's son, to be crowned
+- **Edmund Carrow / Edmund / Carrow / Lord Regent / Regent** — the regent of Kingsmere
+- **Gideon Hale / Hale** — the marshal and auditor
+- **Harborwatch** — the Accord port on the Saltmarsh coast
 - **Wexmoor** — the fallen northern kingdom
-- **Arthas** — the prince who purged Graymouth
-- **Lich King / Lich** — master of the Hollow Host
-- **Cult of the Damned / Cult / Damned** — the Hollow Host's living cult; runs The Blackcloister
+- **Hollow Host** — the risen dead of the plague
 - **Elarion** — the dreaming druid of the Dreaming Caves
-- **Juggernaut** — the Grey Hood warship in the Smugglers' Deep
-- **Stonemasons' Guild / Stonemasons** — the masons who rebuilt Kingsmere and became the Grey Hood
 - **Lyv** — Lyveus's name among friends
 - **Hiveborn** — insect swarms of the south
-- **Darkshore** — wood elf coast north of Elderglen
-- **Drakestone Hold / Batol / Grim** — the Wyrmchain fortress in the Greenfen
-- **Booty Bay / Bay** — goblin port in southern Vinewild
-- **Thousand Needles / Needles** — canyon zone south of the Scrublands
-- **Harrow Span / Span** — the bridge between the Greenfen and Kinloch
-- **Underrail / Deeprun / Tram** — the tunnel train between Kingsmere and Keldrun
-- **Imperial Seat / Seat / Throne** — Grimmark's throne room in Cinderpeak Depths; also the thorn throne of The Thorn Warrens
+- **Mistshore** — wood elf coast north of Elderglen
+- **Drakestone Hold / Drakestone** — the Wyrmchain fortress in Greenfen
+- **Rumhook Bay** — goblin port in the south of the Vinewild
+- **Windgorge** — canyon lands south of the Scrublands
+- **Harrow Span / Span** — the bridge between Greenfen and Kinloch
+- **Underrail** — the tunnel train between Kingsmere and Keldrun
+- **Anvil Throne / Throne** — Grimmark's throne room in Cinderpeak Depths; also the thorn throne of the Thorn Warrens
 - **Isle** — as in Stormveil Isle
-- **Third War** — the war four to five years ago: the plague, the Hollow Host, the Legion's defeat
-- **Sundering** — the breaking of the world when the Heartfire exploded, ten thousand years ago
-- **Lyceum** — the Slagborn's hall of learning in Cinderpeak Depths
+- **Forgehall** — the Slagborn's hall of learning in Cinderpeak Depths
 - **Pyre Bastion** — the Order's stronghold in Graymouth
 - **King's Square** — the old market square of Graymouth
-- **Lion's Pride** — the inn at Brackenford
-- **Saltmarsh / Saltmarsh** — the marsh south of the Scrublands; Harborwatch on its coast, Veshmira's lair in the Dragonmire
+- **Bracken Arms** — the inn at Brackenford
+- **White Hart** — the inn in Kingsmere
+- **Saltmarsh** — the marsh south of the Scrublands; Harborwatch on its coast, Veshmira's lair in the Dragonmire
 - **Mudwall Village / Mudwall** — the Krugar camp in Saltmarsh
 - **Scorchmaw** — a rare drake of Veshmira's brood in the Scorched Fen
 - **Brant Ashby** — Commander of Harborwatch's watch
 - **Durnak** — Warlord of Mudwall Village
-- **Emberfall** — Vulcarn's lesser flame-forged hammer, a Magma Throne drop
+- **Emberfall** — the King Below's hammer, a Magma Throne drop
+- **Grand** — as in the Grand Crusader

@@ -67,7 +67,7 @@
   // places
   Object.assign(D.PLACES, {
     astranaar: { name: 'Ilvaris', zone: 'Elderglen', region: 'ashenvale', faction: 'alliance', scene: 'astranaar', lvl: [22, 30], safe: true, inn: true, mobs: [], pool: 0, npcs: ['raene', 'shindrell', 'thenysil', 'orendil', 'kimlya', 'aeolynn'], vendor: 'kimlya', gearVendor: 'aeolynn',
-      links: { the_zoram_strand: 20, mystral_lake: 16, thistlefur_village: 18, darnassus: 50 }, via: { darnassus: 'Boat to Darkshore' } },
+      links: { the_zoram_strand: 20, mystral_lake: 16, thistlefur_village: 18, darnassus: 50 }, via: { darnassus: 'Boat to Mistshore' } },
     splintertree_post: { name: 'Stumpwatch', zone: 'Elderglen', region: 'ashenvale', faction: 'horde', scene: 'splintertree_post', lvl: [22, 30], safe: true, inn: true, mobs: [], pool: 0, npcs: ['senani', 'ertog', 'mitsuwa', 'kaylisk', 'burkrum'], vendor: 'kaylisk', gearVendor: 'burkrum',
       links: { satyrnaar: 16, felfire_hill: 16, mystral_lake: 22, crossroads: 40 }, via: { crossroads: 'Road through the Scrublands' } },
     the_zoram_strand: { name: 'The Coral Strand', zone: 'Elderglen', region: 'ashenvale', scene: 'the_zoram_strand', lvl: [22, 24], mobs: [['wrathtail_myrmidon', 5], ['wrathtail_sea_witch', 4]], pool: 10, npcs: [], links: { astranaar: 20, mystral_lake: 20 } },
@@ -77,7 +77,7 @@
     satyrnaar: { name: 'Hornhold', zone: 'Elderglen', region: 'ashenvale', scene: 'satyrnaar', lvl: [26, 28], mobs: [['bleakheart_satyr', 5], ['bleakheart_hellcaller', 4]], pool: 10, npcs: [], links: { the_howling_vale: 16, splintertree_post: 16 } },
     felfire_hill: { name: 'Gloomfire Hill', zone: 'Elderglen', region: 'ashenvale', scene: 'felfire_hill', lvl: [28, 30], mobs: [['mannoroc_lasher', 5], ['felguard_sentry', 4]], pool: 10, npcs: [], links: { splintertree_post: 16 } },
   });
-  D.PLACES.darnassus.links.astranaar = 50; D.PLACES.darnassus.via = Object.assign(D.PLACES.darnassus.via || {}, { astranaar: 'Boat to Darkshore' });
+  D.PLACES.darnassus.links.astranaar = 50; D.PLACES.darnassus.via = Object.assign(D.PLACES.darnassus.via || {}, { astranaar: 'Boat to Mistshore' });
   D.PLACES.crossroads.links.splintertree_post = 40; D.PLACES.crossroads.via = Object.assign(D.PLACES.crossroads.via || {}, { splintertree_post: 'Road north' });
 
   // people
@@ -98,7 +98,7 @@
   // quests: Accord (Ilvaris) and Krugar (Stumpwatch) share the wild, not the quests
   const A = (id, q) => { q.faction = 'alliance'; D.QUESTS[id] = q; };
   const H = (id, q) => { q.faction = 'horde'; D.QUESTS[id] = q; };
-  A('redridge_ashenvale', { name: 'A Call from the Forest', lvl: 22, giver: 'solomon', turnin: 'raene', text: 'The wood elves of Elderglen ask Kingsmere for help against the Krugar and the demons in their forest. Take the boat from Nyrwen to Darkshore, and ride south to Ilvaris.',
+  A('redridge_ashenvale', { name: 'A Call from the Forest', lvl: 22, giver: 'solomon', turnin: 'raene', text: 'The wood elves of Elderglen ask Kingsmere for help against the Krugar and the demons in their forest. Take the boat from Nyrwen to Mistshore, and ride south to Ilvaris.',
     objs: [{ type: 'visit', place: 'astranaar' }], reward: { money: 800 } });
   H('stonetalon_ashenvale', { name: 'The Woodcleaver Front', lvl: 22, giver: 'mastok', turnin: 'senani', text: 'The Woodcleaver clan cuts timber in Elderglen for the Krugar, and the wood elves kill our loggers for it. Take the road north from Dustfort to Stumpwatch.',
     objs: [{ type: 'visit', place: 'splintertree_post' }], reward: { money: 800 } });

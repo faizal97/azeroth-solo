@@ -33,7 +33,7 @@
 
   const A = (id, q) => { q.faction = 'alliance'; D.QUESTS[id] = q; };
   const H = (id, q) => { q.faction = 'horde'; D.QUESTS[id] = q; };
-  A('st_baron_a', { name: "The Baron's Doom", lvl: 60, giver: 'argent_officer_a', turnin: 'argent_officer_a', dungeon: 'stratholme', text: 'Baron Mortvale rules the dead side of Graymouth for the Lich King. End him and bring me his seal.',
+  A('st_baron_a', { name: "The Baron's Doom", lvl: 60, giver: 'argent_officer_a', turnin: 'argent_officer_a', dungeon: 'stratholme', text: 'Baron Mortvale rules the dead side of Graymouth for the Hollow Host. End him and bring me his seal.',
     objs: [{ type: 'collect', item: 'rivendare_seal', n: 1 }], reward: { choice: ['fam_weapon60'] } });
   H('st_baron_h', { name: "The Baron's Doom", lvl: 60, giver: 'argent_officer_h', turnin: 'argent_officer_h', dungeon: 'stratholme', text: 'Baron Mortvale commands the Hollow Host in Graymouth. The Lantern Watch wants him gone.',
     objs: [{ type: 'collect', item: 'rivendare_seal', n: 1 }], reward: { choice: ['fam_weapon60'] } });

@@ -1,12 +1,12 @@
 /* art_stratholme.js — Graymouth art for Realm of Loner (dungeon, levels 58-60: the burned city where Arthas culled
  * Wexmoor's people; King's Square under a red sky, the Pyre Bastion, and the Hollow Host ziggurats by the slaughterhouse;
- * the Crimson Legion guardsmen and conjurors, skeletal guardians and bile spewers, and the bosses Nibbles the Cruel,
+ * the Crimson Unmaking guardsmen and conjurors, skeletal guardians and bile spewers, and the bosses Nibbles the Cruel,
  * Archivist Penrose, Xazzarak, Baroness Vessaline, Bloatgut the Gorger and Baron Mortvale).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
  * Graymouth keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig and the house-style scene pieces are copies of art_brd.js / art_scarlet.js.
- * The Crimson Legion is told apart from the white-tabard Order of the Pyre of the Monastery and Pallmoor by its
+ * The Crimson Unmaking is told apart from the white-tabard Order of the Pyre of the Monastery and Pallmoor by its
  * all-crimson plate with gold trim, the pointed closed helm with a gold finial and the gold cross-pattee emblem
  * (the Monastery wears a sunburst). Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop
  * gradients + flat shadow shapes, no text, no filters, ids unique per call (prefix st<counter>_).
@@ -262,7 +262,7 @@
   var STONE = '#5a5054', STONED = '#3a3236', STONEL = '#7c7072';
   var ZIG = '#3a3044', ZIGL = '#4c4058', ZIGD = '#1e1826';
 
-  // the Crimson Legion emblem: a gold cross pattee with a flame on a crimson boss (original design)
+  // the Crimson Unmaking emblem: a gold cross pattee with a flame on a crimson boss (original design)
   function emblem(c, x, y, k, col) {
     col = col || GOLD; var d = '';
     [-PI / 2, 0, PI / 2, PI].forEach(function (a) { var q = dirQ([x, y], a); d += pd([q(2.4 * k, -2.2 * k), q(10 * k, -5.6 * k), q(8.6 * k, 0), q(10 * k, 5.6 * k), q(2.4 * k, 2.2 * k)], true); });
@@ -566,7 +566,7 @@
   // ============================================================
   //  MOB PIECES
   // ============================================================
-  // the Crimson Legion's closed helm: a pointed bascinet in crimson lacquer, gold brow band, nasal and finial.
+  // the Crimson Unmaking's closed helm: a pointed bascinet in crimson lacquer, gold brow band, nasal and finial.
   // o.mask gives the conjurors a gold face-plate with burning eye slits
   function pointHelm(c, x, y, o) {
     o = o || {};

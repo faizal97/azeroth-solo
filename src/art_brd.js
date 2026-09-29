@@ -1,5 +1,5 @@
 /* art_brd.js — Cinderpeak Depths art for Realm of Loner (dungeon, levels 51-55: the Slagborn capital deep inside Cinderpeak
- * Mountain; the detention block, Ashforge City with its lava moat and iron kings, and the Imperial Seat before the
+ * Mountain; the detention block, Ashforge City with its lava moat and iron kings, and the Anvil Throne before the
  * lava fall; the Slagguard wardens, Ashforge flame keepers and Ragereaver golems, and the bosses High Interrogator
  * Brisa, Lord Stonebrand, Magmagor, General Ashhelm, Golemsmith Kragg, Slagmaw and Emperor Haldor Grimmark).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
@@ -436,7 +436,7 @@
     for (var i = 0; i < w / 6; i++) { var x = x0 + 3 + r() * (w - 6), ya = y0 + r() * (y1 - y0) * 0.5, yb = ya + 20 + r() * 50; (r() < 0.6 ? (st += 'M' + pt([x, ya]) + 'L' + pt([x + (r() - 0.5) * 2, Math.min(y1, yb)])) : (dkS += 'M' + pt([x, ya]) + 'L' + pt([x, Math.min(y1, yb)]))); }
     return o + L(st, '#fff4b0', 1.3, 0.8) + L(dkS, LAVAD, 2, 0.6) + E((x0 + x1) / 2, y1, w * 0.6, 6, glow(c, LAVAY, 0.8));
   }
-  // the Imperial Seat: tall spiked iron back, red panel with an anvil emblem, armrests, cushion (x = centre, y = seat base)
+  // the Anvil Throne: tall spiked iron back, red panel with an anvil emblem, armrests, cushion (x = centre, y = seat base)
   function throne(c, x, y, s) {
     var q = function (u, v) { return [x + u * s, y + v * s]; }, o = E(x, y + 2, 58 * s, 5 * s, '#000', 0, 0.45), sh = function (u0, top) { return F(pd([q(u0, top || -120), q(60, top || -120), q(60, 10), q(u0, 10)], true), dk(IRON, 0.4), 0.8); };
     var back = pd([q(-34, -18), q(-34, -62), q(-44, -70), q(-30, -74), q(-26, -92), q(-14, -86), q(0, -106), q(14, -86), q(26, -92), q(30, -74), q(44, -70), q(34, -62), q(34, -18)], true);

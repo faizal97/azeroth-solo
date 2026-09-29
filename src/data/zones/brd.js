@@ -48,7 +48,7 @@
       { scene: 'brd_prison', label: 'The detention block', mobs: ['anvilrage_warden', 'anvilrage_warden'] },
       { scene: 'brd_prison', label: 'High Interrogator Brisa', mobs: ['high_interrogator_gerstahn'], boss: true },
       { scene: 'brd_prison', label: 'Lord Stonebrand', mobs: ['lord_roccor'], boss: true },
-      { scene: 'brd_city', label: 'The Lyceum', mobs: ['shadowforge_flame_keeper', 'shadowforge_flame_keeper', 'anvilrage_warden'] },
+      { scene: 'brd_city', label: 'The Forgehall', mobs: ['shadowforge_flame_keeper', 'shadowforge_flame_keeper', 'anvilrage_warden'] },
       { scene: 'brd_city', label: "Magmagor", mobs: ['bael_gar'], boss: true },
       { scene: 'brd_city', label: 'General Ashhelm', mobs: ['general_angerforge'], boss: true },
       { scene: 'brd_city', label: 'The golem workshop', mobs: ['ragereaver_golem', 'shadowforge_flame_keeper'] },

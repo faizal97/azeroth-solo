@@ -150,7 +150,7 @@
     dg_maraudon: { title: 'The Gemfall Caves', section: 'dungeon', dungeon: 'maraudon', text: [
       'The centaur tribes of Mournwaste agree on little, but all of them trace their line to these caves and to the wandering god the Stone Princess loved. He has been dead for ages. The tribes tell different stories of how he died, and each one blames another.',
       'Ghesra never left him. She has kept her grief in the deepest caverns for longer than anyone can count, and over that time it has turned to poison. The water that runs out of The Gemfall Caves carries it, and the land it touches withers.',
-      'Others have come to feed on the rot. Satyrs, wood elves who once served the Legion, hold the upper halls under Lord Venomlip. Vines and slimes grow fat in the dark. The druids who knew Faolan still believe his scepter can bring him back to himself.',
+      'Others have come to feed on the rot. Satyrs, wood elves who once served the Unmaking, hold the upper halls under Lord Venomlip. Vines and slimes grow fat in the dark. The druids who knew Faolan still believe his scepter can bring him back to himself.',
       'Krugar and Accord each hold a corner of Mournwaste, and both have watched it die around them. Whatever else divides them, neither wants what lives in The Gemfall Caves to spread any further.',
     ], bosses: {
       noxxion: 'A living mass of the caverns\' poison, grown in the water that seeps up from the depths. Pieces of it break away and crawl off to spread the rot.',
@@ -162,7 +162,7 @@
     } },
     dg_blackrock_depths: { title: 'Cinderpeak Depths', section: 'dungeon', dungeon: 'blackrock_depths', text: [
       'The Slagborn were the proudest of the dwarven clans, and the war with their kin went badly for them. Grimmark reached for a power none of them understood. The fire he woke broke their old capital apart, and its ruins still smoulder in the Cinderfields.',
-      'What was left of the clan went down into the mountain and built again. The city of Ashforge has a throne, a Lyceum, forges and prisons. It is also a temple. Everything the Slagborn make, they make for the King Below sleeping in the molten sea below.',
+      'What was left of the clan went down into the mountain and built again. The city of Ashforge has a throne, a Forgehall, forges and prisons. It is also a temple. Everything the Slagborn make, they make for the King Below sleeping in the molten sea below.',
       'They trade with anyone who pays, and some of their gold comes from a long way off. Marshal Hale, still alive in their cells, has been writing down what he sees.',
       'The Accord comes for the marshal and his notes. The Krugar comes for the Emperor\'s crown, because a kingdom that serves Vulcarn threatens everyone above it. Both want the same thing in the end: Grimmark off his throne.',
     ], bosses: {
@@ -171,7 +171,7 @@
       bael_gar: 'A giant of living magma from the King Below\'s own court, sent up through the rock to watch over the Slagborn\'s work. The dwarves feed it and keep their distance.',
       general_angerforge: 'Commander of the Slagborn armies. He drills his soldiers in the halls of Ashforge day and night, and he means to march them onto the surface one day.',
       golem_lord_argelmach: 'Master of the golem workshop. His machines guard the Emperor\'s halls, and at the heart of each one burns a core of the mountain\'s fire.',
-      magmus: 'A giant of molten stone raised to guard the doors of the Imperial Seat. It has stood before them since the Emperor took his throne, and it has let nobody pass.',
+      magmus: 'A giant of molten stone raised to guard the doors of the Anvil Throne. It has stood before them since the Emperor took his throne, and it has let nobody pass.',
       emperor_dagran_thaurissan: 'Emperor of the Slagborn, who borrowed from the Ledger to rebuild his empire and pays it back by digging. He keeps the marshal\'s notes beside his throne and trusts nobody outside his mountain.',
     } },
     dg_scholomance: { title: 'The Blackcloister', section: 'dungeon', dungeon: 'scholomance', text: [
@@ -210,7 +210,7 @@
       curator_ellaris: 'Keeper of the flooded stacks in life and in death. She still guards every shelf from careless hands, and she decided long ago that all living hands are careless.',
       the_inkbound_horror: 'Ten thousand years of spilled ink, given shape by the magic soaked into the reading hall. It has no mind of its own, only the half-read words it was made from.',
       lorekeeper_nerathil: 'The archive\'s senior scholar, who kept the Codex of Tides before the city sank and has not put it down since. He still charts the currents of a sea he cannot leave.',
-      lady_vessaria: 'Aeldran\'s scribe since before the Sundering, and mistress of the archive. She writes the prince\'s will into the water, and what she writes, the drowned obey.',
+      lady_vessaria: 'Aeldran\'s scribe since before the Drowning, and mistress of the archive. She writes the prince\'s will into the water, and what she writes, the drowned obey.',
     } },
     dg_shalzua_temple: { title: 'Temple of Shal\'zua', section: 'dungeon', dungeon: 'shalzua_temple', text: [
       'The Wavebreakers were a sea tribe, living off reef and tide. They gave their best catch and their dead to Shal\'zua, the loa of the deep water, and she gave them fair winds and full nets. The Kessari count them among their ancestors.',
@@ -313,7 +313,7 @@
     zn_elwynn_forest: { title: 'Ambermoor', section: 'zone', zone: 'Ambermoor', text: [
       'Ambermoor is Kingsmere\'s back garden: farms, lakes and old woods along the road to the city gates. For years it was the safest place in the kingdom.',
       'It is less safe now. Kobolds dig in Deepcut Mine, mirelings raid the shore of Stillwater Lake, and Grey Hood bandits rob the farms. At Greywood Verge, Tallgrass gnolls cross into Ambermoor and grow bolder under a brute called Old Snaggle.',
-      'Marshal Brede keeps what order he can from Brackenford, with too few guards. The Lion\'s Pride is still full every night.',
+      'Marshal Brede keeps what order he can from Brackenford, with too few guards. The Bracken Arms is still full every night.',
     ] },
     zn_dun_morogh: { title: 'Kaldvik', section: 'zone', zone: 'Kaldvik', text: [
       'Kaldvik is the snowbound land around Keldrun, and the dwarves have farmed and hunted it for as long as they have held the mountain. Bjornstad keeps the pass warm, mostly with Maltsson ale.',

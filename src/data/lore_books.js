@@ -49,7 +49,7 @@
     bk_tides: { title: 'A Tide Chart of Sael\'anor', section: 'book', book: true, lvl: 60, faction: 'alliance', from: { lorekeeper_nerathil: 0.45 }, text: [
       'Of the tides about Sael\'anor, set down in the archive by Nerathil, lorekeeper, for the ships of the Tidecrown. The great tide reaches the harbour steps twice each day and the orchard walls once each month. The tidecallers may turn it for the fleet, with the prince\'s leave, and never on the night of the full moon, when the sea is proud.',
       'The eastern current runs cold out of the deep channel and carries ships away. The western runs warm and brings them home. A captain who confuses the two does not return to be corrected.',
-      'Added after the Sundering: There is no tide. The water above the archive does not rise or fall. It only presses. I keep the chart regardless. A keeper who stops keeping is only a drowned elf.',
+      'Added after the Drowning: There is no tide. The water above the archive does not rise or fall. It only presses. I keep the chart regardless. A keeper who stops keeping is only a drowned elf.',
       'Added later: Something turns the currents now, and it is not the moon. They move when the prince speaks, and sometimes a moment before he speaks. I have stopped writing down which.',
       'Last entry: The water is moving upward. After ten thousand years, I can feel the moon again. I do not know whose tide this is.',
     ] },
@@ -99,7 +99,7 @@
     bk_grove: { title: 'The Grove Oath of Silverleaf', section: 'book', book: true, lvl: 35, faction: 'both', from: { kovork: 0.3, nimar_the_slayer: 0.3 }, text: [
       'The oath of the grove, as it is spoken at Silverleaf Lodge by each of us who comes of age, under the oldest pine.',
       'I stand where my kin have stood, and I give my word to the living and the dead. I will keep the grove and the road through it. I will lift my blade for the traveller before I lift it for myself. I will not run from the dark, for the dark does not tire, and neither will I.',
-      'I will remember the Black Ruin, whom we call Astaroth, who burned these hills once and will wish to burn them again. I will not let the pines forget. If I break this oath, let the grove forget my name.',
+      'I will remember the Black Ruin, who burned these hills once and will wish to burn them again. I will not let the pines forget. If I break this oath, let the grove forget my name.',
       'Written below, in a newer hand, the ink run with rain: The oldest pine still stands. Nothing else does. The world says the Black Ledger did this. It was not the Black Ledger. I found this book in the ashes of the long hall, and I have kept my word so far. I will keep watch until I can keep the rest of it.',
     ] },
     bk_sandfury: { title: 'Duneskin Temple Tablets, Translated', section: 'book', book: true, lvl: 43, faction: 'both', from: { chief_ukorz_sandscalp: 0.35, witch_doctor_zumrah: 0.25 }, text: [
@@ -114,7 +114,7 @@
       'Who lit the fire under the mountain? Nobody. It was there before us, and the King Below sleeps in it. Why do we dig toward it? Because we owe, and the deep veins pay best. Why does the mountain burn hotter every year? Ask the Ledger.',
       'What does the apprentice own? His hands, for as long as they are useful. The hammer is the Emperor\'s. The fire is the King Below\'s. Everything he makes belongs to both.',
       'What is a golem? A servant that does not tire and does not question. At its heart burns a core of the mountain\'s fire. The apprentice will learn to set a core before he is allowed to look at one. He will not speak to Golemsmith Kragg unless he is spoken to.',
-      'What becomes of the apprentice who fails? He goes to the forge another way. Who rules us? Emperor Haldor Grimmark, from the Imperial Seat, in the King Below\'s name. When the King Below wakes, he will rule us himself. That will be a great day for our people.',
+      'What becomes of the apprentice who fails? He goes to the forge another way. Who rules us? Emperor Haldor Grimmark, from the Anvil Throne, in the King Below\'s name. When the King Below wakes, he will rule us himself. That will be a great day for our people.',
     ] },
     bk_syllabus: { title: 'The Blackcloister: First-Year Syllabus', section: 'book', book: true, lvl: 57, faction: 'both', from: { darkmaster_gandling: 0.35, instructor_malicia: 0.35 }, text: [
       'Welcome to Castle Ardmore. You were chosen, and that is an honour. Please note that the ferry does not run in the other direction.',

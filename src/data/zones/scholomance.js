@@ -1,4 +1,4 @@
-// The Blackcloister (dungeon, levels 57–60, v8): the Cult of the Damned's school of necromancy in the crypts under Castle Ardmore,
+// The Blackcloister (dungeon, levels 57–60, v8): the Hollow Host's school of necromancy in the crypts under Castle Ardmore,
 // in the West Rotmoor. Reachable by both factions.
 (function (root) {
   const D = root.D;
@@ -33,7 +33,7 @@
 
   const A = (id, q) => { q.faction = 'alliance'; D.QUESTS[id] = q; };
   const H = (id, q) => { q.faction = 'horde'; D.QUESTS[id] = q; };
-  A('sc_gandling_a', { name: 'The Headmaster', lvl: 60, giver: 'commander_ashlam', turnin: 'commander_ashlam', dungeon: 'scholomance', text: 'Headmaster Sallow runs the Blackcloister, where the Cult of the Damned teaches necromancy. Bring me his head.',
+  A('sc_gandling_a', { name: 'The Headmaster', lvl: 60, giver: 'commander_ashlam', turnin: 'commander_ashlam', dungeon: 'scholomance', text: 'Headmaster Sallow runs the Blackcloister, where the Hollow Host teaches necromancy. Bring me his head.',
     objs: [{ type: 'collect', item: 'gandling_head', n: 1 }], reward: { choice: ['fam_weapon60'] } });
   H('sc_gandling_h', { name: 'The Headmaster', lvl: 60, giver: 'high_executor_derrington', turnin: 'high_executor_derrington', dungeon: 'scholomance', text: 'The Pale Queen wants the headmaster of the Blackcloister dead. Bring me Headmaster Sallow\'s head.',
     objs: [{ type: 'collect', item: 'gandling_head', n: 1 }], reward: { choice: ['fam_weapon60'] } });

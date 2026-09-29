@@ -1,4 +1,4 @@
-/* art_scholomance.js — The Blackcloister art for Realm of Loner (dungeon, levels 57-60: the Cult of the Damned's school of
+/* art_scholomance.js — The Blackcloister art for Realm of Loner (dungeon, levels 57-60: the Hollow Host's school of
  * necromancy in the crypts under Castle Ardmore; the great hall with its classrooms and green braziers, the ossuary with
  * its bone walls, sarcophagus and flesh-construct vat, and the headmaster's study; the acolytes, necromancers and risen
  * constructs, and the bosses Skreel the Herald, Mirela Varga, Bonecrunch, Morvish the Frozen, Instructor Grimsby,
@@ -379,7 +379,7 @@
     o += body(c, pd([[x - bw, by - 7 * s], [x + bw, by - 7 * s], [x + bw * 0.7, by + 2 * s], [x - bw * 0.7, by + 2 * s]], true), IRON, F(pd([[x + bw * 0.25, by - 9 * s], [x + bw + 2, by - 9 * s], [x + bw + 2, by + 4 * s], [x + bw * 0.25, by + 4 * s]], true), dk(IRON, 0.35), 0.8) + skullC(c, x - 3 * s, by - 2.4 * s, 0.4 * s, BONED), 1.6 * s);
     return o + E(x, by - 7 * s, bw, 1.8 * s, '#7affa8', 1.1 * s) + gFlame(c, x - 2 * s, by - 7 * s, 0.45 * s);
   }
-  // hanging Cult of the Damned banner: violet cloth, green trim, a skull sigil
+  // hanging Hollow Host banner: violet cloth, green trim, a skull sigil
   function cultBanner(c, x, y, w, h) {
     var d = pd([[x, y], [x + w, y], [x + w, y + h], [x + w / 2, y + h - 12], [x, y + h]], true);
     return R(x - 4, y - 3, w + 8, 4.4, c.cel(IRON), 1.2) + body(c, d, PUR, F(pd([[x + w * 0.62, y], [x + w + 2, y], [x + w + 2, y + h + 2], [x + w * 0.62, y + h]], true), dk(PUR, 0.35), 0.7) +

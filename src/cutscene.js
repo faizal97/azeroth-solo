@@ -206,7 +206,7 @@
         lines: [{ t: 0.5, text: 'Their city of Ashforge works off its debt one forge at a time.' }, { t: 5.5, text: 'Prisons, forges, golem workshops, a whole kingdom under the stone.' }] },
       { bg: 'scene:brd_throne', dur: 10, cam: [[0, 0, 1.0], [0, -2, 1.2]], fx: ['shake@5', 'fadeout'],
         actors: [{ a: 'mob:emperor_dagran_thaurissan', x: 40, y: 0, w: 36, from: { y: -20, o: 0 }, dur: 2 }],
-        lines: [{ t: 0.5, text: 'Emperor Haldor Grimmark rules it all from the Imperial Seat.' }, { t: 5, who: 'Emperor Grimmark', text: 'Come to aid the Throne!' }] },
+        lines: [{ t: 0.5, text: 'Emperor Haldor Grimmark rules it all from the Anvil Throne.' }, { t: 5, who: 'Emperor Grimmark', text: 'Come to aid the Throne!' }] },
     ] },
     { id: 'scholo_intro', instance: 'scholomance', title: 'The Blackcloister', music: 'dungeon', shots: [
       { bg: 'scene:caer_darrow', dur: 9, cam: [[0, 0, 1.15], [0, 2, 1.02]], fx: ['fadein'],

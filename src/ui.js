@@ -262,9 +262,9 @@
   function npcLooks(npc, place) {
     const N = D.NPCS[npc], x = hashStr(npc), t = (N.title || '') + ' ' + N.name;
     const fac = place.faction || (D.REGIONS[place.region] || {}).faction;
-    let races = /Kessari|Witch Doctor|Hexx|Shadow Hunter/i.test(t) ? ['troll'] : /Reclaimed|Gravestalker|Executor|Apothecary|Royal Apothecary/i.test(t) ? ['undead'] : /Cenarion|Warden|Keeper of Lore|Moon|Starfeather/i.test(t) ? ['nightelf'] : /Ossa|Ruga|Hornwind Mesa/i.test(t) ? ['tauren'] : GOBLIN_TOWNS.has(P0(place)) ? ['gnome'] : REGION_RACES[place.region];
+    let races = /Kessari|Witch Doctor|Hexx|Shadow Hunter/i.test(t) ? ['troll'] : /Reclaimed|Gravestalker|Executor|Apothecary|Royal Apothecary/i.test(t) ? ['undead'] : /Grove|Warden|Keeper of Lore|Moon|Starfeather/i.test(t) ? ['nightelf'] : /Ossa|Ruga|Hornwind Mesa/i.test(t) ? ['tauren'] : GOBLIN_TOWNS.has(P0(place)) ? ['gnome'] : REGION_RACES[place.region];
     if (!races) races = fac === 'horde' ? ['orc', 'troll', 'tauren', 'undead'] : ['human', 'dwarf', 'nightelf', 'gnome'];
-    const cls = /Weapon|Smith|Armorer|Guard|Grunt|Marshal|Commander|Captain|Sergeant|Watch|Soldier|Warrior/i.test(t) ? 'warrior' : /Paladin|Lantern|Knight/i.test(t) ? 'paladin' : /Druid|Cenarion|Herbal/i.test(t) ? 'druid' : /Witch|Shaman|Earthen/i.test(t) ? 'shaman' : /Apothecary|Alchemist|Warlock|Demon/i.test(t) ? 'warlock' : /Priest|Healer|Innkeeper|Cleric/i.test(t) ? 'priest' : /Hunter|Stable|Scout|Tracker|Ranger/i.test(t) ? 'hunter' : /Mage|Arcan|Trainer|Lore|Scholar|Surveyor|Engineer/i.test(t) ? 'mage' : ['rogue', 'warrior', 'priest', 'mage'][x % 4];
+    const cls = /Weapon|Smith|Armorer|Guard|Grunt|Marshal|Commander|Captain|Sergeant|Watch|Soldier|Warrior/i.test(t) ? 'warrior' : /Paladin|Lantern|Knight/i.test(t) ? 'paladin' : /Druid|Grove|Herbal/i.test(t) ? 'druid' : /Witch|Shaman|Earthen/i.test(t) ? 'shaman' : /Apothecary|Alchemist|Warlock|Demon/i.test(t) ? 'warlock' : /Priest|Healer|Innkeeper|Cleric/i.test(t) ? 'priest' : /Hunter|Stable|Scout|Tracker|Ranger/i.test(t) ? 'hunter' : /Mage|Arcan|Trainer|Lore|Scholar|Surveyor|Engineer/i.test(t) ? 'mage' : ['rogue', 'warrior', 'priest', 'mage'][x % 4];
     const first = N.name.replace(/^(Innkeeper|Quartermaster|Marshal|Commander|Captain|Sergeant|Scout|Artisan|Stablemaster|Admiral|Scholar|Gravestalker|Hexxer|Witch Doctor|Shadow Hunter|Trader|Armorer|High Executor|Apothecary|Alchemist|Chief Engineer|Senior Surveyor|Lantern Officer|Lord|Lady|Baron)\s+/i, '').split(/\s+/)[0];
     const gender = /(a|ie|elle|ine|ette|ssa|ra|na|lyn|ith|beth)$/i.test(first) && !/^(Grunna|Ogunaro|Grask|Aru)$/i.test(first) ? 'f' : 'm';
     return { cls, race: races[(x >> 3) % races.length], skin: (x >> 7) % 4, hair: (x >> 11) % 5, gender };
@@ -1806,7 +1806,7 @@
       eagan: 'Mind the wolves. They get hungrier every week.', danil: 'Care for some bread and water? Fresh from the abbey.',
       milly: 'Oh! Are you here to help with the harvest?', dughan: 'Brackenford is under my protection. What do you need?',
       remy: 'Pell, at your service. Twice, if you pay twice.', pestle: 'Candles, herbs, powders. I always need more.',
-      farley: 'Welcome to the Lion\'s Pride Inn! Rest your feet a while.', corina: 'Blades, hammers, staves. All sharpened by my own hand.',
+      farley: 'Welcome to the Bracken Arms Inn! Rest your feet a while.', corina: 'Blades, hammers, staves. All sharpened by my own hand.',
       thomas: 'The lake shore isn\'t safe. Keep your weapon ready.', ma_stonefield: 'You there! Can you help an old farmer?',
       sten: 'Welcome to Coldridge, lad. Keep yer axe close.', balir: 'Cavekins! Everywhere I look, cavekin!', talin: 'Good hunting out here, if the wolves don\'t hunt you first.',
       adlin: 'Bread, water, and a wee bit of ale for the road?', ragnar: 'Welcome to the Maltsson Distillery! Best ale in Khaz Modan!',
@@ -1817,7 +1817,7 @@
       grull: 'The longnecks are the first test of any hunter.', hawkwind: 'Walk with the Grass Mother, young one.', raincaller: 'The spinehide grow restless in the ravine.',
       moodan: 'Fresh bread from the plains of Greensward.', baine: 'Welcome to Ossa Village. My father would be glad to see new braves.', kauth: 'Rest, friend. The winds are calm tonight.',
       harken: 'The swoops circle high today.', mahnott: 'Weapons strong enough for a hornfolk.', morin: 'Keep your eyes on the horizon.', pala: 'Welcome to Hornwind Mesa.', etu: 'Hornfolk steel, blessed by the Grass Mother.',
-      sarvis: 'You are free now. Free of the Lich King. Use that freedom well.', arren: 'The dead do not rest here. Not all of them, at least.', saltain: 'We need supplies. Everything is useful to the Reclaimed.',
+      sarvis: 'You are free now. Free of the Hollow Host. Use that freedom well.', arren: 'The dead do not rest here. Not all of them, at least.', saltain: 'We need supplies. Everything is useful to the Reclaimed.',
       kien: 'Food? For you? Yes... I suppose you still eat.', sevren: 'Mossgate serves the Pale Queen. As will you.', renee: 'Welcome to the Gallows\' End Tavern.',
       dillinger: 'The Order of the Pyre grows bolder every day.', johaan: 'Ah, a test subject. I mean, a volunteer.', gerard: 'Blades for the Reclaimed.', norman: 'The Gravenhold welcomes you.', abigail: 'Sharp things. For sharp minds.',
       gornek: 'Lok\'tar, young one. Prove your strength in the Blooding Grounds.', kaltunk: 'Watch for the scorpions, they sting hard.',
@@ -1836,7 +1836,7 @@
       salma: 'Mind the pie, it is hot!', thork: 'Lok\'tar. Dustfort needs every blade it can get.', sergra: 'The Scrublands test every hunter. Most fail.',
       helbrim: 'Samples, samples. The Scrublands are full of interesting poisons.', zargh: 'Hungry? Everything here is edible if you cook it long enough.',
       boorand: 'Rest your feet, traveller. The Scrublands are wide.', nargal: 'Need a weapon? The centaurs will not ask before they charge.', kargal: 'Hollow Tower sees everything that comes out of the Scrublands.',
-      allison: 'Welcome to the Gilded Rose. Kingsmere\'s finest beds.', thurman: 'Kingsmere steel. The best the Accord can buy.',
+      allison: 'Welcome to the White Hart. Kingsmere\'s finest beds.', thurman: 'Kingsmere steel. The best the Accord can buy.',
       banker_alliance: 'Your valuables are safe with us.', banker_horde: 'Store what you cannot carry. Nothing leaves this vault without you.', auctioneer_alliance: 'Buying or selling? Every adventurer on the realm trades through this house.', auctioneer_horde: 'Buy low, sell high. The Krugar trades here.',
       xenzilla: 'Da goblins cut down every tree, mon. Da spirits be angry.', mastok: 'Tallstone stands, for now. Every blade counts up here.', tsunaman: 'The earth weeps where the goblins cut. Listen, and you will hear it.',
       sahn: 'The wild things of these peaks are restless. Something has upset the balance.', jayka: 'Welcome to Tallstone. Warm yourself by the fire.', krond: 'Hornfolk steel and orc temper. Nothing better.',

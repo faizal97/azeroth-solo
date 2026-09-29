@@ -52,7 +52,7 @@
     objs: [{ type: 'visit', place: 'bloodtide_landing' }], reward: { money: 4000 } });
   H('sr_makrura', { name: 'Coralbone Beach', lvl: 60, giver: 'shadow_hunter_zulkesh', turnin: 'shadow_hunter_zulkesh', text: 'Makrura crawl up the beach at night. Kill 12.',
     objs: [{ type: 'kill', mob: 'reef_makrura', n: 12 }], reward: { choice: ['fam_feet60'] } });
-  H('sr_claws', { name: 'Makrura Claws', lvl: 60, giver: 'trader_gikkix', turnin: 'trader_gikkix', pre: ['sr_makrura'], text: 'Makrura claws sell well in Booty Bay. Bring me 8, I split the profit. Mostly.',
+  H('sr_claws', { name: 'Makrura Claws', lvl: 60, giver: 'trader_gikkix', turnin: 'trader_gikkix', pre: ['sr_makrura'], text: 'Makrura claws sell well in Rumhook Bay. Bring me 8, I split the profit. Mostly.',
     objs: [{ type: 'collect', item: 'makrura_claw', n: 8 }], reward: { money: 9000 } });
   H('sr_sailors', { name: 'The Sunken Pier', lvl: 60, giver: 'deathstalker_voss', turnin: 'deathstalker_voss', text: 'Drowned sailors walk the old pier. Not ours, not Hollow Host. Something else raised them. Kill 12.',
     objs: [{ type: 'kill', mob: 'drowned_sailor', n: 12 }], reward: { choice: ['fam_wrist60'] } });
