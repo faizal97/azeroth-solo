@@ -1,11 +1,14 @@
-/* art_razorfen.js — The Thorn Warrens art for Realm of Loner (Krugar dungeon, levels 29-34: the quilboar's giant thorn warren
+/* art_razorfen.js — The Thorn Warrens art for Realm of Loner (Krugar dungeon, levels 29-34: the Spinehide's giant thorn warren
  * in the southern Scrublands). Scenes: the thorn gate on the savannah, the winding thorn tunnels, the ritual depths.
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
  * Thorn Warrens keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
- * Helpers, the biped rig and the house-style scene pieces are shared copies of art_wetlands.js. The Thorn Warrens quilboar
- * rig is its own: darker umber hide, bone-white skull paint over the eyes, dusty grey swept-back quills with bone tips,
- * drooping torn ears and heavier tusks, so the tribe reads apart from the red-painted Snoutspike of art_barrens.js.
+ * Helpers, the biped rig and the house-style scene pieces are shared copies of art_wetlands.js. The Spinehide are
+ * porcupine-folk (spinefolk / spHead / quillCoat): stocky, round-bellied and short-legged, with a dense coat of slender
+ * banded quills (dark base, dusty grey middle, bone tip) over the back, shoulders and crown, a tapered snout with a round
+ * black button nose, small beady eyes, small round ears, two small curved jaw tusks and clawed paws. This tribe's own
+ * colours: darker umber hide, bone-white skull paint over the eyes, torn ears and slightly heavier tusks.
+ * The boar skulls on totems, stakes and staffs are the tribe's hunting trophies (props), not the tribe itself.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix rk<counter>_).
  */
@@ -440,44 +443,74 @@
   }
 
   // ============================================================
-  //  RAZORFEN QUILBOAR RIG (facing left)
+  //  THORN WARRENS SPINEHIDE RIG: porcupine-folk (facing left)
   // ============================================================
-  // long quills swept back along the spine, two rows, bone tips
-  function backQuills(c, mane, tip, k) {
-    var s = '';
-    [[dk(mane, 0.28), 1.15, 0], [mane, 1, 1]].forEach(function (rw) {
-      for (var i = 0; i < 8; i++) {
-        var t = i / 7, bx = 58 + t * 28 - rw[2] * 3, by = 42 + t * 34 + rw[2] * 3, a = -1.3 + t * 1.1 + rw[2] * 0.1, len = (26 - Math.abs(t - 0.3) * 18) * rw[1] * k;
-        var tx = bx + Math.cos(a) * len, ty = by + Math.sin(a) * len, px = -Math.sin(a) * 3.4 * k, py = Math.cos(a) * 3.4 * k;
-        s += P(pd([[bx + px, by + py], [tx, ty], [bx - px, by - py]], true), c.cel(rw[0]), 1.5);
-        s += F(pd([[bx + (tx - bx) * 0.6 + px * 0.42, by + (ty - by) * 0.6 + py * 0.42], [tx, ty], [bx + (tx - bx) * 0.6 - px * 0.42, by + (ty - by) * 0.6 - py * 0.42]], true), tip);
+  // one slender banded quill: dark base, grey middle band, bone tip; outline drawn last so the bands keep it
+  function quill(bx, by, a, len, w, base, mid, tip) {
+    var ca = Math.cos(a), sa = Math.sin(a), px = -sa * w, py = ca * w, tx = bx + ca * len, ty = by + sa * len;
+    var d = pd([[bx + px, by + py], [tx, ty], [bx - px, by - py]], true);
+    var band = function (f, col) { var p = [bx + ca * len * f, by + sa * len * f], k = 1 - f; return F(pd([[p[0] + px * k, p[1] + py * k], [tx, ty], [p[0] - px * k, p[1] - py * k]], true), col); };
+    return P(d, base, 1.1) + band(0.3, mid) + band(0.6, tip);
+  }
+  // point + outward angle along a polyline, t in 0..1
+  function polyAt(pts, t) {
+    var segs = pts.length - 1, f = clamp(t, 0, 1) * segs, i = Math.min(segs - 1, Math.floor(f)), u = f - i;
+    return lerp2(pts[i], pts[i + 1], u);
+  }
+  // the dense coat of slender quills over the shoulders and back, three rows (long dark, mid grey, short pale)
+  var SPINE = [[52, 33], [66, 36], [80, 43], [90, 56], [93, 72], [90, 88]];
+  function quillCoat(c, mane, tip, k, seed) {
+    var s = '', r = rng(seed || 23);
+    [[15, 1.12, dk(mane, 0.26), mane, 3], [12, 0.94, dk(mane, 0.12), lt(mane, 0.1), 0], [9, 0.7, dk(mane, 0.04), lt(mane, 0.2), -4]].forEach(function (rw, ri) {
+      for (var i = 0; i < rw[0]; i++) {
+        var t = (i + (ri === 1 ? 0.5 : 0) + (r() - 0.5) * 0.3) / rw[0], p = polyAt(SPINE, t);
+        var a = -1.32 + t * 1.85 + (r() - 0.5) * 0.18, len = (14 + Math.sin(t * PI) * 10 + r() * 5) * rw[1] * k;
+        var bx = p[0] - Math.cos(a) * (6 + rw[4]), by = p[1] - Math.sin(a) * (6 + rw[4]);
+        s += quill(bx, by, a, len + 6 + rw[4], 2.4 * Math.min(1.25, k), rw[2], rw[3], tip);
       }
     });
     return s;
   }
-  function rfHead(c, x, y, o) {
-    var sk = o.skin || RFSK, mane = o.mane || RFMANE, tip = o.tip || BONE, tk = o.tusk || 1.3, pc = o.paint || BONE, s = '';
-    s += P(shag(x + 13, y + 3, 13, 15, 7, 0.28, o.seed || 5, 0.4), c.cel(o.hair || dk(mane, 0.12)), 1.8);
-    // drooping, notched ear hanging behind the head
-    if (!o.hood) s += P(pd([[x + 4, y - 12], [x + 14, y - 11], [x + 22, y - 3], [x + 24, y + 7], [x + 20, y + 4], [x + 18, y + 9], [x + 8, y]], true), c.cel(dk(sk, 0.05)), 2) + F(pd([[x + 12, y - 7], [x + 19, y - 1], [x + 21, y + 4], [x + 14, y + 1]], true), '#3e2820', 0.8);
+  // small round ear with a torn notch
+  function earD(x, y, r) {
+    var p = [];
+    for (var i = 0; i < 14; i++) { var a = -PI + i * PI * 2 / 14, f = i === 5 ? 0.45 : 1; p.push([x + Math.cos(a) * r * f, y + Math.sin(a) * r * f]); }
+    return pd(p, true);
+  }
+  // small curved lower tusk rising from the jaw (sz ~1 = small, ~1.9 = the heavy ones)
+  function jawTusk(c, bx, by, sz, col) {
+    return P('M' + pt([bx + 1.8, by]) + 'C' + pt([bx - 0.4, by + 2.4]) + ' ' + pt([bx - 4 * sz, by - 0.6 * sz]) + ' ' + pt([bx - 3.4 * sz, by - 6 * sz]) +
+      'C' + pt([bx - 2.2 * sz, by - 3 * sz]) + ' ' + pt([bx - 1, by - 1.6]) + ' ' + pt([bx + 1.4, by - 1.4]) + 'Z', c.cel(col), 1.3);
+  }
+  function spHead(c, x, y, o) {
+    var sk = o.skin || RFSK, mane = o.mane || RFMANE, tip = o.tip || BONE, sz = clamp(o.tusk || 1.3, 1, 2.2), pc = o.paint || BONE, s = '', big = o.big ? 1.18 : 1, r = rng(o.seed || 11);
+    // crest of quills fanning back off the crown (behind the skull)
+    if (!o.hood && !o.noCrown) for (var i = 0; i < 8; i++) {
+      var t = i / 7, th = -2.25 + t * 2.1, bx = x + 3 + Math.cos(th) * 10, by = y - 1 + Math.sin(th) * 12;
+      s += quill(bx, by, th + 0.42 + (r() - 0.5) * 0.1, (12 + Math.sin(t * PI) * 7 + r() * 3) * big, 2.2, dk(mane, 0.2), lt(mane, 0.06), tip);
+    }
     if (o.headBack) s += o.headBack(c, x, y);
-    if (!o.hood && !o.noCrown) [[-6, -12, -1.05, 13], [0, -14, -0.8, 16], [6, -12, -0.52, 16], [11, -8, -0.26, 13]].forEach(function (q) {
-      var a = q[2], len = q[3] * (o.big ? 1.2 : 1), bx = x + q[0], by = y + q[1], ex = bx + Math.cos(a) * len, ey = by + Math.sin(a) * len, px = -Math.sin(a) * 3, py = Math.cos(a) * 3;
-      s += P(pd([[bx + px, by + py], [ex, ey], [bx - px, by - py]], true), c.cel(mane), 1.4) + F(pd([[bx + (ex - bx) * 0.6 + px * 0.4, by + (ey - by) * 0.6 + py * 0.4], [ex, ey], [bx + (ex - bx) * 0.6 - px * 0.4, by + (ey - by) * 0.6 - py * 0.4]], true), tip);
-    });
-    var d = 'M' + pt([x + 13, y - 4]) + 'C' + pt([x + 11, y - 15]) + ' ' + pt([x - 3, y - 18]) + ' ' + pt([x - 10, y - 11]) + 'L' + pt([x - 20, y - 5]) + 'C' + pt([x - 25, y - 3]) + ' ' + pt([x - 27, y + 7]) + ' ' + pt([x - 23, y + 11]) + 'L' + pt([x - 12, y + 15]) + 'C' + pt([x - 3, y + 19]) + ' ' + pt([x + 9, y + 16]) + ' ' + pt([x + 13, y + 6]) + 'Z';
-    var paint = o.nopaint ? '' : F('M' + pt([x - 18, y - 7]) + 'C' + pt([x - 13, y - 13]) + ' ' + pt([x - 2, y - 13]) + ' ' + pt([x + 2, y - 6]) + 'L' + pt([x - 1, y + 4]) + 'C' + pt([x - 5, y + 2]) + ' ' + pt([x - 9, y + 3]) + ' ' + pt([x - 12, y + 7]) + 'C' + pt([x - 14, y + 2]) + ' ' + pt([x - 17, y - 2]) + ' ' + pt([x - 18, y - 7]) + 'Z', pc, 0.95) +
-      L('M' + pt([x - 21, y - 2]) + 'L' + pt([x - 18, y]) + 'M' + pt([x - 22, y + 2.5]) + 'L' + pt([x - 18.5, y + 4.5]) + 'M' + pt([x + 3, y + 3]) + 'L' + pt([x + 7, y + 10]) + 'M' + pt([x + 7, y + 1]) + 'L' + pt([x + 10, y + 7]), pc, 1.7);
-    s += body(c, d, sk, F('M' + pt([x + 3, y - 20]) + 'L' + pt([x + 17, y - 20]) + 'L' + pt([x + 17, y + 20]) + 'L' + pt([x + 1, y + 20]) + 'C' + pt([x + 7, y + 8]) + ' ' + pt([x + 7, y - 6]) + ' ' + pt([x + 3, y - 20]) + 'Z', dk(sk, 0.28), 0.8) +
-      F('M' + pt([x - 28, y + 9]) + 'C' + pt([x - 17, y + 13]) + ' ' + pt([x - 4, y + 13]) + ' ' + pt([x + 15, y + 7]) + 'L' + pt([x + 15, y + 22]) + 'L' + pt([x - 28, y + 22]) + 'Z', dk(sk, 0.2), 0.7) + paint + (o.scars ? L('M' + pt([x - 6, y - 14]) + 'L' + pt([x - 13, y + 4]) + 'M' + pt([x - 3, y - 12]) + 'L' + pt([x - 8, y + 2]), o.scars, 1.3) : ''), 2.5);
-    s += E(x - 24, y + 4, 3.8, 6, c.cel(o.snout || '#8e6252'), 1.8) + E(x - 25, y + 2, 0.9, 1.4, OL) + E(x - 25, y + 6.5, 0.9, 1.4, OL);
-    if (o.shutEye) s += L('M' + pt([x - 13, y - 3]) + 'Q' + pt([x - 9, y - 1]) + ' ' + pt([x - 5, y - 3]), OL, 1.6) + L('M' + pt([x - 12, y - 10]) + 'L' + pt([x - 6, y + 4]), '#c88a7a', 1.6);
-    else s += E(x - 9, y - 3, 3.6, 3, '#2a1a14', 0) + (o.glowEye ? glowEye(c, x - 9.5, y - 3, 1.9, o.glowEye) : C(x - 9.5, y - 3, 1.9, o.eye || '#ffc040', 1));
-    s += L('M' + pt([x - 18, y - 8]) + 'L' + pt([x - 3, y - 7.5]), OL, 3);
-    s += L('M' + pt([x - 22, y + 11]) + 'C' + pt([x - 16, y + 13]) + ' ' + pt([x - 9, y + 13]) + ' ' + pt([x - 3, y + 10]), OL, 1.4);
-    var tusk = function (bx, k, col) { return P('M' + pt([bx, y + 13]) + 'C' + pt([bx - 8 * tk * k, y + 13]) + ' ' + pt([bx - 11 * tk * k, y + 4 - 3 * tk * k]) + ' ' + pt([bx - 9 * tk * k, y - 3 - 6 * tk * k]) + 'C' + pt([bx - 5 * tk * k, y + 1]) + ' ' + pt([bx - 3, y + 6]) + ' ' + pt([bx + 4, y + 10]) + 'Z', c.cel(col), 1.6); };
-    s += tusk(x - 6, 0.7, '#d8ceb4') + tusk(x - 12, 1, '#f4ecd6');
-    if (o.whiskers) s += L('M' + pt([x - 14, y + 15]) + 'l-3,7 M' + pt([x - 9, y + 16]) + 'l-1,8 M' + pt([x - 4, y + 15]) + 'l1,7', OL, 3) + L('M' + pt([x - 14, y + 15]) + 'l-3,7 M' + pt([x - 9, y + 16]) + 'l-1,8 M' + pt([x - 4, y + 15]) + 'l1,7', o.whiskers, 1.5);
+    // skull with a long tapered snout
+    var d = 'M' + pt([x + 15, y - 2]) + 'C' + pt([x + 14, y - 14]) + ' ' + pt([x + 2, y - 18]) + ' ' + pt([x - 8, y - 13]) + 'C' + pt([x - 14, y - 10]) + ' ' + pt([x - 21, y - 4]) + ' ' + pt([x - 28, y]) +
+      'C' + pt([x - 32, y + 2]) + ' ' + pt([x - 31, y + 7]) + ' ' + pt([x - 26, y + 8]) + 'C' + pt([x - 20, y + 10]) + ' ' + pt([x - 14, y + 15]) + ' ' + pt([x - 4, y + 16]) + 'C' + pt([x + 6, y + 17]) + ' ' + pt([x + 15, y + 10]) + ' ' + pt([x + 15, y - 2]) + 'Z';
+    var paint = o.nopaint ? '' : F(pd([[x - 20, y - 5], [x - 14, y - 11], [x - 6, y - 13], [x + 1, y - 9], [x + 2, y - 2], [x - 1, y + 3], [x - 4, y + 1], [x - 7, y + 4], [x - 10, y + 1], [x - 13, y + 3], [x - 16, y + 0.5]], true), pc, 0.95) +
+      L('M' + pt([x + 5, y + 1]) + 'L' + pt([x + 8, y + 8]) + 'M' + pt([x + 9, y - 1]) + 'L' + pt([x + 12, y + 5]) + 'M' + pt([x - 24, y + 1.5]) + 'L' + pt([x - 20, y + 3]), pc, 1.6);
+    s += body(c, d, sk, F('M' + pt([x + 4, y - 20]) + 'L' + pt([x + 18, y - 20]) + 'L' + pt([x + 18, y + 20]) + 'L' + pt([x + 2, y + 20]) + 'C' + pt([x + 8, y + 8]) + ' ' + pt([x + 8, y - 6]) + ' ' + pt([x + 4, y - 20]) + 'Z', dk(sk, 0.28), 0.8) +
+      F('M' + pt([x - 32, y + 4]) + 'C' + pt([x - 22, y + 9]) + ' ' + pt([x - 6, y + 11]) + ' ' + pt([x + 16, y + 6]) + 'L' + pt([x + 16, y + 20]) + 'L' + pt([x - 32, y + 20]) + 'Z', dk(sk, 0.2), 0.7) +
+      F('M' + pt([x - 33, y + 3]) + 'C' + pt([x - 26, y - 3]) + ' ' + pt([x - 18, y - 6]) + ' ' + pt([x - 12, y - 6]) + 'L' + pt([x - 12, y + 8]) + 'C' + pt([x - 20, y + 8]) + ' ' + pt([x - 28, y + 7]) + ' ' + pt([x - 33, y + 3]) + 'Z', lt(sk, 0.14), 0.8) +
+      paint + (o.scars ? L('M' + pt([x - 2, y - 15]) + 'L' + pt([x - 9, y + 2]) + 'M' + pt([x + 2, y - 13]) + 'L' + pt([x - 3, y + 1]), o.scars, 1.3) : ''), 2.5);
+    // short quills growing over the back of the skull
+    if (!o.hood) [[5, -9, -0.9, 10], [9, -5, -0.55, 10], [11, 0, -0.2, 9], [11, 5, 0.15, 8]].forEach(function (q) { s += quill(x + q[0], y + q[1], q[2], q[3] * big, 2, dk(mane, 0.12), lt(mane, 0.12), tip); });
+    // round, torn ear on the crown, just behind the brow
+    if (!o.hood) s += P(earD(x - 1, y - 13, 5), c.cel(dk(sk, 0.04)), 2) + C(x - 1.4, y - 12.6, 2.3, '#3e2622', 0, 0.9);
+    // button nose, mouth, beady eye under the skull paint (a hooded one wears a mask instead)
+    if (!o.hood) s += C(x - 29.5, y + 2.6, 3, '#140e0c', 1.2) + C(x - 30.4, y + 1.6, 0.9, '#9a9090');
+    if (!o.hood) s += L('M' + pt([x - 26, y + 7.5]) + 'C' + pt([x - 21, y + 9.5]) + ' ' + pt([x - 16, y + 11]) + ' ' + pt([x - 11, y + 10]), OL, 1.3);
+    if (o.hood) s += '';
+    else if (o.shutEye) s += L('M' + pt([x - 13, y - 3]) + 'Q' + pt([x - 10, y - 1]) + ' ' + pt([x - 7, y - 3]), OL, 1.6);
+    else s += (o.glowEye ? E(x - 10, y - 3, 3.2, 2.8, '#1a0e0a') + glowEye(c, x - 10, y - 3, 1.7, o.glowEye) : C(x - 10, y - 3, 2.7, '#120a08') + C(x - 10.9, y - 3.9, 0.85, '#ffffff', 0, 0.95));
+    if (!o.hood) s += L('M' + pt([x - 16, y - 7]) + 'L' + pt([x - 5, y - 8]), OL, 2.2) + jawTusk(c, x - 11, y + 11, sz * 0.8, '#d8ceb4') + jawTusk(c, x - 17, y + 9.5, sz, '#f4ecd6');
+    if (o.whiskers) { var wd = 'M' + pt([x - 22, y + 10]) + 'l-3,7 M' + pt([x - 17, y + 12]) + 'l-1,8 M' + pt([x - 12, y + 13]) + 'l1,7'; s += L(wd, OL, 3) + L(wd, o.whiskers, 1.5); }
     if (o.headX) s += o.headX(c, x, y);
     return s;
   }
@@ -485,7 +518,7 @@
     var d = 'M47,84 L82,84 L84,104 L77,100 L71,108 L65,100 L59,108 L53,100 L45,104 Z';
     var s = body(c, d, col, L('M49,90 L81,90', dk(col, 0.4), 1.2) + F('M70,82 L90,82 L90,110 L72,110 Z', dk(col, 0.25), 0.7), 1.8);
     if (beads !== false) for (var x = 52; x < 80; x += 6) s += C(x, 87, 1.5, BONE, 0.8);
-    return s;
+    return G(s, 'translate(0,4)');
   }
   function ribCage(x, y, w, k) {
     var d = '';
@@ -505,26 +538,39 @@
     for (var i = -3; i <= 3; i++) { var bx = x + i * w / 3.6, by = y + 3 - Math.abs(i) * 1.6; s += P('M' + pt([bx - 1.8, by]) + 'Q' + pt([bx - 1, by + 6]) + ' ' + pt([bx + 2, by + 8 - Math.abs(i) * 0.5]) + 'Q' + pt([bx + 1, by + 4]) + ' ' + pt([bx + 1.8, by]) + 'Z', col || '#f4ecd6', 1); }
     return s;
   }
+  // small clawed paw-foot, bone claws to the front
+  function spFoot(x, y, col) {
+    var cd = 'M' + pt([x - 8, y + 0.4]) + 'l-2.8,1 M' + pt([x - 4.6, y + 1.2]) + 'l-2.6,1 M' + pt([x - 1.2, y + 1.4]) + 'l-2.2,0.9';
+    return P('M' + pt([x + 6, y - 8]) + 'C' + pt([x + 7.5, y - 1]) + ' ' + pt([x + 6, y + 1.6]) + ' ' + pt([x + 2, y + 1.6]) + 'L' + pt([x - 7, y + 1.6]) + 'C' + pt([x - 10, y + 1.6]) + ' ' + pt([x - 10, y - 4]) + ' ' + pt([x - 5, y - 6]) + 'L' + pt([x - 4, y - 8]) + 'Z', c_(col), 2) +
+      L(cd, OL, 3) + L(cd, '#efe6cf', 1.3);
+  }
   function robeSkirt(c, col, trim, hem) {
     var d = 'M44,82 L84,82 C88,94 92,106 95,118' + rag(95, 33, 118, 4, hem || 7).replace(/^L/, ' L') + ' C36,106 40,94 44,82 Z';
-    return hoofs(52, 121, '#2a1e18') + hoofs(75, 121, '#241a16') + body(c, d, col, L('M56,86 L52,116 M68,86 L70,116 M78,88 L86,116', dk(col, 0.35), 1.3) + F('M70,80 L100,80 L100,122 L78,122 C80,108 76,92 70,80 Z', dk(col, 0.3), 0.7) + (trim ? L('M36,112 L94,112', trim, 2.2) : ''), 2);
+    return spFoot(52, 121, '#3e2a20') + spFoot(75, 121, '#34241c') + body(c, d, col, L('M56,86 L52,116 M68,86 L70,116 M78,88 L86,116', dk(col, 0.35), 1.3) + F('M70,80 L100,80 L100,122 L78,122 C80,108 76,92 70,80 Z', dk(col, 0.3), 0.7) + (trim ? L('M36,112 L94,112', trim, 2.2) : ''), 2);
   }
-  function rfQuil(c, o) {
+  // quill mantle over the back of the torso (drawn inside the torso clip)
+  function mantle(mane, tip) {
+    var s = F('M60,36 C72,50 76,70 70,98 L104,98 L104,36 Z', dk(mane, 0.14), 0.95), d = '', e = '';
+    [[66, 46], [74, 44], [70, 56], [80, 52], [76, 64], [86, 60], [74, 76], [84, 72], [80, 86], [88, 82]].forEach(function (p) { d += 'M' + pt(p) + 'l7,-3'; e += 'M' + pt([p[0] + 5, p[1] - 2.1]) + 'l2,-0.9'; });
+    return s + L('M60,36 C72,50 76,70 70,98', OL, 1.6) + L(d, dk(mane, 0.45), 1.6) + L(e, tip, 1.5, 0.9);
+  }
+  function spinefolk(c, o) {
     var sk = o.skin || RFSK, mane = o.mane || RFMANE, tip = o.tip || BONE, k = o.k || 1, shirt = o.shirt || sk;
+    var ph = function (c, p) { return clawHand(p, sk, 0.82, '#efe6cf'); };
     return biped(c, {
-      skin: sk, shirt: shirt, pants: dk(sk, 0.06), sleeve: o.sleeve || sk, forearm: o.forearm || o.sleeve || sk, glove: o.glove || sk, feet: hoofs, boots: '#2a1e18', legW: o.legW || 12, armW: o.armW || 11, belt: o.belt, buckle: BONE,
-      hx: o.hx || 46, hy: o.hy || 42, hipY: 86, shadowR: o.shadowR || 36, neck: false, noLegs: o.noLegs,
-      torsoD: o.torsoD || 'M40,58 C40,44 66,38 84,46 L88,68 L82,88 L50,88 L42,74 Z',
-      back: function (c) { return (o.back ? o.back(c) : '') + backQuills(c, mane, tip, k); },
-      head: function (c, x, y) { return rfHead(c, x, y, o); },
+      skin: sk, shirt: shirt, pants: dk(sk, 0.06), sleeve: o.sleeve || sk, forearm: o.forearm || o.sleeve || sk, glove: o.glove || sk, feet: spFoot, boots: dk(sk, 0.3), legW: o.legW || 13, armW: o.armW || 11, belt: o.belt, buckle: BONE,
+      hx: o.hx || 46, hy: o.hy || 42, hipY: 90, shadowR: o.shadowR || 36, neck: false, noLegs: o.noLegs,
+      torsoD: o.torsoD || 'M42,56 C46,44 68,40 84,46 C94,54 94,76 88,92 L50,92 C38,88 32,72 42,56 Z',
+      back: function (c) { return (o.back ? o.back(c) : '') + quillCoat(c, mane, tip, k, o.seed); },
+      head: function (c, x, y) { return spHead(c, x, y, o); },
       chest: function (c) {
-        return (shirt === sk ? F('M42,64 C46,60 54,62 58,70 C56,80 50,86 44,86 Z', lt(sk, 0.14), 0.6) : '') +
-          (o.nopaint || shirt !== sk ? '' : L('M50,62 L57,68 L50,74 M61,56 L68,62 L61,68', o.paint || BONE, 2.2, 0.95)) + (o.chest ? o.chest(c) : '');
+        return (shirt === sk ? F('M38,64 C42,56 54,58 58,70 C60,82 54,92 44,92 C36,88 34,74 38,64 Z', lt(sk, 0.16), 0.85) + L('M42,70 l3,2 M46,78 l3,2 M41,84 l3,2', dk(sk, 0.2), 1, 0.8) + mantle(mane, tip) : '') +
+          (o.nopaint || shirt !== sk ? '' : L('M48,62 L55,68 L48,74 M58,56 L65,62 L58,68', o.paint || BONE, 2.2, 0.95)) + (o.chest ? o.chest(c) : '');
       },
       front: o.front || function (c) { return hideKilt(c, o.kilt || HIDE); },
       pads: o.pads, shins: o.shins,
       near: o.near || [[48, 58], [40, 74], [32, 84]], far: o.far || [[80, 56], [88, 72], [88, 88]],
-      wNear: o.wNear, wFar: o.wFar, wNearFront: o.wNearFront, top: o.top, tf: o.tf, nearHand: o.nearHand, farHand: o.farHand
+      wNear: o.wNear, wFar: o.wFar, wNearFront: o.wNearFront, top: o.top, tf: o.tf, nearHand: o.nearHand || ph, farHand: o.farHand || ph
     });
   }
   function bracer(p, q, col, w) { var a = lerp2(p, q, 0.25), b = lerp2(p, q, 0.72), d = 'M' + pt(a) + 'L' + pt(b); return L(d, OL, (w || 9) + 4) + L(d, col, w || 9) + L(d, dk(col, 0.3), 1.2, 0.8); }
@@ -647,7 +693,7 @@
   // ============================================================
   var MOBS = {
     razorfen_quilguard: function (c) {
-      return rfQuil(c, {
+      return spinefolk(c, {
         eye: '#ffb838', belt: '#3a2a1e', kilt: '#7a5634',
         chest: function () { return ribCage(46, 54, 36, 5); },
         pads: function (c) { return bonePad(c, 80, 50, 1); },
@@ -663,7 +709,7 @@
       });
     },
     razorfen_geomancer: function (c) {
-      return rfQuil(c, {
+      return spinefolk(c, {
         skin: '#6e4c3a', mane: '#7a6a58', glowEye: GEO, belt: '#4a3222',
         back: function (c) { return C(34, 36, 40, glow(c, GEO, 0.3)) + stoneTotem(c, 108, 122, 1.05, GEO); },
         front: function (c) {
@@ -716,18 +762,21 @@
     },
     death_head_cultist: function (c) {
       var rb = '#3a2842', sk = '#5e4638';
-      return rfQuil(c, {
+      return spinefolk(c, {
         skin: sk, mane: '#4a3e3a', tip: '#c8b8d8', nopaint: true, hood: true, shirt: rb, sleeve: rb, noLegs: true, eye: '#c080ff',
         back: function (c) { return C(46, 50, 48, glow(c, NECRO, 0.3)); },
         front: function (c) { return robeSkirt(c, rb, '#8a6aa0', 5) + L('M46,84 L84,84', '#b8a88a', 2.4) + skull(c, 58, 90, 0.5); },
         pads: function (c) { return body(c, 'M36,60 C36,48 60,42 88,50 L90,60 C76,56 56,58 36,60 Z', dk(rb, 0.15), L('M40,58 C54,54 74,54 88,58', '#8a6aa0', 1.4), 1.8); },
         headX: function (c, x, y) {
           var hood = 'M' + pt([x - 14, y - 10]) + 'C' + pt([x - 10, y - 24]) + ' ' + pt([x + 12, y - 26]) + ' ' + pt([x + 20, y - 10]) + 'C' + pt([x + 24, y + 2]) + ' ' + pt([x + 22, y + 14]) + ' ' + pt([x + 18, y + 22]) + 'L' + pt([x + 6, y + 18]) + 'C' + pt([x + 8, y + 6]) + ' ' + pt([x + 4, y - 6]) + ' ' + pt([x - 4, y - 10]) + 'Z';
-          var mask = 'M' + pt([x - 3, y - 12]) + 'C' + pt([x - 14, y - 15]) + ' ' + pt([x - 23, y - 8]) + ' ' + pt([x - 28, y - 1]) + 'C' + pt([x - 30, y + 5]) + ' ' + pt([x - 28, y + 10]) + ' ' + pt([x - 22, y + 11]) + 'L' + pt([x - 10, y + 9]) + 'C' + pt([x - 4, y + 8]) + ' ' + pt([x + 1, y + 2]) + ' ' + pt([x, y - 6]) + 'Z';
-          return body(c, hood, rb, F(pd([[x + 8, y - 26], [x + 26, y - 26], [x + 26, y + 24], [x + 12, y + 24]], true), dk(rb, 0.35), 0.8) + L('M' + pt([x - 12, y - 12]) + 'C' + pt([x - 6, y - 20]) + ' ' + pt([x + 8, y - 22]) + ' ' + pt([x + 16, y - 12]), lt(rb, 0.2), 1.4, 0.8), 2.2) +
-            body(c, mask, '#e4dcc4', F('M' + pt([x - 30, y + 4]) + 'L' + pt([x + 2, y + 2]) + 'L' + pt([x + 2, y + 12]) + 'L' + pt([x - 30, y + 12]) + 'Z', '#b8ae96', 0.8) + L('M' + pt([x - 6, y - 10]) + 'L' + pt([x - 3, y - 4]) + 'L' + pt([x - 6, y + 1]), '#9a907a', 1), 2) +
-            E(x - 10, y - 3, 3.6, 3.4, OL) + glowEye(c, x - 10, y - 3, 1.7, '#d890ff') + E(x - 25, y + 1, 1, 1.6, OL) + E(x - 25, y + 6, 1, 1.6, OL) +
-            P('M' + pt([x - 20, y + 10]) + 'C' + pt([x - 28, y + 10]) + ' ' + pt([x - 30, y + 2]) + ' ' + pt([x - 28, y - 6]) + 'C' + pt([x - 26, y]) + ' ' + pt([x - 24, y + 5]) + ' ' + pt([x - 17, y + 8]) + 'Z', c.cel('#f4ecd6'), 1.4);
+          var mask = 'M' + pt([x - 2, y - 12]) + 'C' + pt([x - 12, y - 14]) + ' ' + pt([x - 21, y - 7]) + ' ' + pt([x - 30, y - 1]) + 'C' + pt([x - 35, y + 1]) + ' ' + pt([x - 35, y + 7]) + ' ' + pt([x - 29, y + 9]) + 'L' + pt([x - 12, y + 13]) + 'C' + pt([x - 4, y + 12]) + ' ' + pt([x + 2, y + 4]) + ' ' + pt([x + 1, y - 5]) + 'Z';
+          var hq = '';
+          [[14, -12, -1.0, 16], [19, -6, -0.6, 17], [22, 1, -0.2, 15], [22, 8, 0.2, 13]].forEach(function (q) { hq += quill(x + q[0], y + q[1], q[2], q[3], 2.2, '#3a302e', '#6a5e58', '#c8b8d8'); });
+          return hq + body(c, hood, rb, F(pd([[x + 8, y - 26], [x + 26, y - 26], [x + 26, y + 24], [x + 12, y + 24]], true), dk(rb, 0.35), 0.8) + L('M' + pt([x - 12, y - 12]) + 'C' + pt([x - 6, y - 20]) + ' ' + pt([x + 8, y - 22]) + ' ' + pt([x + 16, y - 12]), lt(rb, 0.2), 1.4, 0.8), 2.2) +
+            body(c, mask, '#e4dcc4', F('M' + pt([x - 36, y + 4]) + 'L' + pt([x + 2, y + 2]) + 'L' + pt([x + 2, y + 14]) + 'L' + pt([x - 36, y + 14]) + 'Z', '#b8ae96', 0.8) + L('M' + pt([x - 6, y - 10]) + 'L' + pt([x - 3, y - 4]) + 'L' + pt([x - 6, y + 1]), '#9a907a', 1) +
+              L('M' + pt([x - 27, y + 8.4]) + 'l2,-2 l2,2.4 l2,-2 l2,2.6 l2,-2 l2,2.6 l2,-2', '#6a6250', 1.1), 2) +
+            E(x - 10, y - 3, 3.6, 3.4, OL) + glowEye(c, x - 10, y - 3, 1.7, '#d890ff') + E(x - 31, y + 3, 1.8, 1.6, OL) + L('M' + pt([x - 22, y - 6]) + 'L' + pt([x - 17, y - 3]), '#9a907a', 1) +
+            jawTusk(c, x - 16, y + 11, 1.2, '#f4ecd6');
         },
         near: [[48, 58], [38, 72], [26, 78]], wNearFront: function (c, p) { return shadowSwirl(c, [p[0] - 6, p[1] - 8], 1.05, NECRO); },
         far: [[80, 56], [88, 70], [86, 84]], wFar: function (c, p) { return C(p[0], p[1] + 2, 14, glow(c, NECRO, 0.5)) + skull(c, p[0] + 1, p[1] + 4, 0.8); }
@@ -735,14 +784,14 @@
     },
     aggem_thorncurse: function (c) {
       var red = '#ff5a3a';
-      return rfQuil(c, {
+      return spinefolk(c, {
         skin: '#664638', mane: '#6e5a48', glowEye: red, belt: '#3a2618', kilt: '#6a4a2c', big: true,
         back: function (c) {
           return C(40, 40, 44, glow(c, red, 0.28)) + body(c, 'M58,44 C84,40 100,56 102,80 L106,112 L90,106 L84,114 L76,104 L66,110 C64,90 60,66 58,44 Z', '#4e3a2c', L('M80,60 L84,104 M92,70 L96,104', '#2e2218', 1.2) + F('M88,44 L110,44 L110,116 L92,116 Z', '#2e2218', 0.6), 2) +
             P(shag(76, 50, 18, 10, 8, 0.3, 17, 0.3), c.cel('#a8987c'), 1.8);
         },
         chest: function (c) { return tuskNecklace(c, 60, 58, 16); },
-        front: function (c) { return hideKilt(c, '#6a4a2c') + L('M50,100 l-1,10 M58,104 l0,10 M66,102 l0,10 M74,104 l1,10', OL, 3) + L('M50,100 l-1,10 M58,104 l0,10 M66,102 l0,10 M74,104 l1,10', BONE, 1.6); },
+        front: function (c) { return hideKilt(c, '#6a4a2c') + L('M50,104 l-1,10 M58,108 l0,10 M66,106 l0,10 M74,108 l1,10', OL, 3) + L('M50,104 l-1,10 M58,108 l0,10 M66,106 l0,10 M74,108 l1,10', BONE, 1.6); },
         pads: function (c) { return bonePad(c, 80, 50, 1.05); },
         headX: function (c, x, y) {
           var s = vine(c, [[x - 16, y - 7], [x - 6, y - 15], [x + 6, y - 15], [x + 16, y - 7]], 5.4, 5.4, '#5a4a30', 301, 0.6);
@@ -761,7 +810,7 @@
     },
     death_speaker_jargba: function (c) {
       var rb = '#2a1e32', trim = '#e0d6bc', pu = '#b060ff';
-      return rfQuil(c, {
+      return spinefolk(c, {
         skin: '#5a4034', mane: '#3e3430', tip: '#d8c8e8', glowEye: '#d890ff', shirt: rb, sleeve: rb, noLegs: true,
         back: function (c) { return C(40, 44, 52, glow(c, pu, 0.34)) + body(c, 'M60,46 C86,42 100,60 100,84 L104,118 L92,112 L84,120 L74,110 L64,116 C62,94 60,70 60,46 Z', '#1e1624', F('M88,46 L108,46 L108,122 L92,122 Z', '#0e0a12', 0.6), 2) + wisp(c, 110, 56, 1, pu) + wisp(c, 18, 98, 0.8, pu); },
         front: function (c) { return robeSkirt(c, rb, trim, 11) + P('M58,82 L70,82 L68,118 L60,118 Z', c.cel('#4a2a5a'), 1.4) + skull(c, 64, 94, 0.55); },
@@ -772,11 +821,11 @@
           return s + boarSkull(c, 86, 58, 0.55, trim, pu);
         },
         headX: function (c, x, y) {
-          // a boar skull worn as a helm, snout forward over the brow
+          // a long beast skull worn as a helm, muzzle forward over the brow, fangs hanging
           var sk = 'M' + pt([x + 12, y - 8]) + 'C' + pt([x + 10, y - 22]) + ' ' + pt([x - 6, y - 26]) + ' ' + pt([x - 14, y - 18]) + 'L' + pt([x - 26, y - 14]) + 'C' + pt([x - 30, y - 13]) + ' ' + pt([x - 30, y - 7]) + ' ' + pt([x - 26, y - 6]) + 'L' + pt([x - 12, y - 8]) + 'C' + pt([x - 4, y - 10]) + ' ' + pt([x + 4, y - 8]) + ' ' + pt([x + 12, y - 8]) + 'Z';
           return body(c, sk, trim, F(pd([[x + 2, y - 28], [x + 16, y - 28], [x + 16, y - 6], [x + 4, y - 6]], true), '#b0a68e', 0.8) + L('M' + pt([x - 24, y - 12]) + 'L' + pt([x - 12, y - 13]), '#b0a68e', 1), 2) +
             E(x - 6, y - 17, 3.2, 2.8, OL) + glowEye(c, x - 6, y - 17, 1.4, '#d890ff') + E(x - 27, y - 10, 0.9, 1.3, OL) +
-            P('M' + pt([x - 20, y - 7]) + 'C' + pt([x - 27, y - 5]) + ' ' + pt([x - 30, y - 12]) + ' ' + pt([x - 28, y - 19]) + 'C' + pt([x - 26, y - 13]) + ' ' + pt([x - 23, y - 10]) + ' ' + pt([x - 17, y - 9]) + 'Z', c.cel('#f4ecd6'), 1.3) +
+            P(pd([[x - 24, y - 7], [x - 22.5, y - 1.5], [x - 21, y - 7.4]], true), c.cel('#f4ecd6'), 1.1) + P(pd([[x - 17, y - 7.6], [x - 15.8, y - 3], [x - 14.4, y - 7.8]], true), c.cel('#f4ecd6'), 1.1) +
             P(pd([[x + 4, y - 22], [x + 10, y - 34], [x + 10, y - 20]], true), c.cel('#d8cfb8'), 1.3) + P(pd([[x + 10, y - 18], [x + 20, y - 26], [x + 14, y - 14]], true), c.cel('#d8cfb8'), 1.3);
         },
         near: [[48, 58], [38, 72], [26, 78]], wNearFront: function (c, p) { return shadowSwirl(c, [p[0] - 6, p[1] - 8], 1.1, pu); },
@@ -791,7 +840,7 @@
     },
     overlord_ramtusk: function (c) {
       var ir = IRON;
-      return rfQuil(c, {
+      return spinefolk(c, {
         skin: '#5e4234', mane: '#5a4c40', tusk: 2.3, eye: '#ff8a30', legW: 14, armW: 13, shadowR: 44, belt: '#2a2020', k: 1.2, big: true, scars: '#b88a78',
         torsoD: 'M34,58 C34,42 70,34 90,44 L94,70 L86,90 L46,90 L38,76 Z',
         chest: function (c) {
@@ -809,6 +858,7 @@
           return s;
         },
         headX: function (c, x, y) {
+          y -= 4; // the iron cap sits up on the crown, clear of the eye
           var h = 'M' + pt([x - 12, y - 8]) + 'C' + pt([x - 10, y - 20]) + ' ' + pt([x + 8, y - 22]) + ' ' + pt([x + 14, y - 8]) + 'L' + pt([x + 12, y - 4]) + 'C' + pt([x + 4, y - 9]) + ' ' + pt([x - 6, y - 9]) + ' ' + pt([x - 12, y - 4]) + 'Z';
           var s = body(c, h, ir, F(pd([[x + 4, y - 24], [x + 16, y - 24], [x + 16, y - 2], [x + 6, y - 2]], true), dk(ir, 0.3), 0.8) + L('M' + pt([x - 10, y - 8]) + 'L' + pt([x + 12, y - 7]), '#9a9ea4', 1, 0.8), 2);
           [[-6, -16, -2.0], [1, -19, -1.6], [8, -17, -1.2]].forEach(function (t) { s += P(pd([[x + t[0] - 2.6, y + t[1] + 2], [x + t[0] + Math.cos(t[2]) * 10, y + t[1] + Math.sin(t[2]) * 10], [x + t[0] + 2.6, y + t[1] + 2]], true), c.cel('#f4ecd6'), 1.2); });
@@ -817,7 +867,7 @@
         near: [[46, 58], [36, 72], [30, 80]],
         wNear: function (c, p) { return club(c, p, 34, -2.25, '#6a5a4a', true); },
         far: [[82, 56], [94, 70], [90, 84]],
-        top: function (c) { return bonePad(c, 44, 60, 0.85) + bracer([36, 72], [30, 80], ir, 10) + bracer([94, 70], [90, 84], ir, 9.4); },
+        top: function (c) { return bonePad(c, 46, 65, 0.8) + bracer([36, 72], [30, 80], ir, 10) + bracer([94, 70], [90, 84], ir, 9.4); },
         tf: at(1.12, 64, 122)
       });
     },
@@ -858,7 +908,7 @@
     },
     charlga_razorflank: function (c) {
       var gr = '#7aff9a', sk = '#7a6254';
-      return rfQuil(c, {
+      return spinefolk(c, {
         skin: sk, mane: '#aca496', tip: '#f4f0e4', hair: '#c8c0b0', glowEye: gr, shutEye: false, noLegs: true, shirt: '#5a4636', sleeve: sk, whiskers: '#d8d0c0', scars: '#c89080',
         hx: 42, hy: 48, torsoD: 'M36,64 C34,50 60,42 82,48 L88,70 L82,88 L50,88 L42,78 Z',
         noCrown: true,

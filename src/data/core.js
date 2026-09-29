@@ -479,7 +479,7 @@
   D.MOUNTS = {
     horse: { name: 'Brown Horse', race: 'human', faction: 'alliance', cost: 100000 },
     ram: { name: 'Grey Ram', race: 'dwarf', faction: 'alliance', cost: 100000 },
-    mechanostrider: { name: 'Red Mechanostrider', race: 'gnome', faction: 'alliance', cost: 100000 },
+    mechanostrider: { name: 'Red Clockwork Trike', race: 'gnome', faction: 'alliance', cost: 100000 },
     nightsaber: { name: 'Striped Shadowcat', race: 'nightelf', faction: 'alliance', cost: 100000 },
     wolf: { name: 'Timber Wolf', race: 'orc', faction: 'horde', cost: 100000 },
     raptor: { name: 'Emerald Raptor', race: 'troll', faction: 'horde', cost: 100000 },

@@ -283,47 +283,70 @@
       return s;
     },
 
-    /* gnome: a two-legged brass walking machine, bird-like, with a lens eye and a riveted pod */
+    /* gnome: a red clockwork trike, a steam tricycle with one big spoked front wheel, two small rear wheels, a red
+       riveted chassis with brass trim and a pressure gauge, a little brass boiler puffing steam, handlebars and a footrest */
     mechanostrider: function (c, o) {
-      var brass = '#d09a3a', steel = '#aab4be', dst = '#6a7682', red = '#b0302a', lens = '#6af0ff', s = o.icon ? '' : shadow(c, 76, 40);
-      // far leg (a stride back)
-      s += leg([[66, 88], [56, 102, 7], [64, 114, 5], [62, 117, 4]], dk(steel, 0.3), false) + C(56, 102, 4, dk(steel, 0.3), 1.6) + birdFoot(62, 121, dk(steel, 0.35));
-      s += P('M60,86 L70,86 L62,104 L54,100 Z', c.cel(dk(brass, 0.3)), 1.8);
-      // tail fins + exhaust
-      s += P('M44,70 L20,58 L26,70 L16,72 L42,82 Z', c.cel(dk(brass, 0.12)), 2) + L('M26,62 L40,72 M24,72 L40,78', dk(brass, 0.4), 1.2);
-      s += P('M40,82 L28,88 L30,93 L42,88 Z', c.cel(dst), 1.6) + C(22, 88, 4, '#c8c8c8', 0, 0.55) + C(15, 84, 3, '#c8c8c8', 0, 0.4) + C(10, 79, 2.2, '#c8c8c8', 0, 0.3);
-      // neck: stacked steel rings
-      var neck = [[104, 68], [110, 58], [116, 49], [122, 41]];
-      s += limb('M104,70 L112,56 L122,40', dst, 7);
-      neck.forEach(function (p, i) { s += E(p[0], p[1], 6 - i * 0.4, 3.4, c.cel(steel), 1.6); });
-      // head: rounded capsule with a big lens eye and a steel beak
-      var hd = 'M114,34 C114,24 124,19 134,21 C142,23 146,29 146,35 C146,42 140,46 132,46 C122,46 114,42 114,34 Z';
-      s += P('M144,30 L158,34 L144,39 Z', c.cel(steel), 1.8) + L('M145,34.4 L156,34.4', dk(steel, 0.4), 1);
-      s += body(c, hd, brass, F('M136,18 L150,18 L150,50 L134,50 C142,42 142,28 136,18 Z', dk(brass, 0.25), 0.8), 2.3);
-      s += L('M126,21 L124,12', OL, 3) + L('M126,21 L124,12', steel, 1.4) + C(124, 11, 2.2, red, 1.2);
-      s += C(133, 32, 7, c.cel(dst), 2) + C(133, 32, 4.6, lens, 1.2) + C(133, 32, 9, glow(c, lens, 0.5)) + C(131.4, 30.4, 1.4, '#ffffff', 0, 0.9);
-      s += L('M117,38 L126,40', dk(brass, 0.4), 1.2) + C(119, 30, 1.1, dk(brass, 0.4)) + C(119, 38, 1.1, dk(brass, 0.4));
-      // pod
-      var bd = 'M38,78 C38,64 54,60 76,60 C98,60 114,64 116,76 C118,90 102,97 78,97 C56,97 38,92 38,78 Z';
+      var red = '#b0302a', brass = '#d09a3a', steel = '#aab4be', dst = '#6a7682', tyre = '#2a2622', s = o.icon ? '' : shadow(c, 86, 62);
+      // a spoked wheel: tyre, brass rim ring, steel spokes, riveted hub
+      var wheel = function (cx, cy, r, sp, rim, spoke, rot) {
+        var w = C(cx, cy, r, tyre, 2.2) + L('M' + pt([cx - r * 0.72, cy - r * 0.62]) + 'A' + n(r - 1.6) + ',' + n(r - 1.6) + ' 0 0,1 ' + pt([cx + r * 0.5, cy - r * 0.82]), lt(tyre, 0.3), 1.2, 0.8);
+        var ri = r - 4.2, ring = ellD(cx, cy, ri, ri), sd = '';
+        for (var i = 0; i < sp; i++) { var a = rot + i * 2 * PI / sp; sd += 'M' + pt([cx + Math.cos(a) * 3, cy + Math.sin(a) * 3]) + 'L' + pt([cx + Math.cos(a) * (ri - 1), cy + Math.sin(a) * (ri - 1)]); }
+        w += L(sd, OL, 2.8) + L(sd, spoke, 1.2);
+        w += L(ring, OL, 4.2) + L(ring, rim, 2.2) + L('M' + pt([cx - ri * 0.7, cy - ri * 0.7]) + 'A' + n(ri) + ',' + n(ri) + ' 0 0,1 ' + pt([cx + ri * 0.2, cy - ri * 0.98]), lt(rim, 0.45), 0.9, 0.9);
+        w += C(cx, cy, r * 0.2 + 1.6, c.cel(rim), 1.6) + C(cx, cy, r * 0.07 + 0.6, OL) + C(cx - 1, cy - 1, 0.7, '#ffffff', 0, 0.7);
+        return w;
+      };
+      var rivet = function (x, y) { return C(x, y, 1.2, dk(brass, 0.4)) + C(x - 0.3, y - 0.3, 0.5, lt(brass, 0.55)); };
+      // far rear wheel (peeks out behind the near one)
+      s += wheel(55, 109, 12, 8, dk(brass, 0.35), dk(steel, 0.4), 0.3);
+      // far fork leg
+      s += limb('M108,64 L121,98', dk(steel, 0.4), 2.6);
+      // boiler: a brass cylinder behind the seat, steel hoops, a short chimney with a flared cap
+      s += limb('M33,46 L32,31', dst, 5.2) + P('M26,31 L38,31 L36,26 L28,26 Z', c.cel(brass), 1.6) + L('M28.4,28 L35.6,28', dk(brass, 0.35), 1);
+      var bl = 'M24,52 C24,46 28,44 34,44 C40,44 45,46 45,52 L45,86 C45,90 40,92 34,92 C28,92 24,90 24,86 Z';
+      s += body(c, bl, brass, F('M37,40 L50,40 L50,96 L38,96 C41,78 41,58 37,40 Z', dk(brass, 0.26), 0.8) + F('M26,50 L30,48 L30,90 L26,88 Z', '#fff4c8', 0.45) +
+        L('M24,53 L45,53 M24,84 L45,84', OL, 3.6) + L('M24,53 L45,53 M24,84 L45,84', steel, 1.8), 2.3);
+      s += rivet(28, 48.6) + rivet(41, 48.6) + rivet(28, 88.4);
+      // boiler pressure gauge
+      s += C(30.4, 64, 4.8, c.cel(brass), 1.6) + C(30.4, 64, 3.3, '#f2eee2', 1) + L('M30.4,64 L32.6,61.6', red, 1.2) + C(30.4, 64, 0.8, OL) + L('M28.2,66.4 L29,65.7 M32.6,66.4 L31.8,65.7', dk(steel, 0.3), 0.8);
+      // steam puffs from the chimney
+      s += C(29, 20, 4.4, '#dfe6ea', 0, 0.8) + C(31.5, 21.5, 2.6, '#ffffff', 0, 0.6) + C(21, 13, 5.4, '#dfe6ea', 0, 0.6) + C(23.5, 11.5, 3, '#ffffff', 0, 0.5) + C(11, 8, 4.2, '#dfe6ea', 0, 0.42);
+      // chassis: a red riveted tub from the boiler to the steering head
+      var bd = 'M36,70 C36,64 41,62 48,62 L98,63 C105,63 110,67 111,74 C112,84 108,93 102,98 C98,101 92,102 86,102 L46,102 C39,102 34,98 34,90 Z';
       var rv = '';
-      [[46, 70], [50, 88], [104, 70], [108, 84], [62, 92], [94, 92]].forEach(function (p) { rv += C(p[0], p[1], 1.3, dk(brass, 0.35)) + C(p[0] - 0.3, p[1] - 0.3, 0.5, lt(brass, 0.5)); });
-      s += body(c, bd, brass, F('M30,86 C50,100 100,102 124,86 L124,104 L30,104 Z', dk(brass, 0.26), 0.8) + L('M56,62 C52,72 52,86 58,96 M98,62 C102,72 102,86 96,96', dk(brass, 0.38), 1.4) +
-        F('M44,66 C56,61 76,60 96,62 L96,65 C76,63 56,64 44,69 Z', '#fff4c8', 0.45) + rv, 2.5);
-      // belly plate + gauge on the flank
-      s += P('M58,90 C66,95 88,95 96,90 L94,97 C86,100 68,100 60,97 Z', c.cel(steel), 1.6);
-      s += C(104, 78, 5, c.cel('#f0ece0'), 1.6) + L('M104,78 L106.4,75', red, 1.2) + C(104, 78, 0.9, OL);
-      // control panel + handlebars (the reins)
-      s += P('M92,62 L104,58 L106,64 L94,68 Z', c.cel(dst), 1.6) + C(98, 62, 1.1, '#6aff6a') + C(102, 60.6, 1.1, red);
-      var hb = 'M99,60 L94,52 L88,52';
-      s += L(hb, OL, 4.4) + L(hb, steel, 2.2) + E(87, 52, 2.6, 1.8, '#3a2a20', 1.2);
+      [[44, 68.4], [56, 68.6], [92, 69], [102, 70.4], [42, 96], [54, 97.4], [70, 97.6], [86, 97.4], [98, 94]].forEach(function (p) { rv += rivet(p[0], p[1]); });
+      s += body(c, bd, red, F('M24,90 C50,99 90,99 118,86 L118,110 L24,110 Z', dk(red, 0.28), 0.85) + F('M40,64 C56,62 80,63 100,64 L100,66.5 C80,65.5 56,65 40,67 Z', '#ffffff', 0.25) +
+        L('M36,67 L98,67.6 C105,68 109,71 110.4,76', OL, 5) + L('M36,67 L98,67.6 C105,68 109,71 110.4,76', brass, 2.8) +
+        L('M35,93 C38,99 42,100.4 48,100.4 L86,100.4 C94,100.4 100,98 104,94', OL, 5) + L('M35,93 C38,99 42,100.4 48,100.4 L86,100.4 C94,100.4 100,98 104,94', brass, 2.8) +
+        P('M50,74 L81,74 C83,74 84,75 84,77 L84,88 C84,90 83,91 81,91 L50,91 C48,91 47,90 47,88 L47,77 C47,75 48,74 50,74 Z', dk(red, 0.1), 1.2) +
+        L('M49,76 L82,76', lt(red, 0.25), 0.9, 0.7) + rv, 2.5);
+      // dash gauge on the nose
+      s += C(91, 81, 5.2, c.cel(brass), 1.6) + C(91, 81, 3.6, '#f2eee2', 1) + L('M91,81 L93.4,78.6', red, 1.2) + C(91, 81, 0.8, OL);
+      // gear emblem on the side panel
+      var cog = '';
+      for (var i = 0; i < 8; i++) { var a = i * PI / 4; cog += 'M' + pt([65.5 + Math.cos(a) * 4, 83 + Math.sin(a) * 4]) + 'L' + pt([65.5 + Math.cos(a) * 6.4, 83 + Math.sin(a) * 6.4]); }
+      s += L(cog, OL, 4.4) + L(cog, brass, 2.4) + C(65.5, 83, 4.6, c.cel(brass), 1.4) + C(65.5, 83, 1.6, dk(red, 0.2), 1);
+      // the seat
       var sd = { leather: '#8a2a2a', metal: steel, rim: brass, noStirrup: true, cantle: 10 };
       s += saddle(c, sd);
-      // pedal instead of a stirrup
-      s += limb('M76,66 L78,84', dst, 2.6) + P('M72,84 L84,84 L84,88 L72,88 Z', c.cel(steel), 1.4);
-      // near leg: brass thigh piston, steel shin, bolted joints
-      s += P('M70,84 L86,84 L96,102 L86,106 Z', c.cel(brass), 2) + L('M78,88 L89,102', dk(brass, 0.4), 1.2);
-      s += leg([[90, 104], [80, 115, 6], [80, 117, 5]], steel, false) + C(78, 88, 5, c.cel(dst), 1.8) + C(78, 88, 1.6, brass) + C(91, 104, 4.4, c.cel(dst), 1.8) + C(91, 104, 1.4, brass);
-      s += birdFoot(80, 121, steel);
+      // footrest for the rider
+      s += limb('M84,90 L88,95', dst, 2.4) + P('M81,94 L97,94 L96,98 L82,98 Z', c.cel(steel), 1.4) + L('M84,96 L94,96', dk(steel, 0.4), 0.8);
+      // drive: a little steam cylinder on the rear axle
+      s += P('M58,98 L72,98 L72,104 L58,104 Z', c.cel(dst), 1.4) + limb('M58,101 L49,105', steel, 1.8);
+      // near rear wheel
+      s += wheel(46, 108, 13, 8, brass, steel, 0.1);
+      s += C(49, 105, 1.6, lt(steel, 0.2), 1);
+      // front mudguard over the big wheel
+      var fg = 'M' + pt([120 + Math.cos(-2.05) * 28, 97 + Math.sin(-2.05) * 28]) + 'A28,28 0 0,1 ' + pt([120 + Math.cos(-0.35) * 28, 97 + Math.sin(-0.35) * 28]);
+      // big front wheel
+      s += wheel(120, 97, 24, 12, brass, steel, 0.12);
+      s += L(fg, OL, 7.4) + L(fg, red, 4) + L('M' + pt([120 + Math.cos(-1.9) * 29, 97 + Math.sin(-1.9) * 29]) + 'A29,29 0 0,1 ' + pt([120 + Math.cos(-1.1) * 29, 97 + Math.sin(-1.1) * 29]), lt(red, 0.35), 1.1, 0.8);
+      // near fork leg, steering head, handlebars (the grip sits where the rider's hands go)
+      s += limb('M109,63 L120,97', steel, 3.4) + L('M108.4,64 L118.6,93', lt(steel, 0.35), 1, 0.8) + C(120, 97, 2.2, c.cel(brass), 1.2);
+      s += P('M105,58 L112,57 L113,68 L107,69 Z', c.cel(brass), 1.6) + L('M106,63 L112.6,62', dk(brass, 0.4), 1);
+      var hb = 'M109,58 L101,51 L90,52';
+      s += L(hb, OL, 4.8) + L(hb, steel, 2.4) + E(88, 52, 3, 2, '#3a2a20', 1.2);
       return s;
     },
 
@@ -575,7 +598,7 @@
   var FOCUS = {
     horse: [134, 33, 0.98, ['#4a74c8', '#0c1430']],
     ram: [126, 52, 1.0, ['#8ab0d0', '#10202e']],
-    mechanostrider: [128, 36, 1.08, ['#40b0b8', '#062024']],
+    mechanostrider: [84, 64, 0.45, ['#3aa0b0', '#061c22']],
     nightsaber: [134, 68, 1.08, ['#6a8a8e', '#0a1416']],
     wolf: [134, 58, 1.06, ['#c83a24', '#240604']],
     raptor: [134, 38, 1.04, ['#8ac848', '#0e2408']],

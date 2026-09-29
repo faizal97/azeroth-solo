@@ -16648,5 +16648,17 @@
   "region": "",
   "status": "forbid",
   "new": null
+ },
+ "Red Mechanostrider": {
+  "kind": "item",
+  "region": "",
+  "status": "rename",
+  "new": "Red Clockwork Trike"
+ },
+ "Mechanostrider": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Clockwork Trike"
  }
 }
