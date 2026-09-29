@@ -130,6 +130,18 @@
     const word = { g: 'gold', s: 'silver', c: 'copper' };
     return `<span class="money tnum" aria-label="${parts.map(([k, v]) => v + ' ' + word[k]).join(' ')}">${parts.map(([k, v]) => `<span class="${k}">${v}<i class="coin ${k}"></i></span>`).join(' ')}</span>`;
   }
+  // folding sections: the header is a button with a one-line summary; open or closed is remembered on this device
+  function foldOpen(key, def) { try { const m = JSON.parse(localStorage.getItem('azsolo.folds') || '{}'); return key in m ? !!m[key] : def; } catch (e) { return def; } }
+  function setFold(key, open) { try { const m = JSON.parse(localStorage.getItem('azsolo.folds') || '{}'); m[key] = open; localStorage.setItem('azsolo.folds', JSON.stringify(m)); } catch (e) { } }
+  function foldSec(key, title, summary, kids, def) {
+    let open = foldOpen(key, !!def);
+    const body = h('div', { class: 'fold-body' }, kids);
+    const arr = h('span', { class: 'fold-arr' });
+    const head = h('button', { class: 'sec-h fold', onclick: () => { open = !open; setFold(key, open); paint(); } }, h('span', null, title), h('small', null, summary || ''), arr);
+    const paint = () => { body.hidden = !open; arr.textContent = open ? '▾' : '▸'; head.setAttribute('aria-expanded', String(open)); };
+    paint();
+    return [head, body];
+  }
   function conColor(lvl) {
     const d = lvl - G.S.player.level;
     if (d >= 5) return '#ff2020';
@@ -164,6 +176,11 @@
     els.chatLines = h('div', { class: 'chat-lines' });
     els.chatOpen = h('button', { class: 'chat-open', 'aria-label': 'Open chat', onclick: (e) => { e.stopPropagation(); openSocial('chat'); } });
     els.chat = h('div', { class: 'chat', onclick: (e) => { const ln = e.target.closest('.ln.tap'); const m = ln && G.S.chat.find((x) => String(x.id) === ln.dataset.mid); if (m) { e.stopPropagation(); msgDialog(m); } else openSocial('chat'); } }, els.chatLines, els.chatOpen);
+    // the chat strip folds to one line (a tab on its bottom edge); remembered on this device
+    const chatFolded = () => { try { return localStorage.getItem('azsolo.chatFolded') === '1'; } catch (e) { return false; } };
+    const paintChatFold = () => { const f = chatFolded(); els.chat.classList.toggle('folded', f); els.chatFold.textContent = f ? '▾' : '▴'; els.chatFold.setAttribute('aria-label', f ? 'Show more chat' : 'Fold the chat to one line'); };
+    els.chatFold = h('button', { class: 'chat-fold', onclick: (e) => { e.stopPropagation(); try { localStorage.setItem('azsolo.chatFolded', chatFolded() ? '0' : '1'); } catch (x) { } paintChatFold(); } });
+    els.chat.append(els.chatFold); paintChatFold();
     els.panel = h('div', { class: 'panel' });
     els.bar = h('div', { class: 'actionbar' });
     els.bottom = h('div', { class: 'bottom-wrap' }, els.bar);
@@ -184,7 +201,7 @@
     const P = G.S.player;
     const f = els.frames; f.innerHTML = '';
     const pf = h('div', { class: 'uf' },
-      h('div', { class: 'portrait' }, h('div', { class: 'pclip' }, img(art('portrait', looks(P)))), h('span', { class: 'lvl tnum', id: 'pf-lvl' }, P.level)),
+      h('div', { class: 'portrait tap', role: 'button', 'aria-label': 'Open Hero', onclick: () => openHero() }, h('div', { class: 'pclip' }, img(art('portrait', looks(P)))), h('span', { class: 'lvl tnum', id: 'pf-lvl' }, P.level)),
       h('div', { class: 'uf-body' },
         h('div', { class: 'uf-namerow' }, h('div', { class: 'uf-name cls-' + P.cls }, G.displayName()), (els.pMoney = h('span', { class: 'pmoney' }))),
         (els.pHp = barEl('hp')), (els.pRes = barEl(D.CLASSES[P.cls].resource)),
@@ -819,8 +836,9 @@
   function tacticsBlock(p, R) {
     const pace = R.pace || 'normal';
     const chip = (label, on, fn, sub) => h('button', { class: 'chip' + (on ? ' gold' : ''), onclick: () => { fn(); renderPanel(); } }, label, sub ? h('small', null, sub) : null);
-    p.append(h('div', { class: 'sec-h' }, 'Tactics', h('small', null, pace === 'careful' ? 'safest: best for a Flawless clear' : pace === 'fast' ? 'builds Momentum: best for par time, more wipes' : 'standard rests')),
-      h('div', { class: 'chips' }, chip('Careful', pace === 'careful', () => G.setPace('careful')), chip('Normal', pace === 'normal', () => G.setPace('normal')), chip('Fast', pace === 'fast', () => G.setPace('fast'))));
+    // set once, read often: Tactics and Boss plan fold to one line (closed by default) so the pull and the party stay on screen
+    p.append(...foldSec('run.tactics', 'Tactics', ({ careful: 'Careful', normal: 'Normal', fast: 'Fast' })[pace] + ' · ' + (pace === 'careful' ? 'safest, best for Flawless' : pace === 'fast' ? 'builds Momentum, more wipes' : 'standard rests'),
+      [h('div', { class: 'chips' }, chip('Careful', pace === 'careful', () => G.setPace('careful')), chip('Normal', pace === 'normal', () => G.setPace('normal')), chip('Fast', pace === 'fast', () => G.setPace('fast')))]));
     const pull = R.pulls[R.idx]; if (!pull) return;
     const marks = (R.marks && R.marks[R.idx]) || {};
     const next = h('div', { class: 'chips' });
@@ -828,8 +846,8 @@
     p.append(h('div', { class: 'sec-h' }, 'Next: ' + pull.label, h('small', null, 'tap to mark: ☠ first, ✖ second')), next);
     if (pull.boss) {
       const bp = R.bossPlan;
-      p.append(h('div', { class: 'sec-h' }, 'Boss plan', h('small', null, bp ? '' : 'the group improvises')),
-        h('div', { class: 'chips' }, chip('Burn the boss', bp === 'boss', () => G.setBossPlan('boss')), chip('Adds first', bp === 'adds', () => G.setBossPlan('adds'))));
+      p.append(...foldSec('run.bossplan', 'Boss plan', bp === 'boss' ? 'Burn the boss' : bp === 'adds' ? 'Adds first' : 'not set · the group improvises',
+        [h('div', { class: 'chips' }, chip('Burn the boss', bp === 'boss', () => G.setBossPlan('boss')), chip('Adds first', bp === 'adds', () => G.setBossPlan('adds')))]));
     }
   }
   // Leaving before the last boss costs the group and gives Deserter, so ask first; once the run is done, just go.
@@ -1917,23 +1935,23 @@
       } else {
           b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { if (G.fight) return toast('You are in combat.'); G.logout(); showSelect(); } }, 'Switch character')));
           if (window.UPD) b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: manualUpdateCheck }, `Check for updates · v${UPD.current()}`)));
-        { const ts = tipState(); b.append(h('div', { class: 'sec-h' }, 'Tips', h('small', null, 'short help for new players')), h('div', { class: 'btn-row' },
+        // each setting folds to its header with the current value, so the page is a short list (all closed by default)
+        { const ts = tipState(); b.append(...foldSec('set.tips', 'Tips', ts.off ? 'Off' : 'On', [h('div', { class: 'btn-row' },
           h('button', { class: 'btn alt', onclick: () => { ts.off = !ts.off; saveTips(ts); ui.sheetFn(); } }, 'Tips: ' + (ts.off ? 'Off' : 'On')),
-          h('button', { class: 'btn alt', onclick: () => { saveTips({ seen: [], off: false }); toast('Tips will show again as you play.', true); ui.sheetFn(); } }, 'Show tips again'))); }
-        if (window.UPD) b.append(h('div', { class: 'sec-h' }, 'Community'), h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => UPD.open(UPD.DISCORD) }, 'Join the Discord'), window.REPORT ? h('button', { class: 'btn alt', onclick: () => reportDialog() }, 'Report a bug') : null),
-          h('p', { class: 'ai-note', style: { margin: 0 } }, 'Talk about the game, report bugs and suggest ideas.'));
-        b.append(h('div', { class: 'sec-h' }, 'Party invites'), h('div', { class: 'btn-row' },
-          h('button', { class: 'btn alt', onclick: () => { G.setInvites(!!G.S.flags.noInvites); ui.sheetFn(); } }, 'Invites from nearby players: ' + (G.S.flags.noInvites ? 'Off' : 'On'))));
+          h('button', { class: 'btn alt', onclick: () => { saveTips({ seen: [], off: false }); toast('Tips will show again as you play.', true); ui.sheetFn(); } }, 'Show tips again'))])); }
+        if (window.UPD) b.append(...foldSec('set.community', 'Community', 'Discord · report a bug', [h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => UPD.open(UPD.DISCORD) }, 'Join the Discord'), window.REPORT ? h('button', { class: 'btn alt', onclick: () => reportDialog() }, 'Report a bug') : null),
+          h('p', { class: 'ai-note', style: { margin: 0 } }, 'Talk about the game, report bugs and suggest ideas.')]));
+        b.append(...foldSec('set.invites', 'Party invites', G.S.flags.noInvites ? 'Off' : 'On', [h('div', { class: 'btn-row' },
+          h('button', { class: 'btn alt', onclick: () => { G.setInvites(!!G.S.flags.noInvites); ui.sheetFn(); } }, 'Invites from nearby players: ' + (G.S.flags.noInvites ? 'Off' : 'On')))]));
         if (window.SND) {
           const pr = window.SND.prefs;
-          b.append(h('div', { class: 'sec-h' }, 'Sound'), h('div', { class: 'btn-row' },
+          b.append(...foldSec('set.sound', 'Sound', `Music ${pr.music ? 'on' : 'off'} · effects ${pr.sfx ? 'on' : 'off'}`, [h('div', { class: 'btn-row' },
             h('button', { class: 'btn alt', onclick: () => { window.SND.setPref('music', !pr.music); ui.sheetFn(); } }, 'Music: ' + (pr.music ? 'On' : 'Off')),
-            h('button', { class: 'btn alt', onclick: () => { window.SND.setPref('sfx', !pr.sfx); ui.sheetFn(); } }, 'Effects: ' + (pr.sfx ? 'On' : 'Off'))));
+            h('button', { class: 'btn alt', onclick: () => { window.SND.setPref('sfx', !pr.sfx); ui.sheetFn(); } }, 'Effects: ' + (pr.sfx ? 'On' : 'Off')))]));
         }
-        b.append(h('div', { class: 'sec-h' }, 'Save'));
-        b.append(h('div', { class: 'btn-row' },
+        b.append(...foldSec('set.save', 'Save', 'save codes', [h('div', { class: 'btn-row' },
           h('button', { class: 'btn alt', onclick: exportSave }, 'Copy save code'),
-          h('button', { class: 'btn alt', onclick: importSave }, 'Load save code')));
+          h('button', { class: 'btn alt', onclick: importSave }, 'Load save code'))]));
 
         b.append(h('button', { class: 'btn alt wide', style: { color: '#ff6a5a' }, onclick: () => { const S = G.S; confirmDeleteChar({ id: S.id, name: S.player.name, level: S.player.level, cls: S.player.cls }, () => showSelect()); } }, 'Delete character'));
       }
