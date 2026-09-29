@@ -2338,7 +2338,7 @@
         h('button', { class: 'btn', onclick: () => friendAdd() }, 'Add a friend'),
         h('button', { class: 'btn alt', onclick: () => copyText(FRIENDS.showCode(st.code), 'Code copied.') }, 'Copy code'),
         h('button', { class: 'btn alt', onclick: () => copyText(`Add me in Realm of Loner: ${FRIENDS.link(st.code)}`, 'Link copied. Paste it to your friend.') }, 'Copy link')));
-    if (!v) { b.append(friendNote(FRIENDS.signedIn() ? 'Loading your friends…' : 'Connecting…'), h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { fw.stop = null; friendsSignIn(); } }, 'Reconnect'))); friendsFooter(b); return; }
+    if (!v) { b.append(friendNote(FRIENDS.signedIn() ? 'Loading your friends…' : 'Connecting…'), h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: friendsSignIn }, 'Reconnect'))); friendsFooter(b); return; }
     if (v.requests.length) {
       b.append(h('div', { class: 'sec-h' }, 'Requests', h('small', null, `${v.requests.length} waiting`)));
       const list = h('div', { class: 'list' });
@@ -2381,7 +2381,7 @@
     b.append(mine, friendNote('Hidden characters, and where you are while you play one, stay private. The switch travels with the character in cloud save.'));
     friendsFooter(b);
   }
-  function friendsSignIn() { FRIENDS.prepare().then(() => friendsStart()).catch(friendErr); }
+  function friendsSignIn() { FRIENDS.signIn().then(() => { friendsStop(); friendsStart(); if (ui.sheetFn) ui.sheetFn(); }).catch(friendErr); } // straight from the tap
   function friendsFooter(b) {
     b.append(h('div', { class: 'btn-row', style: { marginTop: '14px' } },
       h('button', { class: 'btn alt', onclick: () => showDialog([h('h3', null, 'Turn off Friends?'),

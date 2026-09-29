@@ -27,6 +27,7 @@
   FRIENDS.prepare = () => (be && be.prepare ? be.prepare() : Promise.resolve());
   FRIENDS.signedIn = () => !!(be && be.signedIn && be.signedIn());
   FRIENDS.resume = async () => { await FRIENDS.prepare(); await back().signIn(false); };
+  FRIENDS.signIn = () => back().signIn(true); // from a tap: may open Google's window
   const back = () => { if (!be) throw err('unavailable', 'Friends is not available here.'); return be; };
 
   // ---- friend codes: 8 characters, shown as K7QM-P2XD
@@ -247,6 +248,9 @@
   const SDK = 'https://www.gstatic.com/firebasejs/12.19.0/';
   FRIENDS.firebase = function () {
     let fb = null, loading = null, gis = null, gisPending = null, gisLoading = null;
+    // test only: localStorage 'azsolo.friends.emu' = a player id points everything at Firebase's local emulators
+    // (cd firebase && npx firebase emulators:start), signed in as that made-up player. Never set in real play.
+    const EMU = (() => { try { return root.location && /^(localhost|127\.0\.0\.1)$/.test(root.location.hostname) ? localStorage.getItem('azsolo.friends.emu') : null; } catch (e) { return null; } })();
     const inApp = () => !!(root.UPD && UPD.inApp && UPD.inApp() && root.AzCloud);
     // the app: our own calls on the AzCloud bridge (ids of our own; every other reply goes on to cloud.js)
     let seq = 800000, hooked = false; const mine = {};
@@ -281,8 +285,10 @@
       const [app, auth, fs, db] = await Promise.all(['app', 'auth', 'firestore', 'database'].map((m) => import(SDK + `firebase-${m}.js`)));
       const a = app.initializeApp(CFG, 'friends');
       const A = auth.initializeAuth(a, { persistence: [auth.browserLocalPersistence, auth.inMemoryPersistence] });
-      await A.authStateReady();
-      fb = { auth, fs, db, A, F: fs.getFirestore(a), R: db.getDatabase(a) };
+      const F = fs.getFirestore(a), R = db.getDatabase(a);
+      if (EMU) { auth.connectAuthEmulator(A, 'http://127.0.0.1:8785', { disableWarnings: true }); fs.connectFirestoreEmulator(F, '127.0.0.1', 8781); db.connectDatabaseEmulator(R, '127.0.0.1', 8782); }
+      await A.authStateReady(); // the sign-in saved in this page's storage, if any
+      fb = { auth, fs, db, A, F, R };
       return fb;
     })().catch((e) => { loading = null; throw e.code ? e : err('offline', 'Could not reach Friends. Check the connection and try again.'); }));
     const f = () => { if (!fb) throw err('offline', 'Friends is still loading.'); return fb; };
@@ -291,6 +297,12 @@
     const col = (...p) => f().fs.collection(f().F, ...p);
     const r = (p) => f().db.ref(f().R, p);
     let conn = null, want = null, infoOff = null, linked = false;
+    const again = (start) => {
+      let off = null, timer = null, stopped = false;
+      const go = () => { off = start(() => { if (!stopped) { clearTimeout(timer); timer = setTimeout(go, 20000); } }); };
+      go();
+      return () => { stopped = true; clearTimeout(timer); if (off) off(); };
+    };
     const applyPresence = async () => {
       const { db } = f();
       if (!want) { if (conn) { const c = conn; conn = null; await db.remove(c); } return; }
@@ -299,11 +311,12 @@
       await db.set(conn, e);
     };
     return {
-      prepare() { const p = load(); if (!inApp() && !gisLoading) gisLoading = loadGis().then(initGis).catch(() => { gisLoading = null; }); return p; },
+      prepare() { const p = load(); if (!inApp() && !EMU && !gisLoading) gisLoading = loadGis().then(initGis).catch(() => { gisLoading = null; }); return p; },
       signedIn: () => !!(fb && fb.A.currentUser),
       async signIn(interactive) {
         if (fb && fb.A.currentUser) return;
         if (!interactive) { await load(); if (fb.A.currentUser) return; throw err('auth', 'Sign in to use Friends.'); }
+        if (EMU) { await load(); await fb.auth.signInWithCredential(fb.A, fb.auth.GoogleAuthProvider.credential(JSON.stringify({ sub: EMU, email_verified: false }))); return; }
         const tokP = googleToken(); // first, while still inside the tap
         await load();
         if (fb.A.currentUser) { tokP.catch(() => {}); return; }
@@ -343,10 +356,14 @@
         if (!infoOff) { infoOff = f().db.onValue(r('.info/connected'), (s) => { const on = s.val() === true; if (on && !linked) { conn = null; applyPresence().catch(() => {}); } linked = on; }); return; }
         if (linked) await applyPresence();
       },
-      watchProfile: (u, cb) => f().fs.onSnapshot(d('profiles', u), (s) => cb(s.exists() ? s.data() : null), () => cb(null)),
-      watchStatus: (u, cb) => f().db.onValue(r('status/' + u), (s) => cb(s.val() || {}), () => cb({})),
-      watchFriends: (cb) => f().fs.onSnapshot(col('friends', me(), 'list'), (s) => cb(s.docs.map((x) => x.id)), () => cb([])),
-      watchRequests: (cb) => f().fs.onSnapshot(col('requests', me(), 'in'), (s) => cb(s.docs.map((x) => Object.assign({ from: x.id }, x.data()))), () => cb([])),
+      // A refused listen ends for good, and refusals are normal here: right after Accept the friendship is not on the
+      // server yet, and a friend's status opens only once their game has let you see it. So a refused listen tries
+      // again every 20 seconds until it is let in (or is stopped).
+      watchProfile: (u, cb) => again((fail) => f().fs.onSnapshot(d('profiles', u), (s) => cb(s.exists() ? s.data() : null), () => { cb(null); fail(); })),
+      watchStatus: (u, cb) => again((fail) => f().db.onValue(r('status/' + u), (s) => cb(s.val() || {}), () => { cb({}); fail(); })),
+      // the list as the server has it (not our own write before it lands), so each new friend is listened to once it counts
+      watchFriends: (cb) => again((fail) => f().fs.onSnapshot(col('friends', me(), 'list'), { includeMetadataChanges: true }, (s) => { if (!s.metadata.hasPendingWrites) cb(s.docs.map((x) => x.id)); }, () => fail())),
+      watchRequests: (cb) => again((fail) => f().fs.onSnapshot(col('requests', me(), 'in'), (s) => cb(s.docs.map((x) => Object.assign({ from: x.id }, x.data()))), () => fail())),
     };
   };
   // the same places cloud save works: the app, and the game's own page (Google knows these sites)
