@@ -10,8 +10,9 @@ if subprocess.run(['node', os.path.join(R, 'tools', 'validate.js')]).returncode 
 # and the story must agree with the lore bible (docs/lore/canon.md): no spoilers, no stray names
 if subprocess.run(['node', os.path.join(R, 'tools', 'lorekeeper.js')]).returncode != 0:
     sys.exit('build stopped: fix the lore problems above (see docs/lore/canon.md)')
-# v10: how many Blizzard names are left (a report for now; add --enforce once the rename is done)
-subprocess.run(['node', os.path.join(R, 'tools', 'ipcheck.js'), '--brief'])
+# v10: no Blizzard name may appear in anything a player reads (the fan notice excepted)
+if subprocess.run(['node', os.path.join(R, 'tools', 'ipcheck.js'), '--brief', '--enforce']).returncode != 0:
+    sys.exit('build stopped: a Blizzard name is back in player text (node tools/ipcheck.js lists where)')
 DATA = ['src/data/' + f for f in json.load(open(os.path.join(R, 'src', 'data', 'files.json')))]
 # music ships only once he has listened and approved the track
 APPROVED = set(open(os.path.join(R, 'audio', 'approved.txt')).read().split()) if os.path.exists(os.path.join(R, 'audio', 'approved.txt')) else set()

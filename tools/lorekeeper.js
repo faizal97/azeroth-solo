@@ -37,7 +37,7 @@ for (const p of Object.values(D.PLACES)) addName(p.zone);
 for (const n of NAMES) addName(n);
 // v10: the new names in the rename map are real names too (until the bible is rewritten with them)
 try { for (const v of Object.values(JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/rename_v10.json'), 'utf8')))) addName(v.new); } catch (e) { }
-for (const n of ['Accord', 'Krugar', 'Caldreth', 'Kingsmere', 'Long', 'Regent', 'Mistress', 'Ledger', 'Rise', 'Hoods']) addName(n);
+for (const n of ['Accord', 'Krugar', 'Caldreth', 'Kingsmere', 'Long', 'Regent', 'Mistress', 'Ledger', 'Rise', 'Hoods', 'Grand']) addName(n);
 // every-day English, so a capital at the start of a sentence is not a name
 const dict = new Set();
 try { for (const w of fs.readFileSync('/usr/share/dict/words', 'utf8').split('\n')) if (w && w[0] === w[0].toLowerCase()) dict.add(w); } catch (e) { }
@@ -71,10 +71,10 @@ for (const [k, A] of Object.entries(D.ACTIVITIES)) { add(`activity ${k}`, A.minL
 // --selftest: plant one mistake of each kind and make sure each is caught
 const SELF = process.argv.includes('--selftest');
 if (SELF) {
-  add('selftest spoiler', 20, 'Lady Prestor is a dragon, I swear it.');
-  add('selftest spoiler2', 30, 'They say Windsor is alive in the mountain.');
-  add('selftest faction', 20, 'Take this back to Stormwind and report to the guards.', { faction: 'horde', quest: 'selftest' });
-  add('selftest typo', 20, 'The Vancleef gang is back, and Bolvr knows it.');
+  add('selftest spoiler', 20, 'The Ledger answers to Veshmira, I swear it.');
+  add('selftest spoiler2', 30, 'They say Hale is alive in the mountain.');
+  add('selftest faction', 20, 'Take this back to Kingsmere and report to the guards.', { faction: 'horde', quest: 'selftest' });
+  add('selftest typo', 20, 'The Blackwel gang is back, and Carow knows it.');
   add('selftest unknown', 20, 'Ask old Zorbulax about it.');
   add('selftest hood', 17, 'The stranger, Lyveus, wants a word.');
 }
@@ -129,7 +129,7 @@ for (const [w, srcs] of unknown) {
 
 if (SELF) {
   const all = problems.concat(warnings).join('\n');
-  const want = [['spoiler', /SPOILER  selftest spoiler /], ['windsor', /SPOILER  selftest spoiler2/], ['faction', /FACTION  selftest/], ['typo VanCleef', /"Vancleef".*did you mean "VanCleef"/], ['typo Bolvar', /"Bolvr".*did you mean "Bolvar"/], ['unknown name', /"Zorbulax"/], ['hooded stranger', /SPOILER  selftest hood/]];
+  const want = [['spoiler', /SPOILER  selftest spoiler /], ['hale', /SPOILER  selftest spoiler2/], ['faction', /FACTION  selftest/], ['typo Blackwell', /"Blackwel".*did you mean "Blackwell"/], ['typo Carrow', /"Carow".*did you mean "Carrow"/], ['unknown name', /"Zorbulax"/], ['hooded stranger', /SPOILER  selftest hood/]];
   let bad = 0; for (const [k, re] of want) { const ok = re.test(all); if (!ok) bad++; console.log(`${ok ? 'caught' : 'MISSED'}  ${k}`); }
   process.exit(bad ? 1 : 0);
 }

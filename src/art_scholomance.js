@@ -1,17 +1,17 @@
-/* art_scholomance.js — Scholomance art for Azeroth Solo (dungeon, levels 57-60: the Cult of the Damned's school of
- * necromancy in the crypts under Caer Darrow; the great hall with its classrooms and green braziers, the ossuary with
+/* art_scholomance.js — The Blackcloister art for Realm of Loner (dungeon, levels 57-60: the Cult of the Damned's school of
+ * necromancy in the crypts under Castle Ardmore; the great hall with its classrooms and green braziers, the ossuary with
  * its bone walls, sarcophagus and flesh-construct vat, and the headmaster's study; the acolytes, necromancers and risen
- * constructs, and the bosses Kirtonos the Herald, Jandice Barov, Rattlegore, Ras Frostwhisper, Instructor Malicia,
- * Lord Alexei Barov and Darkmaster Gandling).
+ * constructs, and the bosses Skreel the Herald, Mirela Varga, Bonecrunch, Morvish the Frozen, Instructor Grimsby,
+ * Lord Anton Varga and Headmaster Sallow).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Scholomance keys and fall through to the previous functions for every other key. Keys are appended to
+ * The Blackcloister keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig and the house-style scene pieces are shared copies of art_brd.js. The human head, hood,
  * robe skirt, gothic windows, bookshelves, bone wall, vat, desk and arcane circle are new here.
- * Kept apart from the other undead: the necromancer is a living bald man (not the hooded skull of the Duskwood
- * skeletal mage), the construct is mauve stitched flesh with bone (not the green Stitches abomination), Ras is an
- * armoured ice lich crowned with icicles, Jandice is a lilac ghost with two illusion doubles, Alexei wears a
- * bottle-green frock coat (not Silverlaine's blue), and Gandling is tall and bald with a huge standing collar.
+ * Kept apart from the other undead: the necromancer is a living bald man (not the hooded skull of the Wraithwood
+ * skeletal mage), the construct is mauve stitched flesh with bone (not the green Patchwork abomination), Ras is an
+ * armoured ice lich crowned with icicles, Mirela is a lilac ghost with two illusion doubles, Anton wears a
+ * bottle-green frock coat (not Ashcroft's blue), and Headmaster Sallow is tall and bald with a huge standing collar.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix sc<counter>_).
  */
@@ -684,7 +684,7 @@
     return P('M' + pt([x + 6, y - 6]) + 'C' + pt([x + 7, y - 1]) + ' ' + pt([x + 5, y + 1]) + ' ' + pt([x + 1, y + 1]) + 'L' + pt([x - 7, y + 1]) + 'C' + pt([x - 9, y]) + ' ' + pt([x - 8, y - 4]) + ' ' + pt([x - 4, y - 5]) + 'Z', c_(col), 2) +
       L('M' + pt([x - 7, y]) + 'l-4,1.4 M' + pt([x - 3, y + 0.6]) + 'l-3.6,1.2 M' + pt([x + 4, y - 1]) + 'l3.4,1.6', OL, 3) + L('M' + pt([x - 7, y]) + 'l-4,1.4 M' + pt([x - 3, y + 0.6]) + 'l-3.6,1.2 M' + pt([x + 4, y - 1]) + 'l3.4,1.6', '#efe6cf', 1.3);
   }
-  // bundled bones for Rattlegore: a thick bone limb with a groove, iron bands at the joints
+  // bundled bones for Bonecrunch: a thick bone limb with a groove, iron bands at the joints
   function boneLimb(c, pts, col, w) {
     var d = pd(pts), o = limb(d, col, w) + L(d, dk(col, 0.3), w * 0.18, 0.9) + L(pd(pts.map(function (p) { return [p[0] - w * 0.25, p[1] - w * 0.1]; })), lt(col, 0.25), w * 0.14, 0.8);
     for (var i = 1; i < pts.length - 1; i++) o += E(pts[i][0], pts[i][1], w * 0.66, w * 0.56, c.cel(lt(col, 0.05)), 2) + E(pts[i][0] + w * 0.25, pts[i][1] + w * 0.2, w * 0.2, w * 0.16, dk(col, 0.35)) + L('M' + pt([pts[i][0] - w * 0.6, pts[i][1] - w * 0.35]) + 'l' + n(w * 1.2) + ',' + n(w * 0.7), OL, 3.6) + L('M' + pt([pts[i][0] - w * 0.6, pts[i][1] - w * 0.35]) + 'l' + n(w * 1.2) + ',' + n(w * 0.7), '#5a3a2a', 1.8);

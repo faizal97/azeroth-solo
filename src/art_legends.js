@@ -1,19 +1,19 @@
-/* art_legends.js — Legend characters for Azeroth Solo. First legend: Lyveus Cloveus, the Exiled Knight, a high elf
+/* art_legends.js — Legend characters for Realm of Loner. First legend: Lyveus Cloveus, the Exiled Knight, a high elf
  * paladin (an original character by a friend of the developer, redrawn from his reference drawing in the game's style).
  *   legend  lyveus               ART.legend(key): a party / world sprite in exactly the ART.hero format
  *                                (128x128, facing RIGHT, feet on y=122, shadow at y=122.5). ART.legend.keys lists the keys.
  *                                Unknown keys return ART.hero({ cls: 'paladin', race: 'human' }).
  *   actors  lyveus, vyn          ART.story.actor: 160x160 transparent, facing LEFT, feet on the bottom edge
- *   scene   silverleaf_lodge     ART.scene: 400x240, the high elf lodge in the Arathi pines, burned two years ago, at sunset
- *   mob     lord_cassius_marrow  ART.mob: 128x128, facing LEFT, feet on y=122 (open-world elite, Lady Prestor's cabal)
+ *   scene   silverleaf_lodge     ART.scene: 400x240, the high elf lodge in the Kinloch pines, burned two years ago, at sunset
+ *   mob     lord_cassius_marrow  ART.mob: 128x128, facing LEFT, feet on y=122 (open-world elite, Lady Thorne's cabal)
  *   icons   legend_lyveus, oathbound_strike, ancients_bulwark, silverleaf_aegis   ART.icon: 64x64
  * Second batch (the hooded-wanderer stage and the Theater lore cutscene):
  *   legend  lyveus_hooded        the same sprite format: a deep moss-green travel cloak, hood up, face in shadow but for
  *                                the chin and one eye glint, the shield wrapped in cloth on his back, the same sword
  *   actors  lyveus_hooded        the same disguise in the actor format, sword point lowered
- *           deathwing            Deathwing, the Black Ruin: wings spread, bolted iron plates, molten cracks, fire in his jaws
+ *           deathwing            Ossarak, the Black Ruin: wings spread, bolted iron plates, molten cracks, fire in his jaws
  *   story scenes (480x270)       silverleaf_burning (the lodge on fire at night, hooded riders leaving),
- *                                caravan_road (the ambushed Stormwind wagon, the burst of holy light mid-road)
+ *                                caravan_road (the ambushed Kingsmere wagon, the burst of holy light mid-road)
  * Loads AFTER every other art pack (art_story.js and art_story2.js included) and EXTENDS window.ART: ART.scene, ART.mob,
  * ART.icon, ART.story.scene and ART.story.actor handle the keys above and fall through to the previous functions for
  * every other key (prototype keys included). Keys are appended to ART.keys.scenes / mobs / icons and
@@ -359,7 +359,7 @@
   }
 
   // =====================================================================
-  // VYN: Lyveus's comrade, a young Stormwind guard in blue-and-gold plate, his helm under his arm.
+  // VYN: Lyveus's comrade, a young Kingsmere guard in blue-and-gold plate, his helm under his arm.
   // Same sprite-coordinate rig idea, mirrored into the 160 actor box.
   // =====================================================================
   var VY = { skin: '#f0c4a0', hair: '#7a4e2c', steel: '#b9c3cd', blue: '#2f5eb2', gold: '#e0b44a', leather: '#5a3a22' };
@@ -386,7 +386,7 @@
     return P(sp + ' Z', c.cel(VY.gold), 1) + C(x, y, r * 0.82, lt(VY.gold, 0.2), 1) + E(x - r * 0.22, y - r * 0.1, r * 0.3, r * 0.22, dk(VY.gold, 0.35));
   }
   function vynHelm(c, x, y) {
-    // open-faced Stormwind guard helm seen from the side (face opening to the right): steel dome, gold brow band,
+    // open-faced Kingsmere guard helm seen from the side (face opening to the right): steel dome, gold brow band,
     // a flared neck guard behind, a cheek guard, and a blue crest along the top
     var o = '';
     o += P('M' + n(x - 9) + ',' + n(y - 7) + ' C' + n(x - 6) + ',' + n(y - 15) + ' ' + n(x + 5) + ',' + n(y - 16) + ' ' + n(x + 9) + ',' + n(y - 10) + ' L' + n(x + 6.4) + ',' + n(y - 8.6) + ' C' + n(x + 3) + ',' + n(y - 12) + ' ' + n(x - 4) + ',' + n(y - 11) + ' ' + n(x - 6.6) + ',' + n(y - 5.4) + ' Z', c.cel(VY.blue), 1.6);
@@ -460,7 +460,7 @@
   }
 
   // =====================================================================
-  // LORD CASSIUS MARROW: court noble of Lady Prestor's cabal, drawn facing right then mirrored (mobs face left).
+  // LORD CASSIUS MARROW: court noble of Lady Thorne's cabal, drawn facing right then mirrored (mobs face left).
   // Fencer's stance: silver rapier thrust forward, the back hand raised, short cape flaring behind.
   // =====================================================================
   var CM = { skin: '#e8c8b0', hair: '#1c1822', black: '#2c2636', purple: '#50246e', silver: '#cfd4de', lining: '#6a2e8e' };
@@ -901,7 +901,7 @@
       s += P('M' + n(x - 34 * k) + ',' + n(y + 8 * k) + ' Q' + n(x - 34 * k) + ',' + n(y - 6 * k) + ' ' + n(x - 18 * k) + ',' + n(y - 4 * k) + ' Q' + n(x - 12 * k) + ',' + n(y - 20 * k) + ' ' + n(x + 4 * k) + ',' + n(y - 12 * k) + ' Q' + n(x + 20 * k) + ',' + n(y - 22 * k) + ' ' + n(x + 28 * k) + ',' + n(y - 4 * k) + ' Q' + n(x + 40 * k) + ',' + n(y - 2 * k) + ' ' + n(x + 38 * k) + ',' + n(y + 8 * k) + ' Z', '#ffffff', 1.4) +
         F('M' + n(x - 30 * k) + ',' + n(y + 6 * k) + ' L' + n(x + 34 * k) + ',' + n(y + 6 * k) + ' L' + n(x + 36 * k) + ',' + n(y + 8 * k) + ' L' + n(x - 32 * k) + ',' + n(y + 8 * k) + ' Z', '#c8dcec');
     });
-    // Arathi hills and the far pinewood
+    // Kinloch hills and the far pinewood
     s += F('M0,142 C60,122 130,118 190,130 C250,140 300,118 360,120 C410,122 450,130 480,128 L480,170 L0,170 Z', '#8aa88a');
     var tl = '';
     for (var x = -4; x < 486; x += 7 + r() * 6) { var h = 16 + r() * 20, w = 4 + r() * 3; if (x > 206 && x < 272) h *= 0.5; tl += 'M' + n(x - w) + ',160 L' + n(x) + ',' + n(160 - h) + ' L' + n(x + w) + ',160 Z'; }
@@ -917,7 +917,7 @@
     // framing pines
     s += pine(c, 26, 250, 240, 34, '#2e4a30', '#8ab868', 0, 21) + pine(c, 74, 196, 150, 20, '#34523a', '#8ab868', 0, 23);
     s += pine(c, 456, 252, 240, 34, '#2e4a30', '#8ab868', 0, 25) + pine(c, 404, 196, 150, 20, '#34523a', '#8ab868', 0, 27);
-    // the overturned Stormwind supply wagon, spilled crates, arrows in the wood
+    // the overturned Kingsmere supply wagon, spilled crates, arrows in the wood
     var WD = '#8a6440', WL = '#b08a5a';
     s += E(128, 238, 78, 8, '#000', 0, 0.25);
     s += P('M66,236 C70,220 84,212 100,214 L124,232 Z', c.lg([[0, '#f0e8d0'], [1, '#c8bc9c']]), 1.6) + L('M78,228 L96,218 M90,232 L106,222', '#a89c7c', 1.1);

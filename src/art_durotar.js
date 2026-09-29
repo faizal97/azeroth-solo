@@ -1,5 +1,5 @@
-/* art_durotar.js — Durotar zone art for Azeroth Solo (orc homeland, Echo Isles, Tiragarde Keep, Orgrimmar, Ragefire Chasm).
- * Loads AFTER art.js and EXTENDS window.ART: ART.scene / ART.mob handle the Durotar keys and fall through
+/* art_durotar.js — Dunescar zone art for Realm of Loner (orc homeland, Kessari Isles, Saltwall Keep, Vazhrak, The Smoke Pit).
+ * Loads AFTER art.js and EXTENDS window.ART: ART.scene / ART.mob handle the Dunescar keys and fall through
  * to the original functions for every other key. Keys are appended to ART.keys.scenes / ART.keys.mobs.
  * Self-contained: no dependency on art.js internals. Never throws.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
@@ -329,7 +329,7 @@
     o += body(c, 'M' + n(x + 1) + ',' + n(ky - 34 * s) + ' L' + n(x + 24 * s) + ',' + n(ky - 30 * s) + ' L' + n(x + 18 * s) + ',' + n(ky - 26 * s) + ' L' + n(x + 24 * s) + ',' + n(ky - 21 * s) + ' L' + n(x + 1) + ',' + n(ky - 22 * s) + ' Z', '#2a5aa0', '', 1.6 * s);
     return o;
   }
-  // Kul Tiras-style hanging banner: blue with white anchor mark (no text)
+  // Brineholt-style hanging banner: blue with white anchor mark (no text)
   function kulBanner(c, x, y, h) {
     var w = h * 0.55, o = '';
     var d = 'M' + n(x - w / 2) + ',' + n(y) + ' L' + n(x + w / 2) + ',' + n(y) + ' L' + n(x + w / 2) + ',' + n(y + h) + ' L' + n(x) + ',' + n(y + h * 0.82) + ' L' + n(x - w / 2) + ',' + n(y + h) + ' Z';

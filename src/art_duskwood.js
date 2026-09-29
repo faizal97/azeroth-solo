@@ -1,14 +1,14 @@
-/* art_duskwood.js — Duskwood zone art for Azeroth Solo (Alliance, levels 24-30: Darkshire, Brightwood Grove,
- * the Hushed Bank, Raven Hill Cemetery, Tranquil Gardens Cemetery, Vul'Gol Ogre Mound, the Rotting Orchard).
+/* art_duskwood.js — Wraithwood zone art for Realm of Loner (Accord, levels 24-30: Lanternby, Hollin Grove,
+ * the Blackreed Bank, Harlow Cemetery, Cobb's Rest, Gruk's Mound, the Crookapple Orchard).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Duskwood keys and fall through to the previous functions for every other key. Keys are appended to
+ * Wraithwood keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers and rigs (biped, ogre head, spider, farmhouse, lanterns) are shared copies of art_redridge.js so the
  * zones match.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix dw<counter>_).
  * Palette: eternal night under a huge pale moon, blue-violet sky, black twisted trees, cold blue-green ground fog,
- * warm orange lamplight only in Darkshire. Figures get a cold moon rim so they separate from the dark.
+ * warm orange lamplight only in Lanternby. Figures get a cold moon rim so they separate from the dark.
  */
 (function (root) {
   'use strict';
@@ -190,7 +190,7 @@
     var d = 'M' + pt([x - 10 * s, y]) + 'L' + pt([x - 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y]) + 'Z';
     return E(x, y + 1, 12 * s, 2.4 * s, '#000', 0, 0.22) + body(c, d, col, L('M' + pt([x - 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y]) + 'M' + pt([x - 10 * s, y - 8 * s]) + 'L' + pt([x + 10 * s, y - 8 * s]), dk(col, 0.4), 1.4 * s) + F('M' + pt([x + 4 * s, y - 18 * s]) + 'L' + pt([x + 12 * s, y - 18 * s]) + 'L' + pt([x + 12 * s, y + 2]) + 'L' + pt([x + 4 * s, y + 2]) + 'Z', dk(col, 0.4), 0.5), 1.6 * s);
   }
-  // Defias crate: a red cloth tied over the lid
+  // Grey Hood crate: a red cloth tied over the lid
   function defCrate(c, x, y, s) {
     return crate(c, x, y, s, '#9a6a3a') + P('M' + pt([x - 11 * s, y - 16 * s]) + 'L' + pt([x + 3 * s, y - 17 * s]) + 'L' + pt([x + 4 * s, y - 8 * s]) + 'L' + pt([x, y - 10 * s]) + 'L' + pt([x - 4 * s, y - 6 * s]) + 'L' + pt([x - 7 * s, y - 11 * s]) + 'L' + pt([x - 11 * s, y - 9 * s]) + 'Z', c.cel(DEF_RED), 1.3 * s);
   }
@@ -207,7 +207,7 @@
     o += L(posts + rl, OL, 5) + L(rl, lt(col, 0.1), 2) + L(posts, col, 2.6);
     return o;
   }
-  // Stormwind-style farmhouse: stone ground floor, half-timbered upper, steep shingle roof
+  // Kingsmere-style farmhouse: stone ground floor, half-timbered upper, steep shingle roof
   function farmhouse(c, x, y, s, o) {
     o = o || {};
     var plaster = o.wall || PLASTER, beam = BEAM, roofc = o.roof || ROOF, stone = o.stone || STONE, out = '', ruin = o.ruin;
@@ -607,7 +607,7 @@
     var d = arch ? 'M' + pt([x, y + h]) + 'L' + pt([x, y + w / 2]) + 'Q' + pt([x + w / 2, y - w * 0.3]) + ' ' + pt([x + w, y + w / 2]) + 'L' + pt([x + w, y + h]) + 'Z' : pd([[x, y], [x + w, y], [x + w, y + h], [x, y + h]], true);
     return C(x + w / 2, y + h / 2, (w + h) * 0.9, glow(c, LAMP, 0.4)) + P(d, c.lg([[0, '#ffe8a0'], [1, '#ffa840']]), 1.4 * s) + L('M' + pt([x + w / 2, y + (arch ? w * 0.1 : 0)]) + 'L' + pt([x + w / 2, y + h]) + 'M' + pt([x, y + h * 0.5]) + 'L' + pt([x + w, y + h * 0.5]), BEAM, 1 * s);
   }
-  // Darkshire clock tower: stone shaft, timber belfry, slate spire, pale lit clock face
+  // Lanternby clock tower: stone shaft, timber belfry, slate spire, pale lit clock face
   function clockTower(c, x, y, s) {
     var q = function (dx, dy) { return [x + dx * s, y + dy * s]; }, o = E(x, y + 2, 26 * s, 4 * s, '#000', 0, 0.3);
     var joints = '';
@@ -625,7 +625,7 @@
     o += L('M' + pt(cx) + 'L' + pt([cx[0], cx[1] - 6 * s]) + 'M' + pt(cx) + 'L' + pt([cx[0] + 4 * s, cx[1] + 2 * s]), OL, 1.3 * s);
     return o;
   }
-  // Darkshire town hall: stone ground floor, timber upper, big roof, central gable over lit double doors
+  // Lanternby town hall: stone ground floor, timber upper, big roof, central gable over lit double doors
   function townHall(c, x, y, s) {
     var q = function (dx, dy) { return [x + dx * s, y + dy * s]; }, o = E(x, y + 2, 66 * s, 6 * s, '#000', 0, 0.3), stone = '#6e7080', plast = '#a49c8a', roofc = '#4a3446';
     var w = 56, joints = '';
@@ -776,7 +776,7 @@
     pts.forEach(function (p, i) { var t = i / (pts.length - 1), w = (w0 + (w1 - w0) * t) / 2; a.push([p[0], p[1] - w]); b.unshift([p[0], p[1] + w]); });
     return F(sm(a.concat(b), true), col, op == null ? 0.7 : op);
   }
-  // hanging lantern + hand-drawn glow halo for Darkshire homes
+  // hanging lantern + hand-drawn glow halo for Lanternby homes
   function porchLamp(c, x, y, s) { return C(x, y + 6 * s, 26 * s, glow(c, LAMP, 0.45)) + hangLantern(c, x, y, s); }
 
   // ============================================================
@@ -1212,7 +1212,7 @@
   //  MOBS (128x128, facing left, feet on y=122)
   // ============================================================
   var MOBS = {
-    // ---- the Nightbane worgen ----
+    // ---- the Gloomfang worgen ----
     nightbane_worgen: function (c) {
       return worgen(c, { fur: '#7c6e5e', mane: '#4a4036', pants: '#4a5270', seed: 11 });
     },
@@ -1322,7 +1322,7 @@
         tf: at(1.04, 64, 122)
       });
     },
-    // ---- Splinter Fist ogres ----
+    // ---- Knotjaw ogres ----
     splinter_fist_warrior: function (c) {
       var sk = '#b48a64';
       return biped(c, {
@@ -1353,7 +1353,7 @@
         tf: at(1.05, 64, 122)
       });
     },
-    // ---- Stitches: the abomination that walks the Duskwood road ----
+    // ---- Patchwork: the abomination that walks the Wraithwood road ----
     stitches: function (c) {
       var sk = '#a4b08e', p2 = '#8e9ea8', p3 = '#bca88e', s = shadow(c, 66, 58);
       // extra arm sprouting from the back

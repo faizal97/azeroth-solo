@@ -16,7 +16,7 @@ class AzerothApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'Azeroth Solo',
+      title: 'Realm of Loner',
       debugShowCheckedModeBanner: false,
       home: GameScreen(),
     );

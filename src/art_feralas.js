@@ -1,11 +1,11 @@
-/* art_feralas.js — Feralas zone art for Azeroth Solo (contested, levels 44-50: Feathermoon Stronghold, Camp Mojache,
- * the Frayfeather Highlands, Woodpaw Hills, the Gordunni Outpost, the Forgotten Coast, the Lower Wilds) plus the gate of
- * Maraudon in Desolace.
+/* art_feralas.js — Ferndeep zone art for Realm of Loner (contested, levels 44-50: Starfeather Hold, Camp Ruga,
+ * the Tatterwing Highlands, Mossgut Hills, the Stonegut Outpost, the Forgotten Coast, the Lower Wilds) plus the gate of
+ * The Gemfall Caves in Mournwaste.
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Feralas keys and fall through to the previous functions for every other key. Keys are appended to
+ * Ferndeep keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig and the house-style scene pieces are shared copies of art_stranglethorn.js (itself after
- * art_wetlands.js / art_ashenvale.js). The redwoods, elven ruins, tauren camp, Desolace pieces and every mob rig
+ * art_wetlands.js / art_ashenvale.js). The redwoods, elven ruins, tauren camp, Mournwaste pieces and every mob rig
  * (hippogryph, gnoll, ogre, naga, wolf, treant, harpy, bear) are new here.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix fr<counter>_).
@@ -429,7 +429,7 @@
     var k = big ? 1.25 : 1;
     return L('M' + pt([x, y - 2]) + 'L' + pt([x - 11 * k, y + 1]) + 'M' + pt([x, y - 2]) + 'L' + pt([x - 5 * k, y + 1.5]) + 'M' + pt([x, y - 2]) + 'L' + pt([x + 6 * k, y + 1]), OL, 5) + L('M' + pt([x, y - 2]) + 'L' + pt([x - 11 * k, y + 1]) + 'M' + pt([x, y - 2]) + 'L' + pt([x - 5 * k, y + 1.5]) + 'M' + pt([x, y - 2]) + 'L' + pt([x + 6 * k, y + 1]), col, 2.2);
   }
-  // ---- more shared copies of art_redridge.js (feathers, spear, rags, Redridge-style gnoll rig, bone necklace, pelt hood) ----
+  // ---- more shared copies of art_redridge.js (feathers, spear, rags, Stoneharrow-style gnoll rig, bone necklace, pelt hood) ----
   function feathers(x, y, cols, s, a0) {
     s = s || 1; var o = '';
     cols.forEach(function (col, i) {
@@ -898,7 +898,7 @@
     o += P('M' + pt(q(-14, 0)) + 'L' + pt(q(-14, -28)) + 'C' + pt(q(-14, -36)) + ' ' + pt(q(14, -36)) + ' ' + pt(q(14, -28)) + 'L' + pt(q(14, 0)) + 'Z', '#1e140e', 1.6 * s) + P(pd([q(-16, -30), q(16, -30), q(16, -26), q(-16, -26)], true), c.cel('#5a3e26'), 1.2 * s);
     return o + skull(c, x, y - 40 * s, 1.3 * s) + limb(pd([q(-60, 2), q(-60, -38)]), '#5a3e26', 3 * s) + skull(c, x - 60 * s, y - 40 * s, 0.9 * s);
   }
-  // crude Gordunni war banner: stitched hide on a spear with a red hand print (x = pole, y = ground)
+  // crude Stonegut war banner: stitched hide on a spear with a red hand print (x = pole, y = ground)
   function ogreBanner(c, x, y, h, s) {
     var ty = y - h, o = E(x, y + 1, 5 * s, 1.6 * s, '#000', 0, 0.3) + limb(pd([[x, y], [x, ty - 8 * s]]), '#5a3e24', 3 * s) + P(pd([[x - 3 * s, ty - 8 * s], [x, ty - 20 * s], [x + 3 * s, ty - 8 * s]], true), c.cel('#b8b4a8'), 1.2 * s);
     var d = pd([[x + 1, ty], [x + 26 * s, ty + 2 * s], [x + 24 * s, ty + 32 * s], [x + 18 * s, ty + 28 * s], [x + 12 * s, ty + 36 * s], [x + 6 * s, ty + 30 * s], [x + 1, ty + 34 * s]], true);
@@ -953,13 +953,13 @@
       'M' + pt([x - 4 * s, y - 1 * s]) + 'Q' + pt([x, y - 10 * s * k]) + ' ' + pt([x + 10 * s, y - 16 * s * k]) + 'Q' + pt([x + 6 * s, y - 6 * s * k]) + ' ' + pt([x + 4 * s, y - 1 * s]) + 'Z';
     return F(d, col);
   }
-  // ---- Desolace ----
+  // ---- Mournwaste ----
   function cracks(seed, y0, y1, col, cnt) {
     var r = rng(seed), d = '';
     for (var i = 0; i < cnt; i++) { var x = r() * 400, y = y0 + r() * (y1 - y0), s = 0.6 + (y - y0) / (y1 - y0), l = (8 + r() * 12) * s; d += 'M' + pt([x, y]) + 'l' + n(l * 0.5) + ',' + n(-1 - r() * 2) + 'l' + n(l * 0.5) + ',' + n(r() * 3) + 'M' + pt([x + l * 0.5, y - 1]) + 'l' + n(r() * 4) + ',' + n(-3 * s); }
     return L(d, col, 1, 0.7);
   }
-  // rock face with the great cave mouth of Maraudon: purple light, crystals, a vine lintel (x = centre, y = cave floor)
+  // rock face with the great cave mouth of The Gemfall Caves: purple light, crystals, a vine lintel (x = centre, y = cave floor)
   function caveMouth(c, x, y, w, h) {
     var hw = w / 2, o = '';
     var cliff = 'M' + pt([x - hw * 2.2, y + 4]) + 'L' + pt([x - hw * 1.9, y - h * 1.3]) + 'L' + pt([x - hw * 1.2, y - h * 1.6]) + 'L' + pt([x - hw * 0.4, y - h * 1.5]) + 'L' + pt([x + hw * 0.3, y - h * 1.75]) + 'L' + pt([x + hw * 1.2, y - h * 1.55]) + 'L' + pt([x + hw * 2.1, y - h * 1.35]) + 'L' + pt([x + hw * 2.3, y + 4]) + 'Z';
@@ -1187,7 +1187,7 @@
     s += limb('M90,86 L100,102 L94,114', bc, 9) + hoof(94, 120, '#3a2a22') + L('M84,80 C90,78 98,82 100,90', dk(bc, 0.3), 1.2);
     return o.tf ? G(s, o.tf) : s;
   }
-  // ---- Woodpaw gnoll (new head: big round hyena ears, dark mask, a black mane down the back) ----
+  // ---- Mossgut gnoll (new head: big round hyena ears, dark mask, a black mane down the back) ----
   function gwHead(c, x, y, o) {
     var f = o.fur, s = '', mane = o.mane || '#2e1a10';
     s += P(pd([[x - 2, y - 12], [x + 3, y - 22], [x + 7, y - 12], [x + 13, y - 20], [x + 14, y - 8], [x + 22, y - 12], [x + 19, y], [x + 27, y + 1], [x + 20, y + 8], [x + 26, y + 14], [x + 12, y + 12]], true), c.cel(mane), 1.8);
@@ -1218,7 +1218,7 @@
       tf: o.tf || at(0.96, 64, 122)
     });
   }
-  // bark shoulder guard with leaves (Woodpaw)
+  // bark shoulder guard with leaves (Mossgut)
   function barkPad(c, x, y, r) {
     var d = 'M' + pt([x - r, y + r * 0.4]) + 'C' + pt([x - r, y - r * 0.8]) + ' ' + pt([x + r, y - r * 0.9]) + ' ' + pt([x + r * 1.1, y + r * 0.3]) + 'L' + pt([x + r * 0.6, y + r * 0.1]) + 'L' + pt([x + r * 0.2, y + r * 0.5]) + 'L' + pt([x - r * 0.3, y + r * 0.1]) + 'Z';
     return body(c, d, '#7a5236', L('M' + pt([x - r * 0.6, y - r * 0.2]) + 'L' + pt([x - r * 0.2, y + r * 0.3]) + 'M' + pt([x, y - r * 0.6]) + 'L' + pt([x + r * 0.2, y + r * 0.3]) + 'M' + pt([x + r * 0.6, y - r * 0.4]) + 'L' + pt([x + r * 0.7, y + r * 0.1]), '#4a3020', 1), 1.6) + P(leafD(x - r * 0.4, y - r * 0.7, -1, r * 0.9), c.cel('#5a8a34'), 1) + P(leafD(x, y - r * 0.8, 1, r * 0.8), c.cel('#6a9a3a'), 1);
@@ -1228,7 +1228,7 @@
     return C(g[0], g[1], 12, glow(c, col || '#c8ff6a', 0.55)) + limb('M' + pt(q(-4, 0)) + 'L' + pt(q(12, 0)), '#8a6a44', 2.4) + body(c, ellD(g[0], g[1], 5.4, 5.4), '#c8a060', L('M' + pt([g[0] - 5, g[1]]) + 'L' + pt([g[0] + 5, g[1]]), '#7a4a2a', 1.4), 1.6) +
       bone(q(20, -4)[0], q(20, -4)[1], 7, ang + 1.2, 0.5) + bone(q(21, 5)[0], q(21, 5)[1], 7, ang - 1.1, 0.5) + L('M' + pt(q(12, 3)) + 'l2,6 M' + pt(q(12, -3)) + 'l-1,6', '#e8dcc0', 1.2);
   }
-  // ---- Gordunni ogre (new rig: pear body, small head low on the chest, stubby legs) ----
+  // ---- Stonegut ogre (new rig: pear body, small head low on the chest, stubby legs) ----
   function oHead(c, x, y, o) {
     var sk = o.skin, s = '';
     s += P(pd([[x + 8, y - 4], [x + 18, y - 9], [x + 14, y + 4]], true), c.cel(dk(sk, 0.08)), 1.6);
@@ -1268,7 +1268,7 @@
     [[0.6, -8, -1], [0.8, -10, -1], [0.98, -7, -1], [0.7, 9, 1], [0.9, 10, 1], [1.05, 2, 1]].forEach(function (k) { var b = q(len * k[0], k[1]); o += L('M' + pt(b) + 'L' + pt(q(len * k[0] + 2, k[1] + k[2] * 6)), OL, 3.2) + L('M' + pt(b) + 'L' + pt(q(len * k[0] + 2, k[1] + k[2] * 6)), '#b8bcc4', 1.4); });
     return o + body(c, hd, col, L('M' + pt(q(len * 0.55, -7)) + 'L' + pt(q(len * 0.55, 7)) + 'M' + pt(q(len * 0.85, -9)) + 'L' + pt(q(len * 0.85, 9)), '#5a5a62', 3) + F(pd([q(len * 0.3, 1), q(len + 6, 1), q(len + 6, 12), q(len * 0.3, 12)], true), dk(col, 0.3), 0.7), 2);
   }
-  // ---- Hatecrest naga (new rig on the shared biped: S-coiled tail with a dorsal frill, sail-crested heads) ----
+  // ---- Spitecoil naga (new rig on the shared biped: S-coiled tail with a dorsal frill, sail-crested heads) ----
   function nHeadM(c, x, y, o) {
     var sc = o.col, fin = o.fin, s = '';
     s += P(pd([[x - 5, y - 10], [x - 8, y - 27], [x + 1, y - 17], [x + 3, y - 34], [x + 9, y - 17], [x + 16, y - 31], [x + 16, y - 13], [x + 27, y - 20], [x + 21, y - 5], [x + 31, y - 3], [x + 16, y + 3], [x + 8, y - 3]], true), c.cel(fin), 1.8) +
@@ -1330,7 +1330,7 @@
     return C(x, y, r * 2.6, glow(c, '#6ad8ff', 0.6)) + C(x, y, r, c.rg([[0, '#f0ffff'], [0.5, '#8ae4ff'], [1, '#2a8ad0']]), 1.6) + L(sw, '#ffffff', 1.4, 0.9) +
       P('M' + pt([x - r * 1.6, y - r * 0.9]) + 'q-2,3 0,4 q2,-1 0,-4Z', '#aaf0ff', 0.8) + P('M' + pt([x + r * 1.4, y - r * 1.3]) + 'q-2,3 0,4 q2,-1 0,-4Z', '#aaf0ff', 0.8) + P('M' + pt([x + r * 0.2, y + r * 1.6]) + 'q-2,3 0,4 q2,-1 0,-4Z', '#aaf0ff', 0.8);
   }
-  // ---- Longtooth runner: wolf in full gallop, long sabre fangs (new rig, facing left) ----
+  // ---- Greymuzzle runner: wolf in full gallop, long sabre fangs (new rig, facing left) ----
   function runWolf(c, o) {
     var col = o.col, bel = o.belly || lt(col, 0.4), sad = o.saddle || dk(col, 0.3), dcol = dk(col, 0.22), s = shadow(c, 70, 48);
     var leg = function (d, cc, w, p) { return limb(d, cc, w) + E(p[0], p[1], 5, 3.4, c.cel(dk(cc, 0.25)), 1.8); };
@@ -1370,7 +1370,7 @@
     s += P(leafD(18, 72, -1, 7), c.cel(lt(fol, 0.1)), 1) + P(leafD(106, 12, 1, 7), c.cel(lt(fol, 0.1)), 1);
     return o.tf ? G(s, o.tf) : s;
   }
-  // ---- Sister Rathtalon: black-winged harpy matriarch, crouched with wings raised (new rig, facing left) ----
+  // ---- Sister Hisk: black-winged harpy matriarch, crouched with wings raised (new rig, facing left) ----
   function harpyR(c, o) {
     var sk = o.skin, wc = o.wing, tp = o.tip, lg = o.leg || '#b8a060', s = shadow(c, 64, 40);
     s += G(wing(c, dk(wc, 0.1), dk(tp, 0.1), lt(wc, 0.04)), 'translate(74,52) rotate(-40) scale(0.86)');
@@ -1396,7 +1396,7 @@
     s += limb('M50,56 L40,60', sk, 7) + clawHand([36, 58], sk, 0.9, '#e8e0d0');
     return o.tf ? G(s, o.tf) : s;
   }
-  // ---- Old Grizzlegut: a huge old bear reared on the hind legs (new rig, facing left) ----
+  // ---- Old Bramblebelly: a huge old bear reared on the hind legs (new rig, facing left) ----
   function bearUp(c, o) {
     var col = o.col, bel = o.belly || lt(col, 0.2), gz = o.grizzle || '#c8baa4', mz = o.muzzle || lt(col, 0.35), dcol = dk(col, 0.22), s = shadow(c, 66, 50);
     s += limb('M84,50 L102,36 L108,22', dcol, 14) + bearPaw(110, 20, dk(col, 0.3)).replace(/translate/, '');

@@ -1,8 +1,8 @@
-/* art_dustwallow.js — Dustwallow Marsh and Onyxia's Lair art for Azeroth Solo (contested zone and 10-player raid, level 60,
- * Chapter 6 "The Brood Mother": Onyxia, unmasked at the Stormwind court, has fled south across the sea to her cave under
- * the Wyrmbog, and her brood spreads out through the marsh).
- *   scenes  theramore_isle       the Alliance harbour fort: stone towers with blue roofs, blue banners, ships on the sea
- *           brackenwall_village  the Horde camp: hide huts and a palisade in a dark swamp, braziers, a war banner
+/* art_dustwallow.js — Saltmarsh and Veshmira's Lair art for Realm of Loner (contested zone and 10-player raid, level 60,
+ * Chapter 6 "The Brood Mother": Veshmira, unmasked at the Kingsmere court, has fled south across the sea to her cave under
+ * the Dragonmire, and her brood spreads out through the marsh).
+ *   scenes  theramore_isle       the Accord harbour fort: stone towers with blue roofs, blue banners, ships on the sea
+ *           brackenwall_village  the Krugar camp: hide huts and a palisade in a dark swamp, braziers, a war banner
  *           the_quagmire         murky swamp, twisted mossy trees, fog, reeds, whelps in the sky
  *           scorched_fen         the dragon-burnt fen: charred trees, smoke, embers, glowing cracks
  *           the_wyrmbog          the bog before the lair: black crags, a dragon's ribcage, eggs, the lair hill far off
@@ -16,10 +16,10 @@
  * to ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig and the robe rig are shared copies of art_tidecrown.js; the dragonkin pieces (wing, drake head,
  * talon) are copies of art_steppes.js, the whelp of art_redridge.js and the dragonspawn body of art_winterspring.js.
- * The black brood matches the story Onyxia of art_story.js: near-black scales, a bronze belly, deep red wings, pale
- * horns and amber eyes. Kept apart from their cousins: the Redridge whelp is smaller and plainer, the Burning Steppes
- * dragonspawn stands on two legs (ours has the dragon body below), the Winterspring scalebane is blue. The Onyxian
- * whelp and warder are the raid's darker, fiercer versions (red eyes, fire, iron plate). Onyxia is the biggest sprite.
+ * The black brood matches the story Veshmira of art_story.js: near-black scales, a bronze belly, deep red wings, pale
+ * horns and amber eyes. Kept apart from their cousins: the Stoneharrow whelp is smaller and plainer, the Cinderfields
+ * dragonspawn stands on two legs (ours has the dragon body below), the Icewold scalebane is blue. The Veshmiran
+ * whelp and warder are the raid's darker, fiercer versions (red eyes, fire, iron plate). Veshmira is the biggest sprite.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix dw<counter>_).
  */
@@ -280,7 +280,7 @@
   // ============================================================
   //  DUSTWALLOW: palette
   // ============================================================
-  // the black brood matches the story Onyxia (art_story.js): near-black scales, bronze belly, deep red wings, pale horns, amber eyes
+  // the black brood matches the story Veshmira (art_story.js): near-black scales, bronze belly, deep red wings, pale horns, amber eyes
   var BLK = '#2a2430', BLK2 = '#3c3444', BEL = '#b0703a', MEM = '#6a2430', HORN = '#d8ccb0', AMBER = '#ffb020';
   var LAVA = '#ff6a1a', LAVAH = '#ffb42e', LAVAW = '#fff2a8';
   var IRON = '#34323a', IRONL = '#6a6a74', RUST = '#9a3a1e';
@@ -388,7 +388,7 @@
     var q = function (u, v) { return pt([x + u * s, y + v * s]); };
     return F('M' + q(-10, 0) + 'L' + q(-4, -1) + 'L' + q(-2, -8) + 'L' + q(2, -2) + 'L' + q(8, -9) + 'L' + q(7, -1) + 'L' + q(12, 1) + 'L' + q(4, 2) + 'L' + q(-4, 2) + 'Z', col || '#1a1418', 0.9);
   }
-  // ---- Theramore pieces ----
+  // ---- Harborwatch pieces ----
   function stoneWall(c, x0, y0, x1, y1, col, seed, bh, bw) {
     var r = rng(seed), o = R(x0, y0, x1 - x0, y1 - y0, c.lg([[0, lt(col, 0.1)], [0.6, col], [1, dk(col, 0.25)]]), 1.6), d = '', row = 0;
     bh = bh || 10; bw = bw || 22;
@@ -421,7 +421,7 @@
     o += P(pd([q(-10, -58), q(4, -55), q(-10, -52)], true), c.cel(BLUEL), 0.9) + L('M' + pt(q(-10, -58)) + 'L' + pt(q(-40, -10)) + 'M' + pt(q(14, -48)) + 'L' + pt(q(38, -11)), OL, 0.8, 0.8);
     return o;
   }
-  // ---- Horde pieces ----
+  // ---- Krugar pieces ----
   function hut(c, x, y, s, seed, flag) {
     var q = function (u, v) { return [x + u * s, y + v * s]; }, r = rng(seed);
     var o = E(x, y + 1, 28 * s, 3 * s, '#000', 0, 0.35);
@@ -764,7 +764,7 @@
       s += wing(c, [56, 70], [44, 34], [[24, 10], [50, 4], [70, 18], [72, 42]], sc, mem);
       return G(s + embers(61, 8, 10, 120, 20, 100), at(1.02, 64, 122));
     },
-    // Onyxia herself: a great black dragon rearing up, wings spread over the whole frame, fire in her jaws.
+    // Veshmira herself: a great black dragon rearing up, wings spread over the whole frame, fire in her jaws.
     // Drawn on a 160 box and scaled into the 128 frame (like nalveshra in art_tidecrown.js); the biggest sprite in the pack.
     onyxia: function (c) {
       var sc = BLK, sc2 = BLK2, mem = MEM, s = '';

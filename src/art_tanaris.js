@@ -1,9 +1,9 @@
-/* art_tanaris.js — Tanaris zone art for Azeroth Solo (contested desert, levels 40-46: Gadgetzan, Lost Rigger Cove,
- * Waterspring Field, the Noxious Lair, the Dunemaul Compound, Thistleshrub Valley, the Eastmoon Ruins and the gate of
- * Zul'Farrak; Wastewander bandits, Southsea pirates, Centipaar silithid, Dunemaul ogres, thistleshrubs, dunestalker
- * scorpids, Caliph Scorpidsting and Captain Kregg Keelhaul).
+/* art_tanaris.js — Sirocco zone art for Realm of Loner (contested desert, levels 40-46: Coppergulch, Rotten Plank Cove,
+ * Pumpworks Field, the Stinging Hive, the Sandbrute Compound, Spinebush Valley, the Dawnstone Ruins and the gate of
+ * The Dune Temple; Dustcloak bandits, Blackgull pirates, Hivecrawler hiveborn, Sandbrute ogres, thistleshrubs, dunestalker
+ * scorpids, Caliph Stingtail and Captain Captain Rusk Hookhand).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Tanaris keys and fall through to the previous functions for every other key. Keys are appended to
+ * Sirocco keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig, the human and goblin heads and the house-style scene pieces are shared copies of
  * art_stranglethorn.js. The desert scene pieces, the veiled bandit head, the pirate kit, the silithid, ogre,
@@ -410,8 +410,8 @@
     if (mark) o += mark(bx + w / 2, ty + bh * 0.45, s);
     return o + C(x, ty - 4 * s, 1.8 * s, c.cel(GOLD), 0.9 * s);
   }
-  // original marks: rebel gold star over a chevron; Horde black fang-crown; Kurzen tan crossed blades
-  // ---- goblin (Venture Co.) — copy of the art_stonetalon.js rig, plus goggles, a dented hat and free limb sizes ----
+  // original marks: rebel gold star over a chevron; Krugar black fang-crown; Drayke tan crossed blades
+  // ---- goblin (Deepgold Company) — copy of the art_stonetalon.js rig, plus goggles, a dented hat and free limb sizes ----
   function gobHead(c, x, y, o) {
     var sk = o.skin || '#6aa84a', s = '';
     s += P('M' + pt([x + 8, y - 4]) + 'C' + pt([x + 18, y - 10]) + ' ' + pt([x + 26, y - 14]) + ' ' + pt([x + 32, y - 18]) + 'C' + pt([x + 28, y - 8]) + ' ' + pt([x + 20, y + 2]) + ' ' + pt([x + 10, y + 6]) + 'Z', c.cel(sk), 2) + F('M' + pt([x + 12, y - 2]) + 'C' + pt([x + 18, y - 6]) + ' ' + pt([x + 24, y - 10]) + ' ' + pt([x + 28, y - 14]) + 'C' + pt([x + 24, y - 6]) + ' ' + pt([x + 18, y]) + ' ' + pt([x + 12, y + 3]) + 'Z', '#c87a6a', 0.6);
@@ -786,7 +786,7 @@
     var ar = 'M' + pt([x - w / 2 - 11, y - h - 10]) + 'Q' + pt([x - w / 2 + 4, y - h - 46]) + ' ' + pt([x + 4, y - h - 44]) + 'L' + pt([x + 8, y - h - 34]) + 'L' + pt([x + 2, y - h - 30]) + 'Q' + pt([x - w / 2 + 10, y - h - 30]) + ' ' + pt([x - w / 2 + 11, y - h - 10]) + 'Z';
     return o + body(c, ar, col, F('M' + pt([x - w / 2, y - h - 40]) + 'L' + pt([x + 10, y - h - 46]) + 'L' + pt([x + 10, y - h - 28]) + 'L' + pt([x - w / 2 + 6, y - h - 22]) + 'Z', dk(col, 0.2), 0.6), 1.6) + crescent(x - w / 2 + 4, y - h - 24, 3.4, dk(col, 0.35));
   }
-  // ---- Zul'Farrak pieces ----
+  // ---- The Dune Temple pieces ----
   function trollWall(c, x0, x1, yb, h, col, seed) {
     col = col || '#d49a5a'; var o = stoneFace(c, x0, yb, x1 - x0, h, col, 9);
     for (var x = x0; x < x1 - 4; x += 16) o += P(pd([[x, yb - h + 1], [x, yb - h - 6], [x + 3, yb - h - 6], [x + 3, yb - h - 10], [x + 9, yb - h - 10], [x + 9, yb - h - 6], [x + 12, yb - h - 6], [x + 12, yb - h + 1]], true), c.cel(lt(col, 0.05)), 1.3);
@@ -1126,7 +1126,7 @@
     s += bugLeg(c, [[46, 102], [36, 110], [28, 121]], col, 3.6) + bugLeg(c, [[66, 104], [62, 114], [58, 121]], col, 3.6) + bugLeg(c, [[92, 102], [104, 110], [96, 121]], col, 3.6);
     return s;
   }
-  // ---- Dunemaul ogre (facing left; body rig after art_arathi.js, head new here) ----
+  // ---- Sandbrute ogre (facing left; body rig after art_arathi.js, head new here) ----
   function dmHead(c, x, y, o) {
     var sk = o.skin, s = '';
     if (o.knot) s += limb('M' + pt([x + 4, y - 20]) + 'Q' + pt([x + 14, y - 30]) + ' ' + pt([x + 20, y - 18]), o.hair || '#3a2414', 4) + C(x + 4, y - 20, 4.4, c.cel(o.hair || '#3a2414'), 1.5);

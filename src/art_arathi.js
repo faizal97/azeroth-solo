@@ -1,7 +1,7 @@
-/* art_arathi.js — Arathi Highlands zone art for Azeroth Solo (contested, levels 35-40: Refuge Pointe, Hammerfall,
- * the highland plains, Drywhisker Gorge, Witherbark Village, Stromgarde Keep, Boulderfist Hall, the Circle of West Binding).
+/* art_arathi.js — Kinloch Highlands zone art for Realm of Loner (contested, levels 35-40: Holdfast Point, Chainbreak,
+ * the highland plains, Candlegrub Gorge, Rotbough Village, Highhold Keep, Rockbrow Hall, the West Binding Stones).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Arathi keys and fall through to the previous functions for every other key. Keys are appended to
+ * Kinloch keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig, the raptor, the jungle-troll and human rigs and the camp pieces are shared copies of
  * art_stranglethorn.js. The kobold, ogre and elemental rigs are new here.
@@ -427,7 +427,7 @@
     var k = big ? 1.25 : 1;
     return L('M' + pt([x, y - 2]) + 'L' + pt([x - 11 * k, y + 1]) + 'M' + pt([x, y - 2]) + 'L' + pt([x - 5 * k, y + 1.5]) + 'M' + pt([x, y - 2]) + 'L' + pt([x + 6 * k, y + 1]), OL, 5) + L('M' + pt([x, y - 2]) + 'L' + pt([x - 11 * k, y + 1]) + 'M' + pt([x, y - 2]) + 'L' + pt([x - 5 * k, y + 1.5]) + 'M' + pt([x, y - 2]) + 'L' + pt([x + 6 * k, y + 1]), col, 2.2);
   }
-  // ---- more shared copies of art_redridge.js (feathers, spear, rags, Redridge-style gnoll rig, bone necklace, pelt hood) ----
+  // ---- more shared copies of art_redridge.js (feathers, spear, rags, Stoneharrow-style gnoll rig, bone necklace, pelt hood) ----
   function feathers(x, y, cols, s, a0) {
     s = s || 1; var o = '';
     cols.forEach(function (col, i) {
@@ -625,7 +625,7 @@
     if (mark) o += mark(bx + w / 2, ty + bh * 0.45, s);
     return o + C(x, ty - 4 * s, 1.8 * s, c.cel(GOLD), 0.9 * s);
   }
-  // original marks: rebel gold star over a chevron; Horde black fang-crown; Kurzen tan crossed blades
+  // original marks: rebel gold star over a chevron; Krugar black fang-crown; Drayke tan crossed blades
   function rebelMark(x, y, s) { return P(starD(x, y - 2 * s, 5 * s), GOLD, 0.8 * s) + L('M' + pt([x - 5 * s, y + 8 * s]) + 'L' + pt([x, y + 4 * s]) + 'L' + pt([x + 5 * s, y + 8 * s]), GOLD, 1.8 * s); }
   function hordeMark(x, y, s) { return F(pd([[x - 6 * s, y + 6 * s], [x - 6 * s, y - 2 * s], [x - 3 * s, y + 1 * s], [x, y - 7 * s], [x + 3 * s, y + 1 * s], [x + 6 * s, y - 2 * s], [x + 6 * s, y + 6 * s], [x, y + 9 * s]], true), '#1a1009'); }
   function kurzenMark(x, y, s) { var d = 'M' + pt([x - 5 * s, y - 6 * s]) + 'L' + pt([x + 5 * s, y + 6 * s]) + 'M' + pt([x + 5 * s, y - 6 * s]) + 'L' + pt([x - 5 * s, y + 6 * s]); return C(x, y, 7 * s, '#1a1a14', 0, 0.5) + L(d, '#1a1009', 3 * s) + L(d, '#c8b88a', 1.6 * s) + L('M' + pt([x - 4 * s, y + 7 * s]) + 'L' + pt([x - 7 * s, y + 9 * s]) + 'M' + pt([x + 4 * s, y + 7 * s]) + 'L' + pt([x + 7 * s, y + 9 * s]), '#6a4a2a', 1.6 * s); }
@@ -896,7 +896,7 @@
     if (cloth) o += body(c, pd([q(-12, -68), q(-2, -68), q(-2, -40), q(-7, -45), q(-12, -40)], true), cloth, F(pd([q(-6, -68), q(-1, -68), q(-1, -40), q(-6, -40)], true), '#000', 0.22), 1.2 * s) + (mark ? mark(x - 7 * s, y - 56 * s, 0.6 * s) : '');
     return o;
   }
-  // original marks: Refuge Pointe white keep on blue; Syndicate red triple slash; Boulderfist red handprint
+  // original marks: Holdfast Point white keep on blue; Black Ledger red triple slash; Rockbrow red handprint
   function refugeMark(x, y, s) {
     return F(pd([[x - 4 * s, y + 7 * s], [x - 4 * s, y - 2 * s], [x - 5.5 * s, y - 2 * s], [x - 5.5 * s, y - 6 * s], [x - 3.2 * s, y - 6 * s], [x - 3.2 * s, y - 4 * s], [x - 1 * s, y - 4 * s], [x - 1 * s, y - 6 * s], [x + 1 * s, y - 6 * s], [x + 1 * s, y - 4 * s], [x + 3.2 * s, y - 4 * s], [x + 3.2 * s, y - 6 * s], [x + 5.5 * s, y - 6 * s], [x + 5.5 * s, y - 2 * s], [x + 4 * s, y - 2 * s], [x + 4 * s, y + 7 * s]], true), '#eef0f4') +
       F(pd([[x - 1.4 * s, y + 7 * s], [x - 1.4 * s, y + 3 * s], [x, y + 1.6 * s], [x + 1.4 * s, y + 3 * s], [x + 1.4 * s, y + 7 * s]], true), '#1a2a4a') + L('M' + pt([x - 6 * s, y + 9 * s]) + 'L' + pt([x + 6 * s, y + 9 * s]), GOLD, 1.6 * s);
@@ -985,7 +985,7 @@
     o += L('M' + pt(q(-30, -55)) + 'l' + n(-1 * s) + ',' + n(5 * s) + 'M' + pt(q(-18, -58)) + 'l0,' + n(5 * s) + 'M' + pt(q(-6, -59)) + 'l0,' + n(5 * s) + 'M' + pt(q(6, -59)) + 'l0,' + n(5 * s) + 'M' + pt(q(18, -58)) + 'l0,' + n(5 * s) + 'M' + pt(q(30, -55)) + 'l' + n(1 * s) + ',' + n(5 * s), dk(roof, 0.2), 1.6 * s);
     return o + skull(c, x, y - 91 * s, 0.8 * s) + feathers(x + 5 * s, y - 88 * s, [WBP, '#e8e4d8'], 0.5 * s, 0.6);
   }
-  // Witherbark bone totem: purple-banded pole, hanging bones, stacked skulls under antlers
+  // Rotbough bone totem: purple-banded pole, hanging bones, stacked skulls under antlers
   function boneTotem(c, x, y, s) {
     var q = function (u, v) { return [x + u * s, y + v * s]; }, wood = '#5e4228', o = E(x, y + 2, 12 * s, 3 * s, '#000', 0, 0.28);
     o += body(c, pd([q(-4, 0), q(-3.4, -66), q(3.4, -66), q(4, 0)], true), wood, F(pd([q(1, -68), q(6, -68), q(6, 2), q(1.5, 2)], true), dk(wood, 0.3), 0.8) + R(x - 5 * s, y - 14 * s, 10 * s, 4 * s, WBP) + R(x - 5 * s, y - 36 * s, 10 * s, 3 * s, WBP), 1.6 * s);

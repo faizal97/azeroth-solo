@@ -1,4 +1,4 @@
-/* art_icons3.js - profession, material and crafted item icons plus gathering nodes for Azeroth Solo.
+/* art_icons3.js - profession, material and crafted item icons plus gathering nodes for Realm of Loner.
  * Loads AFTER art.js (and art_icons2.js / zone packs) and EXTENDS window.ART:
  *   ART.icon(key)  handles the keys below and falls through to the previous ART.icon for every other key.
  *                  Keys are appended to ART.keys.icons.

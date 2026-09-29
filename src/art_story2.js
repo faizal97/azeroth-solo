@@ -1,10 +1,10 @@
-/* art_story2.js — second story cutscene pack for Azeroth Solo (the Onyxia reveal and the Drowned Crown prologue).
+/* art_story2.js — second story cutscene pack for Realm of Loner (the Veshmira reveal and the Drowned Crown prologue).
  * Loads AFTER art_story.js and WRAPS window.ART.story: scene(key) / actor(key) draw the keys below and fall through
  * to the previous functions for every other key (prototype keys included). New keys are appended to
  * ART.story.keys.scenes / ART.story.keys.actors. Self-contained, never throws, ids unique per call (prefix s2<counter>_).
- *   scene  stormveil_storm  storm at sea, the Stormveil Isle and its drowned citadel rising, Onyxia flying south
- *   actor  windsor          Marshal Reginald Windsor, just out of the Blackrock Depths cells
- *   actor  aeldran          Prince Aeldran Tidecrown, drowned Highborne prince (original character)
+ *   scene  stormveil_storm  storm at sea, the Stormveil Isle and its drowned citadel rising, Veshmira flying south
+ *   actor  windsor          Marshal Gideon Hale, just out of the Cinderpeak Depths cells
+ *   actor  aeldran          Prince Aeldran Tidecrown, drowned Starborn prince (original character)
  *   actor  nalveshra        Nal'veshra the Deepmother, abyssal sea spirit (original character)
  * Style matches art_story.js: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients,
  * no text, no images, no filters. Scenes 480x270 opaque; actors 160x160 transparent, facing LEFT, feet on the bottom edge.
@@ -100,7 +100,7 @@
     }
     return o;
   }
-  // small gold lion-sun crest, as on the Stormwind banners in art_story.js
+  // small gold lion-sun crest, as on the Kingsmere banners in art_story.js
   function crest(cx, cy, r, gold) {
     var sp = '';
     for (var i = 0; i < 10; i++) {
@@ -125,7 +125,7 @@
     }
     return d + ' L-20,' + top + ' Z';
   }
-  // slender Highborne spire: shaft, balcony ring, leaf-shaped crown with swept fins, needle tip
+  // slender Starborn spire: shaft, balcony ring, leaf-shaped crown with swept fins, needle tip
   function spire(c, x, baseY, topY, w, K, broken, lit) {
     var o = '', h = baseY - topY, by = topY + h * 0.24, bh = h * 0.1, bw = w * 1.35, ys = topY + h * 0.56;
     var shaftTop = broken ? topY + h * 0.3 : by + bh * 0.55;
@@ -177,13 +177,13 @@
     var K = { stone: '#4e6c70', stone2: '#628284', verd: '#66c4ae', win: '#72f6e4', weed: '#26442a' };
     // sky
     o += R(0, 0, 480, 270, c.lin([[0, '#06090f'], [0.3, '#101824'], [0.55, '#26343f'], [0.63, '#34464f'], [1, '#34464f']]));
-    // lightning-lit hollows in the clouds (Onyxia's gap on the left, the strike on the right)
+    // lightning-lit hollows in the clouds (Veshmira's gap on the left, the strike on the right)
     o += E(112, 92, 130, 48, c.glow('#a8c4d8', 0.6));
     o += E(304, 58, 130, 84, c.glow('#c8e4ff', 0.6));
     // far cloud banks on the horizon
     o += P(cloudBand(r, 150, 10, 172, false, 34), c.lin([[0, '#4a5c6e'], [0.5, '#2c3a48'], [1, '#22303a']]), 1.2);
     o += P(cloudBand(r, 128, 16, 172, false, 46), c.lin([[0, '#3c4e60'], [0.5, '#24323e'], [1, '#1c2832']]), 1.4, 'opacity="0.8"');
-    // Onyxia far off, heading south
+    // Veshmira far off, heading south
     o += onyxiaFar(112, 94, 0.66, -10);
     // storm ceiling: two hanging layers, lit along their bellies
     var c1 = cloudBand(r, 60, 24, -10, true, 54);
@@ -385,7 +385,7 @@
     o += limb('M67,57 L54,72 L46,84', ROBE, 7);
     o += P('M50,80 L55,90 L45,93 L41,86 Z', c.cel(ROBE2), 1.2);
     o += E(44, 88, 4.4, 4, c.cel(SK), 1.2) + L('M41,87 L47,87 M41.2,89.6 L46.6,89.6', dk(SK, 0.35), 0.7);
-    // tall upswept Highborne pauldrons, barnacled
+    // tall upswept Starborn pauldrons, barnacled
     o += P('M88,48 C94,42 104,40 112,30 C114,40 112,52 108,58 C102,62 92,60 88,54 Z', c.cel(ARM, 0.3, 0.45), 1.6) + L('M91,49 C98,45 106,42 110,36', GOLD, 1.1);
     o += P('M50,62 C46,52 50,42 58,40 C54,36 50,32 46,24 C60,28 72,38 74,52 C70,62 58,66 50,62 Z', c.cel(ARM, 0.3, 0.45), 1.8);
     o += L('M52,58 C51,50 55,44 62,43 M50,32 C58,36 66,42 70,50', GOLD, 1.1);

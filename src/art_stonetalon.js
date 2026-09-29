@@ -1,7 +1,7 @@
-/* art_stonetalon.js — Stonetalon Mountains zone art for Azeroth Solo (Horde, levels 18-25: Malaka'jin, Sun Rock Retreat,
- * the Webwinder Path, Windshear Crag, Cragpool Lake, the Charred Vale, Grimtotem Post, Mirkfallon Lake).
+/* art_stonetalon.js — Highcrag Mountains zone art for Realm of Loner (Krugar, levels 18-25: Camp Vosh, Tallstone Retreat,
+ * the Silkline Path, Sawtooth Crag, Kettle Lake, the Screaming Vale, Sourhorn Post, Fogwater Lake).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Stonetalon keys and fall through to the previous functions for every other key. Keys are appended to
+ * Highcrag keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig, tauren tents/totems, the perch, the voodoo totem and the goblin industry pieces are shared
  * copies of art_barrens.js / art_mulgore.js / art_durotar.js / art_tirisfal.js so the zones match.
@@ -185,7 +185,7 @@
     var d = 'M' + pt([x - 10 * s, y]) + 'L' + pt([x - 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y]) + 'Z';
     return body(c, d, '#a8743e', L('M' + pt([x - 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y]) + 'M' + pt([x - 10 * s, y - 8 * s]) + 'L' + pt([x + 10 * s, y - 8 * s]), '#6a4424', 1.4 * s) + F('M' + pt([x + 4 * s, y - 18 * s]) + 'L' + pt([x + 12 * s, y - 18 * s]) + 'L' + pt([x + 12 * s, y + 2]) + 'L' + pt([x + 4 * s, y + 2]) + 'Z', '#6a4424', 0.5), 1.6 * s);
   }
-  // ---- Horde pieces (Durotar style) ----
+  // ---- Krugar pieces (Dunescar style) ----
   function brush(c, x, y, s, col) {
     col = col || '#6e4a26';
     var r = rng(Math.round(x * 7 + y * 13)), br = '', tw = '';
@@ -268,7 +268,7 @@
     return L(d, col, 1.6);
   }
 
-  // ---- mob pieces (Mulgore rig: biped + quilboar) ----
+  // ---- mob pieces (Greensward rig: biped + quilboar) ----
   var _cur = null; function c_(col) { return _cur ? _cur.cel(col) : col; }
   function hand(p, col) { return C(p[0], p[1], 4.4, col, 2); }
   function hoofs(x, y, col) { return P('M' + n(x - 5) + ',' + n(y - 5) + ' L' + n(x + 5) + ',' + n(y - 5) + ' L' + n(x + 4.5) + ',' + n(y + 1) + ' L' + n(x - 5.5) + ',' + n(y + 1) + ' Z', col || '#2d2420', 2) + L('M' + n(x - 0.5) + ',' + n(y - 3) + ' L' + n(x - 0.5) + ',' + n(y + 1), OL, 1.2); }
@@ -332,7 +332,7 @@
     if (o.top) s += o.top(c);
     return o.tf ? G(s, o.tf) : s;
   }
-  // ---- storm pieces (Durotar style) ----
+  // ---- storm pieces (Dunescar style) ----
   function spark(x, y, s, col) {
     return L('M' + pt([x - 5 * s, y - 6 * s]) + 'L' + pt([x, y - 1 * s]) + 'L' + pt([x - 2 * s, y + 1 * s]) + 'L' + pt([x + 4 * s, y + 7 * s]), '#fff', 3.2 * s) +
       L('M' + pt([x - 5 * s, y - 6 * s]) + 'L' + pt([x, y - 1 * s]) + 'L' + pt([x - 2 * s, y + 1 * s]) + 'L' + pt([x + 4 * s, y + 7 * s]), col, 1.6 * s);
@@ -715,7 +715,7 @@
       E(x - r * 0.4, y - r * 0.5, r * 0.26, r * 0.12, lt(st, 0.3), 0, 0.7), 2.4);
     return o;
   }
-  // Darkspear hut: round mud wall, tall ragged thatch cone, tusks either side of the door
+  // Kessari hut: round mud wall, tall ragged thatch cone, tusks either side of the door
   function trollHut(c, x, y, s, thatch) {
     thatch = thatch || '#c8a060';
     var wall = '#9a7048', o = E(x, y + 1, 32 * s, 5 * s, '#000', 0, 0.22), i;
@@ -829,7 +829,7 @@
       o += peaks(c, 11, 136, 56, 96, '#aca6c2', '#eeeaf4', 50, 80) + peaks(c, 13, 148, 30, 58, '#8e86a4', null, 40, 70);
       o += farPines(15, 148, '#3e5a4a', 26, 12, 24, 170, 420);
       o += ground(c, 146, '#bcae6c', '#8e8a4a');
-      // the Barrens road climbing in from the lower left toward the pass
+      // the Scrublands road climbing in from the lower left toward the pass
       o += F('M60,242 C90,210 150,190 210,178 C250,168 290,158 332,148 L350,148 C312,162 272,176 238,186 C182,202 142,222 132,242 Z', '#dcc890', 0.72);
       o += grass(17, 150, 238, '#8a7a34', 90, 0.6, 1.8, 1.1) + grass(19, 152, 238, '#c8c070', 50, 0.6, 1.6, 1) + pebbles(21, 170, 236, '#7a6a48', 14);
       o += crag(c, 18, 180, 64, 104, GRAN, 23) + crag(c, 392, 170, 52, 76, GRAND, 25);
@@ -987,7 +987,7 @@
   // ============================================================
   //  MOB PIECES
   // ============================================================
-  // ---- spider (Deepmoss, facing left) ----
+  // ---- spider (Deepvine, facing left) ----
   function spider(c, o) {
     var col = o.col, mk = o.mark || '#c8c090', legF = dk(col, 0.28), legN = lt(col, 0.06), s = shadow(c, 64, 56);
     if (o.back) s += o.back(c);
@@ -1096,7 +1096,7 @@
     s += gEye(c, 21, 74, 2.2, o.eye || gc) + L('M14,70 L26,71', OL, 2.2) + C(8, 79, 1, OL);
     return o.tf ? G(s, o.tf) : s;
   }
-  // ---- tauren (Grimtotem) ----
+  // ---- tauren (Sourhorn) ----
   function hornP(c, x, y, dir, col) {
     var d = 'M' + pt([x - 4, y + 2]) + 'C' + pt([x + dir * 14, y + 2]) + ' ' + pt([x + dir * 20, y - 8]) + ' ' + pt([x + dir * 16, y - 22]) + 'C' + pt([x + dir * 12, y - 12]) + ' ' + pt([x + dir * 6, y - 6]) + ' ' + pt([x + 4, y - 4]) + 'Z';
     return body(c, d, col, E(x + dir * 16, y - 20, 4, 6, dk(col, 0.45), 0, 0.9) + L('M' + pt([x + dir * 8, y + 1]) + 'L' + pt([x + dir * 10, y - 4]) + 'M' + pt([x + dir * 13, y - 1]) + 'L' + pt([x + dir * 15, y - 7]), dk(col, 0.3), 1), 1.8);
@@ -1270,7 +1270,7 @@
     return G(flame(c, x - 26, y - 1, 1.3, '#ff6a1a', '#ffe070'), 'rotate(-90 ' + n(x - 26) + ' ' + n(y - 1) + ')') + C(x - 34, y - 1, 16, glow(c, '#ff9a3a', 0.6)) +
       P(pd([[x + 4, y - 3], [x - 20, y - 3], [x - 26, y - 5], [x - 26, y + 3], [x - 20, y + 1], [x + 4, y + 3]], true), c.cel('#6a6660'), 1.6) + R(x - 10, y - 5, 4, 8, c.cel('#c89a3a'), 1);
   }
-  // ---- goblin (Venture Co.) — copy of the shared rig with more hat styles, grin and a free torso ----
+  // ---- goblin (Deepgold Company) — copy of the shared rig with more hat styles, grin and a free torso ----
   function gobHead(c, x, y, o) {
     var sk = o.skin || '#6aa84a', s = '';
     s += P('M' + pt([x + 8, y - 4]) + 'C' + pt([x + 18, y - 10]) + ' ' + pt([x + 26, y - 14]) + ' ' + pt([x + 32, y - 18]) + 'C' + pt([x + 28, y - 8]) + ' ' + pt([x + 20, y + 2]) + ' ' + pt([x + 10, y + 6]) + 'Z', c.cel(sk), 2) + F('M' + pt([x + 12, y - 2]) + 'C' + pt([x + 18, y - 6]) + ' ' + pt([x + 24, y - 10]) + ' ' + pt([x + 28, y - 14]) + 'C' + pt([x + 24, y - 6]) + ' ' + pt([x + 18, y]) + ' ' + pt([x + 12, y + 3]) + 'Z', '#c87a6a', 0.6);

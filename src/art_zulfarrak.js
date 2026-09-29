@@ -1,13 +1,13 @@
-/* art_zulfarrak.js — Zul'Farrak art for Azeroth Solo (dungeon, levels 44-48: the sandstone city of the Sandfury desert
- * trolls in Tanaris; the courtyard below the pyramid temple and the temple with its sacred pool, the blood drinkers,
- * shadowcasters and bandaged dead of the city, and the bosses Antu'sul, Theka the Martyr, Witch Doctor Zum'rah,
- * Gahz'rilla, Sergeant Bly and Chief Ukorz Sandscalp).
+/* art_zulfarrak.js — The Dune Temple art for Realm of Loner (dungeon, levels 44-48: the sandstone city of the Duneskin desert
+ * trolls in Sirocco; the courtyard below the pyramid temple and the temple with its sacred pool, the blood drinkers,
+ * shadowcasters and bandaged dead of the city, and the bosses Antuzz, Vessa the Martyr, Witch Doctor Zogo,
+ * Grumblescale, Sergeant Kipp and Chief Uzzak).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Zul'Farrak keys and fall through to the previous functions for every other key. Keys are appended to
+ * The Dune Temple keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig and the house-style scene pieces are shared copies of art_scarlet.js; toes, skull, feathers,
  * smoke, voodoo, the carved troll face and the goblin rig are copies of art_stranglethorn.js. The desert troll head,
- * the sandstone city pieces, the idols, the pool and the hydra are new here. The Sandfury look is deliberately apart
+ * the sandstone city pieces, the idols, the pool and the hydra are new here. The Duneskin look is deliberately apart
  * from the teal jungle trolls and the green forest trolls: sand-coloured skin, bleached hair swept back or in dreads,
  * red and gold paint, turquoise and gold jewellery.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,

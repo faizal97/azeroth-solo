@@ -1,7 +1,7 @@
-/* art_barrens.js — The Barrens zone art for Azeroth Solo (Horde savanna, levels 10-15: the Crossroads, Far Watch Post,
- * the Forgotten Pools, the Stagnant Oasis, the Razormane grounds, Thorn Hill).
+/* art_barrens.js — The Scrublands zone art for Realm of Loner (Krugar savanna, levels 10-15: Dustfort, Hollow Tower,
+ * the Silent Pools, the Sourwater Oasis, the Snoutspike grounds, Hoofbreak Hill).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Barrens keys and fall through to the previous functions for every other key. Keys are appended to
+ * Scrublands keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers and the biped/quilboar rig are shared copies of art_mulgore.js / art_durotar.js so the zones match.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
@@ -222,7 +222,7 @@
     var d = 'M' + pt([x - 10 * s, y]) + 'L' + pt([x - 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y]) + 'Z';
     return body(c, d, '#a8743e', L('M' + pt([x - 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y]) + 'M' + pt([x - 10 * s, y - 8 * s]) + 'L' + pt([x + 10 * s, y - 8 * s]), '#6a4424', 1.4 * s) + F('M' + pt([x + 4 * s, y - 18 * s]) + 'L' + pt([x + 12 * s, y - 18 * s]) + 'L' + pt([x + 12 * s, y + 2]) + 'L' + pt([x + 4 * s, y + 2]) + 'Z', '#6a4424', 0.5), 1.6 * s);
   }
-  // ---- Horde pieces (Durotar style) ----
+  // ---- Krugar pieces (Dunescar style) ----
   function brush(c, x, y, s, col) {
     col = col || '#6e4a26';
     var r = rng(Math.round(x * 7 + y * 13)), br = '', tw = '';
@@ -338,7 +338,7 @@
     return L(d, col, 1.6);
   }
 
-  // ---- mob pieces (Mulgore rig: biped + quilboar) ----
+  // ---- mob pieces (Greensward rig: biped + quilboar) ----
   var _cur = null; function c_(col) { return _cur ? _cur.cel(col) : col; }
   function hand(p, col) { return C(p[0], p[1], 4.4, col, 2); }
   function hoofs(x, y, col) { return P('M' + n(x - 5) + ',' + n(y - 5) + ' L' + n(x + 5) + ',' + n(y - 5) + ' L' + n(x + 4.5) + ',' + n(y + 1) + ' L' + n(x - 5.5) + ',' + n(y + 1) + ' Z', col || '#2d2420', 2) + L('M' + n(x - 0.5) + ',' + n(y - 3) + ' L' + n(x - 0.5) + ',' + n(y + 1), OL, 1.2); }
@@ -456,7 +456,7 @@
   }
   function thornBelt(y) { var s = L('M48,' + y + ' L80,' + y, '#4a3a22', 3.4); for (var x = 52; x < 80; x += 7) s += P('M' + (x - 2) + ',' + y + ' L' + x + ',' + (y + 6) + ' L' + (x + 2) + ',' + y + ' Z', '#ece2c0', 1); return s; }
   function boneNeck(x, y) { var s = L('M' + (x - 12) + ',' + y + ' Q' + x + ',' + (y + 10) + ' ' + (x + 12) + ',' + y, '#3a2a1a', 1.2); for (var i = -2; i <= 2; i++) s += P('M' + n(x + i * 4.4 - 1.3) + ',' + n(y + 4 - Math.abs(i) * 1.4) + ' L' + n(x + i * 4.4) + ',' + n(y + 10 - Math.abs(i) * 1.4) + ' L' + n(x + i * 4.4 + 1.3) + ',' + n(y + 4 - Math.abs(i) * 1.4) + ' Z', '#f4ecd6', 1); return s; }
-  // ---- storm pieces (Durotar style) ----
+  // ---- storm pieces (Dunescar style) ----
   function spark(x, y, s, col) {
     return L('M' + pt([x - 5 * s, y - 6 * s]) + 'L' + pt([x, y - 1 * s]) + 'L' + pt([x - 2 * s, y + 1 * s]) + 'L' + pt([x + 4 * s, y + 7 * s]), '#fff', 3.2 * s) +
       L('M' + pt([x - 5 * s, y - 6 * s]) + 'L' + pt([x, y - 1 * s]) + 'L' + pt([x - 2 * s, y + 1 * s]) + 'L' + pt([x + 4 * s, y + 7 * s]), col, 1.6 * s);
@@ -538,7 +538,7 @@
     }
     return E(x, y + 1, 12 * s, 2.4 * s, '#000', 0, 0.18) + L(d, OL, 3.2 * s) + L(d, col, 1.6 * s) + tops;
   }
-  // Kolkar centaur tent: patched hide dome, poles through the top, painted band
+  // Galloran centaur tent: patched hide dome, poles through the top, painted band
   function kolkarTent(c, x, y, s, hide) {
     hide = hide || '#c8a878';
     var o = E(x, y + 1, 32 * s, 5 * s, '#000', 0, 0.22);
@@ -603,7 +603,7 @@
     o += bramble(c, [x + 20 * s, y + 2], [x + 30 * s, y - 24 * s], [x + 50 * s, y - 30 * s], [x + 56 * s, y - 44 * s], 4 * s, '#4e3222', '#e4d4a8', seed + 7);
     return o;
   }
-  // Kolkar war totem: feathered pole, painted round hide shield, kodo horns on top
+  // Galloran war totem: feathered pole, painted round hide shield, kodo horns on top
   function kolkarTotem(c, x, y, h, s) {
     var top = y - h, o = E(x, y + 1, 10 * s, 3 * s, '#000', 0, 0.25);
     o += limb('M' + pt([x, y]) + 'L' + pt([x, top]), '#6a4424', 3.4 * s);
@@ -618,7 +618,7 @@
   }
 
   // ============================================================
-  //  SOUTHERN BARRENS PIECES (Sludge Fen, Lushwater Oasis, Bael'dun Digsite)
+  //  SOUTHERN BARRENS PIECES (Slick, Greenwell Oasis, Stonegrave Dig)
   // ============================================================
   var IRON = '#5e5a54', RUST = '#a0582a', OIL = '#121216';
   // (gear / rails / minecart are shared copies of art_mulgore.js)
@@ -653,7 +653,7 @@
       'M' + pt([x - 6 * s, y - 12 * s]) + 'L' + pt([x + 4.5 * s, y - 26 * s]) + 'M' + pt([x + 6 * s, y - 12 * s]) + 'L' + pt([x - 4.5 * s, y - 26 * s]) + 'M' + pt([x - 4 * s, y - 28 * s]) + 'L' + pt([x + 3 * s, y - 40 * s]);
     return L(d, col, 1.6 * s) + R(x - 3 * s, y - h - 3 * s, 6 * s, 4 * s, col);
   }
-  // Venture Co. oil derrick: tapered iron lattice, crown block, drill floor, tar stains (+ optional gusher)
+  // Deepgold Company oil derrick: tapered iron lattice, crown block, drill floor, tar stains (+ optional gusher)
   function derrick(c, x, y, s, gush) {
     var col = '#4e4a44', h = 112 * s, w0 = 22 * s, w1 = 5 * s, o = E(x, y + 2, 32 * s, 5 * s, '#000', 0, 0.3);
     var legs = 'M' + pt([x - w0, y]) + 'L' + pt([x - w1, y - h]) + 'M' + pt([x + w0, y]) + 'L' + pt([x + w1, y - h]), br = '';
@@ -797,7 +797,7 @@
     for (var i = 0; i < 9; i++) { var tx = x + (r() - 0.5) * 30 * s, ty = y - (r() * 5) * s; tw += 'M' + pt([tx - 5 * s, ty]) + 'l' + n(10 * s) + ',' + n((r() - 0.5) * 4 * s); }
     return o + body(c, bowl, '#8a6a3a', L(tw, '#5a3e22', 1 * s), 1.5 * s) + L(tw, '#b08a54', 0.8 * s, 0.8);
   }
-  // Ironforge banner: iron pole, gold finial, blue cloth with gold border + anvil emblem
+  // Keldrun banner: iron pole, gold finial, blue cloth with gold border + anvil emblem
   function dwBanner(c, x, y, h, col) {
     col = col || '#2a4a8e';
     var top = y - h, o = '', bw = 18, bh = h * 0.56, gold = '#e0b040';
@@ -1001,7 +1001,7 @@
       var o = barSky(c, 70, 38) + cloud(170, 34, 1.0, 0.75) + cloud(300, 22, 0.7, 0.7);
       o += hills(c, 111, 150, 8, '#cfc79c', 60) + farAcacia(40, 150, 1) + farAcacia(120, 149, 0.8) + haze(c, 152);
       o += farMesa(300, 104, 110, 30, '#d0947a', '#b87c64', null);
-      // the red ridge on the Durotar border
+      // the red ridge on the Dunescar border
       var rk = '#b4623a';
       o += body(c, 'M206,160 C222,150 236,134 248,118 C256,108 262,102 272,100 L406,98 L406,160 Z', rk,
         F('M340,98 L406,98 L406,162 L360,162 C356,140 350,118 340,98 Z', dk(rk, 0.28), 0.85) + L('M236,134 Q300,130 406,128 M222,150 Q300,146 406,146 M256,112 Q320,112 406,112', dk(rk, 0.22), 1.6, 0.7) +
@@ -1147,7 +1147,7 @@
       o += tufts(c, [[16, 236, 1], [390, 238, 1], [160, 236, 0.8]], TUFT);
       return o + vignette(c);
     },
-    // Wailing Caverns: the cave network under the oasis (dungeon: party left, enemies right, lower-middle kept open)
+    // The Dreaming Caves: the cave network under the oasis (dungeon: party left, enemies right, lower-middle kept open)
     wailing_caverns: function (c) {
       var st = '#343c36', o = R(0, 0, 400, 240, c.lg([[0, '#0c1410'], [0.5, '#1a2820'], [1, '#0e1610']]));
       o += C(200, 118, 170, glow(c, '#3a8a5a', 0.3));
@@ -1431,7 +1431,7 @@
     s += arc('M' + pt([x, y - 18]) + 'L' + pt([x - 8, y - 26]) + 'L' + pt([x - 5, y - 30]) + 'L' + pt([x - 14, y - 38])) + arc('M' + pt([x, y - 18]) + 'L' + pt([x + 7, y - 24]) + 'L' + pt([x + 5, y - 29]) + 'L' + pt([x + 13, y - 34]), 0.9) + arc('M' + pt([x - 2, y - 18]) + 'L' + pt([x - 12, y - 16]) + 'L' + pt([x - 14, y - 20]) + 'L' + pt([x - 22, y - 18]), 0.8);
     return s;
   }
-  // ---- thunder lizard (Durotar family, heavier) ----
+  // ---- thunder lizard (Dunescar family, heavier) ----
   function thunderLizard(c, o) {
     var col = o.col, dcol = dk(col, 0.3), pl = o.plate, s = shadow(c, 64, 56), ft = '#22242e';
     s += limb('M58,92 L62,106 L58,116', dk(col, 0.25), 11) + paw(58, 121, ft) + limb('M100,90 L108,104 L104,116', dk(col, 0.25), 11) + paw(104, 121, ft);
@@ -1457,7 +1457,7 @@
     return s;
   }
 
-  // ---- goblin (shared copy of the art_mulgore.js Venture Co. rig; adds `specs`: round goggles worn over the eye) ----
+  // ---- goblin (shared copy of the art_mulgore.js Deepgold Company rig; adds `specs`: round goggles worn over the eye) ----
   function goblinHead(c, x, y, o) {
     var sk = o.skin || '#6aa84a', s = '';
     s += P('M' + pt([x + 8, y - 4]) + 'C' + pt([x + 18, y - 10]) + ' ' + pt([x + 26, y - 14]) + ' ' + pt([x + 32, y - 18]) + 'C' + pt([x + 28, y - 8]) + ' ' + pt([x + 20, y + 2]) + ' ' + pt([x + 10, y + 6]) + 'Z', c.cel(sk), 2) + F('M' + pt([x + 12, y - 2]) + 'C' + pt([x + 18, y - 6]) + ' ' + pt([x + 24, y - 10]) + ' ' + pt([x + 28, y - 14]) + 'C' + pt([x + 24, y - 6]) + ' ' + pt([x + 18, y]) + ' ' + pt([x + 12, y + 3]) + 'Z', '#c87a6a', 0.6);
@@ -1514,7 +1514,7 @@
   }
   function spark4(x, y, r, col) { return F('M' + pt([x, y - r * 2]) + 'L' + pt([x + r * 0.4, y - r * 0.4]) + 'L' + pt([x + r * 2, y]) + 'L' + pt([x + r * 0.4, y + r * 0.4]) + 'L' + pt([x, y + r * 2]) + 'L' + pt([x - r * 0.4, y + r * 0.4]) + 'L' + pt([x - r * 2, y]) + 'L' + pt([x - r * 0.4, y - r * 0.4]) + 'Z', col); }
 
-  // ---- dwarf (Ironforge, facing left: squat, broad, big braided beard over the chest) ----
+  // ---- dwarf (Keldrun, facing left: squat, broad, big braided beard over the chest) ----
   function dwarfHead(c, x, y, o) {
     var sk = o.skin || '#e09c78', hc = o.hair || '#7a4422', band = o.band || '#d6a53c', bl = o.beardLen || 30, s = '';
     s += E(x + 10, y + 1, 3.4, 4.6, c.cel(sk), 1.8);
@@ -1625,7 +1625,7 @@
   }
 
   // ============================================================
-  //  WAILING CAVERNS MOB PIECES (Druids of the Fang, deviate beasts)
+  //  WAILING CAVERNS MOB PIECES (Druids of the Coil, deviate beasts)
   // ============================================================
   function vglow(c, x, y, r, col, a) { return C(x, y, r, glow(c, col, a == null ? 0.7 : a)); }
   // green nightmare-lightning arc
@@ -1956,7 +1956,7 @@
         wNear: function (c, p) { return rifle(c, p, 30, 0.95); }
       });
     },
-    // ---------------- Wailing Caverns ----------------
+    // ---------------- The Dreaming Caves ----------------
     druid_of_the_fang: function (c) {
       return fangDruid(c, {
         skin: '#8a6ab8', robe: '#3f7040', hood: '#5a8a3a', hoodBelly: '#dcd490', eye: '#9cff5a', hair: '#2e8a6a', trim: '#6a4424',

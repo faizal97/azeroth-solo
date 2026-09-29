@@ -1,8 +1,8 @@
-/* art_ashenvale.js — Ashenvale zone art for Azeroth Solo (contested, levels 22-30: Astranaar, Splintertree Post,
- * the Zoram Strand, Mystral Lake, Thistlefur Village, the Howling Vale, Satyrnaar, Felfire Hill) plus the
- * Blackfathom Deeps dungeon (flooded temple, altar depths).
+/* art_ashenvale.js — Elderglen zone art for Realm of Loner (contested, levels 22-30: Ilvaris, Stumpwatch,
+ * the Coral Strand, Lake Aurel, Briarpelt Village, Grey Wolf Vale, Hornhold, Gloomfire Hill) plus the
+ * The Tidehollow Deeps dungeon (flooded temple, altar depths).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Ashenvale keys and fall through to the previous functions for every other key. Keys are appended to
+ * Elderglen keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig, the bear, wolf, turtle and murloc rigs and the house-style scene pieces are shared copies of
  * art_hillsbrad.js / art_barrens.js / art_redridge.js so the zones match.
@@ -457,7 +457,7 @@
     for (var i = 0; i < (cnt || 26); i++) { var yy = y0 + 3 + r() * (y1 - y0 - 6), t = (yy - y0) / (y1 - y0), w = 8 + t * 26, xx = r() * 400; d += 'M' + pt([xx - w, yy]) + 'L' + pt([xx + w, yy]); }
     return o + L(d, lt(top, 0.45), 1.2, 0.55);
   }
-  // ---- Horde pieces ----
+  // ---- Krugar pieces ----
   function palisade(c, x0, x1, y, h, col, seed) {
     col = col || HWOOD; var r = rng(seed || 5), o = '', lw = 9;
     for (var x = x0; x < x1; x += lw) {
@@ -484,7 +484,7 @@
     });
     return o;
   }
-  // Horde banner: spiked pole, ragged red cloth with a black three-claw mark
+  // Krugar banner: spiked pole, ragged red cloth with a black three-claw mark
   function hBanner(c, x, y, h, s) {
     s = s || 1; var top = y - h, bw = 16 * s, bh = h * 0.58, o = '';
     o += limb('M' + pt([x, y]) + 'L' + pt([x, top - 5 * s]), '#4a3020', 2.4 * s) + P(pd([[x - 2.4 * s, top - 4 * s], [x, top - 13 * s], [x + 2.4 * s, top - 4 * s]], true), c.cel('#c8c0a8'), 1 * s);
@@ -1103,7 +1103,7 @@
     });
   }
 
-  // ---- night elf head (Kelris) ----
+  // ---- night elf head (Oreth) ----
   function neHead(c, x, y, o) {
     var sk = o.skin || '#8a78b8', hc = o.hairCol || '#2a4a5a', s = '';
     s += body(c, 'M' + pt([x - 4, y - 12]) + 'C' + pt([x + 12, y - 18]) + ' ' + pt([x + 20, y - 4]) + ' ' + pt([x + 20, y + 10]) + 'C' + pt([x + 22, y + 22]) + ' ' + pt([x + 24, y + 30]) + ' ' + pt([x + 28, y + 36]) + 'L' + pt([x + 12, y + 30]) + 'C' + pt([x + 10, y + 20]) + ' ' + pt([x + 8, y + 8]) + ' ' + pt([x, y]) + 'Z', hc, L('M' + pt([x + 10, y - 8]) + 'C' + pt([x + 16, y + 4]) + ' ' + pt([x + 16, y + 18]) + ' ' + pt([x + 22, y + 30]), lt(hc, 0.25), 1.1, 0.8), 2);

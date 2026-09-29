@@ -1,4 +1,4 @@
-// EXPANSION: The Sunken Archive (Alliance dungeon, level 60). The great library of Sael'anor, drowned for ten thousand
+// EXPANSION: The Sunken Archive (Accord dungeon, level 60). The great library of Sael'anor, drowned for ten thousand
 // years and still kept by its dead. Entered from the Archive Steps on the Tidewatch Coast.
 (function (root) {
   const D = root.D;
@@ -43,6 +43,6 @@
     ] },
   });
   Object.assign(D.ACTIVITIES, {
-    sunken_archive: { name: 'The Sunken Archive', dungeon: 'sunken_archive', where: 'archive_steps', size: 5, minLvl: 60, maxLvl: 60, desc: 'Dungeon on the Tidewatch Coast. 5 players. Alliance.' },
+    sunken_archive: { name: 'The Sunken Archive', dungeon: 'sunken_archive', where: 'archive_steps', size: 5, minLvl: 60, maxLvl: 60, desc: 'Dungeon on the Tidewatch Coast. 5 players. Accord.' },
   });
 })(typeof window !== 'undefined' ? window : globalThis);

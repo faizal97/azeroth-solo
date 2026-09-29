@@ -1,4 +1,4 @@
-/* art_shalzua.js — Temple of Shal'zua art for Azeroth Solo (expansion "The Drowned Crown", Horde dungeon, level 60:
+/* art_shalzua.js — Temple of Shal'zua art for Realm of Loner (expansion "The Drowned Crown", Krugar dungeon, level 60:
  * the Wavebreaker trolls' temple to the sea loa Shal'zua, drowned for ten thousand years and risen with the Skullreef
  * Isles; the flooded courtyard of sacred tide pools under a storm sky, the drowned shrine hall with its serpent idols,
  * shell mosaic and offerings, and the loa's altar set in the lower jaw of a giant carved sea-serpent head over dark
@@ -10,7 +10,7 @@
  * Helpers, the biped rig and the house-style scene pieces are shared copies of art_scholomance.js; the troll rig,
  * toes, stone faces and merlons are copies of art_zulfarrak.js. The drowned troll head, the shells, barnacles, kelp,
  * coral, tide pools, clam lamps, serpent idols and the carved serpent maw are new here.
- * The Wavebreaker look is kept apart from the saturated teal Stranglethorn trolls and the sand-coloured Sandfury:
+ * The Wavebreaker look is kept apart from the saturated teal Vinewild trolls and the sand-coloured Duneskin:
  * pale washed-out teal skin with darker drowned mottles, barnacles on ears, cheeks, tusks and shoulders, dark green
  * seaweed dreads with kelp floats, teal glowing eyes, kelp skirts, shell and pearl jewellery and coral weapons.
  * The Avatar is a water body (not a naga's flesh) with abyssal violet veins and extra violet eyes.

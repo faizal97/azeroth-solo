@@ -49,17 +49,17 @@
     undead: { active: 'will_forsaken', passives: { resist: { shadow: 10 }, cannibalize: true }, text: ['Shadow damage taken −10%', 'Cannibalize: heal 15% after killing a humanoid or undead'] },
   };
 
-  D.FACTIONS = { alliance: { name: 'Alliance', color: '#3f7fff' }, horde: { name: 'Horde', color: '#d23a2a' } };
+  D.FACTIONS = { alliance: { name: 'Accord', color: '#3f7fff' }, horde: { name: 'Krugar', color: '#d23a2a' } };
 
   D.RACES = {
-    human: { name: 'Human', faction: 'alliance', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'northshire_abbey', startZone: 'Northshire Valley' },
-    dwarf: { name: 'Dwarf', faction: 'alliance', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'anvilmar', startZone: 'Coldridge Valley' },
-    gnome: { name: 'Gnome', faction: 'alliance', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'anvilmar', startZone: 'Coldridge Valley' },
-    nightelf: { name: 'Night Elf', faction: 'alliance', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'shadowglen', startZone: 'Shadowglen' },
-    orc: { name: 'Orc', faction: 'horde', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'valley_of_trials', startZone: 'Valley of Trials' },
-    troll: { name: 'Troll', faction: 'horde', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'valley_of_trials', startZone: 'Valley of Trials' },
-    tauren: { name: 'Tauren', faction: 'horde', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'camp_narache', startZone: 'Camp Narache' },
-    undead: { name: 'Undead', faction: 'horde', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'deathknell', startZone: 'Deathknell' },
+    human: { name: 'Human', faction: 'alliance', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'northshire_abbey', startZone: 'Halden Vale' },
+    dwarf: { name: 'Dwarf', faction: 'alliance', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'anvilmar', startZone: 'Rimefold Valley' },
+    gnome: { name: 'Gnome', faction: 'alliance', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'anvilmar', startZone: 'Rimefold Valley' },
+    nightelf: { name: 'Wood Elf', faction: 'alliance', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'shadowglen', startZone: 'Dewfern Glade' },
+    orc: { name: 'Orc', faction: 'horde', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'valley_of_trials', startZone: 'The Blooding Grounds' },
+    troll: { name: 'Troll', faction: 'horde', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'valley_of_trials', startZone: 'The Blooding Grounds' },
+    tauren: { name: 'Hornfolk', faction: 'horde', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'camp_narache', startZone: 'Calf Hill Camp' },
+    undead: { name: 'Undead', faction: 'horde', classes: ['warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid'], start: 'deathknell', startZone: 'Last Bell' },
   };
 
   D.PETS = {
@@ -85,18 +85,18 @@
     hamstring: { name: 'Hamstring', cls: 'warrior', lvl: 12, cost: 10, cd: 0, target: 'enemy', dmg: { base: [5, 5], perLvl: 0.6, school: 'physical' }, slow: { pct: 50, dur: 15 }, desc: 'Maims the enemy for {b} damage and slows its attacks by 50% for 15 sec.' },
     cleave: { name: 'Cleave', cls: 'warrior', lvl: 14, cost: 20, cd: 6, target: 'aoe', dmg: { base: [12, 12], perLvl: 1.5, school: 'physical' }, threat: 1.2, desc: 'A sweeping strike that hits every enemy in front of you for {b}.' },
     // paladin
-    seal_righteousness: { name: 'Seal of Righteousness', cls: 'paladin', lvl: 1, cost: 20, costPerLvl: 3, cd: 0, target: 'self', combatOnly: true, buff: { id: 'seal', dur: 30, seal: { base: 3, perLvl: 1.1 } }, desc: 'Each melee hit deals extra Holy damage for 30 sec. Judgement releases it.' },
+    seal_righteousness: { name: 'Oath of Righteousness', cls: 'paladin', lvl: 1, cost: 20, costPerLvl: 3, cd: 0, target: 'self', combatOnly: true, buff: { id: 'seal', dur: 30, seal: { base: 3, perLvl: 1.1 } }, desc: 'Each melee hit deals extra Holy damage for 30 sec. Verdict releases it.' },
     holy_light: { name: 'Holy Light', cls: 'paladin', lvl: 1, cost: 35, costPerLvl: 5, cd: 0, cast: 2.5, target: 'ally', heal: { base: [42, 51], perLvl: 8, coef: 0.71 }, desc: 'Heals a friendly target for {h}.' },
-    devotion_aura: { name: 'Devotion Aura', cls: 'paladin', lvl: 1, cost: 0, cd: 0, target: 'party', buff: { id: 'devotion_aura', dur: 1800, stats: { armor: 35 }, perLvl: { armor: 8 } }, desc: 'Raises the armor of your party by {armor}.' },
-    judgement: { name: 'Judgement', cls: 'paladin', lvl: 4, cost: 25, costPerLvl: 2, cd: 10, target: 'enemy', needSeal: true, dmg: { base: [15, 18], perLvl: 3.4, coef: 0.45, school: 'holy' }, threat: 1.5, desc: 'Unleashes your seal on the enemy for {b} Holy damage.' },
+    devotion_aura: { name: 'Steadfast Aura', cls: 'paladin', lvl: 1, cost: 0, cd: 0, target: 'party', buff: { id: 'devotion_aura', dur: 1800, stats: { armor: 35 }, perLvl: { armor: 8 } }, desc: 'Raises the armor of your party by {armor}.' },
+    judgement: { name: 'Verdict', cls: 'paladin', lvl: 4, cost: 25, costPerLvl: 2, cd: 10, target: 'enemy', needSeal: true, dmg: { base: [15, 18], perLvl: 3.4, coef: 0.45, school: 'holy' }, threat: 1.5, desc: 'Unleashes your seal on the enemy for {b} Holy damage.' },
     divine_protection: { name: 'Divine Protection', cls: 'paladin', lvl: 6, cost: 15, costPerLvl: 2, cd: 300, target: 'self', gcd: false, combatOnly: true, buff: { id: 'divine_protection', dur: 6, immune: true }, desc: 'You are immune to all damage for 6 sec. 5 min cooldown.' },
-    hammer_justice: { name: 'Hammer of Justice', cls: 'paladin', lvl: 8, cost: 30, costPerLvl: 2, cd: 60, target: 'enemy', stun: 3, desc: 'Stuns the target for 3 sec.' },
+    hammer_justice: { name: 'Hammer of Order', cls: 'paladin', lvl: 8, cost: 30, costPerLvl: 2, cd: 60, target: 'enemy', stun: 3, desc: 'Stuns the target for 3 sec.' },
     blessing_might: { name: 'Blessing of Might', cls: 'paladin', lvl: 12, cost: 30, costPerLvl: 2, cd: 0, target: 'party', buff: { id: 'blessing_might', dur: 300, stats: { ap: 20 }, perLvl: { ap: 3 } }, desc: 'Raises the attack power of your party by {ap} for 5 min.' },
     lay_on_hands: { name: 'Lay on Hands', cls: 'paladin', lvl: 14, cost: 0, cd: 600, target: 'ally', heal: { base: [400, 400], perLvl: 30 }, desc: 'Heals a friendly target for {h}. 10 min cooldown.' },
     // hunter
-    raptor_strike: { name: 'Raptor Strike', cls: 'hunter', lvl: 1, cost: 15, costPerLvl: 2, cd: 6, target: 'enemy', dmg: { weapon: true, bonus: [5, 5], perLvl: 1 }, desc: 'A strong melee attack that adds {b} damage.' },
-    serpent_sting: { name: 'Serpent Sting', cls: 'hunter', lvl: 4, cost: 15, costPerLvl: 2, cd: 0, target: 'enemy', dot: { id: 'serpent_sting', ticks: 5, every: 3, dmg: 4, perLvl: 1.2, school: 'nature' }, desc: 'Stings the target for {d} Nature damage over 15 sec.' },
-    aspect_monkey: { name: 'Aspect of the Monkey', cls: 'hunter', lvl: 4, cost: 20, cd: 0, target: 'self', buff: { id: 'aspect_monkey', dur: 1800, stats: { dodge: 8 } }, desc: 'Raises your chance to dodge by 8%.' },
+    raptor_strike: { name: 'Savage Strike', cls: 'hunter', lvl: 1, cost: 15, costPerLvl: 2, cd: 6, target: 'enemy', dmg: { weapon: true, bonus: [5, 5], perLvl: 1 }, desc: 'A strong melee attack that adds {b} damage.' },
+    serpent_sting: { name: 'Venom Sting', cls: 'hunter', lvl: 4, cost: 15, costPerLvl: 2, cd: 0, target: 'enemy', dot: { id: 'serpent_sting', ticks: 5, every: 3, dmg: 4, perLvl: 1.2, school: 'nature' }, desc: 'Stings the target for {d} Nature damage over 15 sec.' },
+    aspect_monkey: { name: 'Spirit of the Monkey', cls: 'hunter', lvl: 4, cost: 20, cd: 0, target: 'self', buff: { id: 'aspect_monkey', dur: 1800, stats: { dodge: 8 } }, desc: 'Raises your chance to dodge by 8%.' },
     arcane_shot: { name: 'Arcane Shot', cls: 'hunter', lvl: 6, cost: 25, costPerLvl: 3, cd: 6, target: 'enemy', dmg: { base: [13, 13], perLvl: 2.4, rapCoef: 0.15, school: 'arcane' }, desc: 'An instant shot for {b} Arcane damage.' },
     hunters_mark: { name: "Hunter's Mark", cls: 'hunter', lvl: 6, cost: 15, costPerLvl: 1, cd: 0, target: 'enemy', debuff: { id: 'hunters_mark', dur: 120 }, desc: 'Marks the target. You and your pet deal 10% more damage to it.' },
     concussive_shot: { name: 'Concussive Shot', cls: 'hunter', lvl: 8, cost: 15, costPerLvl: 2, cd: 12, target: 'enemy', slow: { pct: 50, dur: 4 }, desc: 'Dazes the target, slowing its attacks by 50% for 4 sec.' },
@@ -113,15 +113,15 @@
     // priest
     smite: { name: 'Smite', cls: 'priest', lvl: 1, cost: 20, costPerLvl: 3, cd: 0, cast: 2, target: 'enemy', dmg: { base: [15, 20], perLvl: 2.8, coef: 0.71, school: 'holy' }, desc: 'Smite an enemy for {b} Holy damage.' },
     lesser_heal: { name: 'Lesser Heal', cls: 'priest', lvl: 1, cost: 30, costPerLvl: 4, cd: 0, cast: 2, target: 'ally', heal: { base: [46, 56], perLvl: 7, coef: 0.85 }, desc: 'Heal a friendly target for {h}.' },
-    pw_fortitude: { name: 'Power Word: Fortitude', cls: 'priest', lvl: 1, cost: 60, cd: 0, target: 'party', buff: { id: 'pw_fortitude', dur: 1800, stats: { sta: 3 }, perLvl: { sta: 0.8 } }, desc: 'Power infuses your party, raising Stamina by {sta}.' },
-    sw_pain: { name: 'Shadow Word: Pain', cls: 'priest', lvl: 4, cost: 25, costPerLvl: 3, cd: 0, target: 'enemy', dot: { id: 'sw_pain', ticks: 6, every: 3, dmg: 5, perLvl: 1.1, coef: 0.1, school: 'shadow' }, desc: 'A word of darkness that deals {d} Shadow damage over 18 sec.' },
-    pw_shield: { name: 'Power Word: Shield', cls: 'priest', lvl: 6, cost: 45, costPerLvl: 4, cd: 4, target: 'ally', shield: { base: 44, perLvl: 6, coef: 0.1, dur: 30 }, weakened: 15, desc: 'Absorbs {s} damage for 30 sec. The target cannot be shielded again for 15 sec.' },
+    pw_fortitude: { name: 'Word of Fortitude', cls: 'priest', lvl: 1, cost: 60, cd: 0, target: 'party', buff: { id: 'pw_fortitude', dur: 1800, stats: { sta: 3 }, perLvl: { sta: 0.8 } }, desc: 'Power infuses your party, raising Stamina by {sta}.' },
+    sw_pain: { name: 'Word of Pain', cls: 'priest', lvl: 4, cost: 25, costPerLvl: 3, cd: 0, target: 'enemy', dot: { id: 'sw_pain', ticks: 6, every: 3, dmg: 5, perLvl: 1.1, coef: 0.1, school: 'shadow' }, desc: 'A word of darkness that deals {d} Shadow damage over 18 sec.' },
+    pw_shield: { name: 'Word of Warding', cls: 'priest', lvl: 6, cost: 45, costPerLvl: 4, cd: 4, target: 'ally', shield: { base: 44, perLvl: 6, coef: 0.1, dur: 30 }, weakened: 15, desc: 'Absorbs {s} damage for 30 sec. The target cannot be shielded again for 15 sec.' },
     renew: { name: 'Renew', cls: 'priest', lvl: 8, cost: 40, costPerLvl: 4, cd: 0, target: 'ally', hot: { id: 'renew', ticks: 5, every: 3, heal: 9, perLvl: 1.6, coef: 0.2 }, desc: 'Heals the target for {hh} over 15 sec.' },
     mind_blast: { name: 'Mind Blast', cls: 'priest', lvl: 12, cost: 50, costPerLvl: 4, cd: 8, cast: 1.5, target: 'enemy', dmg: { base: [36, 40], perLvl: 3, coef: 0.43, school: 'shadow' }, threat: 1.5, desc: "Blasts the target's mind for {b} Shadow damage." },
     inner_fire: { name: 'Inner Fire', cls: 'priest', lvl: 14, cost: 60, costPerLvl: 2, cd: 0, target: 'self', buff: { id: 'inner_fire', dur: 600, stats: { armor: 150, ap: 10 }, perLvl: { armor: 10, ap: 1 } }, desc: 'Raises your armor by {armor} and your attack power for 10 min.' },
     // shaman
     lightning_bolt: { name: 'Lightning Bolt', cls: 'shaman', lvl: 1, cost: 15, costPerLvl: 3, cd: 0, cast: 2, target: 'enemy', dmg: { base: [13, 16], perLvl: 3, coef: 0.79, school: 'nature' }, desc: 'Casts a bolt of lightning for {b} Nature damage.' },
-    rockbiter_weapon: { name: 'Rockbiter Weapon', cls: 'shaman', lvl: 1, cost: 20, costPerLvl: 2, cd: 0, target: 'self', buff: { id: 'rockbiter', dur: 300, seal: { base: 2, perLvl: 1, school: 'physical' } }, desc: 'Imbues your weapon with earth for 5 min: each hit deals extra damage.' },
+    rockbiter_weapon: { name: 'Earthen Weapon', cls: 'shaman', lvl: 1, cost: 20, costPerLvl: 2, cd: 0, target: 'self', buff: { id: 'rockbiter', dur: 300, seal: { base: 2, perLvl: 1, school: 'physical' } }, desc: 'Imbues your weapon with earth for 5 min: each hit deals extra damage.' },
     healing_wave: { name: 'Healing Wave', cls: 'shaman', lvl: 1, cost: 25, costPerLvl: 5, cd: 0, cast: 2.5, target: 'ally', heal: { base: [36, 47], perLvl: 8, coef: 0.86 }, desc: 'Heals a friendly target for {h}.' },
     earth_shock: { name: 'Earth Shock', cls: 'shaman', lvl: 4, cost: 25, costPerLvl: 3, cd: 6, target: 'enemy', dmg: { base: [19, 22], perLvl: 2.5, coef: 0.39, school: 'nature' }, threat: 2, desc: 'Instantly shocks the target for {b} Nature damage.' },
     stoneskin_totem: { name: 'Stoneskin Totem', cls: 'shaman', lvl: 4, cost: 25, costPerLvl: 2, cd: 0, target: 'party', buff: { id: 'stoneskin', dur: 120, stats: { armor: 25 }, perLvl: { armor: 6 } }, desc: "Drops a totem that raises your party's armor by {armor}." },
@@ -149,8 +149,8 @@
     // druid
     wrath: { name: 'Wrath', cls: 'druid', lvl: 1, cost: 20, costPerLvl: 3, cd: 0, cast: 2, target: 'enemy', dmg: { base: [13, 16], perLvl: 2.9, coef: 0.57, school: 'nature' }, desc: 'Hurls a bolt of nature for {b} Nature damage.' },
     healing_touch: { name: 'Healing Touch', cls: 'druid', lvl: 1, cost: 25, costPerLvl: 5, cd: 0, cast: 2.5, target: 'ally', heal: { base: [40, 55], perLvl: 8, coef: 0.8 }, desc: 'Heals a friendly target for {h}.' },
-    mark_wild: { name: 'Mark of the Wild', cls: 'druid', lvl: 1, cost: 20, costPerLvl: 3, cd: 0, target: 'party', buff: { id: 'mark_wild', dur: 1800, stats: { armor: 25, str: 1, agi: 1, sta: 1, int: 1, spi: 1 }, perLvl: { armor: 5, str: 0.2, agi: 0.2, sta: 0.2, int: 0.2, spi: 0.2 } }, desc: 'Raises armor by {armor} and all attributes for your party.' },
-    moonfire: { name: 'Moonfire', cls: 'druid', lvl: 4, cost: 25, costPerLvl: 3, cd: 0, target: 'enemy', dmg: { base: [9, 12], perLvl: 1.6, coef: 0.15, school: 'arcane' }, dot: { id: 'moonfire', ticks: 3, every: 3, dmg: 3, perLvl: 0.8, school: 'arcane' }, desc: 'Burns the enemy for {b} Arcane damage and {d} more over 9 sec.' },
+    mark_wild: { name: 'Mark of the Grove', cls: 'druid', lvl: 1, cost: 20, costPerLvl: 3, cd: 0, target: 'party', buff: { id: 'mark_wild', dur: 1800, stats: { armor: 25, str: 1, agi: 1, sta: 1, int: 1, spi: 1 }, perLvl: { armor: 5, str: 0.2, agi: 0.2, sta: 0.2, int: 0.2, spi: 0.2 } }, desc: 'Raises armor by {armor} and all attributes for your party.' },
+    moonfire: { name: 'Moonbeam', cls: 'druid', lvl: 4, cost: 25, costPerLvl: 3, cd: 0, target: 'enemy', dmg: { base: [9, 12], perLvl: 1.6, coef: 0.15, school: 'arcane' }, dot: { id: 'moonfire', ticks: 3, every: 3, dmg: 3, perLvl: 0.8, school: 'arcane' }, desc: 'Burns the enemy for {b} Arcane damage and {d} more over 9 sec.' },
     rejuvenation: { name: 'Rejuvenation', cls: 'druid', lvl: 4, cost: 25, costPerLvl: 3, cd: 0, target: 'ally', hot: { id: 'rejuvenation', ticks: 4, every: 3, heal: 8, perLvl: 1.8, coef: 0.2 }, desc: 'Heals the target for {hh} over 12 sec.' },
     bear_form: { name: 'Bear Form', cls: 'druid', lvl: 10, cost: 55, cd: 0, target: 'self', shapeshift: 'bear', combatOnly: true, desc: 'Shapeshift into a bear: much more armor and health, attacks use rage. Cast again to change back.' },
     maul: { name: 'Maul', cls: 'druid', lvl: 10, cost: 15, cd: 0, target: 'enemy', form: 'bear', dmg: { weapon: true, bonus: [18, 18], perLvl: 1.5 }, threat: 1.75, desc: 'A heavy swipe that adds {b} damage and extra threat.' },
@@ -167,7 +167,7 @@
     rupture: { name: 'Rupture', cls: 'rogue', lvl: 16, cost: 25, cd: 0, target: 'enemy', gcdLen: 1.0, finisher: true, dot: { id: 'rupture', ticks: 5, every: 2, dmg: 9, perLvl: 1.6, school: 'physical' }, desc: 'Finishing move. The target bleeds for {d} damage over 10 sec.' },
     kidney_shot: { name: 'Kidney Shot', cls: 'rogue', lvl: 18, cost: 25, cd: 20, target: 'enemy', gcdLen: 1.0, finisher: true, stun: 3, desc: 'Finishing move. Stuns the target for 3 sec. 20 sec cooldown.' },
     exorcism: { name: 'Exorcism', cls: 'paladin', lvl: 16, cost: 50, costPerLvl: 3, cd: 15, target: 'enemy', dmg: { base: [45, 52], perLvl: 3, coef: 0.43, school: 'holy' }, desc: 'Blasts the enemy with holy light for {b} Holy damage. 15 sec cooldown.' },
-    retribution_aura: { name: 'Retribution Aura', cls: 'paladin', lvl: 18, cost: 0, cd: 0, target: 'party', buff: { id: 'retribution_aura', dur: 1800, thorns: { base: 5, perLvl: 0.6, charges: 60 } }, desc: 'Your party deals Holy damage to every enemy that hits them in melee.' },
+    retribution_aura: { name: 'Thorned Aura', cls: 'paladin', lvl: 18, cost: 0, cd: 0, target: 'party', buff: { id: 'retribution_aura', dur: 1800, thorns: { base: 5, perLvl: 0.6, charges: 60 } }, desc: 'Your party deals Holy damage to every enemy that hits them in melee.' },
     rain_of_fire: { name: 'Rain of Fire', cls: 'warlock', lvl: 16, cost: 110, costPerLvl: 4, cd: 0, cast: 3, target: 'aoe', dmg: { base: [45, 52], perLvl: 2.2, coef: 0.25, school: 'fire' }, desc: 'Fire rains down on all nearby enemies for {b} Fire damage.' },
     demon_armor: { name: 'Demon Armor', cls: 'warlock', lvl: 18, cost: 60, costPerLvl: 3, cd: 0, target: 'self', buff: { id: 'demon_armor', dur: 1800, stats: { armor: 110, sta: 4 }, perLvl: { armor: 10, sta: 0.2 } }, desc: 'Demonic armor raises your armor by {armor} and your Stamina.' },
     rapid_fire: { name: 'Rapid Fire', cls: 'hunter', lvl: 16, cost: 40, cd: 180, target: 'self', gcd: false, combatOnly: true, buff: { id: 'rapid_fire', dur: 15, stats: { haste: 40 } }, desc: 'Shoot 40% faster for 15 sec. 3 min cooldown.' },
@@ -175,10 +175,10 @@
     regrowth: { name: 'Regrowth', cls: 'druid', lvl: 16, cost: 80, costPerLvl: 4, cd: 0, cast: 2, target: 'ally', heal: { base: [80, 95], perLvl: 7, coef: 0.5 }, hot: { id: 'regrowth', ticks: 7, every: 3, heal: 6, perLvl: 1.2, coef: 0.1 }, desc: 'Heals a friendly target for {h} and {hh} more over 21 sec.' },
     swipe: { name: 'Swipe', cls: 'druid', lvl: 18, cost: 20, cd: 0, target: 'aoe', form: 'bear', dmg: { weapon: true, bonus: [10, 10], perLvl: 0.8 }, threat: 1.5, desc: 'Swipes every nearby enemy for weapon damage plus {b}.' },
     frost_shock: { name: 'Frost Shock', cls: 'shaman', lvl: 16, cost: 70, costPerLvl: 3, cd: 6, target: 'enemy', dmg: { base: [45, 50], perLvl: 2.5, coef: 0.39, school: 'frost' }, slow: { pct: 50, dur: 8 }, desc: 'Shocks the target with frost for {b} Frost damage and slows it.' },
-    flametongue_weapon: { name: 'Flametongue Weapon', cls: 'shaman', lvl: 18, cost: 30, costPerLvl: 2, cd: 0, target: 'self', buff: { id: 'rockbiter', dur: 300, seal: { base: 5, perLvl: 1.3, school: 'fire' } }, desc: 'Imbues your weapon with fire for 5 min: each hit deals extra Fire damage. Replaces Rockbiter.' },
+    flametongue_weapon: { name: 'Burning Weapon', cls: 'shaman', lvl: 18, cost: 30, costPerLvl: 2, cd: 0, target: 'self', buff: { id: 'rockbiter', dur: 300, seal: { base: 5, perLvl: 1.3, school: 'fire' } }, desc: 'Imbues your weapon with fire for 5 min: each hit deals extra Fire damage. Replaces Rockbiter.' },
     // racial actives (combat only, off the global cooldown)
     every_man: { name: 'Every Man for Himself', racial: true, lvl: 1, cost: 0, cd: 120, target: 'self', gcd: false, combatOnly: true, freeOf: 'stun', desc: 'Breaks free of stuns and slows. 2 min cooldown.' },
-    stoneform: { name: 'Stoneform', racial: true, lvl: 1, cost: 0, cd: 120, target: 'self', gcd: false, combatOnly: true, cleanse: true, buff: { id: 'stoneform', dur: 8, stats: { armor: 10 }, perLvl: { armor: 6 } }, desc: 'Turns your skin to stone: more armor, and bleeds and poisons are removed. 8 sec.' },
+    stoneform: { name: 'Granite Skin', racial: true, lvl: 1, cost: 0, cd: 120, target: 'self', gcd: false, combatOnly: true, cleanse: true, buff: { id: 'stoneform', dur: 8, stats: { armor: 10 }, perLvl: { armor: 6 } }, desc: 'Turns your skin to stone: more armor, and bleeds and poisons are removed. 8 sec.' },
     escape_artist: { name: 'Escape Artist', racial: true, lvl: 1, cost: 0, cd: 60, target: 'self', gcd: false, combatOnly: true, freeOf: 'stun', desc: 'Escapes stuns and slows. 1 min cooldown.' },
     // v3 (levels 20 and 24)
     shield_block: { name: 'Shield Block', cls: 'warrior', lvl: 20, cost: 10, cd: 10, target: 'self', gcd: false, combatOnly: true, buff: { id: 'shield_block', dur: 5, stats: { dodge: 40 } }, desc: 'Raise your guard: 40% more chance to avoid attacks for 5 sec. 10 sec cooldown.' },
@@ -193,16 +193,16 @@
     blessing_wisdom: { name: 'Blessing of Wisdom', cls: 'paladin', lvl: 24, cost: 40, costPerLvl: 2, cd: 0, target: 'party', buff: { id: 'blessing_wisdom', dur: 600, stats: { spi: 8 }, perLvl: { spi: 0.4 } }, desc: 'Blesses your party with {spi} Spirit for 10 min.' },
     shadowburn: { name: 'Shadowburn', cls: 'warlock', lvl: 20, cost: 60, costPerLvl: 3, cd: 15, target: 'enemy', dmg: { base: [70, 80], perLvl: 3, coef: 0.43, school: 'shadow' }, desc: 'Instantly blasts the enemy for {b} Shadow damage. 15 sec cooldown.' },
     death_coil: { name: 'Death Coil', cls: 'warlock', lvl: 24, cost: 70, costPerLvl: 3, cd: 120, target: 'enemy', dmg: { base: [120, 130], perLvl: 2, coef: 0.21, school: 'shadow' }, stun: 3, desc: 'Horrifies the enemy for 3 sec and deals {b} Shadow damage. 2 min cooldown.' },
-    aspect_hawk: { name: 'Aspect of the Hawk', cls: 'hunter', lvl: 20, cost: 20, cd: 0, target: 'self', buff: { id: 'aspect_hawk', dur: 1800, stats: { ap: 20 }, perLvl: { ap: 1 } }, desc: 'Raises your attack power by {ap}.' },
+    aspect_hawk: { name: 'Spirit of the Hawk', cls: 'hunter', lvl: 20, cost: 20, cd: 0, target: 'self', buff: { id: 'aspect_hawk', dur: 1800, stats: { ap: 20 }, perLvl: { ap: 1 } }, desc: 'Raises your attack power by {ap}.' },
     feign_death: { name: 'Feign Death', cls: 'hunter', lvl: 24, cost: 30, cd: 30, target: 'self', gcd: false, combatOnly: true, dropThreat: true, desc: 'Play dead: enemies lose all threat on you. 30 sec cooldown.' },
-    starfire: { name: 'Starfire', cls: 'druid', lvl: 20, cost: 95, costPerLvl: 4, cd: 0, cast: 3, target: 'enemy', dmg: { base: [95, 115], perLvl: 3.6, coef: 0.85, school: 'arcane' }, desc: 'Calls down starlight for {b} Arcane damage.' },
+    starfire: { name: 'Star Bolt', cls: 'druid', lvl: 20, cost: 95, costPerLvl: 4, cd: 0, cast: 3, target: 'enemy', dmg: { base: [95, 115], perLvl: 3.6, coef: 0.85, school: 'arcane' }, desc: 'Calls down starlight for {b} Arcane damage.' },
     insect_swarm: { name: 'Insect Swarm', cls: 'druid', lvl: 24, cost: 45, costPerLvl: 2, cd: 0, target: 'enemy', dot: { id: 'insect_swarm', ticks: 6, every: 2, dmg: 8, perLvl: 1.2, coef: 0.1, school: 'nature' }, desc: 'A swarm of insects bites the enemy for {d} Nature damage over 12 sec.' },
     lesser_healing_wave: { name: 'Lesser Healing Wave', cls: 'shaman', lvl: 20, cost: 60, costPerLvl: 3, cd: 0, cast: 1.5, target: 'ally', heal: { base: [80, 95], perLvl: 4, coef: 0.43 }, desc: 'A quick heal for {h}.' },
     fire_nova_totem: { name: 'Fire Nova Totem', cls: 'shaman', lvl: 24, cost: 90, costPerLvl: 3, cd: 15, target: 'aoe', dmg: { base: [55, 63], perLvl: 2.4, coef: 0.2, school: 'fire' }, desc: 'A totem that bursts in flame: all nearby enemies take {b} Fire damage. 15 sec cooldown.' },
     // v4 (levels 26 and 28)
     overpower: { name: 'Overpower', cls: 'warrior', lvl: 26, cost: 5, cd: 5, target: 'enemy', dmg: { weapon: true, bonus: [35, 35], perLvl: 1.4 }, desc: 'A quick counter-strike for weapon damage plus {b}. 5 sec cooldown.' },
     whirlwind: { name: 'Whirlwind', cls: 'warrior', lvl: 28, cost: 25, cd: 10, target: 'aoe', dmg: { weapon: true, bonus: [10, 10], perLvl: 0.6 }, threat: 1.3, desc: 'Spin and strike every nearby enemy for weapon damage plus {b}. 10 sec cooldown.' },
-    blizzard: { name: 'Blizzard', cls: 'mage', lvl: 26, cost: 130, costPerLvl: 4, cd: 0, cast: 3, target: 'aoe', dmg: { base: [60, 68], perLvl: 2.4, coef: 0.3, school: 'frost' }, slow: { pct: 30, dur: 6 }, desc: 'Ice shards rain on all nearby enemies for {b} Frost damage and slow them.' },
+    blizzard: { name: 'Frost Storm', cls: 'mage', lvl: 26, cost: 130, costPerLvl: 4, cd: 0, cast: 3, target: 'aoe', dmg: { base: [60, 68], perLvl: 2.4, coef: 0.3, school: 'frost' }, slow: { pct: 30, dur: 6 }, desc: 'Ice shards rain on all nearby enemies for {b} Frost damage and slow them.' },
     blast_wave: { name: 'Blast Wave', cls: 'mage', lvl: 28, cost: 110, costPerLvl: 4, cd: 30, target: 'aoe', dmg: { base: [70, 80], perLvl: 2.6, coef: 0.2, school: 'fire' }, slow: { pct: 50, dur: 6 }, desc: 'A wave of flame hits all nearby enemies for {b} Fire damage and slows them. 30 sec cooldown.' },
     mind_flay: { name: 'Mind Flay', cls: 'priest', lvl: 26, cost: 70, costPerLvl: 3, cd: 0, cast: 3, target: 'enemy', dmg: { base: [75, 85], perLvl: 2.8, coef: 0.45, school: 'shadow' }, slow: { pct: 50, dur: 3 }, desc: "Assaults the target's mind for {b} Shadow damage and slows it." },
     flash_heal: { name: 'Flash Heal', cls: 'priest', lvl: 28, cost: 90, costPerLvl: 4, cd: 0, cast: 1.5, target: 'ally', heal: { base: [95, 115], perLvl: 5, coef: 0.43 }, desc: 'A quick heal for {h}.' },
@@ -217,28 +217,28 @@
     hurricane: { name: 'Hurricane', cls: 'druid', lvl: 26, cost: 130, costPerLvl: 4, cd: 30, cast: 3, target: 'aoe', dmg: { base: [65, 75], perLvl: 2.4, coef: 0.3, school: 'nature' }, slow: { pct: 25, dur: 6 }, desc: 'A storm batters all nearby enemies for {b} Nature damage and slows them. 30 sec cooldown.' },
     barkskin: { name: 'Barkskin', cls: 'druid', lvl: 28, cost: 0, cd: 60, target: 'self', gcd: false, combatOnly: true, buff: { id: 'barkskin', dur: 15, stats: { armor: 300 }, perLvl: { armor: 10 } }, desc: 'Your skin turns to bark: +{armor} armor for 15 sec. 1 min cooldown.' },
     chain_lightning: { name: 'Chain Lightning', cls: 'shaman', lvl: 26, cost: 110, costPerLvl: 4, cd: 6, cast: 2.5, target: 'aoe', dmg: { base: [70, 80], perLvl: 2.6, coef: 0.4, school: 'nature' }, desc: 'Lightning arcs between all nearby enemies for {b} Nature damage. 6 sec cooldown.' },
-    windfury_weapon: { name: 'Windfury Weapon', cls: 'shaman', lvl: 28, cost: 40, costPerLvl: 2, cd: 0, target: 'self', buff: { id: 'rockbiter', dur: 300, seal: { base: 8, perLvl: 1.6, school: 'physical' } }, desc: 'Imbues your weapon with wind for 5 min: each hit deals extra damage. Replaces other imbues.' },
+    windfury_weapon: { name: 'Gale Weapon', cls: 'shaman', lvl: 28, cost: 40, costPerLvl: 2, cd: 0, target: 'self', buff: { id: 'rockbiter', dur: 300, seal: { base: 8, perLvl: 1.6, school: 'physical' } }, desc: 'Imbues your weapon with wind for 5 min: each hit deals extra damage. Replaces other imbues.' },
     // v5 (levels 32 and 34)
     shield_wall: { name: 'Shield Wall', cls: 'warrior', lvl: 32, cost: 0, cd: 180, target: 'self', gcd: false, combatOnly: true, shield: { base: 300, perLvl: 18, coef: 0, dur: 10 }, desc: 'Brace behind your shield: absorbs {s} damage for 10 sec. 3 min cooldown.' },
     slam: { name: 'Slam', cls: 'warrior', lvl: 34, cost: 15, cd: 0, cast: 1.5, target: 'enemy', dmg: { weapon: true, bonus: [45, 45], perLvl: 1.6 }, desc: 'A heavy blow for weapon damage plus {b}.' },
     ice_block: { name: 'Ice Block', cls: 'mage', lvl: 32, cost: 0, cd: 300, target: 'self', gcd: false, combatOnly: true, buff: { id: 'ice_block', dur: 8, immune: true }, desc: 'Encase yourself in ice: immune to all damage for 8 sec. 5 min cooldown.' },
-    pyroblast: { name: 'Pyroblast', cls: 'mage', lvl: 34, cost: 150, costPerLvl: 4, cd: 30, cast: 5, target: 'enemy', dmg: { base: [260, 300], perLvl: 5, coef: 1.1, school: 'fire' }, desc: 'Hurls an immense fiery boulder for {b} Fire damage. 30 sec cooldown.' },
+    pyroblast: { name: 'Inferno Blast', cls: 'mage', lvl: 34, cost: 150, costPerLvl: 4, cd: 30, cast: 5, target: 'enemy', dmg: { base: [260, 300], perLvl: 5, coef: 1.1, school: 'fire' }, desc: 'Hurls an immense fiery boulder for {b} Fire damage. 30 sec cooldown.' },
     holy_nova: { name: 'Holy Nova', cls: 'priest', lvl: 32, cost: 110, costPerLvl: 4, cd: 8, target: 'aoe', dmg: { base: [50, 58], perLvl: 2, coef: 0.2, school: 'holy' }, desc: 'A burst of holy light hits all nearby enemies for {b} Holy damage. 8 sec cooldown.' },
     greater_heal: { name: 'Greater Heal', cls: 'priest', lvl: 34, cost: 180, costPerLvl: 6, cd: 0, cast: 3, target: 'ally', heal: { base: [360, 420], perLvl: 12, coef: 1.2 }, desc: 'A slow, powerful heal for {h}.' },
     blind: { name: 'Blind', cls: 'rogue', lvl: 32, cost: 30, cd: 180, target: 'enemy', stun: 8, desc: 'Blinds the target: it can\'t act for 8 sec. 3 min cooldown.' },
     vanish: { name: 'Vanish', cls: 'rogue', lvl: 34, cost: 0, cd: 300, target: 'self', gcd: false, combatOnly: true, dropThreat: true, desc: 'Vanish in a puff of smoke: enemies lose all threat on you. 5 min cooldown.' },
     holy_shock: { name: 'Holy Shock', cls: 'paladin', lvl: 32, cost: 90, costPerLvl: 3, cd: 20, target: 'enemy', dmg: { base: [110, 125], perLvl: 3.5, coef: 0.43, school: 'holy' }, desc: 'A burst of holy energy for {b} Holy damage. Instant. 20 sec cooldown.' },
-    seal_command: { name: 'Seal of Command', cls: 'paladin', lvl: 34, cost: 30, costPerLvl: 3, cd: 0, target: 'self', combatOnly: true, buff: { id: 'seal', dur: 30, seal: { base: 8, perLvl: 1.6 } }, desc: 'A stronger seal: each melee hit deals more extra Holy damage for 30 sec. Judgement releases it.' },
+    seal_command: { name: 'Oath of Command', cls: 'paladin', lvl: 34, cost: 30, costPerLvl: 3, cd: 0, target: 'self', combatOnly: true, buff: { id: 'seal', dur: 30, seal: { base: 8, perLvl: 1.6 } }, desc: 'A stronger seal: each melee hit deals more extra Holy damage for 30 sec. Verdict releases it.' },
     siphon_life: { name: 'Siphon Life', cls: 'warlock', lvl: 32, cost: 70, costPerLvl: 3, cd: 0, target: 'enemy', dot: { id: 'siphon_life', ticks: 10, every: 3, dmg: 9, perLvl: 1.4, coef: 0.1, school: 'shadow' }, desc: 'Drains the life of the target for {d} Shadow damage over 30 sec.' },
     conflagrate: { name: 'Conflagrate', cls: 'warlock', lvl: 34, cost: 80, costPerLvl: 3, cd: 10, target: 'enemy', dmg: { base: [130, 150], perLvl: 3.5, coef: 0.43, school: 'fire' }, desc: 'Ignites the target for {b} Fire damage. Instant. 10 sec cooldown.' },
     scatter_shot: { name: 'Scatter Shot', cls: 'hunter', lvl: 32, cost: 40, cd: 30, target: 'enemy', stun: 4, desc: 'A short-range shot that disorients the target for 4 sec. 30 sec cooldown.' },
-    trueshot_aura: { name: 'Trueshot Aura', cls: 'hunter', lvl: 34, cost: 0, cd: 0, target: 'party', buff: { id: 'trueshot_aura', dur: 1800, stats: { ap: 30 }, perLvl: { ap: 1 } }, desc: 'Raises the attack power of your party by {ap}.' },
+    trueshot_aura: { name: 'Keen Eye Aura', cls: 'hunter', lvl: 34, cost: 0, cd: 0, target: 'party', buff: { id: 'trueshot_aura', dur: 1800, stats: { ap: 30 }, perLvl: { ap: 1 } }, desc: 'Raises the attack power of your party by {ap}.' },
     bash: { name: 'Bash', cls: 'druid', lvl: 32, cost: 10, cd: 60, target: 'enemy', form: 'bear', stun: 4, desc: 'Stuns the target for 4 sec. Bear Form only. 1 min cooldown.' },
     innervate: { name: 'Innervate', cls: 'druid', lvl: 34, cost: 0, cd: 360, target: 'self', gcd: false, combatOnly: true, buff: { id: 'innervate', dur: 20, stats: { spi: 60 }, perLvl: { spi: 2 } }, desc: 'Nature floods you with energy: +{spi} Spirit for 20 sec. 6 min cooldown.' },
     magma_totem: { name: 'Magma Totem', cls: 'shaman', lvl: 32, cost: 110, costPerLvl: 4, cd: 12, target: 'aoe', dmg: { base: [70, 80], perLvl: 2.4, coef: 0.2, school: 'fire' }, desc: 'A totem of lava burns all nearby enemies for {b} Fire damage. 12 sec cooldown.' },
     chain_heal: { name: 'Chain Heal', cls: 'shaman', lvl: 34, cost: 150, costPerLvl: 5, cd: 0, cast: 2.5, target: 'ally', heal: { base: [300, 340], perLvl: 9, coef: 0.9 }, desc: 'A wave of healing for {h}.' },
     // v5.1 (levels 36 and 38)
-    mortal_strike: { name: 'Mortal Strike', cls: 'warrior', lvl: 36, cost: 30, cd: 6, target: 'enemy', dmg: { weapon: true, bonus: [85, 85], perLvl: 2 }, desc: 'A vicious strike for weapon damage plus {b}. 6 sec cooldown.' },
+    mortal_strike: { name: 'Grievous Strike', cls: 'warrior', lvl: 36, cost: 30, cd: 6, target: 'enemy', dmg: { weapon: true, bonus: [85, 85], perLvl: 2 }, desc: 'A vicious strike for weapon damage plus {b}. 6 sec cooldown.' },
     berserker_rage: { name: 'Berserker Rage', cls: 'warrior', lvl: 38, cost: 0, cd: 60, target: 'self', gcd: false, combatOnly: true, rage: 15, buff: { id: 'berserker_rage', dur: 10, stats: { haste: 20 } }, desc: 'Go berserk: 15 rage and 20% faster attacks for 10 sec. 1 min cooldown.' },
     arcane_power: { name: 'Arcane Power', cls: 'mage', lvl: 36, cost: 0, cd: 180, target: 'self', gcd: false, combatOnly: true, buff: { id: 'arcane_power', dur: 15, stats: { sp: 40 }, perLvl: { sp: 1 } }, desc: 'Your spells deal more damage: +{sp} spell power for 15 sec. 3 min cooldown.' },
     fire_ward: { name: 'Fire Ward', cls: 'mage', lvl: 38, cost: 80, costPerLvl: 3, cd: 30, target: 'self', gcd: false, shield: { base: 220, perLvl: 10, coef: 0.1, dur: 30 }, desc: 'A ward of flame absorbs {s} damage for 30 sec.' },
@@ -247,32 +247,32 @@
     adrenaline_rush: { name: 'Adrenaline Rush', cls: 'rogue', lvl: 36, cost: 0, cd: 300, target: 'self', gcd: false, combatOnly: true, buff: { id: 'adrenaline_rush', dur: 15, stats: { haste: 30 } }, desc: 'Attack 30% faster for 15 sec. 5 min cooldown.' },
     ghostly_strike: { name: 'Ghostly Strike', cls: 'rogue', lvl: 38, cost: 40, cd: 20, target: 'enemy', gcdLen: 1, dmg: { weapon: true, bonus: [30, 30], perLvl: 1.2 }, cp: 1, desc: 'A ghostly strike for weapon damage plus {b}. Awards 1 combo point. 20 sec cooldown.' },
     blessing_kings: { name: 'Blessing of Kings', cls: 'paladin', lvl: 36, cost: 60, costPerLvl: 2, cd: 0, target: 'party', buff: { id: 'blessing_kings', dur: 600, stats: { str: 5, agi: 5, sta: 5, int: 5, spi: 5 }, perLvl: { str: 0.15, agi: 0.15, sta: 0.15, int: 0.15, spi: 0.15 } }, desc: 'Blesses your party with +{sta} to all stats for 10 min.' },
-    avenging_wrath: { name: 'Avenging Wrath', cls: 'paladin', lvl: 38, cost: 0, cd: 180, target: 'self', gcd: false, combatOnly: true, buff: { id: 'avenging_wrath', dur: 20, stats: { ap: 60, sp: 40 }, perLvl: { ap: 1.5, sp: 1 } }, desc: 'Wings of light: +{ap} attack power and +{sp} spell power for 20 sec. 3 min cooldown.' },
+    avenging_wrath: { name: 'Radiant Wrath', cls: 'paladin', lvl: 38, cost: 0, cd: 180, target: 'self', gcd: false, combatOnly: true, buff: { id: 'avenging_wrath', dur: 20, stats: { ap: 60, sp: 40 }, perLvl: { ap: 1.5, sp: 1 } }, desc: 'Wings of light: +{ap} attack power and +{sp} spell power for 20 sec. 3 min cooldown.' },
     curse_of_doom: { name: 'Curse of Doom', cls: 'warlock', lvl: 36, cost: 100, costPerLvl: 3, cd: 60, target: 'enemy', dot: { id: 'curse_of_doom', ticks: 1, every: 20, dmg: 600, perLvl: 18, coef: 1, school: 'shadow' }, desc: 'After 20 sec, the curse deals {d} Shadow damage. 1 min cooldown.' },
-    hellfire: { name: 'Hellfire', cls: 'warlock', lvl: 38, cost: 140, costPerLvl: 4, cd: 0, cast: 3, target: 'aoe', dmg: { base: [80, 90], perLvl: 2.6, coef: 0.3, school: 'fire' }, desc: 'A ring of fel fire burns all nearby enemies for {b} Fire damage.' },
+    hellfire: { name: 'Hellfire', cls: 'warlock', lvl: 38, cost: 140, costPerLvl: 4, cd: 0, cast: 3, target: 'aoe', dmg: { base: [80, 90], perLvl: 2.6, coef: 0.3, school: 'fire' }, desc: 'A ring of gloom fire burns all nearby enemies for {b} Fire damage.' },
     explosive_trap: { name: 'Explosive Trap', cls: 'hunter', lvl: 36, cost: 80, costPerLvl: 3, cd: 30, target: 'aoe', dmg: { base: [90, 100], perLvl: 2.6, rapCoef: 0.1, school: 'fire' }, desc: 'A trap explodes under all nearby enemies for {b} Fire damage. 30 sec cooldown.' },
     deterrence: { name: 'Deterrence', cls: 'hunter', lvl: 38, cost: 0, cd: 300, target: 'self', gcd: false, combatOnly: true, buff: { id: 'deterrence', dur: 10, stats: { dodge: 60 } }, desc: 'Dodge 60% more attacks for 10 sec. 5 min cooldown.' },
-    swiftmend: { name: 'Swiftmend', cls: 'druid', lvl: 36, cost: 90, costPerLvl: 3, cd: 15, target: 'ally', heal: { base: [300, 340], perLvl: 8, coef: 0.6 }, desc: 'Instantly heals a friendly target for {h}. 15 sec cooldown.' },
+    swiftmend: { name: 'Quick Mend', cls: 'druid', lvl: 36, cost: 90, costPerLvl: 3, cd: 15, target: 'ally', heal: { base: [300, 340], perLvl: 8, coef: 0.6 }, desc: 'Instantly heals a friendly target for {h}. 15 sec cooldown.' },
     frenzied_regeneration: { name: 'Frenzied Regeneration', cls: 'druid', lvl: 38, cost: 0, cd: 180, target: 'self', gcd: false, combatOnly: true, hot: { id: 'frenzied_regeneration', ticks: 10, every: 1, heal: 40, perLvl: 2 }, desc: 'Regenerate {hh} health over 10 sec. 3 min cooldown.' },
-    stormstrike: { name: 'Stormstrike', cls: 'shaman', lvl: 36, cost: 70, costPerLvl: 2, cd: 10, target: 'enemy', dmg: { weapon: true, bonus: [60, 60], perLvl: 1.6 }, desc: 'Strike with a storm-charged weapon for weapon damage plus {b}. 10 sec cooldown.' },
-    mana_tide_totem: { name: 'Mana Tide Totem', cls: 'shaman', lvl: 38, cost: 20, cd: 300, target: 'party', buff: { id: 'mana_tide', dur: 12, stats: { spi: 80 }, perLvl: { spi: 2 } }, desc: 'A totem of water: your party gains +{spi} Spirit for 12 sec. 5 min cooldown.' },
+    stormstrike: { name: 'Storm Blade', cls: 'shaman', lvl: 36, cost: 70, costPerLvl: 2, cd: 10, target: 'enemy', dmg: { weapon: true, bonus: [60, 60], perLvl: 1.6 }, desc: 'Strike with a storm-charged weapon for weapon damage plus {b}. 10 sec cooldown.' },
+    mana_tide_totem: { name: 'Wellspring Totem', cls: 'shaman', lvl: 38, cost: 20, cd: 300, target: 'party', buff: { id: 'mana_tide', dur: 12, stats: { spi: 80 }, perLvl: { spi: 2 } }, desc: 'A totem of water: your party gains +{spi} Spirit for 12 sec. 5 min cooldown.' },
     // v6 (levels 44 and 48)
     intercept: { name: 'Intercept', cls: 'warrior', lvl: 44, cost: 10, cd: 30, target: 'enemy', dmg: { weapon: true, bonus: [25, 25], perLvl: 1 }, stun: 3, desc: 'Leap at the enemy for weapon damage plus {b} and stun it for 3 sec. 30 sec cooldown.' },
     recklessness: { name: 'Recklessness', cls: 'warrior', lvl: 48, cost: 0, cd: 300, target: 'self', gcd: false, combatOnly: true, buff: { id: 'recklessness', dur: 15, stats: { ap: 120, haste: 15 }, perLvl: { ap: 2 } }, desc: 'Throw caution aside: +{ap} attack power and 15% faster attacks for 15 sec. 5 min cooldown.' },
     ice_barrier: { name: 'Ice Barrier', cls: 'mage', lvl: 44, cost: 150, costPerLvl: 4, cd: 30, target: 'self', gcd: false, shield: { base: 450, perLvl: 14, coef: 0.1, dur: 60 }, desc: 'A shell of ice absorbs {s} damage for 1 min. 30 sec cooldown.' },
     combustion: { name: 'Combustion', cls: 'mage', lvl: 48, cost: 0, cd: 180, target: 'self', gcd: false, combatOnly: true, buff: { id: 'combustion', dur: 15, stats: { sp: 70 }, perLvl: { sp: 1.5 } }, desc: 'Your fire burns hotter: +{sp} spell power for 15 sec. 3 min cooldown.' },
-    power_infusion: { name: 'Power Infusion', cls: 'priest', lvl: 44, cost: 0, cd: 180, target: 'self', gcd: false, combatOnly: true, buff: { id: 'power_infusion', dur: 15, stats: { sp: 60, haste: 15 }, perLvl: { sp: 1.2 } }, desc: 'Infused with power: +{sp} spell power and 15% faster casting for 15 sec. 3 min cooldown.' },
+    power_infusion: { name: 'Surge of Power', cls: 'priest', lvl: 44, cost: 0, cd: 180, target: 'self', gcd: false, combatOnly: true, buff: { id: 'power_infusion', dur: 15, stats: { sp: 60, haste: 15 }, perLvl: { sp: 1.2 } }, desc: 'Infused with power: +{sp} spell power and 15% faster casting for 15 sec. 3 min cooldown.' },
     prayer_of_fortitude: { name: 'Prayer of Fortitude', cls: 'priest', lvl: 48, cost: 180, costPerLvl: 4, cd: 0, target: 'party', buff: { id: 'pw_fortitude', dur: 3600, stats: { sta: 20 }, perLvl: { sta: 1.1 } }, desc: 'Power infuses your whole party, raising Stamina by {sta} for 1 hour.' },
     cold_blood: { name: 'Cold Blood', cls: 'rogue', lvl: 44, cost: 0, cd: 180, target: 'self', gcd: false, combatOnly: true, buff: { id: 'cold_blood', dur: 12, stats: { ap: 150 }, perLvl: { ap: 2 } }, desc: 'Your blood runs cold: +{ap} attack power for 12 sec. 3 min cooldown.' },
     hemorrhage: { name: 'Hemorrhage', cls: 'rogue', lvl: 48, cost: 35, cd: 0, target: 'enemy', gcdLen: 1, dmg: { weapon: true, bonus: [40, 40], perLvl: 1.4 }, cp: 1, desc: 'A deep, bleeding cut for weapon damage plus {b}. Awards 1 combo point.' },
     repentance: { name: 'Repentance', cls: 'paladin', lvl: 44, cost: 60, cd: 60, target: 'enemy', stun: 6, desc: 'The target kneels in repentance and can\'t act for 6 sec. 1 min cooldown.' },
-    crusader_strike: { name: 'Crusader Strike', cls: 'paladin', lvl: 48, cost: 40, costPerLvl: 2, cd: 6, target: 'enemy', dmg: { weapon: true, bonus: [60, 60], perLvl: 1.6 }, desc: 'A holy strike for weapon damage plus {b}. 6 sec cooldown.' },
+    crusader_strike: { name: 'Zealot Strike', cls: 'paladin', lvl: 48, cost: 40, costPerLvl: 2, cd: 6, target: 'enemy', dmg: { weapon: true, bonus: [60, 60], perLvl: 1.6 }, desc: 'A holy strike for weapon damage plus {b}. 6 sec cooldown.' },
     shadowfury: { name: 'Shadowfury', cls: 'warlock', lvl: 44, cost: 120, costPerLvl: 3, cd: 20, target: 'aoe', dmg: { base: [90, 104], perLvl: 2.8, coef: 0.2, school: 'shadow' }, stompAll: 2, desc: 'Shadow bursts from the ground: {b} Shadow damage to all nearby enemies, stunning them for 2 sec. 20 sec cooldown.' },
     shadow_bolt_volley: { name: 'Shadow Bolt Volley', cls: 'warlock', lvl: 48, cost: 160, costPerLvl: 4, cd: 0, cast: 2.5, target: 'aoe', dmg: { base: [105, 120], perLvl: 3, coef: 0.3, school: 'shadow' }, desc: 'Shadow bolts hit all nearby enemies for {b} Shadow damage.' },
     counterattack: { name: 'Counterattack', cls: 'hunter', lvl: 44, cost: 45, cd: 5, target: 'enemy', dmg: { weapon: true, bonus: [45, 45], perLvl: 1.4 }, stun: 2, desc: 'A counter-blow for weapon damage plus {b}; the target is stunned for 2 sec. 5 sec cooldown.' },
-    wyvern_sting: { name: 'Wyvern Sting', cls: 'hunter', lvl: 48, cost: 80, cd: 60, target: 'enemy', stun: 6, dot: { id: 'wyvern_sting', ticks: 4, every: 3, dmg: 40, perLvl: 1.5, school: 'nature' }, desc: 'Puts the target to sleep for 6 sec, then poisons it for {d} Nature damage. 1 min cooldown.' },
+    wyvern_sting: { name: 'Sleep Sting', cls: 'hunter', lvl: 48, cost: 80, cd: 60, target: 'enemy', stun: 6, dot: { id: 'wyvern_sting', ticks: 4, every: 3, dmg: 40, perLvl: 1.5, school: 'nature' }, desc: 'Puts the target to sleep for 6 sec, then poisons it for {d} Nature damage. 1 min cooldown.' },
     feral_charge: { name: 'Feral Charge', cls: 'druid', lvl: 44, cost: 5, cd: 15, target: 'enemy', form: 'bear', stun: 3, desc: 'Charge the enemy and stun it for 3 sec. Bear Form only. 15 sec cooldown.' },
-    gift_of_the_wild: { name: 'Gift of the Wild', cls: 'druid', lvl: 48, cost: 200, costPerLvl: 4, cd: 0, target: 'party', buff: { id: 'mark_wild', dur: 3600, stats: { str: 8, agi: 8, sta: 8, int: 8, spi: 8, armor: 150 }, perLvl: { str: 0.2, agi: 0.2, sta: 0.2, int: 0.2, spi: 0.2 } }, desc: 'Nature blesses your whole party: +{sta} to all stats and more armor for 1 hour.' },
+    gift_of_the_wild: { name: 'Gift of the Grove', cls: 'druid', lvl: 48, cost: 200, costPerLvl: 4, cd: 0, target: 'party', buff: { id: 'mark_wild', dur: 3600, stats: { str: 8, agi: 8, sta: 8, int: 8, spi: 8, armor: 150 }, perLvl: { str: 0.2, agi: 0.2, sta: 0.2, int: 0.2, spi: 0.2 } }, desc: 'Nature blesses your whole party: +{sta} to all stats and more armor for 1 hour.' },
     earth_shield: { name: 'Earth Shield', cls: 'shaman', lvl: 44, cost: 130, costPerLvl: 4, cd: 30, target: 'self', gcd: false, shield: { base: 420, perLvl: 13, coef: 0.2, dur: 60 }, desc: 'A ring of stone absorbs {s} damage for 1 min. 30 sec cooldown.' },
     elemental_mastery: { name: 'Elemental Mastery', cls: 'shaman', lvl: 48, cost: 0, cd: 180, target: 'self', gcd: false, combatOnly: true, buff: { id: 'elemental_mastery', dur: 15, stats: { sp: 70 }, perLvl: { sp: 1.5 } }, desc: 'Master the elements: +{sp} spell power for 15 sec. 3 min cooldown.' },
     // v7 (levels 52 and 54)
@@ -290,7 +290,7 @@
     demonic_sacrifice: { name: 'Demonic Sacrifice', cls: 'warlock', lvl: 54, cost: 0, cd: 300, target: 'self', gcd: false, combatOnly: true, buff: { id: 'demonic_sacrifice', dur: 30, stats: { sp: 90 }, perLvl: { sp: 1.5 } }, desc: 'Feed on demonic power: +{sp} spell power for 30 sec. 5 min cooldown.' },
     kill_command: { name: 'Kill Command', cls: 'hunter', lvl: 52, cost: 90, costPerLvl: 3, cd: 8, target: 'enemy', dmg: { base: [160, 160], perLvl: 4, rapCoef: 0.4, school: 'physical' }, desc: 'Command a killing blow for {b} damage. 8 sec cooldown.' },
     bestial_wrath: { name: 'Bestial Wrath', cls: 'hunter', lvl: 54, cost: 0, cd: 120, target: 'self', gcd: false, combatOnly: true, buff: { id: 'bestial_wrath', dur: 18, stats: { ap: 150, haste: 20 }, perLvl: { ap: 2 } }, desc: 'Go wild: +{ap} attack power and 20% faster attacks for 18 sec. 2 min cooldown.' },
-    starfall: { name: 'Starfall', cls: 'druid', lvl: 52, cost: 200, costPerLvl: 4, cd: 60, target: 'aoe', dmg: { base: [180, 210], perLvl: 4, coef: 0.5, school: 'arcane' }, desc: 'Stars fall on all nearby enemies for {b} Arcane damage. 1 min cooldown.' },
+    starfall: { name: 'Falling Stars', cls: 'druid', lvl: 52, cost: 200, costPerLvl: 4, cd: 60, target: 'aoe', dmg: { base: [180, 210], perLvl: 4, coef: 0.5, school: 'arcane' }, desc: 'Stars fall on all nearby enemies for {b} Arcane damage. 1 min cooldown.' },
     wild_growth: { name: 'Wild Growth', cls: 'druid', lvl: 54, cost: 180, costPerLvl: 4, cd: 6, target: 'ally', hot: { id: 'wild_growth', ticks: 7, every: 1, heal: 70, perLvl: 2, coef: 0.1 }, desc: 'Heals a friendly target for {hh} over 7 sec. 6 sec cooldown.' },
     earthquake: { name: 'Earthquake', cls: 'shaman', lvl: 52, cost: 200, costPerLvl: 4, cd: 10, cast: 2.5, target: 'aoe', dmg: { base: [170, 200], perLvl: 4, coef: 0.4, school: 'nature' }, desc: 'The ground shakes under all nearby enemies for {b} Nature damage. 10 sec cooldown.' },
     fire_elemental_totem: { name: 'Fire Elemental Totem', cls: 'shaman', lvl: 54, cost: 150, costPerLvl: 4, cd: 120, target: 'aoe', dmg: { base: [300, 340], perLvl: 6, coef: 0.4, school: 'fire' }, desc: 'A fire elemental bursts from the totem: {b} Fire damage to all nearby enemies. 2 min cooldown.' },
@@ -307,17 +307,17 @@
     aura_mastery: { name: 'Aura Mastery', cls: 'paladin', lvl: 58, cost: 0, cd: 120, target: 'party', buff: { id: 'aura_mastery', dur: 10, stats: { armor: 800 }, perLvl: { armor: 15 } }, desc: 'Empower your aura: your party gains +{armor} armor for 10 sec. 2 min cooldown.' },
     haunt: { name: 'Haunt', cls: 'warlock', lvl: 56, cost: 120, costPerLvl: 3, cd: 8, cast: 1.5, target: 'enemy', dmg: { base: [200, 230], perLvl: 4, coef: 0.5, school: 'shadow' }, dot: { id: 'haunt', ticks: 4, every: 3, dmg: 40, perLvl: 1.2, school: 'shadow' }, desc: 'A ghostly soul strikes for {b} Shadow damage and haunts the target for {d} more. 8 sec cooldown.' },
     metamorphosis: { name: 'Metamorphosis', cls: 'warlock', lvl: 58, cost: 0, cd: 180, target: 'self', gcd: false, combatOnly: true, buff: { id: 'metamorphosis', dur: 30, stats: { sp: 80, armor: 1200 }, perLvl: { sp: 1.2 } }, desc: 'Become a demon: +{sp} spell power and much more armor for 30 sec. 3 min cooldown.' },
-    chimera_shot: { name: 'Chimera Shot', cls: 'hunter', lvl: 56, cost: 110, costPerLvl: 3, cd: 10, target: 'enemy', dmg: { base: [230, 230], perLvl: 5, rapCoef: 0.5, school: 'nature' }, desc: 'A shot for {b} Nature damage. 10 sec cooldown.' },
+    chimera_shot: { name: 'Twinfang Shot', cls: 'hunter', lvl: 56, cost: 110, costPerLvl: 3, cd: 10, target: 'enemy', dmg: { base: [230, 230], perLvl: 5, rapCoef: 0.5, school: 'nature' }, desc: 'A shot for {b} Nature damage. 10 sec cooldown.' },
     rapid_killing: { name: 'Rapid Killing', cls: 'hunter', lvl: 58, cost: 0, cd: 120, target: 'self', gcd: false, combatOnly: true, buff: { id: 'rapid_killing', dur: 15, stats: { haste: 35, ap: 80 } }, desc: 'Shoot 35% faster with more attack power for 15 sec. 2 min cooldown.' },
     typhoon: { name: 'Typhoon', cls: 'druid', lvl: 56, cost: 180, costPerLvl: 4, cd: 20, target: 'aoe', dmg: { base: [200, 230], perLvl: 4, coef: 0.3, school: 'nature' }, stompAll: 2, desc: 'A wall of wind hits all nearby enemies for {b} Nature damage and stuns them for 2 sec. 20 sec cooldown.' },
-    lifebloom: { name: 'Lifebloom', cls: 'druid', lvl: 58, cost: 150, costPerLvl: 3, cd: 0, target: 'ally', hot: { id: 'lifebloom', ticks: 7, every: 1, heal: 90, perLvl: 2.5, coef: 0.12 }, desc: 'Heals a friendly target for {hh} over 7 sec.' },
+    lifebloom: { name: 'Blossoming Life', cls: 'druid', lvl: 58, cost: 150, costPerLvl: 3, cd: 0, target: 'ally', hot: { id: 'lifebloom', ticks: 7, every: 1, heal: 90, perLvl: 2.5, coef: 0.12 }, desc: 'Heals a friendly target for {hh} over 7 sec.' },
     thunderstorm: { name: 'Thunderstorm', cls: 'shaman', lvl: 56, cost: 160, costPerLvl: 4, cd: 30, target: 'aoe', dmg: { base: [210, 240], perLvl: 4, coef: 0.3, school: 'nature' }, stompAll: 2, desc: 'Thunder hits all nearby enemies for {b} Nature damage, stunning them for 2 sec. 30 sec cooldown.' },
     bloodlust: { name: 'Bloodlust', cls: 'shaman', lvl: 58, cost: 150, cd: 300, target: 'party', buff: { id: 'bloodlust', dur: 20, stats: { haste: 30 } }, desc: 'Your party attacks and casts 30% faster for 20 sec. 5 min cooldown.' },
-    shadowmeld: { name: 'Shadowmeld', racial: true, lvl: 1, cost: 0, cd: 120, target: 'self', gcd: false, combatOnly: true, dropThreat: true, desc: 'Fade into the shadows: enemies lose track of you and all your threat is wiped. 2 min cooldown.' },
+    shadowmeld: { name: 'Shadow Fade', racial: true, lvl: 1, cost: 0, cd: 120, target: 'self', gcd: false, combatOnly: true, dropThreat: true, desc: 'Fade into the shadows: enemies lose track of you and all your threat is wiped. 2 min cooldown.' },
     blood_fury: { name: 'Blood Fury', racial: true, lvl: 1, cost: 0, cd: 120, target: 'self', gcd: false, combatOnly: true, bloodFury: true, desc: 'Attack power +25% for 15 sec. 2 min cooldown.' },
     berserking: { name: 'Berserking', racial: true, lvl: 1, cost: 0, cd: 180, target: 'self', gcd: false, combatOnly: true, berserk: true, desc: 'Attack and casting speed +10% to +30%, more when you are hurt. 10 sec. 3 min cooldown.' },
     war_stomp: { name: 'War Stomp', racial: true, lvl: 1, cost: 0, cd: 120, target: 'self', gcd: false, combatOnly: true, stompAll: 2, desc: 'Stomps the ground, stunning nearby enemies for 2 sec. 2 min cooldown.' },
-    will_forsaken: { name: 'Will of the Forsaken', racial: true, lvl: 1, cost: 0, cd: 120, target: 'self', gcd: false, combatOnly: true, freeOf: 'stun', stunImmune: 5, desc: 'Breaks free of stuns and slows, and ignores new stuns for 5 sec. 2 min cooldown.' },
+    will_forsaken: { name: 'Will of the Reclaimed', racial: true, lvl: 1, cost: 0, cd: 120, target: 'self', gcd: false, combatOnly: true, freeOf: 'stun', stunImmune: 5, desc: 'Breaks free of stuns and slows, and ignores new stuns for 5 sec. 2 min cooldown.' },
   };
 
   // ---- items: D.item(id, fields). Zone files add their own.
@@ -329,12 +329,12 @@
   D.item('worn_dagger', { name: 'Worn Dagger', slot: 'weapon', wtype: 'dagger', q: 1, lvl: 1, dmg: [1, 3], speed: 1.6, icon: 'dagger', sell: 7 });
   D.item('worn_axe', { name: 'Worn Axe', slot: 'weapon', wtype: 'axe', q: 1, lvl: 1, dmg: [2, 5], speed: 2.1, icon: 'axe', sell: 7 });
   D.item('worn_shortbow', { name: 'Worn Shortbow', slot: 'ranged', wtype: 'bow', q: 1, lvl: 1, dmg: [2, 5], speed: 2.3, icon: 'bow', sell: 7 });
-  D.item('militia_longbow', { name: 'Militia Longbow', slot: 'ranged', wtype: 'bow', q: 2, lvl: 9, dmg: [10, 19], speed: 2.8, stats: { agi: 3 }, icon: 'bow', sell: 180, look: ['ranged', 'militia_longbow'], source: 'Quest: Wanted: Hogger' });
+  D.item('militia_longbow', { name: 'Militia Longbow', slot: 'ranged', wtype: 'bow', q: 2, lvl: 9, dmg: [10, 19], speed: 2.8, stats: { agi: 3 }, icon: 'bow', sell: 180, look: ['ranged', 'militia_longbow'], source: 'Quest: Wanted: Old Snaggle' });
   D.item('recruits_vest', { name: "Recruit's Vest", slot: 'chest', atype: 'mail', q: 1, lvl: 1, armor: 22, icon: 'chest_mail', sell: 1 });
   D.item('apprentice_robe', { name: "Apprentice's Robe", slot: 'chest', atype: 'cloth', q: 1, lvl: 1, armor: 5, icon: 'chest_cloth', sell: 1 });
   D.item('neophyte_robe', { name: "Neophyte's Robe", slot: 'chest', atype: 'cloth', q: 1, lvl: 1, armor: 5, icon: 'chest_cloth', sell: 1 });
   D.item('footpad_shirt', { name: "Footpad's Vest", slot: 'chest', atype: 'leather', q: 1, lvl: 1, armor: 12, icon: 'chest_leather', sell: 1 });
-  D.item('hearthstone', { name: 'Hearthstone', slot: 'special', q: 1, lvl: 1, icon: 'hearthstone', noSell: true, desc: "Returns you to Lion's Pride Inn. 15 min cooldown." });
+  D.item('hearthstone', { name: 'Waystone', slot: 'special', q: 1, lvl: 1, icon: 'hearthstone', noSell: true, desc: "Returns you to Lion's Pride Inn. 15 min cooldown." });
   D.item('tough_bread', { name: 'Tough Hunk of Bread', slot: 'food', q: 1, lvl: 1, restore: 61, icon: 'bread', sell: 1, cost: 5 });
   D.item('fresh_bread', { name: 'Freshly Baked Bread', slot: 'food', q: 1, lvl: 5, restore: 243, icon: 'bread', sell: 6, cost: 25 });
   D.item('spring_water', { name: 'Refreshing Spring Water', slot: 'drink', q: 1, lvl: 1, restore: 151, icon: 'water', sell: 1, cost: 5 });
@@ -344,35 +344,35 @@
   D.item('kobold_rag', { name: 'Dirty Kobold Rag', slot: 'junk', q: 0, icon: 'bandana', sell: 3 });
   D.item('broken_candle', { name: 'Melted Candle Stub', slot: 'junk', q: 0, icon: 'candle', sell: 5 });
   D.item('thieves_coin', { name: 'Tarnished Coin', slot: 'junk', q: 0, icon: 'coin', sell: 9 });
-  D.item('murloc_eye', { name: 'Slimy Murloc Scale', slot: 'junk', q: 0, icon: 'fin', sell: 12 });
+  D.item('murloc_eye', { name: 'Slimy Mireling Scale', slot: 'junk', q: 0, icon: 'fin', sell: 12 });
   D.item('bear_hide', { name: 'Thick Bear Fur', slot: 'junk', q: 0, icon: 'pelt', sell: 15 });
   D.item('gnoll_mane', { name: 'Matted Gnoll Mane', slot: 'junk', q: 0, icon: 'pelt', sell: 18 });
   D.item('linen_cloth', { name: 'Linen Cloth', slot: 'junk', q: 1, icon: 'bandana', sell: 5 });
   D.item('pumpkin', { name: 'Stolen Pumpkin', slot: 'junk', q: 0, icon: 'grapes', sell: 20 });
   D.item('wolf_meat', { name: 'Tough Wolf Meat', slot: 'quest', q: 1, icon: 'meat' });
-  D.item('vancleef_head', { name: 'Head of VanCleef', slot: 'quest', q: 1, icon: 'head' });
-  D.item('militia_shortsword', { name: 'Militia Shortsword', slot: 'weapon', wtype: 'sword', q: 2, lvl: 9, dmg: [8, 16], speed: 2.1, stats: { str: 2, sta: 1 }, icon: 'sword', sell: 180, look: ['weapon', 'militia_sword'], source: 'Quest: Wanted: Hogger' });
-  D.item('militia_dagger', { name: 'Militia Dagger', slot: 'weapon', wtype: 'dagger', q: 2, lvl: 9, dmg: [6, 11], speed: 1.6, stats: { agi: 3 }, icon: 'dagger', sell: 170, look: ['weapon', 'militia_dagger'], source: 'Quest: Wanted: Hogger' });
-  D.item('militia_staff', { name: 'Militia Quarterstaff', slot: 'weapon', wtype: 'staff', q: 2, lvl: 9, dmg: [13, 20], speed: 3, stats: { int: 4, spi: 3 }, sp: 6, icon: 'staff', sell: 190, look: ['weapon', 'militia_staff'], source: 'Quest: Wanted: Hogger' });
-  D.item('militia_hammer', { name: 'Militia Warhammer', slot: 'weapon', wtype: 'mace', q: 2, lvl: 9, dmg: [8, 15], speed: 2.3, stats: { int: 2, spi: 2 }, sp: 4, icon: 'mace', sell: 180, look: ['weapon', 'militia_hammer'], source: 'Quest: Wanted: Hogger' });
-  D.item('defias_armor', { name: 'Blackened Defias Armor', slot: 'chest', atype: 'leather', q: 3, lvl: 21, armor: 119, stats: { agi: 8, sta: 5 }, icon: 'chest_leather', sell: 1540, look: ['chest', 'defias_armor'], set: 'defias', source: 'Edwin VanCleef, The Deadmines' });
-  D.item('defias_leggings', { name: 'Blackened Defias Leggings', slot: 'legs', atype: 'leather', q: 3, lvl: 19, armor: 96, stats: { agi: 6, sta: 5 }, icon: 'legs', sell: 1540, look: ['legs', 'defias_leggings'], set: 'defias', source: 'Gilnid, The Deadmines' });
-  D.item('defias_boots', { name: 'Blackened Defias Boots', slot: 'feet', atype: 'leather', q: 3, lvl: 19, armor: 70, stats: { agi: 5, sta: 5 }, icon: 'boots', sell: 1320, set: 'defias', source: "Sneed's Shredder, The Deadmines" });
-  D.item('defias_belt', { name: 'Blackened Defias Belt', slot: 'waist', atype: 'leather', q: 3, lvl: 18, armor: 50, stats: { agi: 5, sta: 3 }, icon: 'belt', sell: 1100, set: 'defias', source: "Rhahk'Zor, The Deadmines" });
-  D.item('troll_tusk', { name: 'Frostmane Tusk', slot: 'junk', q: 0, icon: 'claw', sell: 11 });
-  D.item('trogg_stone', { name: 'Rockjaw Pebble', slot: 'junk', q: 0, icon: 'dust', sell: 3 });
+  D.item('vancleef_head', { name: 'Head of Blackwell', slot: 'quest', q: 1, icon: 'head' });
+  D.item('militia_shortsword', { name: 'Militia Shortsword', slot: 'weapon', wtype: 'sword', q: 2, lvl: 9, dmg: [8, 16], speed: 2.1, stats: { str: 2, sta: 1 }, icon: 'sword', sell: 180, look: ['weapon', 'militia_sword'], source: 'Quest: Wanted: Old Snaggle' });
+  D.item('militia_dagger', { name: 'Militia Dagger', slot: 'weapon', wtype: 'dagger', q: 2, lvl: 9, dmg: [6, 11], speed: 1.6, stats: { agi: 3 }, icon: 'dagger', sell: 170, look: ['weapon', 'militia_dagger'], source: 'Quest: Wanted: Old Snaggle' });
+  D.item('militia_staff', { name: 'Militia Quarterstaff', slot: 'weapon', wtype: 'staff', q: 2, lvl: 9, dmg: [13, 20], speed: 3, stats: { int: 4, spi: 3 }, sp: 6, icon: 'staff', sell: 190, look: ['weapon', 'militia_staff'], source: 'Quest: Wanted: Old Snaggle' });
+  D.item('militia_hammer', { name: 'Militia Warhammer', slot: 'weapon', wtype: 'mace', q: 2, lvl: 9, dmg: [8, 15], speed: 2.3, stats: { int: 2, spi: 2 }, sp: 4, icon: 'mace', sell: 180, look: ['weapon', 'militia_hammer'], source: 'Quest: Wanted: Old Snaggle' });
+  D.item('defias_armor', { name: 'Blackened Grey Hood Armor', slot: 'chest', atype: 'leather', q: 3, lvl: 21, armor: 119, stats: { agi: 8, sta: 5 }, icon: 'chest_leather', sell: 1540, look: ['chest', 'defias_armor'], set: 'defias', source: 'Corvin Blackwell, The Smugglers\' Deep' });
+  D.item('defias_leggings', { name: 'Blackened Grey Hood Leggings', slot: 'legs', atype: 'leather', q: 3, lvl: 19, armor: 96, stats: { agi: 6, sta: 5 }, icon: 'legs', sell: 1540, look: ['legs', 'defias_leggings'], set: 'defias', source: 'Gimble, The Smugglers\' Deep' });
+  D.item('defias_boots', { name: 'Blackened Grey Hood Boots', slot: 'feet', atype: 'leather', q: 3, lvl: 19, armor: 70, stats: { agi: 5, sta: 5 }, icon: 'boots', sell: 1320, set: 'defias', source: "Snork's Shredder, The Smugglers' Deep" });
+  D.item('defias_belt', { name: 'Blackened Grey Hood Belt', slot: 'waist', atype: 'leather', q: 3, lvl: 18, armor: 50, stats: { agi: 5, sta: 3 }, icon: 'belt', sell: 1100, set: 'defias', source: "Rukko the Foreman, The Smugglers' Deep" });
+  D.item('troll_tusk', { name: 'Grimtooth Tusk', slot: 'junk', q: 0, icon: 'claw', sell: 11 });
+  D.item('trogg_stone', { name: 'Gravelmaw Pebble', slot: 'junk', q: 0, icon: 'dust', sell: 3 });
   D.item('thunder_ale', { name: 'Thunder Ale', slot: 'drink', q: 1, lvl: 5, restore: 436, icon: 'keg', sell: 6, cost: 25 });
-  D.item('grell_earring', { name: 'Grell Earring', slot: 'junk', q: 0, icon: 'ring', sell: 6 });
-  D.item('furbolg_charm', { name: 'Gnarlpine Charm', slot: 'junk', q: 0, icon: 'claw', sell: 14 });
-  D.item('moonberry_juice', { name: 'Moonberry Juice', slot: 'drink', q: 1, lvl: 5, restore: 436, icon: 'water', sell: 6, cost: 25 });
+  D.item('grell_earring', { name: 'Thornling Earring', slot: 'junk', q: 0, icon: 'ring', sell: 6 });
+  D.item('furbolg_charm', { name: 'Mossback Charm', slot: 'junk', q: 0, icon: 'claw', sell: 14 });
+  D.item('moonberry_juice', { name: 'Starberry Juice', slot: 'drink', q: 1, lvl: 5, restore: 436, icon: 'water', sell: 6, cost: 25 });
   D.item('boar_tusk', { name: 'Mottled Tusk', slot: 'junk', q: 0, icon: 'tusk', sell: 4 });
   D.item('troll_trinket', { name: 'Hexed Trinket', slot: 'junk', q: 0, icon: 'voodoo_doll', sell: 12 });
   D.item('horde_bread', { name: 'Haunch of Meat', slot: 'food', q: 1, lvl: 5, restore: 243, icon: 'meat', sell: 6, cost: 25 });
-  D.item('quilboar_tusk', { name: 'Quilboar Tusk', slot: 'junk', q: 0, icon: 'quilboar_tusk', sell: 8 });
-  D.item('mulgore_bread', { name: 'Mulgore Spice Bread', slot: 'food', q: 1, lvl: 5, restore: 243, icon: 'bread', sell: 6, cost: 25 });
+  D.item('quilboar_tusk', { name: 'Spinehide Tusk', slot: 'junk', q: 0, icon: 'quilboar_tusk', sell: 8 });
+  D.item('mulgore_bread', { name: 'Greensward Spice Bread', slot: 'food', q: 1, lvl: 5, restore: 243, icon: 'bread', sell: 6, cost: 25 });
   D.item('rotting_flesh', { name: 'Rotting Flesh', slot: 'junk', q: 0, icon: 'zombie_brain', sell: 5 });
-  D.item('tirisfal_pumpkin', { name: 'Tirisfal Pumpkin', slot: 'food', q: 1, lvl: 5, restore: 243, icon: 'grapes', sell: 6, cost: 25 });
-  D.item('moist_cornbread', { name: 'Moist Cornbread', slot: 'food', q: 1, lvl: 10, restore: 552, icon: 'bread', sell: 12, cost: 50 });
+  D.item('tirisfal_pumpkin', { name: 'Pallmoor Pumpkin', slot: 'food', q: 1, lvl: 5, restore: 243, icon: 'grapes', sell: 6, cost: 25 });
+  D.item('moist_cornbread', { name: 'Buttered Cornbread', slot: 'food', q: 1, lvl: 10, restore: 552, icon: 'bread', sell: 12, cost: 50 });
   D.item('mutton_chop', { name: 'Mutton Chop', slot: 'food', q: 1, lvl: 15, restore: 874, icon: 'meat', sell: 20, cost: 80 });
   D.item('sweet_nectar', { name: 'Sweet Nectar', slot: 'drink', q: 1, lvl: 15, restore: 1344, icon: 'water', sell: 20, cost: 80 });
   D.item('wild_hog_shank', { name: 'Wild Hog Shank', slot: 'food', q: 1, lvl: 22, restore: 1152, icon: 'meat', sell: 30, cost: 120 });
@@ -382,17 +382,17 @@
   D.item('spiced_jungle_meat', { name: 'Spiced Jungle Meat', slot: 'food', q: 1, lvl: 32, restore: 1632, icon: 'meat', sell: 55, cost: 220 });
   D.item('bubbling_water', { name: 'Bubbling Water', slot: 'drink', q: 1, lvl: 32, restore: 2556, icon: 'water', sell: 55, cost: 220 });
   D.item('hardened_mushroom', { name: 'Hardened Mushroom', slot: 'food', q: 1, lvl: 37, restore: 1932, icon: 'bread', sell: 70, cost: 280 });
-  D.item('moonberry_cordial', { name: 'Moonberry Cordial', slot: 'drink', q: 1, lvl: 37, restore: 2934, icon: 'water', sell: 70, cost: 280 });
+  D.item('moonberry_cordial', { name: 'Starberry Cordial', slot: 'drink', q: 1, lvl: 37, restore: 2934, icon: 'water', sell: 70, cost: 280 });
   D.item('smoked_desert_dumplings', { name: 'Smoked Desert Dumplings', slot: 'food', q: 1, lvl: 45, restore: 2148, icon: 'bread', sell: 90, cost: 360 });
   D.item('sweet_nectar_45', { name: 'Morning Glory Cordial', slot: 'drink', q: 1, lvl: 45, restore: 3600, icon: 'water', sell: 90, cost: 360 });
   D.item('cured_ham_steak', { name: 'Cured Ham Steak', slot: 'food', q: 1, lvl: 52, restore: 2550, icon: 'meat', sell: 110, cost: 440 });
   D.item('morning_glory_60', { name: 'Morning Glory Dew', slot: 'drink', q: 1, lvl: 52, restore: 4410, icon: 'water', sell: 110, cost: 440 });
   D.item('sweet_roll_60', { name: 'Homemade Cherry Pie', slot: 'food', q: 1, lvl: 57, restore: 3000, icon: 'bread', sell: 130, cost: 520 });
-  D.item('spring_water_60', { name: 'Sparkling Southshore Cider', slot: 'drink', q: 1, lvl: 57, restore: 5100, icon: 'water', sell: 130, cost: 520 });
+  D.item('spring_water_60', { name: 'Sparkling Seacombe Cider', slot: 'drink', q: 1, lvl: 57, restore: 5100, icon: 'water', sell: 130, cost: 520 });
   D.item('melon_juice', { name: 'Melon Juice', slot: 'drink', q: 1, lvl: 10, restore: 835, icon: 'water', sell: 12, cost: 50 });
   D.item('pool_water', { name: 'Forgotten Pool Water', slot: 'quest', q: 1, icon: 'water' });
 
-  D.SETS = { defias: { name: 'Blackened Defias', pieces: 4, mask: 3 } };
+  D.SETS = { defias: { name: 'Blackened Grey Hood', pieces: 4, mask: 3 } };
 
   // ---- random gear
   D.AFFIXES = [{ name: 'of the Bear', stats: { str: 1, sta: 1 } }, { name: 'of the Tiger', stats: { str: 1, agi: 1 } }, { name: 'of the Monkey', stats: { agi: 1, sta: 1 } }, { name: 'of the Eagle', stats: { sta: 1, int: 1 } }, { name: 'of the Owl', stats: { int: 1, spi: 1 } }, { name: 'of the Whale', stats: { sta: 1, spi: 1 } }, { name: 'of the Falcon', stats: { agi: 1, int: 1 } }, { name: 'of Strength', stats: { str: 2 } }, { name: 'of Agility', stats: { agi: 2 } }, { name: 'of Intellect', stats: { int: 2 } }, { name: 'of Stamina', stats: { sta: 2 } }, { name: 'of Spirit', stats: { spi: 2 } }];
@@ -450,27 +450,27 @@
     { id: 'pvp2', name: 'Corporal %s', horde: 'Grunt %s', need: { honor: 500 }, how: 'Earn 500 Honor' },
     { id: 'pvp3', name: 'Sergeant %s', horde: 'Sergeant %s', need: { honor: 1500 }, how: 'Earn 1500 Honor' },
     { id: 'pvp4', name: 'Knight %s', horde: 'Stone Guard %s', need: { honor: 4000 }, how: 'Earn 4000 Honor' },
-    { id: 'defender', name: '%s, Defender of the Realm', horde: '%s, Defender of the Horde', need: { kills: 50 }, how: 'Defeat 50 enemy players' },
-    { id: 'deadmines', name: '%s of Westfall', need: { clear: 'deadmines' }, how: 'Clear the Deadmines' },
-    { id: 'wailing', name: '%s the Dreamwalker', need: { clear: 'wailing_caverns' }, how: 'Clear Wailing Caverns' },
-    { id: 'stockade', name: 'Warden %s', need: { clear: 'stockade' }, how: 'Clear the Stockade' },
-    { id: 'shadowfang', name: '%s the Wolfslayer', need: { clear: 'shadowfang' }, how: 'Clear Shadowfang Keep' },
-    { id: 'blackfathom', name: '%s of the Deeps', need: { clear: 'blackfathom' }, how: 'Clear Blackfathom Deeps' },
-    { id: 'zulfarrak', name: '%s the Sandbreaker', need: { clear: 'zul_farrak' }, how: "Clear Zul'Farrak" },
-    { id: 'maraudon', name: '%s of the Earthen Ring', need: { clear: 'maraudon' }, how: 'Clear Maraudon' },
-    { id: 'brd', name: '%s, Bane of the Dark Iron', need: { clear: 'blackrock_depths' }, how: 'Clear Blackrock Depths' },
-    { id: 'scholomance', name: 'Headmaster %s', need: { clear: 'scholomance' }, how: 'Clear Scholomance' },
-    { id: 'stratholme', name: '%s the Argent', need: { clear: 'stratholme' }, how: 'Clear Stratholme' },
+    { id: 'defender', name: '%s, Defender of the Realm', horde: '%s, Defender of the Krugar', need: { kills: 50 }, how: 'Defeat 50 enemy players' },
+    { id: 'deadmines', name: '%s of Longfield', need: { clear: 'deadmines' }, how: 'Clear the Smugglers\' Deep' },
+    { id: 'wailing', name: '%s the Dreamwalker', need: { clear: 'wailing_caverns' }, how: 'Clear The Dreaming Caves' },
+    { id: 'stockade', name: 'Warden %s', need: { clear: 'stockade' }, how: 'Clear Kingsmere Gaol' },
+    { id: 'shadowfang', name: '%s the Wolfslayer', need: { clear: 'shadowfang' }, how: 'Clear Greyhowl Keep' },
+    { id: 'blackfathom', name: '%s of the Deeps', need: { clear: 'blackfathom' }, how: 'Clear The Tidehollow Deeps' },
+    { id: 'zulfarrak', name: '%s the Sandbreaker', need: { clear: 'zul_farrak' }, how: "Clear The Dune Temple" },
+    { id: 'maraudon', name: '%s of the Stone Circle', need: { clear: 'maraudon' }, how: 'Clear The Gemfall Caves' },
+    { id: 'brd', name: '%s, Bane of the Slagborn', need: { clear: 'blackrock_depths' }, how: 'Clear Cinderpeak Depths' },
+    { id: 'scholomance', name: 'Headmaster %s', need: { clear: 'scholomance' }, how: 'Clear The Blackcloister' },
+    { id: 'stratholme', name: '%s of the Lantern Watch', need: { clear: 'stratholme' }, how: 'Clear Graymouth' },
     { id: 'sunken_archive', name: '%s the Lorebound', need: { clear: 'sunken_archive' }, how: 'Clear the Sunken Archive' },
     { id: 'shalzua', name: '%s, Loa-Breaker', need: { clear: 'shalzua_temple' }, how: "Clear the Temple of Shal'zua" },
     { id: 'guild_champion', name: '%s, Champion of the Guild', need: { guildRank: 4 }, how: 'Reach Champion rank in a guild' },
     { id: 'oathkeeper', name: '%s the Oathkeeper', need: { quest: 'lg_lyv_oath' }, how: "Finish Lyveus Cloveus's story" },
     { id: 'tidecrown', name: '%s of the Drowned Crown', need: { clear: 'tidecrown_citadel' }, how: 'Clear the Tidecrown Citadel' },
-    { id: 'scarlet', name: '%s the Crusader\'s Bane', need: { clear: 'sm_cathedral' }, how: 'Clear the Scarlet Monastery Cathedral' },
+    { id: 'scarlet', name: '%s the Crusader\'s Bane', need: { clear: 'sm_cathedral' }, how: 'Clear the Pyre Abbey Cathedral' },
     { id: 'rider', name: '%s the Rider', need: { riding: 1 }, how: 'Learn to ride' },
-    { id: 'gnomeregan', name: '%s, Liberator of Gnomeregan', need: { clear: 'gnomeregan' }, how: 'Clear Gnomeregan' },
-    { id: 'razorfen', name: '%s the Thornbreaker', need: { clear: 'razorfen_kraul' }, how: 'Clear Razorfen Kraul' },
-    { id: 'hunter_big', name: '%s the Big Game Hunter', need: { clear: 'bangalash' }, how: 'Defeat King Bangalash' },
+    { id: 'gnomeregan', name: '%s, Liberator of Gearhollow', need: { clear: 'gnomeregan' }, how: 'Clear Gearhollow' },
+    { id: 'razorfen', name: '%s the Thornbreaker', need: { clear: 'razorfen_kraul' }, how: 'Clear The Thorn Warrens' },
+    { id: 'hunter_big', name: '%s the Big Game Hunter', need: { clear: 'bangalash' }, how: 'Defeat King Ghostpelt' },
     { id: 'artisan', name: 'Artisan %s', need: { craft: 150 }, how: 'Reach 150 in a crafting profession' },
   ];
   // ---- mounts (v5.1): learn riding at 40 from a stable master in a capital, then buy a mount.
@@ -480,10 +480,10 @@
     horse: { name: 'Brown Horse', race: 'human', faction: 'alliance', cost: 100000 },
     ram: { name: 'Grey Ram', race: 'dwarf', faction: 'alliance', cost: 100000 },
     mechanostrider: { name: 'Red Mechanostrider', race: 'gnome', faction: 'alliance', cost: 100000 },
-    nightsaber: { name: 'Striped Nightsaber', race: 'nightelf', faction: 'alliance', cost: 100000 },
+    nightsaber: { name: 'Striped Shadowcat', race: 'nightelf', faction: 'alliance', cost: 100000 },
     wolf: { name: 'Timber Wolf', race: 'orc', faction: 'horde', cost: 100000 },
     raptor: { name: 'Emerald Raptor', race: 'troll', faction: 'horde', cost: 100000 },
-    kodo: { name: 'Grey Kodo', race: 'tauren', faction: 'horde', cost: 100000 },
+    kodo: { name: 'Grey Dustback', race: 'tauren', faction: 'horde', cost: 100000 },
     skeletal_horse: { name: 'Red Skeletal Horse', race: 'undead', faction: 'horde', cost: 100000 },
   };
   // ---- quest reward families

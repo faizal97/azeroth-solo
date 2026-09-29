@@ -1,11 +1,11 @@
-/* art_razorfen.js — Razorfen Kraul art for Azeroth Solo (Horde dungeon, levels 29-34: the quilboar's giant thorn warren
- * in the southern Barrens). Scenes: the thorn gate on the savannah, the winding thorn tunnels, the ritual depths.
+/* art_razorfen.js — The Thorn Warrens art for Realm of Loner (Krugar dungeon, levels 29-34: the quilboar's giant thorn warren
+ * in the southern Scrublands). Scenes: the thorn gate on the savannah, the winding thorn tunnels, the ritual depths.
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Razorfen keys and fall through to the previous functions for every other key. Keys are appended to
+ * Thorn Warrens keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
- * Helpers, the biped rig and the house-style scene pieces are shared copies of art_wetlands.js. The Razorfen quilboar
+ * Helpers, the biped rig and the house-style scene pieces are shared copies of art_wetlands.js. The Thorn Warrens quilboar
  * rig is its own: darker umber hide, bone-white skull paint over the eyes, dusty grey swept-back quills with bone tips,
- * drooping torn ears and heavier tusks, so the tribe reads apart from the red-painted Razormane of art_barrens.js.
+ * drooping torn ears and heavier tusks, so the tribe reads apart from the red-painted Snoutspike of art_barrens.js.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix rk<counter>_).
  */
@@ -280,7 +280,7 @@
     return o.tf ? G(s, o.tf, o.op) : (o.op != null ? G(s, '', o.op) : s);
   }
   function glowEye(c, x, y, r, col) { return C(x, y, r * 3.4, glow(c, col, 0.8)) + C(x, y, r, col) + C(x - r * 0.3, y - r * 0.3, r * 0.35, '#ffffff', 0, 0.9); }
-  // ---- more shared copies of art_redridge.js (feathers, spear, rags, Redridge-style gnoll rig, bone necklace, pelt hood) ----
+  // ---- more shared copies of art_redridge.js (feathers, spear, rags, Stoneharrow-style gnoll rig, bone necklace, pelt hood) ----
   function feathers(x, y, cols, s, a0) {
     s = s || 1; var o = '';
     cols.forEach(function (col, i) {
@@ -309,7 +309,7 @@
   var VINE = '#6c5844', THORN = '#dcd0b0', BONE = '#ece4cc', BONED = '#c8bc9c', OCHRE = '#b0823e', HIDE = '#7a5a3a',
     RFSK = '#6a4a3c', RFMANE = '#857564', NECRO = '#a050f0', GEO = '#f0a040', IRON = '#5a5c62';
   function hoofs(x, y, col) { return P('M' + n(x - 5) + ',' + n(y - 5) + ' L' + n(x + 5) + ',' + n(y - 5) + ' L' + n(x + 4.5) + ',' + n(y + 1) + ' L' + n(x - 5.5) + ',' + n(y + 1) + ' Z', col || '#2d2420', 2) + L('M' + n(x - 0.5) + ',' + n(y - 3) + ' L' + n(x - 0.5) + ',' + n(y + 1), OL, 1.2); }
-  // flat-topped Barrens mesas on the horizon, no outline
+  // flat-topped Scrublands mesas on the horizon, no outline
   function mesas(seed, base, col) {
     var r = rng(seed), o = '', x = -30;
     while (x < 420) {
@@ -371,7 +371,7 @@
     if (eye) o += glowEye(c, x - 3.8 * s, y - 6 * s, 1.2 * s, eye) + glowEye(c, x + 3.8 * s, y - 6 * s, 1.2 * s, eye);
     return o;
   }
-  // Razorfen bone totem: vine-wrapped pole, crossbar with bones and pale rags, boar skull on top
+  // Thorn Warrens bone totem: vine-wrapped pole, crossbar with bones and pale rags, boar skull on top
   function rfTotem(c, x, y, h, s, eye) {
     var top = y - h, o = E(x, y + 1, 12 * s, 3 * s, '#000', 0, 0.28);
     o += limb('M' + pt([x, y]) + 'L' + pt([x + 1 * s, top + 8 * s]), '#5a4230', 4 * s);

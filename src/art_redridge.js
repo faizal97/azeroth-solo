@@ -1,14 +1,14 @@
-/* art_redridge.js — Redridge Mountains zone art for Azeroth Solo (Alliance, levels 18-25: Three Corners, Lakeshire,
- * Lake Everstill, the Redridge Canyons, Alther's Mill, Render's Valley, Stonewatch Keep, Galardell Valley) plus
- * the Stockade (Stormwind prison dungeon, levels 22-26).
+/* art_redridge.js — Stoneharrow Mountains zone art for Realm of Loner (Accord, levels 18-25: Hob's Fork, Longbridge,
+ * Lake Calder, the Stoneharrow Canyons, Pike's Mill, Scorched Valley, Watcher's Keep, Dunmore Valley) plus
+ * Kingsmere Gaol (Kingsmere prison dungeon, levels 22-26).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Redridge keys and fall through to the previous functions for every other key. Keys are appended to
+ * Stoneharrow keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
- * Helpers and rigs (biped, gnoll head, murloc, goretusk, Defias head, orc/human/dwarf heads) are shared copies of
+ * Helpers and rigs (biped, gnoll head, murloc, goretusk, Grey Hood head, orc/human/dwarf heads) are shared copies of
  * art_westfall.js / art_durotar.js / art_barrens.js so the zones match.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix rr<counter>_).
- * Palette: red-rock canyons, rust cliffs, dark pines, deep blue Lake Everstill, warm evening light.
+ * Palette: red-rock canyons, rust cliffs, dark pines, deep blue Lake Calder, warm evening light.
  */
 (function (root) {
   'use strict';
@@ -190,7 +190,7 @@
     var d = 'M' + pt([x - 10 * s, y]) + 'L' + pt([x - 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y]) + 'Z';
     return E(x, y + 1, 12 * s, 2.4 * s, '#000', 0, 0.22) + body(c, d, col, L('M' + pt([x - 10 * s, y - 16 * s]) + 'L' + pt([x + 10 * s, y]) + 'M' + pt([x - 10 * s, y - 8 * s]) + 'L' + pt([x + 10 * s, y - 8 * s]), dk(col, 0.4), 1.4 * s) + F('M' + pt([x + 4 * s, y - 18 * s]) + 'L' + pt([x + 12 * s, y - 18 * s]) + 'L' + pt([x + 12 * s, y + 2]) + 'L' + pt([x + 4 * s, y + 2]) + 'Z', dk(col, 0.4), 0.5), 1.6 * s);
   }
-  // Defias crate: a red cloth tied over the lid
+  // Grey Hood crate: a red cloth tied over the lid
   function defCrate(c, x, y, s) {
     return crate(c, x, y, s, '#9a6a3a') + P('M' + pt([x - 11 * s, y - 16 * s]) + 'L' + pt([x + 3 * s, y - 17 * s]) + 'L' + pt([x + 4 * s, y - 8 * s]) + 'L' + pt([x, y - 10 * s]) + 'L' + pt([x - 4 * s, y - 6 * s]) + 'L' + pt([x - 7 * s, y - 11 * s]) + 'L' + pt([x - 11 * s, y - 9 * s]) + 'Z', c.cel(DEF_RED), 1.3 * s);
   }
@@ -207,7 +207,7 @@
     o += L(posts + rl, OL, 5) + L(rl, lt(col, 0.1), 2) + L(posts, col, 2.6);
     return o;
   }
-  // Stormwind-style farmhouse: stone ground floor, half-timbered upper, steep shingle roof
+  // Kingsmere-style farmhouse: stone ground floor, half-timbered upper, steep shingle roof
   function farmhouse(c, x, y, s, o) {
     o = o || {};
     var plaster = o.wall || PLASTER, beam = BEAM, roofc = o.roof || ROOF, stone = o.stone || STONE, out = '', ruin = o.ruin;
@@ -280,7 +280,7 @@
     var ca = Math.cos(ang) * len / 2, sa = Math.sin(ang) * len / 2, d = 'M' + pt([x - ca, y - sa]) + 'L' + pt([x + ca, y + sa]);
     return L(d, OL, 4.4 * s) + C(x - ca, y - sa, 2.2 * s, '#ece4cc', 1 * s) + C(x + ca, y + sa, 2.2 * s, '#ece4cc', 1 * s) + L(d, '#ece4cc', 2.2 * s);
   }
-  // Riverpaw lean-to: crossed poles, ragged hide, skull on top
+  // Tallgrass lean-to: crossed poles, ragged hide, skull on top
   function gnollTent(c, x, y, s, hide, bare) {
     hide = hide || '#9a7a52';
     var o = E(x, y + 1, 30 * s, 5 * s, '#000', 0, 0.22);
@@ -504,7 +504,7 @@
     });
     return o;
   }
-  // Blackrock war banner: black cloth, orange-red mountain sigil (two jagged peaks over a red band)
+  // Cinderpeak war banner: black cloth, orange-red mountain sigil (two jagged peaks over a red band)
   function sigil(x, y, k) {
     return F(pd([[x - 6 * k, y + 4 * k], [x - 2.5 * k, y - 4 * k], [x - 1 * k, y - 1.5 * k], [x + 1.5 * k, y - 6.5 * k], [x + 6 * k, y + 4 * k]], true), BRO) +
       F(pd([[x + 1.5 * k, y - 6.5 * k], [x + 2.5 * k, y - 2.5 * k], [x + 0.8 * k, y - 3.4 * k]], true), '#ffd070') + F(pd([[x - 6.5 * k, y + 4.5 * k], [x + 6.5 * k, y + 4.5 * k], [x + 6 * k, y + 6.5 * k], [x - 6 * k, y + 6.5 * k]], true), BRK);
@@ -520,7 +520,7 @@
     o += body(c, d, BR, F(pd([[x + 2 * s, by - 1], [x + bw, by - 1], [x + bw, by + bh + 4], [x + 2 * s, by + bh + 4]], true), '#000000', 0.35) + R(x - bw / 2, by + 2 * s, bw, 2 * s, BRK) + sigil(x, by + bh * 0.45, 1.05 * s), 1.6 * s);
     return o;
   }
-  // wall-hung Blackrock banner (hangs down from y)
+  // wall-hung Cinderpeak banner (hangs down from y)
   function wallBanner(c, x, y, w, h) {
     var d = pd([[x - w / 2, y], [x + w / 2, y], [x + w / 2, y + h], [x, y + h - w * 0.35], [x - w / 2, y + h]], true);
     return L('M' + pt([x - w / 2 - 2, y]) + 'L' + pt([x + w / 2 + 2, y]), OL, 3) + body(c, d, BR, F(pd([[x + 1, y], [x + w, y], [x + w, y + h + 2], [x + 1, y + h + 2]], true), '#000', 0.35) + R(x - w / 2, y + 2, w, 1.8, BRK) + sigil(x, y + h * 0.42, w / 16), 1.4);
@@ -554,7 +554,7 @@
     o += body(c, 'M' + pt([x - 11 * s, y - 20 * s]) + 'L' + pt([x + 11 * s, y - 20 * s]) + 'L' + pt([x + 7 * s, y - 12 * s]) + 'L' + pt([x - 7 * s, y - 12 * s]) + 'Z', '#4a4444', L('M' + pt([x - 9 * s, y - 16 * s]) + 'L' + pt([x + 9 * s, y - 16 * s]), '#2a2424', 1.2 * s), 1.4 * s);
     return o + flame(c, x - 4 * s, y - 19 * s, 0.7 * s) + flame(c, x + 4 * s, y - 19 * s, 0.65 * s) + flame(c, x, y - 18 * s, 1.1 * s);
   }
-  // Blackrock war tent: dark hide over poles, spikes on the ridge
+  // Cinderpeak war tent: dark hide over poles, spikes on the ridge
   function warTent(c, x, y, s, hide) {
     hide = hide || '#3a302c';
     var o = E(x, y + 1, 34 * s, 5 * s, '#000', 0, 0.26);
@@ -609,7 +609,7 @@
     var bd = 'M' + pt(q(-12, 0)) + 'Q' + pt(q(-4, -5)) + ' ' + pt(q(6, -2)) + 'L' + pt(q(14, 2)) + 'L' + pt(q(18, 6)) + 'L' + pt(q(12, 4)) + 'Q' + pt(q(-2, 4)) + ' ' + pt(q(-12, 0)) + 'Z';
     return P(wing, '#2a2226', 1 * s) + P(bd, '#2a2226', 1 * s) + F(pd([q(-8, 1), q(4, 1), q(-2, 3)], true), BRO) + C(q(-10, -1)[0], q(-10, -1)[1], 0.9 * s, '#ffb030');
   }
-  // ---- the Stockade ----
+  // ---- Kingsmere Gaol ----
   // big fitted-stone wall filling a rect
   function brickWall(c, x0, y0, x1, y1, col, seed, bh) {
     bh = bh || 12;
@@ -731,7 +731,7 @@
       o += farPines(9, 300, 356, 84, 0.6, 0.8, '#2e5236', 8);
       o += ground(c, 148, GR, GR2);
       o += F('M-4,150 Q80,142 160,150 L160,160 Q80,156 -4,164 Z', GRL, 0.35);
-      // the Elwynn road coming in from the lower left, forking east and north at the signpost
+      // the Ambermoor road coming in from the lower left, forking east and north at the signpost
       o += path2(c, [[-10, 226], [60, 214], [130, 196], [190, 180], [230, 172], [300, 166], [410, 162]], 46, 20, DIRT, 0.72);
       o += path2(c, [[200, 178], [210, 166], [226, 156], [236, 148]], 26, 10, DIRT, 0.72);
       o += grass(12, 150, 240, dk(GR, 0.25), 90, 0.6, 1.6, 1.2);
@@ -751,7 +751,7 @@
       o += cliffs(c, [[40, 118, 80, 34, lt(RR, 0.1), 1.4], [110, 118, 50, 20, lt(RR, 0.16), 1.2]]);
       o += hills(c, 23, 118, 8, '#6e7e46', 50) + farPines(24, 0, 400, 118, 0.6, 0.9, '#3a5c3e', 36);
       o += lake(c, 118, 172, 7, 70);
-      // the long stone bridge striding across Lake Everstill from the town
+      // the long stone bridge striding across Lake Calder from the town
       o += stoneBridge(c, -6, 262, 126, 30, 7, '#c4b8a2');
       o += E(120, 158, 150, 3, '#0c2040', 0, 0.25);
       o += rowboat(c, 150, 166, 0.9, '#8a5a36');
@@ -760,7 +760,7 @@
       o += shore(c, 172, '#8a9650', 31, 4);
       o += ground(c, 176, '#8a9650', '#6a7a3c');
       o += path2(c, [[-10, 218], [100, 210], [200, 204], [300, 206], [410, 212]], 44, 44, '#c8a070', 0.75);
-      // Lakeshire houses: white plaster, dark beams, red-brown roofs, lit windows
+      // Longbridge houses: white plaster, dark beams, red-brown roofs, lit windows
       o += farmhouse(c, 238, 160, 0.6, { wall: PLASTER, roof: dk(ROOF, 0.06), stone: '#b8ab94', lit: true });
       o += farmhouse(c, 396, 170, 0.78, { wall: PLASTER, roof: dk(ROOF, 0.1), stone: '#b0a48c', lit: true });
       o += farmhouse(c, 318, 184, 1.08, { wall: PLASTER, roof: ROOF, stone: '#b8ab94', lit: true });
@@ -820,7 +820,7 @@
       o += hills(c, 84, 146, 12, '#687e44', 44) + farPines(85, 260, 400, 146, 1, 1.3, '#2a4630', 14);
       o += ground(c, 148, GR, GR2);
       o += stream(c, [[230, 146], [250, 160], [236, 176], [270, 196], [320, 216], [352, 242]], 5, 30);
-      // Alther's Mill: burnt lumber mill, roof fallen in, the wheel still turning in the stream
+      // Pike's Mill: burnt lumber mill, roof fallen in, the wheel still turning in the stream
       o += farmhouse(c, 150, 176, 1.12, { ruin: true, wall: '#8a7a68', roof: '#3a2a22', stone: '#8a8070' });
       o += limb('M186,146 L236,156', '#3a2a20', 4) + waterwheel(c, 236, 160, 22, true) + E(236, 184, 22, 3, '#e8f0ff', 0, 0.6);
       o += smoke(128, 106, 0.9, 8, '#5a5450', 6) + C(130, 150, 2.4, '#ff8a2a', 0, 0.9) + C(170, 166, 2, '#ffb040', 0, 0.9) + C(112, 172, 2, '#ff7a1a', 0, 0.8);
@@ -1014,8 +1014,8 @@
     return o.tf ? G(s, o.tf) : s;
   }
 
-  // ---- Defias ----
-  // hooded head with the red Defias mask over nose and mouth (facing left)
+  // ---- Grey Hood ----
+  // hooded head with the red Grey Hood mask over nose and mouth (facing left)
   function defiasHead(c, x, y, o) {
     var sk = o.skin || '#e4b48a', hood = o.hood || DEF_HOOD, mask = o.mask || DEF_RED, s = '';
     // hood back / cowl hanging behind the neck
@@ -1044,7 +1044,7 @@
       F('M' + pt([x + 4, y - 24]) + 'L' + pt([x + 18, y - 24]) + 'L' + pt([x + 18, y + 8]) + 'L' + pt([x + 9, y + 8]) + 'C' + pt([x + 10, y - 6]) + ' ' + pt([x + 8, y - 16]) + ' ' + pt([x + 4, y - 24]) + 'Z', dk(hood, 0.3), 0.75) + L('M' + pt([x - 8, y - 12]) + 'Q' + pt([x, y - 17]) + ' ' + pt([x + 8, y - 14]), lt(hood, 0.2), 1, 0.7), 2);
     return s;
   }
-  // ---- murloc (same family shape as the Elwynn murlocs, facing left) ----
+  // ---- murloc (same family shape as the Ambermoor murlocs, facing left) ----
   function murloc(c, o) {
     var f = o.skin, fd = dk(f, 0.28), fin = o.fin, out = '';
     var bd = 'M30,66 C28,50 42,40 58,42 C76,44 90,56 90,76 C90,94 80,108 62,108 C46,108 36,98 34,86 C33,80 31,72 30,66 Z';
@@ -1100,7 +1100,7 @@
     s += limb('M44,90 L42,106 L42,116', col, 11) + hoofs(42, 122) + limb('M96,88 L100,104 L98,116', col, 11) + hoofs(98, 122);
     return G(s, at(o.scale || 1, 64, 122));
   }
-  // ---- Riverpaw gnoll: same head as art.js riverpaw_gnoll / hogger (ported, drawn facing right, then mirrored) ----
+  // ---- Tallgrass gnoll: same head as art.js riverpaw_gnoll / hogger (ported, drawn facing right, then mirrored) ----
   function gnollHeadR(c, X, Y, r, o) {
     var f = o.skin, fd = dk(f, 0.3), out = '';
     out += P(pd([[X - r * 0.1, Y - r * 0.95], [X - r * 0.95, Y - r * 0.85], [X - r * 0.75, Y - r * 0.45], [X - r * 1.6, Y - r * 0.15], [X - r * 1.05, Y + r * 0.2], [X - r * 1.7, Y + r * 0.7], [X - r * 0.95, Y + r * 0.9], [X - r * 1.35, Y + r * 1.55], [X - r * 0.3, Y + r * 1.2]], true), c.cel(o.mane || dk(f, 0.45)), 2);
@@ -1195,7 +1195,7 @@
       L('M' + pt([x - 11, y - 1]) + 'L' + pt([x - 1, y]), OL, 2.2) + C(x - 6, y + 2, 1.7, eye, 0) + C(x - 6, y + 2, 4, glow(c, eye, 0.6)) +
       P('M' + pt([x - 11, y + 11]) + 'L' + pt([x - 12, y + 5]) + 'L' + pt([x - 8, y + 10]) + 'Z', '#f4ecd6', 1.1) + P('M' + pt([x - 5, y + 12]) + 'L' + pt([x - 5, y + 6]) + 'L' + pt([x - 2, y + 11]) + 'Z', '#f4ecd6', 1.1);
   }
-  // ---- dwarf (Ironforge, facing left: squat, broad, big braided beard over the chest) ----
+  // ---- dwarf (Keldrun, facing left: squat, broad, big braided beard over the chest) ----
   function dwarfHead(c, x, y, o) {
     var sk = o.skin || '#e09c78', hc = o.hair || '#7a4422', band = o.band || '#d6a53c', bl = o.beardLen || 30, s = '';
     s += E(x + 10, y + 1, 3.4, 4.6, c.cel(sk), 1.8);
@@ -1277,7 +1277,7 @@
     var d = 'M' + pt([x - r, y]) + 'C' + pt([x - r, y - r * 1.2]) + ' ' + pt([x + r, y - r * 1.2]) + ' ' + pt([x + r * 0.9, y - r * 0.1]) + 'C' + pt([x + r * 0.8, y + r * 0.8]) + ' ' + pt([x - r * 0.5, y + r * 0.9]) + ' ' + pt([x - r * 0.4, y + r * 0.1]) + 'C' + pt([x - r * 0.3, y - r * 0.5]) + ' ' + pt([x + r * 0.4, y - r * 0.4]) + ' ' + pt([x + r * 0.3, y + r * 0.1]);
     return L(d, OL, 4.4, 0.8) + L(d, col, 2.4) + L(d, '#ffffff', 0.8, 0.7);
   }
-  // round wooden shield with an iron rim and the Blackrock sigil (seen from the front)
+  // round wooden shield with an iron rim and the Cinderpeak sigil (seen from the front)
   function roundShield(c, x, y, r, face) {
     return C(x, y, r, c.cel(face || BR), 2.2) + L('M' + pt([x - r + 2, y]) + 'a' + n(r - 2) + ',' + n(r - 2) + ' 0 1,0 ' + n(2 * r - 4) + ',0a' + n(r - 2) + ',' + n(r - 2) + ' 0 1,0 ' + n(-2 * r + 4) + ',0', '#8a8a90', 2) +
       sigil(x, y - 1, r / 13) + C(x, y + r * 0.62, 1.6, '#c8c4bc', 0.8) + C(x - r * 0.62, y, 1.4, '#c8c4bc', 0.8) + C(x + r * 0.62, y, 1.4, '#c8c4bc', 0.8) + E(x - r * 0.35, y - r * 0.45, r * 0.3, r * 0.16, '#ffffff', 0, 0.18);
@@ -1316,7 +1316,7 @@
   }
   var RAG = '#8e8a82', RAG2 = '#6e6a64';
 
-  // ---- Redridge gnoll (hunched, digitigrade, same head family as the Riverpaw) ----
+  // ---- Stoneharrow gnoll (hunched, digitigrade, same head family as the Tallgrass) ----
   function rrGnoll(c, o) {
     var fur = o.fur, mane = o.mane, spot = o.spot || dk(fur, 0.38);
     var head = function (c, x, y) {
@@ -1353,7 +1353,7 @@
       F(pd([[x + 10, y - 24], [x + 34, y - 24], [x + 34, y + 28], [x + 16, y + 28]], true), dk(col, 0.3), 0.7) + L('M' + pt([x - 13, y - 9]) + 'C' + pt([x, y - 13]) + ' ' + pt([x + 10, y - 6]) + ' ' + pt([x + 14, y + 8]), lt(col, 0.3), 1.6, 0.9), 2);
   }
 
-  // ---- Blackrock orc (black leather / mail, the red-orange mountain sigil) ----
+  // ---- Cinderpeak orc (black leather / mail, the red-orange mountain sigil) ----
   function rrOrc(c, o) {
     var sk = o.skin || '#6a8a3a';
     return biped(c, {
@@ -1369,7 +1369,7 @@
     for (var y = y0; y < y1; y += 4) for (var x = x0 + ((y - y0) / 4 % 2) * 2; x < x1; x += 4) d += 'M' + pt([x, y]) + 'q2,2.6 4,0';
     return L(d, col, 0.9, 0.8);
   }
-  // horned great-helm for a Blackrock warlord (x, y = orc head centre)
+  // horned great-helm for a Cinderpeak warlord (x, y = orc head centre)
   function hornHelm(c, x, y, col) {
     col = col || '#2e2a2e';
     var o = P('M' + pt([x + 4, y - 14]) + 'C' + pt([x + 14, y - 24]) + ' ' + pt([x + 28, y - 18]) + ' ' + pt([x + 36, y - 24]) + 'C' + pt([x + 26, y - 24]) + ' ' + pt([x + 14, y - 30]) + ' ' + pt([x + 8, y - 22]) + 'Z', c.cel('#d8ccb0'), 1.6);
@@ -1381,7 +1381,7 @@
   }
   function ponytail(c, x, y) { return P('M' + pt([x + 6, y - 14]) + 'C' + pt([x + 16, y - 20]) + ' ' + pt([x + 24, y - 10]) + ' ' + pt([x + 22, y + 10]) + 'C' + pt([x + 20, y]) + ' ' + pt([x + 16, y - 8]) + ' ' + pt([x + 8, y - 8]) + 'Z', c.cel('#1e1812'), 1.8) + R(x + 14, y - 12, 5, 4, c.cel(BRK), 1); }
 
-  // ---- human prisoner (Stockade) ----
+  // ---- human prisoner (Gaol) ----
   function prisoner(c, o) {
     var sk = o.skin || '#e0b08a', tun = o.tunic || RAG;
     return biped(c, {
@@ -1503,7 +1503,7 @@
     return G(s, at(o.scale || 1, 64, 122));
   }
 
-  // ---- Bellygrub: a huge fat boar with a sagging belly (facing left) ----
+  // ---- Lardhide: a huge fat boar with a sagging belly (facing left) ----
   function bellygrubArt(c) {
     var col = '#8a5a44', mane = '#3a2218', bel = '#d8a08a', s = shadow(c, 64, 58), legF = dk(col, 0.25);
     s += limb('M58,100 L58,112', legF, 12) + hoofs(58, 122) + limb('M102,98 L104,112', legF, 12) + hoofs(104, 122);
@@ -1535,7 +1535,7 @@
   //  MOBS (128x128, facing left, feet on y=122)
   // ============================================================
   var MOBS = {
-    // ---- Redridge gnolls: rust-red hyena fur, dark spots ----
+    // ---- Stoneharrow gnolls: rust-red hyena fur, dark spots ----
     redridge_mongrel: function (c) {
       return rrGnoll(c, {
         fur: '#a4542e', mane: '#4a2014', loin: '#6a4a2e', armW: 9, legW: 10, shadowR: 30,
@@ -1618,7 +1618,7 @@
         tf: at(1.06, 64, 122)
       });
     },
-    // ---- Lake Everstill murlocs ----
+    // ---- Lake Calder murlocs ----
     murloc_flesheater: function (c) {
       return murloc(c, {
         skin: '#3a6a3c', belly: '#b8c890', fin: '#8e2a26', eyeC: '#ffd0a0', scale: 1.02,
@@ -1668,7 +1668,7 @@
     },
     bellygrub: function (c) { return bellygrubArt(c); },
     black_dragon_whelp: function (c) { return whelp(c, { col: '#2a2428', belly: '#e0641e', mem: '#b8401e', eye: '#ffc030', scale: 0.96 }); },
-    // ---- Blackrock orcs ----
+    // ---- Cinderpeak orcs ----
     blackrock_outrunner: function (c) {
       return rrOrc(c, {
         skin: '#6a8a3a', shirt: '#2e2828', sleeve: '#6a8a3a', pants: '#3a3030', boots: '#1e1818', glove: '#2e2424', legW: 10.5, armW: 9.5,
@@ -1741,7 +1741,7 @@
         tf: at(1.06, 64, 122)
       });
     },
-    // ---- the Stockade ----
+    // ---- Kingsmere Gaol ----
     defias_convict: function (c) {
       var sk = '#e0b08a';
       return prisoner(c, {

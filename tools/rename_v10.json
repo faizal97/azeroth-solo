@@ -81,13 +81,13 @@
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": "the Unmaking"
+  "new": "Unmaking"
  },
  "Well of Eternity": {
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": "the Heartfire"
+  "new": "Heartfire"
  },
  "Deathwing": {
   "kind": "lore",
@@ -99,7 +99,7 @@
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": "the Black Brood"
+  "new": "Black Brood"
  },
  "Dark Iron": {
   "kind": "lore",
@@ -15057,7 +15057,7 @@
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": "the Pale Queen"
+  "new": "The Pale Queen"
  },
  "Dark Lady": {
   "kind": "lore",
@@ -15561,7 +15561,7 @@
   "kind": "lore",
   "region": "",
   "status": "rename",
-  "new": "the Grass Mother"
+  "new": "The Grass Mother"
  },
  "Earth Mother": {
   "kind": "lore",
@@ -16264,5 +16264,251 @@
   "region": "",
   "status": "rename",
   "new": "Stone Circle"
+ },
+ "Molsen": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hartwell"
+ },
+ "Bonds": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Cutts"
+ },
+ "the Crusade": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "the Order"
+ },
+ "Crusade": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Order"
+ },
+ "Orwin": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Orbin"
+ },
+ "Thornmantle": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Spinecrest"
+ },
+ "Deadmines": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Smugglers' Deep"
+ },
+ "Render's Rock": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Scorched Rock"
+ },
+ "Render": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Scorch"
+ },
+ "Mastok": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Rakko"
+ },
+ "Cragpool": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Kettle"
+ },
+ "Althea": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Isolde"
+ },
+ "Valorfist": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Braddock"
+ },
+ "Alexei": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Anton"
+ },
+ "Mutanus": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Gulgoth"
+ },
+ "Tallonkai": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Calen"
+ },
+ "Sergra": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Vesha"
+ },
+ "Solomon": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Aldren"
+ },
+ "Sirra": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Lotte"
+ },
+ "Rethiel": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ysra"
+ },
+ "Glorin": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Gunnar"
+ },
+ "Hemet": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ambrose"
+ },
+ "Erlgadin": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Tallow"
+ },
+ "Yohwa": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Tove"
+ },
+ "Bilgewhizzle": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Sprockit"
+ },
+ "Blizrik": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Kip"
+ },
+ "Shandris": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ilara"
+ },
+ "Hadoken": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hado"
+ },
+ "Williden": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Wendel"
+ },
+ "Yeager": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Stoke"
+ },
+ "Pureheart": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Brighthand"
+ },
+ "Garush": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ruzh"
+ },
+ "the Society": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "the Guild"
+ },
+ "Apothecary Society": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Apothecary Guild"
+ },
+ "the Well": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "the Heartfire"
+ },
+ "Aspect": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Queen"
+ },
+ "the Dawn": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "the Watch"
+ },
+ "the Well of Eternity": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "the Heartfire"
+ },
+ "Heartfire of Eternity": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Heartfire"
+ },
+ "The Society": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "The Guild"
+ },
+ "The Dawn": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "The Watch"
  }
 }

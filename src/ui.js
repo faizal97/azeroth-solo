@@ -1,4 +1,4 @@
-// Azeroth Solo — phone UI. Vanilla DOM; the game state lives in G.S.
+// Realm of Loner — phone UI. Vanilla DOM; the game state lives in G.S.
 (function () {
   const { D, E, B, G } = window;
   const app = document.getElementById('app');
@@ -82,7 +82,7 @@
     if (r.thorns) out.push(`Deals ${r.thorns.dmg} damage to each melee attacker${r.thorns.charges ? ` (${r.thorns.charges} left)` : ''}.`);
     if (r.seal) out.push(`Each weapon hit deals ${Math.round(r.seal)} extra ${SCHOOL(r.sealSchool || 'holy')}damage.`);
     if (r.immune) out.push('Immune to all damage.');
-    if (r.id === 'weakened_soul') out.push("Can't receive Power Word: Shield yet.");
+    if (r.id === 'weakened_soul') out.push("Can't receive Word of Warding yet.");
     if (r.id === 'hunters_mark') out.push('Takes 10% more damage from the hunter and their pet.');
     if (r.bear || r.id === 'bear') out.push('Bear Form: much more armor and health, attacks use rage.');
     if (r.id === 'momentum') out.push('Built by pulling again quickly. Resting resets it.');
@@ -262,11 +262,11 @@
   function npcLooks(npc, place) {
     const N = D.NPCS[npc], x = hashStr(npc), t = (N.title || '') + ' ' + N.name;
     const fac = place.faction || (D.REGIONS[place.region] || {}).faction;
-    let races = /Darkspear|Witch Doctor|Hexx|Shadow Hunter/i.test(t) ? ['troll'] : /Forsaken|Deathstalker|Executor|Apothecary|Royal Apothecary/i.test(t) ? ['undead'] : /Cenarion|Sentinel|Keeper of Lore|Moon|Feathermoon/i.test(t) ? ['nightelf'] : /Bloodhoof|Mojache|Thunder Bluff/i.test(t) ? ['tauren'] : GOBLIN_TOWNS.has(P0(place)) ? ['gnome'] : REGION_RACES[place.region];
+    let races = /Kessari|Witch Doctor|Hexx|Shadow Hunter/i.test(t) ? ['troll'] : /Reclaimed|Gravestalker|Executor|Apothecary|Royal Apothecary/i.test(t) ? ['undead'] : /Cenarion|Warden|Keeper of Lore|Moon|Starfeather/i.test(t) ? ['nightelf'] : /Ossa|Ruga|Hornwind Mesa/i.test(t) ? ['tauren'] : GOBLIN_TOWNS.has(P0(place)) ? ['gnome'] : REGION_RACES[place.region];
     if (!races) races = fac === 'horde' ? ['orc', 'troll', 'tauren', 'undead'] : ['human', 'dwarf', 'nightelf', 'gnome'];
-    const cls = /Weapon|Smith|Armorer|Guard|Grunt|Marshal|Commander|Captain|Sergeant|Watch|Soldier|Warrior/i.test(t) ? 'warrior' : /Paladin|Argent|Knight/i.test(t) ? 'paladin' : /Druid|Cenarion|Herbal/i.test(t) ? 'druid' : /Witch|Shaman|Earthen/i.test(t) ? 'shaman' : /Apothecary|Alchemist|Warlock|Demon/i.test(t) ? 'warlock' : /Priest|Healer|Innkeeper|Cleric/i.test(t) ? 'priest' : /Hunter|Stable|Scout|Tracker|Ranger/i.test(t) ? 'hunter' : /Mage|Arcan|Trainer|Lore|Scholar|Surveyor|Engineer/i.test(t) ? 'mage' : ['rogue', 'warrior', 'priest', 'mage'][x % 4];
-    const first = N.name.replace(/^(Innkeeper|Quartermaster|Marshal|Commander|Captain|Sergeant|Scout|Artisan|Stablemaster|Admiral|Scholar|Deathstalker|Hexxer|Witch Doctor|Shadow Hunter|Trader|Armorer|High Executor|Apothecary|Alchemist|Chief Engineer|Senior Surveyor|Argent Officer|Lord|Lady|Baron)\s+/i, '').split(/\s+/)[0];
-    const gender = /(a|ie|elle|ine|ette|ssa|ra|na|lyn|ith|beth)$/i.test(first) && !/^(Grunna|Ogunaro|Thrall|Rahauro)$/i.test(first) ? 'f' : 'm';
+    const cls = /Weapon|Smith|Armorer|Guard|Grunt|Marshal|Commander|Captain|Sergeant|Watch|Soldier|Warrior/i.test(t) ? 'warrior' : /Paladin|Lantern|Knight/i.test(t) ? 'paladin' : /Druid|Cenarion|Herbal/i.test(t) ? 'druid' : /Witch|Shaman|Earthen/i.test(t) ? 'shaman' : /Apothecary|Alchemist|Warlock|Demon/i.test(t) ? 'warlock' : /Priest|Healer|Innkeeper|Cleric/i.test(t) ? 'priest' : /Hunter|Stable|Scout|Tracker|Ranger/i.test(t) ? 'hunter' : /Mage|Arcan|Trainer|Lore|Scholar|Surveyor|Engineer/i.test(t) ? 'mage' : ['rogue', 'warrior', 'priest', 'mage'][x % 4];
+    const first = N.name.replace(/^(Innkeeper|Quartermaster|Marshal|Commander|Captain|Sergeant|Scout|Artisan|Stablemaster|Admiral|Scholar|Gravestalker|Hexxer|Witch Doctor|Shadow Hunter|Trader|Armorer|High Executor|Apothecary|Alchemist|Chief Engineer|Senior Surveyor|Lantern Officer|Lord|Lady|Baron)\s+/i, '').split(/\s+/)[0];
+    const gender = /(a|ie|elle|ine|ette|ssa|ra|na|lyn|ith|beth)$/i.test(first) && !/^(Grunna|Ogunaro|Grask|Aru)$/i.test(first) ? 'f' : 'm';
     return { cls, race: races[(x >> 3) % races.length], skin: (x >> 7) % 4, hair: (x >> 11) % 5, gender };
   }
   const P0 = (place) => Object.keys(D.PLACES).find((k) => D.PLACES[k] === place);
@@ -713,7 +713,7 @@
     const others = Object.keys(places).filter((k) => k !== P.place);
     if (!others.length && !places[P.place]) {
       const horde = (D.RACES[P.race] || {}).faction === 'horde';
-      const nextZone = P.level >= 9 && region !== 'westfall' && region !== 'barrens' ? (horde ? ' Next: the Barrens. Head to the Crossroads (from Razor Hill, Bloodhoof Village or Orgrimmar).' : ' Next: Westfall. Head to Sentinel Hill (west of Goldshire).') : '';
+      const nextZone = P.level >= 9 && region !== 'westfall' && region !== 'barrens' ? (horde ? ' Next: the Scrublands. Head to Dustfort (from Bonewall, Ossa Village or Vazhrak).' : ' Next: Longfield. Head to Warrick\'s Rise (west of Brackenford).') : '';
       b.append(h('div', { class: 'people' }, (nextLvl ? `No new quests in ${here.zone} until level ${nextLvl}. Hunt, or try the group finder.` : `You have done every quest in ${here.zone}.`) + nextZone));
       return;
     }
@@ -730,7 +730,7 @@
     const roads = h('div', { class: 'chips' });
     for (const to in place.links) { const foe = G.enemyTown(to); roads.append(h('button', { class: 'chip', disabled: foe, onclick: () => G.travelTo(to) }, D.PLACES[to].name, h('small', { style: foe ? { color: '#ff6a5a' } : null }, foe ? 'Enemy town' : (D.PLACES[to].zone !== place.zone ? D.PLACES[to].zone + ' · ' : '') + (place.via && place.via[to] ? place.via[to] + ' · ' : '') + G.travelSecs(P.place, to) + 's'))); }
     const hs = (P.hearthAt || 0) - now();
-    roads.append(h('button', { class: 'chip gold', onclick: () => G.hearth(), disabled: hs > 0 || P.place === P.bind }, 'Hearthstone', h('small', null, hs > 0 ? Math.ceil(hs / 60000) + 'm' : D.PLACES[P.bind].name)));
+    roads.append(h('button', { class: 'chip gold', onclick: () => G.hearth(), disabled: hs > 0 || P.place === P.bind }, 'Waystone', h('small', null, hs > 0 ? Math.ceil(hs / 60000) + 'm' : D.PLACES[P.bind].name)));
     b.append(roads, h('button', { class: 'btn alt wide', onclick: () => openMap() }, 'Open map'));
   }
   function rankMob(m) {
@@ -901,7 +901,7 @@
     } else {
       const row = h('div', { class: 'btn-row' });
       if (R.phase === 'rest') row.append(h('button', { class: 'btn', onclick: () => G.runReady() }, G.role() === 'tank' ? 'Pull' : 'Ready'));
-      if (R.phase === 'done' && S.player.quests.defias_brotherhood === undefined && !S.player.done.defias_brotherhood && R.act === 'deadmines') row.append(h('div', { style: { fontSize: '13px', color: 'var(--muted)' } }, 'Tip: Marshal Dughan in Goldshire has a quest for VanCleef.'));
+      if (R.phase === 'done' && S.player.quests.defias_brotherhood === undefined && !S.player.done.defias_brotherhood && R.act === 'deadmines') row.append(h('div', { style: { fontSize: '13px', color: 'var(--muted)' } }, 'Tip: Marshal Brede in Brackenford has a quest for Blackwell.'));
       row.append(h('button', { class: 'btn alt', onclick: confirmLeaveGroup }, R.phase === 'done' ? 'Leave group' : 'Leave'));
       actions.append(row);
     }
@@ -1361,7 +1361,7 @@
     if (setId) {
       const SET = D.SETS[setId];
       const worn = Object.values(P.equip).filter((e) => e && (e.set || (D.ITEMS[e.id] || {}).set) === setId).length;
-      t.append(h('div', { style: { color: '#ffd100' } }, `${SET.name} (${worn}/${SET.pieces})`), h('div', { class: worn >= SET.mask ? 'gr' : 'dim' }, `(${SET.mask}) Set: you wear the Defias mask.`));
+      t.append(h('div', { style: { color: '#ffd100' } }, `${SET.name} (${worn}/${SET.pieces})`), h('div', { class: worn >= SET.mask ? 'gr' : 'dim' }, `(${SET.mask}) Set: you wear the Grey Hood mask.`));
     }
     if (it.look || base.look) t.append(h('div', { style: { color: '#ff80ff' } }, 'Appearance: shows on your character'));
     if (it.source || base.source) t.append(h('div', { class: 'dim' }, (/^Quest/.test(it.source || base.source) ? '' : 'Drops from ') + (it.source || base.source)));
@@ -1458,33 +1458,33 @@
     tanaris: `<defs><radialGradient id="maptn" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#e0c070"/><stop offset="1" stop-color="#9a7a3a"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#maptn)"/>
         <path d="M0 330 C40 320 60 380 40 400 H0Z" fill="#3a7a9a" opacity=".8"/>
-        <text x="170" y="390" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#4a3010" opacity=".85">Tanaris · contested</text>`,
+        <text x="170" y="390" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#4a3010" opacity=".85">Sirocco · contested</text>`,
     ungoro: `<defs><radialGradient id="mapug" cx="50%" cy="48%" r="72%"><stop offset="0" stop-color="#5a8a3a"/><stop offset="1" stop-color="#23401c"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapug)"/>
         <path d="M0 0 H340 V400 H0Z M170 30 C300 30 330 200 300 330 C250 400 90 400 40 330 C10 200 40 30 170 30Z" fill="#5a4a36" fill-rule="evenodd" opacity=".75"/>
         <path d="M150 170 L170 140 L190 170 Z" fill="#c0502a" opacity=".85"/>
-        <text x="170" y="392" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f0e8d0" opacity=".85">Un'Goro Crater · contested</text>`,
+        <text x="170" y="392" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f0e8d0" opacity=".85">Greenmaw Crater · contested</text>`,
     steppes: `<defs><radialGradient id="mapbs" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#6a3a28"/><stop offset="1" stop-color="#2a1610"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapbs)"/>
         <path d="M0 110 L60 90 L100 140 L70 230 L0 240Z" fill="#1a1210" opacity=".8"/>
         <path d="M130 200 C170 220 200 240 250 230" stroke="#e06a20" stroke-width="3" fill="none" opacity=".6"/>
-        <text x="170" y="392" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f8d0a0" opacity=".85">Burning Steppes · contested</text>`,
+        <text x="170" y="392" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f8d0a0" opacity=".85">The Cinderfields · contested</text>`,
     plaguelands: `<defs><radialGradient id="mapwp" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#7a7a4a"/><stop offset="1" stop-color="#3a3a24"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapwp)"/>
         <ellipse cx="250" cy="372" rx="70" ry="22" fill="#3a5a6a" opacity=".85"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e8e8c8" opacity=".85">Western Plaguelands · contested</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e8e8c8" opacity=".85">West Rotmoor · contested</text>`,
     winterspring: `<defs><radialGradient id="mapwsp" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#e8f0f8"/><stop offset="1" stop-color="#9aaec4"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapwsp)"/>
         <ellipse cx="150" cy="255" rx="50" ry="24" fill="#8ab4d0" opacity=".8"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#2a3a50" opacity=".85">Winterspring · contested</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#2a3a50" opacity=".85">Icewold · contested</text>`,
     tidewatch: `<defs><radialGradient id="maptw" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#5a9a7a"/><stop offset="1" stop-color="#244a40"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="#2a5a7a"/>
         <path d="M20 380 C0 250 30 90 110 60 C200 30 300 90 320 200 C330 300 300 370 240 390 Z" fill="url(#maptw)"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e8f4f0" opacity=".85">Tidewatch Coast · Alliance</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e8f4f0" opacity=".85">Tidewatch Coast · Accord</text>`,
     skullreef: `<defs><radialGradient id="mapsr" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#8a9a5a"/><stop offset="1" stop-color="#3a4a2a"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="#2a5a7a"/>
         <path d="M30 330 C20 240 60 150 120 140 C140 80 220 70 260 110 C320 150 330 260 310 340 C280 390 90 390 30 330 Z" fill="url(#mapsr)"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f0f0d8" opacity=".85">Skullreef Isles · Horde</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f0f0d8" opacity=".85">Skullreef Isles · Krugar</text>`,
     stormveil: `<defs><radialGradient id="mapsv" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#3a6a8a"/><stop offset="1" stop-color="#10283a"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapsv)"/>
         <path d="M160 400 L160 130 L180 130 L180 400 Z" fill="#6a7a80" opacity=".8"/>
@@ -1492,98 +1492,98 @@
     feralas: `<defs><radialGradient id="mapfr" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#3a6a3a"/><stop offset="1" stop-color="#1c341c"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapfr)"/>
         <path d="M0 0 H30 C20 150 40 260 20 400 H0Z" fill="#3d5f7a" opacity=".85"/>
-        <text x="170" y="390" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e8f0e0" opacity=".85">Feralas · contested</text>`,
+        <text x="170" y="390" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e8f0e0" opacity=".85">Ferndeep · contested</text>`,
     arathi: `<defs><radialGradient id="mapah" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#8a9a52"/><stop offset="1" stop-color="#4a5a2c"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapah)"/>
         <path d="M0 0 H20 V400 H0Z" fill="#5a5a50" opacity=".6"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f8f4e0" opacity=".85">Arathi Highlands · contested</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f8f4e0" opacity=".85">Kinloch Highlands · contested</text>`,
     stranglethorn: `<defs><radialGradient id="mapv" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#3f6a2c"/><stop offset="1" stop-color="#1c3314"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapv)"/>
         <path d="M0 0 H24 C14 120 34 260 16 400 H0Z" fill="#2f6a8a" opacity=".85"/>
         <ellipse cx="235" cy="185" rx="36" ry="22" fill="#3d7a8a" opacity=".7"/>
-        <text x="170" y="390" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f0f8e0" opacity=".85">Stranglethorn Vale · contested</text>`,
+        <text x="170" y="390" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f0f8e0" opacity=".85">The Vinewild · contested</text>`,
     wetlands: `<defs><radialGradient id="mapl" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#5a6a4a"/><stop offset="1" stop-color="#2c3424"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapl)"/>
         <path d="M0 0 H30 C20 120 40 220 20 400 H0Z" fill="#3d5f7a" opacity=".85"/>
         <ellipse cx="80" cy="140" rx="40" ry="28" fill="#3a5a4a" opacity=".6"/>
         <path d="M340 180 C300 200 290 240 320 300 L340 300Z" fill="#23261f" opacity=".7"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#eef0e0" opacity=".85">Wetlands</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#eef0e0" opacity=".85">Greenfen</text>`,
     ashenvale: `<defs><radialGradient id="mapa" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#3a4f5a"/><stop offset="1" stop-color="#1c2430"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapa)"/>
         <path d="M0 0 H22 C12 120 30 220 14 400 H0Z" fill="#2f5f7f" opacity=".85"/>
         <ellipse cx="110" cy="195" rx="34" ry="22" fill="#3d6f9a" opacity=".6"/><ellipse cx="180" cy="275" rx="30" ry="16" fill="#3d6f9a" opacity=".7"/>
         <ellipse cx="305" cy="300" rx="26" ry="20" fill="#3a6a2a" opacity=".5"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e8e0f8" opacity=".85">Ashenvale · contested</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e8e0f8" opacity=".85">Elderglen · contested</text>`,
     duskwood: `<defs><radialGradient id="mapd" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#2e3a4a"/><stop offset="1" stop-color="#12161e"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapd)"/>
         <circle cx="300" cy="40" r="18" fill="#d8dde8" opacity=".5"/>
         <path d="M250 110 C230 160 250 200 285 250" stroke="#2a4a6a" stroke-width="10" fill="none" opacity=".7"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#dfe6f2" opacity=".85">Duskwood</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#dfe6f2" opacity=".85">Wraithwood</text>`,
     hillsbrad: `<defs><radialGradient id="maph" cx="50%" cy="50%" r="75%"><stop offset="0" stop-color="#5e8a4a"/><stop offset="1" stop-color="#2e4a26"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#maph)"/>
         <path d="M0 0 H340 V70 C260 50 180 80 100 50 C60 40 20 60 0 50Z" fill="#e8eef2" opacity=".55"/>
         <path d="M0 110 C20 140 30 160 40 150 L0 200Z" fill="#23301e" opacity=".8"/>
-        <text x="170" y="390" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f0f4e0" opacity=".85">Hillsbrad Foothills</text>`,
+        <text x="170" y="390" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#f0f4e0" opacity=".85">Greymead Foothills</text>`,
     redridge: `<defs><radialGradient id="mapr" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#a0643a"/><stop offset="1" stop-color="#5a3420"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapr)"/>
         <path d="M120 230 C160 215 220 240 250 262 C230 292 175 300 140 280 C120 265 110 245 120 230Z" fill="#3d6fa0" opacity=".85"/>
         <path d="M0 330 C40 320 60 300 40 300 C80 270 110 230 140 205 C200 200 240 200 285 205" stroke="#7a4a2a" stroke-width="8" fill="none" opacity=".45"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#ffe8cc" opacity=".85">Redridge Mountains</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#ffe8cc" opacity=".85">Stoneharrow Mountains</text>`,
     stonetalon: `<defs><radialGradient id="maps" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#6a6878"/><stop offset="1" stop-color="#34323e"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#maps)"/>
         <ellipse cx="110" cy="100" rx="30" ry="16" fill="#3d6f8a" opacity=".85"/><ellipse cx="215" cy="60" rx="26" ry="13" fill="#3d6f8a" opacity=".85"/>
         <ellipse cx="55" cy="235" rx="40" ry="30" fill="#1c1a1e" opacity=".55"/>
         <path d="M250 400 C250 370 230 320 205 285 C190 250 175 225 160 200" stroke="#8a7a6a" stroke-width="8" fill="none" opacity=".4"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e8e0f0" opacity=".85">Stonetalon Mountains</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e8e0f0" opacity=".85">Highcrag Mountains</text>`,
     westfall: `<defs><radialGradient id="mapw" cx="55%" cy="45%" r="75%"><stop offset="0" stop-color="#b89a52"/><stop offset="1" stop-color="#6a5528"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapw)"/>
         <path d="M0 0 H40 C30 100 60 180 30 260 C20 320 40 360 20 400 H0Z" fill="#4a7a9a" opacity=".85"/>
         <path d="M250 60 C220 90 190 100 170 110 C180 160 185 200 190 225 C220 260 240 280 260 300" stroke="#8a6a3a" stroke-width="8" fill="none" opacity=".45"/>
-        <text x="190" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#fff0cc" opacity=".85">Westfall</text>`,
+        <text x="190" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#fff0cc" opacity=".85">Longfield</text>`,
     barrens: `<defs><radialGradient id="mapb" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#c8b070"/><stop offset="1" stop-color="#7a6534"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapb)"/>
         <ellipse cx="90" cy="150" rx="26" ry="14" fill="#4f8a8a" opacity=".75"/><ellipse cx="230" cy="290" rx="28" ry="15" fill="#5f7a3a" opacity=".75"/>
         <path d="M290 90 C250 120 210 150 175 175 C150 230 160 300 170 400 M175 175 C120 170 60 180 0 190" stroke="#8a6a3a" stroke-width="8" fill="none" opacity=".45"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#fff0cc" opacity=".85">The Barrens</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#fff0cc" opacity=".85">The Scrublands</text>`,
     elwynn: `<defs><radialGradient id="mapg" cx="50%" cy="45%" r="70%"><stop offset="0" stop-color="#3f5a26"/><stop offset="1" stop-color="#1f2c13"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapg)"/>
         <path d="M0 0 H340 V30 C250 40 180 20 90 34 C50 40 20 30 0 38Z" fill="#6f7d86" opacity=".55"/>
         <ellipse cx="292" cy="266" rx="30" ry="18" fill="#3d7fa8" opacity=".85"/>
         <path d="M150 0 C140 60 170 90 158 150 C150 200 150 230 140 400" stroke="#8a7650" stroke-width="10" fill="none" opacity=".35"/>
-        <text x="170" y="22" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e5d8b8" opacity=".8">Northshire Valley</text>
-        <text x="300" y="390" text-anchor="end" font-family="Marcellus SC, serif" font-size="12" fill="#e5d8b8" opacity=".8">Elwynn Forest</text>`,
+        <text x="170" y="22" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e5d8b8" opacity=".8">Halden Vale</text>
+        <text x="300" y="390" text-anchor="end" font-family="Marcellus SC, serif" font-size="12" fill="#e5d8b8" opacity=".8">Ambermoor</text>`,
     mulgore: `<defs><radialGradient id="mapm" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#b7b45a"/><stop offset="1" stop-color="#5c6b2c"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapm)"/>
         <path d="M0 0 H340 V30 C250 50 150 20 60 40 L0 50Z" fill="#8a6a45" opacity=".7"/>
         <ellipse cx="110" cy="70" rx="40" ry="22" fill="#9c7a4c" opacity=".7"/>
         <path d="M220 340 C200 290 185 250 175 205 C178 160 180 130 180 110" stroke="#e8d9a0" stroke-width="8" fill="none" opacity=".4"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#fff4d0" opacity=".85">Mulgore</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#fff4d0" opacity=".85">Greensward</text>`,
     tirisfal: `<defs><radialGradient id="mapx" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#5d6a58"/><stop offset="1" stop-color="#262d26"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapx)"/>
         <path d="M0 0 H340 V26 C240 40 120 18 0 36Z" fill="#40576a" opacity=".8"/>
         <path d="M60 300 C110 250 160 210 200 180 C240 150 265 130 285 110" stroke="#b8c4a8" stroke-width="8" fill="none" opacity=".3"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e2ecd8" opacity=".85">Tirisfal Glades</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e2ecd8" opacity=".85">Pallmoor</text>`,
     durotar: `<defs><radialGradient id="mapo" cx="45%" cy="45%" r="75%"><stop offset="0" stop-color="#b8653a"/><stop offset="1" stop-color="#5e2a14"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapo)"/>
         <path d="M300 0 C280 100 320 160 290 240 C270 300 300 350 280 400 H340 V0Z" fill="#3a78a8" opacity=".8"/>
         <ellipse cx="268" cy="330" rx="26" ry="16" fill="#c9a36a" opacity=".6"/>
         <path d="M150 52 C170 120 190 170 200 215 C180 250 160 280 140 300" stroke="#e0b07a" stroke-width="8" fill="none" opacity=".35"/>
-        <text x="150" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#ffe6c8" opacity=".85">Durotar</text>
-        <text x="20" y="390" font-family="Marcellus SC, serif" font-size="12" fill="#ffe6c8" opacity=".85">Valley of Trials</text>`,
+        <text x="150" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#ffe6c8" opacity=".85">Dunescar</text>
+        <text x="20" y="390" font-family="Marcellus SC, serif" font-size="12" fill="#ffe6c8" opacity=".85">The Blooding Grounds</text>`,
     teldrassil: `<defs><radialGradient id="mapt" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#3a3f6a"/><stop offset="1" stop-color="#161733"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapt)"/>
         <ellipse cx="205" cy="330" rx="46" ry="26" fill="#5d7fc4" opacity=".7"/>
         <circle cx="280" cy="90" r="34" fill="#5a4a7a" opacity=".6"/>
         <path d="M60 110 C120 150 150 190 190 200 C230 190 260 140 280 90" stroke="#b9a7e6" stroke-width="8" fill="none" opacity=".25"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e6e0ff" opacity=".8">Teldrassil</text>
-        <text x="320" y="390" text-anchor="end" font-family="Marcellus SC, serif" font-size="12" fill="#e6e0ff" opacity=".8">Shadowglen</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#e6e0ff" opacity=".8">Greatbough</text>
+        <text x="320" y="390" text-anchor="end" font-family="Marcellus SC, serif" font-size="12" fill="#e6e0ff" opacity=".8">Dewfern Glade</text>`,
     dunmorogh: `<defs><radialGradient id="mapd" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#cfd8df"/><stop offset="1" stop-color="#6f7c88"/></radialGradient></defs>
         <rect width="340" height="400" rx="6" fill="url(#mapd)"/>
         <path d="M0 0 H340 V40 C260 60 220 30 170 44 C110 60 60 30 0 50Z" fill="#8c97a2" opacity=".8"/>
         <path d="M0 360 C60 340 120 380 180 370 C240 360 300 390 340 372 V400 H0Z" fill="#8c97a2" opacity=".7"/>
         <path d="M78 330 C110 290 150 250 175 210 C178 160 172 110 170 70" stroke="#9a8a70" stroke-width="10" fill="none" opacity=".4"/>
-        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#2b2f36" opacity=".8">Dun Morogh</text>
-        <text x="20" y="390" font-family="Marcellus SC, serif" font-size="12" fill="#2b2f36" opacity=".8">Coldridge Valley</text>`,
+        <text x="170" y="24" text-anchor="middle" font-family="Marcellus SC, serif" font-size="12" fill="#2b2f36" opacity=".8">Kaldvik</text>
+        <text x="20" y="390" font-family="Marcellus SC, serif" font-size="12" fill="#2b2f36" opacity=".8">Rimefold Valley</text>`,
   };
   // The map (v9.4): a zone view you can browse to any zone, and a world view of how the zones connect.
   // Tapping a far place offers the whole route, travelled leg by leg (G.travelRoute).
@@ -1669,7 +1669,7 @@
     feralas: [210, 310], tanaris: [298, 322], ungoro: [254, 380], tidewatch: [118, 458], stormveil: [196, 486], skullreef: [274, 458],
   };
   function worldMap(b, title, hereRegion) {
-    title.firstChild.textContent = 'Azeroth';
+    title.firstChild.textContent = 'Caldreth';
     const P = G.S.player, my = G.myFaction();
     const edges = {}, lines = [], nodes = [];
     for (const k in D.PLACES) { const p = D.PLACES[k]; for (const l in p.links) { const a = p.region, c = D.PLACES[l].region; if (a && c && a !== c && WORLD[a] && WORLD[c]) { const key = [a, c].sort().join('|'); const via = (p.via || {})[l]; if (!edges[key] || (via && edges[key] === 'road')) edges[key] = via || 'road'; } } }
@@ -1694,8 +1694,8 @@
       <path d="M12 26 C70 6 160 24 170 74 C182 150 158 250 164 330 C170 410 120 428 64 412 C4 392 0 250 12 150 Z" fill="#4a5a34" opacity=".85"/>
       <path d="M190 22 C260 6 332 24 334 96 C338 200 332 300 322 370 C302 412 226 414 196 370 C180 300 184 200 184 120 Z" fill="#6a5a34" opacity=".85"/>
       <ellipse cx="196" cy="468" rx="112" ry="32" fill="#3f6a58" opacity=".85"/>
-      <text x="88" y="16" text-anchor="middle" font-family="Marcellus SC, serif" font-size="11" fill="#cfe0e8" opacity=".75">Eastern Kingdoms</text>
-      <text x="262" y="16" text-anchor="middle" font-family="Marcellus SC, serif" font-size="11" fill="#cfe0e8" opacity=".75">Kalimdor</text><text x="196" y="432" text-anchor="middle" font-family="Marcellus SC, serif" font-size="10" fill="#cfe0e8" opacity=".75">The Stormveil Isle</text>
+      <text x="88" y="16" text-anchor="middle" font-family="Marcellus SC, serif" font-size="11" fill="#cfe0e8" opacity=".75">Ostmarch</text>
+      <text x="262" y="16" text-anchor="middle" font-family="Marcellus SC, serif" font-size="11" fill="#cfe0e8" opacity=".75">Redmarch</text><text x="196" y="432" text-anchor="middle" font-family="Marcellus SC, serif" font-size="10" fill="#cfe0e8" opacity=".75">The Stormveil Isle</text>
       ${lines.join('')}${nodes.join('')}</svg>`;
     const m = h('div', { class: 'map', html: svg });
     m.addEventListener('click', (e) => { const g = e.target.closest('[data-region]'); if (!g) return; ui.mapView = 'zone'; ui.mapRegion = g.dataset.region; ui.sheetFn(); });
@@ -1802,78 +1802,78 @@
     if (npc === 'lyveus' && G.S && !G.S.player.done.lg_lyv_ashes && (G.S.player.done.lg_hood_a || G.S.player.done.lg_hood_h || (G.S.player.wanderer || {}).n)) return "You. The one from the road. I wondered if we'd meet again. Yes, the hood was me. My name is Lyveus Cloveus, and this was my home.";
     if (npc === 'hooded_stranger') return 'Keep your voice down. Some of the people who would like me dead wear very fine clothes.';
     return ({
-      mcbride: 'Greetings, citizen. The Northshire Abbey could use your help.', willem: 'Stay alert, friend. The Defias are bold these days.',
+      mcbride: 'Greetings, citizen. The Halden Abbey could use your help.', willem: 'Stay alert, friend. The Grey Hood are bold these days.',
       eagan: 'Mind the wolves. They get hungrier every week.', danil: 'Care for some bread and water? Fresh from the abbey.',
-      milly: 'Oh! Are you here to help with the harvest?', dughan: 'Goldshire is under my protection. What do you need?',
-      remy: 'Remy, at your service. Twice, if you pay twice.', pestle: 'Candles, herbs, powders. I always need more.',
+      milly: 'Oh! Are you here to help with the harvest?', dughan: 'Brackenford is under my protection. What do you need?',
+      remy: 'Pell, at your service. Twice, if you pay twice.', pestle: 'Candles, herbs, powders. I always need more.',
       farley: 'Welcome to the Lion\'s Pride Inn! Rest your feet a while.', corina: 'Blades, hammers, staves. All sharpened by my own hand.',
       thomas: 'The lake shore isn\'t safe. Keep your weapon ready.', ma_stonefield: 'You there! Can you help an old farmer?',
-      sten: 'Welcome to Coldridge, lad. Keep yer axe close.', balir: 'Troggs! Everywhere I look, troggs!', talin: 'Good hunting out here, if the wolves don\'t hunt you first.',
-      adlin: 'Bread, water, and a wee bit of ale for the road?', ragnar: 'Welcome to the Thunderbrew Distillery! Best ale in Khaz Modan!',
+      sten: 'Welcome to Coldridge, lad. Keep yer axe close.', balir: 'Cavekins! Everywhere I look, cavekin!', talin: 'Good hunting out here, if the wolves don\'t hunt you first.',
+      adlin: 'Bread, water, and a wee bit of ale for the road?', ragnar: 'Welcome to the Maltsson Distillery! Best ale in Khaz Modan!',
       belm: 'Pull up a stool by the fire and warm yer bones.', stonegear: 'Careful, that engine bites. What can I do for ya?',
       senir: 'The trolls grow bolder by the day.', grawn: 'Axes, hammers, and a blade or two. All dwarf-made.',
       rudra: 'Something is killing my rams, and I know its name.', firebrew: 'Welcome to the Stonefire Tavern!',
-      overspark: 'Gnomeregan will be ours again. We just need the right parts!', bruuk: 'Finest steel in Ironforge, if I say so meself.',
-      grull: 'The plainstriders are the first test of any hunter.', hawkwind: 'Walk with the Earth Mother, young one.', raincaller: 'The quilboar grow restless in the ravine.',
-      moodan: 'Fresh bread from the plains of Mulgore.', baine: 'Welcome to Bloodhoof Village. My father would be glad to see new braves.', kauth: 'Rest, friend. The winds are calm tonight.',
-      harken: 'The swoops circle high today.', mahnott: 'Weapons strong enough for a tauren.', morin: 'Keep your eyes on the horizon.', pala: 'Welcome to Thunder Bluff.', etu: 'Tauren steel, blessed by the Earth Mother.',
-      sarvis: 'You are free now. Free of the Lich King. Use that freedom well.', arren: 'The dead do not rest here. Not all of them, at least.', saltain: 'We need supplies. Everything is useful to the Forsaken.',
-      kien: 'Food? For you? Yes... I suppose you still eat.', sevren: 'Brill serves the Dark Lady. As will you.', renee: 'Welcome to the Gallows\' End Tavern.',
-      dillinger: 'The Scarlet Crusade grows bolder every day.', johaan: 'Ah, a test subject. I mean, a volunteer.', gerard: 'Blades for the Forsaken.', norman: 'The Undercity welcomes you.', abigail: 'Sharp things. For sharp minds.',
-      gornek: 'Lok\'tar, young one. Prove your strength in the Valley of Trials.', kaltunk: 'Watch for the scorpids, they sting hard.',
-      galgar: 'Hungry? Bring me cactus apples and I\'ll cook you something.', zureetha: 'The Burning Blade taints this valley. Help me cleanse it.',
-      duokna: 'Food and water for the road, friend.', garthok: 'Razor Hill stands ready. The humans at Tiragarde are a thorn in our side.',
-      grosk: 'Throm-ka! Rest your bones by the fire.', orgnil: 'The spirits whisper of storms over Thunder Ridge.', kaplak: 'Axes, blades, hammers. Orc steel.',
-      vikar: 'I keep my eyes on the coast.', vanira: 'Zalazane has turned our people against us. Help me, mon.',
-      gryshka: 'Welcome to Orgrimmar. Grab a drink.', rahauro: 'Weapons for the Horde, strong as the earth.', thrall_herald: 'The Warchief has need of heroes.',
-      ilthalaine: 'Ishnu-alah. The balance of Shadowglen needs tending.', gilshalan: 'Something foul creeps into the glade. Can you feel it?',
+      overspark: 'Gearhollow will be ours again. We just need the right parts!', bruuk: 'Finest steel in Keldrun, if I say so meself.',
+      grull: 'The longnecks are the first test of any hunter.', hawkwind: 'Walk with the Grass Mother, young one.', raincaller: 'The spinehide grow restless in the ravine.',
+      moodan: 'Fresh bread from the plains of Greensward.', baine: 'Welcome to Ossa Village. My father would be glad to see new braves.', kauth: 'Rest, friend. The winds are calm tonight.',
+      harken: 'The swoops circle high today.', mahnott: 'Weapons strong enough for a hornfolk.', morin: 'Keep your eyes on the horizon.', pala: 'Welcome to Hornwind Mesa.', etu: 'Hornfolk steel, blessed by the Grass Mother.',
+      sarvis: 'You are free now. Free of the Lich King. Use that freedom well.', arren: 'The dead do not rest here. Not all of them, at least.', saltain: 'We need supplies. Everything is useful to the Reclaimed.',
+      kien: 'Food? For you? Yes... I suppose you still eat.', sevren: 'Mossgate serves the Pale Queen. As will you.', renee: 'Welcome to the Gallows\' End Tavern.',
+      dillinger: 'The Order of the Pyre grows bolder every day.', johaan: 'Ah, a test subject. I mean, a volunteer.', gerard: 'Blades for the Reclaimed.', norman: 'The Gravenhold welcomes you.', abigail: 'Sharp things. For sharp minds.',
+      gornek: 'Lok\'tar, young one. Prove your strength in the Blooding Grounds.', kaltunk: 'Watch for the scorpions, they sting hard.',
+      galgar: 'Hungry? Bring me cactus apples and I\'ll cook you something.', zureetha: 'The Hollow Eye taints this valley. Help me cleanse it.',
+      duokna: 'Food and water for the road, friend.', garthok: 'Bonewall stands ready. The humans at Saltwall are a thorn in our side.',
+      grosk: 'Throm-ka! Rest your bones by the fire.', orgnil: 'The spirits whisper of storms over Rumblestone Ridge.', kaplak: 'Axes, blades, hammers. Orc steel.',
+      vikar: 'I keep my eyes on the coast.', vanira: 'Mokku the Hexer has turned our people against us. Help me, mon.',
+      gryshka: 'Welcome to Vazhrak. Grab a drink.', rahauro: 'Weapons for the Krugar, strong as the earth.', thrall_herald: 'The Warchief has need of heroes.',
+      ilthalaine: 'Ishnu-alah. The balance of Dewfern Glade needs tending.', gilshalan: 'Something foul creeps into the glade. Can you feel it?',
       dirania: 'Stay sharp. The spiders of Shadowthread grow bolder.', nyoma: 'Rest and eat, traveller. The night is long.',
-      tallonkai: 'The Gnarlpine were once our friends. Something has changed them.', zenn: 'Heh heh. Zenn has a small job for you, friend. Nothing strange.',
-      keldamyr: 'Welcome to Dolanaar. Rest by the moonwell.', kyra: 'Elune guide your blade.', ilyenia: 'Glaives, blades and bows, blessed by the moon.',
-      gryan: 'Welcome to Sentinel Hill. Westfall is ours again, one farm at a time.', danuvin: 'Keep your blade drawn. The Defias are never far.',
-      galiaan: 'The murlocs on the Longshore get bolder every tide.', heather: 'Sit down and eat, love. Stew is hot.', lewis: 'Militia steel. Plain, but it does not break.',
-      furlbrow: 'We lost the farm to the Defias. Lost everything.', verna: 'Poor Blanchy has not eaten in days.', saldean: 'We stayed when everyone else ran. Stubborn, I suppose.',
-      salma: 'Mind the pie, it is hot!', thork: 'Lok\'tar. The Crossroads needs every blade it can get.', sergra: 'The Barrens test every hunter. Most fail.',
-      helbrim: 'Samples, samples. The Barrens are full of interesting poisons.', zargh: 'Hungry? Everything here is edible if you cook it long enough.',
-      boorand: 'Rest your feet, traveller. The Barrens are wide.', nargal: 'Need a weapon? The centaurs will not ask before they charge.', kargal: 'Far Watch sees everything that comes out of the Barrens.',
-      allison: 'Welcome to the Gilded Rose. Stormwind\'s finest beds.', thurman: 'Stormwind steel. The best the Alliance can buy.',
-      banker_alliance: 'Your valuables are safe with us.', banker_horde: 'Store what you cannot carry. Nothing leaves this vault without you.', auctioneer_alliance: 'Buying or selling? Every adventurer on the realm trades through this house.', auctioneer_horde: 'Buy low, sell high. The Horde trades here.',
-      xenzilla: 'Da goblins cut down every tree, mon. Da spirits be angry.', mastok: 'Sun Rock stands, for now. Every blade counts up here.', tsunaman: 'The earth weeps where the goblins cut. Listen, and you will hear it.',
-      sahn: 'The wild things of these peaks are restless. Something has upset the balance.', jayka: 'Welcome to Sun Rock. Warm yourself by the fire.', krond: 'Tauren steel and orc temper. Nothing better.',
-      solomon: 'Lakeshire has begged Stormwind for help for months. You are the first to answer.', marris: 'The orcs hold Stonewatch and the gnolls hold the hills. Pick a fight, any fight.',
-      oslow: 'This bridge will be finished one day. If the murlocs let me.', darcy: 'Sit, eat. Nothing fixes a bad day like a bowl of goulash.', brianna: 'Welcome to the Lakeshire Inn. Mind the fish smell.',
-      verner: 'Blades and mail, forged by the lake.', thelwater: 'The Stockade is in chaos. Every prisoner we ever caught is loose in there.',
-      ebonlocke: 'Darkshire stands, no thanks to Stormwind. We watch the woods every night.', althea: 'The Night Watch takes anyone who can hold a sword. Can you?', abercrombie: 'Heh heh. A visitor. Come in, come in. Mind the smell.',
-      madame_eva: 'The cards told me you would come. They did not say whether you would leave.', sirra: 'The history of Duskwood is written in blood and moonlight.', trelayne: 'Welcome to the Scarlet Raven. Keep the door shut, the wolves are out.', gavin: 'Silver edges bite worgen best. Take a look.',
-      darthalia: 'The Dark Lady wants Hillsbrad. We will give it to her, one farm at a time.', lydon: 'Every plague needs a test. And every test needs subjects.', krusk: 'Lok\'tar. Tarren Mill needs blades, not talk.', dalar: 'Arugal made those worgen. He must answer for it.',
-      marla: 'Rest in Tarren Mill. The dead do not sleep, but you still may.', dogran: 'Orc steel, Forsaken edge.',
-      noggenfogger: 'Welcome to Gadgetzan, where everything has a price and the water costs extra.', bilgewhizzle: 'Bandits, pirates, bugs. My water towers have more enemies than friends.', sprinkle: 'Water is life out here. Help me keep it flowing.', fizzledowser: 'Fascinating desert! Dangerous, but fascinating.', innkeeper_fizzgrimble: 'Rooms, drinks, sand in everything. Welcome.', blizrik: 'Guns, blades and bombs. No refunds.',
-      shandris: 'Feathermoon holds the coast. Elune gives us strength.', latronicus: 'The forest is vast and old. So are its dangers.', innkeeper_shyria: 'Rest under the moon, friend.', vivianna: 'Moonsteel blades, light and deadly.',
-      hadoken: 'The hunt in Feralas is the greatest in Kalimdor.', orwin: 'Mojache is a camp of hunters. Bring me proof of yours.', innkeeper_greul: 'Eat, drink, sleep. The forest will wait.', krueg: 'Heavy weapons for heavy work.',
-      lyveus: 'They told the world I died. Some days I almost believed them.', vyn: 'Keep your voice down. The court has ears even in Gadgetzan.',
-      donova_snowden: 'The Winterfall were a peaceful tribe. Something poisoned them.', witch_doctor_mauari: 'Cold magic, strong magic. Mauari has work for you.', umi_rumplesnicker: 'Have you seen a yeti? Aren\'t they wonderful? Please kill some.', malyfous_darkhammer: 'Bring me good materials and I\'ll make you something worth wearing.', haleh: 'The blue dragonflight watches Winterspring. Not all of us stayed loyal.', innkeeper_everlook: 'Welcome to Everlook. Warm beds, hot food, cold prices.', xizzer_fizzbolt: 'Weapons for the cold. Guaranteed not to freeze. Mostly.',
-      admiral_vane: 'Kul Tiras charts every sea. This island was never on any chart.', lyssa_moonquill: 'Highborne built this place. I want to know what they became.', sergeant_tamsin: 'Keep your blade dry and your back to the landing.', quartermaster_brenn: 'Supplies from Menethil. What\'s left of them.', armorer_hale: 'Kul Tiran steel. It holds an edge in salt water.',
-      shadow_hunter_zulkesh: 'Our ancestors knew this reef. Now it knows us again.', deathstalker_voss: 'The drowned are not Scourge. That makes them interesting.', hexxer_mazu: 'The loa is screaming, mon. Mazu can hear it.', trader_gikkix: 'Everything\'s for sale on the reef. Even the reef.', armorer_krosh: 'Blades for the Horde. Sharp, heavy, and cheap enough.',
-      marshal_yeager: "Welcome to the Refuge. Watch the sky, the pterrordax take anyone who wanders.", williden: 'Un\'Goro is older than any of us. Old and hungry.', spraggle: 'I lost my tools and my nerve out there. You can have the nerve.', larion: 'The crater is full of wonders. Most of them bite.', quixxil: 'Supplies! Priced for the end of the world, which this place looks like.',
-      marshal_maxwell: 'Morgan\'s Vigil stands between the Blackrock orcs and Redridge. We will not fall back.', oralius: 'The black dragonflight hatches in these hills. Burn every egg you find.', helendis: 'My wife is at Morgan\'s Vigil. I fight so she never has to.', innkeeper_ashmorn: 'Food, drink, and a bed that isn\'t on fire. Mostly.',
+      tallonkai: 'The Mossback were once our friends. Something has changed them.', zenn: 'Heh heh. Pym has a small job for you, friend. Nothing strange.',
+      keldamyr: 'Welcome to Ithrenne. Rest by the moonwell.', kyra: 'Elune guide your blade.', ilyenia: 'Glaives, blades and bows, blessed by the moon.',
+      gryan: 'Welcome to Warrick\'s Rise. Longfield is ours again, one farm at a time.', danuvin: 'Keep your blade drawn. The Grey Hood are never far.',
+      galiaan: 'The mirelings on the Saltstrand get bolder every tide.', heather: 'Sit down and eat, love. Stew is hot.', lewis: 'Militia steel. Plain, but it does not break.',
+      furlbrow: 'We lost the farm to the Grey Hood. Lost everything.', verna: 'Poor Old Clover has not eaten in days.', saldean: 'We stayed when everyone else ran. Stubborn, I suppose.',
+      salma: 'Mind the pie, it is hot!', thork: 'Lok\'tar. Dustfort needs every blade it can get.', sergra: 'The Scrublands test every hunter. Most fail.',
+      helbrim: 'Samples, samples. The Scrublands are full of interesting poisons.', zargh: 'Hungry? Everything here is edible if you cook it long enough.',
+      boorand: 'Rest your feet, traveller. The Scrublands are wide.', nargal: 'Need a weapon? The centaurs will not ask before they charge.', kargal: 'Hollow Tower sees everything that comes out of the Scrublands.',
+      allison: 'Welcome to the Gilded Rose. Kingsmere\'s finest beds.', thurman: 'Kingsmere steel. The best the Accord can buy.',
+      banker_alliance: 'Your valuables are safe with us.', banker_horde: 'Store what you cannot carry. Nothing leaves this vault without you.', auctioneer_alliance: 'Buying or selling? Every adventurer on the realm trades through this house.', auctioneer_horde: 'Buy low, sell high. The Krugar trades here.',
+      xenzilla: 'Da goblins cut down every tree, mon. Da spirits be angry.', mastok: 'Tallstone stands, for now. Every blade counts up here.', tsunaman: 'The earth weeps where the goblins cut. Listen, and you will hear it.',
+      sahn: 'The wild things of these peaks are restless. Something has upset the balance.', jayka: 'Welcome to Tallstone. Warm yourself by the fire.', krond: 'Hornfolk steel and orc temper. Nothing better.',
+      solomon: 'Longbridge has begged Kingsmere for help for months. You are the first to answer.', marris: 'The orcs hold Watcher\'s Keep and the gnolls hold the hills. Pick a fight, any fight.',
+      oslow: 'This bridge will be finished one day. If the mirelings let me.', darcy: 'Sit, eat. Nothing fixes a bad day like a bowl of goulash.', brianna: 'Welcome to the Longbridge Inn. Mind the fish smell.',
+      verner: 'Blades and mail, forged by the lake.', thelwater: 'Kingsmere Gaol is in chaos. Every prisoner we ever caught is loose in there.',
+      ebonlocke: 'Lanternby stands, no thanks to Kingsmere. We watch the woods every night.', althea: 'The Lamplighters takes anyone who can hold a sword. Can you?', abercrombie: 'Heh heh. A visitor. Come in, come in. Mind the smell.',
+      madame_eva: 'The cards told me you would come. They did not say whether you would leave.', sirra: 'The history of Wraithwood is written in blood and moonlight.', trelayne: 'Welcome to the Pyre Raven. Keep the door shut, the wolves are out.', gavin: 'Silver edges bite werewolves best. Take a look.',
+      darthalia: 'The Pale Queen wants Greymead. We will give it to her, one farm at a time.', lydon: 'Every plague needs a test. And every test needs subjects.', krusk: 'Lok\'tar. Mourncross needs blades, not talk.', dalar: 'Cairn made those werewolves. He must answer for it.',
+      marla: 'Rest in Mourncross. The dead do not sleep, but you still may.', dogran: 'Orc steel, Reclaimed edge.',
+      noggenfogger: 'Welcome to Coppergulch, where everything has a price and the water costs extra.', bilgewhizzle: 'Bandits, pirates, bugs. My water towers have more enemies than friends.', sprinkle: 'Water is life out here. Help me keep it flowing.', fizzledowser: 'Fascinating desert! Dangerous, but fascinating.', innkeeper_fizzgrimble: 'Rooms, drinks, sand in everything. Welcome.', blizrik: 'Guns, blades and bombs. No refunds.',
+      shandris: 'Starfeather holds the coast. Elune gives us strength.', latronicus: 'The forest is vast and old. So are its dangers.', innkeeper_shyria: 'Rest under the moon, friend.', vivianna: 'Moonsteel blades, light and deadly.',
+      hadoken: 'The hunt in Ferndeep is the greatest in Redmarch.', orwin: 'Ruga is a camp of hunters. Bring me proof of yours.', innkeeper_greul: 'Eat, drink, sleep. The forest will wait.', krueg: 'Heavy weapons for heavy work.',
+      lyveus: 'They told the world I died. Some days I almost believed them.', vyn: 'Keep your voice down. The court has ears even in Coppergulch.',
+      donova_snowden: 'The Icebrow were a peaceful tribe. Something poisoned them.', witch_doctor_mauari: 'Cold magic, strong magic. Mauari has work for you.', umi_rumplesnicker: 'Have you seen a yeti? Aren\'t they wonderful? Please kill some.', malyfous_darkhammer: 'Bring me good materials and I\'ll make you something worth wearing.', haleh: 'The blue brood watches Icewold. Not all of us stayed loyal.', innkeeper_everlook: 'Welcome to Coldcoin. Warm beds, hot food, cold prices.', xizzer_fizzbolt: 'Weapons for the cold. Guaranteed not to freeze. Mostly.',
+      admiral_vane: 'Brineholt charts every sea. This island was never on any chart.', lyssa_moonquill: 'Starborn built this place. I want to know what they became.', sergeant_tamsin: 'Keep your blade dry and your back to the landing.', quartermaster_brenn: 'Supplies from Gullhaven. What\'s left of them.', armorer_hale: 'Brineholt steel. It holds an edge in salt water.',
+      shadow_hunter_zulkesh: 'Our ancestors knew this reef. Now it knows us again.', deathstalker_voss: 'The drowned are not Hollow Host. That makes them interesting.', hexxer_mazu: 'The loa is screaming, mon. Mazu can hear it.', trader_gikkix: 'Everything\'s for sale on the reef. Even the reef.', armorer_krosh: 'Blades for the Krugar. Sharp, heavy, and cheap enough.',
+      marshal_yeager: "Welcome to the Refuge. Watch the sky, the pterrordax take anyone who wanders.", williden: 'Greenmaw is older than any of us. Old and hungry.', spraggle: 'I lost my tools and my nerve out there. You can have the nerve.', larion: 'The crater is full of wonders. Most of them bite.', quixxil: 'Supplies! Priced for the end of the world, which this place looks like.',
+      marshal_maxwell: 'Drummond\'s Vigil stands between the Cinderpeak orcs and Stoneharrow. We will not fall back.', oralius: 'The black brood hatches in these hills. Burn every egg you find.', helendis: 'My wife is at Drummond\'s Vigil. I fight so she never has to.', innkeeper_ashmorn: 'Food, drink, and a bed that isn\'t on fire. Mostly.',
       gorzeeki: 'Everything in the Steppes is hot, sharp or angry. Perfect for my work.', thal_kaur: 'The Warchief watches the mountain. So do I.', innkeeper_bruk: 'Rest. The ash gets in everything, even the ale.', shul_kar: 'Steel forged in the Steppes. Nothing else survives the heat.',
-      commander_ashlam: 'The Scourge never sleeps, and neither does Chillwind Camp.', argent_officer_a: 'The Argent Dawn counts every fallen undead. Help us raise the count.', alchemist_arbington: 'Bring me samples. The plague can be cured, I know it.', quartermaster_hudson: 'Supplies for the living. Take what you need.',
-      high_executor_derrington: 'The Bulwark holds for the Dark Lady. The Scourge will not pass.', argent_officer_h: 'Horde or Alliance, the Argent Dawn stands against the dead.', apothecary_dithers: 'A new plague needs new ingredients. Fetch them.', quartermaster_lauren: 'Gear for the front. It\'s all the front out here.',
-      captain_nials: 'Arathor will rise again. Until then, we hold Refuge Pointe.', sergeant_maclear: 'The highlands are full of things that want you dead. Pick one.', shards: 'I scout Stromgarde. The Syndicate never sleeps.', innkeeper_taruga: 'Supplies for the road, soldier.',
-      drum_fel: 'Hammerfall stands. Arathi will be the Horde\'s.', tor_gan: 'The hunt in these highlands is good.', gorn: 'The earth here is bound and angry. Help me free it.', innkeeper_adegwa: 'Rest in Hammerfall, the walls are thick.', urda: 'Orc steel. The best in the highlands.',
-      barnil: 'Welcome to the Rebel Camp. We left Kurzen when he lost his mind.', lieutenant_doren: 'Stormwind forgot us out here. Kurzen did not.', sergeant_yohwa: 'Watch the trees. Everything in this jungle bites.', corporal_bluth: 'Supplies are thin, but they are yours for a price.',
-      nimboya: 'Da Darkspear got old enemies in dis jungle, mon.', commander_aggro: "Grom'gol stands for the Horde. Keep it standing.", kin_weelay: 'Da loa whisper in dis jungle. Listen close.', innkeeper_thulbek: 'Rest. The jungle will still be here.', uthok: 'Blades for the jungle. Sharp and heavy.',
+      commander_ashlam: 'The Hollow Host never sleeps, and neither does Greyfrost Camp.', argent_officer_a: 'The Lantern Watch counts every fallen undead. Help us raise the count.', alchemist_arbington: 'Bring me samples. The plague can be cured, I know it.', quartermaster_hudson: 'Supplies for the living. Take what you need.',
+      high_executor_derrington: 'The Bulwark holds for the Pale Queen. The Hollow Host will not pass.', argent_officer_h: 'Krugar or Accord, the Lantern Watch stands against the dead.', apothecary_dithers: 'A new plague needs new ingredients. Fetch them.', quartermaster_lauren: 'Gear for the front. It\'s all the front out here.',
+      captain_nials: 'Kinloch will rise again. Until then, we hold Holdfast Point.', sergeant_maclear: 'The highlands are full of things that want you dead. Pick one.', shards: 'I scout Highhold. The Black Ledger never sleeps.', innkeeper_taruga: 'Supplies for the road, soldier.',
+      drum_fel: 'Chainbreak stands. Kinloch will be the Krugar\'s.', tor_gan: 'The hunt in these highlands is good.', gorn: 'The earth here is bound and angry. Help me free it.', innkeeper_adegwa: 'Rest in Chainbreak, the walls are thick.', urda: 'Orc steel. The best in the highlands.',
+      barnil: 'Welcome to the Rebel Camp. We left Drayke when he lost his mind.', lieutenant_doren: 'Kingsmere forgot us out here. Drayke did not.', sergeant_yohwa: 'Watch the trees. Everything in this jungle bites.', corporal_bluth: 'Supplies are thin, but they are yours for a price.',
+      nimboya: 'Da Kessari got old enemies in dis jungle, mon.', commander_aggro: "Camp Skarn stands for the Krugar. Keep it standing.", kin_weelay: 'Da loa whisper in dis jungle. Listen close.', innkeeper_thulbek: 'Rest. The jungle will still be here.', uthok: 'Blades for the jungle. Sharp and heavy.',
       nesingwary: 'Ah, a fellow hunter! The finest game in the world lives in this jungle.', ajeck: 'Tigers first. Prove your aim.', erlgadin: 'The raptors are cunning. Mind your flanks.',
-      stoutfist: 'Menethil holds the only road north. Keep it open and I will keep you fed.', glorin: 'The Dark Iron and the Dragonmaw both. Busy times for a mountaineer.', rethiel: 'The marsh is sick. The murlocs are only the symptom.',
-      whelgar: 'History under every stone! And raptors on top of it.', helbrek: 'Rain again. Sit by the fire.', murndan: 'Dwarven steel and Menethil tar. Built to last.',
-      raene: 'Ashenvale bleeds. Demons, satyrs, and orcs with axes. We need every blade.', shindrell: 'The wolves of this forest are no ordinary wolves.', thenysil: 'Elune watch over you. The Deeps are darker than the sea.',
-      orendil: 'The furbolgs were friends once. Something poisons their hearts.', kimlya: 'Rest, traveller. Astranaar is safe while the lake guards us.', aeolynn: 'Kaldorei steel, sharp as moonlight.',
-      senani: 'Splintertree holds, for now. The elves attack every night.', ertog: 'The Warsong need wood, and the forest fights back. Pick up an axe.', mitsuwa: 'The spirits of this forest are angry. I do not blame them.',
-      kaylisk: 'Sit. Eat. The next night elf raid is not for an hour.', burkrum: 'Orc steel. Better than elf twigs.',
-      stable_alliance: 'A good mount is worth every copper. Ready to learn?', stable_horde: 'Every warrior of the Horde needs a mount. Show me your gold.',
+      stoutfist: 'Gullhaven holds the only road north. Keep it open and I will keep you fed.', glorin: 'The Slagborn and the Wyrmchain both. Busy times for a mountaineer.', rethiel: 'The marsh is sick. The mirelings are only the symptom.',
+      whelgar: 'History under every stone! And raptors on top of it.', helbrek: 'Rain again. Sit by the fire.', murndan: 'Dwarven steel and Gullhaven tar. Built to last.',
+      raene: 'Elderglen bleeds. Demons, satyrs, and orcs with axes. We need every blade.', shindrell: 'The wolves of this forest are no ordinary wolves.', thenysil: 'Elune watch over you. The Deeps are darker than the sea.',
+      orendil: 'The bearkin were friends once. Something poisons their hearts.', kimlya: 'Rest, traveller. Ilvaris is safe while the lake guards us.', aeolynn: 'Sylari steel, sharp as moonlight.',
+      senani: 'Stumpwatch holds, for now. The elves attack every night.', ertog: 'The Woodcleaver need wood, and the forest fights back. Pick up an axe.', mitsuwa: 'The spirits of this forest are angry. I do not blame them.',
+      kaylisk: 'Sit. Eat. The next wood elf raid is not for an hour.', burkrum: 'Orc steel. Better than elf twigs.',
+      stable_alliance: 'A good mount is worth every copper. Ready to learn?', stable_horde: 'Every warrior of the Krugar needs a mount. Show me your gold.',
       crafts_alliance: 'Every trade starts with a pick, a knife or a needle. Which will it be?', crafts_horde: 'Strong arms gather, clever hands craft. Choose your trade.',
-      mentor_alliance: 'Helping the new ones through the dungeons is how heroes are made. Your marks are good here.', mentor_horde: 'The strong carry the weak through the fire. The Horde remembers. Spend your marks well.',
-      denalan: 'The timberlings have been acting so oddly...', saelienne: 'Welcome to Darnassus, child of the stars.', mydrannul: 'Fine Kaldorei steel. Look, but do not touch.',
+      mentor_alliance: 'Helping the new ones through the dungeons is how heroes are made. Your marks are good here.', mentor_horde: 'The strong carry the weak through the fire. The Krugar remembers. Spend your marks well.',
+      denalan: 'The timberlings have been acting so oddly...', saelienne: 'Welcome to Nyrwen, child of the stars.', mydrannul: 'Fine Sylari steel. Look, but do not touch.',
     })[npc] || 'Hello.';
   }
   function openVendor(npc) {
@@ -2023,7 +2023,7 @@
             if (open) for (const para of L.story) box.append(h('p', { style: { margin: '6px 0' } }, para));
             box.append(h('button', { class: 'chip', style: { marginTop: '6px' }, onclick: () => { ui.heroStory = open ? null : key; ui.sheetFn(); } }, open ? 'Hide story' : 'Read his story'));
           }
-          else box.append(h('p', { style: { margin: '6px 0' } }, 'A high elf knight, said to have died five years ago, has been seen among the ashes of Silverleaf Lodge in the Arathi Highlands (level 37+).'));
+          else box.append(h('p', { style: { margin: '6px 0' } }, 'A high elf knight, said to have died five years ago, has been seen among the ashes of Silverleaf Lodge in the Kinloch Highlands (level 37+).'));
           if (on) box.append(h('p', { class: 'ai-note' }, `${L.short} takes a ${L.role} slot in your groups (a damage slot if you are the ${L.role}), with his own abilities: ${L.abilities.map((a) => D.ABILITIES[a].name).join(' and ')}.`));
           box.append(h('p', { class: 'ai-note' }, L.credit));
           b.append(box);
@@ -2163,7 +2163,7 @@
     openSheet('profs', 'Professions', ' ', (b, title) => {
       const P = G.S.player, profs = G.profs(), ids = Object.keys(profs);
       title.querySelector('small').textContent = ids.length ? `${ids.length}/${D.PROF_MAX} · craft anywhere out of combat` : 'Learn up to two from a profession trainer';
-      if (!ids.length) { b.append(h('p', null, 'You have no professions yet. Profession trainers wait in every capital and in Sentinel Hill and the Crossroads.')); return; }
+      if (!ids.length) { b.append(h('p', null, 'You have no professions yet. Profession trainers wait in every capital and in Warrick\'s Rise and Dustfort.')); return; }
       if (!ids.includes(ui.profTab)) ui.profTab = ids.find((k) => D.PROFESSIONS[k].kind === 'craft') || ids.find((k) => k === 'mining') || ids[0];
       b.append(h('div', { class: 'chips' }, ...ids.map((k) => h('button', { class: 'chip' + (k === ui.profTab ? ' gold' : ''), onclick: () => { ui.profTab = k; ui.sheetFn(); } }, img(art('icon', D.PROFESSIONS[k].icon)), ' ', D.PROFESSIONS[k].name, h('small', null, `${profs[k].skill}/${profs[k].max}`)))));
       const k = ui.profTab, Pd = D.PROFESSIONS[k], p = profs[k];
@@ -2403,7 +2403,7 @@
     if (P.guild < 0) {
       const ap = S.soc && S.soc.applied && S.soc.applied.until > Date.now() ? S.soc.applied : null;
       b.append(h('p', null, ap ? `You applied to <${B.GUILDS[ap.g]}>. An officer will answer soon.` : 'You are not in a guild. Pick one and apply, or watch General for recruiters.'));
-      b.append(h('div', { class: 'sec-h' }, 'Guilds', h('small', null, (D.RACES[P.race] || {}).faction === 'horde' ? 'Horde' : 'Alliance')));
+      b.append(h('div', { class: 'sec-h' }, 'Guilds', h('small', null, (D.RACES[P.race] || {}).faction === 'horde' ? 'Krugar' : 'Accord')));
       for (const gi of SOC.myGuilds()) {
         const ok = P.level >= gi.min;
         b.append(h('div', { class: 'row', style: { gridTemplateColumns: '1fr auto' } },
@@ -2746,7 +2746,7 @@
     mage: 'Damage. Fire and frost from range. Fragile, and thirsty for mana.',
     priest: 'Healer. Keeps the group alive, and can smite when nobody needs healing.',
     rogue: 'Damage. Fast strikes build combo points; finishers spend them.',
-    paladin: 'Healer or tank. Holy knight in mail: seals and Judgement in melee, Holy Light to heal.',
+    paladin: 'Healer or tank. Holy knight in mail: seals and Verdict in melee, Holy Light to heal.',
     warlock: 'Damage. Curses and shadow from range, with a demon at your side. Trades health for mana.',
     shaman: 'Damage or healer. Lightning and earth shocks, totems for the party, and healing waves.',
     hunter: 'Damage. Shoots from range with a bow. At level 10 you tame a beast to fight beside you.',
@@ -2786,10 +2786,10 @@
     const later = h('button', { class: 'btn alt', onclick: closeDialog }, 'Later');
     const skip = h('button', { class: 'btn alt', onclick: () => { UPD.skip(rel.latest); closeDialog(); toast(`Skipped ${rel.latest}. Hero has a manual check.`); } }, 'Skip this version');
     const permissionStep = () => {
-      status.textContent = 'Android needs your OK once: allow Azeroth Solo to install apps, then come back and tap Install.';
+      status.textContent = 'Android needs your OK once: allow Realm of Loner to install apps, then come back and tap Install.';
       row.innerHTML = '';
       row.append(h('button', { class: 'btn', onclick: () => UPD.askPermission() }, 'Open settings'),
-        h('button', { class: 'btn alt', onclick: () => UPD.install().then((r) => { if (r === 'need_permission') status.textContent = 'Not allowed yet. Turn on "Allow from this source" for Azeroth Solo.'; else status.textContent = 'Opening the installer...'; }).catch((e) => { status.textContent = 'Install failed: ' + ((e && e.message) || 'unknown error'); }) }, 'Install'), later);
+        h('button', { class: 'btn alt', onclick: () => UPD.install().then((r) => { if (r === 'need_permission') status.textContent = 'Not allowed yet. Turn on "Allow from this source" for Realm of Loner.'; else status.textContent = 'Opening the installer...'; }).catch((e) => { status.textContent = 'Install failed: ' + ((e && e.message) || 'unknown error'); }) }, 'Install'), later);
     };
     const web = !UPD.inApp();
     const go = h('button', { class: 'btn', onclick: async () => {
@@ -2837,7 +2837,7 @@
           h('div', { class: 'r' }, c.id === sel ? 'Play' : '')));
       }
       root.append(
-        h('h1', null, 'Azeroth Solo'), h('div', { class: 'sub' }, `Realm: ${D.REALM} · ${list.length}/${G.MAX_CHARS} characters`),
+        h('h1', null, 'Realm of Loner'), h('div', { class: 'sub' }, `Realm: ${D.REALM} · ${list.length}/${G.MAX_CHARS} characters`),
         h('img', { class: 'preview', src: art('hero', { cls: cur.cls, race: cur.race || 'human', skin: cur.skin || 0, hair: cur.hair || 0, gender: cur.gender || 'm', gear: cur.gear || undefined }), alt: '' }),
         rows,
         h('button', { class: 'btn wide go', onclick: () => enter(sel) }, 'Enter World'),
@@ -2882,7 +2882,7 @@
       for (const c of D.RACES[st.race].classes) classes.append(h('button', { class: st.cls === c ? 'on' : '', onclick: () => { st.cls = c; draw(); } }, img(art('portrait', { cls: c, race: st.race, skin: st.skin, hair: st.hair, gender: st.gender })), h('span', { class: 'cls-' + c }, D.CLASSES[c].name), h('small', null, c === 'paladin' ? 'Heal / Tank' : c === 'druid' ? 'Any role' : c === 'shaman' ? 'Dmg / Heal' : D.CLASSES[c].role === 'dps' ? 'Damage' : D.CLASSES[c].role === 'tank' ? 'Tank' : 'Healer')));
       const cyc = (k, n, label) => h('button', { class: 'chip', onclick: () => { st[k] = (st[k] + 1) % n; draw(); } }, label, h('small', null, String(st[k] + 1)));
       root.append(
-        h('h1', null, 'Azeroth Solo'), h('div', { class: 'sub' }, `Realm: ${D.REALM}`),
+        h('h1', null, 'Realm of Loner'), h('div', { class: 'sub' }, `Realm: ${D.REALM}`),
         factions,
         h('img', { class: 'preview', src: art('hero', { cls: st.cls, race: st.race, skin: st.skin, hair: st.hair, gender: st.gender }), alt: '' }),
         h('div', { class: 'desc' }, CLASS_BLURB[st.cls]),
@@ -2924,7 +2924,7 @@
     G.on('fightEnd', (d) => { renderAll(); if (d.result === 'lose' && !G.S.run) banner('You died'); });
     G.on('runUpdate', renderAll);
     G.on('runTick', () => {});
-    // a chapter that waits on a quest (x1 waits for Onyxia) plays as soon as that quest is turned in
+    // a chapter that waits on a quest (x1 waits for Veshmira) plays as soon as that quest is turned in
     G.on('questDone', (d) => { const ch = d && d.qid && window.CS && CS.CHAPTERS.find((c) => c.after && c.after.includes(d.qid) && c.shots && G.S.player.level >= c.level && !CS.unlocked().has(c.id)); if (ch) ui.pendingChapter = ch.id; });
     G.on('levelup', (d) => { const ch = window.CS && CS.CHAPTERS.find((c) => c.level === d.level && c.shots && c.id !== 'intro' && chapterReady(c)); if (ch) ui.pendingChapter = ch.id; renderAll(); banner('Level ' + d.level, d.learned.length ? 'New: ' + d.learned.map((a) => D.ABILITIES[a].name).join(', ') : 'Health and mana restored'); });
     G.on('combat', onCombat);

@@ -1,6 +1,6 @@
-/* art_tirisfal.js — Tirisfal Glades zone art for Azeroth Solo (Forsaken homeland: Deathknell, Brill, Agamand Mills,
- * Garren's Haunt, the Scarlet Watch Post, Night Web's Hollow and the Undercity).
- * Loads AFTER art.js (and any other zone pack) and EXTENDS window.ART: ART.scene / ART.mob handle the Tirisfal keys
+/* art_tirisfal.js — Pallmoor zone art for Realm of Loner (Reclaimed homeland: Last Bell, Mossgate, Varden Mills,
+ * Holt's Haunt, the Pyre Watch Post, Spinner\'s Hollow and the Gravenhold).
+ * Loads AFTER art.js (and any other zone pack) and EXTENDS window.ART: ART.scene / ART.mob handle the Pallmoor keys
  * and fall through to the previous functions for every other key. Keys are appended to ART.keys.scenes / ART.keys.mobs.
  * Self-contained: no dependency on art.js internals. Never throws.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
@@ -88,7 +88,7 @@
       'C' + pt([x + 4 * s, y - 12 * s]) + ' ' + pt([x + 5 * s, y - 14 * s]) + ' ' + pt([x + 5 * s, y - 16 * s]) + 'C' + pt([x + 10 * s, y - 9 * s]) + ' ' + pt([x + 8 * s, y]) + ' ' + pt([x, y]) + 'Z', o, 1.6 * Math.max(0.7, s)) +
       F('M' + pt([x, y - 1 * s]) + 'C' + pt([x - 4 * s, y - 1 * s]) + ' ' + pt([x - 5 * s, y - 6 * s]) + ' ' + pt([x - 1 * s, y - 11 * s]) + 'C' + pt([x, y - 7 * s]) + ' ' + pt([x + 2 * s, y - 8 * s]) + ' ' + pt([x + 2 * s, y - 10 * s]) + 'C' + pt([x + 5 * s, y - 6 * s]) + ' ' + pt([x + 4 * s, y - 1 * s]) + ' ' + pt([x, y - 1 * s]) + 'Z', i);
   }
-  // simple Scarlet flame crest (three tongues), centred on x,y, height ~16k
+  // simple Pyre flame crest (three tongues), centred on x,y, height ~16k
   function crest(x, y, k, col) {
     function q(dx, dy) { return pt([x + dx * k, y + dy * k]); }
     return F('M' + q(0, 7) + 'C' + q(-7, 6) + ' ' + q(-7, -1) + ' ' + q(-4, -5) + 'C' + q(-4, -1) + ' ' + q(-3, 0) + ' ' + q(-1.4, 1) +
@@ -257,7 +257,7 @@
     o += rubble(c, x - 64 * s, y + 3, 0.9 * s) + rubble(c, x + 58 * s, y + 4, 0.8 * s);
     return o;
   }
-  // crooked half-timbered house (Brill style)
+  // crooked half-timbered house (Mossgate style)
   function house(c, x, y, s, o) {
     o = o || {};
     var plaster = o.wall || '#a49884', beam = '#3a2e28', roofc = o.roof || '#4e4460', out = '';
@@ -420,7 +420,7 @@
     return body(c, 'M' + pt([x - 7 * s, y]) + 'C' + pt([x - 9 * s, y - 6 * s]) + ' ' + pt([x - 9 * s, y - 12 * s]) + ' ' + pt([x - 7 * s, y - 18 * s]) + 'L' + pt([x + 7 * s, y - 18 * s]) + 'C' + pt([x + 9 * s, y - 12 * s]) + ' ' + pt([x + 9 * s, y - 6 * s]) + ' ' + pt([x + 7 * s, y]) + 'Z', '#6a5040',
       L('M' + pt([x - 8.5 * s, y - 5 * s]) + 'L' + pt([x + 8.5 * s, y - 5 * s]) + 'M' + pt([x - 8.5 * s, y - 13 * s]) + 'L' + pt([x + 8.5 * s, y - 13 * s]), '#3a3a40', 1.8 * s) + F('M' + pt([x + 2 * s, y - 19 * s]) + 'L' + pt([x + 10 * s, y - 19 * s]) + 'L' + pt([x + 10 * s, y + 1]) + 'L' + pt([x + 2 * s, y + 1]) + 'Z', '#2a1e14', 0.5), 1.6 * s);
   }
-  // ---- Scarlet camp ----
+  // ---- Pyre camp ----
   function scarletTent(c, x, y, s) {
     var o = E(x, y + 2, 34 * s, 4 * s, '#000', 0, 0.28);
     var d = 'M' + pt([x - 32 * s, y]) + 'Q' + pt([x - 16 * s, y - 20 * s]) + ' ' + pt([x, y - 44 * s]) + 'Q' + pt([x + 16 * s, y - 20 * s]) + ' ' + pt([x + 32 * s, y]) + 'Z';
@@ -672,7 +672,7 @@
       wsh += L('M-4,60 L404,60 M-4,70 L404,70', dk(st, 0.3), 1, 0.7);
       o += body(c, bw, '#46424e', wsh, 2);
       o += column(c, 84, 82, 58, 12, '#6a6674', true) + column(c, 322, 82, 46, 12, '#6a6674', true) + column(c, 150, 82, 34, 10, '#6a6674', true) + column(c, 252, 82, 28, 10, '#6a6674', true);
-      // torn banner of Lordaeron (no marks)
+      // torn banner of Wexmoor (no marks)
       o += body(c, 'M222,40 L240,40 L240,70 L235,64 L231,72 L227,64 L222,70 Z', '#34406a', L('M231,44 L231,62', '#a88a40', 1.6), 1.6);
       o += throne(c, 190, 82, 1);
       o += rubble(c, 120, 82, 0.8, '#6a6674') + rubble(c, 280, 82, 0.9, '#6a6674');
@@ -1043,7 +1043,7 @@
     return o;
   }
 
-  // ---- ghoul hulk (Samuel Fipps) ----
+  // ---- ghoul hulk (Edric Fane) ----
   function ghoul(c, o) {
     var sk = o.skin, s = '';
     s += shadow(c, 64, 46) + rim(c, 62, 72, 56, 56, '#d0e8b0');
@@ -1108,7 +1108,7 @@
     return o.tf ? G(s, o.tf) : s;
   }
 
-  // ---- Scarlet Crusade humans ----
+  // ---- Order of the Pyre humans ----
   function scarlet(c, o) {
     var red = '#b82220', white = '#f0ece2';
     return biped(c, {

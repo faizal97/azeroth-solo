@@ -1,10 +1,10 @@
-/* art_moltencore.js — the Molten Core art for Azeroth Solo (raid, level 60): the molten sea under Blackrock Depths where the
- * Dark Iron dug for Ragnaros the Firelord, and the halls his servants keep for him.
+/* art_moltencore.js — the Magma Throne art for Realm of Loner (raid, level 60): the molten sea under Cinderpeak Depths where the
+ * Slagborn dug for Vulcarn the King Below, and the halls his servants keep for him.
  *   scenes  molten_core_gate  the descent: a stair cut down into the mountain's fiery heart, lava falls either side
  *           mc_caverns        the lava caverns: stalactites, a lava river, vents and pools in a cracked black floor
  *           mc_halls          the rune-lit halls: basalt columns, burning runes set in the floor and walls
- *           mc_domain         the Majordomo's domain: an obsidian hall, horned braziers, a dais before a red glow
- *           mc_lake           Ragnaros's lava lake: a sea of fire under a vast vault, an eruption boiling in the middle
+ *           mc_domain         the Steward's domain: an obsidian hall, horned braziers, a dais before a red glow
+ *           mc_lake           Vulcarn's lava lake: a sea of fire under a vast vault, an eruption boiling in the middle
  *   mobs    core_hound, molten_giant, firelord, core_surger, flamewaker_guard, firesworn, core_rager, flamewaker_priest,
  *           flamewaker_elite, flamewaker_healer, son_of_flame, magmadar, garr, baron_geddon, golemagg,
  *           sulfuron_harbinger, majordomo_executus, ragnaros
@@ -13,9 +13,9 @@
  * to ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig and the robe rig are shared copies of art_tidecrown.js (itself a copy of art_scholomance.js).
  * Looks: fire elementals are living fire in three hard tones around a dark stone core with lava cracks; core hounds are
- * two-headed lava dogs plated in black rock (Magmadar the biggest; the core ragers have one head); flamewakers are tall,
- * horned, red-skinned fire humanoids with a snake's tail instead of legs; Majordomo Executus is a flamewaker lord in robes;
- * Ragnaros (after art_story.js: ragnaros) rises from the lava with his hammer raised, the biggest sprite in the raid.
+ * two-headed lava dogs plated in black rock (Cinderhound the biggest; the core ragers have one head); flamewakers are tall,
+ * horned, red-skinned fire humanoids with a snake's tail instead of legs; Steward Cindral is a flamewaker lord in robes;
+ * Vulcarn (after art_story.js: ragnaros) rises from the lava with his hammer raised, the biggest sprite in the raid.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix mc<counter>_).
  */
@@ -274,7 +274,7 @@
 
 
   // ============================================================
-  //  MOLTEN CORE: palette (Ragnaros matches art_story.js: ragnaros)
+  //  MOLTEN CORE: palette (Vulcarn matches art_story.js: ragnaros)
   // ============================================================
   var ROCK = '#3a2420', ROCKL = '#5c3c30', ROCKD = '#1e120e', BASC = '#3a2e2e', OBS = '#221a22';
   var LAVA = '#ff7a1a', LAVAL = '#ffd040', LAVAD = '#c82a08', LAVAW = '#fff4b0', EMB = '#ffb030', EYEF = '#fff080';
@@ -426,7 +426,7 @@
       }
       // the ceiling, heavy with stalactites
       o += P(ceiling(4101, 22, 18, 34), c.lg([[0, '#0a0605'], [0.8, '#2a1410'], [1, '#4a1e10']]), 1.6);
-      // two great pillars carved by the Dark Iron, chains slung between them
+      // two great pillars carved by the Slagborn, chains slung between them
       [96, 304].forEach(function (x) { o += basalt(c, x, 124, 36, 100, '#3e302c') + P(pd([[x - 22, 34], [x + 22, 34], [x + 25, 24], [x - 25, 24]], true), c.cel('#4e3c36'), 1.6) + P(pd([[x - 20, 124], [x + 20, 124], [x + 24, 116], [x - 24, 116]], true), c.cel('#4e3c36'), 1.6) + wallRune(c, x, 64, 1) + wallRune(c, x, 94, 0.8); });
       o += chain(114, 36, 286, 44, 22, 30);
       // lava falls on either side
@@ -496,7 +496,7 @@
       // obsidian columns
       [30, 92, 308, 370].forEach(function (x, i) { o += basalt(c, x, 124, i === 0 || i === 3 ? 30 : 24, 118, '#2e2230') + wallRune(c, x, 60, 0.7); });
       o += chain(30, 18, 92, 22, 14, 10) + chain(308, 22, 370, 18, 14, 10);
-      // the dais: three steps and the Majordomo's fire altar
+      // the dais: three steps and the Steward's fire altar
       o += body(c, pd([[112, 126], [288, 126], [282, 118], [118, 118]], true), '#4a3438', '', 1.6) + body(c, pd([[128, 118], [272, 118], [266, 111], [134, 111]], true), '#56404a', '', 1.5) + body(c, pd([[146, 111], [254, 111], [248, 104], [152, 104]], true), '#624a52', '', 1.4);
       o += L('M118,121 L282,121 M134,114 L266,114', GOLD, 1, 0.7);
       o += brazier(c, 200, 104, 1.5, 4402);
@@ -522,7 +522,7 @@
       o += lavaBubbles(4502, 16, 0, 400, 84, 120, 1.1);
       // crust floating on the lake
       [[60, 98, 16, 3], [150, 88, 10, 2], [330, 94, 18, 3.4], [110, 114, 20, 4], [360, 116, 14, 3]].forEach(function (k) { o += E(k[0], k[1], k[2], k[3], c.cel(ROCKD), 1.2) + L('M' + pt([k[0] - k[2] * 0.6, k[1]]) + 'l' + n(k[2] * 0.5) + ',-0.6', LAVA, 0.8, 0.8); });
-      // the eruption in the middle of the lake: a dome of boiling lava and a spout of fire, where the Firelord rises
+      // the eruption in the middle of the lake: a dome of boiling lava and a spout of fire, where the King Below rises
       o += E(250, 96, 90, 40, glow(c, LAVAL, 0.6)) + fire(c, 250, 100, 60, 70, 4, 4503, 0, FIREH, 1.6) + E(250, 100, 44, 8, c.lg([[0, LAVAW], [1, LAVA]]), 1.6) + lavaBubbles(4504, 8, 212, 290, 88, 104, 1.4);
       o += drip(c, 222, 60, 2.4) + drip(c, 280, 52, 2) + drip(c, 262, 40, 1.6) + drip(c, 234, 48, 1.8);
       // fire geysers left and right
@@ -709,7 +709,7 @@
   var MOBS = {
     core_hound: function (c) { return hound(c, { col: ROCK, seed: 111, tf: at(0.84, 64, 122) }); },
     core_rager: function (c) {
-      // Golemagg's dogs: one heavy head, thicker plating, a brighter belly
+      // Magmahulk's dogs: one heavy head, thicker plating, a brighter belly
       return hound(c, { col: '#4a2a22', seed: 121, heads: 1, tf: at(0.86, 64, 122), extra: function (c) { return boulder(c, 64, 56, 9, 5, ROCKD, 125, 1) + boulder(c, 84, 58, 8, 5, ROCKD, 126, 1); } });
     },
     magmadar: function (c) {
@@ -733,11 +733,11 @@
         nearHand: function (c, p) { return L(whip, OL, 4.6) + L(whip, LAVA, 2.8) + L(whip, LAVAL, 1) + boulder(c, p[0], p[1], 7, 6.4, ROCK, 162, 1) + fire(c, 4, 118, 8, 12, 1, 163, 0, FIREH, 1); } });
     },
     firesworn: function (c) {
-      // Garr's small bound elementals, hunched and flickering
+      // Stonecore's small bound elementals, hunched and flickering
       return fireElem(c, { seed: 171, w: 52, h: 90, k: 4, lean: 6, near: [[46, 54], [36, 72], [34, 86]], far: [[80, 52], [92, 70], [92, 84]], tf: at(0.7, 64, 122), cols: [LAVAD, LAVA, LAVAL] });
     },
     son_of_flame: function (c) {
-      // the Firelord's children: brighter fire, a stone crest, both arms raised to burn
+      // the King Below's children: brighter fire, a stone crest, both arms raised to burn
       return fireElem(c, { seed: 181, crest: true, w: 56, h: 104, cols: [LAVA, LAVAL, LAVAW], near: [[46, 54], [34, 42], [30, 26]], far: [[80, 52], [94, 42], [98, 28]], tf: at(0.88, 64, 122),
         farHand: function (c, p) { return fireOrb(c, p[0], p[1], 4.4, 182); }, nearHand: function (c, p) { return fireOrb(c, p[0], p[1], 5, 183); } });
     },
@@ -832,7 +832,7 @@
       });
     },
     sulfuron_harbinger: function (c) {
-      // the Firelord's herald: taller and heavier, spiked iron over dark red skin, a spiked mace that burns
+      // the King Below's herald: taller and heavier, spiked iron over dark red skin, a spiked mace that burns
       return flamewaker(c, {
         skin: '#a8321e', chest: '#2a2228', seed: 271, belt: GOLDD, buckle: GOLD, maneCols: FIREH, shadowR: 42, tf: 'matrix(1.06,0,0,1.06,-4,-7.2)',
         chestX: function (c) { return P('M52,50 L76,50 L72,66 L64,72 L56,66 Z', c.cel('#3a3038'), 1.4) + crackLine('M64,52 L64,68 M58,58 L70,58', 1.3) + L('M48,76 L80,76', GOLD, 1.2); },
@@ -843,7 +843,7 @@
       });
     },
     majordomo_executus: function (c) {
-      // the steward of the Firelord's house: a flamewaker lord in long crimson robes and a tall collar, a flame-crowned staff
+      // the steward of the King Below's house: a flamewaker lord in long crimson robes and a tall collar, a flame-crowned staff
       var rb = '#6a1a1c', rbl = '#8a2a26';
       return flamewaker(c, {
         skin: '#c0442a', chest: rb, sleeve: rb, seed: 281, maneCols: FIREH, shadowR: 42, horn: '#3a2420', tf: 'matrix(1.04,0,0,1.04,-2.6,-4.8)',
@@ -860,7 +860,7 @@
       });
     },
     ragnaros: function (c) {
-      // the Firelord (art_story.js: ragnaros) as a combat sprite: a vast torso of magma rising from the lava, hammer raised
+      // the King Below (art_story.js: ragnaros) as a combat sprite: a vast torso of magma rising from the lava, hammer raised
       var s = E(64, 60, 76, 72, glow(c, LAVA, 0.55));
       s += fire(c, 66, 108, 114, 96, 7, 301, 3, FIRE3, 2.2);
       // far arm down into the lava, the fist burning

@@ -1,15 +1,15 @@
-/* art_plaguelands.js — Western Plaguelands art for Azeroth Solo (contested zone, levels 55-58: blighted farmland held
- * against the Scourge; Chillwind Camp and the Bulwark, Felstone Field, Dalson's Tears, the ruins of Andorhal, the Scarlet
- * town of Hearthglen, the Writhing Haunt, Caer Darrow and the road to the gates of Stratholme; plaguehounds, diseased
- * ghouls, skeletal executioners, Scourge warders, Scarlet sentinels and lightsworn, rotting behemoths, the ghoul Foulmane
- * and the lich Araj the Summoner).
+/* art_plaguelands.js — West Rotmoor art for Realm of Loner (contested zone, levels 55-58: blighted farmland held
+ * against the Hollow Host; Greyfrost Camp and the Bulwark, Gloomstone Field, Harmon's Tears, the ruins of Elmsworth, the Pyre
+ * town of Morrowglen, the Weeping Haunt, Castle Ardmore and the road to the gates of Graymouth; plaguehounds, diseased
+ * ghouls, skeletal executioners, Hollow Host warders, Pyre sentinels and lightsworn, rotting behemoths, the ghoul Mangefang
+ * and the lich Vashti the Summoner).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Plaguelands keys and fall through to the previous functions for every other key. Keys are appended to
+ * Rotmoor keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig and the house-style scene pieces are shared copies of art_maraudon.js / art_scarlet.js (the
- * Scarlet sigil, tabard, robe and banner come from art_scarlet.js); the skeleton rig and the claw/foot pieces are
+ * Pyre sigil, tabard, robe and banner come from art_scarlet.js); the skeleton rig and the claw/foot pieces are
  * copies of art_duskwood.js with leg overrides added. The dog skull, the hunched ghoul rig, the kettle helm, the
- * ziggurat, farm buildings, crops, cauldron, island castle and the Stratholme gate are new here.
+ * ziggurat, farm buildings, crops, cauldron, island castle and the Graymouth gate are new here.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix wp<counter>_).
  */
@@ -242,7 +242,7 @@
     return body(c, d, col, F(pd([[x, y - h - 2], [x + w / 2 + 6, y + 2], [x + 1, y + 2]], true), dk(col, 0.3), 0.8) + L(tl, dk(col, 0.35), 0.9, 0.8), 1.7) +
       limb('M' + pt([x, y - h]) + 'L' + pt([x, y - h - 7]), fin || GOLD, 1.2) + C(x, y - h - 8, 2, fin || GOLD, 1);
   }
-  // ---- the Scarlet sigil (copy of art_scarlet.js) ----
+  // ---- the Pyre sigil (copy of art_scarlet.js) ----
   function flameD(x, y, k) {
     return 'M' + pt([x, y + 5 * k]) + 'C' + pt([x - 5 * k, y + 5 * k]) + ' ' + pt([x - 5.2 * k, y - 1 * k]) + ' ' + pt([x - 2.6 * k, y - 4.2 * k]) + 'C' + pt([x - 2.4 * k, y - 1.6 * k]) + ' ' + pt([x - 1.2 * k, y - 1 * k]) + ' ' + pt([x - 0.7 * k, y - 1.3 * k]) +
       'C' + pt([x - 1.8 * k, y - 4.2 * k]) + ' ' + pt([x - 0.6 * k, y - 6.4 * k]) + ' ' + pt([x + 0.6 * k, y - 8.4 * k]) + 'C' + pt([x + 1.6 * k, y - 5.8 * k]) + ' ' + pt([x + 3.6 * k, y - 4.2 * k]) + ' ' + pt([x + 2.2 * k, y - 0.9 * k]) +
@@ -876,7 +876,7 @@
     s = s || 1;
     return P('M' + pt([x - 3 * s, y]) + 'C' + pt([x - 3 * s, y + len * 0.6]) + ' ' + pt([x - 4 * s, y + len]) + ' ' + pt([x, y + len]) + 'C' + pt([x + 4 * s, y + len]) + ' ' + pt([x + 3 * s, y + len * 0.6]) + ' ' + pt([x + 3 * s, y]) + 'Z', c.cel(PLG), 1.2) + C(x - 1 * s, y + len * 0.7, 0.9 * s, PLGL);
   }
-  // ---- Scarlet gear (copies of art_scarlet.js) ----
+  // ---- Pyre gear (copies of art_scarlet.js) ----
   function blade(c, p, len, ang, w, col, grip) {
     var q = dirQ(p, ang); col = col || '#d0d6de'; w = w || 3.2;
     var o = limb('M' + pt(q(-10, 0)) + 'L' + pt(q(3, 0)), grip || '#5a2a1a', 3.4) + C(q(-11, 0)[0], q(-11, 0)[1], 2.6, c.cel(GOLD), 1.1);

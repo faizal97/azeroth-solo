@@ -1,14 +1,14 @@
-/* art_maraudon.js — Maraudon art for Azeroth Solo (dungeon, levels 46-50: the sacred caverns of the centaur and the
- * earth beneath Desolace, corrupted by the elemental princess Theradras; the purple-crystal caverns with their
+/* art_maraudon.js — The Gemfall Caves art for Realm of Loner (dungeon, levels 46-50: the sacred caverns of the centaur and the
+ * earth beneath Mournwaste, corrupted by the elemental princess Ghesra; the purple-crystal caverns with their
  * poison vines, the orange-crystal falls, and the deep throne chamber with its dark pool; the Putridus tricksters,
- * constrictor vines and cavern lurkers, and the bosses Noxxion, Razorlash, Lord Vyletongue, Celebras the Cursed,
- * Landslide and Princess Theradras).
+ * constrictor vines and cavern lurkers, and the bosses Sludgewell, Thornlash, Lord Venomlip, Faolan the Cursed,
+ * Landslide and Ghesra, the Stone Duchess).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Maraudon keys and fall through to the previous functions for every other key. Keys are appended to
+ * The Gemfall Caves keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig and the house-style scene pieces are shared copies of art_scarlet.js; the satyr rig
- * (goat legs, horns) is a copy of art_ashenvale.js so the Putridus satyrs read as kin of the Bleakheart ones.
- * The crystal clusters, cave shell, vines, boulder bodies, slime and the earth-hair of Theradras are new here.
+ * (goat legs, horns) is a copy of art_ashenvale.js so the Putridus satyrs read as kin of the Sourheart ones.
+ * The crystal clusters, cave shell, vines, boulder bodies, slime and the earth-hair of Ghesra are new here.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix md<counter>_).
  */
@@ -517,7 +517,7 @@
     var d = 'M' + pt(q(0, -w)) + 'Q' + pt(q(len * 0.6, -w * 0.6)) + ' ' + pt(q(len, w * 0.5)) + 'Q' + pt(q(len * 0.5, w * 0.6)) + ' ' + pt(q(0, w)) + 'Z';
     return P(d, c.cel(col), 1.3) + F('M' + pt(q(0, 0)) + 'Q' + pt(q(len * 0.55, w * 0.1)) + ' ' + pt(q(len, w * 0.5)) + 'Q' + pt(q(len * 0.5, w * 0.6)) + ' ' + pt(q(0, w)) + 'Z', dk(col, 0.3), 0.8);
   }
-  // elf head facing left with branch antlers (Celebras)
+  // elf head facing left with branch antlers (Faolan)
   function antler(c, x, y, col) {
     var d = 'M' + pt([x, y]) + 'Q' + pt([x + 2, y - 11]) + ' ' + pt([x + 12, y - 18]) + 'M' + pt([x + 1, y - 7]) + 'L' + pt([x - 6, y - 14]) + 'L' + pt([x - 7, y - 19]) + 'M' + pt([x + 6, y - 14]) + 'L' + pt([x + 5, y - 22]) + 'M' + pt([x + 12, y - 18]) + 'L' + pt([x + 21, y - 20]) + 'M' + pt([x + 12, y - 18]) + 'L' + pt([x + 15, y - 25]);
     return L(d, OL, 5.6) + L(d, col, 3) + L(d, lt(col, 0.25), 0.9, 0.6);
@@ -535,7 +535,7 @@
     s += gEye(c, x - 5, y - 3, 1.7, EMER) + L('M' + pt([x - 11, y - 7]) + 'L' + pt([x - 1, y - 8]), OL, 2.2);
     return s + antler(c, x + 2, y - 10, o.bark) + leaf(c, x - 5, y - 30, -2.2, 7, '#6a8a30');
   }
-  // one strand of Theradras's flowing earth hair
+  // one strand of Ghesra's flowing earth hair
   function earthStrand(c, pts, w0, w1, col, seed) {
     var T = taper(pts, w0, w1, 6), r = rng(seed || 3), m = T.s.length;
     var o = body(c, T.d, col, F(ribbonBand(T, 0.6, 1), dk(col, 0.3), 0.85) + F(ribbonBand(T, 0.1, 0.2), '#7a9a40', 0.6) + L(along(T, 0.3), lt(col, 0.22), 1.4, 0.85) + L(bands(T, 5, 4), dk(col, 0.4), 1.1, 0.8), 1.8);

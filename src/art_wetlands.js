@@ -1,7 +1,7 @@
-/* art_wetlands.js — Wetlands zone art for Azeroth Solo (Alliance, levels 25-30: Menethil Harbor, Bluegill Marsh,
- * Whelgar's Excavation, Saltspray Glen, Dun Modr, the Angerfang Encampment under Grim Batol).
+/* art_wetlands.js — Greenfen zone art for Realm of Loner (Accord, levels 25-30: Gullhaven, Reedgill Marsh,
+ * Torvald's Dig, Seawrack Glen, Kaldhelm, the Wyrmchain Camp under Drakestone Hold).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Wetlands keys and fall through to the previous functions for every other key. Keys are appended to
+ * Greenfen keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped and murloc rigs and the house-style scene pieces are shared copies of art_ashenvale.js; the gnoll,
  * orc head, dwarf head and whelp rigs are shared copies of art_redridge.js; the raptor is adapted from art_barrens.js.
@@ -564,7 +564,7 @@
     var k = big ? 1.25 : 1;
     return L('M' + pt([x, y - 2]) + 'L' + pt([x - 11 * k, y + 1]) + 'M' + pt([x, y - 2]) + 'L' + pt([x - 5 * k, y + 1.5]) + 'M' + pt([x, y - 2]) + 'L' + pt([x + 6 * k, y + 1]), OL, 5) + L('M' + pt([x, y - 2]) + 'L' + pt([x - 11 * k, y + 1]) + 'M' + pt([x, y - 2]) + 'L' + pt([x - 5 * k, y + 1.5]) + 'M' + pt([x, y - 2]) + 'L' + pt([x + 6 * k, y + 1]), col, 2.2);
   }
-  // ---- more shared copies of art_redridge.js (feathers, spear, rags, Redridge-style gnoll rig, bone necklace, pelt hood) ----
+  // ---- more shared copies of art_redridge.js (feathers, spear, rags, Stoneharrow-style gnoll rig, bone necklace, pelt hood) ----
   function feathers(x, y, cols, s, a0) {
     s = s || 1; var o = '';
     cols.forEach(function (col, i) {
@@ -587,7 +587,7 @@
     return d;
   }
 
-  // ---- Redridge gnoll (hunched, digitigrade, same head family as the Riverpaw) ----
+  // ---- Stoneharrow gnoll (hunched, digitigrade, same head family as the Tallgrass) ----
   function rrGnoll(c, o) {
     var fur = o.fur, mane = o.mane, spot = o.spot || dk(fur, 0.38);
     var head = function (c, x, y) {
@@ -672,7 +672,7 @@
     return F(pd([q(-15, 2), q(-7, -1), q(-3, -13), q(1, -3), q(7, -15), q(6, -2), q(12, -2), q(16, -5), q(14, 0), q(5, 2), q(-6, 4)], true), '#6e2420', 0.9) +
       F(pd([q(-3, -12), q(1, -3), q(5, -4)], true), '#a8382a', 0.7) + F(pd([q(7, -14), q(6, -3), q(9, -3)], true), '#a8382a', 0.6);
   }
-  // Grim Batol: a fortress carved into a dark peak, seen far off (no outlines, a few lit slits)
+  // Drakestone Hold: a fortress carved into a dark peak, seen far off (no outlines, a few lit slits)
   function grimBatol(c, x, y, s, col) {
     col = col || '#34363c'; var o = '', wl = lt(col, 0.1);
     o += F(pd([[x - 124 * s, y], [x - 80 * s, y - 48 * s], [x - 52 * s, y - 68 * s], [x - 36 * s, y - 100 * s], [x - 14 * s, y - 114 * s], [x + 6 * s, y - 126 * s], [x + 26 * s, y - 108 * s], [x + 54 * s, y - 90 * s], [x + 86 * s, y - 54 * s], [x + 128 * s, y]], true), col);
@@ -765,7 +765,7 @@
     if (o.door != null) out += archWin(x + w * o.door, y, 10, 16, c.cel('#5a3a24'), 1.4);
     return out;
   }
-  // blue Alliance-style wall banner with a gold trim and a gold shield-and-chevron (original)
+  // blue Accord-style wall banner with a gold trim and a gold shield-and-chevron (original)
   function allyBanner(c, x, y, w, h) {
     var d = pd([[x, y], [x + w, y], [x + w, y + h], [x + w / 2, y + h + 6], [x, y + h]], true), ex = x + w / 2, ey = y + h * 0.42;
     return L('M' + pt([x - 2, y]) + 'L' + pt([x + w + 2, y]), OL, 3) + body(c, d, ALLY, L(pd([[x + 1.8, y + 1], [x + 1.8, y + h - 0.6], [ex, y + h + 3.8], [x + w - 1.8, y + h - 0.6], [x + w - 1.8, y + 1]]), GOLD, 1) + F(pd([[x + w * 0.62, y], [x + w, y], [x + w, y + h + 6], [x + w * 0.62, y + h + 6]], true), '#000', 0.25), 1.3) +
@@ -903,7 +903,7 @@
     o += feathers(x - 1 * s, y - 44 * s, ['#c8a040', '#4a6a3a'], 0.6 * s, 0.1);
     return o + skull(c, x, y - 52 * s, 1.1 * s) + L('M' + pt([x - 3 * s, y - 58 * s]) + 'l6,2', '#6a8a3a', 1.6 * s);
   }
-  // ---- Dark Iron ruins ----
+  // ---- Slagborn ruins ----
   function ruin(c, x, y, w, h, col, seed, door) {
     var r = rng(seed || 5), top = [];
     for (var i = 0; i <= 6; i++) top.push([w * i / 6, i === 0 || i === 6 ? r() * h * 0.2 : (i % 2 ? r() * h * 0.45 : r() * h * 0.15)]);
@@ -945,7 +945,7 @@
     var q = function (u, v) { return [x + u * s, y + v * s]; };
     return E(x, y + 1, 12 * s, 2.4 * s, '#000', 0, 0.3) + P(pd([q(-14, -14), q(12, -14), q(10, -9), q(4, -9), q(5, -3), q(9, 0), q(-8, 0), q(-4, -3), q(-3, -9), q(-8, -9), q(-18, -12)], true), c.cel('#46444a'), 1.6 * s) + L('M' + pt(q(-12, -13)) + 'L' + pt(q(10, -13)), '#8a8890', 1 * s, 0.8);
   }
-  // Dark Iron war banner (original): black cloth, an ember ring round a molten drop, a red band
+  // Slagborn war banner (original): black cloth, an ember ring round a molten drop, a red band
   function diBanner(c, x, y, h, s) {
     s = s || 1; var top = y - h, bw = 17 * s, bh = h * 0.6, o = E(x, y + 1, 6 * s, 1.6 * s, '#000', 0, 0.25);
     o += limb('M' + pt([x, y]) + 'L' + pt([x, top - 6 * s]), '#1e1c1e', 2.6 * s) + P(pd([[x - 3 * s, top - 5 * s], [x, top - 15 * s], [x + 3 * s, top - 5 * s]], true), c.cel('#5a5a60'), 1 * s);
@@ -956,8 +956,8 @@
     o += C(ex, ey, 10 * s, glow(c, EMBER, 0.4)) + L(ellD(ex, ey, 5.4 * s, 5.4 * s), EMBER, 1.8 * s) + P('M' + pt([ex, ey - 3.8 * s]) + 'C' + pt([ex + 3 * s, ey]) + ' ' + pt([ex + 2.4 * s, ey + 3 * s]) + ' ' + pt([ex, ey + 3 * s]) + 'C' + pt([ex - 2.4 * s, ey + 3 * s]) + ' ' + pt([ex - 3 * s, ey]) + ' ' + pt([ex, ey - 3.8 * s]) + 'Z', '#ffc050', 0);
     return o;
   }
-  // ---- Dragonmaw camp ----
-  // Dragonmaw war banner (original): black swallowtail cloth, red lower half, a red spread-wing mark
+  // ---- Wyrmchain camp ----
+  // Wyrmchain war banner (original): black swallowtail cloth, red lower half, a red spread-wing mark
   function dmBanner(c, x, y, h, s) {
     s = s || 1; var top = y - h, bw = 18 * s, bh = h * 0.62, o = E(x, y + 1, 6 * s, 1.6 * s, '#000', 0, 0.25);
     o += limb('M' + pt([x, y]) + 'L' + pt([x, top - 4 * s]), '#2a2020', 2.6 * s) + P(pd([[x - 2.6 * s, top - 3 * s], [x - 1 * s, top - 14 * s], [x + 3 * s, top - 18 * s], [x + 1.4 * s, top - 8 * s], [x + 2.6 * s, top - 3 * s]], true), c.cel('#d8ccb0'), 1 * s);
@@ -1286,7 +1286,7 @@
     return L(d, OL, 7.4) + L(d, '#c0321e', 4.6) + L('M' + pt(q(1, -1.2)) + 'L' + pt(q(len - 1, -1.2)), '#f07050', 1, 0.8) + L('M' + pt(q(len * 0.3, -3)) + 'L' + pt(q(len * 0.3, 3)) + 'M' + pt(q(len * 0.7, -3)) + 'L' + pt(q(len * 0.7, 3)), '#e8d8b0', 1.2) +
       L('M' + pt(q(len, 0)) + 'q' + n(Math.cos(ang) * 4) + ',' + n(Math.sin(ang) * 4 - 3) + ' ' + n(Math.cos(ang) * 6) + ',' + n(Math.sin(ang) * 6 - 1), '#3a2a1a', 1);
   }
-  // ---- Dragonmaw orc ----
+  // ---- Wyrmchain orc ----
   function warPaint(c, x, y, eye) {
     return F(pd([[x - 16, y - 3], [x - 8, y - 5], [x + 3, y - 6], [x + 5, y - 2], [x - 2, y + 2], [x - 9, y + 3], [x - 15, y + 2]], true), '#b01a14', 0.9) + L('M' + pt([x - 14, y - 4]) + 'L' + pt([x - 1, y - 2]), OL, 2.6) + C(x - 7, y + 0.5, 1.8, eye || '#ffd040', 1) + C(x - 7.4, y + 0.1, 0.6, '#fff');
   }

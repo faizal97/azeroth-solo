@@ -1,10 +1,10 @@
-/* art_gnomeregan.js — Gnomeregan art for Azeroth Solo (Alliance dungeon, levels 29-34: the sealed gate in Dun Morogh's snow,
+/* art_gnomeregan.js — Gearhollow art for Realm of Loner (Accord dungeon, levels 29-34: the sealed gate in Kaldvik's snow,
  * the mechanical halls and the engine core of the fallen gnome city, flooded with radiation).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Gnomeregan keys and fall through to the previous functions for every other key. Keys are appended to
+ * Gearhollow keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped and dwarf rigs and the house-style scene pieces are shared copies of art_wetlands.js; the trogg is
- * adapted from art_durotar.js. `leper_gnome` is NOT drawn here: art.js already owns that key (Dun Morogh).
+ * adapted from art_durotar.js. `leper_gnome` is NOT drawn here: art.js already owns that key (Kaldvik).
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix gn<counter>_).
  */

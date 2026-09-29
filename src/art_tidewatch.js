@@ -1,6 +1,6 @@
-/* art_tidewatch.js — Tidewatch Coast art for Azeroth Solo (expansion "The Drowned Crown", Alliance zone, level 60: the
- * Stormveil Isle, risen from the sea after ten thousand years; the Highborne city of Sael'anor, overgrown with coral,
- * barnacles and kelp. The Kul Tiran expedition camp at Brightwater Landing, the Saltmarsh Shallows, the Kelpwood, the
+/* art_tidewatch.js — Tidewatch Coast art for Realm of Loner (expansion "The Drowned Crown", Accord zone, level 60: the
+ * Stormveil Isle, risen from the sea after ten thousand years; the Starborn city of Sael'anor, overgrown with coral,
+ * barnacles and kelp. The Brineholt expedition camp at Brightwater Landing, the Saltmarsh Shallows, the Kelpwood, the
  * Drowned Orchards, the Archive Steps and the Sael'anor Outskirts; reefclaw snappers, tidebound husks, kelp horrors,
  * tidebound sentinels and sorceresses, the rare crab Old Brinescale and the elite Warden Ithrael).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
@@ -8,8 +8,8 @@
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig, tents, crates, banners and the house-style scene pieces are shared copies of
  * art_plaguelands.js; waves, reeds, driftwood, starfish and light shafts are copies of art_stranglethorn.js.
- * New here: the drowned-elf (Tidebound) head and gear, Highborne spires and arches, coral, barnacles, kelp stalks,
- * tide pools, the Kul Tiran ship, pier and anchor banner, the crab rig and the kelp mass.
+ * New here: the drowned-elf (Tidebound) head and gear, Starborn spires and arches, coral, barnacles, kelp stalks,
+ * tide pools, the Brineholt ship, pier and anchor banner, the crab rig and the kelp mass.
  * The Tidebound are an original faction: pale sea-green skin, teal glowing eyes, coral and pearl accents, solid (not
  * ghostly), with legs (not naga tails).
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
@@ -144,11 +144,11 @@
   // ============================================================
   // sea and shore
   var SEA = '#4e8e96', SEAD = '#2a5a66', SEAL = '#a6ccc8', FOAM = '#f2faf4', SAND = '#cdbb8e';
-  // Highborne stone, teal roofs, moon silver
+  // Starborn stone, teal roofs, moon silver
   var STONE = '#dcd8c8', TEAL = '#3e8c8a', TEALL = '#7ccac0', MOONC = '#eef4e2';
   // coral, pearl, kelp, barnacles
   var CORAL = '#ee7a62', CORALD = '#b84a44', CORALL = '#ffb4a0', CORALP = '#e87aa0', PEARL = '#f4f0e4', KELP = '#6a7a2e', BARN = '#dcd8c6';
-  // the Kul Tiran expedition
+  // the Brineholt expedition
   var NAVY = '#23386a', KGOLD = '#e0b040', CANVAS = '#e6e0cc', WOOD = '#6a4a2e', ABLUE = '#2a4a9e';
   // the Tidebound (drowned elves)
   var DSK = '#a6d4c2', DEYE = '#3cf4dc', DARM = '#4f8a92', DROBE = '#2c5e6e', TGOLD = '#c8a458', WATER = '#8ee0ea';
@@ -259,7 +259,7 @@
       L(pd([[bx + 2 * s, top + 1], [bx + 2 * s, top + bh - 2.6 * s], [bx + w / 2, top + bh - 8 * s], [bx + w - 2 * s, top + bh - 2.6 * s], [bx + w - 2 * s, top + 1]]), trim, 1.2 * s), 1.4 * s);
     return o + (em ? em(c, bx + w / 2, top + bh * 0.42, s) : '');
   }
-  // banner emblems (x, y = centre): the Kul Tiran anchor, the Alliance crown (copy of art_plaguelands.js emCrown)
+  // banner emblems (x, y = centre): the Brineholt anchor, the Accord crown (copy of art_plaguelands.js emCrown)
   function emAnchor(c, x, y, k) {
     var d = 'M' + pt([x, y - 4.6 * k]) + 'L' + pt([x, y + 6 * k]) + 'M' + pt([x - 3.6 * k, y - 2.4 * k]) + 'L' + pt([x + 3.6 * k, y - 2.4 * k]) + 'M' + pt([x - 5.4 * k, y + 1.4 * k]) + 'Q' + pt([x - 4.6 * k, y + 6.4 * k]) + ' ' + pt([x, y + 6.2 * k]) + 'Q' + pt([x + 4.6 * k, y + 6.4 * k]) + ' ' + pt([x + 5.4 * k, y + 1.4 * k]);
     var ring = ellD(x, y - 6.4 * k, 1.8 * k, 1.8 * k);
@@ -396,7 +396,7 @@
   }
 
   // ============================================================
-  //  SCENE PIECES: Highborne ruins (new here)
+  //  SCENE PIECES: Starborn ruins (new here)
   // ============================================================
   // crescent moon, horns to the right
   function moonD(x, y, r) { return 'M' + pt([x, y - r]) + 'A' + n(r) + ',' + n(r) + ' 0 0,0 ' + pt([x, y + r]) + 'A' + n(r * 0.55) + ',' + n(r) + ' 0 0,1 ' + pt([x, y - r]) + 'Z'; }
@@ -429,7 +429,7 @@
     var top = yb - h, tw = w * 0.78;
     return F(pd([[x - w / 2, yb], [x + w / 2, yb], [x + tw / 2, top], [x - tw / 2, top]], true), col) + F(spireTopD(x, top, tw, w * 2.4), col) + F(moonD(x, top - w * 2.4 - w * 0.3, w * 0.24), col);
   }
-  // pointed Highborne arch on two slim pillars; o.broken drops the right half, o.over adds coral and kelp
+  // pointed Starborn arch on two slim pillars; o.broken drops the right half, o.over adds coral and kelp
   function elfArch(c, x, yb, w, h, col, o) {
     o = o || {};
     var pw = o.pw || w * 0.16, s = '', top = yb - h, ap = top - w * 0.72;
@@ -467,7 +467,7 @@
     sp.forEach(function (q) { var wx = x + q[0] * s, wy = y - 20 * s - q[2] * s * 0.55; o += C(wx, wy, 5 * s + 2, glow(c, win, 0.6)) + R(wx - 1 * s - 0.4, wy - 2.4 * s, 2 * s + 0.8, 4.4 * s, win); });
     return o + C(x, y - 20 * s - 88 * s - 17 * s * 2.4 - 6 * s, 10 * s + 4, glow(c, win, 0.5));
   }
-  // robed Highborne statue, facing front (x, yb = feet)
+  // robed Starborn statue, facing front (x, yb = feet)
   function statue(c, x, yb, s, col, headless) {
     col = col || STONE;
     var q = function (a, b) { return [x + a * s, yb + b * s]; }, o = '';
@@ -485,7 +485,7 @@
   }
 
   // ============================================================
-  //  SCENE PIECES: the Kul Tiran expedition (new here)
+  //  SCENE PIECES: the Brineholt expedition (new here)
   // ============================================================
   // a two-and-a-half-masted ship moored bow-left; y = waterline
   function ship(c, x, y, s) {
@@ -638,7 +638,7 @@
       o += ground(c, 170, '#cac6b4', '#8a8676') + L('M-4,170 L404,170', OL, 1.4) + L('M-4,172 L404,172', lt(ST, 0.4), 1.2);
       var fl = ''; for (var k = -6; k <= 6; k++) fl += 'M' + pt([200 + k * 18, 172]) + 'L' + pt([200 + k * 60, 242]); fl += 'M-4,186 L404,186 M-4,206 L404,206 M-4,232 L404,232';
       o += L(fl, '#8a8676', 1, 0.7);
-      // the Alliance guard post at the top of the steps
+      // the Accord guard post at the top of the steps
       o += poleBanner(c, 128, 190, 66, 1, NAVY, KGOLD, emAnchor) + poleBanner(c, 268, 190, 66, 1, ABLUE, KGOLD, emCrown);
       o += brazier(c, 100, 184, 1) + brazier(c, 300, 184, 1) + crate(c, 344, 198, 1) + crate(c, 360, 196, 0.8, '#7a5a36') + barrel(c, 378, 204, 0.9);
       o += limb('M326,196 L322,160 M334,196 L336,158 M342,196 L348,162', '#6a4a2e', 1.4) + P('M318,176 L352,176 L352,180 L318,180 Z', c.cel('#5a3e26'), 1.1) + P(pd([[320, 158], [322, 152], [324, 158]], true), '#c8d0d8', 0.8) + P(pd([[334, 156], [336, 150], [338, 156]], true), '#c8d0d8', 0.8) + P(pd([[346, 160], [348, 154], [350, 160]], true), '#c8d0d8', 0.8);
@@ -666,7 +666,7 @@
       return o + mist(c, 126, 22, '#e8f0ec', 0.3, 3616) + motes(3617, 22, 0, 400, 20, 200, '#bff8f0') + vignette(c, '#eef4f0', '#10160e');
     }
   };
-  // a dead Highborne fruit tree: a short trunk forking into a vase of bare limbs, bleached and crusted with coral
+  // a dead Starborn fruit tree: a short trunk forking into a vase of bare limbs, bleached and crusted with coral
   function orchardTree(c, x, y, s, seed, o) {
     o = o || {};
     var col = o.col || '#8e8676', r = rng(seed), out = E(x + 2 * s, y + 1, 24 * s, 3.6 * s, '#000', 0, 0.25), fk = [x + 2 * s, y - 28 * s];
@@ -690,7 +690,7 @@
     [tips[1], tips[4], tips[7]].forEach(function (p) { out += L('M' + pt(p) + 'l0,' + n(4 * s), OL, 0.8 * s) + C(p[0], p[1] + 6 * s, 2.2 * s, c.cel('#6a5040'), 0.8 * s); });
     return out;
   }
-  // a colossal Highborne head in profile, facing left (drawn upright; rotate it to topple it)
+  // a colossal Starborn head in profile, facing left (drawn upright; rotate it to topple it)
   function stoneHead(c, x, y, k, col) {
     col = col || STONE;
     var q = function (a, b) { return [x + a * k, y + b * k]; }, o = '';
@@ -760,7 +760,7 @@
       (trim ? L('M36,' + (hem - 2.4) + ' L92,' + (hem - 2.4), trim, o.trimW || 3) : '') + (o.panel ? F(pd([[58, 80], [70, 80], [72, hem], [56, hem]], true), o.panel) + (trim ? L('M58,80 L56,' + hem + ' M70,80 L72,' + hem, trim, 1.4) : '') : ''), 2);
     return s;
   }
-  // ---- the Tidebound (drowned Highborne): head, gear, water magic ----
+  // ---- the Tidebound (drowned Starborn): head, gear, water magic ----
   // head facing left; o.hair 'float' | 'husk', o.helm 'fin' | 'crest', o.circlet, o.jaw, o.blotch
   function deHead(c, x, y, o) {
     var sk = o.skin || DSK, s = '', hc = o.hairCol || '#f2f6f2';

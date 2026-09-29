@@ -1,4 +1,4 @@
-/* art_mounts.js - riding mounts for Azeroth Solo (the eight racial mounts plus the riding skill icon).
+/* art_mounts.js - riding mounts for Realm of Loner (the eight racial mounts plus the riding skill icon).
  * Loads AFTER art.js and the other packs and EXTENDS window.ART:
  *   ART.mount(key)  NEW: a 160x128 SVG, transparent background, side view facing RIGHT, standing, saddled and
  *                   bridled, no rider. The game draws the hero FIRST and the mount on top, so the mount's body is
@@ -213,7 +213,7 @@
 
   /* ================= the mounts (all face RIGHT; seat at 72,60; hooves on y 121) ================= */
   var MOUNTS = {
-    /* human: a brown Stormwind horse in blue-and-gold barding, steel chanfron and a blue plume */
+    /* human: a brown Kingsmere horse in blue-and-gold barding, steel chanfron and a blue plume */
     horse: function (c, o) {
       var col = '#8e5a32', dc = dk(col, 0.3), mane = '#3a2216', blue = '#2c4ea2', gold = '#e0b040', s = o.icon ? '' : shadow(c, 80, 56);
       s += leg([[52, 82], [58, 98, 13], [50, 108, 8], [51, 117, 6]], dc) + hoof(51, 121, 8, '#2a1c14');
@@ -249,7 +249,7 @@
       return s;
     },
 
-    /* dwarf: a big grey-white mountain ram with huge curled horns and a red-and-bronze Ironforge saddle */
+    /* dwarf: a big grey-white mountain ram with huge curled horns and a red-and-bronze Keldrun saddle */
     ram: function (c, o) {
       var wool = '#e4dfd4', dw = '#b4ac9e', face = '#a89e90', horn = '#c8b28a', red = '#9a2a1e', bronze = '#cc8a3a', s = o.icon ? '' : shadow(c, 80, 54);
       var lc = '#8e8476';

@@ -1,7 +1,7 @@
-/* art_stranglethorn.js — Stranglethorn Vale zone art for Azeroth Solo (contested, levels 30-35: Rebel Camp, Grom'gol,
- * Nesingwary's Expedition, the Kurzen Compound, Zuuldaia Ruins, Lake Nazferiti, Zul'Kunda, Venture Co. Base Camp, Balia'mah Ruins).
+/* art_stranglethorn.js — The Vinewild zone art for Realm of Loner (contested, levels 30-35: Rebel Camp, Camp Skarn,
+ * Wexley's Expedition, the Drayke Compound, Zuuldaia Ruins, Lake Omunde, Mokkari, Deepgold Company Base Camp, Umbaa Ruins).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Stranglethorn keys and fall through to the previous functions for every other key. Keys are appended to
+ * Vinewild keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig and the house-style scene pieces are shared copies of art_wetlands.js; the raptor is the
  * art_wetlands.js adaptation of art_barrens.js; the goblin rig is a copy of art_stonetalon.js. The cat, jungle troll
@@ -428,7 +428,7 @@
     var k = big ? 1.25 : 1;
     return L('M' + pt([x, y - 2]) + 'L' + pt([x - 11 * k, y + 1]) + 'M' + pt([x, y - 2]) + 'L' + pt([x - 5 * k, y + 1.5]) + 'M' + pt([x, y - 2]) + 'L' + pt([x + 6 * k, y + 1]), OL, 5) + L('M' + pt([x, y - 2]) + 'L' + pt([x - 11 * k, y + 1]) + 'M' + pt([x, y - 2]) + 'L' + pt([x - 5 * k, y + 1.5]) + 'M' + pt([x, y - 2]) + 'L' + pt([x + 6 * k, y + 1]), col, 2.2);
   }
-  // ---- more shared copies of art_redridge.js (feathers, spear, rags, Redridge-style gnoll rig, bone necklace, pelt hood) ----
+  // ---- more shared copies of art_redridge.js (feathers, spear, rags, Stoneharrow-style gnoll rig, bone necklace, pelt hood) ----
   function feathers(x, y, cols, s, a0) {
     s = s || 1; var o = '';
     cols.forEach(function (col, i) {
@@ -769,7 +769,7 @@
     s = s || 1; var d = 'M' + pt([x, y]) + 'L' + pt([x, y - h]);
     return E(x, y + 1, 5 * s, 1.6 * s, '#000', 0, 0.25) + limb(d, '#6a4a2a', 2.6 * s) + P(pd([[x - 1.6 * s, y - h], [x, y - h - 11 * s], [x + 1.6 * s, y - h]], true), c.cel('#d8d0b8'), 0.9 * s) + skull(c, x, y - h + 1 * s, 1.1 * s);
   }
-  // Bloodscalp war totem: carved wooden pole of stacked red-painted heads, feathers and a horned skull
+  // Scaldback war totem: carved wooden pole of stacked red-painted heads, feathers and a horned skull
   function warTotem(c, x, y, s, col) {
     col = col || BSRED; var q = function (u, v) { return [x + u * s, y + v * s]; }, o = E(x, y + 2, 14 * s, 3 * s, '#000', 0, 0.28), wood = '#7a5230';
     o += body(c, pd([q(-6, 0), q(-5, -64), q(5, -64), q(6, 0)], true), wood, F(pd([q(2, -66), q(9, -66), q(9, 2), q(3, 2)], true), dk(wood, 0.3), 0.8), 1.8 * s);
@@ -812,7 +812,7 @@
     if (mark) o += mark(bx + w / 2, ty + bh * 0.45, s);
     return o + C(x, ty - 4 * s, 1.8 * s, c.cel(GOLD), 0.9 * s);
   }
-  // original marks: rebel gold star over a chevron; Horde black fang-crown; Kurzen tan crossed blades
+  // original marks: rebel gold star over a chevron; Krugar black fang-crown; Drayke tan crossed blades
   function rebelMark(x, y, s) { return P(starD(x, y - 2 * s, 5 * s), GOLD, 0.8 * s) + L('M' + pt([x - 5 * s, y + 8 * s]) + 'L' + pt([x, y + 4 * s]) + 'L' + pt([x + 5 * s, y + 8 * s]), GOLD, 1.8 * s); }
   function hordeMark(x, y, s) { return F(pd([[x - 6 * s, y + 6 * s], [x - 6 * s, y - 2 * s], [x - 3 * s, y + 1 * s], [x, y - 7 * s], [x + 3 * s, y + 1 * s], [x + 6 * s, y - 2 * s], [x + 6 * s, y + 6 * s], [x, y + 9 * s]], true), '#1a1009'); }
   function kurzenMark(x, y, s) { var d = 'M' + pt([x - 5 * s, y - 6 * s]) + 'L' + pt([x + 5 * s, y + 6 * s]) + 'M' + pt([x + 5 * s, y - 6 * s]) + 'L' + pt([x - 5 * s, y + 6 * s]); return C(x, y, 7 * s, '#1a1a14', 0, 0.5) + L(d, '#1a1009', 3 * s) + L(d, '#c8b88a', 1.6 * s) + L('M' + pt([x - 4 * s, y + 7 * s]) + 'L' + pt([x - 7 * s, y + 9 * s]) + 'M' + pt([x + 4 * s, y + 7 * s]) + 'L' + pt([x + 7 * s, y + 9 * s]), '#6a4a2a', 1.6 * s); }
@@ -1148,7 +1148,7 @@
       return o + fireflies(731, 22, 0, 400, 60, 220) + vignette(c, '#b8c8ff', '#020406');
     }
   };
-  // ---- goblin (Venture Co.) — copy of the art_stonetalon.js rig, plus goggles, a dented hat and free limb sizes ----
+  // ---- goblin (Deepgold Company) — copy of the art_stonetalon.js rig, plus goggles, a dented hat and free limb sizes ----
   function gobHead(c, x, y, o) {
     var sk = o.skin || '#6aa84a', s = '';
     s += P('M' + pt([x + 8, y - 4]) + 'C' + pt([x + 18, y - 10]) + ' ' + pt([x + 26, y - 14]) + ' ' + pt([x + 32, y - 18]) + 'C' + pt([x + 28, y - 8]) + ' ' + pt([x + 20, y + 2]) + ' ' + pt([x + 10, y + 6]) + 'Z', c.cel(sk), 2) + F('M' + pt([x + 12, y - 2]) + 'C' + pt([x + 18, y - 6]) + ' ' + pt([x + 24, y - 10]) + ' ' + pt([x + 28, y - 14]) + 'C' + pt([x + 24, y - 6]) + ' ' + pt([x + 18, y]) + ' ' + pt([x + 12, y + 3]) + 'Z', '#c87a6a', 0.6);

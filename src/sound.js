@@ -1,4 +1,4 @@
-// Azeroth Solo — music and sound effects (Web Audio). Audio data is inlined by build.py as window.AUDIO_DATA.
+// Realm of Loner — music and sound effects (Web Audio). Audio data is inlined by build.py as window.AUDIO_DATA.
 (function (root) {
   const SND = { ctx: null, bufs: {}, loading: {}, cur: null, curName: null, want: null, last: {} };
   const KEY = 'azsolo.sound';

@@ -1,8 +1,8 @@
-/* art_hillsbrad.js — Hillsbrad Foothills zone art for Azeroth Solo (Horde, levels 24-30: Tarren Mill, the Hillsbrad
- * fields, Durnholde Keep, Azurelode Mine, the Alterac foothills, Growless Cave), plus a corner of Silverpine Forest
- * (Pyrewood Village) and the Shadowfang Keep dungeon (courtyard, great hall).
+/* art_hillsbrad.js — Greymead Foothills zone art for Realm of Loner (Krugar, levels 24-30: Mourncross, the Greymead
+ * fields, Blackhelm Keep, Kestrel Mine, the Vaskar foothills, Frostmouth Cave), plus a corner of Needlewood
+ * (Ashwick Village) and the Greyhowl Keep dungeon (courtyard, great hall).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Hillsbrad keys and fall through to the previous functions for every other key. Keys are appended to
+ * Greymead keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig, the human head, the wolf and lioness rigs, the brick wall, torches and the flagstone floor are
  * shared copies of art_stonetalon.js / art_redridge.js / art_mulgore.js / art_barrens.js so the zones match.
@@ -326,9 +326,9 @@
   var PINE = '#2e5a3a', PINED = '#1f4030', GRASS = '#6a9a48', GRASSD = '#4a7432', STONE = '#9a968c', TIMBER = '#3e302c', SLATE = '#4a4658',
     FPURP = '#5a2a78', FBLK = '#1c1420', FBONE = '#d8d4b8', LGREEN = '#8aff6a', SYN_R = '#a01e1e', SYN_B = '#1a1618', SNOW = '#f2f6fa', SNOWS = '#c8d4e4';
   function hbSky(c, top, mid, bot) { return sky(c, top || '#6f8aaa', mid || '#aebccc', bot || '#e0e4e2'); }
-  // the Alterac range behind the hills: pale blue-grey peaks with big snowfields
+  // the Vaskar range behind the hills: pale blue-grey peaks with big snowfields
   function alterac(c, seed, base, h0, h1) { return peaks(c, seed, base, h0, h1, '#9aa6be', SNOW, 50, 90) + peaks(c, seed + 1, base + 12, h0 * 0.5, h1 * 0.55, '#7e8aa4', '#e4eaf2', 40, 70); }
-  // Forsaken banner: black pole, purple swallowtail cloth with black borders and a pale hooked crest
+  // Reclaimed banner: black pole, purple swallowtail cloth with black borders and a pale hooked crest
   function fBanner(c, x, y, h, s) {
     s = s || 1;
     var top = y - h, bw = 16 * s, bh = h * 0.56, o = '';
@@ -350,7 +350,7 @@
       C(lx, top + 10 * s, 16 * s, glow(c, LGREEN, 0.6)) + L('M' + pt([lx, top + 2 * s]) + 'L' + pt([lx, top + 5 * s]), OL, 1.2 * s) + P(pd([[lx - 3.4 * s, top + 6 * s], [lx + 3.4 * s, top + 6 * s], [lx + 2.6 * s, top + 14 * s], [lx - 2.6 * s, top + 14 * s]], true), '#c8ffb0', 1.2 * s) +
       R(lx - 4 * s, top + 4.5 * s, 8 * s, 2 * s, '#2a2428', 1 * s) + C(lx, top + 10 * s, 1.6 * s, '#ffffff', 0, 0.8);
   }
-  // Tarren Mill style house: dark timber frame, grey plaster, steep slate roof, green-lit windows
+  // Mourncross style house: dark timber frame, grey plaster, steep slate roof, green-lit windows
   function tmHouse(c, x, y, s, o) {
     o = o || {};
     var w = (o.w || 30) * s, h = (o.h || 30) * s, pl = o.wall || '#8a8290', rf = o.roof || SLATE, out = E(x, y + 2, w + 10 * s, 4 * s, '#000', 0, 0.26), ruin = o.ruin;
@@ -464,7 +464,7 @@
     var d = 'M' + pt([x - 16 * s, y]) + 'C' + pt([x - 18 * s, y - 14 * s]) + ' ' + pt([x - 8 * s, y - 28 * s]) + ' ' + pt([x, y - 28 * s]) + 'C' + pt([x + 8 * s, y - 28 * s]) + ' ' + pt([x + 18 * s, y - 14 * s]) + ' ' + pt([x + 16 * s, y]) + 'Z';
     return E(x, y + 1, 18 * s, 3 * s, '#000', 0, 0.24) + body(c, d, '#d8b050', L('M' + pt([x - 10 * s, y - 8 * s]) + 'l4,-5 M' + pt([x - 2 * s, y - 16 * s]) + 'l4,-4 M' + pt([x + 6 * s, y - 6 * s]) + 'l4,-5 M' + pt([x - 8 * s, y - 20 * s]) + 'l3,-3', '#9a7a2a', 1 * s) + F(pd([[x + 3 * s, y - 30 * s], [x + 20 * s, y - 30 * s], [x + 20 * s, y + 2], [x + 6 * s, y + 2]], true), '#8a6a2a', 0.5), 1.6 * s);
   }
-  // Syndicate banner: black cloth, red diagonal band, red ring; black-and-red pole wrap
+  // Black Ledger banner: black cloth, red diagonal band, red ring; black-and-red pole wrap
   function sBanner(c, x, y, h, s, torn) {
     s = s || 1;
     var top = y - h, bw = 18 * s, bh = h * 0.56, o = '';
@@ -537,7 +537,7 @@
     for (var x = x0; x < x1; x += 5 + r() * 5) { var l = (len || 14) * (0.4 + r() * 0.8); d += 'M' + pt([x - 2.4, y]) + 'L' + pt([x + 0.4, y + l]) + 'L' + pt([x + 2.6, y]) + 'Z'; }
     return P(d, '#dff0ff', 1.1) + F(d, '#ffffff', 0.35);
   }
-  // Shadowfang Keep silhouette on its cliff (distant, few outlines)
+  // Greyhowl Keep silhouette on its cliff (distant, few outlines)
   function keepOnCliff(c, x, y, s, lit) {
     var o = '', st = '#3a3a48', st2 = '#2c2c38';
     o += F('M' + pt([x - 70 * s, y + 60 * s]) + 'L' + pt([x - 58 * s, y + 6 * s]) + 'L' + pt([x - 40 * s, y]) + 'L' + pt([x + 44 * s, y - 2 * s]) + 'L' + pt([x + 62 * s, y + 8 * s]) + 'L' + pt([x + 74 * s, y + 60 * s]) + 'Z', '#2e3230');
@@ -648,7 +648,7 @@
       o += sBanner(c, 90, 146, 46, 1, true) + sBanner(c, 262, 146, 46, 1) + sBanner(c, 318, 66, 36, 0.9);
       o += rock(c, 156, 164, 22, 10, st) + rock(c, 240, 162, 18, 8, st) + rock(c, 60, 172, 20, 9, dk(st, 0.1));
       o += grass(55, 160, 238, '#4e6034', 50, 0.6, 1.6, 1) + pebbles(57, 166, 236, '#6a6a60', 16);
-      // Syndicate camp in the yard
+      // Black Ledger camp in the yard
       o += P('M104,196 L128,166 L152,196 Z', c.cel('#6a1e1e'), 1.8) + P('M122,196 L128,182 L134,196 Z', '#1a1010', 1.4) + P('M280,190 L300,164 L320,190 Z', c.cel('#2a2226'), 1.8) + P('M295,190 L300,178 L305,190 Z', '#0e0a0a', 1.2);
       o += campfire(c, 206, 208, 0.62) + crate(c, 46, 214, 1, '#6a4a2e') + barrel(c, 70, 216, 1, '#5a3a24') + crate(c, 356, 210, 0.9, '#6a4a2e') + sBanner(c, 378, 224, 44, 0.9);
       o += rock(c, 16, 240, 40, 16, dk(st, 0.12)) + tufts(c, [[160, 236, 0.9], [250, 238, 0.8]], '#5a7a3a');
@@ -1008,7 +1008,7 @@
     return R(p[0] - 5 * s, p[1] - 3 * s, 10 * s, 6 * s, c.cel('#5a5e66'), 1.4 * s) + C(p[0] - 5 * s, p[1] + 3 * s, 1.1 * s, '#c8ccd4');
   }
 
-  // ---- worgen (Silverpine / Shadowfang, facing left) ----
+  // ---- worgen (Needlewood / Greyhowl, facing left) ----
   function worgenHead(c, x, y, o) {
     var fur = o.fur, mane = o.mane || dk(fur, 0.3), s = '';
     s += P(pd([[x + 2, y - 12], [x + 16, y - 16], [x + 14, y - 8], [x + 26, y - 4], [x + 18, y + 3], [x + 27, y + 12], [x + 14, y + 13], [x + 18, y + 22], [x + 2, y + 16]], true), c.cel(mane), 2);

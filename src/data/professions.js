@@ -25,12 +25,12 @@
     copper: { name: 'Copper Vein', prof: 'mining', skill: 1, item: 'copper_ore', n: [1, 3], extra: ['rough_stone', 0.5] },
     tin: { name: 'Tin Vein', prof: 'mining', skill: 65, item: 'tin_ore', n: [1, 2], extra: ['coarse_stone', 0.5] },
     silver: { name: 'Silver Vein', prof: 'mining', skill: 75, item: 'silver_ore', n: [1, 1], extra: ['coarse_stone', 0.3] },
-    peacebloom: { name: 'Peacebloom', prof: 'herbalism', skill: 1, item: 'peacebloom', n: [1, 3] },
+    peacebloom: { name: 'Softpetal', prof: 'herbalism', skill: 1, item: 'peacebloom', n: [1, 3] },
     silverleaf: { name: 'Silverleaf', prof: 'herbalism', skill: 1, item: 'silverleaf', n: [1, 3] },
-    earthroot: { name: 'Earthroot', prof: 'herbalism', skill: 15, item: 'earthroot', n: [1, 3] },
-    mageroyal: { name: 'Mageroyal', prof: 'herbalism', skill: 50, item: 'mageroyal', n: [1, 3] },
-    briarthorn: { name: 'Briarthorn', prof: 'herbalism', skill: 70, item: 'briarthorn', n: [1, 3] },
-    bruiseweed: { name: 'Bruiseweed', prof: 'herbalism', skill: 100, item: 'bruiseweed', n: [1, 3] },
+    earthroot: { name: 'Knotroot', prof: 'herbalism', skill: 15, item: 'earthroot', n: [1, 3] },
+    mageroyal: { name: 'Sageflower', prof: 'herbalism', skill: 50, item: 'mageroyal', n: [1, 3] },
+    briarthorn: { name: 'Hookthorn', prof: 'herbalism', skill: 70, item: 'briarthorn', n: [1, 3] },
+    bruiseweed: { name: 'Bramblewort', prof: 'herbalism', skill: 100, item: 'bruiseweed', n: [1, 3] },
   };
   D.GATHER_BANDS = [25, 50, 100]; // skill below req+25 always gains, below +50 half the time, below +100 a quarter
   // Which nodes grow at a place, by the place's level. Weights; the game rolls one per spawn.
@@ -54,12 +54,12 @@
   mat('tin_bar', 'Tin Bar', 'tin_bar', 20);
   mat('bronze_bar', 'Bronze Bar', 'bronze_bar', 25);
   mat('silver_bar', 'Silver Bar', 'silver_bar', 100, { q: 2 });
-  mat('peacebloom', 'Peacebloom', 'peacebloom', 5);
+  mat('peacebloom', 'Softpetal', 'peacebloom', 5);
   mat('silverleaf', 'Silverleaf', 'silverleaf', 5);
-  mat('earthroot', 'Earthroot', 'earthroot', 10);
-  mat('mageroyal', 'Mageroyal', 'mageroyal', 15);
-  mat('briarthorn', 'Briarthorn', 'briarthorn', 20);
-  mat('bruiseweed', 'Bruiseweed', 'bruiseweed', 25);
+  mat('earthroot', 'Knotroot', 'earthroot', 10);
+  mat('mageroyal', 'Sageflower', 'mageroyal', 15);
+  mat('briarthorn', 'Hookthorn', 'briarthorn', 20);
+  mat('bruiseweed', 'Bramblewort', 'bruiseweed', 25);
   mat('light_leather', 'Light Leather', 'light_leather', 10);
   mat('medium_leather', 'Medium Leather', 'medium_leather', 25);
   mat('linen_bolt', 'Bolt of Linen Cloth', 'linen_bolt', 15);
@@ -225,7 +225,7 @@
     crafts_alliance: { name: 'Artisan Hollis', title: 'Profession Trainer' },
     crafts_horde: { name: 'Artisan Grunna', title: 'Profession Trainer' },
     stable_alliance: { name: 'Stablemaster Rowan', title: 'Riding Trainer' },
-    stable_horde: { name: 'Stablemaster Ogunaro', title: 'Riding Trainer' },
+    stable_horde: { name: 'Stablemaster Kuno', title: 'Riding Trainer' },
   });
   const TRAIN = { crafts_alliance: ['stormwind', 'ironforge', 'darnassus', 'sentinel_hill', 'lakeshire', 'darkshire', 'astranaar', 'menethil_harbor', 'rebel_camp', 'refuge_pointe', 'gadgetzan', 'feathermoon_stronghold'], crafts_horde: ['orgrimmar', 'thunder_bluff', 'undercity', 'crossroads', 'sun_rock_retreat', 'tarren_mill', 'splintertree_post', 'grom_gol', 'hammerfall', 'gadgetzan', 'camp_mojache', 'marshals_refuge', 'flame_crest', 'the_bulwark', 'everlook', 'bloodtide_landing'] };
   for (const npc in TRAIN) for (const p of TRAIN[npc]) if (D.PLACES[p] && !D.PLACES[p].npcs.includes(npc)) D.PLACES[p].npcs.push(npc);

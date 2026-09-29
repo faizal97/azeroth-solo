@@ -1,4 +1,4 @@
-// Azeroth Solo — combat engine. No DOM: runs in the page and in Node sims.
+// Realm of Loner — combat engine. No DOM: runs in the page and in Node sims.
 // A fight is a set of units on two sides. Solo play is a party of one.
 (function (root) {
   const D = root.D;
@@ -552,9 +552,9 @@
     const pct = m.hp / m.maxHp;
     const allies = alive(C.allies);
     if (sp.kind === 'smite') {
-      if (sp.phase === 0 && pct < 0.66) { sp.phase = 1; stomp(C, m, 'Mr. Smite stomps the deck!'); say(C, m, 'You landlubbers are tougher than I thought! I\'ll have to improvise!', 'monster'); }
-      if (sp.phase === 1 && pct < 0.5) { sp.phase = 2; m.enrage = 1.35; ev(C, { type: 'emote', uid: m.uid, text: 'Mr. Smite draws his hammer.' }); }
-      if (sp.phase === 2 && pct < 0.33) { sp.phase = 3; stomp(C, m, 'Mr. Smite stomps the deck!'); say(C, m, 'D\'ah! Now you\'re making me angry!', 'monster'); }
+      if (sp.phase === 0 && pct < 0.66) { sp.phase = 1; stomp(C, m, 'Mr. Clobber stomps the deck!'); say(C, m, 'You landlubbers are tougher than I thought! I\'ll have to improvise!', 'monster'); }
+      if (sp.phase === 1 && pct < 0.5) { sp.phase = 2; m.enrage = 1.35; ev(C, { type: 'emote', uid: m.uid, text: 'Mr. Clobber draws his hammer.' }); }
+      if (sp.phase === 2 && pct < 0.33) { sp.phase = 3; stomp(C, m, 'Mr. Clobber stomps the deck!'); say(C, m, 'D\'ah! Now you\'re making me angry!', 'monster'); }
       return;
     }
     if (sp.kind === 'arugal') {
@@ -565,7 +565,7 @@
       }
       if (sp.t <= 0) {
         sp.t = 12; const a = allies[rint(0, allies.length - 1)];
-        if (a) { ev(C, { type: 'emote', uid: m.uid, text: 'Arugal hurls a bolt of shadow!' }); dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * 0.9, { school: 'shadow', ab: 'shadow_bolt' }); }
+        if (a) { ev(C, { type: 'emote', uid: m.uid, text: 'Cairn hurls a bolt of shadow!' }); dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * 0.9, { school: 'shadow', ab: 'shadow_bolt' }); }
       }
       return;
     }
@@ -580,14 +580,14 @@
     if (sp.kind === 'thermaplugg') {
       // a leper gnome joins at 66% and at 33%
       if (sp.phase < 2 && pct < (sp.phase === 0 ? 0.66 : 0.33)) {
-        sp.phase++; say(C, m, sp.phase === 1 ? 'Usurpers! Gnomeregan is mine!' : 'My machines are the future!', 'monster');
+        sp.phase++; say(C, m, sp.phase === 1 ? 'Usurpers! Gearhollow is mine!' : 'My machines are the future!', 'monster');
         E.addEnemy(C, E.mobUnit('gnomeregan_leper', m.level - 2, (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
       }
       return;
     }
     if (sp.kind === 'thredd') {
       if (sp.phase === 0 && pct < 0.5) {
-        sp.phase = 1; say(C, m, 'To me, brothers! Show them what the Stockade taught us!', 'monster');
+        sp.phase = 1; say(C, m, 'To me, brothers! Show them what Kingsmere Gaol taught us!', 'monster');
         for (let i = 0; i < 2; i++) E.addEnemy(C, E.mobUnit('defias_insurgent', m.level - 1, (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
       }
       return;
@@ -609,7 +609,7 @@
       }
     } else if (sp.kind === 'whirl') {
       sp.t = 12;
-      ev(C, { type: 'emote', uid: m.uid, text: sp.text || `${m.name === 'XT:9' ? 'XT:9' : 'The Shredder'} whirls its saw blades!` });
+      ev(C, { type: 'emote', uid: m.uid, text: sp.text || `${m.name === 'Big Chopper' ? 'Big Chopper' : 'The Shredder'} whirls its saw blades!` });
       for (const a of allies) dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * 0.7, { school: 'physical', ab: 'whirl' });
     } else if (sp.kind === 'molten') {
       sp.t = 10;
@@ -617,7 +617,7 @@
       if (a) { ev(C, { type: 'emote', uid: m.uid, text: sp.text || `${m.name} splashes molten metal!` }); dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * 1.4, { school: 'fire', ab: 'molten' }); }
     } else if (sp.kind === 'cook') {
       sp.t = 15;
-      ev(C, { type: 'emote', uid: m.uid, text: sp.text || 'Cookie eats some of his cooking.' });
+      ev(C, { type: 'emote', uid: m.uid, text: sp.text || 'Crumbs eats some of his cooking.' });
       heal(C, m, m, m.maxHp * 0.08, {});
     }
   }

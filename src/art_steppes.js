@@ -1,20 +1,20 @@
-/* art_steppes.js — Burning Steppes art for Azeroth Solo (contested zone, levels 52-55: scorched black earth split by
- * lava, an ash-grey sky lit red from below, smoke columns, and Blackrock Mountain looming over it all with its lava
- * falls and chains). Scenes: Morgan's Vigil (Alliance hub), Flame Crest (Horde hub), Dreadmaul Rock, the Ruins of
- * Thaurissan, Blackrock Stronghold, the Terror Wing path and the gate of Blackrock Mountain. Mobs: Firegut ogres and
- * brutes, Blackrock battlemasters and flamecallers, black broodlings and dragonspawn, flamekin spitters, blazing
- * elementals, the rare Gorlash and the elite Volchan.
+/* art_steppes.js — The Cinderfields art for Realm of Loner (contested zone, levels 52-55: scorched black earth split by
+ * lava, an ash-grey sky lit red from below, smoke columns, and Cinderpeak looming over it all with its lava
+ * falls and chains). Scenes: Drummond's Vigil (Accord hub), Brand Crest (Krugar hub), Brokemaw Rock, the Ruins of
+ * Grimmark, Cinderpeak Stronghold, the Broodwing path and the gate of Cinderpeak. Mobs: Smokebelly ogres and
+ * brutes, Cinderpeak battlemasters and flamecallers, black broodlings and dragonspawn, flamekin spitters, blazing
+ * elementals, the rare Old Smokejaw and the elite Scorch.
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Burning Steppes keys and fall through to the previous functions for every other key. Keys are appended to
+ * The Cinderfields keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig and the house-style scene pieces are shared copies of art_zulfarrak.js (itself copying
  * art_scarlet.js / art_stranglethorn.js); blaze() and chunk() are copies of art_arathi.js. Everything else is new.
- * Kept apart from their cousins: the Firegut ogres are red-skinned (Boulderfist grey, Dunemaul tan); the
- * battlemaster wears a horned great-helm and lava-seamed plate (the Redridge Blackrock wear plain black with an
+ * Kept apart from their cousins: the Smokebelly ogres are red-skinned (Rockbrow grey, Sandbrute tan); the
+ * battlemaster wears a horned great-helm and lava-seamed plate (the Stoneharrow Cinderpeak wear plain black with an
  * orange sigil); the flamecaller is unhooded with a skull headdress and orange fire (the summoner is hooded, fel
- * green); the broodling lunges with purple-black wings (the Redridge whelp stands, orange wings); the fire
- * elementals are a squat spitter, a vortex-bodied blazing elemental with obsidian plates, and Volchan's black crust
- * over molten lava (the Arathi exile is a plain column of flame).
+ * green); the broodling lunges with purple-black wings (the Stoneharrow whelp stands, orange wings); the fire
+ * elementals are a squat spitter, a vortex-bodied blazing elemental with obsidian plates, and Scorch's black crust
+ * over molten lava (the Kinloch exile is a plain column of flame).
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix bs<counter>_).
  */
@@ -461,7 +461,7 @@
     }
     return o;
   }
-  // banners: Alliance blue with a gold shield and star, Horde red with a black tusked jaw, Blackrock with the burning peak, ogre hide with a red eye
+  // banners: Accord blue with a gold shield and star, Krugar red with a black tusked jaw, Cinderpeak with the burning peak, ogre hide with a red eye
   function embAlliance(c, x, y, s) { return P('M' + pt([x - 5 * s, y - 6 * s]) + 'L' + pt([x + 5 * s, y - 6 * s]) + 'L' + pt([x + 5 * s, y]) + 'Q' + pt([x + 4 * s, y + 5 * s]) + ' ' + pt([x, y + 7 * s]) + 'Q' + pt([x - 4 * s, y + 5 * s]) + ' ' + pt([x - 5 * s, y]) + 'Z', c.cel(GOLD), 1 * s) + P(pd([[x, y - 4 * s], [x + 1.2 * s, y - 0.4 * s], [x + 3.6 * s, y], [x + 1.2 * s, y + 0.8 * s], [x, y + 4.4 * s], [x - 1.2 * s, y + 0.8 * s], [x - 3.6 * s, y], [x - 1.2 * s, y - 0.4 * s]], true), '#f8f4e0', 0.6 * s); }
   function embHorde(c, x, y, s) { return P(pd([[x, y - 7 * s], [x + 6 * s, y], [x, y + 7 * s], [x - 6 * s, y]], true), '#1e1614', 1 * s) + P('M' + pt([x - 3 * s, y + 3 * s]) + 'Q' + pt([x - 7 * s, y - 1 * s]) + ' ' + pt([x - 5 * s, y - 7 * s]) + 'L' + pt([x - 2 * s, y - 1 * s]) + 'Z', BONE, 0.8 * s) + P('M' + pt([x + 3 * s, y + 3 * s]) + 'Q' + pt([x + 7 * s, y - 1 * s]) + ' ' + pt([x + 5 * s, y - 7 * s]) + 'L' + pt([x + 2 * s, y - 1 * s]) + 'Z', BONE, 0.8 * s); }
   function embRock(c, x, y, s) { return P(pd([[x - 7 * s, y + 5 * s], [x - 2 * s, y - 3 * s], [x, y - 1 * s], [x + 2 * s, y - 5 * s], [x + 7 * s, y + 5 * s]], true), '#1e1a1e', 1 * s) + flame(c, x + 1.6 * s, y - 3 * s, 0.34 * s, BRK, LAVAH) + L('M' + pt([x - 7 * s, y + 7 * s]) + 'L' + pt([x + 7 * s, y + 7 * s]), '#1e1a1e', 1.4 * s); }
@@ -497,7 +497,7 @@
     for (i = 0; i < 7; i++) { var a2 = PI * (1.05 + i * 0.15); o += E(x + Math.cos(a2) * 13 * s, y + 2 * s - Math.sin(a2) * 2 * s, 3.4 * s, 2.4 * s, c.cel('#6a625c'), 1 * s); }
     return o;
   }
-  // pale canvas tent with a blue stripe (Alliance)
+  // pale canvas tent with a blue stripe (Accord)
   function tent(c, x, y, w, h, col, stripe) {
     var d = pd([[x - w / 2, y], [x, y - h], [x + w / 2, y]], true);
     return E(x, y + 1, w * 0.6, 3, '#000', 0, 0.3) + limb('M' + pt([x, y - h]) + 'l0,-6', WOODD, 1.6) + body(c, d, col, F(pd([[x, y - h - 2], [x + w / 2 + 2, y + 2], [x, y + 2]], true), dk(col, 0.25), 0.8) + (stripe ? L('M' + pt([x - w * 0.38, y - h * 0.24]) + 'L' + pt([x + w * 0.38, y - h * 0.24]), stripe, 3) : ''), 1.6) +
@@ -542,7 +542,7 @@
     o += limb('M' + pt([x - 10 * s, y - 34 * s]) + 'L' + pt([x + 10 * s, y - 38 * s]), WOODD, 1.8 * s) + skull(c, x, y - 46 * s, (big ? 1.6 : 1) * s);
     return o + L('M' + pt([x - 9 * s, y - 34 * s]) + 'l-1,' + n(8 * s) + 'M' + pt([x + 9 * s, y - 38 * s]) + 'l1,' + n(8 * s), '#c8b89a', 1.2 * s) + L('M' + pt([x - 2 * s, y - 30 * s]) + 'L' + pt([x + 2 * s, y - 26 * s]), HRED, 2 * s);
   }
-  // the Blackrock peak: jagged crown, ridges, lava falls from its flanks
+  // the Cinderpeak peak: jagged crown, ridges, lava falls from its flanks
   function mountain(c, x, y, s, col, falls) {
     col = col || '#2a2224';
     var q = function (u, v) { return [x + u * s, y + v * s]; };
@@ -619,7 +619,7 @@
     for (var x2 = x0 + 20; x2 < x1 - 10; x2 += 40) o += C(x2, y - h * 0.3, 1.6, IRONL, 0.8) + C(x2, y - h * 0.75, 1.6, IRONL, 0.8);
     return o;
   }
-  // tall Blackrock tower: tapering black block, spikes jutting out, glowing slit windows (x = centre, y = base)
+  // tall Cinderpeak tower: tapering black block, spikes jutting out, glowing slit windows (x = centre, y = base)
   function spikeTower(c, x, y, w, h, col) {
     col = col || '#322c30';
     var d = pd([[x - w / 2, y], [x + w / 2, y], [x + w * 0.38, y - h], [x - w * 0.38, y - h]], true), o = E(x, y + 2, w * 0.8, 4, '#000', 0, 0.35);
@@ -838,7 +838,7 @@
   //  MOB PIECES
   // ============================================================
   function bigFist(c, p, col, r) { return C(p[0], p[1], r, c.cel(col), 2.2) + L('M' + pt([p[0] - r * 0.7, p[1] - r * 0.2]) + 'l' + n(r * 0.5) + ',' + n(-r * 0.3) + 'M' + pt([p[0] - r * 0.7, p[1] + r * 0.3]) + 'l' + n(r * 0.5) + ',' + n(-r * 0.2), dk(col, 0.4), 1.1); }
-  // ---- Firegut ogre head (facing left): low heavy brow, flat nose, underbite with upturned tusks, black topknot ----
+  // ---- Smokebelly ogre head (facing left): low heavy brow, flat nose, underbite with upturned tusks, black topknot ----
   function ogHead(c, x, y, o) {
     var sk = o.skin, s = '';
     s += P(pd([[x + 12, y - 4], [x + 25, y - 13], [x + 19, y + 3]], true), c.cel(sk), 2);

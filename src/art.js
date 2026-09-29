@@ -1,4 +1,4 @@
-/* Azeroth Solo - art.js
+/* Realm of Loner - art.js
    Every visual in the game as an SVG string. Defines window.ART (see SPEC.md "ART API").
    Original fan art. No external assets, no text in any image, no SVG filters.
    Every id is suffixed with a per-call counter so many SVGs can share one page. */
@@ -1452,8 +1452,8 @@
   };
 
 
-  /* ================= v19 races: tauren, undead (Forsaken) =================
-     Tauren: the biggest race, broad and hunched, bovine head (HEAD.ptauren) with horns that change with the
+  /* ================= v19 races: tauren, undead (Reclaimed) =================
+     Hornfolk: the biggest race, broad and hunched, bovine head (HEAD.ptauren) with horns that change with the
      hair index, long ears, mane or braids, cloven hooves (foot kind 'thoof') and a tail (o.hairBack).
      Undead: human height but gaunt and hunched (HEAD.pundead): glowing pinpoint eyes, exposed jaw on some hair
      indexes, ribs through a torn gap in the clothes (o.raceTorso) and a bony forearm (o.armFx).
@@ -1909,7 +1909,7 @@
       out += P('M-8,-66 L-11,-73 L-6,-69 Z M8,-66 L12,-72 L7,-68 Z M0,-68 L0,-76 L2,-69 Z', c.cel('#cfeeff'), 1.2);
       return out;
     },
-    /* Vagash's claw: a huge curved lion claw set as a dagger, fur collar, leather grip */
+    /* Snowfang's claw: a huge curved lion claw set as a dagger, fur collar, leather grip */
     vagash_claw: function (c) {
       var bd = 'M-4,-5 C-5.5,-17 -3,-29 6.5,-38 C5.2,-30 4.4,-17 4,-5 Z';
       return P(bd, c.lg(['#f6eedc', '#d8c6a0', '#8a7456', '#3a2e24'], 0, 1, 0.6, 0), 2) +
@@ -1918,7 +1918,7 @@
         P('M-6.5,-3 L-5,-7 L-2.5,-4.5 L0,-8 L2.5,-4.5 L5,-7.5 L6.5,-3 L4,-1.5 L-4,-1.5 Z', c.cel('#c8984e'), 1.6) +
         C(0, 10.5, 2.8, c.cel('#ece4cc'), 1.5);
     },
-    /* Oakenscowl's staff: tall gnarled totem wood, a carved bear head on top, feathers on a cord */
+    /* Old Barkjaw's staff: tall gnarled totem wood, a carved bear head on top, feathers on a cord */
     oakenscowl_staff: function (c) {
       var wd = '#6e4e30', out = '', fe = function (x, y, a, col) {
         return G(P('M0,0 C3.4,-3.4 4,-11 0,-16 C-4,-11 -3.4,-3.4 0,0 Z', c.cel(col), 1.3) + S('M0,-1 L0,-14', dk(col, 0.45), 0.7) + S('M-1.8,-6 L0,-8 M1.8,-9 L0,-11', dk(col, 0.3), 0.6), 'translate(' + x + ',' + y + ') rotate(' + a + ')');
@@ -1938,7 +1938,7 @@
       out += S('M-8,-44 L8,-43', '#c8a860', 2.2) + S('M-8,-44 L8,-43', OL, 0.6, 0.6);
       return out;
     },
-    /* Lord Melenas' blade: a strongly curved satyr blade, dark metal, fel-green cutting edge */
+    /* Lord Varneth' blade: a strongly curved satyr blade, dark metal, gloom-green cutting edge */
     melenas_blade: function (c) {
       var bd = 'M-3,-5 C-7,-18 -6,-32 2,-44 C5,-49 10,-52 13,-52 C9,-46 7,-40 6.4,-32 C5.6,-22 4.4,-13 3.4,-5 Z';
       return C(6, -30, 13, c.rg([[0, '#b8ff6a', 0.45], [0.5, FEL, 0.18], [1, FEL, 0]]), 0) +
@@ -1952,7 +1952,7 @@
     }
   };
   for (var gwk in GW) if (GW.hasOwnProperty(gwk)) WP[gwk] = GW[gwk];
-  /* weapons used only by Dun Morogh mobs */
+  /* weapons used only by Kaldvik mobs */
   WP.taxe = function (c) {
     return P('M-1.9,10 L-1.9,-20 L1.9,-20 L1.9,10 Z', c.cel('#7a5a3a'), 1.8) + S('M-1.9,4 L1.9,5.5 M-1.9,7 L1.9,8.5', '#3a78c8', 1.2) +
       P('M1,-19 C5,-26 13,-27 16,-22 C16,-16 13,-10 9,-8 C7,-12 4,-13 1,-12 Z', c.lg(['#e8eef2', '#9aa4ae', '#5a646e'], 0, 0, 1, 0), 1.8) +
@@ -2093,7 +2093,7 @@
           P(D`M${x - 3},${y - 3} L${x - 4.5},${y - 6.5} L${x - 1},${y - 4.2} Z`, bone, 1);
       }
     },
-    /* Old Icebeard's pelt: white shaggy wendigo fur, frosted blue in the folds */
+    /* Old Rimehide's pelt: white shaggy wendigo fur, frosted blue in the folds */
     icebeard_cloak: {
       back: function (c, g) {
         var d = capeD(g, 'fur', 17), R_ = rnd(43), t = '', i;
@@ -2114,7 +2114,7 @@
         return drape(c, g, '#eef3f6', '#c8dcea', function (c, g) { var bx = g.bSh[0]; return S(D`M${bx - 6},${g.sy} l1,4 M${bx},${g.sy - 3} l0.5,4 M${bx - 3},${g.sy + 6} l-0.5,4`, '#9fb6ca', 1.1, 0.85); });
       }
     },
-    /* Githyiss' shroud: grey-white spider silk with a faint web and wispy torn strands */
+    /* Skitterfang' shroud: grey-white spider silk with a faint web and wispy torn strands */
     githyiss_shroud: {
       back: function (c, g) {
         var d = capeD(g, 'rag', 23), col = '#dcdce4', cx = g.scx - 6, cy = g.sy + 2, w = '', i, k;
@@ -2238,9 +2238,9 @@
       C(X - r * 0.9, Y + r * 0.52, r * 0.2, c.cel(col), 1.4);
   }
   var GMASK = { defias: DRED };
-  /* ---- v18 looks: Durotar / Barrens drops ---- */
+  /* ---- v18 looks: Dunescar / Scrublands drops ---- */
   var GW18 = {
-    /* Zalazane's voodoo staff: gnarled crook, shrunken-head fetish on a cord, red and teal feathers */
+    /* Mokku the Hexer's voodoo staff: gnarled crook, shrunken-head fetish on a cord, red and teal feathers */
     zalazane_staff: function (c) {
       var wd = '#5a3e26', fe = 'M0,0 C3.4,-3 4,-11 0,-16 C-4,-11 -3.4,-3 0,0 Z';
       return C(-1, -62, 12, c.rg([[0, '#d8ffb0', 0.6], [0.5, '#9a6ad8', 0.25], [1, '#9a6ad8', 0]]), 0) +
@@ -2332,9 +2332,9 @@
       });
     }
   };
-  /* ---- v19 looks: Mulgore / Tirisfal drops ---- */
+  /* ---- v19 looks: Greensward / Pallmoor drops ---- */
   var GW19 = {
-    /* Snaggletooth's war pike: crooked quilboar shaft, a huge curved boar tusk lashed on as the blade, bristle tuft */
+    /* Snaggletooth's war pike: crooked spinehide shaft, a huge curved boar tusk lashed on as the blade, bristle tuft */
     snagglespear_pike: function (c) {
       var wd = '#6a4a2a', tk = 'M-3.2,-44 C-5,-54 -2,-66 7,-76 C6.5,-66 5,-56 3.2,-44 Z';
       return P('M-2.4,38 C-3.4,22 -1.4,6 -2.8,-10 C-3.6,-24 -2,-34 -3,-44 L3,-44 C2.6,-34 3.8,-22 3,-8 C2.2,6 3.4,22 2.4,38 Z', c.lg([lt(wd, 0.25), wd, dk(wd, 0.4)], 0, 0, 1, 0), 2) +
@@ -2345,7 +2345,7 @@
         P('M-4,-45.5 L4,-45.5 L3.6,-38 L-3.6,-38 Z', c.cel('#c8a870'), 1.6) + S('M-3.8,-43 L3.8,-42 M-3.8,-40.5 L3.8,-39.5', '#6a4a28', 0.9) +
         S('M3.4,-40 C8,-36 9,-30 8,-24', OL, 2.2) + S('M3.4,-40 C8,-36 9,-30 8,-24', '#c8a870', 1) + C(8, -23, 2, c.cel('#e8dcc0'), 1.1) + C(8.3, -19.4, 1.6, c.cel('#b8342a'), 1);
     },
-    /* Arra'chea's totem: heavy carved kodo-bone club, a horned skull-like head with carved rings and painted bands */
+    /* Great Mother Dustback's totem: heavy carved dustback-bone club, a horned skull-like head with carved rings and painted bands */
     arrachea_totem: function (c) {
       var bn = '#e4d8b8', hd = 'M-8.5,-24 C-12.5,-30 -13,-44 -10,-52 C-6,-58 6,-58 10,-52 C13,-44 12.5,-30 8.5,-24 C6,-20 3,-18 0,-18 C-3,-18 -6,-20 -8.5,-24 Z';
       var hornL = 'M-9,-49 C-15,-50 -20,-55 -19,-64 C-17,-59 -14,-57 -9.5,-56 Z', hornR = 'M9,-49 C15,-50 20,-55 19,-64 C17,-59 14,-57 9.5,-56 Z';
@@ -2364,7 +2364,7 @@
         G(P('M0,0 C3,-3 3.6,-9 0,-13 C-3.6,-9 -3,-3 0,0 Z', c.cel('#f0ece2'), 1.2) + S('M0,-1 L0,-11', '#8a7a60', 0.7), 'translate(14,-18) rotate(185)') +
         G(P('M0,0 C3,-3 3.6,-9 0,-13 C-3.6,-9 -3,-3 0,0 Z', c.cel('#b8342a'), 1.2), 'translate(16,-20) rotate(160) scale(0.8)');
     },
-    /* Maggot Eye's axe: a crude, notched, rusty gnoll cleaver on a bound wooden haft */
+    /* Grubgut's axe: a crude, notched, rusty gnoll cleaver on a bound wooden haft */
     maggot_eye_axe: function (c) {
       var bl = 'M1.5,-40 L15.5,-45 C19,-38 20,-31 18.8,-27 L20,-22 L17.8,-17 L19,-12 L1.5,-13 Z';
       return P('M-2.4,12 C-3,-4 -2,-22 -2.8,-40 L2.8,-40 C2.2,-22 3,-4 2.4,12 Z', c.lg(['#8a6a44', '#5e4428', '#3a2814'], 0, 0, 1, 0), 2) +
@@ -2387,7 +2387,7 @@
   }
   for (var gw19 in GW19) if (GW19.hasOwnProperty(gw19)) { GW[gw19] = GW19[gw19]; WP[gw19] = GW19[gw19]; }
   GKIND.snagglespear_pike = 'staff'; GKIND.arrachea_totem = 'big'; GKIND.maggot_eye_axe = 'hammer';
-  /* Mazzranache's pelt: tawny cat fur with faint stripes, the cat's head worn as a hood-down on the upper back */
+  /* Old Longclaw's pelt: tawny cat fur with faint stripes, the cat's head worn as a hood-down on the upper back */
   var MAZZ = '#c89a58';
   GBACK.mazzranache_cloak = {
     back: function (c, g) {
@@ -2414,7 +2414,7 @@
         S(D`M${bx - 7.5},${by + 23} l-0.6,2.4 M${bx - 5},${by + 23.5} l0,2.6 M${bx - 2.6},${by + 23} l0.6,2.4`, '#f4ecd6', 1.3);
     }
   };
-  /* Perrine's cape: Scarlet Crusade red with a white trim and a white flame crest on the back */
+  /* Aubert's cape: Order of the Pyre red with a white trim and a white flame crest on the back */
   var SCAR = '#b3161c';
   function flameCrest(c, x, y, s) {
     var d = D`M${x},${y - 9 * s} C${x + 2 * s},${y - 5 * s} ${x + 6 * s},${y - 3 * s} ${x + 5.5 * s},${y + 2 * s} C${x + 5 * s},${y + 6 * s} ${x + 2 * s},${y + 8 * s} ${x},${y + 8 * s} C${x - 2 * s},${y + 8 * s} ${x - 5 * s},${y + 6 * s} ${x - 5.5 * s},${y + 2 * s} C${x - 6 * s},${y - 2 * s} ${x - 3 * s},${y - 3 * s} ${x - 2 * s},${y - 6 * s} C${x - 1 * s},${y - 3.5 * s} ${x},${y - 4 * s} ${x},${y - 9 * s} Z`;
@@ -2521,7 +2521,7 @@
           S('M12,84 C18,86 26,86 32,84', OL, 1.4);
       }
     },
-    /* big cat (Dun Morogh): long low body, thick tail, round head, short muzzle */
+    /* big cat (Kaldvik): long low body, thick tail, round head, short muzzle */
     cat: {
       legW: 8,
       far: [[[44, 86], [41, 104], [38, 118]], [[92, 84], [100, 101], [95, 118]]],
@@ -2679,7 +2679,7 @@
     return out;
   }
 
-  /* ================= Dun Morogh mob bases ================= */
+  /* ================= Kaldvik mob bases ================= */
   /* snow-leopard rosettes: broken rings plus dots, scattered in a box */
   function rosettes(col, x0, x1, y0, y1, n, R_) {
     var d = '', dots = '';
@@ -2861,7 +2861,7 @@
     return mobH(c, o, 20);
   }
 
-  /* ================= Teldrassil mob bases (all FACING LEFT unless mirrored) ================= */
+  /* ================= Greatbough mob bases (all FACING LEFT unless mirrored) ================= */
   /* faint panther stripes for the nightsabers (body, haunch, tail, head) */
   var PSTR = {
     body: 'M50,58 q-3,8 -1,16 M60,57 q-3,9 -1,18 M70,57 q-3,9 -1,19 M80,58 q-3,9 -1,18 M90,59 q-2,8 0,16 M100,62 q-2,7 0,14',
@@ -3195,7 +3195,7 @@
       }, 26);
     },
     sneed_shredder: function (c) { return shredder(c); },
-    /* ---- Dun Morogh ---- */
+    /* ---- Kaldvik ---- */
     rockjaw_trogg: function (c) { return mobH(c, trogg({}), 30); },
     burly_rockjaw_trogg: function (c) {
       return mobH(c, trogg({
@@ -3242,7 +3242,7 @@
     wendigo: function (c) { return wendigo(c, { scale: 0.95, seed: 9 }); },
     old_icebeard: function (c) { return wendigo(c, { scale: 1.12, seed: 13, fur: '#f4f8fb', face: '#3f6fb0', eyeC: '#bff4ff', beard: 1, icicles: 1, frost: 1 }); },
     leper_gnome: function (c) { return leperGnome(c); },
-    /* ---- Teldrassil ---- */
+    /* ---- Greatbough ---- */
     young_nightsaber: function (c) { return quad(c, { kind: 'cat', fur: '#3a3050', belly: '#4a4062', muzzle: '#5a5070', eye: '#c8f4ff', earIn: '#6a5a8a', pstripes: '#7a68a8', scale: 0.76 }); },
     mangy_nightsaber: function (c) { return quad(c, { kind: 'cat', fur: '#423c50', belly: '#5a5268', muzzle: '#625a74', eye: '#b8e8f8', earIn: '#6a5a7a', patches: '#5c546e', pstripes: '#72688a', scars: 1, torn: 1, scale: 0.88 }); },
     nightsaber: function (c) { return quad(c, { kind: 'cat', fur: '#2e2442', belly: '#3e345a', muzzle: '#4c4268', eye: '#d0f8ff', earIn: '#6a4a9a', pstripes: '#8a78c8', snarl: 1, scale: 1.0 }); },
@@ -3405,7 +3405,7 @@
     return out;
   }
 
-  /* ---- Dun Morogh helpers: snow, peaks, dwarven stone, troll camp props ---- */
+  /* ---- Kaldvik helpers: snow, peaks, dwarven stone, troll camp props ---- */
   var SNOW = '#f4f8fb', SNOWS = '#b9cde0', DSTONE = '#8a8278';
   /* jagged mountain range: each peak lit on the left, shaded on the right, with a ragged snow cap */
   function peaks(c, yb, n, h0, h1, seed, rock, o) {
@@ -3535,7 +3535,7 @@
     return G(P('M-16,-14 L14,-14 C18,-14 22,-12 26,-10 C20,-9 16,-8 14,-6 L8,-6 L6,0 L10,6 L-10,6 L-6,0 L-8,-6 L-16,-6 Z', c.cel('#4a4e56'), 2.2) + S('M-16,-13 L14,-13', '#8a929c', 1.2, 0.8), 'translate(' + r1(x) + ',' + r1(y) + ') scale(' + s + ')');
   }
 
-  /* ---- Teldrassil helpers: twilight sky, colossal trunks, wisps, elven wood and moonwells ---- */
+  /* ---- Greatbough helpers: twilight sky, colossal trunks, wisps, elven wood and moonwells ---- */
   var TBARK = '#4a3a56', TLEAF = '#2e4a66', TLEAF2 = '#4a3a80', TGLOW = '#bff4ff';
   function nightSky(c, st) { return skyRect(c, st || ['#15173a', '#2c2a64', '#524892', '#8474b4']); }
   function starsG(c, seed, n, y1) {
@@ -3708,7 +3708,7 @@
   }
 
   var SCENES = {
-    /* ---- Teldrassil ---- */
+    /* ---- Greatbough ---- */
     shadowglen: function (c) {
       var out = nightSky(c) + starsG(c, 301, 40, 90) + moonG(c, 60, 34, 11);
       out += ridge(c, 132, 22, '#22284a', 302, 7) + tTreeRow(c, 140, 12, 303, ['#2e3e62', '#3a3470', '#2a4658'], 0.8, 1.2, 0);
@@ -4076,7 +4076,7 @@
       out += R(20, 150, 8, 30, c.cel('#6a4a2e'), 1.8) + lantern(c, 24, 138, 0.9) + R(372, 150, 8, 30, c.cel('#6a4a2e'), 1.8) + lantern(c, 376, 138, 0.9);
       return out;
     },
-    /* ================= Dun Morogh ================= */
+    /* ================= Kaldvik ================= */
     coldridge_valley: function (c) {
       var out = snowSky(c, ['#7ea6d0', '#b8d2ea', '#eef3f8']);
       out += sunGlow(c, 70, 40, 10, '#fff6e0');
@@ -4087,7 +4087,7 @@
       var mtn = 'M170,160 C188,120 200,90 220,64 C236,42 260,18 290,6 C320,-4 360,0 410,-10 L410,160 Z';
       out += rockFace(c, mtn, '#7a8290', 204);
       out += CG(F('M200,96 C230,86 260,90 300,80 C330,72 370,78 410,70 L410,78 C370,86 330,82 300,90 C260,98 230,94 200,104 Z M232,50 C262,40 300,36 340,30 L410,24 L410,30 C360,36 300,44 240,58 Z', SNOW, 0.95), c.clip(mtn));
-      /* Anvilmar: carved stone facade, stepped roofline, a great arched door */
+      /* Brunhall: carved stone facade, stepped roofline, a great arched door */
       var fx = 244, fy = 160, st = '#9a9088';
       var fac = D`M${fx},${fy} L${fx},${fy - 70} L${fx + 16},${fy - 70} L${fx + 16},${fy - 84} L${fx + 40},${fy - 84} L${fx + 52},${fy - 100} L${fx + 94},${fy - 100} L${fx + 106},${fy - 84} L${fx + 130},${fy - 84} L${fx + 130},${fy - 70} L${fx + 146},${fy - 70} L${fx + 146},${fy} Z`;
       out += P(fac, c.cel(st), 2.4) + blocks(c, fac, fx, fy - 100, fx + 146, fy, 9, dk(st, 0.35));
@@ -4136,7 +4136,7 @@
       var hs = D`M20,154 L20,112 L84,112 L84,154 Z`;
       out += P(hs, c.cel('#9a9290'), 2.2) + blocks(c, hs, 20, 112, 84, 154, 8, '#6e6662') + warmWin(c, 32, 124, 12, 14) + warmWin(c, 62, 124, 12, 14);
       out += P('M12,114 L52,84 L92,114 Z', c.cel('#5a4a44'), 2.2) + P('M10,115 L52,82 L94,115 L88,118 L52,90 L16,118 Z', SNOW, 1.8) + F('M22,110 L52,88 L82,110 Z', SNOW, 0.85);
-      /* Thunderbrew-style brewery inn: stone base, timber upper floor, steep snowy roof */
+      /* Maltsson-style brewery inn: stone base, timber upper floor, steep snowy roof */
       var bx = 120, by = 156, bw = 170;
       var base = D`M${bx},${by} L${bx},${by - 40} L${bx + bw},${by - 40} L${bx + bw},${by} Z`;
       out += P(base, c.cel('#9a9290'), 2.2) + blocks(c, base, bx, by - 40, bx + bw, by, 9, '#6e6662');
@@ -4720,7 +4720,7 @@
     }
   };
   for (var ik3 in ICONS3) ICONS[ik3] = ICONS3[ik3];
-  /* ---- Dun Morogh icons ---- */
+  /* ---- Kaldvik icons ---- */
   var ICONS4 = {
     journal: function (c) {
       var lea = '#7a4a2a';
@@ -4754,7 +4754,7 @@
     }
   };
   for (var ik4 in ICONS4) ICONS[ik4] = ICONS4[ik4];
-  /* ---- Teldrassil loot ---- */
+  /* ---- Greatbough loot ---- */
   var ICONS5 = {
     moss: function (c) {
       var R_ = rnd(501), out = C(32, 38, 26, c.rg([[0, '#c8ff8a', 0.55], [0.5, '#7ee03a', 0.2], [1, '#7ee03a', 0]]), 0);
@@ -4796,7 +4796,7 @@
     }
   };
   for (var ik5 in ICONS5) ICONS[ik5] = ICONS5[ik5];
-  /* ---- v18 icons: shaman spells, Durotar / Barrens items ---- */
+  /* ---- v18 icons: shaman spells, Dunescar / Scrublands items ---- */
   function boltD(pts) { return pl(pts) + 'Z'; }
   function totemPost(c, x, y, s, wood, face) {
     /* carved totem post standing on y, width 20*s, height 40*s */
@@ -4916,7 +4916,7 @@
     }
   };
   for (var ik6 in ICONS6) ICONS[ik6] = ICONS6[ik6];
-  /* ---- v19 icons: tauren / Forsaken racials, Mulgore and Tirisfal drops ---- */
+  /* ---- v19 icons: tauren / Reclaimed racials, Greensward and Pallmoor drops ---- */
   function iLink(x, y, rot, rx, ry) {
     var e = '<ellipse cx="0" cy="0" rx="' + rx + '" ry="' + ry + '" fill="none" stroke="';
     return G(e + OL + '" stroke-width="5.4"/>' + e + '#9aa2ac" stroke-width="2.8"/>' + e + '#e8eef4" stroke-width="0.9" opacity="0.7"/>', 'translate(' + x + ',' + y + ') rotate(' + rot + ')');

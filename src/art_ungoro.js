@@ -1,13 +1,13 @@
-/* art_ungoro.js — Un'Goro Crater zone art for Azeroth Solo (contested, levels 48-54: a prehistoric jungle in a volcanic
- * crater; Marshal's Refuge, Golakka Hot Springs, Terror Run, the Slithering Scar, Fire Plume Ridge, the Lakkari Tar Pits
- * and the Marshlands; bloodpetals, dinosaurs, pterrordax, Gorishi silithid, fire and lava elementals, tar creatures,
- * gorillas, the rare queen-guard Rex Ashil and the devilsaur King Mosh).
+/* art_ungoro.js — Greenmaw Crater zone art for Realm of Loner (contested, levels 48-54: a prehistoric jungle in a volcanic
+ * crater; Marshal's Refuge, Steamcrack Springs, Tooth Run, the Hive Scar, Smokeplume Ridge, the Blacktar Pits
+ * and the Marshlands; bloodpetals, dinosaurs, pterrordax, Krizzik silithid, fire and lava elementals, tar creatures,
+ * gorillas, the rare queen-guard Rex Scorchtail and the devilsaur King Stomp).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Un'Goro keys and fall through to the previous functions for every other key. Keys are appended to
+ * Greenmaw keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers and the jungle pieces (canopy, vines, palms, ferns, big leaves, floor, tents, flags) are shared copies of
- * art_stranglethorn.js. The crater walls, volcanoes, tree ferns, crystals, hot springs, tar pits, lava, the Gorishi
- * hive and every mob are new here. The Gorishi are deliberately apart from the amber Centipaar of Tanaris:
+ * art_stranglethorn.js. The crater walls, volcanoes, tree ferns, crystals, hot springs, tar pits, lava, the Krizzik
+ * hive and every mob are new here. The Krizzik are deliberately apart from the amber Hivecrawler of Sirocco:
  * violet-black chitin, lime venom glow, green-tinted wings.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix ug<counter>_).
@@ -517,7 +517,7 @@
     o += L('M' + pt([tx, ty]) + 'q' + n(1 * s) + ',' + n(-8 * s) + ' ' + n(5 * s) + ',' + n(-9 * s) + 'q' + n(3 * s) + ',' + n(1 * s) + ' ' + n(1 * s) + ',' + n(3 * s), OL, 3.4 * s) + L('M' + pt([tx, ty]) + 'q' + n(1 * s) + ',' + n(-8 * s) + ' ' + n(5 * s) + ',' + n(-9 * s) + 'q' + n(3 * s) + ',' + n(1 * s) + ' ' + n(1 * s) + ',' + n(3 * s), lt(col, 0.2), 1.6 * s);
     return o;
   }
-  // glowing crystal shards (Un'Goro power crystals)
+  // glowing crystal shards (Greenmaw power crystals)
   function shard(c, x, y, len, wd, ang, col) {
     var q = dirQ([x, y], ang), d = pd([q(0, -wd / 2), q(len * 0.78, -wd / 2), q(len, 0), q(len * 0.78, wd / 2), q(0, wd / 2)], true);
     return P(d, lt(col, 0.25), 0) + F(pd([q(0, 0), q(len, 0), q(len * 0.78, wd / 2), q(0, wd / 2)], true), dk(col, 0.22), 0.95) +
@@ -594,7 +594,7 @@
     return E(x, y + 1, 13 * s, 3 * s, '#000', 0, 0.25) + body(c, d, col, F(pd([[x + 2 * s, y - 46 * s], [x + 12 * s, y - 46 * s], [x + 12 * s, y + 2], [x + 3 * s, y + 2]], true), dk(col, 0.3), 0.8) +
       L('M' + pt([x - 4 * s, y - 4 * s]) + 'L' + pt([x - 4 * s, y - 26 * s]) + 'M' + pt([x + 5 * s, y - 6 * s]) + 'L' + pt([x + 5 * s, y - 22 * s]), dk(col, 0.4), 1 * s) + F(pd([[x - 3 * s, y - 38 * s], [x - 1 * s, y - 31 * s], [x + 3 * s, y - 44 * s], [x + 2 * s, y - 30 * s], [x - 2 * s, y - 28 * s]], true), '#e8c890', 0.9), 1.6 * s);
   }
-  // ---- Gorishi hive pieces ----
+  // ---- Krizzik hive pieces ----
   function chitinSpire(c, x, y, s, bend, col) {
     col = col || HIVE; bend = bend || 0;
     var T = taper([[x, y], [x + bend * 0.15 * s, y - 32 * s], [x + bend * 0.55 * s, y - 64 * s], [x + bend * s, y - 90 * s]], 30 * s, 2 * s, 6), holes = '';
@@ -612,7 +612,7 @@
     [[-0.34, 0.6], [0.3, 0.5], [0.05, 0.82]].forEach(function (t) { var hx = x + t[0] * w, hy = y - t[1] * h; o += E(hx, hy, 4, 3, '#1a1020', 1.1) + E(hx, hy + 1, 2.4, 1.3, VENOM, 0, 0.9); });
     return o + P('M' + pt([x - aw * 0.6, y - ah * 0.98]) + 'l2,0 l-0.6,10 q-0.8,2 -1.4,0Z M' + pt([x + aw * 0.5, y - ah * 0.92]) + 'l2,0 l-0.6,7 q-0.8,2 -1.4,0Z', VENOM, 0.8);
   }
-  // cluster of glowing Gorishi egg pods
+  // cluster of glowing Krizzik egg pods
   function eggPods(c, x, y, s) {
     var o = C(x, y - 8 * s, 26 * s, glow(c, VENOM, 0.4)) + E(x, y + 1, 18 * s, 3.4 * s, '#000', 0, 0.25);
     [[-10, 7, 11], [9, 6, 10], [0, 8, 15], [-3, 5, 7], [14, 4, 6]].forEach(function (e, i) {
@@ -798,7 +798,7 @@
     for (var j = 0; j < 8; j++) { var b = j * PI / 4, p0 = [x + Math.cos(b) * r * 0.34, y + Math.sin(b) * r * 0.34], p1 = [x + Math.cos(b + 0.2) * r * 0.16, y + Math.sin(b + 0.2) * r * 0.16], p2 = [x + Math.cos(b + 0.4) * r * 0.34, y + Math.sin(b + 0.4) * r * 0.34]; th += pd([p0, p1, p2], true); }
     return o + F(th, '#fff6e0') + C(x - r * 0.1, y - r * 0.1, r * 0.08, '#c83a4a');
   }
-  // Gorishi insect pieces
+  // Krizzik insect pieces
   var GOR = '#5e4a9a', GORD = '#2e2250', GORL = '#9a86d0';
   function bugLeg(c, pts, col, w) { var e = pts[pts.length - 1]; return limb(pd(pts), col, w || 2.6) + L('M' + pt(e) + 'l-3,1', OL, 2); }
   function bugEye(c, x, y, rx, ry) { return C(x, y, rx * 3, glow(c, VENOM, 0.6)) + E(x, y, rx, ry, c.lg([[0, '#f4ffb0'], [0.5, VENOM], [1, '#4a8a1a']]), 1.4) + C(x - rx * 0.3, y - ry * 0.35, rx * 0.25, '#ffffff', 0, 0.9); }

@@ -1,7 +1,7 @@
-/* art_mulgore.js — Mulgore zone art for Azeroth Solo (tauren homeland: Camp Narache, Brambleblade Ravine,
- * Bloodhoof Village, Palemane Rock, the Venture Co. mine, the Golden Plains, Thunder Bluff).
+/* art_mulgore.js — Greensward zone art for Realm of Loner (tauren homeland: Calf Hill Camp, Thornrift Ravine,
+ * Ossa Village, Ashpelt Rock, the Deepgold Company mine, the Sunwheat Plains, Hornwind Mesa).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Mulgore keys and fall through to the previous functions for every other key. Keys are appended to
+ * Greensward keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix mu<counter>_).

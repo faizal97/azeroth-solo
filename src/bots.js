@@ -1,4 +1,4 @@
-// Azeroth Solo — the simulated server: population, schedules, levelling, chat.
+// Realm of Loner — the simulated server: population, schedules, levelling, chat.
 (function (root) {
   const D = root.D;
   const B = {};
@@ -32,8 +32,8 @@
     return 'Alt' + Math.floor(Math.random() * 9999);
   };
 
-  const GUILDS = ['Goldshire Legends', 'Crimson Vanguard', 'Knights of Elwynn', 'Pumpkin Patrol', 'Defias Dropouts', 'Lions Pride', 'Murloc Mafia', 'Starlight Vanguard',
-    'Blood and Thunder', 'Sons of the Storm', 'Zug Zug Crew', 'Razor Hill Raiders', 'Darkspear Voodoo'];
+  const GUILDS = ['Brackenford Legends', 'Crimson Vanguard', 'Knights of Ambermoor', 'Pumpkin Patrol', 'Grey Hood Dropouts', 'Lions Pride', 'Mireling Mafia', 'Starlight Vanguard',
+    'Blood and Thunder', 'Sons of the Storm', 'Zug Zug Crew', 'Bonewall Raiders', 'Kessari Voodoo'];
   const GUILD_FACTION = GUILDS.map((g, i) => (i < 8 ? 'alliance' : 'horde'));
   B.GUILDS = GUILDS; B.GUILD_FACTION = GUILD_FACTION;
   B.factionOf = (bot) => ((D.RACES[bot.race] || {}).faction || 'alliance');
@@ -84,24 +84,24 @@
   B.regionFor = function (bot, slot) {
     const home = (bot.race === 'dwarf' || bot.race === 'gnome') ? 'dunmorogh' : bot.race === 'nightelf' ? 'teldrassil' : (bot.race === 'orc' || bot.race === 'troll') ? 'durotar' : bot.race === 'tauren' ? 'mulgore' : bot.race === 'undead' ? 'tirisfal' : 'elwynn';
     const mine = Object.keys(D.REGIONS).filter((r) => D.REGIONS[r].faction === B.factionOf(bot));
-    // v2.0: from 10 most players move on to Westfall or the Barrens
-    // v3: from 18 most players move on again, to Redridge or Stonetalon
+    // v2.0: from 10 most players move on to Longfield or the Scrublands
+    // v3: from 18 most players move on again, to Stoneharrow or Highcrag
     const next = bot.level >= 24 && D.REGIONS.duskwood ? (B.factionOf(bot) === 'horde' ? 'hillsbrad' : D.REGIONS.wetlands && hash(bot.id * 29, Math.floor(slot / 6)) < 0.45 ? 'wetlands' : 'duskwood') : bot.level >= 18 && D.REGIONS.redridge ? (B.factionOf(bot) === 'horde' ? 'stonetalon' : 'redridge') : B.factionOf(bot) === 'horde' ? 'barrens' : 'westfall';
-    // v8: from 55 the Plaguelands, from 57 Winterspring; v7: from 50 Un'Goro, from 52 the Burning Steppes
+    // v8: from 55 the Rotmoor, from 57 Icewold; v7: from 50 Greenmaw, from 52 the Cinderfields
     // expansion: at 60 most players are on the Stormveil Isle, each on their own faction's side
     if (bot.level >= 60 && D.REGIONS.tidewatch && hash(bot.id * 61, Math.floor(slot / 6)) < 0.55) return hash(bot.id * 67, Math.floor(slot / 6)) < 0.2 ? 'stormveil' : B.factionOf(bot) === 'horde' ? 'skullreef' : 'tidewatch';
     if (bot.level >= 57 && D.REGIONS.winterspring && hash(bot.id * 59, Math.floor(slot / 6)) < 0.4) return 'winterspring';
     if (bot.level >= 55 && D.REGIONS.plaguelands && hash(bot.id * 53, Math.floor(slot / 6)) < 0.7) return 'plaguelands';
     if (bot.level >= 52 && D.REGIONS.steppes && hash(bot.id * 51, Math.floor(slot / 6)) < 0.6) return 'steppes';
     if (bot.level >= 50 && D.REGIONS.ungoro && hash(bot.id * 47, Math.floor(slot / 6)) < 0.7) return 'ungoro';
-    // v6: from 40 Tanaris, from 45 Feralas
+    // v6: from 40 Sirocco, from 45 Ferndeep
     if (bot.level >= 45 && D.REGIONS.feralas && hash(bot.id * 41, Math.floor(slot / 6)) < 0.7) return 'feralas';
     if (bot.level >= 40 && D.REGIONS.tanaris && hash(bot.id * 43, Math.floor(slot / 6)) < 0.7) return 'tanaris';
-    // v5.1: from 35 half of them are in Arathi
+    // v5.1: from 35 half of them are in Kinloch
     if (bot.level >= 35 && D.REGIONS.arathi && hash(bot.id * 37, Math.floor(slot / 6)) < 0.5) return 'arathi';
-    // v5: from 30 most players go to contested Stranglethorn
+    // v5: from 30 most players go to contested Vinewild
     if (bot.level >= 30 && D.REGIONS.stranglethorn && hash(bot.id * 31, Math.floor(slot / 6)) < 0.7) return 'stranglethorn';
-    // v4.1: from 22 some players quest in contested Ashenvale instead
+    // v4.1: from 22 some players quest in contested Elderglen instead
     if (bot.level >= 22 && D.REGIONS.ashenvale && hash(bot.id * 23, Math.floor(slot / 6)) < 0.25) return 'ashenvale';
     if (bot.level >= 10 && D.REGIONS[next] && hash(bot.id * 19, Math.floor(slot / 6)) < 0.75) return next;
     if (bot.level >= 10 && mine.length > 1 && hash(bot.id * 13, Math.floor(slot / 6)) < 0.35) {
@@ -158,7 +158,7 @@
         const g = pick(GUILDS);
         const first = !S.server.firstVC;
         if (first) S.server.firstVC = g;
-        news.push({ t: when.getTime(), text: first ? `<${g}> is the first guild on ${D.REALM} to defeat Edwin VanCleef!` : `<${g}> cleared The Deadmines.`, big: first });
+        news.push({ t: when.getTime(), text: first ? `<${g}> is the first guild on ${D.REALM} to defeat Corvin Blackwell!` : `<${g}> cleared The Smugglers' Deep.`, big: first });
       }
     }
     // new players keep rolling alts, so the starting zone never empties
@@ -168,7 +168,7 @@
       const nb = B.assignGuild(B.makeBot(S.nextBotId++, used, { level: 1 }));
       S.bots.push(nb);
     }
-    if (newbies > 0) news.push({ t: S.lastSim + ms, text: `${Math.min(newbies, 40)} new adventurers arrived in Northshire.` });
+    if (newbies > 0) news.push({ t: S.lastSim + ms, text: `${Math.min(newbies, 40)} new adventurers arrived in Halden.` });
     // keep the population bounded
     if (S.bots.length > 420) S.bots.splice(0, S.bots.length - 420);
     S.lastSim += ms;
@@ -329,7 +329,7 @@
       if (lower(D.MOBS[key].name) === n) {
         for (const p in D.PLACES) {
           const P = D.PLACES[p];
-          if ((P.mobs || []).some((m) => m[0] === key) || (P.named && P.named[key])) return `${P.name}${P.zone === 'Elwynn Forest' && p !== 'goldshire' ? ' in elwynn' : ''}`;
+          if ((P.mobs || []).some((m) => m[0] === key) || (P.named && P.named[key])) return `${P.name}${P.zone === 'Ambermoor' && p !== 'goldshire' ? ' in elwynn' : ''}`;
         }
       }
     }
@@ -350,7 +350,7 @@
     const L = S.player.level;
     const inns = Object.values(D.PLACES).filter((p) => (p.region || 'elwynn') === region && p.inn);
     const G0 = root.G;
-    // dungeons near your level; raids only once you are their level (Onyxia's name is a level-60 reveal)
+    // dungeons near your level; raids only once you are their level (Veshmira's name is a level-60 reveal)
     const acts = Object.keys(D.ACTIVITIES).filter((k) => { const A = D.ACTIVITIES[k]; return !A.needQuest && A.minLvl <= L + 3 && A.maxLvl >= L - 3 && !(A.size >= 10 && L < A.minLvl) && !(G0 && G0.activityBlock && G0.activityBlock(k) === 'hidden'); });
     const A = D.ACTIVITIES[acts.length ? pick(acts) : 'hogger'];
     const Dg = A.dungeon && D.DUNGEONS[A.dungeon]; const lastBoss = Dg && Dg.pulls.filter((p) => p.boss).pop();

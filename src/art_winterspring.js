@@ -1,15 +1,15 @@
-/* art_winterspring.js — Winterspring zone art for Azeroth Solo (contested, levels 57-60: the goblin trading town of
- * Everlook, Frostsaber Rock, Winterfall Village, Lake Kel'Theril and the Starfall ruins, the Ice Thistle Hills,
- * Frostwhisper Gorge and the blue-dragon caverns of Mazthoril; Winterfall furbolgs, frostsabers, Ice Thistle yetis,
- * Chillwind chimaera, Highborne apparitions, Cobalt scalebanes, Grizzle Snowpaw and the elite Rak'shiri).
+/* art_winterspring.js — Icewold zone art for Realm of Loner (contested, levels 57-60: the goblin trading town of
+ * Coldcoin, Snowcat Rock, Icebrow Village, Lake Eluvain and the Falling Stars ruins, the Frostburr Hills,
+ * Hoarwind Gorge and the blue-dragon caverns of Crystalhall; Icebrow furbolgs, frostsabers, Frostburr yetis,
+ * Greyfrost chimaera, Starborn apparitions, Cobalt scalebanes, Old Frostmuzzle and the elite Whiteclaw).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Winterspring keys and fall through to the previous functions for every other key. Keys are appended to
+ * Icewold keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig, blade/pauldron and the crystal/cave pieces are shared copies of art_maraudon.js; the props,
  * flag and goblin rig are copies of art_tanaris.js; the furbolg rig and totem staff are copies of art_ashenvale.js.
  * The snow pieces (peaks, pines, drifts, icicles, aurora, crag, gorge walls, frozen lake, highborne ruins, hide huts,
  * ice thistles, dragon-scale panels and runes), the sabercat, knuckle-walking yeti, chimaera, dragonspawn and
- * Highborne ghost bodies are new here.
+ * Starborn ghost bodies are new here.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix ws<counter>_).
  */
@@ -392,7 +392,7 @@
     if (mark) o += mark(bx + w / 2, ty + bh * 0.45, s);
     return o + C(x, ty - 4 * s, 1.8 * s, c.cel(GOLD), 0.9 * s);
   }
-  // ---- goblin (Venture Co.) — copy of the art_stonetalon.js rig, plus goggles, a dented hat and free limb sizes ----
+  // ---- goblin (Deepgold Company) — copy of the art_stonetalon.js rig, plus goggles, a dented hat and free limb sizes ----
   function gobHead(c, x, y, o) {
     var sk = o.skin || '#6aa84a', s = '';
     s += P('M' + pt([x + 8, y - 4]) + 'C' + pt([x + 18, y - 10]) + ' ' + pt([x + 26, y - 14]) + ' ' + pt([x + 32, y - 18]) + 'C' + pt([x + 28, y - 8]) + ' ' + pt([x + 20, y + 2]) + ' ' + pt([x + 10, y + 6]) + 'Z', c.cel(sk), 2) + F('M' + pt([x + 12, y - 2]) + 'C' + pt([x + 18, y - 6]) + ' ' + pt([x + 24, y - 10]) + ' ' + pt([x + 28, y - 14]) + 'C' + pt([x + 24, y - 6]) + ' ' + pt([x + 18, y]) + ' ' + pt([x + 12, y + 3]) + 'Z', '#c87a6a', 0.6);
@@ -656,7 +656,7 @@
       C(x - 7 * s, y - 8 * s, 2.4 * s, c.cel('#ece4cc'), 1 * s) + C(x + 7 * s, y - 8 * s, 2.4 * s, c.cel('#ece4cc'), 1 * s) + E(x - 3.2 * s, y - 2.4 * s, 2 * s, 2.2 * s, OL) + E(x + 3.2 * s, y - 2.4 * s, 2 * s, 2.2 * s, OL) + E(x, y + 3 * s, 1.4 * s, 1 * s, OL) +
       P(pd([[x - 4 * s, y + 5.6 * s], [x - 3 * s, y + 9 * s], [x - 2 * s, y + 5.6 * s]], true), '#f4ecd6', 0.6 * s) + P(pd([[x + 2 * s, y + 5.6 * s], [x + 3 * s, y + 9 * s], [x + 4 * s, y + 5.6 * s]], true), '#f4ecd6', 0.6 * s);
   }
-  // Winterfall totem: carved bear heads painted white and blue, a crown of antlers, spirit beads
+  // Icebrow totem: carved bear heads painted white and blue, a crown of antlers, spirit beads
   function wTotem(c, x, y, s) {
     var o = E(x, y + 1, 10 * s, 2.4 * s, '#1a2a3a', 0, 0.3), wd = '#8a6440';
     o += L('M' + pt([x - 9 * s, y - 60 * s]) + 'Q' + pt([x - 16 * s, y - 70 * s]) + ' ' + pt([x - 20 * s, y - 80 * s]) + 'M' + pt([x - 14 * s, y - 70 * s]) + 'L' + pt([x - 22 * s, y - 70 * s]) + 'M' + pt([x + 9 * s, y - 60 * s]) + 'Q' + pt([x + 16 * s, y - 70 * s]) + ' ' + pt([x + 20 * s, y - 80 * s]) + 'M' + pt([x + 14 * s, y - 70 * s]) + 'L' + pt([x + 22 * s, y - 72 * s]), OL, 4.4 * s) +
@@ -944,7 +944,7 @@
       return o + motes(2717, 30, 20, 380, 30, 220, '#c8ecff') + R(0, 0, 400, 240, c.rg([[0, '#000', 0], [0.7, '#000', 0.12], [1, '#000', 0.55]]));
     }
   };
-  // Everlook guard: a goblin in a fur-trimmed coat and fur cap, standing in a scene; foot at (x, y)
+  // Coldcoin guard: a goblin in a fur-trimmed coat and fur cap, standing in a scene; foot at (x, y)
   function guard(c, x, y, s, flip) {
     var g = gob(c, {
       skin: '#6aa84a', shirt: '#8a2e22', sleeve: '#8a2e22', forearm: '#8a2e22', pants: '#3a3a44', hat: '#6a4a34', hatStyle: 'cap', belt: '#3a2a1a', buckle: GOLD, boots: '#2a2220', legW: 11, armW: 10, shadowR: 34,

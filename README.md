@@ -1,6 +1,6 @@
-# Azeroth Solo
+# Realm of Loner
 
-A single-player "MMO" for Android, set in the world of classic Warcraft. Every other player on the realm is simulated: they level, chat, form groups, run dungeons, win and lose loot rolls, and join your party in the open world. You get the feel of a busy server in a game you can put down at any time.
+A single-player "MMO" for Android and the browser, set in Caldreth, a world of its own in the style of the classic online RPGs. Every other player on the realm is simulated: they level, chat, form groups, run dungeons, win and lose loot rolls, and join your party in the open world. You get the feel of a busy server in a game you can put down at any time.
 
 It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sprites, real combat maths, gear, quests and dungeons.
 
@@ -9,14 +9,14 @@ It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sp
 **Join the community on Discord:** https://discord.gg/6xaVaXukeT (talk about the game, report bugs, suggest ideas).
 
 <p align="center">
-  <img src="docs/screenshots/02_goldshire.jpg" width="24%" alt="Goldshire with other players and General chat">
-  <img src="docs/screenshots/04_deadmines_fight.jpg" width="24%" alt="A Deadmines pull with a simulated party">
-  <img src="docs/screenshots/05_westfall_foe_reaper.jpg" width="24%" alt="Westfall: Molsen Farm with the rare Foe Reaper 4000">
-  <img src="docs/screenshots/06_crossroads.jpg" width="24%" alt="The Crossroads in the Barrens">
+  <img src="docs/screenshots/02_goldshire.jpg" width="24%" alt="Brackenford with other players and General chat">
+  <img src="docs/screenshots/04_deadmines_fight.jpg" width="24%" alt="A Smugglers' Deep pull with a simulated party">
+  <img src="docs/screenshots/05_westfall_foe_reaper.jpg" width="24%" alt="Longfield: Hartwell Farm with the rare Grim Harvester 3000">
+  <img src="docs/screenshots/06_crossroads.jpg" width="24%" alt="Dustfort in the Scrublands">
 </p>
 <p align="center">
   <img src="docs/screenshots/01_create.jpg" width="24%" alt="Character creation: any race, any class">
-  <img src="docs/screenshots/p4_pvp_fight.jpg" width="24%" alt="World PvP: an enemy player in Westfall">
+  <img src="docs/screenshots/p4_pvp_fight.jpg" width="24%" alt="World PvP: an enemy player in Longfield">
   <img src="docs/screenshots/t2_bossplan.jpg" width="24%" alt="Dungeon tactics: pull pace, kill order and boss plan">
   <img src="docs/screenshots/au1_warlock_dots.jpg" width="24%" alt="Buffs and debuffs with time left">
 </p>
@@ -25,28 +25,28 @@ It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sp
 
 ## What's in it (v9.6)
 
-- **Both factions, all 8 classic races.** Human, Dwarf, Gnome, Night Elf, Orc, Troll, Tauren, Undead, each with its own starting zone, and racial traits (one active, two passive).
+- **Both factions, all 8 classic races.** Human, Dwarf, Gnome, Wood Elf, Orc, Troll, Hornfolk, Undead, each with its own starting zone, and racial traits (one active, two passive).
 - **Talents** from level 10: three trees per class.
 - **Mounts** at 40: learn riding and buy your race's mount; every road is 40% faster.
 - **Professions.** Mining, Herbalism, Skinning, Blacksmithing, Alchemy, Leatherworking and Tailoring: gather in the wild, craft gear, potions, elixirs and bags, and trade on the auction house.
-- **Cities.** A bank and auction house in every capital, Stormwind included; daily bounty boards, Help Wanted, Mentor Marks, heirlooms and titles.
+- **Cities.** A bank and auction house in every capital, Kingsmere included; daily bounty boards, Help Wanted, Mentor Marks, heirlooms and titles.
 - **9 classes, any race can be any class.** Warrior, Paladin, Hunter, Rogue, Priest, Shaman, Mage, Warlock, Druid. Pets for Hunters and Warlocks, Bear Form for Druids, seals for Paladins, totems for Shamans.
-- **Levels 1–60.** Starting zones, then Westfall and the Barrens, Redridge and Stonetalon, then Duskwood, the Wetlands and Hillsbrad, and contested Ashenvale, Stranglethorn Vale, the Arathi Highlands, Feralas, the Burning Steppes, the Western Plaguelands, Tanaris, Un'Goro Crater and Winterspring (neutral Gadgetzan, Marshal's Refuge and Everlook), with about 700 quests, named rares and unique drops.
-- **Dungeons and elites with a group of simulated players.** Ragefire Chasm, The Deadmines, Wailing Caverns, The Stockade, Shadowfang Keep, Blackfathom Deeps, Gnomeregan, Razorfen Kraul, the Scarlet Monastery (Library and Cathedral), Zul'Farrak, Maraudon, Blackrock Depths, Scholomance, Stratholme, and open-world elites such as Hogger, Bellygrub, XT:9, Stitches, Big Samras, Sharptalon, the Razormaw Matriarch, King Bangalash, Kregg Keelhaul, Lord Shalzaru, King Mosh, Volchan, Araj the Summoner and Rak'shiri, with roles, threat, wipes and need/greed rolls. Groups are synced to the dungeon's level; you choose the pull pace, mark the kill order and pick a boss plan.
-- **World PvP (War Mode).** Enemy players show up nearby; some pass by, some attack, and you can strike first. Guards help in towns. Ashenvale is contested: both factions quest there, each from its own town, and enemy players are more common. +10% XP and gold, and Honor.
+- **Levels 1–60.** Starting zones, then Longfield and the Scrublands, Stoneharrow and Highcrag, then Wraithwood, the Greenfen and Greymead, and contested Elderglen, The Vinewild, the Kinloch Highlands, Ferndeep, the Cinderfields, the West Rotmoor, Sirocco, Greenmaw Crater and Icewold (neutral Coppergulch, Marshal's Refuge and Coldcoin), with about 700 quests, named rares and unique drops.
+- **Dungeons and elites with a group of simulated players.** The Smoke Pit, The Smugglers' Deep, The Dreaming Caves, Kingsmere Gaol, Greyhowl Keep, The Tidehollow Deeps, Gearhollow, The Thorn Warrens, the Pyre Abbey (Library and Cathedral), The Dune Temple, The Gemfall Caves, Cinderpeak Depths, The Blackcloister, Graymouth, and open-world elites such as Old Snaggle, Lardhide, Big Chopper, Patchwork, Big Bruin, Skyrend, the Scalehide Matriarch, King Ghostpelt, Captain Rusk Hookhand, Lord Nazzir, King Stomp, Scorch, Vashti the Summoner and Whiteclaw, with roles, threat, wipes and need/greed rolls. Groups are synced to the dungeon's level; you choose the pull pace, mark the kill order and pick a boss plan.
+- **World PvP (War Mode).** Enemy players show up nearby; some pass by, some attack, and you can strike first. Guards help in towns. Elderglen is contested: both factions quest there, each from its own town, and enemy players are more common. +10% XP and gold, and Honor.
 - **A living server.** Players online by time of day and a welcome-back digest of what happened while you were away.
 - **Chat that does things.** Tap an LFG post to join that group. Whispers ask for real things: help with a kill, teaming up on your quest, a carry, a craft order, a duel, a trade, a question you can answer. Rares get called out in General. Bots you help remember you. Tap any [item] to see it, and use quick replies.
 - **Guilds.** Browse your faction's guilds and apply (each has a style and a level floor), or answer a recruiter. Guildmates post requests in guild chat. Helping earns guild standing, and ranks bring small perks (XP, quest gold, Mentor Marks, a title).
 - **World map and routes.** Every zone and how they connect. Tap any place for the way there, and travel it in one go.
-- **Our own expansion, "The Drowned Crown" (level 60).** After Chapter 6 an island rises from the sea: the Tidewatch Coast (Alliance) and the Skullreef Isles (Horde), a dungeon for each side (the Sunken Archive and the Temple of Shal'zua), and a 10-player raid for both, the Tidecrown Citadel, with its own story. All original.
-- **Legends.** Hand-made characters with their own story. The first is Lyveus Cloveus, the Exiled Knight (an original character by a friend): cross paths with a hooded stranger from level 15, meet him properly in the Arathi Highlands at 37, follow his questline to 60, and he joins your groups as a tank with his own abilities.
+- **Our own expansion, "The Drowned Crown" (level 60).** After Chapter 6 an island rises from the sea: the Tidewatch Coast (Accord) and the Skullreef Isles (Krugar), a dungeon for each side (the Sunken Archive and the Temple of Shal'zua), and a 10-player raid for both, the Tidecrown Citadel, with its own story. All original.
+- **Legends.** Hand-made characters with their own story. The first is Lyveus Cloveus, the Exiled Knight (an original character by a friend): cross paths with a hooded stranger from level 15, meet him properly in the Kinloch Highlands at 37, follow his questline to 60, and he joins your groups as a tank with his own abilities.
 - **Story cutscenes** at key levels and a first-time lore intro for every dungeon, replayable in the Theater.
 
 Where the game stands, how it is designed and what comes next: [the roadmap](docs/plans/2026-09-27-roadmap-design.md).
 
 ## Install (Android)
 
-From v9.3.0 the app checks GitHub for new releases. When one is out it shows what changed, and **Update now** downloads it and opens Android's installer. The first time, Android asks you to allow Azeroth Solo to install apps. Hero → Check for updates checks by hand.
+From v9.3.0 the app checks GitHub for new releases. When one is out it shows what changed, and **Update now** downloads it and opens Android's installer. The first time, Android asks you to allow Realm of Loner to install apps. Hero → Check for updates checks by hand.
 
 
 Download the latest APK from [Releases](../../releases) and open it on your phone (you may need to allow installs from your browser or file manager). arm64 phones only.

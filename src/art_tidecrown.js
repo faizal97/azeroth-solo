@@ -1,5 +1,5 @@
-/* art_tidecrown.js — the Tidecrown Citadel art for Azeroth Solo (raid, level 60, the finale of the original expansion
- * "The Drowned Crown": Prince Aeldran's Highborne citadel, drowned ten thousand years and risen in the surf of the
+/* art_tidecrown.js — the Tidecrown Citadel art for Realm of Loner (raid, level 60, the finale of the original expansion
+ * "The Drowned Crown": Prince Aeldran's Starborn citadel, drowned ten thousand years and risen in the surf of the
  * Stormveil Reach, and the abyss beneath it where Nal'veshra the Deepmother waits).
  *   scenes  citadel_court     the drowned courtyard: fallen statues of elf knights, a waterfall from the great arch
  *           citadel_throne    the coral throne room: the pearl-and-coral throne, royal kelp banners, shafts of light
@@ -15,7 +15,7 @@
  * art_story2.js. Prince Aeldran and Nal'veshra are the story actors of art_story2.js redrawn as combat sprites.
  * The drowned elves share one look: pale sea-green skin, teal glowing eyes, white hair floating up as if underwater,
  * coral, pearl and barnacle accents, crescent-moon motifs. They are kept apart from the naga (no serpent tails) and
- * from the pale-blue Highborne ghosts. The Twin Tides are a pair: the same face, hair and teal cloth; Myrel is gold
+ * from the pale-blue Starborn ghosts. The Twin Tides are a pair: the same face, hair and teal cloth; Myrel is gold
  * with water rising round her, Sorin is silver with water falling round her.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix tc<counter>_).

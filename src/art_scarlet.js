@@ -1,9 +1,9 @@
-/* art_scarlet.js — Scarlet Monastery art for Azeroth Solo (dungeon, levels 33-40: the fortress-abbey of the Scarlet
- * Crusade in north-east Tirisfal; the gate outside, the Library and the Cathedral, its monks, chaplains, myrmidons,
- * abbots, champions and wizards, and the bosses Interrogator Vishas, Houndmaster Loksey, Arcanist Doan, Herod,
- * High Inquisitor Fairbanks, Scarlet Commander Mograine and High Inquisitor Whitemane).
+/* art_scarlet.js — The Pyre Abbey art for Realm of Loner (dungeon, levels 33-40: the fortress-abbey of the Pyre
+ * Order in north-east Pallmoor; the gate outside, the Library and the Cathedral, its monks, chaplains, myrmidons,
+ * abbots, champions and wizards, and the bosses Interrogator Crell, Houndmaster Tobbs, Arcanist Veyne, Sir Barrow,
+ * High Inquisitor Albright, Pyre Commander Aldric Vance and High Inquisitor Seraphine Ashe).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Scarlet Monastery keys and fall through to the previous functions for every other key. Keys are appended to
+ * The Pyre Abbey keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig and the house-style scene pieces are shared copies of art_stranglethorn.js (the rig gains
  * optional legF/legN/footF/footN for wide stances). The monastery head, robes, plate and the gold sunburst-and-flame

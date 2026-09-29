@@ -1,4 +1,4 @@
-/* art_icons2.js - extra ability icons for Azeroth Solo (34 keys, batch 1 + batch 2, a few per class).
+/* art_icons2.js - extra ability icons for Realm of Loner (34 keys, batch 1 + batch 2, a few per class).
  * Loads AFTER art.js and EXTENDS window.ART: ART.icon handles the keys below and falls through to the previous
  * ART.icon for every other key. Keys are appended to ART.keys.icons. Self-contained: art.js helpers are private,
  * so the few needed here are re-implemented (same maths, same look). Never throws.

@@ -1,4 +1,4 @@
-/* art_icons4.js - more spell icons for Azeroth Solo (18 keys, two per class: the level 20 and 24 abilities).
+/* art_icons4.js - more spell icons for Realm of Loner (18 keys, two per class: the level 20 and 24 abilities).
  * Loads AFTER art.js, art_icons2.js and art_icons3.js and EXTENDS window.ART: ART.icon handles the keys below and
  * falls through to the previous ART.icon for every other key. Keys are appended to ART.keys.icons. Self-contained:
  * art.js helpers are private, so the few needed here are re-implemented (same maths, same look). Never throws.

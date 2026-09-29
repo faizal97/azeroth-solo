@@ -1,4 +1,4 @@
-/* art_story.js — story cutscene art for Azeroth Solo (Black Dragonflight arc).
+/* art_story.js — story cutscene art for Realm of Loner (Black Brood arc).
  * Loads AFTER art.js and extends the global: window.ART.story = { scene(key), actor(key), keys }.
  * Self-contained: no dependency on art.js internals. Never throws; unknown key -> neutral placeholder.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients, no text, no filters.
@@ -281,7 +281,7 @@
     o += E(240, 190, 300, 120, c.glow('#ff7a20', 0.55));
     // far cavern walls
     o += P('M-10,120 L20,60 L44,74 L70,20 L96,50 L118,30 L150,90 L176,70 L196,110 L214,96 L240,130 L262,100 L284,116 L306,70 L330,86 L360,24 L388,58 L410,34 L440,80 L470,50 L490,90 L490,200 L-10,200 Z', c.vgrad('#2a1210', '#5a2012', '#b8401a'), 1.6);
-    // Blackrock Spire towers far off in the glow
+    // Cinderpeak Spire towers far off in the glow
     o += P('M196,150 L200,96 L196,96 L204,70 L212,96 L208,96 L210,118 L222,118 L224,82 L220,82 L230,50 L240,82 L236,82 L238,112 L250,112 L252,90 L248,90 L256,66 L264,90 L260,90 L262,120 L276,120 L278,100 L286,150 Z', '#1a0a08', 1.4, 'opacity="0.85"');
     o += E(230, 70, 1.4, 2, '#ffb040') + E(256, 84, 1.2, 1.8, '#ffb040') + E(204, 88, 1.2, 1.8, '#ffb040') + E(231, 96, 1.2, 1.6, '#ff8a30');
     o += P('M-10,150 L30,110 L60,130 L96,96 L130,140 L170,124 L200,150 L280,150 L310,124 L350,140 L384,100 L420,126 L452,104 L490,140 L490,210 L-10,210 Z', c.vgrad('#1e0c0c', '#4a1a10', '#a03a16'), 1.6);
@@ -450,7 +450,7 @@
     o += P('M100,80 L110,70 L122,82 L114,80 L108,86 Z M364,84 L370,76 L380,88 L372,86 Z M294,92 L300,84 L308,94 L300,92 Z M36,100 L40,96 L48,104 Z', '#fff4f4', 1);
     o += P('M110,70 L150,108 L126,114 Z M40,96 L70,112 L52,116 Z M300,84 L262,118 L286,120 Z M370,76 L338,112 L360,116 Z', '#c0a8c8', 0, 'opacity="0.75"');
     o += L('M40,96 L52,116 M110,70 L126,114 M300,84 L286,120 M370,76 L360,116', '#6a6498', 1, 'opacity="0.6"');
-    // Stormwind far away on a hill
+    // Kingsmere far away on a hill
     var cs = '#b8b4d4', cr = '#4e5aa8';
     o += P('M290,156 Q312,136 350,134 Q388,136 410,156 Z', c.vgrad('#7a88a8', '#667898'), 1.2);
     o += R(318, 122, 64, 18, c.celH(cs), 1);
@@ -506,7 +506,7 @@
   // ACTORS (160 x 160, transparent, facing LEFT, feet on bottom edge)
   // =====================================================================
 
-  // Lady Prestor silhouette parts; shadow=true renders the dragon reveal
+  // Lady Thorne silhouette parts; shadow=true renders the dragon reveal
   function prestor(shadow) {
     var c = new Ctx(), o = '';
     var SK = '#f2d8c6', HAIR = '#262030', RED = '#8a1424', BLK = '#281c24', GOLD = '#e2b23e';

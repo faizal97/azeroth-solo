@@ -1,11 +1,11 @@
-// EXPANSION "The Drowned Crown" (level 60, original story). The Tidewatch Coast is the Alliance side of the Stormveil
-// Isle, which rose from the sea in the storm Onyxia left behind (Chapter 6). The Kul Tiran expedition holds Brightwater
-// Landing; inland lie the drowned orchards and outskirts of Sael'anor, a Highborne city that sank in the Sundering.
+// EXPANSION "The Drowned Crown" (level 60, original story). The Tidewatch Coast is the Accord side of the Stormveil
+// Isle, which rose from the sea in the storm Veshmira left behind (Chapter 6). The Brineholt expedition holds Brightwater
+// Landing; inland lie the drowned orchards and outskirts of Sael'anor, a Starborn city that sank in the Sundering.
 (function (root) {
   const D = root.D;
   D.zone('tidewatch', { name: 'Tidewatch Coast', faction: 'alliance' });
   D.item('reefclaw_meat', { name: 'Reefclaw Meat', slot: 'quest', q: 1, icon: 'meat' });
-  D.item('sodden_relic', { name: 'Sodden Highborne Relic', slot: 'quest', q: 1, icon: 'coin' });
+  D.item('sodden_relic', { name: 'Sodden Starborn Relic', slot: 'quest', q: 1, icon: 'coin' });
   D.item('living_kelp', { name: 'Living Kelp', slot: 'quest', q: 1, icon: 'moss' });
   D.item('tidecrown_insignia', { name: 'Tidecrown Insignia', slot: 'quest', q: 1, icon: 'ring' });
   D.item('drowned_tome', { name: 'Drowned Tome', slot: 'quest', q: 1, icon: 'journal' });
@@ -20,7 +20,7 @@
     reefclaw_snapper: { name: 'Reefclaw Snapper', lvl: [59, 60], family: 'beast', drops: [['light_leather', 0.2]], qdrops: [['reefclaw_meat', 0.55]] },
     tidebound_husk: { name: 'Tidebound Husk', lvl: [59, 60], family: 'undead', hpMult: 1.1, drops: [['thieves_coin', 0.5]], qdrops: [['sodden_relic', 0.5]], aggro: 'The sea... remembers...' },
     kelp_horror: { name: 'Kelp Horror', lvl: [59, 60], family: 'elemental', hpMult: 1.2, drops: [['trogg_stone', 0.2]], qdrops: [['living_kelp', 0.55]] },
-    tidebound_sentinel: { name: 'Tidebound Sentinel', lvl: [60, 60], family: 'humanoid', hpMult: 1.1, drops: [['thieves_coin', 0.55], ['linen_cloth', 0.3]], qdrops: [['tidecrown_insignia', 0.5]], aggro: 'For the Tidecrown!' },
+    tidebound_sentinel: { name: 'Tidebound Warden', lvl: [60, 60], family: 'humanoid', hpMult: 1.1, drops: [['thieves_coin', 0.55], ['linen_cloth', 0.3]], qdrops: [['tidecrown_insignia', 0.5]], aggro: 'For the Tidecrown!' },
     tidebound_sorceress: { name: 'Tidebound Sorceress', lvl: [60, 60], family: 'humanoid', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.4]], qdrops: [['drowned_tome', 0.45]], aggro: 'You breathe too loudly, surface-dweller.' },
     old_brinescale: { name: 'Old Brinescale', lvl: [60, 60], family: 'beast', named: true, hpMult: 2.2, dmgMult: 1.35, drops: [['brinescale_band', 0.35], ['light_leather', 1]], qdrops: [['brinescale_heart', 1]] },
     warden_ithrael: { name: 'Warden Ithrael', lvl: [60, 60], family: 'humanoid', elite: true, named: true, hpMult: 5.5, dmgMult: 2.6, special: 'molten', specialText: 'Warden Ithrael hurls a crashing wave!', drops: [['thieves_coin', 1]], qdrops: [['ithrael_seal', 1]], loot: ['ithrael_glaive', 'ithrael_robe', 'ithrael_plate'], aggro: 'No surface-dweller passes the Warden.' },
@@ -28,17 +28,17 @@
 
   Object.assign(D.PLACES, {
     brightwater_landing: { name: 'Brightwater Landing', zone: 'Tidewatch Coast', region: 'tidewatch', faction: 'alliance', scene: 'brightwater_landing', lvl: [60, 60], safe: true, inn: true, mobs: [], pool: 0, npcs: ['admiral_vane', 'lyssa_moonquill', 'sergeant_tamsin', 'quartermaster_brenn', 'armorer_hale'], vendor: 'quartermaster_brenn', gearVendor: 'armorer_hale',
-      links: { saltmarsh_shallows: 16, drowned_orchards: 18, menethil_harbor: 60 }, via: { menethil_harbor: 'Kul Tiran ship' } },
+      links: { saltmarsh_shallows: 16, drowned_orchards: 18, menethil_harbor: 60 }, via: { menethil_harbor: 'Brineholt ship' } },
     saltmarsh_shallows: { name: 'Saltmarsh Shallows', zone: 'Tidewatch Coast', region: 'tidewatch', scene: 'saltmarsh_shallows', lvl: [60, 60], mobs: [['reefclaw_snapper', 6], ['kelp_horror', 2]], named: { old_brinescale: 300 }, pool: 9, npcs: [], links: { brightwater_landing: 16, kelpwood: 18 } },
     kelpwood: { name: 'The Kelpwood', zone: 'Tidewatch Coast', region: 'tidewatch', scene: 'kelpwood', lvl: [60, 60], mobs: [['kelp_horror', 6], ['reefclaw_snapper', 2]], pool: 9, npcs: [], links: { saltmarsh_shallows: 18, sael_anor_outskirts: 18 } },
     drowned_orchards: { name: 'The Drowned Orchards', zone: 'Tidewatch Coast', region: 'tidewatch', scene: 'drowned_orchards', lvl: [60, 60], mobs: [['tidebound_husk', 7]], pool: 9, npcs: [], links: { brightwater_landing: 18, sael_anor_outskirts: 18, archive_steps: 16 } },
     archive_steps: { name: 'The Archive Steps', zone: 'Tidewatch Coast', region: 'tidewatch', faction: 'alliance', scene: 'archive_steps', lvl: [60, 60], safe: true, mobs: [], pool: 0, npcs: [], links: { drowned_orchards: 16 } },
     sael_anor_outskirts: { name: "Sael'anor Outskirts", zone: 'Tidewatch Coast', region: 'tidewatch', scene: 'sael_anor_outskirts', lvl: [60, 60], mobs: [['tidebound_sentinel', 5], ['tidebound_sorceress', 4]], named: { warden_ithrael: 150 }, pool: 10, npcs: [], links: { drowned_orchards: 18, kelpwood: 18, drowned_causeway: 20 } },
   });
-  D.PLACES.menethil_harbor.links.brightwater_landing = 60; D.PLACES.menethil_harbor.via.brightwater_landing = 'Kul Tiran ship';
+  D.PLACES.menethil_harbor.links.brightwater_landing = 60; D.PLACES.menethil_harbor.via.brightwater_landing = 'Brineholt ship';
 
   Object.assign(D.NPCS, {
-    admiral_vane: { name: 'Admiral Hollin Vane', title: 'Kul Tiran Navy' },
+    admiral_vane: { name: 'Admiral Hollin Vane', title: 'Brineholt Navy' },
     lyssa_moonquill: { name: 'Lyssa Moonquill', title: 'Keeper of Lore' },
     sergeant_tamsin: { name: 'Sergeant Tamsin Reed', title: 'Brightwater Watch' },
     quartermaster_brenn: { name: 'Quartermaster Brenn', title: 'Supplies' },
@@ -52,7 +52,7 @@
     objs: [{ type: 'kill', mob: 'reefclaw_snapper', n: 12 }], reward: { choice: ['fam_feet60'] } });
   A('tw_crab_meat', { name: 'Supper at Brightwater', lvl: 60, giver: 'quartermaster_brenn', turnin: 'quartermaster_brenn', pre: ['tw_snappers'], text: 'The ship\'s biscuits are gone. Bring me 8 reefclaw meats.',
     objs: [{ type: 'collect', item: 'reefclaw_meat', n: 8 }], reward: { money: 9000 } });
-  A('tw_husks', { name: 'The Drowned Orchards', lvl: 60, giver: 'lyssa_moonquill', turnin: 'lyssa_moonquill', text: "The husks in the orchards were Highborne once. Whatever keeps them moving is not mercy. Put 12 to rest.",
+  A('tw_husks', { name: 'The Drowned Orchards', lvl: 60, giver: 'lyssa_moonquill', turnin: 'lyssa_moonquill', text: "The husks in the orchards were Starborn once. Whatever keeps them moving is not mercy. Put 12 to rest.",
     objs: [{ type: 'kill', mob: 'tidebound_husk', n: 12 }], reward: { choice: ['fam_wrist60'] } });
   A('tw_relics', { name: 'Sodden Relics', lvl: 60, giver: 'lyssa_moonquill', turnin: 'lyssa_moonquill', pre: ['tw_husks'], text: 'Bring me 8 relics from the husks. They will tell me who ruled here.',
     objs: [{ type: 'collect', item: 'sodden_relic', n: 8 }], reward: { choice: ['fam_back60'] } });

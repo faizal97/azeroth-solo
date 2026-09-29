@@ -1,5 +1,5 @@
-// EXPANSION "The Drowned Crown" (level 60). The Skullreef Isles are the Horde side of the Stormveil Isle: Darkspear and
-// Forsaken crews hold Bloodtide Landing. The drowned Wavebreaker trolls, who served the sea loa Shal'zua, have risen with
+// EXPANSION "The Drowned Crown" (level 60). The Skullreef Isles are the Krugar side of the Stormveil Isle: Kessari and
+// Reclaimed crews hold Bloodtide Landing. The drowned Wavebreaker trolls, who served the sea loa Shal'zua, have risen with
 // the isle. Also the Stormveil Reach (contested): the causeway out to the Tidecrown Citadel, where both sides meet.
 (function (root) {
   const D = root.D;
@@ -40,21 +40,21 @@
   D.PLACES.grom_gol.links.bloodtide_landing = 60; D.PLACES.grom_gol.via.bloodtide_landing = 'Bloodtide ship';
 
   Object.assign(D.NPCS, {
-    shadow_hunter_zulkesh: { name: "Shadow Hunter Zul'kesh", title: 'Darkspear Expedition' },
-    deathstalker_voss: { name: 'Deathstalker Maren Voss', title: 'Forsaken Expedition' },
+    shadow_hunter_zulkesh: { name: "Shadow Hunter Zul'kesh", title: 'Kessari Expedition' },
+    deathstalker_voss: { name: 'Gravestalker Maren Voss', title: 'Reclaimed Expedition' },
     hexxer_mazu: { name: 'Hexxer Mazu', title: 'Witch Doctor' },
     trader_gikkix: { name: 'Trader Gikkix', title: 'Supplies' },
     armorer_krosh: { name: 'Armorer Krosh', title: 'Weaponsmith' },
   });
 
   const H = (id, q) => { q.faction = 'horde'; D.QUESTS[id] = q; };
-  H('x_to_skullreef', { name: 'The Drowned Crown', lvl: 60, storm: true, giver: 'thrall_herald', turnin: 'shadow_hunter_zulkesh', text: "An island has risen from the sea, and with the dragon dead the storm around it has broken. The Darkspear say its reefs are full of their drowned ancestors. The Warchief wants the Horde there first. Take the Bloodtide ship from Grom'gol.",
+  H('x_to_skullreef', { name: 'The Drowned Crown', lvl: 60, storm: true, giver: 'thrall_herald', turnin: 'shadow_hunter_zulkesh', text: "An island has risen from the sea, and with the dragon dead the storm around it has broken. The Kessari say its reefs are full of their drowned ancestors. The Warchief wants the Krugar there first. Take the Bloodtide ship from Camp Skarn.",
     objs: [{ type: 'visit', place: 'bloodtide_landing' }], reward: { money: 4000 } });
   H('sr_makrura', { name: 'Coralbone Beach', lvl: 60, giver: 'shadow_hunter_zulkesh', turnin: 'shadow_hunter_zulkesh', text: 'Makrura crawl up the beach at night. Kill 12.',
     objs: [{ type: 'kill', mob: 'reef_makrura', n: 12 }], reward: { choice: ['fam_feet60'] } });
   H('sr_claws', { name: 'Makrura Claws', lvl: 60, giver: 'trader_gikkix', turnin: 'trader_gikkix', pre: ['sr_makrura'], text: 'Makrura claws sell well in Booty Bay. Bring me 8, I split the profit. Mostly.',
     objs: [{ type: 'collect', item: 'makrura_claw', n: 8 }], reward: { money: 9000 } });
-  H('sr_sailors', { name: 'The Sunken Pier', lvl: 60, giver: 'deathstalker_voss', turnin: 'deathstalker_voss', text: 'Drowned sailors walk the old pier. Not ours, not Scourge. Something else raised them. Kill 12.',
+  H('sr_sailors', { name: 'The Sunken Pier', lvl: 60, giver: 'deathstalker_voss', turnin: 'deathstalker_voss', text: 'Drowned sailors walk the old pier. Not ours, not Hollow Host. Something else raised them. Kill 12.',
     objs: [{ type: 'kill', mob: 'drowned_sailor', n: 12 }], reward: { choice: ['fam_wrist60'] } });
   H('sr_logbooks', { name: 'Waterlogged Logbooks', lvl: 60, giver: 'deathstalker_voss', turnin: 'deathstalker_voss', pre: ['sr_sailors'], text: 'Bring me 8 logbooks. I want to know which ships the sea took, and when.',
     objs: [{ type: 'collect', item: 'sailor_logbook', n: 8 }], reward: { choice: ['fam_back60'] } });
@@ -70,7 +70,7 @@
     objs: [{ type: 'kill', mob: 'wavebreaker_hexer', n: 10 }], reward: { choice: ['fam_chest60'] } });
   H('sr_loas_rest', { name: "Hold Loa's Rest", lvl: 60, giver: 'shadow_hunter_zulkesh', turnin: 'shadow_hunter_zulkesh', pre: ['sr_hexers'], text: '8 wavebreakers and 6 hexers. Push them back to the causeway.',
     objs: [{ type: 'kill', mob: 'drowned_wavebreaker', n: 8 }, { type: 'kill', mob: 'wavebreaker_hexer', n: 6 }], reward: { choice: ['fam_waist60'] } });
-  H('sr_causeway', { name: 'The Causeway', lvl: 60, giver: 'deathstalker_voss', turnin: 'deathstalker_voss', pre: ['sr_loas_rest'], text: 'Beyond Loa\'s Rest a causeway runs out to a citadel in the surf. The Alliance is already looking at it. Go and look first.',
+  H('sr_causeway', { name: 'The Causeway', lvl: 60, giver: 'deathstalker_voss', turnin: 'deathstalker_voss', pre: ['sr_loas_rest'], text: 'Beyond Loa\'s Rest a causeway runs out to a citadel in the surf. The Accord is already looking at it. Go and look first.',
     objs: [{ type: 'visit', place: 'drowned_causeway' }], reward: { money: 8000 } });
   H('sr_saltbones', { name: 'Captain Saltbones', lvl: 60, giver: 'deathstalker_voss', turnin: 'deathstalker_voss', text: 'A drowned captain still gives orders on the pier. Bring me his hat. It will look good on my wall.',
     objs: [{ type: 'collect', item: 'saltbones_hat', n: 1 }], reward: { choice: ['fam_ring_rare60'] } });

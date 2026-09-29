@@ -1,12 +1,12 @@
-/* art_stratholme.js — Stratholme art for Azeroth Solo (dungeon, levels 58-60: the burned city where Arthas culled
- * Lordaeron's people; King's Square under a red sky, the Scarlet Bastion, and the Scourge ziggurats by the slaughterhouse;
- * the Crimson Legion guardsmen and conjurors, skeletal guardians and bile spewers, and the bosses Timmy the Cruel,
- * Archivist Galford, Balnazzar, Baroness Anastari, Ramstein the Gorger and Baron Rivendare).
+/* art_stratholme.js — Graymouth art for Realm of Loner (dungeon, levels 58-60: the burned city where Arthas culled
+ * Wexmoor's people; King's Square under a red sky, the Pyre Bastion, and the Hollow Host ziggurats by the slaughterhouse;
+ * the Crimson Legion guardsmen and conjurors, skeletal guardians and bile spewers, and the bosses Nibbles the Cruel,
+ * Archivist Penrose, Xazzarak, Baroness Vessaline, Bloatgut the Gorger and Baron Mortvale).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Stratholme keys and fall through to the previous functions for every other key. Keys are appended to
+ * Graymouth keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig and the house-style scene pieces are copies of art_brd.js / art_scarlet.js.
- * The Crimson Legion is told apart from the white-tabard Scarlet Crusade of the Monastery and Tirisfal by its
+ * The Crimson Legion is told apart from the white-tabard Order of the Pyre of the Monastery and Pallmoor by its
  * all-crimson plate with gold trim, the pointed closed helm with a gold finial and the gold cross-pattee emblem
  * (the Monastery wears a sunburst). Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop
  * gradients + flat shadow shapes, no text, no filters, ids unique per call (prefix st<counter>_).
@@ -289,7 +289,7 @@
   function blaze(c, x, y, s) {
     return C(x, y - 12 * s, 34 * s, glow(c, FIRE, 0.55)) + flame(c, x - 8 * s, y, 0.7 * s) + flame(c, x + 8 * s, y, 0.78 * s) + flame(c, x, y + 1 * s, 1.15 * s);
   }
-  // a Lordaeron gable house: stone ground floor, timber-framed plaster upper storey, steep slate roof;
+  // a Wexmoor gable house: stone ground floor, timber-framed plaster upper storey, steep slate roof;
   // o.broken tears the right slope open to charred rafters, o.burn puts fire in the windows and the break
   function house(c, x, y, w, h, o) {
     o = o || {};
@@ -344,7 +344,7 @@
     o += body(c, pd([[x + 64 * s, y - 4 * s], [x + 84 * s, y - 10 * s], [x + 88 * s, y - 2 * s], [x + 68 * s, y + 5 * s]], true), lt(col, 0.05), F(rp(x + 64 * s, y - 2 * s, 30 * s, 10 * s), dk(col, 0.3), 0.8), 1.6 * s) + C(x + 92 * s, y + 1 * s, 5 * s, c.cel(lt(col, 0.08)), 1.5 * s) + P(pd([[x + 88 * s, y - 4 * s], [x + 92 * s, y - 9 * s], [x + 96 * s, y - 4 * s]], true), c.cel(GOLDD), 1 * s);
     return o;
   }
-  // a Lordaeron street lamp, snapped and leaning, still burning
+  // a Wexmoor street lamp, snapped and leaning, still burning
   function lamp(c, x, y, lean, lit) {
     var q = dirQ([x, y], -PI / 2 + (lean || 0)), top = q(46, 0), o = E(x, y + 1, 7, 2, '#000', 0, 0.4);
     o += P(pd([[x - 5, y + 1], [x + 5, y + 1], [x + 3, y - 5], [x - 3, y - 5]], true), c.cel(BLK), 1.4) + limb('M' + pt(q(4, 0)) + 'L' + pt(top), BLK, 2.6);
@@ -364,7 +364,7 @@
     return o + L(d, dk(col, 0.5), 1, 0.55) + L(hl, lt(col, 0.18), 1, 0.5);
   }
   function embers(c, seed, cnt, x0, x1, y0, y1) { return motes(seed, cnt, x0, x1, y0, y1, '#ffb050') + motes(seed + 1, Math.round(cnt / 3), x0, x1, y0, y1, '#fff0a0'); }
-  // ---- the Scarlet Bastion ----
+  // ---- the Pyre Bastion ----
   function archD(x, y, w, h) { return 'M' + pt([x - w / 2, y]) + 'L' + pt([x - w / 2, y - h + w * 0.55]) + 'Q' + pt([x - w / 2, y - h + w * 0.08]) + ' ' + pt([x, y - h]) + 'Q' + pt([x + w / 2, y - h + w * 0.08]) + ' ' + pt([x + w / 2, y - h + w * 0.55]) + 'L' + pt([x + w / 2, y]) + 'Z'; }
   function stainedWindow(c, x, y, w, h, seed, rose) {
     var r = rng(seed), o = C(x, y - h * 0.5, w * 1.3, glow(c, '#ff7a2a', 0.4));
@@ -418,7 +418,7 @@
     for (var m = 1; m < rows; m++) lines += 'M-2,' + n(yAt(m)) + 'L402,' + n(yAt(m));
     return o + F(fill, colB) + L(lines, OL, 0.9, 0.5) + R(-2, yH, 404, 242 - yH, c.lg([[0, '#000', 0.55], [0.45, '#000', 0.15], [1, '#000', 0]]));
   }
-  // ---- the Scourge side ----
+  // ---- the Hollow Host side ----
   function boneSpike(c, x, y, dir, len) {
     var T = taper([[x, y + 2], [x + dir * len * 0.18, y - len * 0.5], [x + dir * len * 0.55, y - len * 0.92]], len * 0.34, 1, 4);
     return P(T.d, c.cel(BONE), 1.3) + L(along(T, 0.7), BONED, 0.9, 0.8);
@@ -434,7 +434,7 @@
     }
     return { d: d, dots: dots };
   }
-  // a Scourge ziggurat: dark stepped tiers, green rune bands, bone spikes at the corners, a floating plague crystal
+  // a Hollow Host ziggurat: dark stepped tiers, green rune bands, bone spikes at the corners, a floating plague crystal
   function ziggurat(c, x, y, s) {
     var tiers = [[100, 24], [80, 21], [60, 19], [40, 16]], o = C(x, y - 60 * s, 130 * s, glow(c, PLG, 0.3)), by = y;
     tiers.forEach(function (t, i) {
@@ -653,7 +653,7 @@
     var q = dirQ([x, y], ang), d = pd([q(-w / 2, -h / 2), q(w / 2, -h / 2), q(w / 2, h / 2), q(-w / 2, h / 2)], true);
     return P(d, c.cel(col), 1.4) + P(pd([q(-w / 2 + 2, h / 2 - 2.6), q(w / 2 - 1, h / 2 - 2.6), q(w / 2 - 1, h / 2), q(-w / 2 + 2, h / 2)], true), '#efe4c4', 0.9) + L('M' + pt(q(-w / 2 + 3, -h / 2)) + 'L' + pt(q(-w / 2 + 3, h / 2 - 2.6)), GOLD, 1.1);
   }
-  // Scourge rig bits
+  // Hollow Host rig bits
   function boneLimb(pts, w) { var d = pd(pts), o = L(d, OL, w + 3.8) + L(d, BONE, w) + L(d, lt(BONE, 0.4), w * 0.3, 0.6); for (var i = 1; i < pts.length - 1; i++) o += C(pts[i][0], pts[i][1], w * 0.72, BONE, 1.2); return o; }
   function boneFoot(x, y) { return P('M' + pt([x + 4, y - 5]) + 'L' + pt([x + 5, y + 1]) + 'L' + pt([x - 9, y + 1]) + 'C' + pt([x - 9, y - 2]) + ' ' + pt([x - 6, y - 3]) + ' ' + pt([x - 3, y - 3]) + 'L' + pt([x - 2, y - 5]) + 'Z', BONE, 1.6) + L('M' + pt([x - 6, y - 1]) + 'l0,2 M' + pt([x - 3, y - 1]) + 'l0,2', BONED, 0.9); }
   function spikedPad(c, x, y, r, col, sp) {
@@ -673,7 +673,7 @@
     var bd = pd([q(5, -3.4), q(len * 0.4, -3.6), q(len * 0.45, -1.8), q(len * 0.52, -3.8), q(len - 7, -3.6), q(len, 0), q(len - 7, 3.8), q(len * 0.66, 3.6), q(len * 0.6, 1.6), q(len * 0.55, 3.8), q(5, 3.4)], true);
     return o + (glowCol ? L('M' + pt(q(8, 0)) + 'L' + pt(q(len - 6, 0)), glowCol, 7, 0.25) : '') + P(bd, c.cel('#6a6e7a'), 1.5) + L('M' + pt(q(8, 0)) + 'L' + pt(q(len - 8, 0)), glowCol || dk('#6a6e7a', 0.3), 1.2);
   }
-  // Baron Rivendare's runeblade: broad dark blade, spiked guard, a skull pommel, frost runes down the middle
+  // Baron Mortvale's runeblade: broad dark blade, spiked guard, a skull pommel, frost runes down the middle
   function runeblade(c, p, len, ang, w) {
     var q = dirQ(p, ang), o = '';
     o += limb('M' + pt(q(-13, 0)) + 'L' + pt(q(4, 0)), '#2a2230', 3.8) + L('M' + pt(q(-11, 0)) + 'L' + pt(q(2, 0)), BLKL, 1, 0.8);
@@ -763,7 +763,7 @@
       o += L('M' + pt([x - 8, y + 9]) + 'L' + pt([x + 1, y + 9]) + 'M' + pt([x - 6, y + 7]) + 'l0,4 M' + pt([x - 3, y + 7]) + 'l0,4 M' + pt([x, y + 7]) + 'l0,4', OL, 1);
       o += body(c, 'M' + pt([x - 12, y - 5]) + 'C' + pt([x - 13, y - 18]) + ' ' + pt([x + 11, y - 20]) + ' ' + pt([x + 13, y - 5]) + 'L' + pt([x + 13, y + 7]) + 'L' + pt([x + 7, y + 5]) + 'L' + pt([x + 6, y - 5]) + 'Z', BLK, F(rp(x + 3, y - 22, 14, 32), BLKX, 0.6) + L('M' + pt([x - 8, y - 14]) + 'C' + pt([x - 2, y - 17]) + ' ' + pt([x + 6, y - 16]) + ' ' + pt([x + 10, y - 10]), BLKL, 1.2), 1.8) + L('M' + pt([x - 12, y - 6]) + 'L' + pt([x + 12, y - 6]), PLG, 1.4);
       o += P(taper([[x - 8, y - 12], [x - 14, y - 22], [x - 12, y - 30]], 5.6, 1, 4).d, c.cel(BONE), 1.3) + P(taper([[x + 6, y - 14], [x + 12, y - 24], [x + 9, y - 31]], 5.6, 1, 4).d, c.cel(BONED), 1.3);
-      // near arm with the Scourge shield in front
+      // near arm with the Hollow Host shield in front
       o += spikedPad(c, 46, 53, 10, BLK, BONE) + boneLimb([[46, 58], [40, 70], [36, 80]], 4.4) + C(36, 80, 4, BONE, 1.6) + scourgeShield(c, 30, 86, 0.95);
       return o;
     },

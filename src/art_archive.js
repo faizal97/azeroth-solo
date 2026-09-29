@@ -1,5 +1,5 @@
-/* art_archive.js — The Sunken Archive art for Azeroth Solo (expansion "The Drowned Crown", Alliance dungeon, level 60:
- * the great library of the Highborne city Sael'anor, drowned for ten thousand years and still kept by its dead).
+/* art_archive.js — The Sunken Archive art for Realm of Loner (expansion "The Drowned Crown", Accord dungeon, level 60:
+ * the great library of the Starborn city Sael'anor, drowned for ten thousand years and still kept by its dead).
  * Scenes: the flooded stacks (towering shelves), the domed reading hall (lecterns, a round window onto the sea) and the
  * sanctum scriptorium (a giant open book on a dais, a quill, rising ink). Mobs: the Archive Wardkeeper, Inkbound Wisp
  * and Drowned Scholar, and the bosses Curator Ellaris, the Inkbound Horror, Lorekeeper Nerathil and Lady Vessaria
@@ -9,9 +9,9 @@
  * ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig, the robe rig and the head are copies of art_scholomance.js (itself copying art_brd.js).
  * New here: coral, pools, pages, ink clouds and ribbons, elven shelves, columns and arches, the sea window, the giant
- * book and quill, and the drowned Highborne look: pale sea-green skin, teal glowing eyes, long ears, gill lines,
+ * book and quill, and the drowned Starborn look: pale sea-green skin, teal glowing eyes, long ears, gill lines,
  * pearl and coral accents, white hair floating as if under water.
- * Kept apart from Scholomance's undead (no bone, no green fel light) and from the Winterspring Highborne apparitions
+ * Kept apart from The Blackcloister's undead (no bone, no green gloom light) and from the Icewold Starborn apparitions
  * (those are translucent blue-violet gowns with crescent headdresses; here only Ellaris is a ghost, and he is teal).
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix ar<counter>_).
@@ -600,7 +600,7 @@
     }
     return s;
   }
-  // drowned Highborne head: sea-green skin, teal eyes, long ears, gill lines, a pearl earring, floating white hair
+  // drowned Starborn head: sea-green skin, teal eyes, long ears, gill lines, a pearl earring, floating white hair
   function eHead(c, x, y, o) {
     var sk = o.skin || SKIN;
     return hHead(c, x, y, {

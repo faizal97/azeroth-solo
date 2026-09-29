@@ -1,4 +1,4 @@
-// EXPANSION: The Temple of Shal'zua (Horde dungeon, level 60). The Wavebreaker trolls' drowned temple to the sea loa
+// EXPANSION: The Temple of Shal'zua (Krugar dungeon, level 60). The Wavebreaker trolls' drowned temple to the sea loa
 // Shal'zua, whose spirit was swallowed by the Deepmother. Entered from Shal'zua's Steps on the Skullreef Isles.
 (function (root) {
   const D = root.D;
@@ -43,6 +43,6 @@
     ] },
   });
   Object.assign(D.ACTIVITIES, {
-    shalzua_temple: { name: "Temple of Shal'zua", dungeon: 'shalzua_temple', where: 'temple_steps', size: 5, minLvl: 60, maxLvl: 60, desc: 'Dungeon on the Skullreef Isles. 5 players. Horde.' },
+    shalzua_temple: { name: "Temple of Shal'zua", dungeon: 'shalzua_temple', where: 'temple_steps', size: 5, minLvl: 60, maxLvl: 60, desc: 'Dungeon on the Skullreef Isles. 5 players. Krugar.' },
   });
 })(typeof window !== 'undefined' ? window : globalThis);

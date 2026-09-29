@@ -44,7 +44,7 @@
   SOC.motd = function (g) {
     const day = Math.floor(now() / 86400000), info = SOC.guildInfo(g);
     const lines = { casual: ['Be nice, help the new folks.', 'Remember to take breaks :)', 'Guild night on Friday, all welcome!', 'Ask in guild chat, someone always knows.'],
-      leveling: ['Low dungeon runs every evening, ask in guild.', 'Share your quest drops, someone needs them.', 'Level 20? Deadmines and Wailing Caverns runs this week.', 'Help a guildie, earn standing.'],
+      leveling: ['Low dungeon runs every evening, ask in guild.', 'Share your quest drops, someone needs them.', 'Level 20? Smugglers\' Deep and The Dreaming Caves runs this week.', 'Help a guildie, earn standing.'],
       dungeons: ['Tank and healer spots always open.', 'This week: full clears only, no speedruns.', 'Sign up for guild nights in guild chat.', 'Bring potions to guild runs.'],
       raiding: ['Raid prep: bring resist gear.', 'Attendance matters. Sign up early.', 'New recruits: shadow a raid first.', 'Consumables are on the guild.'],
       pvp: ['For the glory. War Mode on.', 'Never roam alone out there.', 'Honor is earned, not given.', 'Watch the contested zones this week.'],

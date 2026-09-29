@@ -1,4 +1,4 @@
-// Azeroth Solo — story cutscenes: a tiny in-page film player plus the chapter scripts.
+// Realm of Loner — story cutscenes: a tiny in-page film player plus the chapter scripts.
 // Shots use our own art (ART.story scenes/actors, ART.scene, ART.mob, the player's hero).
 (function (root) {
   const CS = { playing: null, music: null };
@@ -78,7 +78,7 @@
         lines: [{ t: 0.5, text: 'Grey Hood miners dig day and night. Goblin engineers, paid in warm Ledger coin, build machines in the dark.' }, { t: 5.5, who: 'Goblin Engineer', text: 'Time is money, friend! Keep those carts moving!' }] },
       { bg: 'scene:deadmines_mine', dur: 8, cam: [[0, 4, 1.25], [0, 0, 1.05]], fx: ['shake@2'],
         actors: [{ a: 'mob:rhahkzor', x: 40, y: 0, w: 34, from: { x: 70, o: 0 }, dur: 1.8 }],
-        lines: [{ t: 0.6, text: 'Rukko, Blackwell\'s ogre foreman, guards the first gate.' }, { t: 4.2, who: "Rhahk'Zor", text: 'Blackwell pay big for your heads!' }] },
+        lines: [{ t: 0.6, text: 'Rukko, Blackwell\'s ogre foreman, guards the first gate.' }, { t: 4.2, who: "Rukko the Foreman", text: 'Blackwell pay big for your heads!' }] },
       { bg: 'scene:deadmines_ship', dur: 11, cam: [[0, 0, 1.0], [0, -2, 1.2]],
         actors: [{ a: 'story:defias_crowd', x: 6, y: 0, w: 44, flip: true }, { a: 'story:vancleef_story', x: 58, y: 0, w: 38, anim: 'breathe', from: { o: 0 }, delay: 2, dur: 2 }],
         lines: [{ t: 0.5, text: 'At the end of the mine, in a hidden cove, Blackwell builds the Ledger\'s fleet.' }, { t: 5.8, who: 'Corvin Blackwell', text: 'Nobody takes back what the Ledger owns!' }], fx: ['fadeout'] },
@@ -153,7 +153,7 @@
         lines: [{ t: 0.5, text: 'Gearhollow was the wonder of the gnomes: a city of gears and steam beneath the snows of Kaldvik.' }, { t: 5, text: 'Then the cavekin came up from the deep.' }] },
       { bg: 'scene:gnomeregan_halls', dur: 10, cam: [[-4, 0, 1.12], [4, 0, 1.12]],
         actors: [{ a: 'mob:irradiated_pillager', x: 56, y: 2, w: 22 }, { a: 'mob:leper_gnome', x: 28, y: 2, w: 18, from: { x: 8, o: 0 }, dur: 2 }],
-        lines: [{ t: 0.5, text: 'Their chief engineer promised a machine to drive them out. When he switched it on, the halls filled with poison.' }, { t: 5.5, text: 'It killed thousands. The troggs survived. So did the gnomes who stayed behind, sick and changed.' }] },
+        lines: [{ t: 0.5, text: 'Their chief engineer promised a machine to drive them out. When he switched it on, the halls filled with poison.' }, { t: 5.5, text: 'It killed thousands. The cavekin survived. So did the gnomes who stayed behind, sick and changed.' }] },
       { bg: 'scene:gnomeregan_core', dur: 10, cam: [[0, 0, 1.0], [0, -2, 1.2]], fx: ['shake@5', 'fadeout'],
         actors: [{ a: 'mob:mekgineer_thermaplugg', x: 40, y: 0, w: 36, from: { y: -20, o: 0 }, dur: 2 }],
         lines: [{ t: 0.5, text: 'The engineer who built it, Chief Engineer Voltwhistle, rules the ruins now, and says it worked.' }, { t: 5, who: 'Chief Engineer Voltwhistle', text: 'My machines are the future! They will destroy you!' }] },
@@ -163,7 +163,7 @@
         lines: [{ t: 0.5, text: 'Long ago a great boar spirit fell in the south of the Scrublands.' }, { t: 5, text: 'Great thorns grew from its blood. The spinehide made them their home.' }] },
       { bg: 'scene:razorfen_kraul', dur: 10, cam: [[-4, 0, 1.12], [4, 0, 1.12]],
         actors: [{ a: 'mob:razorfen_quilguard', x: 56, y: 2, w: 22 }, { a: 'mob:death_head_cultist', x: 28, y: 2, w: 20, from: { x: 8, o: 0 }, dur: 2 }],
-        lines: [{ t: 0.5, text: 'Inside the Kraul, a cult of the dead has taken root among the tribe.' }, { t: 5.5, text: 'Its masks and skulls whisper of a power older than the thorns.' }] },
+        lines: [{ t: 0.5, text: 'Inside the Warrens, a cult of the dead has taken root among the tribe.' }, { t: 5.5, text: 'Its masks and skulls whisper of a power older than the thorns.' }] },
       { bg: 'scene:razorfen_depths', dur: 10, cam: [[0, 0, 1.0], [0, -2, 1.2]], fx: ['fadeout'],
         actors: [{ a: 'mob:charlga_razorflank', x: 40, y: 0, w: 34, from: { y: -20, o: 0 }, dur: 2 }],
         lines: [{ t: 0.5, text: 'Their matriarch, Mother Grisla, waits on the thorn throne.' }, { t: 5, who: 'Mother Grisla', text: 'The thorns will be your grave!' }] },
@@ -190,13 +190,13 @@
     ] },
     { id: 'md_intro', instance: 'maraudon', title: 'The Gemfall Caves', music: 'dungeon', shots: [
       { bg: 'scene:maraudon_gate', dur: 9, cam: [[0, 0, 1.15], [0, 2, 1.02]], fx: ['fadein'],
-        lines: [{ t: 0.5, text: 'The centaur say the Gemfall Caves are where their people were born, from a wandering god and the Stone Princess.' }, { t: 5, text: 'Now the caves poison all of Mournwaste.' }] },
+        lines: [{ t: 0.5, text: 'The centaur say the Gemfall Caves are where their people were born, from a wandering god and the Stone Duchess.' }, { t: 5, text: 'Now the caves poison all of Mournwaste.' }] },
       { bg: 'scene:maraudon_caverns', dur: 10, cam: [[-4, 0, 1.12], [4, 0, 1.12]],
         actors: [{ a: 'mob:putridus_trickster', x: 56, y: 2, w: 22 }, { a: 'mob:constrictor_vine', x: 28, y: 2, w: 20, from: { x: 8, o: 0 }, dur: 2 }],
         lines: [{ t: 0.5, text: 'Satyrs and twisted vines choke the purple caves. Faolan, a keeper of the grove, lies cursed in the falls.' }, { t: 5.5, text: 'Deeper still, the earth itself moves.' }] },
       { bg: 'scene:maraudon_throne', dur: 10, cam: [[0, 0, 1.0], [0, -2, 1.2]], fx: ['shake@5', 'fadeout'],
         actors: [{ a: 'mob:princess_theradras', x: 40, y: 0, w: 40, from: { y: -20, o: 0 }, dur: 2 }],
-        lines: [{ t: 0.5, text: 'On her stone throne sits Ghesra, the Stone Princess.' }, { t: 5, who: 'Ghesra', text: 'You will be buried in my caverns!' }] },
+        lines: [{ t: 0.5, text: 'On her stone throne sits Ghesra, the Stone Duchess.' }, { t: 5, who: 'Ghesra', text: 'You will be buried in my caverns!' }] },
     ] },
     { id: 'brd_intro', instance: 'blackrock_depths', title: 'Cinderpeak Depths', music: 'dungeon', shots: [
       { bg: 'scene:blackrock_mountain', dur: 9, cam: [[0, 0, 1.15], [0, 2, 1.02]], fx: ['fadein', 'embers'],
@@ -271,7 +271,7 @@
     ] },
     { id: 'tidecrown_intro', instance: 'tidecrown_citadel', title: 'The Tidecrown Citadel', music: 'dungeon', shots: [
       { bg: 'scene:tidecrown_gate', dur: 9, cam: [[0, 0, 1.15], [0, 2, 1.02]], fx: ['fadein'],
-        lines: [{ t: 0.5, text: "At the end of the causeway stands the Tidecrown Citadel, Prince Aeldran's seat. The Alliance and the Horde arrive at its gate on the same morning." }, { t: 5.5, text: 'For once, neither side draws on the other.' }] },
+        lines: [{ t: 0.5, text: "At the end of the causeway stands the Tidecrown Citadel, Prince Aeldran's seat. The Accord and the Krugar arrive at its gate on the same morning." }, { t: 5.5, text: 'For once, neither side draws on the other.' }] },
       { bg: 'scene:citadel_throne', dur: 10, cam: [[-4, 0, 1.12], [4, 0, 1.12]],
         actors: [{ a: 'mob:prince_aeldran', x: 44, y: 0, w: 34, from: { o: 0 }, dur: 2 }],
         lines: [{ t: 0.5, text: 'The prince waits on his coral throne, with his drowned court around him.' }, { t: 5, who: 'Prince Aeldran', text: 'Ten thousand years I waited. You will not take the surface from me.' }] },
@@ -369,7 +369,7 @@
         actors: [{ a: 'hero:player', x: 38, y: 2, w: 26, anim: 'breathe' }],
         lines: [{ t: 0.5, text: 'The creditor has gone to ground in her lair in Saltmarsh, {name}. While she lives, her storm hides the new isle.' }, { t: 5.5, text: 'Harborwatch and Mudwall are already gathering. Look for her trail in your quest log.' }] },
     ] },
-    // plays once Onyxia is dead (after: any of these quests done); her death breaks the storm over the isle
+    // plays once Veshmira is dead (after: any of these quests done); her death breaks the storm over the isle
     { id: 'x1', level: 60, title: 'The Drowned Crown', music: 'dungeon', needs: 'tidewatch', after: ['dw_onyxia_a', 'dw_onyxia_h'], shots: [
       { bg: 'story:stormveil_storm', dur: 9, cam: [[-4, 0, 1.12], [4, 0, 1.12]], fx: ['fadein'],
         lines: [{ t: 0.5, text: 'When Veshmira fell in her lair, the storm over the sea finally broke.' }, { t: 5, text: 'For the first time, ships could reach the isle it had hidden.' }] },

@@ -1,5 +1,5 @@
-/* art_skullreef.js — Skullreef Isles art for Azeroth Solo (expansion "The Drowned Crown", level 60, Horde zone: a
- * tropical reef archipelago that rose from the sea after ten thousand years; the Darkspear and Forsaken camp at
+/* art_skullreef.js — Skullreef Isles art for Realm of Loner (expansion "The Drowned Crown", level 60, Krugar zone: a
+ * tropical reef archipelago that rose from the sea after ten thousand years; the Kessari and Reclaimed camp at
  * Bloodtide Landing, Coralbone Beach, the Sunken Pier, the Screaming Grotto, the drowned troll village of Loa's Rest
  * and Shal'zua's Steps; reef makrura, the drowned Wavebreaker trolls and their hexers, drowned sailors, grotto sirens,
  * the skeletal Captain Saltbones and the sea giant Krag'vesh the Tidebeast).
@@ -7,7 +7,7 @@
  * Skullreef keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig, the skeleton rig and the house-style scene pieces are shared copies of art_plaguelands.js;
- * palms, ferns, flags, the Horde mark, the palisade, nests, feathers, spears and the carved troll face are copies of
+ * palms, ferns, flags, the Krugar mark, the palisade, nests, feathers, spears and the carved troll face are copies of
  * art_stranglethorn.js; the cutlass is a copy of art_zulfarrak.js. The sea, storm sky, beach, black rock, coral,
  * barnacles, kelp, giant bones, stilt huts, the longship, piers, wrecks, anchors, serpent idols, the temple steps and
  * every mob are new here.
@@ -361,7 +361,7 @@
     if (mark) o += mark(bx + w / 2, ty + bh * 0.45, s);
     return o + C(x, ty - 4 * s, 1.8 * s, c.cel(GOLD), 0.9 * s);
   }
-  // original marks: rebel gold star over a chevron; Horde black fang-crown; Kurzen tan crossed blades
+  // original marks: rebel gold star over a chevron; Krugar black fang-crown; Drayke tan crossed blades
   function hordeMark(x, y, s) { return F(pd([[x - 6 * s, y + 6 * s], [x - 6 * s, y - 2 * s], [x - 3 * s, y + 1 * s], [x, y - 7 * s], [x + 3 * s, y + 1 * s], [x + 6 * s, y - 2 * s], [x + 6 * s, y + 6 * s], [x, y + 9 * s]], true), '#1a1009'); }
   function palisade(c, x0, x1, y, h, col, seed, spikes) {
     col = col || '#8a6a44'; var r = rng(seed || 11), o = '', lw = 9;
@@ -575,7 +575,7 @@
     o += E(q(6, -34)[0], q(6, -34)[1], 9 * s, 8 * s, '#1a1410', 1.4 * s) + E(q(-72, -14)[0], q(-72, -14)[1], 3 * s, 2 * s, '#1a1410');
     return o + barnacles(4121, 9, x - 12 * s, x + 26 * s, y - 50 * s, y - 38 * s, 1.2 * s) + kelp(c, q(-40, -25)[0], q(-40, -25)[1], q(-20, -30)[0], q(-20, -30)[1], 3, 14 * s, 4122);
   }
-  // Darkspear hut on stilts: woven walls, a tall thatched cone, a ladder (x = centre, y = ground)
+  // Kessari hut on stilts: woven walls, a tall thatched cone, a ladder (x = centre, y = ground)
   function stiltHut(c, x, y, s, o) {
     o = o || {}; var q = function (u, v) { return [x + u * s, y + v * s]; }, wall = o.wall || '#b8945a', th = o.thatch || '#c8a860';
     var out = E(x, y + 2, 30 * s, 3.6 * s, '#000', 0, 0.28), posts = '';
@@ -601,7 +601,7 @@
     return E(x, y + 1, 4 * s, 1.4 * s, '#000', 0, 0.3) + C(x, y - 30 * s, 20 * s, glow(c, '#ffa040', 0.5)) + limb('M' + pt([x, y]) + 'L' + pt([x, y - 26 * s]), WOOD, 2 * s) +
       P(pd([[x - 4 * s, y - 30 * s], [x + 4 * s, y - 30 * s], [x + 3 * s, y - 24 * s], [x - 3 * s, y - 24 * s]], true), c.cel('#8a6a3a'), 1 * s) + flame(c, x, y - 29 * s, 0.55 * s);
   }
-  // Horde longship moored side-on, prow to the left (x = centre of the waterline)
+  // Krugar longship moored side-on, prow to the left (x = centre of the waterline)
   function longship(c, x, y, s) {
     var q = function (u, v) { return [x + u * s, y + v * s]; }, hull = '#3e2c22', o = E(x, y + 3 * s, 76 * s, 4 * s, dk(SEAD, 0.2), 0, 0.5);
     o += limb('M' + pt(q(4, -8)) + 'L' + pt(q(4, -100)), '#5a3e28', 3.4 * s);
@@ -925,7 +925,7 @@
       for (var k = -2; k <= 2; k++) jn += 'M' + pt([200 + k * 13, 127]) + 'L' + pt([200 + k * 38, 244]);
       o += body(c, cw, '#8e9892', F('M200,127 L234,127 L300,244 L200,244 Z', '#000', 0.12) + L(jn, '#4e5854', 1.2, 0.85) + E(186, 196, 22, 4, '#3a7a80', 0, 0.45) + E(214, 158, 14, 2.6, '#3a7a80', 0, 0.4), 1.8);
       o += L('M150,138 q8,-3 16,0 M234,136 q8,-3 16,0', FOAM, 1.6, 0.8) + barnacles(3606, 14, 150, 250, 128, 150, 0.9) + kelp(c, 168, 129, 232, 129, 6, 12, 3607, KELP, 2.6);
-      // Horde guard post at the foot of the steps
+      // Krugar guard post at the foot of the steps
       o += flag(c, 332, 196, 84, 1.25, HRED, HBLK, hordeMark) + brazier(c, 296, 196, 1.2);
       o += palisade(c, 344, 404, 206, 26, '#7a5634', 3608, true) + crate(c, 372, 212, 1) + barrel(c, 354, 214, 0.9) + tiki(c, 270, 168, 0.8) + tiki(c, 126, 168, 0.8);
       o += coral(c, 30, 236, 1.2, CORAL, 3609) + kelpTuft(c, 60, 212, 0.9) + shells(c, 3610, 8, 10, 390, 160, 236);

@@ -1,4 +1,4 @@
-// Azeroth Solo — game controller: world, quests, items, group finder, dungeon runs, saves.
+// Realm of Loner — game controller: world, quests, items, group finder, dungeon runs, saves.
 (function (root) {
   const D = root.D, E = root.E, B = root.B;
   const G = {};
@@ -42,7 +42,7 @@
     G.S = S;
     const u = E.charUnit(G.charOf(), 'ally', 'player', t);
     S.player.hp = u.maxHp; S.player.res = u.resType === 'rage' ? 0 : u.maxRes;
-    sys(`Welcome to Azeroth Solo. Realm: ${D.REALM}.`);
+    sys(`Welcome to Realm of Loner. Realm: ${D.REALM}.`);
     sys('Tap a creature to attack it. Talk to people with a yellow ! to get quests.');
     G.save();
     return S;
@@ -93,13 +93,29 @@
     S.pending = []; S.chatTimers = {};
     if (S.run && S.run.phase === 'fight') S.run.phase = 'rest', S.run.restUntil = now() + 3000;
     try { G.refreshHeirlooms(); } catch (e) { /* older save */ }
-    // v9.8: the isle is closed until Onyxia dies; anyone who already reached it keeps access
+    // v10: the world has new names. A save keeps copies of items, so their names come fresh from the data by id;
+    // simulated players from other realms move to the new realm names; old chat goes (it quotes the old names),
+    // except requests still open. Keyed by id throughout, so nothing else changes.
+    S.flags = S.flags || {};
+    if (!S.flags.v10names) {
+      const seen = new Set();
+      const walk = (o, depth) => {
+        if (!o || typeof o !== 'object' || depth > 8 || seen.has(o)) return; seen.add(o);
+        if (typeof o.id === 'string' && o.slot && D.ITEMS[o.id]) { const d = D.ITEMS[o.id]; o.name = d.name; if (d.desc) o.desc = d.desc; if (d.source) o.source = d.source; }
+        if (typeof o.realm === 'string' && o.realm !== D.REALM && !OTHER_REALMS.includes(o.realm)) { let h = 0; for (const c of o.realm) h = (h * 31 + c.charCodeAt(0)) >>> 0; o.realm = OTHER_REALMS[h % OTHER_REALMS.length]; }
+        for (const k in o) walk(o[k], depth + 1);
+      };
+      walk(S, 0);
+      if (Array.isArray(S.chat)) S.chat = S.chat.filter((m) => m.act && m.act.state === 'open');
+      S.flags.v10names = true;
+    }
+    // v9.8: the isle is closed until Veshmira dies; anyone who already reached it keeps access
     if (!S.flags.stormBroken) {
       const onIsle = Object.keys(S.player.visited || {}).concat(Object.keys(S.player.done), Object.keys(S.player.quests)).some((k) => (D.PLACES[k] && STORM_REGIONS.has(D.PLACES[k].region)) || /^(x_to_|tw_|sr_|ar_|tp_|tc_)/.test(k));
       if (onIsle) S.flags.stormBroken = true;
     }
-    // v5: v3.0–v4.2 reused three ids from earlier zones (Redridge's quests 'poachers' and 'gnoll_paws', and its murloc
-    // fins). They have their own ids now. A Redridge-level Alliance character's copies move to the new ids.
+    // v5: v3.0–v4.2 reused three ids from earlier zones (Stoneharrow's quests 'poachers' and 'gnoll_paws', and its murloc
+    // fins). They have their own ids now. A Stoneharrow-level Accord character's copies move to the new ids.
     { const Pp = S.player, alliance = (D.RACES[Pp.race] || {}).faction !== 'horde';
       if (alliance && Pp.level >= 18) {
         for (const [o, nw] of [['poachers', 'rr_poachers'], ['gnoll_paws', 'rr_gnoll_paws']]) {
@@ -108,7 +124,7 @@
         }
         if (Pp.quests && Pp.quests.murloc_fins) for (const b of (Pp.bags || [])) if (b.item.id === 'murloc_fin' && b.item.name === 'Flesheater Fin') b.item = G.copyItem('rr_murloc_fin');
       }
-      if (Pp.done && Pp.done.poachers && alliance) delete Pp.done.poachers; // the Alliance never had Mulgore's quest
+      if (Pp.done && Pp.done.poachers && alliance) delete Pp.done.poachers; // the Accord never had Greensward's quest
     }
     // v3: stacks saved before a material changed slot (linen was junk) take the item's current slot and icon
     for (const b of (S.player.bags || []).concat(S.player.bank || [])) { const base = D.ITEMS[b.item.id]; if (base && base.slot === 'mat' && b.item.slot !== 'mat') { b.item.slot = 'mat'; b.item.icon = base.icon; } }
@@ -142,7 +158,7 @@
       try { json = decodeURIComponent(escape(atob(code))); } catch (e) { throw new Error('That is not a save code. Copy it again and paste the whole thing.'); }
     }
     let S; try { S = JSON.parse(json); } catch (e) { throw new Error('That code is incomplete or damaged. Copy it again and paste the whole thing.'); }
-    if (!S.player || !S.bots) throw new Error('That is not an Azeroth Solo save.');
+    if (!S.player || !S.bots) throw new Error('That is not an Realm of Loner save.');
     if (G.characters().length >= G.MAX_CHARS) throw new Error(`You already have ${G.MAX_CHARS} characters. Delete one first.`);
     if (G.S) G.save(); // keep the character you are playing
     // an imported save becomes its own character; the caller opens it with G.load so it goes through the same fixes as any old save
@@ -245,7 +261,7 @@
       }
       if ((sets.defias || 0) >= D.SETS.defias.mask) g.mask = 'defias';
     } else if (c.level >= 10 && c.id != null) {
-      // players you pass in the world: some capped ones have farmed The Deadmines
+      // players you pass in the world: some capped ones have farmed The Smugglers' Deep
       if (B.hash(c.id, 71) < 0.15) g.back = 'cape_brotherhood';
       const wl = BOT_WEAPON_LOOKS[c.cls];
       if (wl && B.hash(c.id, 72) < 0.12) g.weapon = wl[Math.floor(B.hash(c.id, 73) * wl.length)];
@@ -673,13 +689,13 @@
   // v4.1 contested zones: a town belongs to a faction (its own `faction`, or its region's when the region is not contested).
   // Enemy towns are closed: the guards would kill you on sight, so you can't travel into them.
   G.myFaction = () => (D.RACES[G.S.player.race] || {}).faction || 'alliance';
-  // ---- Onyxia's storm (v9.8): after Chapter 6 the storm she raised hangs over the risen Stormveil Isle. No ship can
-  // land and the expansion's first quests stay closed until she dies in Onyxia's Lair (quest dw_onyxia_a / _h).
+  // ---- Veshmira's storm (v9.8): after Chapter 6 the storm she raised hangs over the risen Stormveil Isle. No ship can
+  // land and the expansion's first quests stay closed until she dies in Veshmira's Lair (quest dw_onyxia_a / _h).
   // Saves that were already on the isle before v9.8 keep their way in (flags.stormBroken, set in G.load).
   const STORM_REGIONS = new Set(['tidewatch', 'skullreef', 'stormveil']);
   G.stormBroken = () => { const S = G.S; return !!(S && (S.flags.stormBroken || S.player.done.dw_onyxia_a || S.player.done.dw_onyxia_h)); };
   G.stormBlocks = (id) => { const p = D.PLACES[id]; return !!(p && STORM_REGIONS.has(p.region) && !G.stormBroken() && !STORM_REGIONS.has((D.PLACES[G.S.player.place] || {}).region)); };
-  G.STORM_TEXT = "Onyxia's storm still rages around the isle. No ship can land while she lives.";
+  G.STORM_TEXT = "Veshmira's storm still rages around the isle. No ship can land while she lives.";
   G.placeFaction = function (id) {
     const p = D.PLACES[id]; if (!p) return null;
     if (p.faction) return p.faction;
@@ -758,9 +774,9 @@
     const P = G.S.player;
     if (G.fight || G.S.run) return toast('You can\'t do that now.');
     const left = (P.hearthAt || 0) - now();
-    if (left > 0) return toast(`Hearthstone is on cooldown (${Math.ceil(left / 60000)} min).`);
+    if (left > 0) return toast(`Waystone is on cooldown (${Math.ceil(left / 60000)} min).`);
     stopActions();
-    P.casting = { what: 'hearth', label: 'Hearthstone', start: now(), end: now() + 10000 };
+    P.casting = { what: 'hearth', label: 'Waystone', start: now(), end: now() + 10000 };
     emit('change');
   };
   G.gather = function () {
@@ -1969,12 +1985,12 @@
     regions.places = seen;
     return (reach[key] = regions);
   };
-  // the entrance itself must be reachable, not just its zone (the Alterac foothills are Hillsbrad, but Pyrewood is not reachable from there)
+  // the entrance itself must be reachable, not just its zone (the Vaskar foothills are Greymead, but Ashwick is not reachable from there)
   G.canReach = (from, place) => G.reachableRegions(from).places.has(place);
   G.activityBlock = function (act) {
     const S = G.S, P = S.player, A = D.ACTIVITIES[act];
     const region = A.where && D.PLACES[A.where].region;
-    if (A.where && G.stormBlocks(A.where) && P.level >= 60) return 'Requires Onyxia\'s defeat: her storm hides the isle'; // listed, but no group or summon can take you there
+    if (A.where && G.stormBlocks(A.where) && P.level >= 60) return 'Requires Veshmira\'s defeat: her storm hides the isle'; // listed, but no group or summon can take you there
     if (A.where && !G.canReach(P.place, A.where)) return 'hidden';
     if (A.needQuest && !P.quests[A.needQuest]) return 'hidden'; // a legend's story fight shows only while you're on it
     if (P.level < A.minLvl) return `Requires level ${A.minLvl}`;
@@ -1996,7 +2012,7 @@
     emit('change');
   };
   G.leaveQueue = function () { G.S.queue = null; sys('You left the queue.'); emit('change'); };
-  const OTHER_REALMS = ['Stormrage', 'Silvermoon', 'Argent Dawn', 'Kirin Tor', 'Bronzebeard', 'Moonglade'];
+  const OTHER_REALMS = ['Mistral', 'Hearthwick', 'Thornbury', 'Copperbell', 'Saltwind', 'Longwinter']; // our own realm names (v10)
   function recruit(role, lvl, used, usedCls, guild) {
     const S = G.S, date = new Date();
     const want = role === 'tank' ? ['warrior', 'warrior', 'paladin'].concat(lvl >= 10 ? ['druid'] : []) : role === 'healer' ? ['priest', 'priest', 'paladin', 'druid', 'shaman'] : ['mage', 'rogue', 'rogue', 'mage', 'warrior', 'warlock', 'warlock', 'hunter', 'hunter', 'druid', 'shaman'];
@@ -2206,7 +2222,7 @@
         for (const it of drops) addRoll(it);
         const rr = G.rareRecipeDrop(); if (rr) addRoll(rr);
         if (!D.ACTIVITIES[R.act].dungeon || Math.random() < 0.25) addRoll(G.genGear(pick(D.GEAR_SLOTS), G.syncLevel(R.act), !D.ACTIVITIES[R.act].dungeon ? 2 : 3));
-        if (pull.mobs[0] === 'vancleef' && G.S.player.quests.defias_brotherhood) { G.addItem(G.copyItem('vancleef_head'), 1); loot(`You receive loot: ${B.link("Head of VanCleef")}.`); questCheck(); }
+        if (pull.mobs[0] === 'vancleef' && G.S.player.quests.defias_brotherhood) { G.addItem(G.copyItem('vancleef_head'), 1); loot(`You receive loot: ${B.link("Head of Blackwell")}.`); questCheck(); }
         const talker = pick(S.group.members.filter((m) => !m.gone));
         if (talker) partySay(talker, B.partyLine(talker.bot, 'win'));
       }

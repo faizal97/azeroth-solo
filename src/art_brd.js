@@ -1,13 +1,13 @@
-/* art_brd.js — Blackrock Depths art for Azeroth Solo (dungeon, levels 51-55: the Dark Iron capital deep inside Blackrock
- * Mountain; the detention block, Shadowforge City with its lava moat and iron kings, and the Imperial Seat before the
- * lava fall; the Anvilrage wardens, Shadowforge flame keepers and Ragereaver golems, and the bosses High Interrogator
- * Gerstahn, Lord Roccor, Bael'Gar, General Angerforge, Golem Lord Argelmach, Magmus and Emperor Dagran Thaurissan).
+/* art_brd.js — Cinderpeak Depths art for Realm of Loner (dungeon, levels 51-55: the Slagborn capital deep inside Cinderpeak
+ * Mountain; the detention block, Ashforge City with its lava moat and iron kings, and the Imperial Seat before the
+ * lava fall; the Slagguard wardens, Ashforge flame keepers and Ragereaver golems, and the bosses High Interrogator
+ * Brisa, Lord Stonebrand, Magmagor, General Ashhelm, Golemsmith Kragg, Slagmaw and Emperor Haldor Grimmark).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
- * Blackrock Depths keys and fall through to the previous functions for every other key. Keys are appended to
+ * Cinderpeak Depths keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.
  * Helpers, the biped rig and the house-style scene pieces are shared copies of art_zulfarrak.js; the dwarf rig follows
- * art_gnomeregan.js / art_wetlands.js proportions with a new Dark Iron head (braided, forked, block and beardless
- * variants). The BRD Dark Irons are told apart from the spiked-helm Wetlands and Gnomeregan ones by their gear: the
+ * art_gnomeregan.js / art_wetlands.js proportions with a new Slagborn head (braided, forked, block and beardless
+ * variants). The BRD Slagborns are told apart from the spiked-helm Greenfen and Gearhollow ones by their gear: the
  * warden's kettle hat, the keeper's flame mitre, the general's crested helm, the engineer's lens cap and the crown.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix bd<counter>_).
@@ -388,7 +388,7 @@
     o += P(m, c.lg([[0, LAVAY], [0.6, LAVA], [1, LAVAD]]), 1.6) + flame(c, x + w * 0.4, y - 4, 0.5) + flame(c, x + w * 0.58, y - 4, 0.6);
     return o;
   }
-  // front-facing iron statue of a Dark Iron king, hands on a hammer, on a plinth (x = centre, y = ground)
+  // front-facing iron statue of a Slagborn king, hands on a hammer, on a plinth (x = centre, y = ground)
   function ironStatue(c, x, y, s) {
     var q = function (u, v) { return [x + u * s, y + v * s]; }, col = '#45434e', sh = dk(col, 0.42), o = '', b = -25;
     var shd = function (u0) { return F(pd([q(u0, -200), q(60, -200), q(60, 10), q(u0, 10)], true), sh, 0.8); };
@@ -409,7 +409,7 @@
     // lava light from below
     return o + L('M' + pt(q(-30, -1)) + 'L' + pt(q(12, -1)) + 'M' + pt(q(-20, b - 1)) + 'L' + pt(q(-5, b - 1)) + 'M' + pt(q(-29, b - 23)) + 'L' + pt(q(8, b - 23)), LAVA, 1.4 * s, 0.8);
   }
-  // Shadowforge façade: stepped basalt tiers with lit slit windows, a glowing gate and a carved Dark Iron face
+  // Ashforge façade: stepped basalt tiers with lit slit windows, a glowing gate and a carved Slagborn face
   function facade(c, x, y, s) {
     var o = '', by = y;
     [[118, 26], [92, 22], [68, 20], [46, 16]].forEach(function (t, i) {
@@ -537,7 +537,7 @@
   // ============================================================
   //  MOB PIECES
   // ============================================================
-  // ---- Dark Iron head (facing left). beard: 'full' | 'braids' | 'fork' | 'block' | 'none' (the women) ----
+  // ---- Slagborn head (facing left). beard: 'full' | 'braids' | 'fork' | 'block' | 'none' (the women) ----
   function diHead(c, x, y, o) {
     var sk = o.skin || DSK, hc = o.hair || DHAIR, bl = o.beardLen || 28, st = o.beard || 'full', s = '', fem = st === 'none';
     if (o.backHair) s += o.backHair(c, x, y);
@@ -575,7 +575,7 @@
     if (o.helm) s += o.helm(c, x, y);
     return s;
   }
-  // ---- Dark Iron dwarf rig (facing left): the Wetlands / Gnomeregan proportions with its own head ----
+  // ---- Slagborn dwarf rig (facing left): the Greenfen / Gearhollow proportions with its own head ----
   function dwarfRig(c, o) {
     var sk = o.skin || DSK;
     return biped(c, {
