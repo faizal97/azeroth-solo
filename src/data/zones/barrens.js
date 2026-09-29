@@ -90,7 +90,7 @@
       objs: [{ type: 'visit', place: 'thorn_hill' }], reward: { money: 350 } },
     kolkar_stormers: { name: 'Galloran Stormers', lvl: 14, giver: 'thork', turnin: 'thork', text: 'The stormers call lightning down on our caravans. Kill 10.',
       objs: [{ type: 'kill', mob: 'kolkar_stormer', n: 10 }], reward: { choice: ['fam_chest13'] } },
-    stormsnouts: { name: 'Boomsnouts', lvl: 14, giver: 'sergra', turnin: 'sergra', text: 'The stormsnouts of Hoofbreak Hill are the toughest lizards in the Scrublands. Hunt 8.',
+    stormsnouts: { name: 'Boomsnouts', lvl: 14, giver: 'sergra', turnin: 'sergra', text: 'The boomsnouts of Hoofbreak Hill are the toughest lizards in the Scrublands. Hunt 8.',
       objs: [{ type: 'kill', mob: 'stormsnout', n: 8 }], reward: { money: 420 } },
     storm_charms: { name: 'Storm Charms', lvl: 15, giver: 'helbrim', turnin: 'helbrim', text: "The stormers' charms hold real power. Bring me 8 to study.",
       objs: [{ type: 'collect', item: 'storm_charm', n: 8 }], reward: { choice: ['fam_wrist12'] } },
@@ -98,7 +98,7 @@
       objs: [{ type: 'collect', item: 'stormsnout_hide', n: 6 }], reward: { choice: ['fam_hands14'] } },
     lizard_steaks: { name: 'Thunder Lizard Steaks', lvl: 15, giver: 'zargh', turnin: 'zargh', text: 'Thunder lizard steak, crackling hot. Bring me 6.',
       objs: [{ type: 'collect', item: 'lizard_steak', n: 6 }], reward: { money: 480 } },
-    thorn_hill_patrol: { name: 'Storm over Hoofbreak Hill', lvl: 15, giver: 'kargal', turnin: 'kargal', pre: ['thorn_hill_scout'], text: 'Push the Galloran off Hoofbreak Hill: 6 stormers and 4 stormsnouts.',
+    thorn_hill_patrol: { name: 'Storm over Hoofbreak Hill', lvl: 15, giver: 'kargal', turnin: 'kargal', pre: ['thorn_hill_scout'], text: 'Push the Galloran off Hoofbreak Hill: 6 stormers and 4 boomsnouts.',
       objs: [{ type: 'kill', mob: 'kolkar_stormer', n: 6 }, { type: 'kill', mob: 'stormsnout', n: 4 }], reward: { choice: ['fam_waist14'] } },
     centaur_camp: { name: 'The Centaur War Camp', lvl: 16, giver: 'thork', turnin: 'thork', pre: ['kolkar_stormers'], text: 'Break the war camp on Hoofbreak Hill: 12 stormers.',
       objs: [{ type: 'kill', mob: 'kolkar_stormer', n: 12 }], reward: { choice: ['fam_back14'] } },
@@ -222,7 +222,7 @@
     wailing_caverns: { name: 'The Dreaming Caves', dungeon: 'wailing_caverns', where: 'lushwater_oasis', size: 5, minLvl: 17, maxLvl: 21, desc: 'Dungeon in the Scrublands. 5 players.', boss: 'mutanus' },
   });
   Object.assign(D.QUESTS, {
-    wc_serpentbloom: { name: 'The Cavern Flower', lvl: 18, giver: 'helbrim', turnin: 'helbrim', dungeon: 'wailing_caverns', text: 'A rare flower grows only in the Dreaming Caves, and the Druids of the Coil guard it. Bring me 8 serpentbloom.',
+    wc_serpentbloom: { name: 'The Cavern Flower', lvl: 18, giver: 'helbrim', turnin: 'helbrim', dungeon: 'wailing_caverns', text: 'A rare flower grows only in the Dreaming Caves, and the Druids of the Coil guard it. Bring me 8 the cavern flower.',
       objs: [{ type: 'collect', item: 'serpentbloom', n: 8 }], reward: { choice: ['fam_hands19'] } },
     wc_deviate_hides: { name: 'Twisted Hides', lvl: 19, giver: 'sergra', turnin: 'sergra', dungeon: 'wailing_caverns', text: 'The beasts in the caverns are twisted into something new. Their hides are strong. Bring me 8.',
       objs: [{ type: 'collect', item: 'deviate_hide', n: 8 }], reward: { choice: ['fam_chest18'] } },

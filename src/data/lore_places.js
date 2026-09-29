@@ -62,10 +62,10 @@
       'Greyhowl Keep was the seat of the Ashcroft barons, who held Needlewood for the old kingdom of Wexmoor. For generations its walls watched the road through the forest.',
       'When the plague came, the barons\' soldiers held the keep as long as they could. Cairn\'s curse finished what the plague began. The garrison died on the walls, and many of them rose again to serve the new master of the tower.',
       'Now the keep is a den. Werewolf hunt its courtyards, the dead stand watch in its halls, and every night the curse reaches a little further down the hill to Ashwick Village.',
-      'To the Reclaimed, Greyhowl is a knife held at the Gravenhold\'s back. The Pale Queen has sent her deathstalkers inside more than once. Not all of them came back.',
+      'To the Reclaimed, Greyhowl is a knife held at the Gravenhold\'s back. The Pale Queen has sent her gravestalkers inside more than once. Not all of them came back.',
     ], bosses: {
       rethilgore: 'Rotjaw was a werewolves of the first packs, set to guard the keep\'s cells. He hates his master as much as any prisoner does, and still does his bidding.',
-      razorclaw: 'Cleaver the Butcher runs the keep\'s kitchens for the werewolves packs. What he cooks there, and who, the deathstalkers who came back prefer not to say.',
+      razorclaw: 'Cleaver the Butcher runs the keep\'s kitchens for the werewolves packs. What he cooks there, and who, the gravestalkers who came back prefer not to say.',
       baron_silverlaine: 'Baron Ashcroft was the keep\'s last lord and died defending it. His spirit still guards what is left of his family\'s name, and treats every visitor as a thief.',
       commander_springvale: 'Commander Ashdown led the keep\'s defenders against the Hollow Host, a soldier of the Light. He fell on the walls, and Cairn raised him to command the dead garrison instead.',
       fenrus: 'Grimwolf was a hound of the keep before the curse. Cairn\'s magic made him something far larger and hungrier, and he now guards the tower stairs for his new master.',
@@ -125,7 +125,7 @@
       'The cathedral is the heart of the monastery and of the Order of the Pyre. Its soldiers are blessed here before they ride out, and its dead are brought back here when they fall.',
       'Pyre Commander Aldric Vance leads the Order\'s army in Pallmoor. High Inquisitor Seraphine Ashe leads its faith. Between them they decide who is pure and who must burn. Their soldiers say the two are closer than a commander and a priest ought to be, and they would follow either of them into fire.',
       'Not everything in the cathedral is holy. High Inquisitor Albright died in these halls and did not stay dead. He sits in a side chamber, and nobody in the Order speaks his name.',
-      'Reclaimed deathguards and Accord soldiers come here for the same reason. While Vance and Ashe stand, the Order keeps its purpose. Without them, it is only frightened people with swords.',
+      'Reclaimed graveguards and Accord soldiers come here for the same reason. While Vance and Ashe stand, the Order keeps its purpose. Without them, it is only frightened people with swords.',
     ], bosses: {
       herod: 'The Order\'s champion, who drills its soldiers in the armory. He fights for the joy of it more than for the Light, and he has long wanted a worthy opponent.',
       high_inquisitor_fairbanks: 'An inquisitor of the early Order who died inside the cathedral. Something kept him from rest. He lingers there still, unburied, and his brothers pretend not to see him.',
@@ -237,7 +237,7 @@
     } },
     dg_molten_core: { title: 'The Magma Throne', section: 'dungeon', dungeon: 'molten_core', text: [
       'Two hundred years ago the sorcerer-thane Grimmark called Vulcarn to win the Slagborn a war. The King Below came, and he never left. His sea of fire lies beneath Cinderpeak, deeper than any mine, and the Slagborn have been digging towards it ever since.',
-      'Down here the rock runs like water. Hounds of living lava prowl the caverns, fire elementals walk the rune-lit halls, and the flamewakers, his own tall and horned servants, keep the runes that feed the fire.',
+      'Down here the rock runs like water. Hounds of living lava prowl the caverns, fire elementals walk the rune-lit halls, and the ashbounds, his own tall and horned servants, keep the runes that feed the fire.',
       'For all those years the Emperor held the mountain in the King Below\'s name, and the King Below slept. When Grimmark fell, the mountain began to shake.',
       'Accord and Krugar go down for the same reason. If Vulcarn climbs out of his lake, the Cinderfields will only be the first land to burn.',
     ], bosses: {
@@ -245,7 +245,7 @@
       garr: 'Stonecore is a lord of living rock, bound to the Core when Vulcarn first came. His firesworn are pieces of his own body, and they burn when they break.',
       baron_geddon: 'Baron Ashfall is a fire lord who carries the heat of the lake inside him. He turns the living into bombs and lets them burn out among their friends.',
       golemagg: 'Magmahulk the Incinerator is a molten giant who guards the deep halls with his core ragers. He is slow, vast and patient, and nothing he strikes stays standing.',
-      sulfuron_harbinger: 'Brimstone is the Harbinger, the King Below\'s herald among the flamewakers. Where he walks, his priests follow, and they keep one another burning.',
+      sulfuron_harbinger: 'Brimstone is the Harbinger, the King Below\'s herald among the ashbounds. Where he walks, his priests follow, and they keep one another burning.',
       majordomo_executus: 'Steward Cindral runs the King Below\'s house the way a steward runs a keep. He answers only to Vulcarn, and he carries the rune that can call his master up.',
       ragnaros: 'Vulcarn the King Below, a lord of elemental fire older than any kingdom. Grimmark called him to win a war. Two hundred years later, the mountain still burns for it.',
     } },
@@ -276,7 +276,7 @@
     ] },
     zn_teldrassil: { title: 'Greatbough', section: 'zone', zone: 'Greatbough', text: [
       'After the last war the Sylari planted a new great tree off the northern coast and raised their home in its branches. Greatbough is young, and its people had hoped it would be clean.',
-      'It is not quite. Gloom moss grows on the grell, the timberlings by Lake Seliwen have turned strange, and the Mossback bearkin of Rootdeep Barrow have gone wild. Something darker stirs at Gloomrock.',
+      'It is not quite. Gloom moss grows on the thornling, the timberlings by Lake Seliwen have turned strange, and the Mossback bearkin of Rootdeep Barrow have gone wild. Something darker stirs at Gloomrock.',
       'The druids of Dewfern Glade and the Wood Elf Wardens at Ithrenne keep watch under the moonlight, and they are worried.',
     ] },
     zn_darnassus: { title: 'Nyrwen', section: 'zone', zone: 'Nyrwen', text: [
@@ -413,7 +413,7 @@
     zn_winterspring: { title: 'Icewold', section: 'zone', zone: 'Icewold', text: [
       'Icewold is the far north of the wood elf lands, a valley of snow and old ruins. The Starborn once kept their halls by Lake Eluvain, and their ghosts have never quite left.',
       'Coldcoin is a goblin trading town in the drifts, open to anyone who pays. Hunters, furriers and scholars pass through, and the blue dragons of Crystalhall watch from their caves.',
-      'Something is wrong in the forest. The Icebrow bearkin have turned savage on a drink of their own brewing, and the frostsabers are sick. The Cenarion Circle wants to know where the taint comes from.',
+      'Something is wrong in the forest. The Icebrow bearkin have turned savage on a drink of their own brewing, and the snowcats are sick. The Cenarion Circle wants to know where the taint comes from.',
     ] },
     zn_tidewatch_coast: { title: 'Tidewatch Coast', section: 'zone', zone: 'Tidewatch Coast', text: [
       'The Tidewatch Coast was the edge of Sael\'anor before the Heartfire exploded. It is dry land again after ten thousand years. Its orchards still stand, grey and dripping, and the husks that walk between them were Starborn once.',

@@ -33,7 +33,7 @@
   };
 
   const GUILDS = ['Brackenford Legends', 'Crimson Vanguard', 'Knights of Ambermoor', 'Pumpkin Patrol', 'Grey Hood Dropouts', 'Lions Pride', 'Mireling Mafia', 'Starlight Vanguard',
-    'Blood and Thunder', 'Sons of the Storm', 'Zug Zug Crew', 'Bonewall Raiders', 'Kessari Voodoo'];
+    'Blood and Thunder', 'Sons of the Storm', 'Dust Eaters', 'Bonewall Raiders', 'Kessari Voodoo'];
   const GUILD_FACTION = GUILDS.map((g, i) => (i < 8 ? 'alliance' : 'horde'));
   B.GUILDS = GUILDS; B.GUILD_FACTION = GUILD_FACTION;
   B.factionOf = (bot) => ((D.RACES[bot.race] || {}).faction || 'alliance');
@@ -235,36 +235,36 @@
     () => 'finally beat a par time, feels great',
   ];
   const GENERAL_ALLI = [
-    () => 'how do i get to stormwind',
-    () => 'stormwind music hits different',
-    () => 'ironforge is too dark for me',
-    () => 'darnassus is so far from everything',
-    () => 'goldshire at night is a vibe',
-    () => 'westfall broke my heart, those poor farmers',
-    () => 'the defias are literally everywhere',
-    () => 'hunters should be banned from pulling in goldshire',
-    () => 'for the alliance!',
-    () => 'deeprun tram is the best thing gnomes ever built',
+    () => 'how do i get to kingsmere',
+    () => 'kingsmere music hits different',
+    () => 'keldrun is too dark for me',
+    () => 'nyrwen is so far from everything',
+    () => 'brackenford at night is a vibe',
+    () => 'longfield broke my heart, those poor farmers',
+    () => 'the grey hood are literally everywhere',
+    () => 'hunters should be banned from pulling in brackenford',
+    () => 'for the accord!',
+    () => 'underrail is the best thing gnomes ever built',
   ];
   const GENERAL_HORDE = [
-    () => 'how do i get to orgrimmar', () => 'zug zug', () => "lok'tar ogar!", () => 'for the horde',
-    () => 'the valley of trials is so crowded lol', () => 'who keeps killing all the boars', () => 'razor hill inn is the best inn',
-    () => 'thrall is the best warchief', () => 'thunder bluff elevators scare me', () => 'undercity has a smell and i love it',
-    () => 'crossroads is always under attack lol', () => 'barrens chat is a way of life', () => "grom'gol boat is taking forever",
+    () => 'how do i get to vazhrak', () => 'ok ok', () => "blood and dust!", () => 'for the krugar',
+    () => 'the the blooding grounds is so crowded lol', () => 'who keeps killing all the boars', () => 'bonewall inn is the best inn',
+    () => 'grask is the best warchief', () => 'hornwind mesa elevators scare me', () => 'gravenhold has a smell and i love it',
+    () => 'dustfort is always under attack lol', () => 'scrublands chat is a way of life', () => "camp skarn boat is taking forever",
   ];
   // what people talk about at your stage of the game
   const GENERAL_BAND = [
     [() => 'finally got my first green lol', () => 'my first bag!! 6 slots of luxury', () => 'kobolds really said you no take candle and meant it', () => 'just found out what rested xp is', () => 'where do i learn cooking'],
-    [() => 'talents are so confusing', () => 'first pug dungeon went... ok', () => 'the wetlands raptors are no joke', () => 'saving up for my mount already', (c) => `${c.zone} quests are kinda long`],
-    [() => 'stranglethorn with war mode on is chaos', () => 'finally got riding, roads feel so short now', () => 'tanaris sand gets everywhere', () => "zul'farrak stairs event is wild", () => 'how much does a mount cost'],
-    [() => 'blackrock depths is a maze', () => 'scholomance gives me the creeps', () => 'stratholme in the rain, perfect', () => 'winterspring yetis again', () => 'is it just me or is the sea acting weird lately'],
+    [() => 'talents are so confusing', () => 'first pug dungeon went... ok', () => 'the greenfen raptors are no joke', () => 'saving up for my mount already', (c) => `${c.zone} quests are kinda long`],
+    [() => 'vinewild with war mode on is chaos', () => 'finally got riding, roads feel so short now', () => 'sirocco sand gets everywhere', () => "the dune temple stairs event is wild", () => 'how much does a mount cost'],
+    [() => 'cinderpeak depths is a maze', () => 'the blackcloister gives me the creeps', () => 'graymouth in the rain, perfect', () => 'icewold yetis again', () => 'is it just me or is the sea acting weird lately'],
   ];
   const ANSWERS = [
     { q: /where is (.+)\?/, a: (m) => [`${m[1]}? ${B.whereIs(m[1])}`, 'no idea sorry', 'same question lol'] },
-    { q: /how do i get to stormwind/, a: () => ['follow the road north out of goldshire', 'take the road north, you cant miss it', 'hearth lol', 'open your world map, it shows the route'] },
-    { q: /how do i get to orgrimmar/, a: () => ['go north from razor hill', 'the big gate north of razor hill', 'follow the road north'] },
-    { q: /zug zug|lok'tar|for the horde/, a: () => ['zug zug', "lok'tar!", 'FOR THE HORDE', 'dabu'] },
-    { q: /for the alliance/, a: () => ['for the alliance!', 'FOR THE KING', 'o7'] },
+    { q: /how do i get to kingsmere/, a: () => ['follow the road north out of brackenford', 'take the road north, you cant miss it', 'hearth lol', 'open your world map, it shows the route'] },
+    { q: /how do i get to vazhrak/, a: () => ['go north from bonewall', 'the big gate north of bonewall', 'follow the road north'] },
+    { q: /ok ok|blood and dust|for the krugar/, a: () => ['ok ok', "blood and dust!", 'FOR THE KRUGAR', 'as you say'] },
+    { q: /for the accord/, a: () => ['for the accord!', 'FOR THE KING', 'o7'] },
     { q: /reset talents/, a: () => ['not that i know of, pick carefully', 'no talents till 10 anyway', 'plan them before you spend lol'] },
     { q: /(level|lvl).*mount|mount cost/, a: () => ['40', 'lvl 40, about 50g all in', '40, start saving now', 'riding at 40, 40g plus the mount'] },
     { q: /cooking/, a: () => ['innkeeper area in town', 'there is a cook in the inn'] },
@@ -275,7 +275,7 @@
     { q: /next alt/, a: () => ['whatever looks cool', 'the one you will actually play', 'hunter, always hunter', 'go the one you keep dying to lol'] },
     { q: /worth it at/, a: () => ['yes, the quests alone are worth it', 'for the loot, yes', 'go with a guild group', 'if you have the quests, yes'] },
     { q: /drop anything good/, a: () => ['check the codex after a clear', 'mostly cloth iirc', 'one nice trinket', 'not really, go for the quest'] },
-    { q: /sea acting weird/, a: () => ['i heard the same', 'storms off the coast, yeah', 'sailors in menethil wont shut up about it'] },
+    { q: /sea acting weird/, a: () => ['i heard the same', 'storms off the coast, yeah', 'sailors in gullhaven wont shut up about it'] },
   ];
   // LFG channel between the real posts: groups that filled, runs that went well or badly, questions about a dungeon
   const LFG_CHATTER = [
@@ -314,7 +314,7 @@
     () => 'nice gear lol',
     () => 'r u a bot?',
     () => 'Hello friend! Cheapest gold on the server, 1000g for $10, visit our site!',
-    () => 'WOW GOLD FAST DELIVERY 100% SAFE, visit our site',
+    () => 'CHEAP GOLD FAST DELIVERY 100% SAFE, visit our site',
     () => 'ty for the buff earlier!',
     (c) => `was that u in ${c.zone}? saw u fighting ${c.mobName}s`,
     () => 'wrong window sorry',
@@ -329,7 +329,7 @@
       if (lower(D.MOBS[key].name) === n) {
         for (const p in D.PLACES) {
           const P = D.PLACES[p];
-          if ((P.mobs || []).some((m) => m[0] === key) || (P.named && P.named[key])) return `${P.name}${P.zone === 'Ambermoor' && p !== 'goldshire' ? ' in elwynn' : ''}`;
+          if ((P.mobs || []).some((m) => m[0] === key) || (P.named && P.named[key])) return `${P.name}${P.zone === 'Ambermoor' && p !== 'brackenford' ? ' in ambermoor' : ''}`;
         }
       }
     }
@@ -452,12 +452,12 @@
     if (/\?/.test(t)) {
       const m = t.match(/where (?:is|are) (?:the )?(.+?)\?/);
       if (m) { say(B.whereIs(m[1])); return; }
-      say(pick(['no idea sorry', 'idk', 'check wowhead lol', 'ask in general', 'not sure', 'same question']));
+      say(pick(['no idea sorry', 'idk', 'check the lore journal lol', 'ask in general', 'not sure', 'same question']));
       return;
     }
-    if (/\b(inv|group|lfg|lf\dm|hogger|dm|deadmines)\b/.test(t)) {
+    if (/\b(inv|group|lfg|lfsd|snaggle|sd|smugglers)\b/.test(t)) {
       if (S.player.level >= 8) say(pick(['queue up in group finder, i will join', 'yeah sure, use the finder', 'i am in queue already']));
-      else say(pick(['you are too low lol', 'come back at 8+', 'hogger will eat you']));
+      else say(pick(['you are too low lol', 'come back at 8+', 'old snaggle will eat you']));
       return;
     }
     if (chance(0.45)) say(pick(['k', 'lol', 'ok', '?', 'true', 'fr', 'nice', 'same']));

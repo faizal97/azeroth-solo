@@ -18,8 +18,20 @@ const LOWER = { 'night elves': 'wood elves', 'night elf': 'wood elf', tauren: 'h
   scorpids: 'scorpions', scorpid: 'scorpion', silithid: 'hiveborn', plainstriders: 'longnecks', plainstrider: 'longneck', devilsaurs: 'thundertooths', devilsaur: 'thundertooth', felguards: 'pit guards',
   felguard: 'pit guard', dreadlords: 'demon lords', dreadlord: 'demon lord', dragonflight: 'brood', drakonids: 'drakeborn', drakonid: 'drakeborn', 'wind riders': 'wyvern riders', 'wind rider': 'wyvern rider',
   fel: 'gloom', forsaken: 'reclaimed' };
-const PROSE_ONLY = new Set(Object.keys(LOWER));
+// chat is written in lowercase ("how do i get to orgrimmar"): the lowercase form of a name that is not an everyday
+// word changes too, in prose only. Everyday words (wetlands, barrens, princess) keep their lowercase meaning.
+const dict = new Set(); try { for (const w of fs.readFileSync('/usr/share/dict/words', 'utf8').split('\n')) dict.add(w.toLowerCase()); } catch (e) { }
+const everyday = (o) => o.toLowerCase().split(/[\s-]+/).every((w) => { const x = w.replace(/[^a-z']/g, '').replace(/'s$/, ''); return !x || dict.has(x) || dict.has(x.replace(/s$/, '')); });
+const have = new Set(pairs.map((p) => p[0]));
+for (const [o, n] of pairs.slice()) if (/[A-Z]/.test(o) && o.length > 3 && !everyday(o) && !have.has(o.toLowerCase()) && !LOWER[o.toLowerCase()]) LOWER[o.toLowerCase()] = n.toLowerCase();
+// Warcraft's orcish catchphrases, and the factions, in the bots' chat only
+const CHAT_ONLY = { 'zug zug': 'ok ok', "lok'tar ogar": 'blood and dust', "lok'tar": 'blood and dust', 'for the horde': 'for the krugar', 'for the alliance': 'for the accord', dabu: 'as you say',
+  'throm-ka': 'well met, blood-kin', 'Throm-ka': 'Well met, blood-kin', 'Zug Zug Crew': 'Dust Eaters', horde: 'krugar', alliance: 'accord' };
+const CHAT_FILES = /src\/(bots|social|ui)\.js$/;
+for (const [o, n] of pairs.slice()) if (/[A-Z]/.test(o) && o.length > 3 && everyday(o) && !have.has(o.toLowerCase()) && !LOWER[o.toLowerCase()] && !CHAT_ONLY[o.toLowerCase()]) CHAT_ONLY[o.toLowerCase()] = n.toLowerCase();
+const PROSE_ONLY = new Set(Object.keys(LOWER).concat(Object.keys(CHAT_ONLY)));
 for (const [o, n] of Object.entries(LOWER)) pairs.push([o, n]);
+for (const [o, n] of Object.entries(CHAT_ONLY)) pairs.push([o, n]);
 pairs.sort((a, b) => b[0].length - a[0].length);
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 // an apostrophe may be escaped in the source (Gath\'Ilzogg inside '...'), so match both forms
@@ -38,9 +50,11 @@ const quoteAt = (line, off) => {
 };
 // the whole string a match sits in (from its opening quote to the closing one)
 const stringAt = (line, at) => { let i = at.start + 1; for (; i < line.length; i++) { if (line[i] === '\\') { i++; continue; } if (line[i] === at.q) break; } return line.slice(at.start + 1, i); };
+let chatFile = false;
 const sub = (line, js) => line.replace(re, (m, w, suf, off) => {
   const key = w.replace(/\\'/g, "'"), at = js ? quoteAt(line, off) : null;
-  if (PROSE_ONLY.has(key) && (js ? !at || !/\s/.test(stringAt(line, at)) : false)) return m;
+  if (CHAT_ONLY[key] && !chatFile) return m;
+  if (PROSE_ONLY.has(key) && (!js || !at || !/\s/.test(stringAt(line, at)))) return m;
   let n = lookup[key] + (suf || '').replace(/\\'/, "'");
   if (js && n.includes("'") && at && at.q === "'") n = n.replace(/'/g, "\\'");
   return n;
@@ -53,13 +67,15 @@ for (const f of ['README.md', 'docs/lore/canon.md', 'app/pubspec.yaml', 'app/and
 
 let total = 0; const per = [];
 for (const f of files) {
-  const js = /\.js$/.test(f);
+  const js = /\.js$/.test(f); chatFile = CHAT_FILES.test(f);
   const src = fs.readFileSync(f, 'utf8');
   let n = 0;
   const out = src.split('\n').map((line) => {
     if (NOTICE.test(line)) return line;
     // a new name that starts with The after an article: 'the The Blackcloister' → 'the Blackcloister'
-    const r = sub(line, js).replace(/\b([Tt]he) The (?=[A-Z])/g, '$1 ');
+    const r = sub(line, js).replace(/\b([Tt]he) The (?=[A-Z])/g, '$1 ')
+      // a title the new name already carries: 'King King Rhodric', 'Poor Old Old Clover'
+      .replace(/\b([A-Z][a-z]+(?: [A-Z][a-z]+)?) \1\b/g, (m, w) => w);
     if (r !== line) n += (line.match(re) || []).length;
     return r;
   }).join('\n');

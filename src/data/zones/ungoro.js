@@ -61,11 +61,11 @@
     objs: [{ type: 'visit', place: 'marshals_refuge' }], reward: { money: 2200 } });
   const list = [
     ['bloodpetal', 48, 'Redbloom Sprouts', 'The plants at the hot springs bite. Bring me 8 sprouts.', 'williden', [{ type: 'collect', item: 'bloodpetal_sprout', n: 8 }], { choice: ['fam_feet51'] }],
-    ['lashers', 49, 'Lashers', 'Kill 12 bloodpetal lashers before they reach the camp.', 'larion', [{ type: 'kill', mob: 'bloodpetal_lasher', n: 12 }], { money: 5000 }],
+    ['lashers', 49, 'Lashers', 'Kill 12 redbloom lashers before they reach the camp.', 'larion', [{ type: 'kill', mob: 'bloodpetal_lasher', n: 12 }], { money: 5000 }],
     ['thunderers', 49, 'Thunderers', 'The thunderers trample our tents. Kill 10 and bring me 5 horns.', 'marshal_yeager', [{ type: 'kill', mob: 'ungoro_thunderer', n: 10 }, { type: 'collect', item: 'thunderer_horn', n: 5 }], { choice: ['fam_wrist51'] }, 'bloodpetal'],
     ['stompers', 50, 'Stompers', 'The stompers of Tooth Run have thick hides. Bring me 8.', 'larion', [{ type: 'collect', item: 'stomper_hide', n: 8 }], { choice: ['fam_chest51'] }],
-    ['pterrordax', 50, 'Skyjaw Eggs', 'I want 6 pterrordax eggs. For science. And omelettes.', 'spraggle', [{ type: 'collect', item: 'pterrordax_egg', n: 6 }], { money: 5200 }],
-    ['terror_patrol', 51, 'Tooth Run', 'Clear the run: 10 stompers and 8 pterrordax.', 'marshal_yeager', [{ type: 'kill', mob: 'ungoro_stomper', n: 10 }, { type: 'kill', mob: 'frenzied_pterrordax', n: 8 }], { choice: ['fam_weapon51'] }, 'stompers'],
+    ['pterrordax', 50, 'Skyjaw Eggs', 'I want 6 skyjaw eggs. For science. And omelettes.', 'spraggle', [{ type: 'collect', item: 'pterrordax_egg', n: 6 }], { money: 5200 }],
+    ['terror_patrol', 51, 'Tooth Run', 'Clear the run: 10 stompers and 8 skyjaw.', 'marshal_yeager', [{ type: 'kill', mob: 'ungoro_stomper', n: 10 }, { type: 'kill', mob: 'frenzied_pterrordax', n: 8 }], { choice: ['fam_weapon51'] }, 'stompers'],
     ['gorishi', 51, 'The Krizzik Hive', 'Hiveborn wasps swarm the Hive Scar. Kill 12 wasps and bring me 5 scent glands.', 'williden', [{ type: 'kill', mob: 'gorishi_wasp', n: 12 }, { type: 'collect', item: 'gorishi_scent_gland', n: 5 }], { choice: ['fam_hands52'] }],
     ['reavers', 52, 'The Reavers', 'The reavers guard the hive. Kill 10.', 'larion', [{ type: 'kill', mob: 'gorishi_reaver', n: 10 }], { money: 5600 }, 'gorishi'],
     ['rex_ashil', 52, 'Rex Scorchtail', 'A great hiveborn, Rex Scorchtail, lurks in the Scar. It is rarely seen. Bring me its claw.', 'marshal_yeager', [{ type: 'collect', item: 'rex_ashil_claw', n: 1 }], { choice: ['fam_ring_rare55'] }],

@@ -1,7 +1,7 @@
 /* art_tanaris.js — Sirocco zone art for Realm of Loner (contested desert, levels 40-46: Coppergulch, Rotten Plank Cove,
  * Pumpworks Field, the Stinging Hive, the Sandbrute Compound, Spinebush Valley, the Dawnstone Ruins and the gate of
  * The Dune Temple; Dustcloak bandits, Blackgull pirates, Hivecrawler hiveborn, Sandbrute ogres, thistleshrubs, dunestalker
- * scorpids, Caliph Stingtail and Captain Captain Rusk Hookhand).
+ * scorpids, Caliph Stingtail and Captain Rusk Hookhand).
  * Loads AFTER art.js (and optionally other zone packs) and EXTENDS window.ART: ART.scene / ART.mob handle the
  * Sirocco keys and fall through to the previous functions for every other key. Keys are appended to
  * ART.keys.scenes / ART.keys.mobs. Self-contained: no dependency on art.js internals. Never throws.

@@ -84,11 +84,11 @@
 
   // quests
   Object.assign(D.QUESTS, {
-    poor_blanchy: { name: 'Poor Old Old Clover', lvl: 10, giver: 'verna', turnin: 'verna', text: 'Our old horse Old Clover is starving. The harvest watchers guard what oats are left in the fields. Bring me 8 handfuls.',
+    poor_blanchy: { name: 'Poor Old Clover', lvl: 10, giver: 'verna', turnin: 'verna', text: 'Our old horse Old Clover is starving. The harvest watchers guard what oats are left in the fields. Bring me 8 handfuls.',
       objs: [{ type: 'collect', item: 'handful_oats', n: 8 }], reward: { money: 250 } },
     westfall_stew: { name: 'Longfield Stew', lvl: 10, giver: 'furlbrow', turnin: 'furlbrow', text: 'We lost everything but our stew pot. Bonepicker meat is stringy, but it fills a belly. Bring me 6.',
       objs: [{ type: 'collect', item: 'vulture_meat', n: 6 }], reward: { choice: ['fam_feet12'] } },
-    goretusk_pie: { name: 'Razorhog Liver Pie', lvl: 10, giver: 'salma', turnin: 'salma', text: 'My liver pie keeps the militia on its feet. I need 8 goretusk livers.',
+    goretusk_pie: { name: 'Razorhog Liver Pie', lvl: 10, giver: 'salma', turnin: 'salma', text: 'My liver pie keeps the militia on its feet. I need 8 razorhog livers.',
       objs: [{ type: 'collect', item: 'goretusk_liver', n: 8 }], reward: { money: 260 } },
     harvest_watchers: { name: 'Scarecrows of Steel', lvl: 11, giver: 'saldean', turnin: 'saldean', text: 'The Grey Hood built those harvest watchers to guard our own fields against us. Smash 8.',
       objs: [{ type: 'kill', mob: 'harvest_watcher', n: 8 }], reward: { choice: ['fam_wrist12'] } },
@@ -102,11 +102,11 @@
       objs: [{ type: 'collect', item: 'defias_bandana_wf', n: 12 }], reward: { money: 380 } },
     coast_murlocs: { name: "Raiders from the Saltstrand", lvl: 12, giver: 'galiaan', turnin: 'galiaan', text: 'Mirelings from the Saltstrand raid the farms at night. Kill 10 coastrunners.',
       objs: [{ type: 'kill', mob: 'murloc_coastrunner', n: 10 }], reward: { choice: ['fam_hands14'] } },
-    goretusk_snouts: { name: 'Razorhog Snouts', lvl: 13, giver: 'heather', turnin: 'heather', text: "Snout soup is the militia's favourite. The big goretusks on Hartwell Farm have the best. Bring me 8.",
+    goretusk_snouts: { name: 'Razorhog Snouts', lvl: 13, giver: 'heather', turnin: 'heather', text: "Snout soup is the militia's favourite. The big razorhogs on Hartwell Farm have the best. Bring me 8.",
       objs: [{ type: 'collect', item: 'goretusk_snout', n: 8 }], reward: { money: 400 } },
     peoples_militia2: { name: "The Farmers' Watch (2)", lvl: 13, giver: 'gryan', turnin: 'gryan', pre: ['peoples_militia'], text: "The pathstalkers are the Brotherhood's eyes. Blind them: 10 pathstalkers on Hartwell Farm.",
       objs: [{ type: 'kill', mob: 'defias_pathstalker', n: 10 }], reward: { choice: ['fam_back14'] } },
-    molsen_watchers: { name: 'Clearing Hartwell Farm', lvl: 13, giver: 'saldean', turnin: 'saldean', pre: ['harvest_watchers'], text: 'More watchers walk the Hartwell fields, and bigger goretusks follow them. Kill 8 goretusks there.',
+    molsen_watchers: { name: 'Clearing Hartwell Farm', lvl: 13, giver: 'saldean', turnin: 'saldean', pre: ['harvest_watchers'], text: 'More watchers walk the Hartwell fields, and bigger razorhogs follow them. Kill 8 razorhogs there.',
       objs: [{ type: 'kill', mob: 'goretusk', n: 8 }], reward: { choice: ['fam_waist14'] } },
     tidehunters: { name: 'Tidehunters', lvl: 14, giver: 'galiaan', turnin: 'galiaan', pre: ['coast_murlocs'], text: 'The tidehunters lead the mireling raids. Kill 8 and the rest will scatter.',
       objs: [{ type: 'kill', mob: 'murloc_tidehunter', n: 8 }], reward: { choice: ['fam_legs13'] } },

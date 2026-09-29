@@ -68,7 +68,7 @@
     [{ type: 'kill', mob: 'firegut_ogre', n: 12 }], ['marshal_maxwell', { choice: ['fam_feet53'] }], ['thal_kaur', { choice: ['fam_feet53'] }]);
   both('firegut_tusks', 53, 'Smokebelly Tusks', ['Bring me 10 tusks.', 'Bring me 10 tusks.'], [{ type: 'collect', item: 'firegut_tusk', n: 10 }], ['oralius', { money: 6000 }], ['gorzeeki', { money: 6000 }], 'firegut');
   both('brutes_bs', 54, 'Smokebelly Brutes', ['Kill 10 brutes.', 'Kill 10 brutes.'], [{ type: 'kill', mob: 'firegut_brute', n: 10 }], ['marshal_maxwell', { choice: ['fam_wrist54'] }], ['thal_kaur', { choice: ['fam_wrist54'] }], 'firegut');
-  both('flamekin', 52, 'The Ruins of Grimmark', ['Fire elementals haunt the ruins of the old dwarven capital. Kill 12 spitters and bring me 5 embers.', 'Kill 12 flamekin spitters and bring me 5 embers.'],
+  both('flamekin', 52, 'The Ruins of Grimmark', ['Fire elementals haunt the ruins of the old dwarven capital. Kill 12 spitters and bring me 5 embers.', 'Kill 12 emberling spitters and bring me 5 embers.'],
     [{ type: 'kill', mob: 'flamekin_spitter', n: 12 }, { type: 'collect', item: 'flamekin_ember', n: 5 }], ['helendis', { choice: ['fam_hands53'] }], ['gorzeeki', { choice: ['fam_hands53'] }]);
   both('blazing', 53, 'Blazing Elementals', ['Kill 10 blazing elementals.', 'Kill 10 blazing elementals.'], [{ type: 'kill', mob: 'blazing_elemental', n: 10 }], ['helendis', { money: 6100 }], ['gorzeeki', { money: 6100 }], 'flamekin');
   both('blackrock', 53, 'The Cinderpeak Clan', ['The Cinderpeak orcs serve Vale. Kill 12 battlemasters.', 'The Cinderpeak betrayed the Krugar. Kill 12 battlemasters.'],

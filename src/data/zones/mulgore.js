@@ -66,11 +66,11 @@
   Object.assign(D.QUESTS, {
     hunt_begins: { name: 'First Hunt', lvl: 2, giver: 'grull', turnin: 'grull', text: 'Every hornfolk hunter starts with the longnecks. Bring me 8 of their beaks.',
       objs: [{ type: 'collect', item: 'plainstrider_beak', n: 8 }], reward: { choice: ['fam_chest'] } },
-    battleboars: { name: 'The Tuskhogs', lvl: 3, giver: 'hawkwind', turnin: 'hawkwind', text: 'The battleboars grow fat and bold. Bring back 8 flanks for the camp.',
+    battleboars: { name: 'The Tuskhogs', lvl: 3, giver: 'hawkwind', turnin: 'hawkwind', text: 'The tuskhogs grow fat and bold. Bring back 8 flanks for the camp.',
       objs: [{ type: 'collect', item: 'battleboar_flank', n: 8 }], reward: { choice: ['fam_legs'] } },
     rite_strength: { name: 'Proving at the Ravine', lvl: 4, giver: 'raincaller', turnin: 'raincaller', text: 'The Hollowtusk spinehide raid our lands from the ravine. Defeat 12 of them.',
       objs: [{ type: 'kill', mob: 'bristleback_quilboar', n: 12 }], reward: { choice: ['fam_feet'] } },
-    break_sharptusk: { name: 'Break Spinecrest!', lvl: 6, giver: 'hawkwind', turnin: 'hawkwind', pre: ['rite_strength'], text: 'Their chief, Spinecrest Spinecrest, must fall.',
+    break_sharptusk: { name: 'Break Spinecrest!', lvl: 6, giver: 'hawkwind', turnin: 'hawkwind', pre: ['rite_strength'], text: 'Their chief, Spinecrest, must fall.',
       objs: [{ type: 'kill', mob: 'chief_sharptusk', n: 1 }], reward: { choice: ['fam_weapon5'] } },
     report_bloodhoof: { name: 'Journey to Ossa', lvl: 5, giver: 'hawkwind', turnin: 'baine', text: 'Go down the mountain to Ossa Village and speak with Tarro of Ossa.',
       objs: [{ type: 'visit', place: 'bloodhoof_village' }], reward: {} },

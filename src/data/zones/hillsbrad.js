@@ -153,7 +153,7 @@
       objs: [{ type: 'collect', item: 'arugal_head', n: 1 }], reward: { choice: ['fam_back_rare30'] } },
     springvale_q: { name: 'The Fallen Commander', lvl: 28, giver: 'darthalia', turnin: 'darthalia', dungeon: 'shadowfang', text: 'Commander Ashdown led the keep\'s defenders. Now he serves Cairn in death. Bring me his seal.',
       objs: [{ type: 'collect', item: 'springvale_seal', n: 1 }], reward: { choice: ['fam_weapon30'] } },
-    deathstalker_journal: { name: 'The Lost Gravestalker', lvl: 27, giver: 'lydon', turnin: 'lydon', dungeon: 'shadowfang', text: 'One of our deathstalkers went into the keep and never came back. Her journal must be on one of the darksouls. Bring it to me.',
+    deathstalker_journal: { name: 'The Lost Gravestalker', lvl: 27, giver: 'lydon', turnin: 'lydon', dungeon: 'shadowfang', text: 'One of our gravestalkers went into the keep and never came back. Her journal must be on one of the darksouls. Bring it to me.',
       objs: [{ type: 'collect', item: 'sfk_journal', n: 1 }], reward: { money: 2000 } },
   });
 

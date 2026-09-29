@@ -82,7 +82,7 @@
       'Last: I woke today for a moment, long enough to write this. It has never been so hard to wake. If anyone finds these pages, do not let them keep me sleeping. Whatever my disciples tell you, wake me.',
     ] },
     bk_worgen: { title: 'On the Curse of Needlewood', section: 'book', book: true, lvl: 22, faction: 'horde', from: { arugal: 0.4, baron_silverlaine: 0.2 }, text: [
-      'Field report, from a deathstalker in Needlewood to High Executor Mordane at Mourncross.',
+      'Field report, from a gravestalker in Needlewood to High Executor Mordane at Mourncross.',
       'Origin. In the plague years the archmage Cairn called wolves from somewhere outside this world to fight the Hollow Host. They came. They would not leave when he asked. His answer was to make more of them out of the forest\'s people.',
       'The packs. These are not beasts. The Howlmoor hunt in numbers, use the old roads and post watches. They know our patrol hours better than some of our patrols do.',
       'Ashwick. By day the villagers farm and stare at us with the usual hatred. By night they are werewolves. In the morning they do not seem to remember. I have not told them.',

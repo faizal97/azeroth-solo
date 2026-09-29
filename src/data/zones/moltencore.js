@@ -63,7 +63,7 @@
 
   const A = (id, q) => { q.faction = 'alliance'; D.QUESTS[id] = q; };
   const H = (id, q) => { q.faction = 'horde'; D.QUESTS[id] = q; };
-  A('mc_executus_a', { name: 'The King Below\'s Steward', lvl: 60, giver: 'helendis', turnin: 'helendis', dungeon: 'molten_core', text: 'Steward Cindral keeps the house of Vulcarn. His flamewakers tend the runes that feed the fire below. Break him and bring me the rune he carries. I want to know what it binds.',
+  A('mc_executus_a', { name: 'The King Below\'s Steward', lvl: 60, giver: 'helendis', turnin: 'helendis', dungeon: 'molten_core', text: 'Steward Cindral keeps the house of Vulcarn. His ashbounds tend the runes that feed the fire below. Break him and bring me the rune he carries. I want to know what it binds.',
     objs: [{ type: 'collect', item: 'executus_rune', n: 1 }], reward: { choice: ['fam_ring_rare60'] } });
   H('mc_executus_h', { name: 'The King Below\'s Steward', lvl: 60, giver: 'gorzeeki', turnin: 'gorzeeki', dungeon: 'molten_core', text: 'The King Below has a servant who runs his house for him. Steward Cindral. He carries a binding rune. Bring it to me. I have plans for it.',
     objs: [{ type: 'collect', item: 'executus_rune', n: 1 }], reward: { choice: ['fam_ring_rare60'] } });
@@ -77,7 +77,7 @@
       { scene: 'mc_caverns', label: 'The lava caverns', mobs: ['core_hound', 'core_hound', 'core_surger'] },
       { scene: 'mc_caverns', label: 'Molten giants', mobs: ['molten_giant', 'molten_giant'] },
       { scene: 'mc_caverns', label: 'Cinderhound', mobs: ['magmadar'], boss: true },
-      { scene: 'mc_caverns', label: 'The firelords', mobs: ['firelord', 'core_surger'] },
+      { scene: 'mc_caverns', label: 'The king belows', mobs: ['firelord', 'core_surger'] },
       { scene: 'mc_caverns', label: 'Stonecore', mobs: ['garr', 'firesworn', 'firesworn'], boss: true },
       { scene: 'mc_halls', label: 'The rune-lit halls', mobs: ['flamewaker_guard', 'flamewaker_guard', 'firelord'] },
       { scene: 'mc_halls', label: 'Baron Ashfall', mobs: ['baron_geddon'], boss: true },

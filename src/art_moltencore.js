@@ -14,7 +14,7 @@
  * Helpers, the biped rig and the robe rig are shared copies of art_tidecrown.js (itself a copy of art_scholomance.js).
  * Looks: fire elementals are living fire in three hard tones around a dark stone core with lava cracks; core hounds are
  * two-headed lava dogs plated in black rock (Cinderhound the biggest; the core ragers have one head); flamewakers are tall,
- * horned, red-skinned fire humanoids with a snake's tail instead of legs; Steward Cindral is a flamewaker lord in robes;
+ * horned, red-skinned fire humanoids with a snake's tail instead of legs; Steward Cindral is a ashbound lord in robes;
  * Vulcarn (after art_story.js: ragnaros) rises from the lava with his hammer raised, the biggest sprite in the raid.
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading via hard-stop gradients + flat shadow shapes,
  * no text, no filters, ids unique per call (prefix mc<counter>_).

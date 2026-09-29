@@ -112,7 +112,7 @@
   Object.assign(D.QUESTS, {
     westfall_redridge: { name: 'To Stoneharrow', lvl: 18, giver: 'gryan', turnin: 'solomon', text: 'Magistrate Aldren of Longbridge begs Kingsmere for help against the orcs, and Kingsmere sends nobody. Go east past Stillwater Lake to Stoneharrow.',
       objs: [{ type: 'visit', place: 'lakeshire' }], reward: { money: 600 } },
-    goretusk_flanks: { name: 'Stoneharrow Goulash', lvl: 18, giver: 'darcy', turnin: 'darcy', text: 'My goulash feeds half the town. The great goretusks at Hob\'s Fork give the best meat. Bring me 8 flanks.',
+    goretusk_flanks: { name: 'Stoneharrow Goulash', lvl: 18, giver: 'darcy', turnin: 'darcy', text: 'My goulash feeds half the town. The great razorhogs at Hob\'s Fork give the best meat. Bring me 8 flanks.',
       objs: [{ type: 'collect', item: 'goretusk_flank', n: 8 }], reward: { choice: ['fam_feet22'] } },
     tarantula_silk_q: { name: 'Silk for the Bridge', lvl: 18, giver: 'oslow', turnin: 'oslow', text: 'Tarantula silk makes the strongest rope I know, and the bridge needs rope. Bring me 8 lengths.',
       objs: [{ type: 'collect', item: 'tarantula_silk', n: 8 }], reward: { money: 900 } },
@@ -168,7 +168,7 @@
       objs: [{ type: 'collect', item: 'bellygrub_tusk', n: 1 }], reward: { choice: ['fam_weapon25'] } },
     tarantula_hunt: { name: 'Eight Legs Too Many', lvl: 18, giver: 'oslow', turnin: 'oslow', pre: ['tarantula_silk_q'], text: 'Now that I have rope, I want the spiders gone from the road. Kill 10 tarantulas.',
       objs: [{ type: 'kill', mob: 'tarantula', n: 10 }], reward: { money: 950 } },
-    goretusk_cull: { name: 'The Razorhog Herd', lvl: 19, giver: 'darcy', turnin: 'darcy', pre: ['goretusk_flanks'], text: 'The goretusks trample the farms at Hob\'s Fork. Kill 10 and I will cook you something special.',
+    goretusk_cull: { name: 'The Razorhog Herd', lvl: 19, giver: 'darcy', turnin: 'darcy', pre: ['goretusk_flanks'], text: 'The razorhogs trample the farms at Hob\'s Fork. Kill 10 and I will cook you something special.',
       objs: [{ type: 'kill', mob: 'great_goretusk', n: 10 }], reward: { money: 1000 } },
     bridge_workers: { name: 'Protect the Workers', lvl: 20, giver: 'oslow', turnin: 'oslow', pre: ['murloc_fins'], text: 'The flesheaters still wait under the bridge. Kill 10 of them.',
       objs: [{ type: 'kill', mob: 'murloc_flesheater', n: 10 }], reward: { choice: ['fam_waist24'] } },

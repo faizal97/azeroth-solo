@@ -66,7 +66,7 @@
     objs: [{ type: 'kill', mob: 'winterfall_shaman', n: 10 }], reward: { choice: ['fam_wrist58'] } });
   Q('ws_village', { name: 'Icebrow Village', lvl: 58, giver: 'donova_snowden', turnin: 'donova_snowden', pre: ['ws_shamans'], text: 'Clear the village: 8 ursa and 8 shamans.',
     objs: [{ type: 'kill', mob: 'winterfall_ursa', n: 8 }, { type: 'kill', mob: 'winterfall_shaman', n: 8 }], reward: { choice: ['fam_feet59'] } });
-  Q('ws_frostsabers', { name: 'Sick Snowcats', lvl: 57, giver: 'donova_snowden', turnin: 'donova_snowden', text: 'The frostsabers near the Rock are sick and savage. End it for 12 of them.',
+  Q('ws_frostsabers', { name: 'Sick Snowcats', lvl: 57, giver: 'donova_snowden', turnin: 'donova_snowden', text: 'The snowcats near the Rock are sick and savage. End it for 12 of them.',
     objs: [{ type: 'kill', mob: 'frostsaber_stalker', n: 12 }], reward: { choice: ['fam_hands58'] } });
   Q('ws_pelts', { name: 'Snowcat Pelts', lvl: 58, giver: 'malyfous_darkhammer', turnin: 'malyfous_darkhammer', pre: ['ws_frostsabers'], text: 'Snowcat pelts line the best armour in the north. Bring me 8.',
     objs: [{ type: 'collect', item: 'frostsaber_pelt', n: 8 }], reward: { money: 8000 } });
@@ -90,7 +90,7 @@
     objs: [{ type: 'kill', mob: 'cobalt_scalebane', n: 8 }, { type: 'kill', mob: 'chillwind_chimaera', n: 8 }], reward: { choice: ['fam_chest60'] } });
   Q('ws_snowpaw', { name: 'Old Frostmuzzle', lvl: 59, giver: 'umi_rumplesnicker', turnin: 'umi_rumplesnicker', text: 'The biggest bearkin in Icebrow, Old Frostmuzzle, is rarely seen. Bring me his heart. Gently.',
     objs: [{ type: 'collect', item: 'snowpaw_heart', n: 1 }], reward: { choice: ['fam_ring_rare60'] } });
-  Q('ws_rakshiri', { name: "Wanted: Whiteclaw", lvl: 60, giver: 'donova_snowden', turnin: 'donova_snowden', group: 3, text: "Whiteclaw, the frostsaber matriarch, hunts the Frostburr Hills. Bring me her fang. Take friends.",
+  Q('ws_rakshiri', { name: "Wanted: Whiteclaw", lvl: 60, giver: 'donova_snowden', turnin: 'donova_snowden', group: 3, text: "Whiteclaw, the snowcat matriarch, hunts the Frostburr Hills. Bring me her fang. Take friends.",
     objs: [{ type: 'collect', item: 'rakshiri_fang', n: 1 }], reward: { choice: ['fam_back_rare60'] } });
   Object.assign(D.ACTIVITIES, {
     rakshiri: { name: "Wanted: Whiteclaw", where: 'ice_thistle_hills', size: 3, minLvl: 57, maxLvl: 60, desc: 'Open-world elite in Icewold. 3 players.', boss: 'rakshiri', pulls: [{ scene: 'ice_thistle_hills', label: 'The hills', mobs: ['frostsaber_stalker', 'frostsaber_stalker'] }, { scene: 'ice_thistle_hills', label: 'The hills', mobs: ['ice_thistle_yeti', 'frostsaber_stalker'] }, { scene: 'ice_thistle_hills', label: "Whiteclaw", mobs: ['rakshiri'], boss: true }] },

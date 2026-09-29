@@ -1823,7 +1823,7 @@
       gornek: 'Lok\'tar, young one. Prove your strength in the Blooding Grounds.', kaltunk: 'Watch for the scorpions, they sting hard.',
       galgar: 'Hungry? Bring me cactus apples and I\'ll cook you something.', zureetha: 'The Hollow Eye taints this valley. Help me cleanse it.',
       duokna: 'Food and water for the road, friend.', garthok: 'Bonewall stands ready. The humans at Saltwall are a thorn in our side.',
-      grosk: 'Throm-ka! Rest your bones by the fire.', orgnil: 'The spirits whisper of storms over Rumblestone Ridge.', kaplak: 'Axes, blades, hammers. Orc steel.',
+      grosk: 'Well met, blood-kin! Rest your bones by the fire.', orgnil: 'The spirits whisper of storms over Rumblestone Ridge.', kaplak: 'Axes, blades, hammers. Orc steel.',
       vikar: 'I keep my eyes on the coast.', vanira: 'Mokku the Hexer has turned our people against us. Help me, mon.',
       gryshka: 'Welcome to Vazhrak. Grab a drink.', rahauro: 'Weapons for the Krugar, strong as the earth.', thrall_herald: 'The Warchief has need of heroes.',
       ilthalaine: 'Ishnu-alah. The balance of Dewfern Glade needs tending.', gilshalan: 'Something foul creeps into the glade. Can you feel it?',
@@ -1854,7 +1854,7 @@
       donova_snowden: 'The Icebrow were a peaceful tribe. Something poisoned them.', witch_doctor_mauari: 'Cold magic, strong magic. Mauari has work for you.', umi_rumplesnicker: 'Have you seen a yeti? Aren\'t they wonderful? Please kill some.', malyfous_darkhammer: 'Bring me good materials and I\'ll make you something worth wearing.', haleh: 'The blue brood watches Icewold. Not all of us stayed loyal.', innkeeper_everlook: 'Welcome to Coldcoin. Warm beds, hot food, cold prices.', xizzer_fizzbolt: 'Weapons for the cold. Guaranteed not to freeze. Mostly.',
       admiral_vane: 'Brineholt charts every sea. This island was never on any chart.', lyssa_moonquill: 'Starborn built this place. I want to know what they became.', sergeant_tamsin: 'Keep your blade dry and your back to the landing.', quartermaster_brenn: 'Supplies from Gullhaven. What\'s left of them.', armorer_hale: 'Brineholt steel. It holds an edge in salt water.',
       shadow_hunter_zulkesh: 'Our ancestors knew this reef. Now it knows us again.', deathstalker_voss: 'The drowned are not Hollow Host. That makes them interesting.', hexxer_mazu: 'The loa is screaming, mon. Mazu can hear it.', trader_gikkix: 'Everything\'s for sale on the reef. Even the reef.', armorer_krosh: 'Blades for the Krugar. Sharp, heavy, and cheap enough.',
-      marshal_yeager: "Welcome to the Refuge. Watch the sky, the pterrordax take anyone who wanders.", williden: 'Greenmaw is older than any of us. Old and hungry.', spraggle: 'I lost my tools and my nerve out there. You can have the nerve.', larion: 'The crater is full of wonders. Most of them bite.', quixxil: 'Supplies! Priced for the end of the world, which this place looks like.',
+      marshal_yeager: "Welcome to the Refuge. Watch the sky, the skyjaw take anyone who wanders.", williden: 'Greenmaw is older than any of us. Old and hungry.', spraggle: 'I lost my tools and my nerve out there. You can have the nerve.', larion: 'The crater is full of wonders. Most of them bite.', quixxil: 'Supplies! Priced for the end of the world, which this place looks like.',
       marshal_maxwell: 'Drummond\'s Vigil stands between the Cinderpeak orcs and Stoneharrow. We will not fall back.', oralius: 'The black brood hatches in these hills. Burn every egg you find.', helendis: 'My wife is at Drummond\'s Vigil. I fight so she never has to.', innkeeper_ashmorn: 'Food, drink, and a bed that isn\'t on fire. Mostly.',
       gorzeeki: 'Everything in the Steppes is hot, sharp or angry. Perfect for my work.', thal_kaur: 'The Warchief watches the mountain. So do I.', innkeeper_bruk: 'Rest. The ash gets in everything, even the ale.', shul_kar: 'Steel forged in the Steppes. Nothing else survives the heat.',
       commander_ashlam: 'The Hollow Host never sleeps, and neither does Greyfrost Camp.', argent_officer_a: 'The Lantern Watch counts every fallen undead. Help us raise the count.', alchemist_arbington: 'Bring me samples. The plague can be cured, I know it.', quartermaster_hudson: 'Supplies for the living. Take what you need.',
@@ -1873,7 +1873,7 @@
       stable_alliance: 'A good mount is worth every copper. Ready to learn?', stable_horde: 'Every warrior of the Krugar needs a mount. Show me your gold.',
       crafts_alliance: 'Every trade starts with a pick, a knife or a needle. Which will it be?', crafts_horde: 'Strong arms gather, clever hands craft. Choose your trade.',
       mentor_alliance: 'Helping the new ones through the dungeons is how heroes are made. Your marks are good here.', mentor_horde: 'The strong carry the weak through the fire. The Krugar remembers. Spend your marks well.',
-      denalan: 'The timberlings have been acting so oddly...', saelienne: 'Welcome to Nyrwen, child of the stars.', mydrannul: 'Fine Sylari steel. Look, but do not touch.',
+      denalan: 'The rootlings have been acting so oddly...', saelienne: 'Welcome to Nyrwen, child of the stars.', mydrannul: 'Fine Sylari steel. Look, but do not touch.',
     })[npc] || 'Hello.';
   }
   function openVendor(npc) {

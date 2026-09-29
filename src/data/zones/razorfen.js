@@ -39,7 +39,7 @@
   Object.assign(D.QUESTS, {
     rfk_charlga: { name: 'Mother Grisla', lvl: 33, giver: 'thork', turnin: 'thork', dungeon: 'razorfen_kraul', text: 'The spinehide of The Thorn Warrens follow Mother Grisla, and she follows something darker. End her and bring me her head.',
       objs: [{ type: 'collect', item: 'charlga_head', n: 1 }], reward: { choice: ['fam_back_rare35'] } },
-    rfk_tubers: { name: 'Rootbulbs of the Warrens', lvl: 30, giver: 'helbrim', turnin: 'helbrim', dungeon: 'razorfen_kraul', text: 'The spinehide grow rare blueleaf tubers deep in the Warrens. Bring me 4. I have plans for them.',
+    rfk_tubers: { name: 'Rootbulbs of the Warrens', lvl: 30, giver: 'helbrim', turnin: 'helbrim', dungeon: 'razorfen_kraul', text: 'The spinehide grow rare rootbulbs of the warrens deep in the Warrens. Bring me 4. I have plans for them.',
       objs: [{ type: 'collect', item: 'blueleaf_tuber', n: 4 }], reward: { money: 2500 } },
     rfk_jargba: { name: 'The Skull Staff', lvl: 31, giver: 'thork', turnin: 'thork', dungeon: 'razorfen_kraul', text: 'A spinehide necromancer, Bone Speaker Harrok, raises the dead in the Warrens. Bring me his skull staff.',
       objs: [{ type: 'collect', item: 'jargba_skull', n: 1 }], reward: { choice: ['fam_weapon32'] } },
