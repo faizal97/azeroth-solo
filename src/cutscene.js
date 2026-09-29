@@ -190,7 +190,7 @@
     ] },
     { id: 'md_intro', instance: 'maraudon', title: 'The Gemfall Caves', music: 'dungeon', shots: [
       { bg: 'scene:maraudon_gate', dur: 9, cam: [[0, 0, 1.15], [0, 2, 1.02]], fx: ['fadein'],
-        lines: [{ t: 0.5, text: 'The centaur say the Gemfall Caves are where their people were born, from a wandering god and the Stone Duchess.' }, { t: 5, text: 'Now the caves poison all of Mournwaste.' }] },
+        lines: [{ t: 0.5, text: 'The centaur of Mournwaste keep one law: take nothing from under the ground. Long ago a khan broke it here.' }, { t: 5, text: 'What he woke has poisoned Mournwaste ever since.' }] },
       { bg: 'scene:maraudon_caverns', dur: 10, cam: [[-4, 0, 1.12], [4, 0, 1.12]],
         actors: [{ a: 'mob:putridus_trickster', x: 56, y: 2, w: 22 }, { a: 'mob:constrictor_vine', x: 28, y: 2, w: 20, from: { x: 8, o: 0 }, dur: 2 }],
         lines: [{ t: 0.5, text: 'Satyrs and twisted vines choke the purple caves. Faolan, a keeper of the grove, lies cursed in the falls.' }, { t: 5.5, text: 'Deeper still, the earth itself moves.' }] },

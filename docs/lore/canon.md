@@ -43,7 +43,7 @@ Years are counted back from the start of the game.
 | When | What happened |
 |---|---|
 | ~10,000 years ago | The Heartfire bursts (the Drowning). The Starborn city of Sael'anor sinks. Prince Aeldran bargains with Nal'veshra, the Deepmother, to keep his court alive under the sea. The Wavebreaker trolls and their sea spirit Shal'zua sink with the isle. The wood elves' moon temple on the Elderglen coast is swallowed (the Tidehollow Deeps). |
-| Long ago | The Briarmother, a spirit of the thorns, lies down to sleep under the southern Scrublands; the Thorn Warrens grow from her roots. A wandering god dies, and the Stone Princess Ghesra carries him into the Gemfall Caves. |
+| Long ago | The Briarmother, a spirit of the thorns, lies down to sleep under the southern Scrublands; the Thorn Warrens grow from her roots. A centaur khan breaks the oldest law of Mournwaste (take nothing from under the ground) and digs into the Gemfall Caves; Ghesra, the Stone Duchess, buries his tribe and her anger has poisoned the land ever since. |
 | Long before the Long War | The black dragon Ossarak tears the world open. The Kinloch elves call him the Black Ruin. He is driven off, never destroyed. |
 | ~12–20 years ago | The Long War between the Accord and the Krugar. |
 | ~12 years ago | The war ends. Everyone rebuilds on Ledger credit: Kingsmere's walls, Longfield's farms, the Slagborn empire, Blackwell's shipyard. Grask leads the orcs to Dunescar. The plague takes Wexmoor, the Hollow Host rises, the Order of the Pyre forms, Cairn makes werewolves of Needlewood, and Graymouth's lord bars its gates with the living inside. |
@@ -119,6 +119,7 @@ ones the story leans on:
 - **The Sunken Archive.** Sael'anor's great library (Accord dungeon).
 - **The Temple of Shal'zua.** The Wavebreakers' temple (Krugar dungeon).
 - **The Tidecrown Citadel.** Aeldran's seat; the 10-player raid, shared by both factions.
+- **The Gemfall Caves.** Under Mournwaste. Ghesra, the Stone Duchess, is a spirit of the deep stone who grows gems; she is nobody's mother and nobody's widow. The centaur's law forbids digging, a khan broke it, and every tribe says he was from another one.
 
 ## Reveals
 

@@ -15,7 +15,7 @@
   gear('celebras_robe', "Keeper's Robe", 'chest', { atype: 'cloth', lvl: 48, armor: 104, stats: { int: 17, spi: 12 }, sp: 20, icon: 'chest_cloth', sell: 8000 });
   gear('landslide_maul', 'Rockgrip Maul', 'weapon', { wtype: 'mace', lvl: 49, dmg: [62, 104], speed: 2.8, stats: { str: 17, sta: 11 }, icon: 'mace', sell: 8600 });
   gear('landslide_legs', 'Granite Skin Leggings', 'legs', { atype: 'mail', lvl: 49, armor: 350, stats: { str: 16, sta: 14 }, icon: 'legs', sell: 8400 });
-  gear('theradras_blade', "Ghesra' Blade", 'weapon', { wtype: 'sword', lvl: 50, dmg: [64, 106], speed: 2.6, stats: { agi: 16, str: 12 }, icon: 'sword', sell: 9200 });
+  gear('theradras_blade', "Ghesra's Blade", 'weapon', { wtype: 'sword', lvl: 50, dmg: [64, 106], speed: 2.6, stats: { agi: 16, str: 12 }, icon: 'sword', sell: 9200 });
   gear('theradras_robe', "Duchess's Silk Robe", 'chest', { atype: 'cloth', lvl: 50, armor: 108, stats: { int: 19, spi: 14 }, sp: 24, icon: 'chest_cloth', sell: 9000 });
   gear('theradras_leather', 'Earthen Leather Vest', 'chest', { atype: 'leather', lvl: 50, armor: 230, stats: { agi: 19, sta: 14 }, icon: 'chest_leather', sell: 9000 });
   gear('theradras_plate', 'Crystal-Studded Hauberk', 'chest', { atype: 'mail', lvl: 50, armor: 420, stats: { str: 19, sta: 16 }, icon: 'chest_mail', sell: 9200 });
@@ -34,11 +34,11 @@
 
   const A = (id, q) => { q.faction = 'alliance'; D.QUESTS[id] = q; };
   const H = (id, q) => { q.faction = 'horde'; D.QUESTS[id] = q; };
-  A('md_theradras_a', { name: 'The Stone Duchess', lvl: 50, giver: 'shandris', turnin: 'shandris', dungeon: 'maraudon', text: 'The elemental princess Ghesra poisons Mournwaste from the depths of The Gemfall Caves. End her and bring me her gem.',
+  A('md_theradras_a', { name: 'The Stone Duchess', lvl: 50, giver: 'shandris', turnin: 'shandris', dungeon: 'maraudon', text: 'Ghesra, the Stone Duchess, poisons Mournwaste from the depths of The Gemfall Caves. End her and bring me her gem.',
     objs: [{ type: 'collect', item: 'theradras_gem', n: 1 }], reward: { choice: ['fam_back_rare50'] } });
-  H('md_theradras_h', { name: 'The Stone Duchess', lvl: 50, giver: 'hadoken', turnin: 'hadoken', dungeon: 'maraudon', text: 'Ghesra, the Stone Duchess corrupts the land from The Gemfall Caves. End her and bring me her gem.',
+  H('md_theradras_h', { name: 'The Stone Duchess', lvl: 50, giver: 'hadoken', turnin: 'hadoken', dungeon: 'maraudon', text: 'Ghesra, the Stone Duchess, corrupts the land from The Gemfall Caves. End her and bring me her gem.',
     objs: [{ type: 'collect', item: 'theradras_gem', n: 1 }], reward: { choice: ['fam_back_rare50'] } });
-  A('md_celebras', { name: 'The Scepter of Faolan', lvl: 48, giver: 'latronicus', turnin: 'latronicus', dungeon: 'maraudon', text: 'Faolan, a keeper of the grove, was cursed in The Gemfall Caves. His scepter may break the curse. Bring it to me.',
+  A('md_celebras', { name: 'The Scepter of Faolan', lvl: 48, giver: 'latronicus', turnin: 'latronicus', dungeon: 'maraudon', text: 'Faolan, a keeper of the grove, went down into The Gemfall Caves to calm the Duchess, and she cursed him. His scepter may break the curse. Bring it to me.',
     objs: [{ type: 'collect', item: 'theradras_scepter', n: 1 }], reward: { choice: ['fam_weapon48'] } });
   H('md_vyletongue', { name: "Venomlip's Blade", lvl: 48, giver: 'orwin', turnin: 'orwin', dungeon: 'maraudon', text: 'The satyr lord Venomlip rules the caverns\' upper halls. Take his blade.',
     objs: [{ type: 'collect', item: 'vyletongue_blade', n: 1 }], reward: { choice: ['fam_weapon48'] } });

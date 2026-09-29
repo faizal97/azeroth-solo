@@ -148,17 +148,17 @@
     } },
 
     dg_maraudon: { title: 'The Gemfall Caves', section: 'dungeon', dungeon: 'maraudon', text: [
-      'The centaur tribes of Mournwaste agree on little, but all of them trace their line to these caves and to the wandering god the Stone Princess loved. He has been dead for ages. The tribes tell different stories of how he died, and each one blames another.',
-      'Ghesra never left him. She has kept her grief in the deepest caverns for longer than anyone can count, and over that time it has turned to poison. The water that runs out of The Gemfall Caves carries it, and the land it touches withers.',
-      'Others have come to feed on the rot. Satyrs, wood elves who once served the Unmaking, hold the upper halls under Lord Venomlip. Vines and slimes grow fat in the dark. The druids who knew Faolan still believe his scepter can bring him back to himself.',
+      'The centaur tribes of Mournwaste agree on little, but they all keep one law: nothing is taken from under the ground. The Gemfall Caves belong to Ghesra, the Stone Duchess, a spirit of the deep stone who grows her gems as slowly as a tree grows rings.',
+      'Long ago a khan broke the law. He took his tribe down into the caves with picks and carts, and none of them came back up. Ghesra woke, buried them all, and has not slept since. Her anger seeps into the water that runs out of The Gemfall Caves, and the land it touches withers. Every tribe tells the story, and every tribe says the khan was from another one.',
+      'Others have come to feed on the rot. Satyrs hold the upper halls under Lord Venomlip. Vines and slimes grow fat in the dark. The druids who knew Faolan still believe his scepter can bring him back to himself.',
       'Krugar and Accord each hold a corner of Mournwaste, and both have watched it die around them. Whatever else divides them, neither wants what lives in The Gemfall Caves to spread any further.',
     ], bosses: {
       noxxion: 'A living mass of the caverns\' poison, grown in the water that seeps up from the depths. Pieces of it break away and crawl off to spread the rot.',
       razorlash: 'A thorned creature grown from the corrupted roots of the upper caves. The satyrs let it thrive, since it strangles anything that wanders in.',
       lord_vyletongue: 'A satyr lord who claimed the upper halls of The Gemfall Caves for his kind. He cares nothing for the centaur or the earth, only for the corruption and what he can make of it.',
-      celebras_the_cursed: 'A keeper of the grove, twisted by the curse of the falls. What remains of him still tends the water, but he no longer knows what he is tending it for.',
-      landslide: 'A great earth elemental that guards the way to the princess. It is less a servant than a piece of the mountain that woke up angry.',
-      princess_theradras: 'The elemental princess of earth and, by the centaur\'s telling, their mother. Her grief for the wandering god has poisoned her caves and, through them, all of Mournwaste.',
+      celebras_the_cursed: 'A keeper of the grove who went down to make peace with the Duchess. She cursed him instead. What remains of him still tends the falls, but he no longer knows what he is tending them for.',
+      landslide: 'A great earth elemental that guards the way to the Duchess. It is less a servant than a piece of the mountain that woke up angry.',
+      princess_theradras: 'The spirit of the deep stone under Mournwaste. Picks woke her, and she has never forgiven it. Her anger has poisoned her caves and, through them, all of Mournwaste.',
     } },
     dg_blackrock_depths: { title: 'Cinderpeak Depths', section: 'dungeon', dungeon: 'blackrock_depths', text: [
       'The Slagborn were the proudest of the dwarven clans, and the war with their kin went badly for them. Grimmark reached for a power none of them understood. The fire he woke broke their old capital apart, and its ruins still smoulder in the Cinderfields.',
@@ -386,8 +386,8 @@
       'The wilds belong to neither. Stonegut ogres hold the old roads, Mossgut gnolls raid the hills, harpies hunt the highlands and the Spitecoil naga come up from the sea.',
     ] },
     zn_desolace: { title: 'Mournwaste', section: 'zone', zone: 'Mournwaste', text: [
-      'Mournwaste is a grey waste of dust and bone. The centaur say it was not always so. Their tribes came from a wandering god and Ghesra, a princess of the earth.',
-      'The wandering god was killed, and Ghesra carried him down into the Gemfall Caves. Her grief has soaked into the ground ever since. The land above is poisoned, and the caves below have filled with twisted things.',
+      'Mournwaste is a grey waste of dust and bone. The centaur say it was grassland once, before a khan went digging in the Gemfall Caves and woke Ghesra, the Stone Duchess.',
+      'Ghesra buried the khan and his whole tribe. Her anger has soaked into the ground ever since. The land above is poisoned, and the caves below have filled with twisted things.',
       'The Wood Elf Wardens of Starfeather and the hornfolk of Camp Ruga both send people into The Gemfall Caves. They go for the same reason. The poison is spreading.',
     ] },
     zn_un_goro_crater: { title: 'Greenmaw Crater', section: 'zone', zone: 'Greenmaw Crater', text: [

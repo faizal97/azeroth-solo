@@ -1,5 +1,5 @@
 /* art_maraudon.js — The Gemfall Caves art for Realm of Loner (dungeon, levels 46-50: the sacred caverns of the centaur and the
- * earth beneath Mournwaste, corrupted by the elemental princess Ghesra; the purple-crystal caverns with their
+ * earth beneath Mournwaste, woken and turned to poison by Ghesra, the Stone Duchess; the purple-crystal caverns with their
  * poison vines, the orange-crystal falls, and the deep throne chamber with its dark pool; the Putridus tricksters,
  * constrictor vines and cavern lurkers, and the bosses Sludgewell, Thornlash, Lord Venomlip, Faolan the Cursed,
  * Landslide and Ghesra, the Stone Duchess).

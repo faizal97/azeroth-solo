@@ -5019,7 +5019,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": "Ghesra, the Stone Princess"
+  "new": "Ghesra, the Stone Duchess"
  },
  "Bloodpetal Lasher": {
   "kind": "monster",
@@ -8259,7 +8259,7 @@
   "kind": "quest",
   "region": "Feralas",
   "status": "rename",
-  "new": "The Stone Princess"
+  "new": "The Stone Duchess"
  },
  "The Scepter of Celebras": {
   "kind": "quest",
@@ -11787,7 +11787,7 @@
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": "Ghesra' Blade"
+  "new": "Ghesra's Blade"
  },
  "Princess's Silk Robe": {
   "kind": "item",
@@ -16668,6 +16668,12 @@
   "new": "Bone Mask"
  },
  "Agamaggan": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Zaetar": {
   "kind": "lore",
   "region": "",
   "status": "forbid",
