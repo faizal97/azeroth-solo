@@ -333,25 +333,25 @@
   "kind": "region",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Ferndeep"
  },
  "Un'Goro Crater": {
   "kind": "region",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Greenmaw Crater"
  },
  "Burning Steppes": {
   "kind": "region",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "The Cinderfields"
  },
  "Western Plaguelands": {
   "kind": "region",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "West Rotmoor"
  },
  "Winterspring": {
   "kind": "region",
@@ -1221,127 +1221,127 @@
   "kind": "place",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Camp Ruga"
  },
  "Frayfeather Highlands": {
   "kind": "place",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Tatterwing Highlands"
  },
  "Woodpaw Hills": {
   "kind": "place",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Mossgut Hills"
  },
  "Gordunni Outpost": {
   "kind": "place",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Stonegut Outpost"
  },
  "The Forgotten Coast": {
   "kind": "place",
   "region": "Feralas",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Lower Wilds": {
   "kind": "place",
   "region": "Feralas",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Maraudon": {
   "kind": "place",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "The Gemfall Caves"
  },
  "Desolace": {
   "kind": "place",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Mournwaste"
  },
  "Marshal's Refuge": {
   "kind": "place",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Golakka Hot Springs": {
   "kind": "place",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Steamcrack Springs"
  },
  "Terror Run": {
   "kind": "place",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Tooth Run"
  },
  "The Slithering Scar": {
   "kind": "place",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "The Hive Scar"
  },
  "Fire Plume Ridge": {
   "kind": "place",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Smokeplume Ridge"
  },
  "Lakkari Tar Pits": {
   "kind": "place",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Blacktar Pits"
  },
  "The Marshlands": {
   "kind": "place",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Morgan's Vigil": {
   "kind": "place",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Drummond's Vigil"
  },
  "Flame Crest": {
   "kind": "place",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Brand Crest"
  },
  "Dreadmaul Rock": {
   "kind": "place",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Brokemaw Rock"
  },
  "Ruins of Thaurissan": {
   "kind": "place",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Ruins of Grimmark"
  },
  "Blackrock Stronghold": {
   "kind": "place",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak Stronghold"
  },
  "Terror Wing Path": {
   "kind": "place",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Broodwing Path"
  },
  "Blackrock Mountain": {
   "kind": "place",
@@ -1353,61 +1353,61 @@
   "kind": "place",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Greyfrost Camp"
  },
  "The Bulwark": {
   "kind": "place",
   "region": "Western Plaguelands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Felstone Field": {
   "kind": "place",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Gloomstone Field"
  },
  "Dalson's Tears": {
   "kind": "place",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Harmon's Tears"
  },
  "Ruins of Andorhal": {
   "kind": "place",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Ruins of Elmsworth"
  },
  "Hearthglen": {
   "kind": "place",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Morrowglen"
  },
  "The Writhing Haunt": {
   "kind": "place",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "The Weeping Haunt"
  },
  "Caer Darrow": {
   "kind": "place",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Castle Ardmore"
  },
  "Stratholme": {
   "kind": "place",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Graymouth"
  },
  "Eastern Plaguelands": {
   "kind": "place",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "East Rotmoor"
  },
  "Everlook": {
   "kind": "place",
@@ -1491,7 +1491,7 @@
   "kind": "place",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "The Magma Throne"
  },
  "Marshal McBride": {
   "kind": "npc",
@@ -2499,175 +2499,175 @@
   "kind": "npc",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Commander Ilara Starfeather"
  },
  "Latronicus Moonspear": {
   "kind": "npc",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Corin Swiftbow"
  },
  "Innkeeper Shyria": {
   "kind": "npc",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Lysa"
  },
  "Vivianna": {
   "kind": "npc",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Vesna"
  },
  "Hadoken Swiftstrider": {
   "kind": "npc",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Hado of the Far Paths"
  },
  "Orwin Gizzmick": {
   "kind": "npc",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Orbin Fizzlecog"
  },
  "Innkeeper Greul": {
   "kind": "npc",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Durga"
  },
  "Krueg Skullsplitter": {
   "kind": "npc",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Kurr Bonegrin"
  },
  "Marshal Yeager": {
   "kind": "npc",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Marshal Stoke"
  },
  "Williden Marshal": {
   "kind": "npc",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Wendel Hobb"
  },
  "Spraggle Frock": {
   "kind": "npc",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Pip Frockle"
  },
  "Larion": {
   "kind": "npc",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Lorand"
  },
  "Quixxil": {
   "kind": "npc",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Quibble"
  },
  "Marshal Maxwell": {
   "kind": "npc",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Marshal Kettering"
  },
  "Oralius": {
   "kind": "npc",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Ossian"
  },
  "Helendis Riverhorn": {
   "kind": "npc",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Hela of the River"
  },
  "Quartermaster Ashmorn": {
   "kind": "npc",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Quartermaster Harl"
  },
  "Gorzeeki Wildeyes": {
   "kind": "npc",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Gizzeki Sparks"
  },
  "Thal'kaur": {
   "kind": "npc",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Thakka"
  },
  "Innkeeper Bruk": {
   "kind": "npc",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Rugga"
  },
  "Shul'kar": {
   "kind": "npc",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Shukka"
  },
  "Commander Ashlam Valorfist": {
   "kind": "npc",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Commander Braddock"
  },
  "Argent Officer Pureheart": {
   "kind": "npc",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Lantern Officer Brighthand"
  },
  "Alchemist Arbington": {
   "kind": "npc",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Alchemist Pennifer"
  },
  "Quartermaster Hudson": {
   "kind": "npc",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Quartermaster Hurst"
  },
  "High Executor Derrington": {
   "kind": "npc",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "High Executor Colm"
  },
  "Argent Officer Garush": {
   "kind": "npc",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Lantern Officer Ruzh"
  },
  "Apothecary Dithers": {
   "kind": "npc",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Apothecary Nettle"
  },
  "Quartermaster Lauren": {
   "kind": "npc",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Quartermaster Hesketh"
  },
  "Donova Snowden": {
   "kind": "npc",
@@ -2774,7 +2774,7 @@
  "Artisan Hollis": {
   "kind": "npc",
   "region": "Feralas",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Stablemaster Rowan": {
@@ -4395,7 +4395,7 @@
   "kind": "boss or named",
   "region": "Wetlands",
   "status": "rename",
-  "new": "Longtooth Matriarch"
+  "new": "Scalehide Matriarch"
  },
  "Stranglethorn Raptor": {
   "kind": "monster",
@@ -4893,55 +4893,55 @@
   "kind": "monster",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Tatterwing Stagwing"
  },
  "Frayfeather Skystormer": {
   "kind": "monster",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Tatterwing Skystormer"
  },
  "Woodpaw Reaver": {
   "kind": "monster",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Mossgut Reaver"
  },
  "Woodpaw Mystic": {
   "kind": "monster",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Mossgut Mystic"
  },
  "Gordunni Ogre": {
   "kind": "monster",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Stonegut Ogre"
  },
  "Gordunni Mage-Lord": {
   "kind": "monster",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Stonegut Mage-Lord"
  },
  "Hatecrest Warrior": {
   "kind": "monster",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Spitecoil Warrior"
  },
  "Hatecrest Siren": {
   "kind": "monster",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Spitecoil Siren"
  },
  "Longtooth Runner": {
   "kind": "monster",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Greymuzzle Runner"
  },
  "Wandering Forest Walker": {
   "kind": "monster",
@@ -4953,25 +4953,25 @@
   "kind": "boss or named",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Sister Hisk"
  },
  "Old Grizzlegut": {
   "kind": "boss or named",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Old Bramblebelly"
  },
  "Lord Shalzaru": {
   "kind": "boss or named",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Lord Nazzir"
  },
  "Putridus Trickster": {
   "kind": "monster",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Graverot Trickster"
  },
  "Constrictor Vine": {
   "kind": "monster",
@@ -5019,43 +5019,43 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Ghesra, the Stone Princess"
  },
  "Bloodpetal Lasher": {
   "kind": "monster",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Redbloom Lasher"
  },
  "Un'Goro Thunderer": {
   "kind": "monster",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Greenmaw Thunderer"
  },
  "Un'Goro Stomper": {
   "kind": "monster",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Greenmaw Stomper"
  },
  "Frenzied Pterrordax": {
   "kind": "monster",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Frenzied Skyjaw"
  },
  "Gorishi Wasp": {
   "kind": "monster",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Krizzik Wasp"
  },
  "Gorishi Reaver": {
   "kind": "monster",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Krizzik Reaver"
  },
  "Fire Plume Elemental": {
   "kind": "monster",
@@ -5066,7 +5066,7 @@
  "Lava Surger": {
   "kind": "monster",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Tar Beast": {
@@ -5085,49 +5085,49 @@
   "kind": "monster",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Greenmaw Gorilla"
  },
  "Bloodpetal Trapper": {
   "kind": "monster",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Redbloom Trapper"
  },
  "Rex Ashil": {
   "kind": "boss or named",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Rex Scorchtail"
  },
  "King Mosh": {
   "kind": "boss or named",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "King Stomp"
  },
  "Firegut Ogre": {
   "kind": "monster",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Smokebelly Ogre"
  },
  "Firegut Brute": {
   "kind": "monster",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Smokebelly Brute"
  },
  "Blackrock Battlemaster": {
   "kind": "monster",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak Battlemaster"
  },
  "Blackrock Flamecaller": {
   "kind": "monster",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak Flamecaller"
  },
  "Black Broodling": {
   "kind": "monster",
@@ -5138,14 +5138,14 @@
  "Black Dragonspawn": {
   "kind": "monster",
   "region": "Burning Steppes",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Flamekin Spitter": {
   "kind": "monster",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Emberling Spitter"
  },
  "Blazing Elemental": {
   "kind": "monster",
@@ -5157,13 +5157,13 @@
   "kind": "boss or named",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Old Smokejaw"
  },
  "Volchan": {
   "kind": "boss or named",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Scorch"
  },
  "Anvilrage Warden": {
   "kind": "monster",
@@ -5222,7 +5222,7 @@
  "Plaguehound": {
   "kind": "monster",
   "region": "Western Plaguelands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Diseased Ghoul": {
@@ -5240,20 +5240,20 @@
  "Scourge Warder": {
   "kind": "monster",
   "region": "Western Plaguelands",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Hollow Host Warder"
  },
  "Scarlet Sentinel": {
   "kind": "monster",
   "region": "Western Plaguelands",
-  "status": "keep",
-  "new": null
+  "status": "rename",
+  "new": "Pyre Warden"
  },
  "Scarlet Lightsworn": {
   "kind": "monster",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Pyre Lightsworn"
  },
  "Rotting Behemoth": {
   "kind": "monster",
@@ -5265,13 +5265,13 @@
   "kind": "boss or named",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Mangefang"
  },
  "Araj the Summoner": {
   "kind": "boss or named",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Vashti the Summoner"
  },
  "Scholomance Acolyte": {
   "kind": "monster",
@@ -5295,7 +5295,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Skreel the Herald"
  },
  "Jandice Barov": {
   "kind": "boss or named",
@@ -5325,7 +5325,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Lord Anton Varga"
  },
  "Darkmaster Gandling": {
   "kind": "boss or named",
@@ -5391,7 +5391,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Baron Mortvale"
  },
  "Winterfall Ursa": {
   "kind": "monster",
@@ -5577,7 +5577,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Steward Cindral"
  },
  "Ragnaros": {
   "kind": "boss or named",
@@ -7659,7 +7659,7 @@
   "kind": "quest",
   "region": "Wetlands",
   "status": "rename",
-  "new": "Wanted: Longtooth Matriarch"
+  "new": "Wanted: Scalehide Matriarch"
  },
  "The Rebels": {
   "kind": "quest",
@@ -8145,133 +8145,133 @@
   "kind": "quest",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Tatterwing Hippogryphs"
  },
  "Frayfeather Plumes": {
   "kind": "quest",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Tatterwing Plumes"
  },
  "Skystormers": {
   "kind": "quest",
   "region": "Feralas",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Woodpaw": {
   "kind": "quest",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "The Mossgut"
  },
  "Woodpaw Manes": {
   "kind": "quest",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Mossgut Manes"
  },
  "The Gordunni": {
   "kind": "quest",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "The Stonegut"
  },
  "The Gordunni Scrolls": {
   "kind": "quest",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "The Stonegut Scrolls"
  },
  "Ogre Tusks": {
   "kind": "quest",
   "region": "Feralas",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Hatecrest": {
   "kind": "quest",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "The Spitecoil"
  },
  "The Sirens": {
   "kind": "quest",
   "region": "Feralas",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Hatecrest Scales": {
   "kind": "quest",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Spitecoil Scales"
  },
  "The Longtooth Pack": {
   "kind": "quest",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "The Greymuzzle Pack"
  },
  "The Forest Walkers": {
   "kind": "quest",
   "region": "Feralas",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Highland Road": {
   "kind": "quest",
   "region": "Feralas",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Back to the Hills": {
   "kind": "quest",
   "region": "Feralas",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Outpost": {
   "kind": "quest",
   "region": "Feralas",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Hold the Coast": {
   "kind": "quest",
   "region": "Feralas",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Wilds": {
   "kind": "quest",
   "region": "Feralas",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Wanted: Lord Shalzaru": {
   "kind": "quest",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Wanted: Lord Nazzir"
  },
  "Corruption of Earth and Seed": {
   "kind": "quest",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "The Stone Princess"
  },
  "The Scepter of Celebras": {
   "kind": "quest",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "The Scepter of Faolan"
  },
  "Vyletongue's Blade": {
   "kind": "quest",
   "region": "Feralas",
   "status": "rename",
-  "new": null
+  "new": "Venomlip's Blade"
  },
  "The Crater": {
   "kind": "quest",
@@ -8283,300 +8283,300 @@
   "kind": "quest",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Redbloom Sprouts"
  },
  "Lashers": {
   "kind": "quest",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Thunderers": {
   "kind": "quest",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Stompers": {
   "kind": "quest",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Pterrordax Eggs": {
   "kind": "quest",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Skyjaw Eggs"
  },
  "The Gorishi Hive": {
   "kind": "quest",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "The Krizzik Hive"
  },
  "The Reavers": {
   "kind": "quest",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Lava Surgers": {
   "kind": "quest",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Tar Beasts": {
   "kind": "quest",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Tar Lurkers": {
   "kind": "quest",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Power Crystals": {
   "kind": "quest",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Gorillas of the Marshlands": {
   "kind": "quest",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Bloodpetal Trappers": {
   "kind": "quest",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Redbloom Trappers"
  },
  "The Hot Springs": {
   "kind": "quest",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Back to the Hive": {
   "kind": "quest",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Burning Ridge": {
   "kind": "quest",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Marshland Patrol": {
   "kind": "quest",
   "region": "Un'Goro Crater",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Wanted: King Mosh": {
   "kind": "quest",
   "region": "Un'Goro Crater",
   "status": "rename",
-  "new": null
+  "new": "Wanted: King Stomp"
  },
  "Firegut Tusks": {
   "kind": "quest",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Smokebelly Tusks"
  },
  "Firegut Brutes": {
   "kind": "quest",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Smokebelly Brutes"
  },
  "The Ruins of Thaurissan": {
   "kind": "quest",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "The Ruins of Grimmark"
  },
  "Blazing Elementals": {
   "kind": "quest",
   "region": "Burning Steppes",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Blackrock Clan": {
   "kind": "quest",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "The Cinderpeak Clan"
  },
  "Blackrock Signets": {
   "kind": "quest",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Cinderpeak Signets"
  },
  "The Flamecallers": {
   "kind": "quest",
   "region": "Burning Steppes",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Terror Wing": {
   "kind": "quest",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Broodwing"
  },
  "The Dragonspawn": {
   "kind": "quest",
   "region": "Burning Steppes",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Rock": {
   "kind": "quest",
   "region": "Burning Steppes",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Siege the Stronghold": {
   "kind": "quest",
   "region": "Burning Steppes",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Wanted: Volchan": {
   "kind": "quest",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "Wanted: Scorch"
  },
  "Jail Break!": {
   "kind": "quest",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "The Detention Block"
  },
  "The Emperor": {
   "kind": "quest",
   "region": "Burning Steppes",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Heart of the Mountain": {
   "kind": "quest",
   "region": "Burning Steppes",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Golem Lord": {
   "kind": "quest",
   "region": "Burning Steppes",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Plaguehounds": {
   "kind": "quest",
   "region": "Western Plaguelands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Plaguehound Fangs": {
   "kind": "quest",
   "region": "Western Plaguelands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Executioners": {
   "kind": "quest",
   "region": "Western Plaguelands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Axe Heads": {
   "kind": "quest",
   "region": "Western Plaguelands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Andorhal": {
   "kind": "quest",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Elmsworth"
  },
  "The Lightsworn": {
   "kind": "quest",
   "region": "Western Plaguelands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Hearthglen Badges": {
   "kind": "quest",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Morrowglen Badges"
  },
  "Clear the Fields": {
   "kind": "quest",
   "region": "Western Plaguelands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Hold Andorhal": {
   "kind": "quest",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Hold Elmsworth"
  },
  "Wanted: Araj the Summoner": {
   "kind": "quest",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "Wanted: Vashti the Summoner"
  },
  "The Darkmaster": {
   "kind": "quest",
   "region": "Western Plaguelands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Herald": {
   "kind": "quest",
   "region": "Western Plaguelands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Barov Family Fortune": {
   "kind": "quest",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "The Varga Family Fortune"
  },
  "Dead Man's Plea": {
   "kind": "quest",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "The Baron's Doom"
  },
  "The True Masters": {
   "kind": "quest",
   "region": "Western Plaguelands",
   "status": "rename",
-  "new": null
+  "new": "The Demon in the Order"
  },
  "The Archive": {
   "kind": "quest",
   "region": "Western Plaguelands",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Winterfall Runners": {
@@ -8691,13 +8691,13 @@
   "kind": "quest",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "The King Below's Steward"
  },
  "The Firelord Wakes": {
   "kind": "quest",
   "region": "Burning Steppes",
   "status": "rename",
-  "new": null
+  "new": "The King Below Wakes"
  },
  "The Smuggler's Ledger": {
   "kind": "quest",
@@ -8781,7 +8781,7 @@
   "kind": "dungeon or wanted",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "The Blackcloister"
  },
  "Krag'vesh": {
   "kind": "dungeon or wanted",
@@ -15658,5 +15658,197 @@
   "region": "Tanaris",
   "status": "rename",
   "new": "Coinsworth"
+ },
+ "Frayfeather": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Tatterwing"
+ },
+ "Woodpaw": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Mossgut"
+ },
+ "Gordunni": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Stonegut"
+ },
+ "Hatecrest": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Spitecoil"
+ },
+ "Longtooth": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Greymuzzle"
+ },
+ "Theradras": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ghesra"
+ },
+ "Celebras": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Faolan"
+ },
+ "Vyletongue": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Venomlip"
+ },
+ "Un'Goro": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Greenmaw"
+ },
+ "Bloodpetal": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Redbloom"
+ },
+ "Pterrordax": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Skyjaw"
+ },
+ "Gorishi": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Krizzik"
+ },
+ "Silithid": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hiveborn"
+ },
+ "Devilsaur": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Thundertooth"
+ },
+ "Firegut": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Smokebelly"
+ },
+ "Dreadmaul": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Brokemaw"
+ },
+ "Molten Core": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Magma Throne"
+ },
+ "Flamekin": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Emberling"
+ },
+ "Argelmach": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Golemsmith Kragg"
+ },
+ "Executus": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Cindral"
+ },
+ "Plaguelands": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Rotmoor"
+ },
+ "Argent": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Lantern"
+ },
+ "Gandling": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Headmaster Sallow"
+ },
+ "Kirtonos": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Skreel"
+ },
+ "Barov": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Varga"
+ },
+ "Rivendare": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Mortvale"
+ },
+ "Royal Apothecary Society": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Royal Apothecary Guild"
+ },
+ "Mojache": {
+  "kind": "lore",
+  "region": "Feralas",
+  "status": "rename",
+  "new": "Ruga"
+ },
+ "Golakka": {
+  "kind": "lore",
+  "region": "Un'Goro Crater",
+  "status": "rename",
+  "new": "Steamcrack"
+ },
+ "Lakkari": {
+  "kind": "lore",
+  "region": "Un'Goro Crater",
+  "status": "rename",
+  "new": "Blacktar"
+ },
+ "Chillwind": {
+  "kind": "lore",
+  "region": "Western Plaguelands",
+  "status": "rename",
+  "new": "Greyfrost"
+ },
+ "Araj": {
+  "kind": "lore",
+  "region": "Western Plaguelands",
+  "status": "rename",
+  "new": "Vashti"
  }
 }
