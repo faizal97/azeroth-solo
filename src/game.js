@@ -81,6 +81,17 @@
     writeIndex(readIndex().filter((c) => c.id !== id));
     if (G.S && G.S.id === id) { G.S = null; G.fight = null; G.pUnit = null; }
   };
+  // A character's stored save without loading it (no catch-up, no fixes), and storing one that is not being played.
+  // Cloud save uses these to back up every character and to bring one in under its own id.
+  G.readSave = function (id) { try { return JSON.parse(ls.get(CHAR_KEY(id)) || 'null'); } catch (e) { return null; } };
+  G.writeSave = function (S) {
+    if (!S || !S.id) return false;
+    if (G.S && G.S.id === S.id) { G.S = null; G.fight = null; G.pUnit = null; } // the caller loads it again with G.load
+    if (!Array.isArray(S.chat)) S.chat = [];
+    const ok = ls.set(CHAR_KEY(S.id), JSON.stringify(S));
+    const idx = readIndex().filter((c) => c.id !== S.id); idx.push(summary(S)); writeIndex(idx);
+    return ok;
+  };
   G.load = function (id) {
     migrate();
     if (!id) { const list = G.characters(); if (!list.length) return null; id = list[0].id; }
@@ -139,14 +150,15 @@
   const toB64 = (u8) => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
   const fromB64 = (b) => { const s = atob(b); const u8 = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u8[i] = s.charCodeAt(i); return u8; };
   const pipe = async (u8, Stream) => { const cs = new Stream('deflate-raw'); const w = cs.writable.getWriter(); w.write(u8); w.close(); return new Uint8Array(await new Response(cs.readable).arrayBuffer()); };
-  G.exportSave = async function () {
-    G.save();
-    const json = JSON.stringify(Object.assign({}, G.S, { chat: [], pending: [] }));
+  // encodeSave/decodeSave turn any character into a code and back; cloud save (cloud.js) uses them for its files
+  G.encodeSave = async function (S) {
+    const json = JSON.stringify(Object.assign({}, S, { chat: [], pending: [] }));
     if (typeof CompressionStream === 'undefined') return btoa(unescape(encodeURIComponent(json)));
     const b = toB64(await pipe(new TextEncoder().encode(json), CompressionStream));
     return `${SAVE_TAG}.${b.length}.${b}`;
   };
-  G.importSave = async function (str) {
+  G.exportSave = async function () { G.save(); return G.encodeSave(G.S); };
+  G.decodeSave = async function (str) {
     let code = String(str || '').replace(/\s+/g, ''); // messaging apps add line breaks and spaces
     let json;
     const at = code.indexOf(SAVE_TAG + '.');
@@ -160,7 +172,11 @@
       try { json = decodeURIComponent(escape(atob(code))); } catch (e) { throw new Error('That is not a save code. Copy it again and paste the whole thing.'); }
     }
     let S; try { S = JSON.parse(json); } catch (e) { throw new Error('That code is incomplete or damaged. Copy it again and paste the whole thing.'); }
-    if (!S.player || !S.bots) throw new Error('That is not an Realm of Loner save.');
+    if (!S.player || !S.bots) throw new Error('That is not a Realm of Loner save.');
+    return S;
+  };
+  G.importSave = async function (str) {
+    const S = await G.decodeSave(str);
     if (G.characters().length >= G.MAX_CHARS) throw new Error(`You already have ${G.MAX_CHARS} characters. Delete one first.`);
     if (G.S) G.save(); // keep the character you are playing
     // an imported save becomes its own character; the caller opens it with G.load so it goes through the same fixes as any old save
