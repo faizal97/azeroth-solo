@@ -2051,6 +2051,9 @@
           h('button', { class: 'btn alt', onclick: () => { saveTips({ seen: [], off: false }); toast('Tips will show again as you play.', true); ui.sheetFn(); } }, 'Show tips again'))])); }
         if (window.UPD) b.append(...foldSec('set.community', 'Community', 'Discord · report a bug', [h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => UPD.open(UPD.DISCORD) }, 'Join the Discord'), window.REPORT ? h('button', { class: 'btn alt', onclick: () => reportDialog() }, 'Report a bug') : null),
           h('p', { class: 'ai-note', style: { margin: 0 } }, 'Talk about the game, report bugs and suggest ideas.')]));
+        if (window.UPD) b.append(...foldSec('set.support', 'Support the game', 'Ko-fi · SociaBuzz', [h('div', { class: 'btn-row' },
+          h('button', { class: 'btn alt', onclick: () => UPD.open(UPD.KOFI) }, 'Ko-fi'), h('button', { class: 'btn alt', onclick: () => UPD.open(UPD.SOCIABUZZ) }, 'SociaBuzz (Indonesia)')),
+          h('p', { class: 'ai-note', style: { margin: 0 } }, 'Realm of Loner is free and stays free, with nothing to buy in the game. If you enjoy it and want to leave a tip, it helps pay for the time that goes into it.')], false));
         b.append(...foldSec('set.invites', 'Party invites', G.S.flags.noInvites ? 'Off' : 'On', [h('div', { class: 'btn-row' },
           h('button', { class: 'btn alt', onclick: () => { G.setInvites(!!G.S.flags.noInvites); ui.sheetFn(); } }, 'Invites from nearby players: ' + (G.S.flags.noInvites ? 'Off' : 'On')))]));
         if (window.SND) {

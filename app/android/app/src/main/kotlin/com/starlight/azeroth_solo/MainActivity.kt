@@ -28,6 +28,8 @@ class MainActivity : FlutterActivity() {
     private fun updFile(): File = File(File(cacheDir, "updates").apply { mkdirs() }, "AzerothSolo-update.apk")
     // the repo is moving from azeroth-solo to realm-of-loner (v10); GitHub serves the old name as a redirect, so both are trusted
     private val repoPrefixes = listOf("https://github.com/faizal97/azeroth-solo", "https://github.com/faizal97/realm-of-loner")
+    // the only pages outside the repo the game may open: its Discord and the two tip pages
+    private val outsideLinks = setOf("https://discord.gg/6xaVaXukeT", "https://ko-fi.com/starlighthvn", "https://sociabuzz.com/starlighthvn/tribe")
     private fun ownRepo(url: String) = repoPrefixes.any { url == it || url.startsWith("$it/") }
     private fun ownApk(url: String) = repoPrefixes.any { url.startsWith("$it/releases/download/") } && url.endsWith(".apk")
     private fun startDownload(url: String) {
@@ -139,8 +141,8 @@ class MainActivity : FlutterActivity() {
                 }
                 "openUrl" -> {
                     val url = call.argument<String>("url") ?: ""
-                    // only this game's own pages: its GitHub repo and its Discord invite
-                    if (ownRepo(url) || url == "https://discord.gg/6xaVaXukeT") startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                    // only this game's own pages: its GitHub repo, its Discord invite and its tip pages
+                    if (ownRepo(url) || url in outsideLinks) startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                     result.success(true)
                 }
                 else -> result.notImplemented()

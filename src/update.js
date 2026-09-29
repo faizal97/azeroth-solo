@@ -101,7 +101,9 @@
     root.location.replace(u.toString());
   };
   UPD.justReloadedFor = (tag) => { const st = store(); return st.reloadedFor === tag && Date.now() - (st.reloadAt || 0) < 30 * 60000; };
-  UPD.DISCORD = 'https://discord.gg/6xaVaXukeT'; // the game's community server; the app only opens this and the repo
+  UPD.DISCORD = 'https://discord.gg/6xaVaXukeT'; // the game's community server; the app only opens these links and the repo
+  UPD.KOFI = 'https://ko-fi.com/starlighthvn'; // optional tips (v10.0.1)
+  UPD.SOCIABUZZ = 'https://sociabuzz.com/starlighthvn/tribe'; // the same, for players in Indonesia
   UPD.open = (url) => (UPD.inApp() ? UPD.call('openUrl', { url }) : (root.open && root.open(url, '_blank')));
 
   // Release notes are GitHub markdown; show the simple parts (headings, bold, bullets) as safe HTML.

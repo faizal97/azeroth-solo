@@ -8,6 +8,8 @@ It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sp
 
 **Join the community on Discord:** https://discord.gg/6xaVaXukeT (talk about the game, report bugs, suggest ideas).
 
+**Support the game:** Realm of Loner is free and stays free, with nothing to buy in the game. If you'd like to leave a tip: [Ko-fi](https://ko-fi.com/starlighthvn), or [SociaBuzz](https://sociabuzz.com/starlighthvn/tribe) for players in Indonesia.
+
 <p align="center">
   <img src="docs/screenshots/02_goldshire.jpg" width="24%" alt="Brackenford with other players and General chat">
   <img src="docs/screenshots/04_deadmines_fight.jpg" width="24%" alt="A Smugglers' Deep pull with a simulated party">
