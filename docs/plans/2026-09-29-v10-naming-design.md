@@ -42,6 +42,8 @@ Each needs your pick before the next. Recommendations are marked.
 
 ### 1. The game's name
 
+**Decided (2026-09-29): Realm of Lone.** No existing game with that name was found.
+
 | Option | Why | Check |
 |---|---|---|
 | **Realm of One** (recommended) | Says the premise: one real player, a whole realm around you. Does not depend on the world's name, so it survives story changes | No existing game found |
