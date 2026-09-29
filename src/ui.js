@@ -952,19 +952,27 @@
               if (Math.hypot(ev.clientX - x0, ev.clientY - y0) < 8) return;
               const r = t.getBoundingClientRect();
               ghost = t.cloneNode(true); ghost.className = 'ab ab-ghost'; ghost.style.width = r.width + 'px'; ghost.style.height = r.height + 'px';
-              document.body.append(ghost); t.classList.add('dragging');
+              document.body.append(ghost); t.classList.add('dragging'); grid.classList.add('drag-on');
+              // feel it lift: a short buzz on phones that have one, and the click sound
+              try { navigator.vibrate && navigator.vibrate(12); } catch (x) { }
+              if (window.SND) window.SND.play('click', { vol: 0.5 });
             }
             ghost.style.left = ev.clientX + 'px'; ghost.style.top = ev.clientY + 'px';
             const el = document.elementFromPoint(ev.clientX, ev.clientY);
             const tgt = el && el.closest('.bar-edit .ab[data-i]');
             if (over && over !== tgt) over.classList.remove('drop');
+            const was = over;
             over = tgt && tgt !== t ? tgt : null; if (over) over.classList.add('drop');
+            ghost.classList.toggle('over', !!over);
+            if (over && over !== was) try { navigator.vibrate && navigator.vibrate(6); } catch (x) { }
           };
           const up = () => {
             window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
             if (!ghost) return;
-            ghost.remove(); t.classList.remove('dragging'); dragged = true; setTimeout(() => { dragged = false; }, 0);
+            ghost.remove(); t.classList.remove('dragging'); grid.classList.remove('drag-on'); dragged = true; setTimeout(() => { dragged = false; }, 0);
             if (!over) return;
+            try { navigator.vibrate && navigator.vibrate(20); } catch (x) { }
+            if (window.SND) window.SND.play('click', { vol: 0.7 });
             const n = shown.slice(); n.splice(+over.dataset.i, 0, n.splice(i, 1)[0]); P.barOrder = n.concat(hidden); changed();
           };
           window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);

@@ -184,9 +184,16 @@ img { max-width: 100%; display: block; }
 .bar-edit .ab.sel { box-shadow: 0 0 0 2px var(--gold), 0 0 10px rgba(255,209,0,.5); transform: translateY(-2px); }
 .bar-edit .ab.hid { opacity: .5; }
 .bar-edit .ab[data-i] { touch-action: none; user-select: none; -webkit-user-select: none; }
-.bar-edit .ab.dragging { opacity: .3; }
-.bar-edit .ab.drop { box-shadow: 0 0 0 2px #fff, 0 0 12px rgba(255,255,255,.5); }
-.ab.ab-ghost { position: fixed; z-index: 70; transform: translate(-50%, -60%) scale(1.12); pointer-events: none; box-shadow: 0 6px 16px rgba(0,0,0,.7), 0 0 0 2px var(--gold); }
+.bar-edit .ab.dragging { opacity: 1; background: rgba(255,209,0,.06); box-shadow: none; outline: 2px dashed var(--gold); outline-offset: -3px; }
+.bar-edit .ab.dragging > * { opacity: .12; } /* the gap it left */
+.bar-edit.drag-on .ab[data-i]:not(.dragging):not(.drop) { animation: jiggle .28s ease-in-out infinite alternate; }
+.bar-edit.drag-on .ab[data-i]:nth-child(even):not(.dragging):not(.drop) { animation-delay: -.14s; }
+@keyframes jiggle { from { transform: rotate(-2.5deg); } to { transform: rotate(2.5deg); } }
+.bar-edit .ab.drop { transform: scale(.88); box-shadow: 0 0 0 3px var(--gold), 0 0 16px rgba(255,209,0,.75); transition: transform .12s; }
+.ab.ab-ghost { position: fixed; z-index: 70; pointer-events: none; transform: translate(-50%, -70%) scale(1.25) rotate(-5deg); box-shadow: 0 14px 26px rgba(0,0,0,.85), 0 0 0 2px var(--gold), 0 0 20px rgba(255,209,0,.55); animation: lift .16s ease-out; transition: transform .12s; }
+.ab.ab-ghost.over { transform: translate(-50%, -70%) scale(1.15) rotate(0deg); }
+@keyframes lift { from { transform: translate(-50%, -60%) scale(1) rotate(0deg); box-shadow: 0 0 0 1px #6b4d20; } }
+@media (prefers-reduced-motion: reduce) { .bar-edit.drag-on .ab[data-i] { animation: none !important; } .ab.ab-ghost { animation: none; } }
 .ab-tag { position: absolute; left: 3px; top: 1px; font: 700 14px var(--body); color: #fff; text-shadow: 0 1px 2px #000, 0 0 2px #000; pointer-events: none; }
 .bar.xpmain { height: 13px; width: 100%; display: block; padding: 0; margin-top: 2px; cursor: pointer; }
 .bar.xpmain > i.rest { opacity: .8; background: repeating-linear-gradient(135deg, #2f78e6 0 6px, #2566c8 6px 12px); }
