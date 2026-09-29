@@ -208,7 +208,7 @@
     };
   };
   CLOUD.available = () => !!auth;
-  CLOUD.TESTING = true; // Google's consent screen is in Testing mode: only invited accounts can sign in (false once published)
+  CLOUD.TESTING = false; // true while Google's consent screen is in Testing mode (only invited accounts can sign in); published 2026-09-29
   // a token for Drive; from a tap, interactive may open Google's window (called synchronously so the popup is allowed)
   CLOUD.token = (interactive) => (auth ? auth.token(interactive) : Promise.reject(err('unavailable', 'Cloud save is not available here.')));
   CLOUD.prepare = () => (auth && auth.prepare ? auth.prepare() : Promise.resolve());
