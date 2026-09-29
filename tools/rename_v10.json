@@ -249,7 +249,7 @@
   "kind": "region",
   "region": "Durotar",
   "status": "rename",
-  "new": "The Scorchlands"
+  "new": "Dunescar"
  },
  "Mulgore": {
   "kind": "region",
@@ -3135,7 +3135,7 @@
   "kind": "monster",
   "region": "Durotar",
   "status": "rename",
-  "new": "The Scorchlands Tiger"
+  "new": "Dunescar Tiger"
  },
  "Hexed Troll": {
   "kind": "monster",
