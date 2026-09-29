@@ -622,8 +622,46 @@
     o += body(c, 'M' + pt([bx - 4 * s, by - 2 * s]) + 'L' + pt([bx + 6 * s, by - 38 * s]) + 'L' + pt([bx + 10 * s, by - 28 * s]) + 'L' + pt([bx + 16 * s, by - 30 * s]) + 'L' + pt([bx + 16 * s, by - 18 * s]) + 'L' + pt([bx + 22 * s, by - 16 * s]) + 'L' + pt([bx + 6 * s, by + 2 * s]) + 'Z', wing, L('M' + pt([bx, by - 4 * s]) + 'L' + pt([bx + 6 * s, by - 34 * s]) + 'M' + pt([bx + 2 * s, by - 2 * s]) + 'L' + pt([bx + 14 * s, by - 26 * s]), dk(wing, 0.35), 0.9 * s), 1.4 * s);
     return o;
   }
-  // quilboar bone totem: thorn-wrapped pole, boar skull, hanging bones and red rags
-  function boneTotem(c, x, y, h, s) {
+  // Briarmother totem: thorn-wrapped pole, hanging bones and red rags, topped with a carved dark-wood Briarmother
+  // mask (almond eyes, long nose ridge, solemn mouth) bound in thorn vine and crowned with a fan of banded quills
+  function briarQuill(x, y, a, len, w, sw) {
+    var ux = Math.cos(a), uy = Math.sin(a), px = -uy, py = ux, tip = [x + ux * len, y + uy * len];
+    var b1 = [x + px * w, y + py * w], b2 = [x - px * w, y - py * w];
+    var m = function (t, k) { return [x + ux * len * t + px * w * k, y + uy * len * t + py * w * k]; };
+    return P(pd([b1, m(0.55, 0.85), tip, m(0.55, -0.85), b2], true), '#f2e6c4', sw) +
+      F(pd([b1, m(0.42, 0.9), m(0.42, -0.9), b2], true), '#3a2416') +
+      F(pd([m(0.58, 0.82), m(0.66, 0.72), m(0.66, -0.72), m(0.58, -0.82)], true), '#3a2416');
+  }
+  function briarMask(c, x, y, s) {
+    var o = '', wood = '#5e3a22', r = rng(Math.round(x * 5 + y));
+    // crown: a fan of long banded quills behind the mask
+    for (var q = 0; q < 7; q++) {
+      var a = -Math.PI * (0.86 - 0.72 * q / 6), len = (q === 3 ? 21 : q === 2 || q === 4 ? 19 : q === 1 || q === 5 ? 16.5 : 13.5) * s;
+      o += briarQuill(x + Math.cos(a) * 3 * s, y - 5 * s + Math.sin(a) * 3 * s, a + (r() - 0.5) * 0.06, len, 2 * s, 1 * s);
+    }
+    // the carved face: long almond shape, pointed chin
+    var d = 'M' + pt([x, y - 11 * s]) + 'C' + pt([x + 7 * s, y - 11 * s]) + ' ' + pt([x + 9 * s, y - 6 * s]) + ' ' + pt([x + 8.5 * s, y - 1 * s]) + 'C' + pt([x + 8 * s, y + 5 * s]) + ' ' + pt([x + 4 * s, y + 9 * s]) + ' ' + pt([x, y + 11 * s]) +
+      'C' + pt([x - 4 * s, y + 9 * s]) + ' ' + pt([x - 8 * s, y + 5 * s]) + ' ' + pt([x - 8.5 * s, y - 1 * s]) + 'C' + pt([x - 9 * s, y - 6 * s]) + ' ' + pt([x - 7 * s, y - 11 * s]) + ' ' + pt([x, y - 11 * s]) + 'Z';
+    var shade = F('M' + pt([x + 1.5 * s, y - 12 * s]) + 'C' + pt([x + 9 * s, y - 10 * s]) + ' ' + pt([x + 10 * s, y + 2 * s]) + ' ' + pt([x + 2 * s, y + 12 * s]) + 'L' + pt([x + 10 * s, y + 12 * s]) + 'L' + pt([x + 10 * s, y - 12 * s]) + 'Z', dk(wood, 0.35), 0.9) +
+      L('M' + pt([x - 6 * s, y - 7 * s]) + 'Q' + pt([x - 7 * s, y]) + ' ' + pt([x - 4 * s, y + 6 * s]), lt(wood, 0.22), 1 * s, 0.8) +
+      // red tribe paint running down from the eyes
+      L('M' + pt([x - 4.6 * s, y + 0.5 * s]) + 'L' + pt([x - 5 * s, y + 5 * s]) + 'M' + pt([x + 4.6 * s, y + 0.5 * s]) + 'L' + pt([x + 5 * s, y + 5 * s]), '#b8281e', 1.3 * s);
+    o += body(c, d, wood, shade, 1.9 * s);
+    // brow line, almond eye holes, long thin nose ridge, small solemn mouth
+    o += L('M' + pt([x - 6.5 * s, y - 4.6 * s]) + 'Q' + pt([x - 3.4 * s, y - 6.4 * s]) + ' ' + pt([x - 0.8 * s, y - 5 * s]) + 'M' + pt([x + 6.5 * s, y - 4.6 * s]) + 'Q' + pt([x + 3.4 * s, y - 6.4 * s]) + ' ' + pt([x + 0.8 * s, y - 5 * s]), OL, 1 * s);
+    o += F('M' + pt([x - 6.4 * s, y - 2.2 * s]) + 'Q' + pt([x - 4 * s, y - 4.4 * s]) + ' ' + pt([x - 1.4 * s, y - 2.6 * s]) + 'Q' + pt([x - 4 * s, y - 0.8 * s]) + ' ' + pt([x - 6.4 * s, y - 2.2 * s]) + 'Z', '#120804') +
+      F('M' + pt([x + 6.4 * s, y - 2.2 * s]) + 'Q' + pt([x + 4 * s, y - 4.4 * s]) + ' ' + pt([x + 1.4 * s, y - 2.6 * s]) + 'Q' + pt([x + 4 * s, y - 0.8 * s]) + ' ' + pt([x + 6.4 * s, y - 2.2 * s]) + 'Z', '#120804');
+    o += L('M' + pt([x, y - 7 * s]) + 'L' + pt([x, y + 3.4 * s]), dk(wood, 0.5), 1.9 * s) + L('M' + pt([x - 0.4 * s, y - 7 * s]) + 'L' + pt([x - 0.4 * s, y + 3 * s]), lt(wood, 0.35), 0.7 * s);
+    o += L('M' + pt([x - 2.2 * s, y + 6.2 * s]) + 'L' + pt([x + 2.2 * s, y + 6.2 * s]), OL, 1.1 * s);
+    // thorn vine binding the mask: a band across the forehead, and one from the cheek under the chin down the pole
+    var v1 = 'M' + pt([x - 9.5 * s, y - 5 * s]) + 'Q' + pt([x - 2 * s, y - 11 * s]) + ' ' + pt([x + 9.5 * s, y - 8 * s]);
+    var v2 = 'M' + pt([x - 8.8 * s, y + 0.5 * s]) + 'C' + pt([x - 7.5 * s, y + 8 * s]) + ' ' + pt([x - 2 * s, y + 12 * s]) + ' ' + pt([x + 2 * s, y + 12.5 * s]) + 'C' + pt([x + 5.5 * s, y + 13 * s]) + ' ' + pt([x + 4 * s, y + 17 * s]) + ' ' + pt([x + 0.5 * s, y + 19 * s]);
+    var th = '', tp = [[x - 6 * s, y - 7.4 * s, -0.4, -1], [x + 1 * s, y - 9.3 * s, 0.2, -1], [x + 7 * s, y - 8.6 * s, 0.6, -1], [x - 8.4 * s, y + 4 * s, -1, 0.2], [x - 3 * s, y + 11 * s, -0.5, 1], [x + 4.6 * s, y + 14.5 * s, 1, 0.1]];
+    tp.forEach(function (t) { var l = 4.2 * s; th += P(pd([[t[0] - t[3] * 1.4 * s, t[1] + t[2] * 1.4 * s], [t[0] + t[2] * l, t[1] + t[3] * l], [t[0] + t[3] * 1.4 * s, t[1] - t[2] * 1.4 * s]], true), '#e8d8ac', 0.8 * s); });
+    o += L(v1 + v2, OL, 3.6 * s) + th + L(v1 + v2, '#5a5a2a', 1.8 * s) + L(v1 + v2, lt('#5a5a2a', 0.3), 0.6 * s, 0.7);
+    return o;
+  }
+  function briarTotem(c, x, y, h, s) {
     var top = y - h, o = E(x, y + 1, 10 * s, 3 * s, '#000', 0, 0.25);
     o += limb('M' + pt([x, y]) + 'L' + pt([x, top + 6 * s]), '#5a3a22', 3.6 * s);
     var wr = '', th = '';
@@ -633,10 +671,8 @@
     o += L('M' + pt([x - 14 * s, cy]) + 'L' + pt([x - 14 * s, cy + 14 * s]) + 'M' + pt([x + 14 * s, cy]) + 'L' + pt([x + 14 * s, cy + 12 * s]), '#3a2a1a', 1 * s);
     o += P(pd([[x - 12 * s, cy + 1 * s], [x - 6 * s, cy + 1 * s], [x - 8 * s, cy + 18 * s], [x - 10 * s, cy + 12 * s]], true), '#a8281e', 1 * s) + P(pd([[x + 5 * s, cy + 1 * s], [x + 11 * s, cy + 1 * s], [x + 9 * s, cy + 15 * s]], true), '#a8281e', 1 * s);
     o += bone(x, cy, 32 * s, 0.08, s) + bone(x - 14 * s, cy + 16 * s, 8 * s, 1.4, 0.7 * s) + skull(c, x + 14 * s, cy + 16 * s, 0.5 * s);
-    // boar skull with tusks
-    o += P('M' + pt([x - 5 * s, top + 4 * s]) + 'C' + pt([x - 11 * s, top + 4 * s]) + ' ' + pt([x - 12 * s, top - 6 * s]) + ' ' + pt([x - 9 * s, top - 10 * s]) + 'C' + pt([x - 8 * s, top - 4 * s]) + ' ' + pt([x - 6 * s, top]) + ' ' + pt([x - 2 * s, top + 1 * s]) + 'Z', c.cel('#f4ecd6'), 1.2 * s) +
-      P('M' + pt([x + 5 * s, top + 4 * s]) + 'C' + pt([x + 11 * s, top + 4 * s]) + ' ' + pt([x + 12 * s, top - 6 * s]) + ' ' + pt([x + 9 * s, top - 10 * s]) + 'C' + pt([x + 8 * s, top - 4 * s]) + ' ' + pt([x + 6 * s, top]) + ' ' + pt([x + 2 * s, top + 1 * s]) + 'Z', c.cel('#f4ecd6'), 1.2 * s);
-    o += skull(c, x, top, 1.05 * s);
+    // the Briarmother mask on top
+    o += briarMask(c, x, top, 1.05 * s);
     return o;
   }
   // dark earthen mound buried in giant brambles
@@ -1105,7 +1141,7 @@
       o += thornMound(c, 206, 154, 0.8, 21);
       o += quilHut(c, 146, 160, 0.72, '#7a5a40') + quilHut(c, 268, 158, 0.78, '#6a4a34');
       o += thornMound(c, 56, 170, 1.25, 31) + thornMound(c, 352, 168, 1.3, 41);
-      o += boneTotem(c, 112, 190, 66, 1) + boneTotem(c, 296, 186, 60, 0.9);
+      o += briarTotem(c, 112, 190, 66, 1) + briarTotem(c, 296, 186, 60, 0.9);
       o += bramble(c, [-12, 246], [6, 222], [30, 206], [62, 204], 7, '#4e3222', '#e4d4a8', 51) + bramble(c, [412, 244], [396, 220], [372, 208], [342, 210], 7, '#4e3222', '#e4d4a8', 53);
       o += bone(170, 212, 14, 0.4, 1) + bone(246, 222, 12, -0.6, 1) + skull(c, 222, 200, 0.8);
       return o + vignette(c, '#fff0d8', '#1a0c06');

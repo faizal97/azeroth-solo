@@ -473,7 +473,6 @@
     o += body(c, 'M' + pt([bx - 4 * s, by - 2 * s]) + 'L' + pt([bx + 6 * s, by - 38 * s]) + 'L' + pt([bx + 10 * s, by - 28 * s]) + 'L' + pt([bx + 16 * s, by - 30 * s]) + 'L' + pt([bx + 16 * s, by - 18 * s]) + 'L' + pt([bx + 22 * s, by - 16 * s]) + 'L' + pt([bx + 6 * s, by + 2 * s]) + 'Z', wing, L('M' + pt([bx, by - 4 * s]) + 'L' + pt([bx + 6 * s, by - 34 * s]) + 'M' + pt([bx + 2 * s, by - 2 * s]) + 'L' + pt([bx + 14 * s, by - 26 * s]), dk(wing, 0.35), 0.9 * s), 1.4 * s);
     return o;
   }
-  // quilboar bone totem: thorn-wrapped pole, boar skull, hanging bones and red rags
   // voodoo totem (shared copy of art_durotar.js)
   function voodooTotem(c, x, y, s) {
     var o = '';
