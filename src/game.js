@@ -2266,6 +2266,8 @@
     loot(`Loot: ${B.link(it.name, it.q)}. Choose Need, Greed or Pass.`);
     emit('roll', r);
   }
+  // the roll card is on screen: rolls you still have to decide wait for it instead of running out
+  G.holdRolls = function (ms) { const R = G.S && G.S.run; if (!R) return; for (const r of R.rolls) if (!r.done && !r.player) r.until += ms; };
   G.roll = function (idx, c) {
     const R = G.S.run;
     if (!R || !R.rolls[idx] || R.rolls[idx].done) return;
@@ -2286,9 +2288,12 @@
       for (const e of entries) if (e.c !== 'pass') loot(`${e.c === 'need' ? 'Need' : 'Greed'} Roll - ${e.v} for ${B.link(r.item.name, r.item.q)} by ${e.name}`);
       const needs = entries.filter((e) => e.c === 'need'); const greeds = entries.filter((e) => e.c === 'greed');
       const pool = needs.length ? needs : greeds;
-      if (!pool.length) { loot(`Everyone passed on ${B.link(r.item.name, r.item.q)}.`); continue; }
+      if (!pool.length) { loot(`Everyone passed on ${B.link(r.item.name, r.item.q)}.`); emit('rollResult', { item: r.item, entries, winner: null }); continue; }
       const win = pool.sort((a, b) => b.v - a.v)[0];
       r.winner = win.name;
+      // the result for the roll card, and a winner line in General (the per-player rolls stay in the Loot channel)
+      emit('rollResult', { item: r.item, entries, winner: win.name, me: !!win.me, how: win.c, v: win.v });
+      sys(`${win.me ? 'You' : win.name} won ${B.link(r.item.name, r.item.q)} (${win.c === 'need' ? 'Need' : 'Greed'} ${win.v}).`);
       if (win.me) { if (G.addItem(r.item, 1)) loot(`You won: ${B.link(r.item.name, r.item.q)}`); }
       else {
         loot(`${win.name} won: ${B.link(r.item.name, r.item.q)}`);

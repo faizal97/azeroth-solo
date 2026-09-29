@@ -183,7 +183,7 @@
       h('div', { class: 'uf-body' },
         h('div', { class: 'uf-name cls-' + P.cls }, G.displayName()),
         (els.pHp = barEl('hp')), (els.pRes = barEl(D.CLASSES[P.cls].resource)),
-        (els.pXp = h('div', { class: 'bar thin xp' }, h('i', { class: 'rest' }), h('i', { class: 'fill' }))),
+        (els.pXp = h('button', { class: 'bar xp xpmain', 'aria-label': 'Experience', onclick: xpDetail }, h('i', { class: 'rest' }), h('i', { class: 'fill' }), h('b', { class: 'tnum' }))),
         (els.pBuffs = h('div', { class: 'buffs' }))));
     els.tf = h('div', { class: 'uf target' });
     f.append(pf, els.tf);
@@ -999,6 +999,23 @@
     const b = bar.querySelector('b');
     if (b) b.textContent = text != null ? text : `${Math.round(v)} / ${Math.round(max)}`;
   }
+  // XP: a readable bar (xp / needed · percent), rested shown in blue, a tap for the details, and a floating +XP on gains
+  const xpPct = (x, n) => { const p = x / n * 100; return p < 10 ? p.toFixed(1) : Math.floor(p); };
+  function xpDetail() {
+    const P = G.S.player;
+    if (P.level >= D.LEVEL_CAP) return showDialog([h('h3', null, 'Experience'), h('p', null, `You are level ${D.LEVEL_CAP}, the level cap. From here, gear, raids and collections are how you grow.`), h('button', { class: 'btn wide', onclick: closeDialog }, 'OK')], true);
+    const need = D.XP_TO_LEVEL[P.level], left = need - P.xp, rest = Math.round(P.rested);
+    showDialog([h('h3', null, `Level ${P.level} → ${P.level + 1}`),
+      h('div', { class: 'bar xp xpmain', style: { height: '18px', margin: '4px 0 8px' } }, h('i', { class: 'rest', style: { width: Math.min(100, (P.xp + P.rested) / need * 100) + '%' } }), h('i', { class: 'fill', style: { width: (P.xp / need * 100) + '%' } }), h('b', { class: 'tnum' }, `${xpPct(P.xp, need)}%`)),
+      h('p', null, h('b', null, `${Math.floor(P.xp).toLocaleString()} of ${need.toLocaleString()} XP`), ` (${xpPct(P.xp, need)}%). ${left.toLocaleString()} more to level ${P.level + 1}.`),
+      h('p', { style: { color: rest > 0 ? '#8fb6ff' : 'var(--muted)' } }, rest > 0 ? `Rested: +${rest.toLocaleString()} bonus XP, the blue part of the bar. Kills give double XP until it runs out. You build more by logging out in an inn or a city.` : 'Not rested. Log out in an inn or a city to build bonus XP for your next kills.'),
+      h('button', { class: 'btn wide', onclick: closeDialog }, 'OK')], true);
+  }
+  function xpFloat(d) {
+    if (!els.pXp || !els.pXp.isConnected || !d || !d.amount) return;
+    const f = h('span', { class: 'xpfloat tnum' }, `+${d.amount.toLocaleString()} XP` + (d.bonus ? ` (${d.bonus.toLocaleString()} rested)` : ''));
+    els.pXp.parentNode.append(f); setTimeout(() => f.remove(), 1500);
+  }
   function frame() {
     const S = G.S; if (!S || !els.pHp) return;
     const P = S.player;
@@ -1009,8 +1026,12 @@
     const need = D.XP_TO_LEVEL[P.level] || 1;
     if (els.pXp) {
       const [rest, fill] = els.pXp.querySelectorAll('i');
-      fill.style.width = (P.level >= D.LEVEL_CAP ? 100 : (P.xp / need) * 100) + '%';
-      rest.style.width = Math.min(100, ((P.xp + P.rested) / need) * 100) + '%';
+      const cap = P.level >= D.LEVEL_CAP;
+      fill.style.width = (cap ? 100 : (P.xp / need) * 100) + '%';
+      rest.style.width = cap ? '0%' : Math.min(100, ((P.xp + P.rested) / need) * 100) + '%';
+      const label = cap ? 'Max level' : `${Math.floor(P.xp).toLocaleString()} / ${need.toLocaleString()} XP · ${xpPct(P.xp, need)}%`;
+      const b = els.pXp.querySelector('b'); if (b.textContent !== label) b.textContent = label;
+      els.pXp.classList.toggle('rested', !cap && P.rested > 0);
     }
     const C = G.fight;
     // buffs
@@ -2251,8 +2272,57 @@
 
 
   // ---------- loot rolls
+  // After a roll: a card with every player's choice and roll, counting up one by one, then the winner. The next roll
+  // prompt waits behind it, and its timer is held for as long as the card shows (G.holdRolls).
+  function showRollCard() {
+    const d = (ui.rollQueue || []).shift(); if (!d) return;
+    const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const order = d.entries.slice().sort((a, b) => (a.c === 'pass') - (b.c === 'pass'));
+    const STEP = calm ? 0 : order.length > 6 ? 150 : 320, COUNT = calm ? 0 : 650, SHOW = order.length > 6 ? 3400 : 2800; // a raid reveals faster and stays a little longer
+    const total = order.length * STEP + COUNT + SHOW;
+    G.holdRolls(total + 400);
+    if (ui.rollEl) { ui.rollEl.remove(); ui.rollEl = null; }
+    const head = h('div', { class: 'rc-head' }, 'Rolling...');
+    const rows = order.map((e) => {
+      const num = h('b', { class: 'tnum' }, e.c === 'pass' ? '' : '0');
+      const row = h('div', { class: 'rc-row' + (e.me ? ' me' : '') },
+        h('span', { class: 'rc-name' + (e.m && e.m.cls ? ' cls-' + e.m.cls : e.me ? ' cls-' + G.S.player.cls : '') }, e.me ? 'You' : e.name),
+        h('span', { class: 'rc-c rc-' + e.c }, e.c === 'need' ? 'Need' : e.c === 'greed' ? 'Greed' : 'Pass'), num);
+      row._e = e; row._num = num; return row;
+    });
+    const it = d.item;
+    const card = h('div', { class: 'rollcard', onclick: closeRollCard },
+      h('div', { class: 'rc-item' }, itemIcon(it, 'rollic'), h('div', null, h('div', { class: 'q' + it.q, style: { fontWeight: 800 } }, it.name), head)),
+      h('div', { class: 'rc-rows' }, ...rows), h('div', { class: 'rc-tap' }, 'Tap to close'));
+    ui.rollCard = card; els.bottom.append(card);
+    rows.forEach((row, i) => setTimeout(() => {
+      if (ui.rollCard !== card) return;
+      row.classList.add('in');
+      const e = row._e; if (e.c === 'pass') return;
+      const t0 = performance.now();
+      const tick = () => { if (ui.rollCard !== card) return; const k = COUNT ? Math.min(1, (performance.now() - t0) / COUNT) : 1; row._num.textContent = k < 1 ? Math.max(1, Math.round(Math.random() * 100)) : e.v; if (k < 1) requestAnimationFrame(tick); };
+      tick();
+    }, i * STEP));
+    setTimeout(() => {
+      if (ui.rollCard !== card) return;
+      const winRow = rows.find((r) => r._e.name === d.winner || (d.me && r._e.me));
+      if (winRow) winRow.classList.add('win');
+      head.textContent = !d.winner ? 'Everyone passed' : d.me ? `You won! (${d.how === 'need' ? 'Need' : 'Greed'} ${d.v})` : `${d.winner} won (${d.how === 'need' ? 'Need' : 'Greed'} ${d.v})`;
+      head.classList.add(d.me ? 'me' : 'done');
+      // a higher Greed that lost looks like a bug unless you know the rule
+      if (d.how === 'need' && d.entries.some((e) => e.c === 'greed' && e.v > d.v)) head.append(h('small', { class: 'rc-rule' }, 'Need beats Greed'));
+    }, order.length * STEP + COUNT);
+    ui.rollTimer = setTimeout(closeRollCard, total);
+  }
+  function closeRollCard() {
+    clearTimeout(ui.rollTimer);
+    if (ui.rollCard) ui.rollCard.remove();
+    ui.rollCard = null;
+    if ((ui.rollQueue || []).length) showRollCard(); else renderRolls();
+  }
   function renderRolls() {
     if (ui.rollEl) { ui.rollEl.remove(); ui.rollEl = null; }
+    if (ui.rollCard) return; // the result card is showing; the next prompt waits for it
     const R = G.S.run;
     if (!R) return;
     const open = R.rolls.map((r, i) => ({ r, i })).filter((x) => !x.r.done && !x.r.player);
@@ -2647,7 +2717,8 @@
     G.on('questReady', () => { renderNavDots(); renderPanel(); });
     G.on('questDone', () => { toast('Quest complete', true); });
     G.on('selfheal', (n) => fct('me', '+' + n, 'heal'));
-    G.on('xp', (d) => { if (G.pUnit && ui.spriteEls[G.pUnit.uid]) fct(G.pUnit.uid, '+' + d.amount + ' XP', 'xp'); });
+    G.on('xp', (d) => { if (G.pUnit && ui.spriteEls[G.pUnit.uid]) fct(G.pUnit.uid, '+' + d.amount + ' XP', 'xp'); xpFloat(d); });
+    G.on('rollResult', (d) => { ui.rollQueue = ui.rollQueue || []; ui.rollQueue.push(d); if (!ui.rollCard) showRollCard(); });
   }
   let panelTick = 0;
   function start() {
