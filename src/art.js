@@ -1676,7 +1676,7 @@
     out += taurenHorn(c, g, o, false);
     return out;
   };
-  /* the old mob Hornfolk head (Mr. Smite) now uses the race head: ram horns, long face, no nose ring */
+  /* the old mob Hornfolk head (Mr. Clobber) now uses the race head: ram horns, long face, no nose ring */
   HEAD.tauren = function (c, g, o) {
     var o2 = {}, k;
     for (k in o) o2[k] = o[k];
