@@ -64,6 +64,19 @@ Valeera and Valdrakken), **Everwyn** (sounds like Elwynn).
 
 ### 3. The two factions (replace the Alliance and the Horde)
 
+**Decided (2026-09-29):**
+
+| Old | New | Note |
+|---|---|---|
+| Alliance | **Accord** | |
+| Horde | **Krugar** | their own word; no Warcraft match (nearest: Krugah, Krug Skullsplit) |
+| Eastern Kingdoms | **Ostmarch** | "the eastern borderland" |
+| Stormwind City | **Kingsmere** | |
+| Kalimdor | *open* | not Kor-/Kar- (Korgzath rejected: too close to Kargath/Korgath) |
+| Orgrimmar | *open* | a proper name, not a label |
+
+The proposal below (the Free Clans) was rejected; so were the Unbound and the Warbands (both Warcraft names).
+
 - **The Accord** (recommended): the old kingdoms of humans, dwarves, gnomes and elves, bound by treaty.
 - **The Free Clans** (recommended): orcs, trolls and their allies, who answer to no crown.
 
