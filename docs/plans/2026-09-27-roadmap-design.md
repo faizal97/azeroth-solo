@@ -6,7 +6,7 @@ Azeroth Solo is a single-player "fake MMO" set in the world of classic World of 
 
 This document says where the game stands, how it is designed, and what comes next.
 
-## Where it stands (v9.8)
+## Where it stands (v9.9)
 
 - **Levels 1–60, both factions, all eight classic races and nine classes.** About 25 zones, from the starting valleys to Winterspring and the Western Plaguelands.
 - **Every classic dungeon along the way,** from Ragefire Chasm and the Deadmines to Blackrock Depths, Scholomance and Stratholme, each with a lore intro.
@@ -15,7 +15,7 @@ This document says where the game stands, how it is designed, and what comes nex
 - **An original expansion at 60, "The Drowned Crown":** two new zones, two dungeons and a 10-player raid.
 - **Legends:** hand-made characters with their own questline, who then fight at your side.
 - **A server that feels alive:** working chat, guilds, requests, trades, duels and rare sightings.
-- **The app updates itself.** New versions come from GitHub releases, with release notes, through the in-app updater.
+- **The app updates itself.** New versions come from GitHub releases, with release notes, through the in-app updater. Public releases come in batches; test builds go to players who turn on Beta updates first (GitHub pre-releases, and the /beta/ web page).
 
 ## Design principles
 
@@ -144,6 +144,10 @@ Roughly in priority order:
 7. **Server events:** a Darkmoon Faire week, guild server-first races, and town defences in War Mode.
 8. **More Legends.**
 9. **Friends in your world** (parked). Your real friends' characters would appear on your server as simulated players, via a small online service and friend codes.
+
+## Known issues
+
+- The "+XP" floater that rises from the XP bar sits over the mana bar for a moment. It should float clear of the other bars.
 
 ## Open questions
 
