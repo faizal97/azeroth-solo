@@ -285,7 +285,7 @@
   "kind": "region",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Highcrag Mountains"
  },
  "Duskwood": {
   "kind": "region",
@@ -297,13 +297,13 @@
   "kind": "region",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Greymead Foothills"
  },
  "Ashenvale": {
   "kind": "region",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Veilwood"
  },
  "Wetlands": {
   "kind": "region",
@@ -825,49 +825,49 @@
   "kind": "place",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Camp Vosh"
  },
  "The Webwinder Path": {
   "kind": "place",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "The Silkline Path"
  },
  "Sun Rock Retreat": {
   "kind": "place",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Tallstone Retreat"
  },
  "Windshear Crag": {
   "kind": "place",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Sawtooth Crag"
  },
  "Cragpool Lake": {
   "kind": "place",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Kettle Lake"
  },
  "Mirkfallon Lake": {
   "kind": "place",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Fogwater Lake"
  },
  "The Charred Vale": {
   "kind": "place",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "The Screaming Vale"
  },
  "Grimtotem Post": {
   "kind": "place",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Sourhorn Post"
  },
  "Darkshire": {
   "kind": "place",
@@ -879,139 +879,139 @@
   "kind": "place",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Hollin Grove"
  },
  "The Hushed Bank": {
   "kind": "place",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "The Blackreed Bank"
  },
  "Raven Hill Cemetery": {
   "kind": "place",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Harlow Cemetery"
  },
  "Tranquil Gardens Cemetery": {
   "kind": "place",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Cobb's Rest"
  },
  "Vul'Gol Ogre Mound": {
   "kind": "place",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Gruk's Mound"
  },
  "The Rotting Orchard": {
   "kind": "place",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "The Crookapple Orchard"
  },
  "Tarren Mill": {
   "kind": "place",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Mourncross"
  },
  "Hillsbrad Fields": {
   "kind": "place",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Greymead Fields"
  },
  "Azurelode Mine": {
   "kind": "place",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Kestrel Mine"
  },
  "Durnholde Keep": {
   "kind": "place",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Blackhelm Keep"
  },
  "Alterac Foothills": {
   "kind": "place",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Vaskar Foothills"
  },
  "Growless Cave": {
   "kind": "place",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Frostmouth Cave"
  },
  "Pyrewood Village": {
   "kind": "place",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Ashwick Village"
  },
  "Silverpine Forest": {
   "kind": "place",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Needlewood"
  },
  "Astranaar": {
   "kind": "place",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Ilvaris"
  },
  "Splintertree Post": {
   "kind": "place",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Stumpwatch"
  },
  "The Zoram Strand": {
   "kind": "place",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "The Coral Strand"
  },
  "Mystral Lake": {
   "kind": "place",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Lake Aurel"
  },
  "Thistlefur Village": {
   "kind": "place",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Briarpelt Village"
  },
  "The Howling Vale": {
   "kind": "place",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Grey Wolf Vale"
  },
  "Satyrnaar": {
   "kind": "place",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Hornhold"
  },
  "Felfire Hill": {
   "kind": "place",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Gloomfire Hill"
  },
  "Menethil Harbor": {
   "kind": "place",
   "region": "Wetlands",
   "status": "rename",
-  "new": null
+  "new": "Gullhaven"
  },
  "Bluegill Marsh": {
   "kind": "place",
@@ -1719,7 +1719,7 @@
   "kind": "npc",
   "region": "Teldrassil",
   "status": "rename",
-  "new": "Sentinel Aerin Ashbrook"
+  "new": "Warden Aerin Ashbrook"
  },
  "Ilyenia Moonfire": {
   "kind": "npc",
@@ -2121,181 +2121,181 @@
   "kind": "npc",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Zessi"
  },
  "Mastok Wrilehiss": {
   "kind": "npc",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Rakko"
  },
  "Tsunaman": {
   "kind": "npc",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Tamu of the Stone"
  },
  "Sahn Windhorn": {
   "kind": "npc",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Onu of the Tall Stone"
  },
  "Innkeeper Jayka": {
   "kind": "npc",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Pema"
  },
  "Krond Ironhide": {
   "kind": "npc",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Bregga"
  },
  "Lord Ello Ebonlocke": {
   "kind": "npc",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Lord Percival Grey"
  },
  "Commander Althea Ebonlocke": {
   "kind": "npc",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Commander Isolde Grey"
  },
  "Abercrombie": {
   "kind": "npc",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Old Mortimer"
  },
  "Madame Eva": {
   "kind": "npc",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Madame Zora"
  },
  "Sirra Von'Indi": {
   "kind": "npc",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Lotte Marsh"
  },
  "Innkeeper Trelayne": {
   "kind": "npc",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Ada"
  },
  "Gavin Gnarltree": {
   "kind": "npc",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Ned Oakes"
  },
  "High Executor Darthalia": {
   "kind": "npc",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "High Executor Mordane"
  },
  "Apothecary Lydon": {
   "kind": "npc",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Apothecary Crail"
  },
  "Krusk": {
   "kind": "npc",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Grol"
  },
  "Dalar Dawnweaver": {
   "kind": "npc",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Dalen Mourne"
  },
  "Innkeeper Marla": {
   "kind": "npc",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Wilma"
  },
  "Dogran Grimhand": {
   "kind": "npc",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Ushar"
  },
  "Raene Wolfrunner": {
   "kind": "npc",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Raelis Swift"
  },
  "Shindrell Swiftfire": {
   "kind": "npc",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Syndra Quill"
  },
  "Sentinel Thenysil": {
   "kind": "npc",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Warden Oriel"
  },
  "Orendil Broadleaf": {
   "kind": "npc",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Talan Ashgrove"
  },
  "Innkeeper Kimlya": {
   "kind": "npc",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Elsin"
  },
  "Aeolynn": {
   "kind": "npc",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Aelys"
  },
  "Senani Thunderheart": {
   "kind": "npc",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Sena of the Deep Roots"
  },
  "Ertog Ragetusk": {
   "kind": "npc",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Hrokk"
  },
  "Mitsuwa": {
   "kind": "npc",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Nisha"
  },
  "Innkeeper Kaylisk": {
   "kind": "npc",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Grelda"
  },
  "Burkrum": {
   "kind": "npc",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Tagga"
  },
  "Captain Stoutfist": {
   "kind": "npc",
@@ -3891,31 +3891,31 @@
   "kind": "monster",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Deepvine Creeper"
  },
  "Deepmoss Venomspitter": {
   "kind": "monster",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Deepvine Venomspitter"
  },
  "Venture Co. Logger": {
   "kind": "monster",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Deepgold Company Logger"
  },
  "Venture Co. Deforester": {
   "kind": "monster",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Deepgold Company Deforester"
  },
  "Venture Co. Operator": {
   "kind": "monster",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Deepgold Company Operator"
  },
  "Compact Harvester": {
   "kind": "monster",
@@ -3927,67 +3927,67 @@
   "kind": "monster",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Highwing Wyvern"
  },
  "Bloodfury Harpy": {
   "kind": "monster",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Redclaw Harpy"
  },
  "Bloodfury Storm Witch": {
   "kind": "monster",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Redclaw Storm Witch"
  },
  "Blackened Basilisk": {
   "kind": "monster",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Grimtotem Brute": {
   "kind": "monster",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Sourhorn Brute"
  },
  "Grimtotem Mystic": {
   "kind": "monster",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Sourhorn Mystic"
  },
  "Foreman Rigger": {
   "kind": "boss or named",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Foreman Gritz"
  },
  "Sister Riven": {
   "kind": "boss or named",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Sister Rasp"
  },
  "XT:9": {
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Big Chopper"
  },
  "Nightbane Worgen": {
   "kind": "monster",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Gloomfang Werewolf"
  },
  "Nightbane Shadow Weaver": {
   "kind": "monster",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Gloomfang Shadow Weaver"
  },
  "Green Recluse": {
   "kind": "monster",
@@ -4022,7 +4022,7 @@
  "Rotted One": {
   "kind": "monster",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Splinter Fist Warrior": {
@@ -4041,49 +4041,49 @@
   "kind": "monster",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Gloomfang Dark Runner"
  },
  "Nightbane Vile Fang": {
   "kind": "monster",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Gloomfang Vile Fang"
  },
  "Naraxis": {
   "kind": "boss or named",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Skittra"
  },
  "Mor'Ladim": {
   "kind": "boss or named",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Morlan the Unburied"
  },
  "Stitches": {
   "kind": "boss or named",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Patchwork"
  },
  "Hillsbrad Farmer": {
   "kind": "monster",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Greymead Farmer"
  },
  "Hillsbrad Farmhand": {
   "kind": "monster",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Greymead Farmhand"
  },
  "Hillsbrad Miner": {
   "kind": "monster",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Greymead Miner"
  },
  "Syndicate Rogue": {
   "kind": "monster",
@@ -4112,32 +4112,32 @@
  "Cave Yeti": {
   "kind": "monster",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Ferocious Yeti": {
   "kind": "monster",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Moonrage Worgen": {
   "kind": "monster",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Howlmoor Werewolf"
  },
  "Foreman Bonds": {
   "kind": "boss or named",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Foreman Cutts"
  },
  "Big Samras": {
   "kind": "boss or named",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Big Bruin"
  },
  "Shadowfang Moonwalker": {
   "kind": "monster",
@@ -4179,7 +4179,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Commander Ashdown"
  },
  "Fenrus the Devourer": {
   "kind": "boss or named",
@@ -4197,79 +4197,79 @@
   "kind": "monster",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Scalelash Myrmidon"
  },
  "Wrathtail Sea Witch": {
   "kind": "monster",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Scalelash Sea Witch"
  },
  "Ashenvale Bear": {
   "kind": "monster",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Veilwood Bear"
  },
  "Ghostpaw Runner": {
   "kind": "monster",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Mistpaw Runner"
  },
  "Ghostpaw Alpha": {
   "kind": "monster",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Mistpaw Alpha"
  },
  "Thistlefur Ursa": {
   "kind": "monster",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Briarpelt Ursa"
  },
  "Thistlefur Shaman": {
   "kind": "monster",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Briarpelt Shaman"
  },
  "Bleakheart Satyr": {
   "kind": "monster",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Sourheart Satyr"
  },
  "Bleakheart Hellcaller": {
   "kind": "monster",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Sourheart Hellcaller"
  },
  "Mannoroc Lasher": {
   "kind": "monster",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Pit Lasher"
  },
  "Felguard Sentry": {
   "kind": "monster",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Pit Guard Sentry"
  },
  "Ursal the Mauler": {
   "kind": "boss or named",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Bruk the Mauler"
  },
  "Sharptalon": {
   "kind": "boss or named",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Skyrend"
  },
  "Blackfathom Myrmidon": {
   "kind": "monster",
@@ -4299,7 +4299,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Lady Szira"
  },
  "Gelihast": {
   "kind": "boss or named",
@@ -4317,7 +4317,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Old Coilmaw"
  },
  "Bluegill Raider": {
   "kind": "monster",
@@ -4473,7 +4473,7 @@
   "kind": "boss or named",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "Colonel Drayke"
  },
  "Sin'Dall": {
   "kind": "boss or named",
@@ -6933,157 +6933,157 @@
   "kind": "quest",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "The Silkline Nests"
  },
  "Clear the Path": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Venom for the Healers": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Stop the Loggers": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Hard Hats": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Power Cores": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Pridewing Feathers": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Highwing Feathers"
  },
  "Thinning the Flock": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Deforesters": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Logging Orders": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Walking Saws": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Operators": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Shut the Pumps": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Bloodfury": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "The Redclaw"
  },
  "Bloodfury Talons": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Redclaw Talons"
  },
  "Blackened Scales": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Storm Witches": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Blood of the Grimtotem": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Blood of the Sourhorn"
  },
  "Broken Totems": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Battle Plan": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Venomspitters": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Break the Works": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Clip Their Wings": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Basilisk Hunt": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Grimtotem Mystics": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "The Sourhorn Mystics"
  },
  "Wanted: XT:9": {
   "kind": "quest",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "Wanted: Big Chopper"
  },
  "The Night Watch": {
   "kind": "quest",
@@ -7095,331 +7095,331 @@
   "kind": "quest",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "The Gloomfang"
  },
  "Worgen Bounty": {
   "kind": "quest",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Werewolf Bounty"
  },
  "The Shadow Weavers": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Web of the Hushed Bank": {
   "kind": "quest",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Web of the Blackreed Bank"
  },
  "Venom for the Watch": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Clear the Riverbank": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Raven Hill": {
   "kind": "quest",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Harlow"
  },
  "The Restless Dead": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Bones of Raven Hill": {
   "kind": "quest",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Bones of Harlow"
  },
  "The Necromancers": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Legend of Mor'Ladim": {
   "kind": "quest",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "The Legend of Morlan the Unburied"
  },
  "Tranquil Gardens": {
   "kind": "quest",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Cobb's Rest"
  },
  "Ribs for Abercrombie": {
   "kind": "quest",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Ribs for Old Mortimer"
  },
  "The Plague Spreaders": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "A Heart for Abercrombie": {
   "kind": "quest",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "A Heart for Old Mortimer"
  },
  "The Rotted Ones": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Vul'Gol": {
   "kind": "quest",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Gruk's Mound"
  },
  "The Splinter Fist": {
   "kind": "quest",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "The Knotjaw"
  },
  "Ogre Teeth": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Taskmasters": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Dark Runners": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Pelts for the Watch": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Vile Fangs": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Seeing Stone": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Night Patrol": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Keep Them Down": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Push Back the Ogres": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Last Harvest": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Wanted: Stitches": {
   "kind": "quest",
   "region": "Duskwood",
   "status": "rename",
-  "new": null
+  "new": "Wanted: Patchwork"
  },
  "The Hillsbrad Farms": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "The Greymead Farms"
  },
  "Deeds of the Land": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Farmhands": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Azurelode Ore": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Kestrel Ore"
  },
  "Close the Mine": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Syndicate": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "The Black Ledger"
  },
  "Syndicate Badges": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Black Ledger Badges"
  },
  "Mercenaries": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Missives": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Gray Bear Tongues": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Mountain Lions": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Bears in the Hills": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Yeti Fur": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Cave Yetis": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Ferocious Ones": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Moonrage": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "The Howlmoor"
  },
  "Burn the Fields": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Keep Durnholde Busy": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Keep Blackhelm Busy"
  },
  "The Foothills Road": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Snow and Blood": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Hold the Mine": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Road to the Keep": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Wanted: Big Samras": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Wanted: Big Bruin"
  },
  "Arugal Must Die": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Cairn Must Die"
  },
  "The Fallen Commander": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Lost Deathstalker": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "The Lost Gravestalker"
  },
  "The Sentinels Call": {
   "kind": "quest",
@@ -7431,108 +7431,108 @@
   "kind": "quest",
   "region": "Stonetalon Mountains",
   "status": "rename",
-  "new": null
+  "new": "The Woodcleaver Front"
  },
  "The Wrathtail": {
   "kind": "quest",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "The Scalelash"
  },
  "The Sea Witches": {
   "kind": "quest",
   "region": "Ashenvale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Wrathtail Scales": {
   "kind": "quest",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Scalelash Scales"
  },
  "Bears of Mystral Lake": {
   "kind": "quest",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Bears of Lake Aurel"
  },
  "The Ghostpaw Pack": {
   "kind": "quest",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "The Mistpaw Pack"
  },
  "Ghostpaw Pelts": {
   "kind": "quest",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Mistpaw Pelts"
  },
  "The Thistlefur": {
   "kind": "quest",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "The Briarpelt"
  },
  "Corrupted Totems": {
   "kind": "quest",
   "region": "Ashenvale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Alphas": {
   "kind": "quest",
   "region": "Ashenvale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Bleakheart Horns": {
   "kind": "quest",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Sourheart Horns"
  },
  "The Hellcallers": {
   "kind": "quest",
   "region": "Ashenvale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Felguard": {
   "kind": "quest",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "The Pit Guard"
  },
  "Wanted: Sharptalon": {
   "kind": "quest",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "Wanted: Skyrend"
  },
  "Twilight Falls": {
   "kind": "quest",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "The Eclipse Cult"
  },
  "The Naga Sorceress": {
   "kind": "quest",
   "region": "Ashenvale",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Essence of Aku'mai": {
   "kind": "quest",
   "region": "Ashenvale",
   "status": "rename",
-  "new": null
+  "new": "The Essence of Old Coilmaw"
  },
  "The Harbor": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Bluegill": {
@@ -7664,14 +7664,14 @@
  "The Rebels": {
   "kind": "quest",
   "region": "Duskwood",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Grom'gol": {
   "kind": "quest",
   "region": "Hillsbrad Foothills",
   "status": "rename",
-  "new": null
+  "new": "Camp Skarn"
  },
  "Tiger Mastery": {
   "kind": "quest",
@@ -8745,13 +8745,13 @@
   "kind": "dungeon or wanted",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Greyhowl Keep"
  },
  "Blackfathom Deeps": {
   "kind": "dungeon or wanted",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "The Tidehollow Deeps"
  },
  "Gnomeregan": {
   "kind": "dungeon or wanted",
@@ -15232,5 +15232,257 @@
   "region": "",
   "status": "rename",
   "new": "Dustfort"
+ },
+ "Grimtotem": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Sourhorn"
+ },
+ "Pridewing": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Highwing"
+ },
+ "Bloodfury": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Redclaw"
+ },
+ "Deepmoss": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Deepvine"
+ },
+ "Warsong": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Woodcleaver"
+ },
+ "Menethil": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Gullhaven"
+ },
+ "Dragonmaw": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Wyrmchain"
+ },
+ "Kurzen": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Drayke"
+ },
+ "Kelris": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Oreth"
+ },
+ "Blackfathom": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Tidehollow"
+ },
+ "Arugal": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Cairn"
+ },
+ "Shadowfang": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Greyhowl"
+ },
+ "Springvale": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ashdown"
+ },
+ "Deathstalker": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Gravestalker"
+ },
+ "Silverpine": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Needlewood"
+ },
+ "Moonrage": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Howlmoor"
+ },
+ "Nightbane": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Gloomfang"
+ },
+ "Southshore": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Seacombe"
+ },
+ "Alterac": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Vaskar"
+ },
+ "Sentinel": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Warden"
+ },
+ "Wrathtail": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Scalelash"
+ },
+ "Ghostpaw": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Mistpaw"
+ },
+ "Thistlefur": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Briarpelt"
+ },
+ "Bleakheart": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Sourheart"
+ },
+ "Felfire": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Gloomfire"
+ },
+ "Felguard": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Pit Guard"
+ },
+ "Mannoroc": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Pit"
+ },
+ "Splinter Fist": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Knotjaw"
+ },
+ "Stonetalon": {
+  "kind": "lore",
+  "region": "Stonetalon Mountains",
+  "status": "rename",
+  "new": "Highcrag"
+ },
+ "Webwinder": {
+  "kind": "lore",
+  "region": "Stonetalon Mountains",
+  "status": "rename",
+  "new": "Silkline"
+ },
+ "Sun Rock": {
+  "kind": "lore",
+  "region": "Stonetalon Mountains",
+  "status": "rename",
+  "new": "Tallstone"
+ },
+ "Mirkfallon": {
+  "kind": "lore",
+  "region": "Stonetalon Mountains",
+  "status": "rename",
+  "new": "Fogwater"
+ },
+ "Brightwood": {
+  "kind": "lore",
+  "region": "Duskwood",
+  "status": "rename",
+  "new": "Hollin"
+ },
+ "Hushed Bank": {
+  "kind": "lore",
+  "region": "Duskwood",
+  "status": "rename",
+  "new": "Blackreed Bank"
+ },
+ "Ebonlocke": {
+  "kind": "lore",
+  "region": "Duskwood",
+  "status": "rename",
+  "new": "Grey"
+ },
+ "Hillsbrad": {
+  "kind": "lore",
+  "region": "Hillsbrad Foothills",
+  "status": "rename",
+  "new": "Greymead"
+ },
+ "Azurelode": {
+  "kind": "lore",
+  "region": "Hillsbrad Foothills",
+  "status": "rename",
+  "new": "Kestrel"
+ },
+ "Durnholde": {
+  "kind": "lore",
+  "region": "Hillsbrad Foothills",
+  "status": "rename",
+  "new": "Blackhelm"
+ },
+ "Pyrewood": {
+  "kind": "lore",
+  "region": "Hillsbrad Foothills",
+  "status": "rename",
+  "new": "Ashwick"
+ },
+ "Splintertree": {
+  "kind": "lore",
+  "region": "Ashenvale",
+  "status": "rename",
+  "new": "Stumpwatch"
+ },
+ "Zoram Strand": {
+  "kind": "lore",
+  "region": "Ashenvale",
+  "status": "rename",
+  "new": "Coral Strand"
+ },
+ "Howling Vale": {
+  "kind": "lore",
+  "region": "Ashenvale",
+  "status": "rename",
+  "new": "Grey Wolf Vale"
  }
 }
