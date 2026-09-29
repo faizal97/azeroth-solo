@@ -257,7 +257,7 @@
     list.forEach((n, i) => {
       const N = D.NPCS[n], mk = G.npcMarker(n);
       const src = n === 'hooded_stranger' && window.ART && ART.legend ? art('legend', 'lyveus_hooded') : N.legend && window.ART && ART.legend ? art('legend', N.legend) : art('hero', npcLooks(n, place));
-      const tag = h('div', { class: 'np', style: { fontSize: '9px' } }, mk ? h('span', { style: { color: mk === '…' ? '#bbb' : '#ffd100', fontWeight: 800 } }, (mk === '…' ? '?' : mk) + ' ') : null, h('span', { style: { color: '#ffd100' } }, N.name.split(' ').length > 2 ? N.name.split(' ').slice(-1)[0] : N.name));
+      const tag = h('div', { class: 'np', style: { fontSize: '10px' } }, mk ? h('span', { style: { color: mk === '…' ? '#bbb' : '#ffd100', fontWeight: 800 } }, (mk === '…' ? '?' : mk) + ' ') : null, h('span', { style: { color: '#ffd100' } }, N.name.split(' ').length > 2 ? N.name.split(' ').slice(-1)[0] : N.name));
       const el = spriteEl(src, slots[i], 'idle flip npc tappable', tag);
       el.addEventListener('click', () => openNpc(n));
       sc.append(el);
@@ -305,7 +305,7 @@
     } else if (!P.travel) {
       const me = spriteEl(art('hero', looks(P)), { l: 4, b: 5, w: 26 }, 'idle');
       ui.spriteEls.me = me; sc.append(me);
-      if (P.pet && P.pet.hp !== 0 && !S.run) sc.append(spriteEl(petArt(P.pet), P.pet.type === 'imp' ? { l: 24, b: 8, w: 13 } : { l: 22, b: 10, w: 20 }, 'idle' + (P.pet.type === 'beast' ? ' flip' : ''), h('div', { class: 'np', style: { fontSize: '9px' } }, h('span', { style: { color: '#9fd6ff' } }, P.pet.name))));
+      if (P.pet && P.pet.hp !== 0 && !S.run) sc.append(spriteEl(petArt(P.pet), P.pet.type === 'imp' ? { l: 24, b: 8, w: 13 } : { l: 22, b: 10, w: 20 }, 'idle' + (P.pet.type === 'beast' ? ' flip' : ''), h('div', { class: 'np', style: { fontSize: '10px' } }, h('span', { style: { color: '#9fd6ff' } }, P.pet.name))));
       if (!S.run) {
         // other players wandering about
         const inParty = new Set(((S.wparty && S.wparty.members) || []).map((m) => m.bot.id));
@@ -317,7 +317,7 @@
         const near = B.onlineIn(S, P.place, new Date()).filter((b) => !inParty.has(b.id) && B.factionOf(b) === G.myFaction()).slice(0, S.wparty ? 2 : 3);
         const SLOTS = [{ l: 27, b: 36, w: 11 }, { l: 45, b: 40, w: 10 }, { l: 62, b: 35, w: 11 }];
         near.forEach((b, i) => {
-          const el = spriteEl(art('hero', looks(b)), SLOTS[i], 'walker small', h('div', { class: 'np', style: { fontSize: '9px' } }, h('span', { class: 'cls-' + b.cls }, b.name)));
+          const el = spriteEl(art('hero', looks(b)), SLOTS[i], 'walker small', h('div', { class: 'np', style: { fontSize: '10px' } }, h('span', { class: 'cls-' + b.cls }, b.name)));
           el.querySelector('img').style.animationDelay = (-i * 0.37) + 's';
           el.classList.add('tappable');
           el.addEventListener('click', () => confirmInvite(b));
@@ -326,14 +326,14 @@
         // an enemy player nearby (War Mode)
         const foe = G.intruderHere();
         if (foe) {
-          const el = spriteEl(art('hero', looks(foe)), { l: 36, b: 12, w: 17 }, 'idle flip foe', h('div', { class: 'np', style: { fontSize: '9px' } }, h('span', { style: { color: '#ff5b4b' } }, '⚔ ' + foe.name)));
+          const el = spriteEl(art('hero', looks(foe)), { l: 36, b: 12, w: 17 }, 'idle flip foe', h('div', { class: 'np', style: { fontSize: '10px' } }, h('span', { style: { color: '#ff5b4b' } }, '⚔ ' + foe.name)));
           el.classList.add('tappable');
           el.addEventListener('click', () => confirmAttack(foe));
           sc.append(el);
         }
         // gathering nodes you can see
         G.placeNodes().forEach((nd, i) => {
-          const el = spriteEl(art('node', nd.key), [{ l: 31, b: 3, w: 11 }, { l: 49, b: 1, w: 10 }][i], 'node tappable', h('div', { class: 'np', style: { fontSize: '9px' } }, h('span', { style: { color: '#ffd84a' } }, nd.N.name)));
+          const el = spriteEl(art('node', nd.key), [{ l: 31, b: 3, w: 11 }, { l: 49, b: 1, w: 10 }][i], 'node tappable', h('div', { class: 'np', style: { fontSize: '10px' } }, h('span', { style: { color: '#ffd84a' } }, nd.N.name)));
           el.addEventListener('click', () => G.gatherNode(nd.i));
           sc.append(el);
         });
@@ -2062,7 +2062,7 @@
     });
   }
   function exportSave() {
-    const ta = h('textarea', { readonly: true, style: { width: '100%', height: '120px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', fontSize: '11px' } });
+    const ta = h('textarea', { readonly: true, style: { width: '100%', height: '120px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', fontSize: '12px' } });
     const note = h('p', { class: 'ai-note', style: { margin: 0 } }, 'Preparing your code...');
     const copy = h('button', { class: 'btn', disabled: true }, 'Copy');
     // the same code as a file: shared through Android's share sheet in the app, downloaded in a browser
@@ -2078,7 +2078,7 @@
     }, () => { note.textContent = 'Could not make a code on this device.'; });
   }
   function importSave() {
-    const ta = h('textarea', { style: { width: '100%', height: '120px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', fontSize: '11px' }, placeholder: 'Paste your save code' });
+    const ta = h('textarea', { style: { width: '100%', height: '120px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', fontSize: '12px' }, placeholder: 'Paste your save code' });
     const err = h('p', { style: { color: '#ff6a5a' } });
     const doLoad = async () => {
       load.disabled = true; err.textContent = '';
