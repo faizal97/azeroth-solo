@@ -2074,7 +2074,7 @@
               } }, on ? 'Back to the normal version' : 'Open the beta version'))];
           b.append(...foldSec('set.beta', 'Beta updates', on ? 'On' : 'Off', kids));
         }
-        b.append(...foldSec('set.about', 'About', 'unofficial fan project', [h('p', { class: 'ai-note', style: { margin: 0 } }, FAN_NOTE)]));
+        b.append(...foldSec('set.about', 'About', 'Realm of Loner', [h('p', { class: 'ai-note', style: { margin: 0 } }, ABOUT_NOTE)]));
         b.append(...foldSec('set.save', 'Save', 'save codes', [h('div', { class: 'btn-row' },
           h('button', { class: 'btn alt', onclick: exportSave }, 'Copy save code'),
           h('button', { class: 'btn alt', onclick: importSave }, 'Load save code'))]));
@@ -2859,9 +2859,8 @@
     showDialog([h('h3', null, rel.beta ? 'Beta update available' : 'Update available'), h('p', null, h('b', { style: { color: 'var(--gold)' } }, rel.name), h('br'), `You have v${cur}.`), notes, bar, status, row], false);
   }
 
-  // shown on the character screens and in Settings → About (the README carries the same notice)
-  const FAN_NOTE = 'Unofficial, non-commercial fan project. Not affiliated with or endorsed by Blizzard Entertainment. Warcraft and World of Warcraft are trademarks of Blizzard Entertainment, Inc. All art, music and code in this game are original.';
-  const fanNote = () => h('p', { class: 'fan-note' }, FAN_NOTE);
+  // Settings → About (since v10 the world, story and art are our own, so the old fan-project notice is gone)
+  const ABOUT_NOTE = 'Realm of Loner: a single-player online RPG where everyone else on the realm is simulated. The world of Caldreth, its story, art, music and code are all original. Free to play, and it will stay free.';
   // the title on the character screens: the lantern from the app icon over the lettering, and the tagline
   const LANTERN_MARK = '<svg viewBox="-24 -46 48 80" aria-hidden="true"><defs><linearGradient id="tlg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff4c8"/><stop offset=".6" stop-color="#ffd67a"/><stop offset="1" stop-color="#f4a840"/></linearGradient></defs>'
     + '<circle cx="0" cy="-37" r="5" fill="none" stroke="#140f09" stroke-width="5"/><circle cx="0" cy="-37" r="5" fill="none" stroke="#e6b450" stroke-width="2.4"/>'
@@ -2902,7 +2901,7 @@
           h('button', { class: 'btn alt', onclick: () => { if (!G.S) { const r = G.load(sel); if (!r) return; } openTheater(); } }, 'Theater'),
           h('button', { class: 'btn alt', style: { color: '#ff6a5a' }, onclick: () => confirmDeleteChar(cur, () => showSelect()) }, 'Delete')),
         h('button', { class: 'btn alt wide', onclick: importSave }, 'Load save code'),
-        discordLink(), fanNote());
+        discordLink());
     };
     draw();
   }
@@ -2959,7 +2958,7 @@
       root.append(h('div', { class: 'btn-row' },
         h('button', { class: 'btn alt', onclick: importSave }, 'Load save code'),
         G.characters().length ? h('button', { class: 'btn alt', onclick: () => showSelect() }, 'Back to characters') : null));
-      root.append(discordLink(), fanNote());
+      root.append(discordLink());
     };
     draw();
   }

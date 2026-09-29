@@ -21,7 +21,7 @@ It is a numbers-and-visuals game, not a text adventure: hand-drawn scenes and sp
   <img src="docs/screenshots/au1_warlock_dots.jpg" width="24%" alt="Buffs and debuffs with time left">
 </p>
 
-> **Unofficial, non-commercial fan project.** Not affiliated with, endorsed by or sponsored by Blizzard Entertainment. World of Warcraft, Warcraft and Azeroth are trademarks or registered trademarks of Blizzard Entertainment, Inc. No Blizzard assets are used: all art (hand-written SVG), music (composed synth) and code in this repository are original. The game is free and will stay free.
+> **About the name and the history.** Versions up to 9.9 were a free, non-commercial fan project set in another company's game world. Since v10 the world (Caldreth), its story (*The Black Ledger*), names and art are original, and the game is **Realm of Loner**. All art (hand-written SVG), music (composed synth) and code in this repository are our own. The game is free and will stay free.
 
 ## What's in it (v9.6)
 
