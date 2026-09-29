@@ -249,19 +249,19 @@
   "kind": "region",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "The Scorchlands"
  },
  "Mulgore": {
   "kind": "region",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Greensward"
  },
  "Tirisfal Glades": {
   "kind": "region",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Pallmoor"
  },
  "Westfall": {
   "kind": "region",
@@ -273,7 +273,7 @@
   "kind": "region",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "The Scrublands"
  },
  "Redridge Mountains": {
   "kind": "region",
@@ -537,37 +537,37 @@
   "kind": "place",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "The Blooding Grounds"
  },
  "Burning Blade Coven": {
   "kind": "place",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Hollow Eye Coven"
  },
  "Razor Hill": {
   "kind": "place",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Bonewall"
  },
  "Thunder Ridge": {
   "kind": "place",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Rumblestone Ridge"
  },
  "Echo Isles": {
   "kind": "place",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Kessari Isles"
  },
  "Tiragarde Keep": {
   "kind": "place",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Saltwall Keep"
  },
  "Orgrimmar": {
   "kind": "place",
@@ -579,37 +579,37 @@
   "kind": "place",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Calf Hill Camp"
  },
  "Brambleblade Ravine": {
   "kind": "place",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Thornrift Ravine"
  },
  "Bloodhoof Village": {
   "kind": "place",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Ossa Village"
  },
  "Palemane Rock": {
   "kind": "place",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Ashpelt Rock"
  },
  "The Venture Co. Mine": {
   "kind": "place",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "The Deepgold Company Mine"
  },
  "The Golden Plains": {
   "kind": "place",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "The Sunwheat Plains"
  },
  "Thunder Bluff": {
   "kind": "place",
@@ -621,37 +621,37 @@
   "kind": "place",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Last Bell"
  },
  "Night Web's Hollow": {
   "kind": "place",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Spinner's Hollow"
  },
  "Brill": {
   "kind": "place",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Mossgate"
  },
  "Agamand Mills": {
   "kind": "place",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Varden Mills"
  },
  "Garren's Haunt": {
   "kind": "place",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Holt's Haunt"
  },
  "Scarlet Watch Post": {
   "kind": "place",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Pyre Watch Post"
  },
  "Undercity": {
   "kind": "place",
@@ -723,55 +723,55 @@
   "kind": "place",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Hollow Tower"
  },
  "The Crossroads": {
   "kind": "place",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Dustfort"
  },
  "The Forgotten Pools": {
   "kind": "place",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "The Silent Pools"
  },
  "The Stagnant Oasis": {
   "kind": "place",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "The Sourwater Oasis"
  },
  "Razormane Grounds": {
   "kind": "place",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Snoutspike Grounds"
  },
  "Thorn Hill": {
   "kind": "place",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Hoofbreak Hill"
  },
  "The Sludge Fen": {
   "kind": "place",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "The Slick"
  },
  "Lushwater Oasis": {
   "kind": "place",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Greenwell Oasis"
  },
  "Bael'dun Digsite": {
   "kind": "place",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Stonegrave Dig"
  },
  "Three Corners": {
   "kind": "place",
@@ -1107,7 +1107,7 @@
   "kind": "place",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "The Thorn Warrens"
  },
  "Refuge Pointe": {
   "kind": "place",
@@ -1161,7 +1161,7 @@
   "kind": "place",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "The Pyre Abbey"
  },
  "Gadgetzan": {
   "kind": "place",
@@ -1748,236 +1748,236 @@
  "Quartermaster Grozka": {
   "kind": "npc",
   "region": "Tirisfal Glades",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Banker Karuk": {
   "kind": "npc",
   "region": "Tirisfal Glades",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Auctioneer Thathung": {
   "kind": "npc",
   "region": "Tirisfal Glades",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Gornek": {
   "kind": "npc",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Urzog"
  },
  "Kaltunk": {
   "kind": "npc",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Brakk"
  },
  "Galgar": {
   "kind": "npc",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Mugra"
  },
  "Zureetha Fargaze": {
   "kind": "npc",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Zekka"
  },
  "Duokna": {
   "kind": "npc",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Oshka"
  },
  "Gar'Thok": {
   "kind": "npc",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Drogga"
  },
  "Innkeeper Grosk": {
   "kind": "npc",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Hurga"
  },
  "Orgnil Soulscar": {
   "kind": "npc",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Vorn Ashmaw"
  },
  "Kaplak": {
   "kind": "npc",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Skiv"
  },
  "Vikar": {
   "kind": "npc",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Tazra"
  },
  "Vanira": {
   "kind": "npc",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Mezzi"
  },
  "Innkeeper Gryshka": {
   "kind": "npc",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Ruzha"
  },
  "Rahauro": {
   "kind": "npc",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Aru"
  },
  "Herald of Thrall": {
   "kind": "npc",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Herald of Grask"
  },
  "Grull Hawkwind": {
   "kind": "npc",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Oru of the Long Stride"
  },
  "Chief Hawkwind": {
   "kind": "npc",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Chief Tamo"
  },
  "Maur Raincaller": {
   "kind": "npc",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Imra of the Wells"
  },
  "Moodan Sungrain": {
   "kind": "npc",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Hasu Grainkeeper"
  },
  "Baine Bloodhoof": {
   "kind": "npc",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Tarro of Ossa"
  },
  "Innkeeper Kauth": {
   "kind": "npc",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Mema"
  },
  "Harken Windtotem": {
   "kind": "npc",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Harun of the Drums"
  },
  "Mahnott Roughwound": {
   "kind": "npc",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Maho"
  },
  "Morin Cloudstalker": {
   "kind": "npc",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Morra of the High Mesa"
  },
  "Innkeeper Pala": {
   "kind": "npc",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Suri"
  },
  "Etu Ragetotem": {
   "kind": "npc",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Ketu"
  },
  "Shadow Priest Sarvis": {
   "kind": "npc",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Shadow Priest Morwen"
  },
  "Executor Arren": {
   "kind": "npc",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Executor Thorley"
  },
  "Deathguard Saltain": {
   "kind": "npc",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Graveguard Bramm"
  },
  "Joshua Kien": {
   "kind": "npc",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Tobias Wren"
  },
  "Magistrate Sevren": {
   "kind": "npc",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Magistrate Caulder"
  },
  "Innkeeper Renee": {
   "kind": "npc",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Lenore"
  },
  "Deathguard Dillinger": {
   "kind": "npc",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Graveguard Moss"
  },
  "Apothecary Johaan": {
   "kind": "npc",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Apothecary Veit"
  },
  "Gerard Abernathy": {
   "kind": "npc",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Walter Pembry"
  },
  "Innkeeper Norman": {
   "kind": "npc",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Hester"
  },
  "Abigail Sawyer": {
   "kind": "npc",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Mercy Dunn"
  },
  "Gryan Stoutmantle": {
   "kind": "npc",
@@ -2037,43 +2037,43 @@
   "kind": "npc",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Grukk"
  },
  "Sergra Darkthorn": {
   "kind": "npc",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Vesha Blackbriar"
  },
  "Apothecary Helbrim": {
   "kind": "npc",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Apothecary Norrin"
  },
  "Zargh": {
   "kind": "npc",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Zugg"
  },
  "Innkeeper Boorand Plainswind": {
   "kind": "npc",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Innkeeper Bruma"
  },
  "Nargal Deatheye": {
   "kind": "npc",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Nazz"
  },
  "Kargal Battlescar": {
   "kind": "npc",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Ogrin"
  },
  "Magistrate Solomon": {
   "kind": "npc",
@@ -2787,7 +2787,7 @@
   "kind": "npc",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Stablemaster Kuno"
  },
  "Young Wolf": {
   "kind": "monster",
@@ -3093,7 +3093,7 @@
   "kind": "monster",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Scorpion Worker"
  },
  "Vile Familiar": {
   "kind": "monster",
@@ -3105,13 +3105,13 @@
   "kind": "monster",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Gloomstalker"
  },
  "Yarrog Baneshadow": {
   "kind": "boss or named",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Muzrak Hollowhand"
  },
  "Dire Mottled Boar": {
   "kind": "monster",
@@ -3123,7 +3123,7 @@
   "kind": "monster",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Scorpion Reaver"
  },
  "Thunder Lizard": {
   "kind": "monster",
@@ -3135,12 +3135,12 @@
   "kind": "monster",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "The Scorchlands Tiger"
  },
  "Hexed Troll": {
   "kind": "monster",
   "region": "Durotar",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Voodoo Troll": {
@@ -3153,25 +3153,25 @@
   "kind": "boss or named",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Mokku the Hexer"
  },
  "Kul Tiras Sailor": {
   "kind": "monster",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Brineholt Sailor"
  },
  "Kul Tiras Marine": {
   "kind": "monster",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Brineholt Marine"
  },
  "Lieutenant Benedict": {
   "kind": "boss or named",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Lieutenant Harwick"
  },
  "Ragefire Trogg": {
   "kind": "monster",
@@ -3201,7 +3201,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Bazzak the Hungerer"
  },
  "Jergosh the Invoker": {
   "kind": "boss or named",
@@ -3219,7 +3219,7 @@
   "kind": "monster",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Longneck"
  },
  "Prairie Wolf": {
   "kind": "monster",
@@ -3231,31 +3231,31 @@
   "kind": "monster",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Tuskhog"
  },
  "Bristleback Quilboar": {
   "kind": "monster",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Hollowtusk Spinehide"
  },
  "Bristleback Shaman": {
   "kind": "monster",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Hollowtusk Shaman"
  },
  "Chief Sharptusk Thornmantle": {
   "kind": "boss or named",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Chief Gorra Spinecrest"
  },
  "Adult Plainstrider": {
   "kind": "monster",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Adult Longneck"
  },
  "Prairie Stalker": {
   "kind": "monster",
@@ -3267,43 +3267,43 @@
   "kind": "monster",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Ashpelt Tanner"
  },
  "Palemane Poacher": {
   "kind": "monster",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Ashpelt Poacher"
  },
  "Venture Co. Worker": {
   "kind": "monster",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Deepgold Company Worker"
  },
  "Venture Co. Supervisor": {
   "kind": "monster",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Deepgold Company Supervisor"
  },
  "Snagglespear": {
   "kind": "boss or named",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Rootgnasher"
  },
  "Mazzranache": {
   "kind": "boss or named",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Old Longclaw"
  },
  "Arra'chea": {
   "kind": "boss or named",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Great Mother Dustback"
  },
  "Mindless Zombie": {
   "kind": "monster",
@@ -3321,19 +3321,19 @@
   "kind": "monster",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Gravebat"
  },
  "Rattlecage Skeleton": {
   "kind": "monster",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Chainbone Skeleton"
  },
  "Samuel Fipps": {
   "kind": "boss or named",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Edric Fane"
  },
  "Young Night Web Spider": {
   "kind": "monster",
@@ -3350,20 +3350,20 @@
  "Darkhound": {
   "kind": "monster",
   "region": "Tirisfal Glades",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Greater Duskbat": {
   "kind": "monster",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Greater Gravebat"
  },
  "Rot Hide Gnoll": {
   "kind": "monster",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Mangecoat Gnoll"
  },
  "Rot Hide Mongrel": {
   "kind": "monster",
@@ -3375,7 +3375,7 @@
   "kind": "boss or named",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Grubgut"
  },
  "Scarlet Convert": {
   "kind": "monster",
@@ -3393,7 +3393,7 @@
   "kind": "boss or named",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Captain Aubert"
  },
  "Defias Miner": {
   "kind": "monster",
@@ -3561,31 +3561,31 @@
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Galloran Drudge"
  },
  "Kolkar Wrangler": {
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Galloran Wrangler"
  },
  "Barak Kodobane": {
   "kind": "boss or named",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Rhaz the Herdbreaker"
  },
  "Zhevra Runner": {
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Stripeback Runner"
  },
  "Swiftmane": {
   "kind": "boss or named",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Quickhoof"
  },
  "Savannah Prowler": {
   "kind": "monster",
@@ -3597,79 +3597,79 @@
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Dustscale Lashtail"
  },
  "Oasis Snapjaw": {
   "kind": "monster",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Razormane Quilboar": {
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Snoutspike Spinehide"
  },
  "Razormane Thornweaver": {
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Snoutspike Thornweaver"
  },
  "Kolkar Stormer": {
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Galloran Stormer"
  },
  "Stormsnout": {
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Boomsnout"
  },
  "Venture Co. Mercenary": {
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Deepgold Company Mercenary"
  },
  "Venture Co. Geologist": {
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Deepgold Company Geologist"
  },
  "Sunscale Scytheclaw": {
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Dustscale Scytheclaw"
  },
  "Oasis Crocolisk": {
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Oasis Crocodile"
  },
  "Takk the Leaper": {
   "kind": "boss or named",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Skarr the Leaper"
  },
  "Bael'dun Excavator": {
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Stonegrave Excavator"
  },
  "Bael'dun Soldier": {
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Stonegrave Soldier"
  },
  "Druid of the Fang": {
   "kind": "monster",
@@ -4545,13 +4545,13 @@
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Thorn Warrens Quilguard"
  },
  "Razorfen Geomancer": {
   "kind": "monster",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Thorn Warrens Geomancer"
  },
  "Kraul Bat": {
   "kind": "monster",
@@ -4575,7 +4575,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Bone Speaker Harrok"
  },
  "Overlord Ramtusk": {
   "kind": "boss or named",
@@ -4593,7 +4593,7 @@
   "kind": "boss or named",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "Mother Grisla"
  },
  "Highland Thrasher": {
   "kind": "monster",
@@ -5949,307 +5949,307 @@
   "kind": "quest",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "First Blood in the Valley"
  },
  "Sting of the Scorpid": {
   "kind": "quest",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Sting of the Scorpion"
  },
  "Galgar's Cactus Apple Surprise": {
   "kind": "quest",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Cactus Apples for Mugra"
  },
  "Vile Familiars": {
   "kind": "quest",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Imps in the Caves"
  },
  "Burning Blade Medallion": {
   "kind": "quest",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Hollow Eye Medallion"
  },
  "Report to Razor Hill": {
   "kind": "quest",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Report to Bonewall"
  },
  "Lizard Horns": {
   "kind": "quest",
   "region": "Durotar",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Dark Storms": {
   "kind": "quest",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Humans at Saltwall"
  },
  "Hexed Charms": {
   "kind": "quest",
   "region": "Durotar",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Hidden Enemies": {
   "kind": "quest",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "The Cult Below"
  },
  "Welcome to Orgrimmar": {
   "kind": "quest",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Welcome to Vazhrak"
  },
  "Meat for the Barracks": {
   "kind": "quest",
   "region": "Durotar",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Reaver Stingers": {
   "kind": "quest",
   "region": "Durotar",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Thunder on the Ridge": {
   "kind": "quest",
   "region": "Durotar",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Tiger Hunt": {
   "kind": "quest",
   "region": "Durotar",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Spoils of Tiragarde": {
   "kind": "quest",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Spoils of Saltwall"
  },
  "The Keep Marines": {
   "kind": "quest",
   "region": "Durotar",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Voodoo on the Isles": {
   "kind": "quest",
   "region": "Durotar",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Report to the Crossroads": {
   "kind": "quest",
   "region": "Durotar",
   "status": "rename",
-  "new": null
+  "new": "Report to Dustfort"
  },
  "The Hunt Begins": {
   "kind": "quest",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "First Hunt"
  },
  "The Battleboars": {
   "kind": "quest",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "The Tuskhogs"
  },
  "Rite of Strength": {
   "kind": "quest",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Proving at the Ravine"
  },
  "Break Sharptusk!": {
   "kind": "quest",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Break Spinecrest!"
  },
  "Journey to Bloodhoof": {
   "kind": "quest",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Journey to Ossa"
  },
  "Swoop Hunting": {
   "kind": "quest",
   "region": "Mulgore",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Poison Water": {
   "kind": "quest",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Poachers at Ashpelt Rock"
  },
  "Dangers of the Venture Co.": {
   "kind": "quest",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Dangers of the Deepgold Company"
  },
  "Plainstrider Stew": {
   "kind": "quest",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Longneck Stew"
  },
  "Stalker Hides": {
   "kind": "quest",
   "region": "Mulgore",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Thinning the Herd": {
   "kind": "quest",
   "region": "Mulgore",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Palemane Tanners": {
   "kind": "quest",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "The Ashpelt Tanners"
  },
  "Broken Tools": {
   "kind": "quest",
   "region": "Mulgore",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Stalkers on the Plains": {
   "kind": "quest",
   "region": "Mulgore",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Time Is Money": {
   "kind": "quest",
   "region": "Mulgore",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Poachers' Last Stand": {
   "kind": "quest",
   "region": "Mulgore",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Journey to the Crossroads": {
   "kind": "quest",
   "region": "Mulgore",
   "status": "rename",
-  "new": null
+  "new": "Journey to Dustfort"
  },
  "The Mindless Ones": {
   "kind": "quest",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Those Who Did Not Wake"
  },
  "Rattling the Rattlecages": {
   "kind": "quest",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Bones in the Graveyard"
  },
  "Night Web and Wing": {
   "kind": "quest",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Spinner and Wing"
  },
  "The Road to Brill": {
   "kind": "quest",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "The Road to Mossgate"
  },
  "The Agamand Family": {
   "kind": "quest",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "The Varden Family"
  },
  "Rot Hide Ichor": {
   "kind": "quest",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Mangecoat Ichor"
  },
  "The Scarlet Crusade": {
   "kind": "quest",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "The Order of the Pyre"
  },
  "Bats Over Brill": {
   "kind": "quest",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Bats Over Mossgate"
  },
  "Darkhound Blood": {
   "kind": "quest",
   "region": "Tirisfal Glades",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Duskbat Pelts": {
   "kind": "quest",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Gravebat Pelts"
  },
  "The Rot Hide Gnolls": {
   "kind": "quest",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "The Mangecoat Gnolls"
  },
  "Mongrels of the Haunt": {
   "kind": "quest",
   "region": "Tirisfal Glades",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Scarlet Warriors": {
   "kind": "quest",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Pyre Warriors"
  },
  "Converts No More": {
   "kind": "quest",
   "region": "Tirisfal Glades",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Service to the Horde": {
   "kind": "quest",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Service to the Krugar"
  },
  "Poor Old Blanchy": {
   "kind": "quest",
@@ -6501,253 +6501,253 @@
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Raids on the Supply Line"
  },
  "Zhevra Runners": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Stripeback Runners"
  },
  "Zhevra Hooves": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Stripeback Hooves"
  },
  "Raptor Thieves": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Thieves with Claws"
  },
  "The Razormane": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "The Snoutspike"
  },
  "Lashtail Claws": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Razormane Tusks": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Snoutspike Tusks"
  },
  "Savannah Prowlers": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Kolkar Wranglers": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Galloran Wranglers"
  },
  "Wrangler Whips": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Thornweavers": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Snapjaw Shells": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Kolkar Leaders": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Galloran Leaders"
  },
  "Kolkar Stormers": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Galloran Stormers"
  },
  "Stormsnouts": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Boomsnouts"
  },
  "Storm Charms": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Stormsnout Hides": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Boomsnout Hides"
  },
  "Thunder Lizard Steaks": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Storm over Thorn Hill": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Storm over Hoofbreak Hill"
  },
  "The Centaur War Camp": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Venture Mercenaries": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Deepgold Mercenaries"
  },
  "Read the Fine Print": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Geologists": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Crystal Samples": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Stop the Drilling": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Crocolisk Steaks": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Crocodile Steaks"
  },
  "Crocs in the Water": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Scytheclaws": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Scytheclaw Talons": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Excavators": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Bael'dun Relics": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Stonegrave Relics"
  },
  "Crocolisk Hides": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Crocodile Hides"
  },
  "Lushwater Raptors": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Greenwell Raptors"
  },
  "Dwarven Rations": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Rifle Parts": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Push Back the Dwarves": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "Bael'dun Soldiers": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Stonegrave Soldiers"
  },
  "Orders from Ironforge": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Orders from Keldrun"
  },
  "Serpentbloom": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "The Cavern Flower"
  },
  "Deviate Hides": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Twisted Hides"
  },
  "Leaders of the Fang": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Leaders of the Coil"
  },
  "The Devourer": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "The Dream-Eater"
  },
  "To Redridge": {
   "kind": "quest",
@@ -6926,7 +6926,7 @@
  "Into the Mountains": {
   "kind": "quest",
   "region": "The Barrens",
-  "status": "rename",
+  "status": "keep",
   "new": null
  },
  "The Webwinder Nests": {
@@ -7755,7 +7755,7 @@
   "kind": "quest",
   "region": "Stranglethorn Vale",
   "status": "rename",
-  "new": null
+  "new": "The Deepgold Company"
  },
  "Follow the Money": {
   "kind": "quest",
@@ -7869,19 +7869,19 @@
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Mother Grisla"
  },
  "Blueleaf Tubers": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "Rootbulbs of the Warrens"
  },
  "Mortality Wanes": {
   "kind": "quest",
   "region": "The Barrens",
   "status": "rename",
-  "new": null
+  "new": "The Skull Staff"
  },
  "The League of Arathor": {
   "kind": "quest",
@@ -8001,7 +8001,7 @@
   "kind": "quest",
   "region": "Tirisfal Glades",
   "status": "rename",
-  "new": null
+  "new": "Pyre Insignias"
  },
  "In the Name of the Light": {
   "kind": "quest",
@@ -8721,7 +8721,7 @@
   "kind": "dungeon or wanted",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "The Smoke Pit"
  },
  "The Deadmines": {
   "kind": "dungeon or wanted",
@@ -8733,7 +8733,7 @@
   "kind": "dungeon or wanted",
   "region": "",
   "status": "rename",
-  "new": null
+  "new": "The Dreaming Caves"
  },
  "The Stockade": {
   "kind": "dungeon or wanted",
@@ -14956,5 +14956,281 @@
   "region": "",
   "status": "rename",
   "new": "Wood Elf Wardens"
+ },
+ "Burning Blade": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hollow Eye"
+ },
+ "Searing Blade": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hollow Eye"
+ },
+ "Scorpid": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Scorpion"
+ },
+ "Scorpids": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Scorpions"
+ },
+ "Taragaman": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Bazzak"
+ },
+ "Crossroads": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Dustfort"
+ },
+ "Far Watch": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hollow Tower"
+ },
+ "Bristleback": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Hollowtusk"
+ },
+ "Palemane": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Ashpelt"
+ },
+ "Plainstriders": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Longnecks"
+ },
+ "Battleboars": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Tuskhogs"
+ },
+ "Sharptusk": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Spinecrest"
+ },
+ "Scarlet": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Pyre"
+ },
+ "Deathguard": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Graveguard"
+ },
+ "Rattlecage": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Chainbone"
+ },
+ "Rot Hide": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Mangecoat"
+ },
+ "The Dark Lady": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "the Pale Queen"
+ },
+ "Dark Lady": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Pale Queen"
+ },
+ "Barrens": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Scrublands"
+ },
+ "Razormane": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Snoutspike"
+ },
+ "Kolkar": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Galloran"
+ },
+ "Zhevra": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Stripeback"
+ },
+ "Sunscale": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Dustscale"
+ },
+ "Razorfen": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Thorn Warrens"
+ },
+ "Kraul": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Warrens"
+ },
+ "Druids of the Fang": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Druids of the Coil"
+ },
+ "Naralex": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Elarion"
+ },
+ "Jargba": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Harrok"
+ },
+ "Tiragarde": {
+  "kind": "lore",
+  "region": "Durotar",
+  "status": "rename",
+  "new": "Saltwall"
+ },
+ "Yarrog": {
+  "kind": "lore",
+  "region": "Durotar",
+  "status": "rename",
+  "new": "Muzrak"
+ },
+ "Bloodhoof": {
+  "kind": "lore",
+  "region": "Mulgore",
+  "status": "rename",
+  "new": "Ossa"
+ },
+ "Golden Plains": {
+  "kind": "lore",
+  "region": "Mulgore",
+  "status": "rename",
+  "new": "Sunwheat Plains"
+ },
+ "Baine": {
+  "kind": "lore",
+  "region": "Mulgore",
+  "status": "rename",
+  "new": "Tarro"
+ },
+ "Tirisfal": {
+  "kind": "lore",
+  "region": "Tirisfal Glades",
+  "status": "rename",
+  "new": "Pallmoor"
+ },
+ "Night Web": {
+  "kind": "lore",
+  "region": "Tirisfal Glades",
+  "status": "rename",
+  "new": "Spinner"
+ },
+ "Agamand": {
+  "kind": "lore",
+  "region": "Tirisfal Glades",
+  "status": "rename",
+  "new": "Varden"
+ },
+ "Stagnant Oasis": {
+  "kind": "lore",
+  "region": "The Barrens",
+  "status": "rename",
+  "new": "Sourwater Oasis"
+ },
+ "Sludge Fen": {
+  "kind": "lore",
+  "region": "The Barrens",
+  "status": "rename",
+  "new": "Slick"
+ },
+ "Lushwater": {
+  "kind": "lore",
+  "region": "The Barrens",
+  "status": "rename",
+  "new": "Greenwell"
+ },
+ "Bael'dun": {
+  "kind": "lore",
+  "region": "The Barrens",
+  "status": "rename",
+  "new": "Stonegrave"
+ },
+ "Venture": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Deepgold"
+ },
+ "Crocolisk": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Crocodile"
+ },
+ "Crocolisks": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Crocodiles"
+ },
+ "Venture Co.": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Deepgold Company"
+ },
+ "the Venture Co.": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "the Deepgold Company"
+ },
+ "the Crossroads": {
+  "kind": "lore",
+  "region": "",
+  "status": "rename",
+  "new": "Dustfort"
  }
 }
