@@ -35,6 +35,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   // Bridges to MainActivity.kt. The page sends {id, cmd, args} on a JS channel; the answer goes back to window.<reply>.
   static const _upd = MethodChannel('azsolo/update'); // in-app updater, answered with window.AZUPD_REPLY
   static const _file = MethodChannel('azsolo/file');  // save files: share sheet and file picker, window.AZFILE_REPLY
+  static const _cloud = MethodChannel('azsolo/cloud'); // cloud save: a Google Drive token, window.AZCLOUD_REPLY
   Future<void> _bridge(MethodChannel ch, String reply, JavaScriptMessage msg) async {
     Map<String, dynamic> req;
     try { req = jsonDecode(msg.message) as Map<String, dynamic>; } catch (_) { return; }
@@ -61,6 +62,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       ..setBackgroundColor(const Color(0xFF0E0B08))
       ..addJavaScriptChannel('AzUpd', onMessageReceived: (m) => _bridge(_upd, 'AZUPD_REPLY', m))
       ..addJavaScriptChannel('AzFile', onMessageReceived: (m) => _bridge(_file, 'AZFILE_REPLY', m))
+      ..addJavaScriptChannel('AzCloud', onMessageReceived: (m) => _bridge(_cloud, 'AZCLOUD_REPLY', m))
       ..loadFlutterAsset('assets/game/index.html');
   }
 

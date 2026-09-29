@@ -12,6 +12,13 @@ import java.net.HttpURLConnection
 import java.net.URL
 import android.provider.Settings
 import androidx.core.content.FileProvider
+import com.google.android.gms.auth.api.identity.AuthorizationRequest
+import com.google.android.gms.auth.api.identity.ClearTokenRequest
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.Scope
 import java.util.concurrent.Executors
 
 // The Flutter host for the game. The game (JS in the WebView) talks to Dart, Dart talks to these channels.
@@ -66,8 +73,41 @@ class MainActivity : FlutterActivity() {
     private fun savesDir(): File = File(cacheDir, "saves").apply { mkdirs() }
 
     @Deprecated("Deprecated in Java")
+    // ---- cloud save (v10.1): Google Play services' authorisation client gives the game a Drive token for its hidden
+    // app-data folder only (drive.appdata). No sign-in library and no server: Android keeps the grant and renews
+    // the token itself, so backups work in the background. The JS side is CLOUD.appAuth in cloud.js.
+    private val cloudScope = Scope("https://www.googleapis.com/auth/drive.appdata")
+    private val cloudRequest = 4713
+    private var pendingCloud: MethodChannel.Result? = null
+    private fun cloudToken(interactive: Boolean, result: MethodChannel.Result) {
+        val req = AuthorizationRequest.builder().setRequestedScopes(listOf(cloudScope)).build()
+        Identity.getAuthorizationClient(this).authorize(req)
+            .addOnSuccessListener { r ->
+                val token = r.accessToken
+                if (!r.hasResolution() && token != null) { result.success(token); return@addOnSuccessListener }
+                // the player has to choose an account or allow access: only from a tap, never in the background
+                val pi = r.pendingIntent
+                if (!interactive || pi == null) { result.error("auth", "The Google sign-in has run out. Reconnect to carry on.", null); return@addOnSuccessListener }
+                if (pendingCloud != null) { result.error("busy", "Google sign-in is already open", null); return@addOnSuccessListener }
+                pendingCloud = result
+                try { startIntentSenderForResult(pi.intentSender, cloudRequest, null, 0, 0, 0) }
+                catch (e: Exception) { pendingCloud = null; result.error("auth", e.message ?: "Could not open Google sign-in", null) }
+            }
+            .addOnFailureListener { e -> result.error("auth", e.message ?: e.toString(), null) }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == cloudRequest) {
+            val res = pendingCloud ?: return
+            pendingCloud = null
+            if (resultCode != Activity.RESULT_OK) { res.error("cancelled", "Sign-in was cancelled.", null); return }
+            try {
+                val token = Identity.getAuthorizationClient(this).getAuthorizationResultFromIntent(data).accessToken
+                if (token == null) res.error("denied", "Cloud save needs the Google Drive permission. Try again and allow it.", null) else res.success(token)
+            } catch (e: ApiException) { res.error("auth", e.message ?: "Google did not sign you in.", null) }
+            return
+        }
         if (requestCode != pickRequest) return
         val res = pendingPick ?: return
         pendingPick = null
@@ -109,6 +149,20 @@ class MainActivity : FlutterActivity() {
                     pendingPick = result
                     val pick = Intent(Intent.ACTION_OPEN_DOCUMENT).apply { addCategory(Intent.CATEGORY_OPENABLE); type = "*/*" }
                     startActivityForResult(pick, pickRequest)
+                }
+                else -> result.notImplemented()
+            }
+        }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "azsolo/cloud").setMethodCallHandler { call, result ->
+            when (call.method) {
+                "available" -> result.success(GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS)
+                "token" -> cloudToken(call.argument<Boolean>("interactive") == true, result)
+                // an expired or refused token leaves Android's cache, so the next "token" fetches a fresh one
+                "clear" -> {
+                    val t = call.argument<String>("token")
+                    if (t.isNullOrEmpty()) { result.success(true); return@setMethodCallHandler }
+                    Identity.getAuthorizationClient(this).clearToken(ClearTokenRequest.builder().setToken(t).build())
+                        .addOnSuccessListener { result.success(true) }.addOnFailureListener { result.success(false) }
                 }
                 else -> result.notImplemented()
             }

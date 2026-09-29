@@ -47,4 +47,6 @@ flutter {
 dependencies {
     // FileProvider, for handing a downloaded update to the system installer
     implementation("androidx.core:core-ktx:1.13.1")
+    // cloud save: Google's authorisation client, for a Drive token limited to the game's hidden app folder
+    implementation("com.google.android.gms:play-services-auth:22.0.0")
 }

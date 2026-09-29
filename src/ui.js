@@ -2247,7 +2247,8 @@
     return st.lastBackup ? 'On · ' + agoText(st.lastBackup) : 'On';
   }
   function cloudKids() {
-    if (!CLOUD.available()) return [cloudNote(UPD.inApp() ? 'Cloud save is coming to the app in a later update. Save codes (below) work in the meantime.' : `Cloud save works on the game's own page, ${UPD.WEB}. Save codes (below) work everywhere.`)];
+    if (!CLOUD.available()) return [cloudNote(CLOUD.why === 'play' ? 'Cloud save needs Google Play services, which this phone does not have. Save codes (below) work everywhere.'
+      : UPD.inApp() ? 'Cloud save needs the newest version of the app. Save codes (below) work in the meantime.' : `Cloud save works on the game's own page, ${UPD.WEB}. Save codes (below) work everywhere.`)];
     CLOUD.prepare(); // load Google's script now, so a tap can open its window straight away
     const testing = CLOUD.TESTING ? cloudNote('Testing: only invited Google accounts can sign in for now.') : null;
     const refresh = () => { if (ui.sheetFn) ui.sheetFn(); };
@@ -3179,7 +3180,7 @@
     if (away > 120000 && !G.fight) { const rep = G.catchUp(); renderAll(); showAway(rep); }
   }
   window.GAME = {
-    save: () => { G.save(); if (window.SND) window.SND.pause(); },
+    save: () => { G.save(); cloudAuto(true); if (window.SND) window.SND.pause(); },
     resume: () => { if (window.SND) window.SND.resume(); resume(); },
     back: () => { if (ui.dialog) closeDialog(); else if (ui.sheet) closeSheet(); },
   };

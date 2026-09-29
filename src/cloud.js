@@ -31,7 +31,7 @@
 
   // ---- sign-in and Drive plug in here
   let auth = null, driver = null;
-  CLOUD.setAuth = (a) => { auth = a; driver = a ? CLOUD.driveREST(() => a.token(false)) : null; };
+  CLOUD.setAuth = (a) => { auth = a; driver = a ? CLOUD.driveREST(() => a.token(false), a.expired) : null; };
   CLOUD.setDriver = (d) => { driver = d; }; // the sim's fake Drive
   const drv = () => { if (!driver) throw err('auth', 'Not signed in to Google.'); return driver; };
   CLOUD.signIn = async function () { if (!auth) throw err('unavailable', 'Cloud save is not available here.'); await auth.token(true); patch({ on: true, lastError: null }); };
@@ -176,7 +176,35 @@
         if (!client) { await load(); init(); } // only when prepare() was not called in time: the browser may block this popup
         return new Promise((res, rej) => { pending = { res, rej }; client.requestAccessToken(CLOUD.on() ? { prompt: '' } : {}); });
       },
+      expired() { tok = null; exp = 0; },
       signOut() { tok = null; exp = 0; }, // this device only: Google keeps the permission, so other devices stay signed in
+    };
+  };
+  // ---- the app's sign-in: Google Play services through the AzCloud bridge (MainActivity.kt). Android keeps the grant
+  // and renews tokens by itself, so backups also work in the background; only choosing an account needs a tap.
+  CLOUD.appOk = () => !!(root.UPD && UPD.inApp && UPD.inApp() && root.AzCloud && root.AzCloud.postMessage);
+  CLOUD.appAuth = function () {
+    let seq = 0, tok = null, exp = 0;
+    const waiting = {};
+    root.AZCLOUD_REPLY = function (s) {
+      let r; try { r = typeof s === 'string' ? JSON.parse(s) : s; } catch (e) { return; }
+      const w = waiting[r.id]; if (!w) return;
+      delete waiting[r.id];
+      if (r.ok) w.res(r.value); else { const v = r.value || {}; w.rej(err(v.code || 'auth', v.message || 'Google did not sign you in.')); }
+    };
+    const call = (cmd, args) => new Promise((res, rej) => { const id = ++seq; waiting[id] = { res, rej }; root.AzCloud.postMessage(JSON.stringify({ id, cmd, args: args || {} })); });
+    return {
+      call,
+      prepare: () => Promise.resolve(),
+      fresh: () => !!tok && Date.now() < exp,
+      async token(interactive) {
+        if (tok && Date.now() < exp) return tok;
+        tok = await call('token', { interactive: !!interactive });
+        exp = Date.now() + 40 * 60 * 1000; // Android's tokens last about an hour; ask again well before
+        return tok;
+      },
+      async expired(t) { tok = null; exp = 0; await call('clear', { token: t }).catch(() => {}); },
+      signOut() { const t = tok; tok = null; exp = 0; if (t) call('clear', { token: t }).catch(() => {}); },
     };
   };
   CLOUD.available = () => !!auth;
@@ -188,12 +216,13 @@
 
   // ---- the real Drive: plain REST calls, only ever in the app-data folder
   const API = 'https://www.googleapis.com/drive/v3', UP = 'https://www.googleapis.com/upload/drive/v3';
-  CLOUD.driveREST = function (getToken) {
-    const call = async (url, opt) => {
+  CLOUD.driveREST = function (getToken, expired) {
+    const call = async (url, opt, again) => {
       const tok = await getToken();
       let r;
       try { r = await fetch(url, Object.assign({}, opt, { headers: Object.assign({ Authorization: 'Bearer ' + tok }, (opt && opt.headers) || {}) })); }
       catch (e) { throw err('offline', 'No connection to Google Drive.'); }
+      if (r.status === 401 && expired && !again) { await expired(tok); return call(url, opt, true); } // one retry, fresh token
       if (r.status === 401) throw err('auth', 'The Google sign-in has run out. Reconnect to carry on.');
       if (!r.ok) throw err('drive', `Google Drive answered ${r.status}. Try again in a moment.`);
       return r;
@@ -220,5 +249,9 @@
   };
   // the browser's sign-in, ready to use on the registered sites (the app gets its own later). Last, so everything
   // it uses above is defined.
-  if (CLOUD.webOk()) CLOUD.setAuth(CLOUD.webAuth());
+  CLOUD.why = null; // why cloud save is unavailable here, for the Settings section
+  if (CLOUD.appOk()) {
+    const a = CLOUD.appAuth(); CLOUD.setAuth(a);
+    a.call('available').then((ok) => { if (!ok) { CLOUD.setAuth(null); CLOUD.why = 'play'; } }).catch(() => {});
+  } else if (CLOUD.webOk()) CLOUD.setAuth(CLOUD.webAuth());
 })(typeof window !== 'undefined' ? window : globalThis);

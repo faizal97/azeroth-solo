@@ -151,6 +151,33 @@ const ok = (cond, what) => { if (cond) pass++; else { fail++; console.log('FAIL'
     ok(!threw && win.CLOUD && win.CLOUD.available() === want, `cloud.js on ${origin}: loads, sign-in ${want ? 'offered' : 'off'}${threw ? ' (' + threw.message + ')' : ''}`);
   }
 
+  // 12. in the app: sign-in goes through the AzCloud bridge; a phone without Google Play services gets none
+  const appWin = (playOk, answer) => {
+    const win = { location: { origin: 'https://appassets.androidplatform.net' }, localStorage: mem(), UPD: { inApp: () => true }, sent: [] };
+    win.window = win;
+    win.AzCloud = { postMessage: (m) => { const q = JSON.parse(m); win.sent.push(q.cmd); setTimeout(() => win.AZCLOUD_REPLY(JSON.stringify(q.cmd === 'available' ? { id: q.id, ok: true, value: playOk } : answer(q))), 0); } };
+    vm.runInNewContext(src, win); return win;
+  };
+  let w = appWin(true, (q) => ({ id: q.id, ok: true, value: 'tok-' + (q.args.interactive ? 'tap' : 'quiet') }));
+  await new Promise((r) => setTimeout(r, 5));
+  ok(w.CLOUD.available() && w.CLOUD.device() === 'phone' && (await w.CLOUD.token(false)) === 'tok-quiet' && w.CLOUD.fresh(), 'in the app: available, a phone, and a quiet token for background backups');
+  w = appWin(false, () => ({}));
+  await new Promise((r) => setTimeout(r, 5));
+  ok(!w.CLOUD.available() && w.CLOUD.why === 'play', 'no Google Play services: cloud save says so');
+  w = appWin(true, (q) => ({ id: q.id, ok: false, value: { code: 'cancelled', message: 'Sign-in was cancelled.' } }));
+  await new Promise((r) => setTimeout(r, 5));
+  let why = null; try { await w.CLOUD.token(true); } catch (e) { why = e.code; }
+  ok(why === 'cancelled', 'a cancelled Google screen comes back as cancelled (no error message shown)');
+
+  // 13. Drive says the token ran out: one retry with a fresh token, then it goes through
+  let n401 = 0, cleared = 0; const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url, o) => { if (o.headers.Authorization === 'Bearer old') { n401++; return { status: 401, ok: false }; } return { status: 200, ok: true, json: async () => ({ files: [] }) }; };
+  let tokNow = 'old';
+  const d = CLOUD.driveREST(async () => tokNow, async () => { cleared++; tokNow = 'new'; });
+  const files = await d.list();
+  ok(Array.isArray(files) && n401 === 1 && cleared === 1, 'an expired token is cleared and the call retried once');
+  globalThis.fetch = realFetch;
+
   console.log(`cloudsync: ${pass}/${pass + fail} checks pass`);
   process.exit(fail ? 1 : 0);
 })().catch((e) => { console.error(e); process.exit(1); });
