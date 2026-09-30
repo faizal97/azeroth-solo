@@ -33,6 +33,13 @@
 - Mentor Marks are account-wide, so an alt's runs pay for your main's upgrades.
 - First step: measure the current gear gap between Magma Throne, Veshmira's Lair and Tidecrown from the data, and set
   the step size from it.
+- **Measured 2026-09-30** (average stat points per boss-loot item, same slots, against Tidecrown = 100%): Veshmira's
+  Lair 92%, Magma Throne 91%, Temple of Shal'zua 96% and the Sunken Archive 93% (both blue, so they already beat older
+  purples), the Blackcloister 85%, Graymouth 82%, Cinderpeak Depths 68% (all items). Weapon damage per second: Tidecrown
+  42.7, the rest 33–38.5, so upgrades scale weapon damage as well as stats.
+- **Step size and caps:** one step is 3% of the ceiling. Purples upgrade to 100% of the ceiling, blues to about 92%, so
+  raids stay the top of power and a blue can still win on its effect. Magma Throne gear takes 3–4 steps; a 5% ceiling
+  raise adds about 2 steps to everything.
 - **Sim:** a geared 60 still clears old normal dungeons easily; a fully upgraded Magma Throne set is within a few
   percent of a Tidecrown set; a 5% ceiling raise moves your best Trial by about +1 to +2; one upgrade step costs about
   3–5 dungeon runs of Marks (first target).
