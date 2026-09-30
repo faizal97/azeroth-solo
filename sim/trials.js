@@ -111,9 +111,12 @@ ok(G.titleUnlocked(D.TITLES.find((t) => t.id === 'tried')) === false, 'no Trial 
 ok(G.queueTrial(easy, 3) && G.S.queue.trial === 3, 'queue a Trial 3');
 G.acceptPop();
 ok(G.S.run && G.S.run.trial && G.S.run.mobLevel === 60 && G.S.group.members.every((m) => m.syncLevel === 60), 'the run and the group are at level 60');
+ok(G.S.group.members.filter((m) => !m.legend).every((m) => m.level === 60), `every player in a Trial group is level 60 (${G.S.group.members.map((m) => m.level).join(', ')})`);
 ok(Math.abs(G.S.run.mult.hp / (D.DUNGEONS[D.ACTIVITIES[easy].dungeon].trashMult || { hp: 1 }).hp - T.factor(3)) < 1e-9, 'enemies gain the Trial factor');
 G.S.run.restUntil = 0; G.runPull();
 ok(G.fight && G.fight.enemies.every((e) => e.level === 60 || e.level === 58), 'the first pull fights at 60');
+G.fight = null; G.S.run = null; G.S.group = null; delete P.syncLevel;
+for (let i = 0; i < 20; i++) { G.S.run = null; G.S.group = null; G.queueTrial(easy, 1); G.acceptPop(); if (G.S.group.members.some((m) => !m.legend && m.level !== 60)) { ok(false, 'a level-59 slipped into a Trial group'); break; } }
 G.fight = null; G.S.run = null; G.S.group = null; delete P.syncLevel;
 // a new month files the old one
 const oldRating = G.trialRating();

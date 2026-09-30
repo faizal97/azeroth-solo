@@ -2274,18 +2274,18 @@
   };
   G.leaveQueue = function () { G.S.queue = null; sys('You left the queue.'); emit('change'); };
   const OTHER_REALMS = ['Mistral', 'Hearthwick', 'Thornbury', 'Copperbell', 'Saltwind', 'Longwinter']; // our own realm names (v10)
-  function recruit(role, lvl, used, usedCls, guild) {
+  function recruit(role, lvl, used, usedCls, guild, exact) { // exact: only players at this level (Trials: the cap)
     const S = G.S, date = new Date();
     const want = role === 'tank' ? ['warrior', 'warrior', 'paladin'].concat(lvl >= 10 ? ['druid'] : []) : role === 'healer' ? ['priest', 'priest', 'paladin', 'druid', 'shaman'] : ['mage', 'rogue', 'rogue', 'mage', 'warrior', 'warlock', 'warlock', 'hunter', 'hunter', 'druid', 'shaman'];
     const myF = (D.RACES[S.player.race] || {}).faction || 'alliance';
-    let pool = S.bots.filter((b) => B.isOnline(b, date) && B.factionOf(b) === myF && want.includes(b.cls) && b.level >= lvl - 1 && b.level <= lvl + 3 && !used.has(b.id));
+    let pool = S.bots.filter((b) => B.isOnline(b, date) && B.factionOf(b) === myF && want.includes(b.cls) && (exact ? b.level === lvl : b.level >= lvl - 1 && b.level <= lvl + 3) && !used.has(b.id));
     // prefer classes the group does not have yet
     if (guild != null && guild >= 0) { const mates = pool.filter((b) => b.guild === guild); if (mates.length) pool = mates; }
     if (usedCls) { const fresh = pool.filter((b) => !usedCls.has(b.cls)); if (fresh.length) pool = fresh; }
     let b;
     if (pool.length) b = JSON.parse(JSON.stringify(pick(pool)));
     else {
-      const nb = B.makeBot(S.nextBotId++, new Set(S.bots.map((x) => x.name)), { level: clamp(lvl + rint(-1, 1), 8, D.LEVEL_CAP) });
+      const nb = B.makeBot(S.nextBotId++, new Set(S.bots.map((x) => x.name)), { level: exact ? lvl : clamp(lvl + rint(-1, 1), 8, D.LEVEL_CAP) });
       const freshCls = usedCls ? want.filter((c) => !usedCls.has(c)) : want;
       nb.cls = pick(freshCls.length ? freshCls : want); nb.realm = pick(OTHER_REALMS);
       nb.race = myF === 'horde' ? pick(['orc', 'troll', 'tauren', 'undead']) : pick(['human', 'dwarf', 'gnome', 'nightelf']);
@@ -2375,7 +2375,7 @@
     roles.splice(roles.indexOf(mine), 1);
     const used = new Set(), usedCls = new Set([S.player.cls]);
     const trial = opts && opts.trial, lvl = trial ? D.LEVEL_CAP : G.syncLevel(act);
-    const members = roles.map((r) => G.botChar(recruit(r, lvl, used, usedCls, opts && opts.guild)));
+    const members = roles.map((r) => G.botChar(recruit(r, lvl, used, usedCls, opts && opts.guild, !!trial)));
     // everyone fights at the activity's level (a Trial: at the level cap)
     const cap = trial ? D.LEVEL_CAP : A.maxLvl || D.LEVEL_CAP;
     for (const m of members) m.syncLevel = cap;
@@ -2642,7 +2642,7 @@
       }
       for (const m of S.group.members.filter((x) => x.gone && x.replacing && t >= x.replacing)) {
         const used = new Set(S.group.members.map((x) => x.bot.id));
-        const nb = G.botChar(recruit(m.role, G.syncLevel(R.act), used, new Set(S.group.members.filter((x) => !x.gone).map((x) => x.cls).concat([P.cls]))));
+        const nb = G.botChar(recruit(m.role, G.syncLevel(R.act), used, new Set(S.group.members.filter((x) => !x.gone).map((x) => x.cls).concat([P.cls])), null, !!R.trial));
         nb.syncLevel = D.ACTIVITIES[R.act].maxLvl || D.LEVEL_CAP;
         const i = S.group.members.indexOf(m);
         S.group.members[i] = nb;
