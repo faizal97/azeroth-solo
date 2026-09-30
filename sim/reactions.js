@@ -72,6 +72,25 @@ for (const cls of CLASSES) {
   mid.chance = save;
   ok(mid.lights.some((l) => E.lit(hi, l)), `${cls}: ${mid.name} lights at level ${mid.minLvl}`);
 }
+
+// ---- talent reactions: each capstone brings one; only with the talent; it lights something at level 60
+{
+  let caps = 0;
+  for (const cls of CLASSES) for (const tr of D.TALENTS[cls]) {
+    const cap = tr.talents.find((t) => t.tier === 3), pr = (D.PROCS[cls] || []).find((p) => p.talent === cap.id);
+    ok(!!pr, `${cls} ${tr.id}: the capstone ${cap.name} brings a reaction`); if (!pr) continue; caps++;
+    G.newGame({ name: 'Cap', cls, race: cls === 'shaman' || cls === 'hunter' ? 'orc' : 'human' }); const P = G.S.player; P.level = 60;
+    const u0 = E.charUnit(P, 'ally', 'bot', Date.now()), C0 = E.fight([u0], [E.mobUnit(mobFor(60), 60)], {});
+    const save = pr.chance; pr.chance = 1; for (const f of pr.from || [null]) for (const on of pr.on) E.proc(C0, u0, on, f);
+    ok(!pr.lights.some((l) => E.lit(u0, l)), `${cls}: ${pr.name} needs its talent`);
+    P.talents = Object.assign({}, P.talents, { [cap.id]: 1 });
+    const u1 = E.charUnit(P, 'ally', 'bot', Date.now()), C1 = E.fight([u1], [E.mobUnit(mobFor(60), 60)], {});
+    for (const f of pr.from || [null]) for (const on of pr.on) E.proc(C1, u1, on, f);
+    pr.chance = save;
+    ok(pr.lights.some((l) => E.lit(u1, l)), `${cls}: ${pr.name} lights with its talent at 60`);
+  }
+  ok(caps === CLASSES.length * 3, `every capstone has a reaction (${caps})`);
+}
 // ---- the early game: different buttons per fight, by level (target: 3 or more by level 4)
 const report = [];
 for (const cls of CLASSES) {

@@ -478,6 +478,47 @@
       { on: ['hit'], from: ['lightning_bolt'], chance: 0.25, aura: 'stormcall', dur: 8, lights: ['earth_shock'], reset: true, free: true, name: 'Stormcall', tell: 'Stormcall! Earth Shock is free', teach: 'Stormcall: when Lightning Bolt hits, Earth Shock can light up. It is ready at once and costs no mana. Tap it while it glows.' },
       { on: ['hit'], from: ['lightning_bolt'], chance: 0.2, minLvl: 26, aura: 'thunderhead', dur: 8, lights: ['chain_lightning'], reset: true, instant: true, free: true, name: 'Thunderhead', tell: 'Thunderhead! Instant Chain Lightning', teach: 'Thunderhead: Lightning Bolt can make your next Chain Lightning instant, free and ready. Tap it while it glows.' }],
   };
+  // Talent reactions (v10.4): each talent tree's capstone also brings a reaction of its own (`talent`), so a level-60
+  // build changes which buttons light up, not only its numbers. When the tree's late ability is not learned yet, the
+  // first ability in `lights` that is known lights instead.
+  const TR = (cls, list) => { D.PROCS[cls] = (D.PROCS[cls] || []).concat(list); };
+  const R = (talent, name, on, from, chance, lights, eff, tell, teach) => Object.assign({ talent, name, on, from, chance, aura: 'cap_' + talent, dur: 8, lights, tell, teach }, eff);
+  TR('warrior', [
+    R('sweeping_strikes', 'Sweeping Blows', ['melee', 'hit'], ['cleave', 'thunder_clap'], 0.35, ['whirlwind'], { reset: true, free: true }, 'Sweeping Blows! Whirlwind is ready', 'Sweeping Blows (Arms): Cleave and Thunder Clap can make Whirlwind ready at once and free.'),
+    R('death_wish', 'Blood Frenzy', ['crit'], null, 0.5, ['heroic_strike'], { free: true }, 'Blood Frenzy! Free Heroic Strike', 'Blood Frenzy (Fury): your critical hits can make your next Heroic Strike cost no rage.'),
+    R('shield_wall', 'Unyielding', ['dodged'], null, 0.6, ['shield_slam', 'shield_block'], { reset: true, free: true }, 'Unyielding! Shield Slam is ready', 'Unyielding (Protection): when you dodge, Shield Slam (or Shield Block before you learn it) becomes ready at once and free.')]);
+  TR('mage', [
+    R('arcane_power', 'Arcane Surge', ['crit'], null, 1, ['arcane_missiles'], { free: true }, 'Arcane Surge! Free Arcane Missiles', 'Arcane Surge (Arcane): any critical hit makes your next Arcane Missiles cost no mana.'),
+    R('combustion', 'Wildfire', ['hit'], ['fire_blast'], 0.5, ['scorch'], { instant: true, free: true }, 'Wildfire! Instant Scorch', 'Wildfire (Fire): Fire Blast can make your next Scorch instant and free.'),
+    R('ice_barrier', 'Frostbite', ['hit'], ['frostbolt'], 0.25, ['cone_of_cold'], { reset: true, free: true }, 'Frostbite! Cone of Cold is ready', 'Frostbite (Frost): Frostbolt can make Cone of Cold ready at once and free.')]);
+  TR('priest', [
+    R('power_infusion', 'Steady Grace', ['heal'], ['lesser_heal', 'heal', 'flash_heal'], 0.2, ['penance', 'pw_shield'], { reset: true, instant: true }, 'Steady Grace! Penance is ready', 'Steady Grace (Discipline): your heals can make Penance (or Word of Warding before you learn it) ready at once.'),
+    R('inspiration', 'Answered Prayer', ['heal'], ['flash_heal', 'heal'], 0.3, ['greater_heal', 'heal'], { instant: true }, 'Answered Prayer! Instant big heal', 'Answered Prayer (Holy): Flash Heal and Heal can make your next Greater Heal instant.'),
+    R('shadowform', 'Creeping Dark', ['tick'], ['sw_pain'], 0.12, ['mind_flay'], { free: true }, 'Creeping Dark! Free Mind Flay', 'Creeping Dark (Shadow): while Word of Pain hurts an enemy, your next Mind Flay can cost no mana.')]);
+  TR('rogue', [
+    R('relentless_strikes', 'Cold Edge', ['hit'], ['eviscerate'], 0.6, ['sinister_strike'], { free: true }, 'Cold Edge! Free Sinister Strike', 'Cold Edge (Assassination): Eviscerate can make your next Sinister Strike cost no energy.'),
+    R('blade_flurry', 'Blade Dance', ['melee'], null, 0.12, ['killing_spree', 'ghostly_strike'], { reset: true }, 'Blade Dance! Killing Spree is ready', 'Blade Dance (Combat): your weapon hits can make Killing Spree (or Ghostly Strike before you learn it) ready at once.'),
+    R('preparation', 'Quiet Blade', ['dodged'], null, 0.5, ['backstab'], { free: true }, 'Quiet Blade! Free Backstab', 'Quiet Blade (Subtlety): when you dodge, your next Backstab costs no energy.')]);
+  TR('paladin', [
+    R('divine_favor', 'Radiance', ['heal'], ['holy_light'], 0.3, ['holy_shock'], { reset: true, free: true }, 'Radiance! Holy Shock is ready', 'Radiance (Holy): Holy Light can make Holy Shock ready at once and free.'),
+    R('blessing_sanctuary', 'Bulwark', ['dodged'], null, 0.5, ['holy_shield', 'consecration'], { reset: true, free: true }, 'Bulwark! Holy Shield is ready', 'Bulwark (Protection): when you dodge, Holy Shield (or Consecration before you learn it) becomes ready at once and free.'),
+    R('vengeance', 'Vengeful Strike', ['crit'], null, 0.6, ['crusader_strike', 'exorcism'], { reset: true }, 'Vengeful Strike! Crusader Strike is ready', 'Vengeful Strike (Retribution): your critical hits can make Crusader Strike (or Exorcism before you learn it) ready at once.')]);
+  TR('warlock', [
+    R('amplify_curse', 'Withering', ['tick'], ['curse_of_agony'], 0.12, ['haunt', 'corruption'], { reset: true, instant: true }, 'Withering! Haunt is ready', 'Withering (Affliction): while Curse of Agony hurts an enemy, Haunt (or an instant Corruption before you learn it) can light up.'),
+    R('soul_link', 'Soulfire Rush', ['hit'], ['shadow_bolt'], 0.2, ['soul_fire'], { reset: true, instant: true }, 'Soulfire Rush! Instant Soul Fire', 'Soulfire Rush (Demonology): Shadow Bolt can make your next Soul Fire instant and ready.'),
+    R('ruin', 'Ruinous Flame', ['crit'], ['shadow_bolt', 'incinerate', 'searing_pain'], 1, ['shadowburn'], { reset: true, free: true }, 'Ruinous Flame! Shadowburn is ready', 'Ruinous Flame (Destruction): a critical Shadow Bolt, Incinerate or Searing Pain makes Shadowburn ready at once and free.')]);
+  TR('hunter', [
+    R('bestial_wrath', 'Pack Call', ['autoshot'], null, 0.12, ['kill_command', 'multi_shot'], { reset: true, free: true }, 'Pack Call! Kill Command is ready', 'Pack Call (Beast Mastery): your auto shots can make Kill Command (or Multi-Shot before you learn it) ready at once and free.'),
+    R('trueshot', 'Dead Aim', ['crit'], ['arcane_shot', 'aimed_shot'], 1, ['chimera_shot', 'aimed_shot'], { reset: true, instant: true }, 'Dead Aim! Chimera Shot is ready', 'Dead Aim (Marksmanship): a critical Arcane or Aimed Shot makes Chimera Shot (or an instant Aimed Shot before you learn it) ready.'),
+    R('deterrence', 'Quick Reflexes', ['dodged'], null, 0.6, ['counterattack', 'raptor_strike'], { reset: true, free: true }, 'Quick Reflexes! Counterattack', 'Quick Reflexes (Survival): when you dodge, Counterattack (or Savage Strike before you learn it) becomes ready at once and free.')]);
+  TR('druid', [
+    R('moonkin', 'Night Sky', ['crit'], ['wrath', 'starfire'], 1, ['starfall', 'hurricane'], { reset: true, free: true }, 'Night Sky! Falling Stars is ready', 'Night Sky (Balance): a critical Wrath or Star Bolt makes Falling Stars (or Hurricane before you learn it) ready at once and free.'),
+    R('heart_wild', 'Wild Heart', ['dodged'], null, 0.4, ['frenzied_regeneration'], { reset: true }, 'Wild Heart! Frenzied Regeneration', 'Wild Heart (Feral): when you dodge, Frenzied Regeneration can become ready at once.'),
+    R('natures_swiftness', 'Clear Stream', ['heal'], ['rejuvenation', 'regrowth'], 0.08, ['healing_touch'], { instant: true }, 'Clear Stream! Instant Healing Touch', 'Clear Stream (Restoration): Rejuvenation and Regrowth can make your next Healing Touch instant.')]);
+  TR('shaman', [
+    R('elemental_fury', 'Molten Fury', ['crit'], ['lightning_bolt', 'chain_lightning'], 1, ['earthquake', 'flame_shock'], { reset: true, free: true }, 'Molten Fury! Earthquake is ready', 'Molten Fury (Elemental): a critical Lightning Bolt or Chain Lightning makes Earthquake (or Flame Shock before you learn it) ready at once and free.'),
+    R('flurry', 'Storm Surge', ['melee'], null, 0.15, ['stormstrike'], { reset: true, free: true }, 'Storm Surge! Stormstrike is ready', 'Storm Surge (Enhancement): your weapon hits can make Stormstrike ready at once and free.'),
+    R('healing_way', 'Tidal Surge', ['heal'], ['healing_wave', 'lesser_healing_wave'], 0.25, ['chain_heal'], { instant: true, free: true }, 'Tidal Surge! Instant Chain Heal', 'Tidal Surge (Restoration): Healing Wave can make your next Chain Heal instant and free.')]);
   D.UPGRADE = { raid: 'tidecrown_citadel', step: 0.03, cap: { 3: 0.92, 4: 1 }, minLvl: 57, perPct: 5 }; // 5 Mentor Marks per 1% of the ceiling gained, so a step costs 15
   // Titles show next to your name. `need` is checked against your records (see G.titleUnlocked).
   D.TITLES = [

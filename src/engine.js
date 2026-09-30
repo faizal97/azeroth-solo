@@ -246,7 +246,7 @@
   function proc(C, u, on, abId) {
     const list = u && u.cls && !u.dead && D.PROCS && D.PROCS[u.cls]; if (!list) return;
     for (const p of list) {
-      if (!p.on.includes(on) || (p.from && !p.from.includes(abId)) || (p.minLvl && (u.level || 1) < p.minLvl) || (p.chance != null && Math.random() >= p.chance)) continue;
+      if (!p.on.includes(on) || (p.from && !p.from.includes(abId)) || (p.minLvl && (u.level || 1) < p.minLvl) || (p.talent && !((u.char && u.char.talents) || {})[p.talent]) || (p.chance != null && Math.random() >= p.chance)) continue;
       if (!p.lights.some((l) => knows(u, l))) continue;
       u.procAt = u.procAt || {}; const pk = p.aura || p.on[0];
       if (p.icd && C.t - (u.procAt[pk] != null ? u.procAt[pk] : -99) < p.icd) continue; // icd: at most one light per so many seconds
@@ -320,6 +320,7 @@
 
   function heal(C, src, tgt, amount, o) {
     if (tgt.dead) return 0;
+    if (src && o && o.ab && amount > 0) proc(C, src, 'heal', o.ab); // talent reactions (v10.4)
     if (src && src.char) { const hm = tmOf(src); amount *= 1 + (hm.heal + (o && o.ab ? hm.abilHeal[o.ab] || 0 : 0)) / 100; }
     const before = tgt.hp;
     tgt.hp = Math.min(tgt.maxHp, tgt.hp + Math.round(amount));
@@ -473,7 +474,7 @@
           const d = cps * rnd(ab.dmg.perCp[0], ab.dmg.perCp[1]) + ab.dmg.perLvl * L + u.st.apTotal * ab.dmg.apCoef * cps;
           const r = meleeRoll(C, u, t);
           if (r === 'miss' || r === 'dodge') ev(C, { type: 'avoid', src: u.uid, tgt: t.uid, what: r, ab: abId });
-          else dealDamage(C, u, t, r === 'crit' ? d * 2 : d, { school: 'physical', crit: r === 'crit', ab: abId, melee: true });
+          else { dealDamage(C, u, t, r === 'crit' ? d * 2 : d, { school: 'physical', crit: r === 'crit', ab: abId, melee: true }); proc(C, u, 'hit', abId); }
         } else {
           const phys = ab.dmg.school === 'physical';
           const r = phys ? meleeRoll(C, u, t) : spellRoll(u, t);

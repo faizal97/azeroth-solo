@@ -1171,6 +1171,7 @@
     if (ab.buff && ab.buff.stats) for (const k in ab.buff.stats) d = d.replace('{' + k + '}', f(ab.buff.stats[k] + ((ab.buff.perLvl && ab.buff.perLvl[k]) || 0) * L));
     // reactions (v10.4): say plainly what this ability lights up, or what lights it
     for (const pr of (D.PROCS || {})[P.cls] || []) {
+      if (pr.talent && !(P.talents || {})[pr.talent]) continue; // a talent reaction only once the talent is taken
       if (pr.lights.includes(id)) d += ` Reaction (${pr.name}): ${pr.teach}`;
       else if ((pr.from || []).includes(id)) d += ` Can light up ${pr.lights.map((l) => D.ABILITIES[l].name).join(' or ')} (${pr.name}).`;
     }
@@ -2403,7 +2404,8 @@
     });
   }
   // ---------- talents: three trees, tap a talent to spend a point
-  const talentText = (t, rank) => t.desc.replace('{v}', String(Math.round(t.fx[0].v * Math.max(1, rank) * 100) / 100));
+  // a capstone's reaction is part of its text (v10.4), so the choice shows what will light up
+  const talentText = (t, rank) => { const x = t.desc.replace('{v}', String(Math.round(t.fx[0].v * Math.max(1, rank) * 100) / 100)); const pr = Object.values(D.PROCS || {}).flat().find((q) => q.talent === t.id); return pr ? `${x} Reaction: ${pr.teach}` : x; };
   function openTalents() {
     ui.talentTree = ui.talentTree || null;
     openSheet('talents', 'Talents', ' ', (b, title) => {
