@@ -49,6 +49,8 @@ Years are counted back from the start of the game.
 | ~12 years ago | The war ends. Everyone rebuilds on Ledger credit: Kingsmere's walls, Longfield's farms, the Slagborn empire, Blackwell's shipyard. Grask leads the orcs to Dunescar. The plague takes Wexmoor, the Hollow Host rises, the Order of the Pyre forms, Cairn makes werewolves of Needlewood, and Graymouth's lord bars its gates with the living inside. |
 | 7 years ago | Lyveus Cloveus defends a Kingsmere caravan near Silverleaf Lodge and the Light wakes in him. He joins the Kingsmere guard and meets Vyn. |
 | 5 years ago | Lyveus overhears a circle of nobles plot to sell the kingdom's soldiers to pay a master they have never met. He is condemned; Vyn fakes his death. |
+| ~10 years ago | Reedsong, a Sylari hamlet on Lake Aurel in Elderglen, borrows from the Black Ledger to rebuild its jetties after the war. |
+| Last autumn | Reedsong's harvest fails. The Ledger's collectors take the Songkeepers' lute "on account", and its appraiser, Harrowby, splits it to sell in pieces. |
 | 2 years ago | The cabal learns Lyveus is alive. Silverleaf Lodge burns with his kin; the world is told bandits did it. It was Lord Cassius Marrow. |
 | Last winter | King Rhodric Aldane dies. Lord Regent Edmund Carrow rules until Prince Tamlin comes of age. |
 | During the game | The Grey Hoods take Longfield's farms (10–20); Marshal Hale follows the warm coins to Cinderpeak and disappears (30); he is alive in the Slagborn cells (40–50); he walks free with Lyveus, exposes the debt, and Veshmira comes to collect and is beaten back (60); she flees to her lair in Saltmarsh and her storm hides the Stormveil Isle (60); her death breaks the storm (expansion). |
@@ -98,6 +100,8 @@ may name her as the creditor, since it opens at 60.
 
 - **Lyveus Cloveus, the Exiled Knight** ("Lyv" to friends). A wood elf paladin from Silverleaf Lodge in the Kinloch Highlands, once of the Kingsmere guard. Quiet, dry, patient; "They made me a ghost. Ghosts keep watch." Created by a friend of the developer and adapted for Caldreth.
 - **Vyn.** Lyveus's friend from the guard, a human farm boy who rose with him. Faked Lyveus's death. Now writes from Coppergulch.
+- **Widya, the Songkeeper's Daughter.** The second Legend (levels 22-40), a wood elf bard of Reedsong on Lake Aurel. Warm, stubborn, funny, a little vain about her voice; sings when she is scared. Created by a friend of the developer and adapted for Caldreth. Her story is small on purpose: she wants her people's songs to live. Reedsong keeps every family's story in a song, and all of them are played on one lute, its neck carved with the name of every Songkeeper who played it. The Ledger took it for the hamlet's debt; she wins it back piece by piece (the silver strings from the Briarpelt bearkin, the heartwood pegs from Harrowby's strongbox, the carved neck at a trophy auction in Wexley's Expedition in the Vinewild, won in a singing contest, the body from Harrowby at Highhold Keep in the Kinloch Highlands). At 40 Harrowby gives the body back when she plays Reedsong's song. The debt is not paid: that is the main story's to settle. She carves her own name on the neck. Her later chapters (the Songbook) follow her want, not the fate of the world. "Every song is somebody's. I'm only keeping them warm."
+- **Harrowby.** The Black Ledger's appraiser: a tired clerk who prices what people lose. Split Widya's lute because it sold better in pieces. Once lost a village of his own to a debt; that is why, at the end, he lets the lute go. Not a villain; a man who stopped arguing with the ledger.
 - **Prince Aeldran Tidecrown.** Starborn prince of Sael'anor. Kept his court alive for ten thousand years through a bargain he does not fully understand. Proud, grieving, dangerous. "Ten thousand years I waited."
 - **Nal'veshra, the Deepmother.** A sea spirit older than the Starborn. The true power under the citadel. Swallowed the sea spirit Shal'zua. "Little lights."
 - **Lady Vessaria, the Tidescribe.** Aeldran's scribe; mistress of the Sunken Archive. Her writing raises the drowned.
@@ -114,6 +118,7 @@ ones the story leans on:
 - **Kingsmere.** The Accord's capital in Ostmarch, rebuilt on credit. **Vazhrak** is the Krugar capital in Redmarch.
 - **Cinderpeak.** The burning mountain: Cinderpeak Depths (the Slagborn city of Ashforge), the Spire (the Ledger's vault), and the Magma Throne beneath.
 - **The Smugglers' Deep.** The old Fenwick mine and hidden cove where Blackwell builds the Ledger's fleet.
+- **Reedsong.** A Sylari hamlet of reed houses and jetties on Lake Aurel, near Ilvaris in Elderglen; Widya's home. Its Songkeepers keep the hamlet's stories as songs.
 - **Silverleaf Lodge.** A wood elf village in the Kinloch pines, the one lodge of the Sylari on Ostmarch, founded by elves who crossed the sea to watch over the Black Ruin's old scar; Lyveus's home, burned two years ago. Now a camp of the Ledger's enforcers until you clear it.
 - **Stormveil Isle.** The risen island. Holds the Tidewatch Coast (Accord landing), the Skullreef Isles (Krugar landing), the drowned city of Sael'anor, Spirit's Rest, the causeway and the Tidecrown Citadel.
 - **The Sunken Archive.** Sael'anor's great library (Accord dungeon).
@@ -171,6 +176,11 @@ several sharing a line separated by " / ".
 - **Hollow Host** — the risen dead of the plague
 - **Elarion** — the dreaming druid of the Dreaming Caves
 - **Lyv** — Lyveus's name among friends
+- **Widya** — the second Legend, a wood elf bard of Reedsong
+- **Harrowby** — the Black Ledger's appraiser, who split Widya's lute
+- **Reedsong** — Widya's hamlet on Lake Aurel
+- **Songkeeper / Songkeepers** — Reedsong's singers, who keep its stories as songs
+- **Songbook** — Widya's later chapters, one song each
 - **Hiveborn** — insect swarms of the south
 - **Mistshore** — wood elf coast north of Elderglen
 - **Drakestone Hold / Drakestone** — the Wyrmchain fortress in Greenfen
