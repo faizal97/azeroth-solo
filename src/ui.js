@@ -945,6 +945,9 @@
     // set once, read often: Tactics and Boss plan fold to one line (closed by default) so the pull and the party stay on screen
     p.append(...foldSec('run.tactics', 'Tactics', ({ careful: 'Careful', normal: 'Normal', fast: 'Fast' })[pace] + ' · ' + (pace === 'careful' ? 'safest, best for Flawless' : pace === 'fast' ? 'builds Momentum, more wipes' : 'standard rests'),
       [h('div', { class: 'chips' }, chip('Careful', pace === 'careful', () => G.setPace('careful')), chip('Normal', pace === 'normal', () => G.setPace('normal')), chip('Fast', pace === 'fast', () => G.setPace('fast')))]));
+    const ko = R.killOrder || 'focus';
+    if (false) p.append(...foldSec('run.killorder', 'Kill order', // hidden (v10.4): in the sims it changed almost nothing, and a choice that does not matter is not a choice ko === 'spread' ? 'Spread · each on a different enemy, more area attacks' : 'One at a time · everyone on the marked target',
+      [h('div', { class: 'chips' }, chip('One at a time', ko === 'focus', () => G.setKillOrder('focus')), chip('Spread', ko === 'spread', () => G.setKillOrder('spread')))]));
     const pull = R.pulls[R.idx]; if (!pull) return;
     const marks = (R.marks && R.marks[R.idx]) || {};
     const next = h('div', { class: 'chips' });
@@ -2874,13 +2877,13 @@
       }
       // every pull, with the numbers you will meet (a Trial's at the level picked, Omens included)
       const tm = (Dg && Dg.trashMult) || { hp: 1, dmg: 1 }, bmu = (Dg && Dg.bossMult) || { hp: 1, dmg: 1 };
-      const trash = { hp: (tm.hp || 1) * f, dmg: (tm.dmg || 1) * f }, boss = { hp: (bmu.hp || 1) * f * (om.includes('hardened') ? 1.3 : 1), dmg: (bmu.dmg || 1) * f };
+      const trash = { hp: (tm.hp || 1) * f, dmg: (tm.dmg || 1) * f }, boss = { hp: (bmu.hp || 1) * f * (om.includes('hardened') ? T.OMENS.hardened.hp : 1), dmg: (bmu.dmg || 1) * f }; // (Guarded and Enraging change fights, not numbers)
       b.append(h('div', { class: 'sec-h' }, 'Pulls', h('small', null, `${pulls.length} in order${om.includes('swarming') ? ' · each +1 enemy (Swarming)' : ''}`)));
       const list = h('div', { class: 'list' });
       for (const p of pulls) {
         const counts = {}; for (const m of p.mobs) counts[m] = (counts[m] || 0) + 1;
         const lines = Object.entries(counts).map(([m, n]) => { const M = D.MOBS[m], L = mobLvl || (M.lvl ? M.lvl[1] : A.maxLvl), u2 = E.mobUnit(m, L, M.boss ? boss : trash); return `${n > 1 ? n + '× ' : ''}${M.name} (${L}): ${k(u2.maxHp)} health, hits for ${k(u2.dmg[0])}–${k(u2.dmg[1])}`; });
-        const bk = p.mobs.find((m) => D.MOBS[m].boss), bm = bk ? D.MOBS[bk] : null;
+        const bk = p.mobs.find((m) => D.MOBS[m].boss || m === A.boss), bm = bk ? D.MOBS[bk] : null; // a Wanted target is named on the activity
         const drops = bm && bm.loot && !trial ? bm.loot.map((id) => D.ITEMS[id]).filter(Boolean) : [];
         list.append(h('div', { class: 'row' }, h('div', { class: 'ic mob' }, img(mobArt(bk || p.mobs[0]))),
           h('div', { class: 't' }, h('b', null, p.label || D.MOBS[p.mobs[0]].name, bm ? h('span', { class: 'gf-kind k-raid', style: { marginLeft: '6px' } }, 'Boss') : null),

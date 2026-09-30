@@ -2428,7 +2428,7 @@
     S.run = { act, name, pulls, mult, bossMult, idx: 0, phase: 'rest', restUntil: now() + 6000, wipes: 0, rolls: [], returnTo: S.player.place, started: now() };
     if (trial) { // Trials (v10.4): enemies at the level cap, stronger with each Trial level
       const f = TR().factor(trial), sc = (m) => ({ hp: ((m && m.hp) || 1) * f, dmg: ((m && m.dmg) || 1) * f }), Rec = G.trials();
-      const omens = TR().active(trial, new Date()), bm = sc(bossMult); if (omens.includes('hardened')) bm.hp *= 1.3; // Omens are fixed when the run starts
+      const omens = TR().active(trial, new Date()), bm = sc(bossMult); if (omens.includes('hardened')) bm.hp *= TR().OMENS.hardened.hp; // Omens are fixed when the run starts
       Object.assign(S.run, { mult: sc(mult), bossMult: bm, mobLevel: D.LEVEL_CAP, omens, name: `${name} · Trial ${trial}`, trial: { lvl: trial, season: Rec.season, bestHere: (Rec.best[act] || {}).lvl || 0 } });
     }
     emit('instanceEnter', { act, dungeon: A.dungeon || null });
@@ -2463,11 +2463,12 @@
     });
     if ((R.omens || []).includes('swarming')) { // Swarming: one more enemy in every pull
       const trash = pull.mobs.find((k) => !D.MOBS[k].boss) || (R.pulls.find((p) => !p.boss) || { mobs: [] }).mobs[0];
-      if (trash) enemies.push(E.mobUnit(trash, R.mobLevel || null, R.mult || { hp: 1, dmg: 1 }));
+      const SW = TR().OMENS.swarming, m0 = R.mult || { hp: 1, dmg: 1 };
+      if (trash) for (let i = 0; i < SW.extra; i++) enemies.push(E.mobUnit(trash, R.mobLevel || null, { hp: m0.hp * SW.hp, dmg: m0.dmg }));
     }
     const tank = allies.find((a) => a.role === 'tank') || pu;
     G.pUnit = pu;
-    G.fight = E.fight(allies, enemies, { puller: tank, dungeonMult: R.mult, omens: R.omens || null });
+    G.fight = E.fight(allies, enemies, { puller: tank, dungeonMult: R.mult, omens: R.omens || null, killOrder: R.killOrder || 'focus' });
     G.fight.kind = 'run';
     pu.target = (enemies.find((e) => e.mark === 'skull') || enemies[0]).uid;
     // Momentum: pulling again within 5 sec of the last fight stacks a group buff; resting resets it
@@ -2680,6 +2681,8 @@
   // loot rolls no longer hold the group)
   const PACE = { careful: { rest: 1.6, hp: 0.95, mana: 0.9, bossHp: 0.95, extra: 0 }, normal: { rest: 1, hp: 0.5, mana: 0.45, bossHp: 0.8, extra: 1 }, fast: { rest: 0.35, hp: 0.3, mana: 0.25, bossHp: 0.6, extra: 2.2 } };
   G.setPace = function (p) { const R = G.S.run; if (R && PACE[p]) { R.pace = p; sys(`Pull pace: ${p}.`); emit('runUpdate'); } };
+  // Kill order (v10.4): one at a time (everyone on the marked target) or spread (each on a different enemy, more area attacks)
+  G.setKillOrder = function (k) { const R = G.S.run; if (R && (k === 'focus' || k === 'spread')) { R.killOrder = k; if (G.fight && G.fight.kind === 'run') G.fight.opts.killOrder = k; sys(k === 'spread' ? 'Kill order: spread the damage.' : 'Kill order: one at a time.'); emit('runUpdate'); } };
   G.setBossPlan = function (p) { const R = G.S.run; if (R) { R.bossPlan = p; sys(p === 'adds' ? 'Boss plan: kill the adds first.' : 'Boss plan: burn the boss.'); emit('runUpdate'); } };
   const NEXT_MARK = { undefined: 'skull', skull: 'cross', cross: undefined };
   // mark an enemy of the next pull (before it starts), or a live enemy in the fight

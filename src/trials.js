@@ -79,11 +79,19 @@
   // tells players how to beat it (docs/design-mindset.md). One per tier, each from its own Trial level; a tier tests one lever (tier 1: what to
   // kill first). The list is open: a new Omen joins the rotation from the next period (content-proof).
   T.OMENS = {
-    frenzied: { tier: 1, icon: 'berserker_rage', name: 'Frenzied', rule: 'Enemies below 30% health deal 50% more damage.', counter: 'Finish one enemy at a time: mark a kill order, and stun the ones about to enrage.' },
-    rallying: { tier: 1, icon: 'rallying_cry', name: 'Rallying', rule: 'When an enemy dies, the rest of its pull heal 20% of their health and hit 10% harder.', counter: 'Burn the boss first (boss plan: burn the boss), so only its adds are left to rally.' },
-    swarming: { tier: 1, icon: 'multi_shot', name: 'Swarming', rule: 'Every pull brings one extra enemy.', counter: 'Kill the adds first (boss plan: adds first), and use area attacks and stuns.' },
-    hardened: { tier: 1, icon: 'shield_wall', name: 'Hardened', rule: 'Bosses have 30% more health.', counter: 'Burn the boss with everything you have: big cooldowns, elixirs and potions.' },
+    mending: { tier: 1, off: true, icon: 'renew', name: 'Mending', below: 0.5, rate: 0.02, text: (O) => `Wounded enemies (below ${Math.round(O.below * 100)}% health) heal ${Math.round(O.rate * 100)}% of their health every second.`, counter: 'Kill order: one at a time, so none sits wounded for long.' },
+    frenzied: { tier: 1, off: true, icon: 'berserker_rage', name: 'Frenzied', below: 0.35, dmg: 2, text: (O) => `Enemies below ${Math.round(O.below * 100)}% health deal ${O.dmg === 2 ? 'double' : Math.round((O.dmg - 1) * 100) + '% more'} damage.`, counter: 'Kill order: one at a time, so only one enemy is low at once.' },
+    rallying: { tier: 1, off: true, icon: 'rallying_cry', name: 'Rallying', heal: 0, dmg: 0.5, text: (O) => `When an enemy dies, the rest of its pull hit ${Math.round(O.dmg * 100)}% harder (this adds up).`, counter: 'Kill order: spread, so they fall together.' },
+    guarded: { tier: 1, icon: 'shield_wall', name: 'Guarded', taken: 0.5, text: (O) => `Bosses take ${Math.round((1 - O.taken) * 100)}% less damage while any other enemy in their pull is alive.`, counter: 'Boss plan: adds first.' },
+    enraging: { tier: 1, icon: 'berserker_rage', name: 'Enraging', every: 8, dmg: 0.25, text: (O) => `Bosses hit ${Math.round(O.dmg * 100)}% harder every ${O.every} seconds of the fight.`, counter: 'Boss plan: burn the boss.' },
+    // out of the rotation (off): they only made runs harder, with no answer a player could choose (sim, 2026-09-30).
+    // Frenzied, Rallying and Mending are off too: they rested on Kill order (one at a time / spread), and in three sims
+    // (2026-09-30) the kill order changed almost nothing, so they offered no real choice. Tier 1 rests on the boss plan:
+    // Guarded (adds first) and Enraging (burn the boss) need opposite answers.
+    swarming: { tier: 1, off: true, icon: 'multi_shot', name: 'Swarming', extra: 1, hp: 1, text: (O) => `Every pull brings ${O.extra} extra enemy.`, counter: '' },
+    hardened: { tier: 1, off: true, icon: 'shield_wall', name: 'Hardened', hp: 1.3, text: (O) => `Bosses have ${Math.round((O.hp - 1) * 100)}% more health.`, counter: '' },
   };
+  for (const k in T.OMENS) Object.defineProperty(T.OMENS[k], 'rule', { get() { return this.text(this); } }); // the rule always matches the numbers
   T.TIER_LVL = { 1: 2, 2: 5, 3: 8 };
   // the period's Omens, one per tier, never the same one twice in a row: worked out week by week from the Preseason
   // (period -4), memoized per Omen list so a new Omen changes only the weeks after it is added
@@ -91,7 +99,7 @@
   T.omensFor = function (periodId) {
     const out = [];
     for (const tier of Object.keys(T.TIER_LVL).map(Number)) {
-      const keys = Object.keys(T.OMENS).filter((k) => T.OMENS[k].tier === tier).sort(); if (!keys.length) continue;
+      const keys = Object.keys(T.OMENS).filter((k) => T.OMENS[k].tier === tier && !T.OMENS[k].off).sort(); if (!keys.length) continue;
       const sig = tier + ':' + keys.join(','), M = (omenMemo[sig] = omenMemo[sig] || { from: -4, picks: [] });
       for (let id = M.from + M.picks.length; id <= periodId; id++) {
         let k = keys[Math.floor(rng(104729 * (id + 7) + tier)() * keys.length)];

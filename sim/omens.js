@@ -10,8 +10,10 @@ globalThis.Date = class extends RealDate { constructor(...a) { if (a.length) sup
 const lootOf = (dk) => { const s = new Set(); for (const p of D.DUNGEONS[dk].pulls) for (const m of p.mobs) for (const i of (D.MOBS[m].loot || [])) s.add(i); return [...s]; };
 function gear(P) { const ids = ['molten_core', 'onyxias_lair'].flatMap(lootOf); for (const slot of D.GEAR_SLOTS) { const f = ids.filter((id) => D.ITEMS[id].slot === slot && G.canUseItem(D.ITEMS[id], P.cls)).sort((a, b) => G.itemScore(D.ITEMS[b], P.cls) - G.itemScore(D.ITEMS[a], P.cls)); if (f.length) P.equip[slot] = G.copyItem(f[0]); } }
 // counter and wrong choice per Omen, as the boss plan the player sets
-const PLAN = { frenzied: ['adds', null], rallying: ['boss', 'adds'], swarming: ['adds', 'boss'], hardened: ['boss', 'adds'] };
-function run(act, omen, plan, cls) {
+// [kill order, boss plan] for the counter and the wrong choice
+const PLAN = { mending: [['focus', null], ['spread', null]], frenzied: [['focus', null], ['spread', null]], rallying: [['spread', null], ['focus', null]], guarded: [['focus', 'adds'], ['focus', 'boss']], enraging: [['focus', 'boss'], ['focus', 'adds']] };
+function run(act, omen, choice, cls) {
+  const [ko, plan] = choice || ['focus', null];
   G.newGame({ name: 'Om', cls, race: 'human' }); const S = G.S, P = S.player; P.level = 60; S.flags.warModeAsked = true;
   P.talents = G.autoTalents(cls, cls === 'warrior' ? 'tank' : 'dps', 60, 0); if (cls === 'warrior') P.role = 'tank'; gear(P);
   P.trials = { season: 0, best: {}, open: { [act]: LVL }, week: null, history: [], bestEver: 0, bestRank: null };
@@ -19,7 +21,7 @@ function run(act, omen, plan, cls) {
   if (!G.queueTrial(act, LVL)) { T.omensFor = real; return null; }
   G.acceptPop(); T.omensFor = real;
   for (const m of S.group.members) { m.bot.skill = 0.72; gear(m); }
-  if (plan) S.run.bossPlan = plan;
+  if (plan) S.run.bossPlan = plan; S.run.killOrder = ko;
   let g = 0;
   while (S.run && S.run.phase !== 'done' && g++ < 400000) {
     if (G.fight && G.pUnit && G.pUnit.kind === 'player') { G.pUnit.kind = 'bot'; G.pUnit.bot = { skill: 0.72, react: 0.5 }; G.pUnit.role = G.role(); }
@@ -31,17 +33,17 @@ function run(act, omen, plan, cls) {
   const done = S.run && S.run.phase === 'done', secs = done ? G.runClock() : Infinity, par = T.par(D.DUNGEONS[D.ACTIVITIES[act].dungeon]);
   return { done, timed: done && secs <= par, secs, wipes: S.run ? S.run.wipes : 99 };
 }
-function cases(omen, plan) {
+function cases(omen, choice) {
   let timed = 0, wiped = 0, n = 0; const all = [];
-  for (const act of ['stratholme', 'blackfathom']) for (let i = 0; i < N; i++) { const r = run(act, omen, plan, ['warrior', 'mage', 'rogue', 'priest'][i % 4]); if (!r) continue; n++; timed += r.timed ? 1 : 0; wiped += r.wipes ? 1 : 0; all.push(Math.min(r.secs, 1500)); }
+  for (const act of ['stratholme', 'blackfathom']) for (let i = 0; i < N; i++) { const r = run(act, omen, choice, ['warrior', 'mage', 'rogue', 'priest'][i % 4]); if (!r) continue; n++; timed += r.timed ? 1 : 0; wiped += r.wipes ? 1 : 0; all.push(Math.min(r.secs, 1500)); }
   all.sort((a, b) => a - b);
   return { timed: timed / n, wiped: wiped / n, median: all[all.length >> 1] };
 }
 const fmt = (c) => `in time ${String(Math.round(c.timed * 100)).padStart(3)}% · runs with a wipe ${String(Math.round(c.wiped * 100)).padStart(3)}% · median ${Math.round(c.median)}s`;
 const base = cases(null, null);
-console.log(`Trial ${LVL}, ${N} runs per dungeon per case\n  no Omen, no plan    ${fmt(base)}\n  no Omen, burn boss  ${fmt(cases(null, 'boss'))}\n  no Omen, adds first ${fmt(cases(null, 'adds'))}`);
-for (const k of Object.keys(T.OMENS)) {
-  const [good, bad] = PLAN[k] || [null, null];
+console.log(`Trial ${LVL}, ${N} runs per dungeon per case\n  no Omen, no plan    ${fmt(base)}`);
+for (const k of Object.keys(T.OMENS).filter((x) => !T.OMENS[x].off)) {
+  const [good, bad] = PLAN[k];
   const c = cases(k, good), w = cases(k, bad);
   console.log(`  ${T.OMENS[k].name.padEnd(10)} counter  ${fmt(c)}\n  ${''.padEnd(10)} wrong    ${fmt(w)}   ${c.timed - w.timed >= 0.15 || w.wiped - c.wiped >= 0.15 ? 'counter clearly better' : 'counter NOT clearly better'}`);
 }

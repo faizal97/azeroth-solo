@@ -90,7 +90,7 @@ const drop = (keys) => { for (const k of keys) { delete D.DUNGEONS[k]; delete D.
 {
   const ids = []; for (let id = -4; id < 60; id++) ids.push(T.omensFor(id)[0]);
   ok(ids.every((k, i) => !i || k !== ids[i - 1]), 'an Omen never repeats two weeks in a row');
-  ok(Object.keys(T.OMENS).every((k) => ids.includes(k)), 'every Omen comes round');
+  ok(Object.keys(T.OMENS).filter((k) => !T.OMENS[k].off).every((k) => ids.includes(k)) && !ids.some((k) => T.OMENS[k].off), 'every Omen in the rotation comes round, and retired ones never do');
   ok(T.active(1, new Date()).length === 0 && T.active(2, new Date()).length === 1, 'Omens start at Trial 2');
   G.newGame({ name: 'Om', cls: 'warrior', race: 'human' }); G.S.player.level = 60; G.S.flags.warModeAsked = true;
   const a = G.trialPicks().find((x) => G.trialBlock(x) === null);
@@ -112,8 +112,41 @@ const drop = (keys) => { for (const k of keys) { delete D.DUNGEONS[k]; delete D.
   const rl = E.fight([E.charUnit(G.S.player, 'ally', 'bot', Date.now())], [E.mobUnit('mangy_wolf', 60), E.mobUnit('mangy_wolf', 60)], { omens: ['rallying'] });
   const [x, y] = rl.enemies; y.hp = y.maxHp * 0.5; x.hp = 1;
   for (let i = 0; i < 400 && !x.dead; i++) E.tick(rl, 0.1);
-  ok(x.dead && y.rally === 1 && y.hp > y.maxHp * 0.6, `Rallying: when one dies, the rest heal and hit harder (${Math.round(y.hp / y.maxHp * 100)}%)`);
+  ok(x.dead && y.rally === 1, 'Rallying: when one dies, the rest hit harder');
   G.fight = null; G.S.run = null; G.S.group = null;
+}
+
+// ---- Kill order: spread splits the damage dealers across enemies; one at a time keeps them together
+{
+  G.newGame({ name: 'Ko', cls: 'mage', race: 'human' }); G.S.player.level = 60;
+  const targets = (ko) => { const allies = [0, 1, 2, 3].map(() => { const u = E.charUnit(G.S.player, 'ally', 'bot', Date.now()); u.bot = { skill: 0.8, react: 0.3 }; u.role = 'dps'; return u; });
+    const F = E.fight(allies, [0, 1, 2].map(() => E.mobUnit('mangy_wolf', 60)), { killOrder: ko }); const seen = new Set();
+    for (let i = 0; i < 40; i++) { E.tick(F, 0.1); for (const e of F.events) if (e.type === 'dmg' && allies.some((a) => a.uid === e.src)) seen.add(e.tgt); F.events.length = 0; } return seen.size; };
+  ok(targets('spread') >= 2, `spread: the damage lands on several enemies (${targets('spread')})`);
+  ok(targets('focus') <= 2, `one at a time: the damage stays on few enemies (${targets('focus')})`);
+}
+
+// ---- Guarded and Enraging
+{
+  G.newGame({ name: 'Gu', cls: 'mage', race: 'human' }); G.S.player.level = 60;
+  const bossKey = 'onyxia'; // a boss; its special is switched off below so only the Omen changes the numbers
+  const dmgOnBoss = (om, withAdd) => { let sum = 0, n = 0; for (let t2 = 0; t2 < 25; t2++) { const me = E.charUnit(G.S.player, 'ally', 'bot', Date.now()); me.bot = { skill: 0.8, react: 0.3 };
+    const bu = E.mobUnit(bossKey, 60, { hp: 50, dmg: 0.01 }); bu.special = null; const en = withAdd ? [bu, E.mobUnit('mangy_wolf', 60, { hp: 50, dmg: 0.01 })] : [bu];
+    const F = E.fight([me], en, { omens: om }); me.target = bu.uid; for (let i = 0; i < 60; i++) { E.tick(F, 0.1); for (const e of F.events) if (e.type === 'dmg' && e.tgt === bu.uid && !e.crit) { sum += e.amount; n++; } F.events.length = 0; } } return sum / Math.max(1, n); };
+  const g1 = dmgOnBoss(['guarded'], true), g0 = dmgOnBoss([], true), g2 = dmgOnBoss(['guarded'], false);
+  ok(g1 < g0 * 0.65 && g2 > g0 * 0.8, `Guarded: a boss takes about half damage while another enemy lives (${Math.round(g1)} vs ${Math.round(g0)}; alone ${Math.round(g2)})`);
+  const bossHits = (om, from) => { let sum = 0, n = 0; for (let t2 = 0; t2 < 20; t2++) { const me = E.charUnit(G.S.player, 'ally', 'bot', Date.now()); me.maxHp = me.hp = 1e9; me.auto = false; me.bot = { skill: 0, react: 99, afkUntil: 999 };
+    const bu = E.mobUnit(bossKey, 60); bu.special = null; const F = E.fight([me], [bu], { omens: om }); for (let i = 0; i < 400; i++) { E.tick(F, 0.1); for (const e of F.events) if (e.type === 'dmg' && e.src === bu.uid && !e.crit && F.t >= from && F.t < from + 10) { sum += e.amount; n++; } F.events.length = 0; } } return sum / Math.max(1, n); };
+  const early = bossHits(['enraging'], 0), late = bossHits(['enraging'], 30);
+  ok(late > early * 1.2, `Enraging: a boss hits harder as the fight goes on (${Math.round(early)} at the start, ${Math.round(late)} after 30 sec)`);
+}
+
+// ---- Mending: a wounded enemy heals
+{
+  const me = E.charUnit(G.S.player, 'ally', 'bot', Date.now()); me.maxHp = me.hp = 1e9; me.auto = false; me.bot = { skill: 0, react: 99, afkUntil: 999 }; // a punching bag that lives
+  const w = E.mobUnit('mangy_wolf', 60), F = E.fight([me], [w], { omens: ['mending'] }); w.hp = w.maxHp * 0.3;
+  for (let i = 0; i < 50; i++) E.tick(F, 0.1);
+  ok(w.hp > w.maxHp * 0.37 && w.hp < w.maxHp * 0.45, `Mending: a wounded enemy heals about 2% a second (${Math.round(w.hp / w.maxHp * 100)}% after 5 sec)`);
 }
 // ---- a character's Trials: blocks, levels, rating, Marks, the weekly goal, history
 G.newGame({ name: 'Trier', cls: 'warrior', race: 'human' });

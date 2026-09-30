@@ -91,3 +91,19 @@ Rules that apply: UI must scale; automatic systems must be content-proof (both i
   pace made them wipe more. Retune with Omens in stage 3.
 - **Retuned for smarter bots (2026-09-30):** bots now use their whole kit, scaled by skill squared, so Trial groups (skill 0.6-0.85) got much stronger. Trial 1 is now 90% strength, then +5.4% a level. Walls: Trial 7 (fresh 60), 15 (raider), 15 (pusher, fully upgraded). The raider is above its 10-12 target; retune with Omens.
 - **Retuned again for talent reactions (2026-09-30):** capstones now bring a reaction, which lifted walls about 2 levels. Trial 1 is now normal strength, then +6% a level. Walls: about 7-9 (fresh 60), 11 (raider), 13 (pusher). Retune with Omens.
+
+## Omens, stage 3: what the sims taught (2026-09-30)
+
+- The first Tier 1 set (Frenzied, Rallying, Swarming, Hardened) had no real answers: at Trial 10 their "counters" did no
+  better than the wrong choice, and they made runs far harder (18-40% of runs wiped, against 0-4% without an Omen).
+- A second lever, Kill order (one at a time / spread), was built and tested three times: in this engine it changes
+  almost nothing (spreading also means more area attacks, and the tank holds everything anyway). It is hidden, and the
+  Omens that rested on it (Frenzied, Rallying, Mending) are off. Mending at 2% a second was impossible (bosses outheal).
+- **The boss plan is a real lever.** Tier 1 now rests on it with two Omens that need opposite answers: **Guarded**
+  (bosses take half damage while an add lives: adds first) and **Enraging** (bosses hit 25% harder every 8 seconds:
+  burn the boss). They alternate weekly until Tiers 2 and 3 add variety.
+- The game never shows counters (design mindset: give every fact, never the answer). `counter` in the data is for the
+  sims only. `node sim/omens.js [runs] [level]` checks that the right answer clearly beats the wrong one.
+- Next: Tier 2 on pull pace (careful / fast), which the dungeon sims show is a strong lever; then retune Trial pacing
+  with Omens in place.
+

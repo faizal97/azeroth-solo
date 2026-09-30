@@ -275,9 +275,12 @@
     o = o || {};
     if (tgt.auras.some((a) => a.immune)) { ev(C, { type: 'avoid', src: src.uid, tgt: tgt.uid, what: 'immune', ab: o.ab || null }); return 0; }
     const om = C.opts.omens; // Trials Omens (v10.4)
+    if (om && tgt.boss && om.includes('guarded') && root.TRIALS && C.enemies.some((x) => !x.dead && x !== tgt)) amount *= root.TRIALS.OMENS.guarded.taken;
     if (om && src.side === 'enemy') {
-      if (om.includes('frenzied') && src.hp < src.maxHp * 0.3) amount *= 1.5;
-      if (src.rally) amount *= 1 + 0.1 * src.rally;
+      const OM = (root.TRIALS && root.TRIALS.OMENS) || {};
+      if (om.includes('frenzied') && OM.frenzied && src.hp < src.maxHp * OM.frenzied.below) amount *= OM.frenzied.dmg;
+      if (src.rally && OM.rallying) amount *= 1 + OM.rallying.dmg * src.rally;
+      if (om.includes('enraging') && OM.enraging && src.boss) amount *= 1 + OM.enraging.dmg * Math.floor(C.t / OM.enraging.every);
     }
     if (auraOf(tgt, 'hunters_mark') && (src.cls === 'hunter' || (src.kind === 'pet' && C.units[src.owner] && C.units[src.owner].cls === 'hunter'))) amount *= 1.1;
     const tRP = tgt.race && D.RACIALS[tgt.race] && D.RACIALS[tgt.race].passives;
@@ -301,7 +304,7 @@
       if (sh.absorb <= 0) tgt.auras = tgt.auras.filter((a) => a !== sh);
     }
     tgt.hp -= dmg;
-    if (C.opts.omens && tgt.side === 'enemy' && !tgt.frenzy && tgt.hp > 0 && tgt.hp < tgt.maxHp * 0.3 && C.opts.omens.includes('frenzied')) { tgt.frenzy = true; ev(C, { type: 'emote', uid: tgt.uid, text: `${tgt.name} goes into a frenzy!` }); }
+    if (C.opts.omens && tgt.side === 'enemy' && !tgt.frenzy && tgt.hp > 0 && tgt.hp < tgt.maxHp * ((root.TRIALS && root.TRIALS.OMENS.frenzied) || { below: 0.3 }).below && C.opts.omens.includes('frenzied')) { tgt.frenzy = true; ev(C, { type: 'emote', uid: tgt.uid, text: `${tgt.name} goes into a frenzy!` }); }
     // threat
     if (tgt.side === 'enemy') {
       let mult = o.threat || 1;
@@ -346,7 +349,7 @@
     ev(C, { type: 'die', uid: u.uid, by: by && by.uid });
     if (u.side === 'enemy' && C.opts.omens && C.opts.omens.includes('rallying')) { // Rallying: the rest of the pull heal and hit harder
       const rest = C.enemies.filter((x) => !x.dead && x !== u);
-      for (const x of rest) { x.hp = Math.min(x.maxHp, x.hp + x.maxHp * 0.2); x.rally = (x.rally || 0) + 1; }
+      const RO = root.TRIALS.OMENS.rallying; for (const x of rest) { if (RO.heal) x.hp = Math.min(x.maxHp, x.hp + x.maxHp * RO.heal); x.rally = (x.rally || 0) + 1; }
       if (rest.length) ev(C, { type: 'emote', uid: rest[0].uid, text: `${rest.length > 1 ? 'The pull rallies' : rest[0].name + ' rallies'}!` });
     }
     if (u.side === 'enemy') {
@@ -690,6 +693,8 @@
   function focusTarget(C, u) {
     // works for either side: 'u' is the unit asking (an ally by default)
     const mine = u ? friends(C, u) : C.allies, theirs = u ? foes(C, u) : C.enemies;
+    // Kill order: spread puts each damage dealer on a different enemy (the tank keeps its own)
+    if (C.opts.killOrder === 'spread' && u && u.side === 'ally' && u.role !== 'tank') { const al = alive(theirs).sort((x, y) => x.uid - y.uid); if (al.length) return al[u.uid % al.length]; }
     // kill order marks come first: skull, then cross
     const marked = alive(theirs).filter((x) => x.mark).sort((x, y) => (x.mark === 'skull' ? 0 : 1) - (y.mark === 'skull' ? 0 : 1));
     if (marked.length) return marked[0];
@@ -812,7 +817,8 @@
       const use = sk * sk; // a casual player (0.35) reaches for the rest of the kit 1 time in 8, a strong one (0.8) 2 in 3
       if (u.hp / u.maxHp < 0.35) for (const id of kit.defensive) if (has(id) && Math.random() < sk && try_(id)) return;
       if (u.role !== 'healer' && en.some((e) => e.boss)) for (const id of kit.burst) if (has(id) && Math.random() < use * 0.5 && try_(id)) return; // big cooldowns on bosses
-      if (en.length >= 3 && tk) for (const id of kit.aoe) if (has(id) && Math.random() < use && try_(id, tk)) return;
+      const spread = C.opts.killOrder === 'spread'; // spread: area attacks from 2 enemies, and more often
+      if ((en.length >= 3 || (spread && en.length >= 2)) && tk) for (const id of kit.aoe) if (has(id) && Math.random() < (spread ? Math.min(1, use * 1.6) : use) && try_(id, tk)) return;
       if (u.role !== 'healer' && tk) for (const id of kit.hits) if (has(id) && Math.random() < use && try_(id, tk)) return;
     }
     if (u.role === 'tank') {
@@ -913,6 +919,8 @@
     const all = C.allies.concat(C.enemies);
     for (const u of all) {
       if (u.dead) continue;
+      // Omen Mending: a wounded enemy heals a little every second (v10.4)
+      if (u.side === 'enemy' && C.opts.omens && C.opts.omens.includes('mending') && root.TRIALS) { const MO = root.TRIALS.OMENS.mending; if (u.hp < u.maxHp * MO.below) u.hp = Math.min(u.maxHp, u.hp + u.maxHp * MO.rate * dt); }
       // auras
       let changed = false;
       for (const a of u.auras.slice()) {
