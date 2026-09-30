@@ -395,7 +395,7 @@
     if (S.run && S.run.phase === 'done') sc.append(h('div', { class: 'overlay-msg', style: { background: 'rgba(0,0,0,.25)' } }, h('div', null, h('h3', null, S.run.name + ' cleared'), h('p', null, 'Leave the group when you are ready.'))));
     els.cast = h('div', { class: 'castbar', hidden: true }, h('i'), h('b'));
     sc.append(els.cast);
-    sc.append(h('div', { class: 'online', id: 'online' }));
+    sc.append(h('div', { class: 'online', id: 'online' }), speedChip());
   }
   function markTargets() {
     const C = G.fight; if (!C || !G.pUnit) return;
@@ -826,6 +826,9 @@
       h('p', { style: { color: 'var(--muted)', fontSize: '13px' } }, 'XP is shared with a group bonus, pulls get bigger, and gear drops are rolled.'),
       h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); G.acceptPartyInvite(b.id); } }, 'Accept'), h('button', { class: 'btn alt', onclick: () => { closeDialog(); G.declinePartyInvite(b.id); } }, 'Decline'))]);
   }
+  // battle speed (v10.3): a chip on the battle scene, 1x → 2x → 3x, remembered on this device; shown in PvE fights only
+  const speedFight = () => !!(G.fight && G.fight.kind !== 'duel' && G.fight.kind !== 'pvp');
+  const speedChip = () => h('button', { class: 'speed-chip', id: 'speed', 'aria-label': 'Battle speed', hidden: !speedFight(), onclick: (e) => { e.stopPropagation(); const i = G.SPEEDS.indexOf(G.speed); G.setSpeed(G.SPEEDS[(i + 1) % G.SPEEDS.length]); try { localStorage.setItem('azsolo.speed', String(G.speed)); } catch (er) { } e.currentTarget.textContent = `${G.speed}×`; } }, `${G.speed}×`);
   function fightPanel(p) {
     const C = G.fight;
     if (G.S.wparty) partyBlock(p);
@@ -1183,6 +1186,7 @@
   function frame() {
     const S = G.S; if (!S || !els.pHp) return;
     const P = S.player;
+    const sp = document.getElementById('speed'); if (sp && sp.hidden === speedFight()) sp.hidden = !speedFight();
     moneyTick(S);
     // low health in a fight: the screen edges glow red
     app.classList.toggle('lowhp', !!G.fight && v0hp(P));
@@ -1935,8 +1939,8 @@
       if (!b) { g.append(h('div', { class: 'slot' })); continue; }
       const it = b.item;
       const why = blockReason(it);
-      g.append(h('button', { class: 'slot qb' + it.q + (ui.bagSel === i ? ' sel' : '') + (why ? ' cant' : ''), onclick: () => onTap(i) },
-        img(art('icon', it.icon)), b.n > 1 ? h('span', { class: 'cnt tnum' }, b.n) : null, !why && G.isUpgrade(it) ? h('span', { class: 'up' }, '▲') : null,
+      g.append(h('button', { class: 'slot qb' + it.q + (ui.bagSel === i || (ui.sellPick && ui.sellPick.has(i)) ? ' sel' : '') + (why ? ' cant' : ''), onclick: () => onTap(i) },
+        img(art('icon', it.icon)), ui.sellPick && ui.sellPick.has(i) ? h('span', { class: 'pick' }, '✓') : null, b.n > 1 ? h('span', { class: 'cnt tnum' }, b.n) : null, !why && G.isUpgrade(it) ? h('span', { class: 'up' }, '▲') : null,
         why ? h('span', { class: 'why' }, why.kind === 'level' ? String(why.lvl) : '✕') : null));
     }
     return g;
@@ -1966,12 +1970,30 @@
       h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); go(); } }, 'Throw away'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Keep'))], true);
   }
   function openBags() {
-    ui.bagSel = null;
+    ui.bagSel = null; ui.sellPick = null;
     openSheet('bags', 'Backpack', null, (b, t) => {
       const P = G.S.player;
       t.innerHTML = ''; t.append('Bags', h('small', { html: `${P.bags.length}/${G.bagCap()} · ` + moneyHtml(P.money) }));
       if ((P.bagsEq || []).length) b.append(h('div', { class: 'chips' }, ...(P.bagsEq || []).map((bg, i) => h('button', { class: 'chip', onclick: () => { G.unequipBag(i); ui.sheetFn(); } }, img(art('icon', bg.icon)), ' ', bg.name, h('small', null, `+${bg.bag} · tap to take off`)))));
-      b.append(bagGrid((i) => { ui.bagSel = ui.bagSel === i ? null : i; ui.sheetFn(); }));
+      const vendorHereB = D.PLACES[P.place].vendor || D.PLACES[P.place].gearVendor;
+      if (ui.sellPick && !vendorHereB) ui.sellPick = null;
+      const sellable = (x) => x && !x.item.noSell && x.item.slot !== 'quest';
+      b.append(bagGrid((i) => {
+        if (ui.sellPick) { if (!sellable(P.bags[i])) return toast('That cannot be sold.'); if (ui.sellPick.has(i)) ui.sellPick.delete(i); else ui.sellPick.add(i); ui.sheetFn(); return; }
+        ui.bagSel = ui.bagSel === i ? null : i; ui.sheetFn();
+      }));
+      // selling several at once (v10.3): tap items to pick them, then sell them together
+      if (ui.sellPick) {
+        const picked = [...ui.sellPick].filter((i) => sellable(P.bags[i])), total = picked.reduce((v, i) => v + (P.bags[i].item.sell || 1) * P.bags[i].n, 0);
+        const precious = picked.filter((i) => { const it = P.bags[i].item; return it.q >= 3 || it.pw || (D.GEAR_SLOTS.includes(it.slot) && G.isUpgrade(it)); }).length;
+        const go = () => { const r = G.sellMany(picked); ui.sellPick = null; toast(`Sold ${r.n} item${r.n > 1 ? 's' : ''}.`, true); ui.sheetFn(); };
+        b.append(h('div', { class: 'bag-acts' }, h('div', { class: 'bag-acts-t' }, h('b', null, picked.length ? `${picked.length} picked` : 'Tap items to pick them'), picked.length ? h('small', { html: ' · sells for ' + moneyHtml(total) }) : null),
+          h('div', { class: 'btn-row' },
+            h('button', { class: 'btn', disabled: !picked.length, onclick: () => precious ? showDialog([h('h3', null, `Sell ${picked.length} items?`), h('p', null, `${precious} of them ${precious > 1 ? 'are' : 'is'} rare, upgraded or better than what you wear. Vendors do not sell things back.`), h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); go(); } }, 'Sell'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Keep'))], true) : go() }, 'Sell'),
+            h('button', { class: 'btn alt', onclick: () => { ui.sellPick = new Set(P.bags.map((x, i) => i).filter((i) => sellable(P.bags[i]) && P.bags[i].item.q === 0)); ui.sheetFn(); } }, 'Pick grey'),
+            h('button', { class: 'btn alt', onclick: () => { ui.sellPick = null; ui.sheetFn(); } }, 'Cancel'))));
+        return;
+      }
       const sel = P.bags[ui.bagSel];
       if (sel) {
         const it = sel.item;
@@ -1995,6 +2017,7 @@
       const vendorNow = D.PLACES[P.place].vendor || D.PLACES[P.place].gearVendor;
       const junk = P.bags.filter((x) => x.item.q === 0 && !x.item.noSell).length;
       if (vendorNow && junk) b.append(h('button', { class: 'btn alt wide', onclick: () => { G.sellJunk(); ui.bagSel = null; ui.sheetFn(); } }, `Sell all grey items (${junk})`));
+      if (vendorNow && P.bags.some(sellable)) b.append(h('button', { class: 'btn alt wide', style: { marginTop: '6px' }, onclick: () => { ui.bagSel = null; ui.sellPick = new Set(); ui.sheetFn(); } }, 'Sell several'));
     });
   }
 
@@ -3546,6 +3569,7 @@
   function boot() {
     // a friend's share link (…#friend=K7QM-P2XD): kept for the Friends tab, and taken out of the address
     try { const m = String(location.hash || '').match(/friend=([0-9A-Za-z-]+)/); if (m && window.FRIENDS && FRIENDS.cleanCode(m[1])) { ui.friendCode = m[1]; history.replaceState(null, '', location.pathname + location.search); } } catch (e) { }
+    try { G.setSpeed(+localStorage.getItem('azsolo.speed') || 1); } catch (e) { } // battle speed, saved on this device
     if (G.hasSave()) showSelect(); else showCreate();
     requestAnimationFrame(loop);
   }

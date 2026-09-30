@@ -82,6 +82,8 @@ img { max-width: 100%; display: block; }
 .scene .zone { position: absolute; z-index: 130; top: 6px; left: 8px; font: 15px/1 var(--display); color: var(--gold); text-shadow: 0 1px 2px #000, 0 0 6px #000; letter-spacing: .02em; }
 .scene .zone small { display: block; font: 600 12px/1.2 var(--body); color: #e8dcc2; letter-spacing: 0; margin-top: 2px; }
 .scene .online { position: absolute; z-index: 130; top: 6px; right: 8px; font: 700 12px var(--body); color: #e8dcc2; text-shadow: 0 1px 2px #000; }
+.scene .speed-chip { position: absolute; z-index: 130; top: 24px; right: 6px; min-width: 40px; min-height: 32px; padding: 2px 8px; border-radius: 16px; border: 1px solid #c9a24a; background: rgba(12,9,6,.72); color: #ffd98a; font: 800 14px var(--body); }
+.scene .speed-chip[hidden] { display: none; }
 .sprite { position: absolute; bottom: 6%; width: 30%; transform-origin: 50% 100%; transition: filter .15s, opacity .4s; }
 .sprite img { width: 100%; }
 .sprite.flip img { transform: scaleX(-1); }
@@ -342,6 +344,7 @@ img { max-width: 100%; display: block; }
 .slot.qb0 { box-shadow: 0 0 0 1px #5a5a5a; } .slot.qb2 { box-shadow: 0 0 0 2px #1eff00; } .slot.qb3 { box-shadow: 0 0 0 2px #0070dd; } .slot.qb4 { box-shadow: 0 0 0 2px #a335ee; }
 .slot .up { position: absolute; left: 3px; top: 1px; font: 900 15px var(--body); color: #2dff2d; text-shadow: 0 1px 1px #000; }
 .slot.sel { outline: 2px solid var(--gold); }
+.slot .pick { position: absolute; top: 2px; left: 4px; color: var(--gold); font-weight: 900; font-size: 15px; text-shadow: 0 1px 2px #000; }
 .bags.looks { grid-template-columns: repeat(5, 1fr); }
 .slot.locked img { filter: grayscale(1) brightness(0.4); }
 .slot .lbl { font-size: 11px; line-height: 1.1; text-align: center; color: var(--muted); padding: 2px; }

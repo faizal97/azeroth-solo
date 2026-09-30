@@ -419,6 +419,14 @@
     emit('change');
     return v;
   };
+  // selling several at once (v10.3): idxs are bag indices; quest items and unsellable ones are skipped
+  G.sellMany = function (idxs) {
+    const P = G.S.player, pick = [...new Set(idxs)].filter((i) => { const b = P.bags[i]; return b && !b.item.noSell && b.item.slot !== 'quest'; }).sort((a, b) => b - a);
+    let v = 0; for (const i of pick) { const b = P.bags[i]; v += (b.item.sell || 1) * b.n; P.bags.splice(i, 1); }
+    if (v) { P.money += v; sys(`Sold ${pick.length} item${pick.length > 1 ? 's' : ''} for ${G.moneyText(v)}.`); emit('sold', { money: v }); }
+    emit('change');
+    return { n: pick.length, money: v };
+  };
   G.vendorStock = function (npc) {
     const base = vendorBase(npc);
     const pl = D.PLACES[G.S.player.place];
@@ -2601,7 +2609,7 @@
   }
   // ---------- dungeon bonuses: beat par time (fast pays), clear flawless (careful pays); a good group can get both
   const MOMENTUM_WINDOW = 5000, MOMENTUM_MAX = 5;
-  G.runClock = function () { const R = G.S.run; return R ? ((R.finishedAt || now()) - R.started) / 1000 : 0; };
+  G.runClock = function () { const R = G.S.run; return R ? ((R.finishedAt || now()) - R.started) / 1000 + (R.fastSecs || 0) : 0; }; // fastSecs: fight time gained at 2x or 3x
   // v10.3: level-60 clears pay Mentor Marks, the currency for gear upgrades (Trials will pay more)
   G.clearMarks = (act) => { const A = D.ACTIVITIES[act], Dg = A && A.dungeon && D.DUNGEONS[A.dungeon]; return !Dg || (A.maxLvl || D.LEVEL_CAP) < D.LEVEL_CAP ? 0 : Dg.raid ? 15 : 5; };
   function runBonuses(R) {
@@ -2672,10 +2680,16 @@
   // ============================================================ main loop
   let acc = 0, worldAcc = 0, saveAcc = 0;
   let socAcc = 0;
+  // Battle speed (v10.3): fights run at 1x, 2x or 3x. Only fight time speeds up, and a group run's clock adds the fight
+  // time gained, so par times and speed bonuses mean the same at every speed.
+  G.SPEEDS = [1, 2, 3]; G.speed = 1;
+  G.setSpeed = (x) => { G.speed = G.SPEEDS.includes(x) ? x : 1; return G.speed; };
   G.update = function (dt) {
     const S = G.S;
     if (!S) return;
-    acc += dt;
+    const fast = G.fight && G.speed > 1 ? G.speed : 1;
+    if (fast > 1 && S.run && !S.run.finishedAt) S.run.fastSecs = (S.run.fastSecs || 0) + dt * (fast - 1);
+    acc += dt * fast;
     socAcc += dt; if (socAcc >= 1) { socAcc = 0; if (root.SOC) try { SOC.tick(); } catch (e) { console.error(e); } }
     S.player.played = (S.player.played || 0) + dt;
     // combat at fixed 0.1s steps
