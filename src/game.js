@@ -1637,6 +1637,47 @@
     loot(owned ? `You take a copy of ${B.link(H.name, 5)}.` : `You bought ${B.link(H.name, 5)} for ${H.cost} Mentor Marks. Every character can take a copy.`);
     emit('change');
   };
+  // ---- gear upgrades (v10.3): it.up is the step, it.base the item as it dropped; stats are rewritten from it.base
+  G.itemPoints = (it) => { let n = (it && it.sp) || 0; for (const k in ((it && it.stats) || {})) n += it.stats[k]; return n; };
+  // The ceiling for an item is its own family's piece in the ceiling raid (same slot, weapon or armour type, and caster
+  // or not), since a staff and a dagger, or a spell-power robe and a leather tunic, carry very different totals. A family
+  // the ceiling raid lacks takes its best level-57+ piece from any dungeon or raid, raised by the ceiling raid's lead.
+  const upKey = (it) => `${it.slot}|${it.wtype || it.atype || ''}|${it.sp ? 'c' : ''}`;
+  let upRef = null;
+  G.upgradeRef = function (it) {
+    if (!upRef) {
+      const U = D.UPGRADE, avg = (a) => a.reduce((x, y) => x + y, 0) / a.length, lootOf = (dk) => { const s = new Set(); for (const p of D.DUNGEONS[dk].pulls) for (const m of p.mobs) for (const id of (D.MOBS[m].loot || [])) if (D.ITEMS[id]) s.add(id); return [...s].map((id) => D.ITEMS[id]); };
+      const top = {}, best = {};
+      for (const x of lootOf(U.raid)) (top[upKey(x)] = top[upKey(x)] || []).push(G.itemPoints(x));
+      for (const dk in D.DUNGEONS) if (dk !== U.raid) for (const x of lootOf(dk)) if ((x.lvl || 0) >= U.minLvl && U.cap[x.q]) { const k = upKey(x); best[k] = Math.max(best[k] || 0, G.itemPoints(x)); }
+      const lead = avg(Object.keys(best).filter((k) => top[k] && best[k] > 0).map((k) => avg(top[k]) / best[k]));
+      upRef = {}; for (const k in best) upRef[k] = top[k] ? avg(top[k]) : best[k] * lead; for (const k in top) upRef[k] = avg(top[k]);
+      upRef['*lead'] = lead;
+    }
+    return upRef[upKey(it)] || G.itemPoints(it.base || it) * upRef['*lead']; // a family seen nowhere: its own power, raised by the lead
+  };
+  const upBase = (it) => it.base || { stats: Object.assign({}, it.stats), armor: it.armor, sp: it.sp, dmg: it.dmg && it.dmg.slice() };
+  G.upgradeInfo = function (it) {
+    const U = D.UPGRADE, up = (it && it.up) || 0;
+    const none = { max: 0, up, cost: 0 };
+    if (!it || it.heirloom || !D.GEAR_SLOTS.includes(it.slot) || !U.cap[it.q] || (it.lvl || 0) < U.minLvl) return none;
+    const ref = G.upgradeRef(it), p0 = G.itemPoints(upBase(it)), capPts = U.cap[it.q] * ref;
+    if (p0 <= 0 || p0 >= capPts) return none;
+    const max = Math.ceil((capPts - p0) / (U.step * ref) - 1e-9);
+    return { max, up, cost: up < max ? U.cost(up + 1) : 0 };
+  };
+  G.upgradedCopy = function (it, up) {
+    const U = D.UPGRADE, b = upBase(it), inf = G.upgradeInfo(it); up = Math.max(0, Math.min(up, inf.max));
+    const out = JSON.parse(JSON.stringify(it));
+    if (!up) { if (it.base) { Object.assign(out, JSON.parse(JSON.stringify(b))); delete out.base; delete out.up; } return out; }
+    const ref = G.upgradeRef(it), p0 = G.itemPoints(b), f = Math.min(p0 + up * U.step * ref, U.cap[it.q] * ref) / p0;
+    out.base = JSON.parse(JSON.stringify(b)); out.up = up;
+    out.stats = {}; for (const k in b.stats || {}) out.stats[k] = Math.round(b.stats[k] * f);
+    if (b.sp) out.sp = Math.round(b.sp * f);
+    if (b.armor) out.armor = Math.round(b.armor * f);
+    if (b.dmg) out.dmg = [Math.round(b.dmg[0] * f), Math.round(b.dmg[1] * f)];
+    return out;
+  };
   // Titles
   G.records = function () {
     const P = G.S.player, cx = P.codex || {}; const pv = G.pvpStats();

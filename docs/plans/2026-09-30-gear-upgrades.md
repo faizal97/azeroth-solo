@@ -131,6 +131,11 @@ Expected: `upgrades: N/N checks pass`. If "tops out at the cap" fails by roundin
 tolerance to 2, not the math. If "Magma Throne items take 1-6 steps" fails, print the step counts and report them before
 changing `D.UPGRADE.step`.
 
+**Built differently (2026-09-30):** one average per slot put staves and spell-power robes above the ceiling. The
+reference is now the item's own family (slot, weapon or armour type, caster or not) in the ceiling raid; a family the
+raid lacks uses its best level-57+ piece anywhere, raised by the raid's measured lead. Items already at the ceiling (the
+Magma Throne's Emberfall) get no steps. Result: 13 of 16 Magma Throne items take 4 steps.
+
 **Step 6: Commit**
 
 ```bash
