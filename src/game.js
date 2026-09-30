@@ -810,6 +810,15 @@
     stopActions();
     emit('change');
   };
+  // Cancel a trip: you never left the place this leg started from (as when a fight on the road stops you), and the
+  // rest of a route is dropped
+  G.cancelTravel = function () {
+    const P = G.S.player;
+    if (!P.travel) return;
+    P.travel = null; P.route = null;
+    sys(`You stay in ${D.PLACES[P.place].name}.`);
+    emit('change');
+  };
   G.hearth = function () {
     const P = G.S.player;
     if (G.fight || G.S.run) return toast('You can\'t do that now.');

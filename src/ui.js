@@ -47,6 +47,25 @@
     if (!svg) svg = placeholder(kind);
     return (cache[k] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg));
   }
+  // quest marks are drawn, not typed: the display font's ? and ! are hairlines at small sizes. 'new' is a gold !
+  // (quest to take), 'ready' a gold ? (hand in), 'active' a grey ? (in progress). G.npcMarker gives '!', '?', '…'.
+  const MK_KIND = { '!': 'new', '?': 'ready', '…': 'active' };
+  const QHOOK = 'M4.8 9.2C4.8 5 7.6 2.8 10.4 2.8c3.4 0 5.6 2.3 5.6 5.4 0 3.3-2.6 4.4-4 5.6-1.1.9-1.4 2-1.4 4.6';
+  function qmarkSrc(kind) {
+    const k = 'qmark:' + kind; if (cache[k]) return cache[k];
+    const [a, m, z] = kind === 'active' ? ['#f4f4f4', '#b4b4b4', '#686868'] : ['#fff6b8', '#ffd100', '#c47e00'];
+    const ink = '#1a0e00', g = 'url(#g)';
+    const body = kind === 'new'
+      ? `<path d="M5.5 2.5h9l-1.8 19.5h-5.4z" fill="${ink}" stroke="${ink}" stroke-width="3.6" stroke-linejoin="round"/><circle cx="10" cy="27.4" r="3.6" fill="${ink}" stroke="${ink}" stroke-width="3.6"/>` +
+        `<path d="M5.5 2.5h9l-1.8 19.5h-5.4z" fill="${g}" stroke="${g}" stroke-width="1" stroke-linejoin="round"/><circle cx="10" cy="27.4" r="3.6" fill="${g}"/>` +
+        '<path d="M7.7 4.6l.9 14.4" stroke="#fffbe0" stroke-width="1.3" stroke-linecap="round" opacity=".75"/>'
+      : `<path d="${QHOOK}" fill="none" stroke="${ink}" stroke-width="8.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10.6" cy="26.8" r="3.5" fill="${ink}" stroke="${ink}" stroke-width="3.4"/>` +
+        `<path d="${QHOOK}" fill="none" stroke="${g}" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10.6" cy="26.8" r="3.5" fill="${g}"/>` +
+        '<path d="M6.9 8.6C7.1 6.2 8.7 4.8 10.4 4.8" fill="none" stroke="#fffbe0" stroke-width="1.3" stroke-linecap="round" opacity=".75"/>';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1 -2 22 36"><defs><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="0" y1="2" x2="0" y2="31"><stop offset="0" stop-color="${a}"/><stop offset=".45" stop-color="${m}"/><stop offset="1" stop-color="${z}"/></linearGradient></defs>${body}</svg>`;
+    return (cache[k] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg));
+  }
+  const qmark = (kind, cls) => h('img', { src: qmarkSrc(kind), class: 'qm ' + kind + (cls ? ' ' + cls : ''), alt: kind === 'new' ? '!' : '?', draggable: 'false' });
   const petArt = (u) => (u.key === 'beast' || u.type === 'beast') ? mobArt(u.mob) : art('pet', u.key || u.type);
   const mobArt = (key) => art('mob', (D.MOBS[key] && D.MOBS[key].sprite) || key);
   const looks = (c) => { const s = c.bot || c; const o = { cls: c.cls, race: s.race || c.race || 'human', skin: s.skin || 0, hair: s.hair || 0, gender: s.gender || 'm' }; const g = G.gearLooks(c); if (g) o.gear = g; return o; };
@@ -288,8 +307,9 @@
     list.forEach((n, i) => {
       const N = D.NPCS[n], mk = G.npcMarker(n);
       const src = n === 'hooded_stranger' && window.ART && ART.legend ? art('legend', 'lyveus_hooded') : (N.legend || N.art) && window.ART && ART.legend ? art('legend', N.legend || N.art) : art('hero', npcLooks(n, place));
-      const tag = h('div', { class: 'np', style: { fontSize: '10px' } }, mk ? h('span', { class: mk === '…' ? '' : 'qmk', style: { color: mk === '…' ? '#bbb' : '#ffd100', fontWeight: 800 } }, (mk === '…' ? '?' : mk) + ' ') : null, h('span', { style: { color: '#ffd100' } }, sceneName(N.name)));
-      const el = spriteEl(src, slots[i], 'idle flip npc tappable', tag);
+      const tag = h('div', { class: 'np', style: { fontSize: '10px' } }, mk ? qmark(MK_KIND[mk], mk === '…' ? '' : 'qmk') : null, h('span', { style: { color: '#ffd100' } }, sceneName(N.name)));
+      // someone waiting for a quest you finished gets a gold outline and a glow at their feet
+      const el = spriteEl(src, slots[i], 'idle flip npc tappable' + (mk === '?' ? ' turnin' : ''), tag);
       el.addEventListener('click', () => openNpc(n));
       sc.append(el);
     });
@@ -556,7 +576,11 @@
     if (S.run) { runPanel(p); p.scrollTop = scroll; return; }
     if (G.fight) { fightPanel(p); return; }
     if (P.ghostUntil) { p.append(h('div', { class: 'sec-h' }, 'Spirit')); p.append(h('p', null, 'Your spirit is returning to your body. You will come back with half health.')); return; }
-    if (P.travel) { p.append(h('div', { class: 'sec-h' }, 'On the road'), h('p', null, `Heading to ${D.PLACES[P.travel.to].name}.`)); taskCards(p); tracker(p); return; }
+    if (P.travel) {
+      p.append(h('div', { class: 'sec-h' }, 'On the road'), h('p', null, `Heading to ${D.PLACES[P.travel.to].name}.`),
+        h('button', { class: 'btn alt wide', onclick: () => G.cancelTravel() }, `Cancel travel · stay in ${D.PLACES[P.place].name}`));
+      taskCards(p); tracker(p); return;
+    }
     if (S.queue) {
       p.append(h('div', { class: 'row', style: { gridTemplateColumns: '34px 1fr auto' } },
         h('div', { class: 'ic' }, img(art('icon', 'hearthstone'))),
@@ -669,15 +693,16 @@
     if (boardHere) {
       const mk = G.bountyMarker(P.place), open = G.bounties(P.place).filter((x) => G.bountyState(x) === 'available').length;
       const ready = G.bounties(P.place).filter((x) => G.bountyState(x) === 'complete').length;
-      here.append(h('button', { class: 'mcard board-card', onclick: () => openBountyBoard() },
-        h('div', { class: 'ic' }, mk ? h('span', { class: 'mark' }, mk) : img(art('icon', 'claw'))),
+      here.append(h('button', { class: 'mcard board-card' + (mk === '?' ? ' turnin' : ''), onclick: () => openBountyBoard() },
+        h('div', { class: 'ic' }, mk ? qmark(MK_KIND[mk]) : img(art('icon', 'claw'))),
         h('div', { class: 't' }, h('b', { style: { color: '#ffd100' } }, 'Bounty Board'), h('small', null, ready ? `${ready} ready to hand in` : open ? `${open} bount${open === 1 ? 'y' : 'ies'} to take` : 'all taken today'))));
     }
     for (const npc of place.npcs) {
       const N = D.NPCS[npc]; const mk = G.npcMarker(npc);
-      here.append(h('button', { class: 'mcard', onclick: () => openNpc(npc) },
-        h('div', { class: 'ic' }, mk ? h('span', { class: 'mark' + (mk === '…' ? ' grey' : '') }, mk === '…' ? '?' : mk) : img(art('icon', N.legend ? 'legend_' + N.legend : npc === place.vendor || npc === place.gearVendor ? 'coin' : 'hearthstone'))),
-        h('div', { class: 't' }, h('b', { style: { color: '#ffd100' } }, N.name), h('small', null, N.title))));
+      const ready = mk === '?' ? G.npcQuests(npc).filter((q) => q.st === 'complete').length : 0;
+      here.append(h('button', { class: 'mcard' + (ready ? ' turnin' : ''), onclick: () => openNpc(npc) },
+        h('div', { class: 'ic' }, mk ? qmark(MK_KIND[mk]) : img(art('icon', N.legend ? 'legend_' + N.legend : npc === place.vendor || npc === place.gearVendor ? 'coin' : 'hearthstone'))),
+        h('div', { class: 't' }, h('b', { style: { color: '#ffd100' } }, N.name), h('small', null, ready ? (ready === 1 ? 'Quest ready to hand in' : `${ready} quests ready to hand in`) : N.title))));
     }
     if (place.npcs.length || boardHere) b.append(here); else b.append(h('div', { class: 'people' }, 'No one to talk to here.'));
     const partyIds = new Set(((S.wparty && S.wparty.members) || []).map((m) => m.bot.id));
@@ -1641,13 +1666,14 @@
         const [x1, y1] = MAP[a], [x2, y2] = MAP[c];
         lines.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#8a6a3a" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round"/>`);
       }
-      const qPlaces = new Set();
+      const qPlaces = new Map();
+      const mark = (p) => { if (!qPlaces.has(p)) qPlaces.set(p, 'new'); }; // a hand-in (?) outranks quest work (!)
       for (const qid in P.quests) {
         const st = G.questState(qid);
-        if (st === 'complete') { const npc = D.QUESTS[qid].turnin; for (const p in D.PLACES) if (D.PLACES[p].npcs.includes(npc)) qPlaces.add(p); continue; }
+        if (st === 'complete') { const npc = D.QUESTS[qid].turnin; for (const p in D.PLACES) if (D.PLACES[p].npcs.includes(npc)) qPlaces.set(p, 'ready'); continue; }
         for (const o of D.QUESTS[qid].objs) {
-          if (o.type === 'visit') qPlaces.add(o.place);
-          for (const p in D.PLACES) { const pl = D.PLACES[p]; if ((pl.mobs || []).some((m) => m[0] === o.mob || (D.MOBS[m[0]].qdrops || []).some((d) => d[0] === o.item)) || (pl.named && Object.keys(pl.named).some((k) => k === o.mob || (D.MOBS[k].qdrops || []).some((d) => d[0] === o.item))) || (pl.gather && pl.gather.item === o.item)) qPlaces.add(p); }
+          if (o.type === 'visit') mark(o.place);
+          for (const p in D.PLACES) { const pl = D.PLACES[p]; if ((pl.mobs || []).some((m) => m[0] === o.mob || (D.MOBS[m[0]].qdrops || []).some((d) => d[0] === o.item)) || (pl.named && Object.keys(pl.named).some((k) => k === o.mob || (D.MOBS[k].qdrops || []).some((d) => d[0] === o.item))) || (pl.gather && pl.gather.item === o.item)) mark(p); }
         }
       }
       for (const p in MAP) {
@@ -1658,7 +1684,7 @@
         nodes.push(`<g data-go="${p}" style="cursor:${adj ? 'pointer' : 'default'}">
           <circle cx="${x}" cy="${y}" r="${here ? 13 : 10}" fill="${here ? '#f0c75e' : G.enemyTown(p) ? '#8a2a22' : seenP ? '#6b8f3a' : '#3a4a2a'}" stroke="#1a1208" stroke-width="3"/>
           ${here ? `<circle cx="${x}" cy="${y}" r="19" fill="none" stroke="#f0c75e" stroke-width="2" opacity=".6"/>` : ''}
-          ${qPlaces.has(p) ? `<text x="${x + 12}" y="${y - 8}" font-family="Marcellus SC, serif" font-size="20" fill="#ffd100" stroke="#000" stroke-width="1">!</text>` : ''}
+          ${qPlaces.has(p) ? `<image href="${qmarkSrc(qPlaces.get(p))}" x="${x + 7}" y="${y - 30}" width="15" height="24.5"/>` : ''}
           <text x="${x}" y="${y + 26}" text-anchor="middle" font-family="Alegreya Sans, sans-serif" font-weight="800" font-size="13" fill="${adj || here ? '#f3e6c6' : '#a89a7a'}" stroke="#120c05" stroke-width="3" paint-order="stroke">${esc(pl.name)}</text>
           <text x="${x}" y="${y + 40}" text-anchor="middle" font-family="Alegreya Sans, sans-serif" font-weight="700" font-size="11" fill="${conColor(Math.round((pl.lvl[0] + pl.lvl[1]) / 2))}" stroke="#120c05" stroke-width="3" paint-order="stroke">${pl.safe ? 'Town' : pl.lvl[0] + '-' + pl.lvl[1]}</text>
         </g>`);
@@ -1676,7 +1702,7 @@
       });
       const far = h('div', { class: 'chips' });
       for (const a in MAP) for (const c in D.PLACES[a].links) if (!MAP[c] && !G.enemyTown(a) && !G.enemyTown(c)) far.append(h('button', { class: 'chip gold', onclick: () => { if (cur === a) { G.travelTo(c); closeSheet(); } else toast(`Go to ${D.PLACES[a].name} first.`); } }, `${D.PLACES[a].name} → ${D.PLACES[c].name}`, h('small', null, `${D.PLACES[c].zone} · ` + ((D.PLACES[a].via || {})[c] || 'Road') + ' · ' + G.travelSecs(a, c) + 's')));
-      b.append(m, h('div', { style: { color: 'var(--muted)', fontSize: '13px' } }, 'Gold: you are here. ! marks places your quests need. Tap any place for the way there.'));
+      b.append(m, h('div', { style: { color: 'var(--muted)', fontSize: '13px' } }, 'Gold: you are here. ! marks places your quests need, ? where a finished quest is handed in. Tap any place for the way there.'));
       // roads out of this zone, under the map so they never push it down
       if (far.childNodes.length) b.append(h('div', { class: 'sec-h' }, 'Roads out of ' + D.REGIONS[region].name), far);
     });
@@ -1783,7 +1809,7 @@
         const st = G.questState(qid);
         const Q = D.QUESTS[qid];
         b.append(h('button', { class: 'row', onclick: () => openSheet('quest', Q.name, 'Level ' + Q.lvl, (bb) => { bb.append(...questDetail(qid)); bb.append(h('button', { class: 'btn alt', onclick: openQuests }, 'Back')); }) },
-          h('div', { class: 'ic' }, h('span', { class: 'mark' + (st === 'complete' ? '' : ' grey') }, '?')),
+          h('div', { class: 'ic' }, qmark(st === 'complete' ? 'ready' : 'active')),
           h('div', { class: 't' }, h('b', { style: { color: conColor(Q.lvl) } }, `[${Q.lvl}] ${Q.name}`), h('small', null, st === 'complete' ? 'Complete. Return to ' + D.NPCS[Q.turnin].name : G.questProgress(qid).map((p) => `${p.have}/${p.n}`).join(' · '))),
           h('div', { class: 'r' }, '›')));
       }
@@ -1818,7 +1844,7 @@
       for (const { qid, st } of qs) {
         const Q = D.QUESTS[qid];
         b.append(h('button', { class: 'row', onclick: () => openSheet('quest', Q.name, N.name, (bb) => { bb.append(...questDetail(qid, npc)); bb.append(h('button', { class: 'btn alt', onclick: () => openNpc(npc) }, 'Back')); }) },
-          h('div', { class: 'ic' }, h('span', { class: 'mark' + (st === 'active' ? ' grey' : '') }, st === 'available' ? '!' : '?')),
+          h('div', { class: 'ic' }, qmark(st === 'available' ? 'new' : st === 'complete' ? 'ready' : 'active')),
           h('div', { class: 't' }, h('b', { style: { color: conColor(Q.lvl) } }, Q.name), h('small', null, st === 'available' ? 'New quest' : st === 'complete' ? 'Ready to turn in' : 'In progress')),
           h('div', { class: 'r' }, '›')));
       }

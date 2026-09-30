@@ -580,8 +580,21 @@ img { max-width: 100%; display: block; }
 .lvlburst { position: absolute; inset: -4px; border-radius: 50%; pointer-events: none; z-index: 2; box-shadow: 0 0 0 3px #ffd100, 0 0 18px 6px rgba(255,209,0,.8); animation: lvlburst 1.3s ease-out forwards; }
 @keyframes lvlburst { 0% { transform: scale(.8); opacity: 1; } 60% { opacity: .8; } 100% { transform: scale(1.9); opacity: 0; } }
 #pf-lvl.pop { animation: bump .6s ease-out 2; }
+/* quest marks (qmark in ui.js): drawn glyphs sized by height; the gold ones glow */
+img.qm { display: inline-block; width: auto; height: 1.3em; vertical-align: -.3em; }
+img.qm.new, img.qm.ready { filter: drop-shadow(0 0 3px rgba(255, 209, 0, .6)); }
+.row .ic img.qm, .mcard .ic img.qm { width: auto; height: 26px; object-fit: contain; margin: auto; }
+.mcard .ic { display: grid; place-items: center; }
+.sprite .np img.qm { width: auto; height: 18px; margin-right: 2px; transform: none; animation: none; }
+.sprite .np img.qm.ready { height: 21px; }
 /* quest marks over people bob */
-.np .qmk { display: inline-block; margin-right: 3px; animation: qbob 1.2s ease-in-out infinite; }
+.sprite .np img.qm.qmk { animation: qbob 1.2s ease-in-out infinite; }
+/* someone to hand a finished quest to: gold outline on the figure, a pulsing glow at the feet, a gold card */
+.sprite.turnin > img { filter: drop-shadow(1.5px 0 0 #ffd100) drop-shadow(-1.5px 0 0 #ffd100) drop-shadow(0 1.5px 0 #ffd100) drop-shadow(0 -1.5px 0 #ffd100) drop-shadow(0 0 6px rgba(255, 190, 0, .85)); }
+.sprite.turnin::before { content: ''; position: absolute; z-index: -1; left: 4%; right: 4%; bottom: -4px; height: 16%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 215, 40, .7), rgba(255, 209, 0, 0)); animation: qglow 1.6s ease-in-out infinite; pointer-events: none; }
+@keyframes qglow { 50% { opacity: .35; transform: scale(.85); } }
+.mcard.turnin { border-color: #e8b923; background: linear-gradient(90deg, rgba(120, 88, 12, .7), rgba(45, 33, 8, .5)); box-shadow: 0 0 0 1px rgba(255, 209, 0, .3), 0 0 10px rgba(255, 209, 0, .35); }
+.mcard.turnin .t small { color: #ffd100; font-weight: 700; }
 @keyframes qbob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 /* a quest just became ready: its tracker line flashes gold */
 .tracker .q.flash { animation: qflash .8s ease-in-out 3; }
@@ -589,7 +602,7 @@ img { max-width: 100%; display: block; }
 /* your crit shakes the target frame */
 .uf.target.shake { animation: shake .32s ease-out; }
 @keyframes shake { 20% { transform: translateX(-4px); } 40% { transform: translateX(4px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(2px); } }
-@media (prefers-reduced-motion: reduce) { #app.lowhp::after { animation: none; opacity: .7; } .np .qmk, .tracker .q.flash, .uf.target.shake, .lvlburst, #pf-lvl.pop, .nav button.bump img { animation: none; } }
+@media (prefers-reduced-motion: reduce) { #app.lowhp::after { animation: none; opacity: .7; } .sprite .np img.qm.qmk, .sprite.turnin::before, .tracker .q.flash, .uf.target.shake, .lvlburst, #pf-lvl.pop, .nav button.bump img { animation: none; } }
 
 
 /* ---- the Group Finder (v10) */
