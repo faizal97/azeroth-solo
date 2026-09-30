@@ -167,7 +167,8 @@ if (arg('--inventory')) {
 
 if (arg('--dist')) {
   const file = process.argv[process.argv.indexOf('--dist') + 1];
-  const names = Object.keys(map).filter((n) => ['rename', 'forbid'].includes(map[n].status)).sort((a, b) => b.length - a.length);
+  // renamed or forbidden names, and names still under review that already have their new name
+  const names = Object.keys(map).filter((n) => ['rename', 'forbid'].includes(map[n].status) || (map[n].status === 'review' && map[n].new)).sort((a, b) => b.length - a.length);
   const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const re = new RegExp(`(?<![A-Za-z0-9_])(?:${names.map(esc).join('|')})(?![A-Za-z0-9_])`, 'g');
   const found = [];
@@ -187,4 +188,6 @@ console.log(`Blizzard names still to rename: ${left} of ${Object.keys(map).lengt
 console.log(`in player-facing code and data: ${text.length} places in ${Object.keys(byFile).length} files; in comments: ${com.length}`);
 if (!arg('--brief')) for (const [f, n] of Object.entries(byFile).sort((a, b) => b[1] - a[1]).slice(0, 15)) console.log(`  ${String(n).padStart(5)}  ${f}`);
 if (!arg('--brief')) console.log('most frequent: ' + Object.entries(byName).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([n, c]) => `${n} ${c}`).join(' · '));
-if (arg('--enforce') && text.some((h) => map[h.name] && ['rename', 'forbid'].includes(map[h.name].status))) process.exit(1);
+// --enforce (the build): any live name in player text fails, 'review' ones included (a name under review can already
+// have its new name, and then the old one must not come back)
+if (arg('--enforce') && text.length) { for (const h of text.slice(0, 20)) console.log(`  ${h.file}:${h.line}  ${h.name}${map[h.name] && map[h.name].new ? ' → ' + map[h.name].new : ''}`); process.exit(1); }
