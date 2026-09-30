@@ -7,6 +7,8 @@
   T.FIRST = { y: 2026, m: 9 }; // October 2026, the first season
   T.SIZE = 8; // dungeons per season
   T.NEW_PER = 4; // dungeons never in a season that are guaranteed a place, per season
+  T.PAR = 1; // a Trial's par is the dungeon's own data par (normal runs use G.par, 15% shorter)
+  T.par = (Dg) => (Dg && Dg.par ? Math.round(Dg.par * T.PAR) : 0);
   T.BASE = 1; T.STEP = 1.06; // enemy health and damage: BASE at Trial 1, then STEP per level, compounding (tuned by sim/trialpace.js)
   T.LAUNCH = '2026-10-01'; // the `since` date of every dungeon that existed when Trials began
   const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

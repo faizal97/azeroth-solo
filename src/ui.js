@@ -914,7 +914,7 @@
   // the run's scoreboard: clock against par, Momentum, and whether it is still flawless
   function runScore(p, R) {
     const A = D.ACTIVITIES[R.act], Dg = A.dungeon && D.DUNGEONS[A.dungeon];
-    if (!Dg || !Dg.par) return;
+    if (!Dg || !G.par(Dg)) return;
     const cx = (G.S.player.codex || {})[R.act];
     if (R.phase === 'done' && R.bonus) {
       const b = R.bonus;
@@ -925,7 +925,7 @@
       return;
     }
     p.append(h('div', { class: 'score' },
-      h('span', null, '⏱ ', h('b', { class: 'tnum', 'data-clock': '1' }, G.fmtClock(G.runClock())), ` / par ${G.fmtClock(Dg.par)}`),
+      h('span', null, '⏱ ', h('b', { class: 'tnum', 'data-clock': '1' }, G.fmtClock(G.runClock())), ` / par ${G.fmtClock(G.par(Dg))}`),
       R.momentum ? h('span', { class: 'mom' }, `Momentum ×${R.momentum}`) : h('span', { class: 'dim' }, 'Pull within 5s to build Momentum'),
       h('span', { class: R.wipes ? 'no' : 'ok' }, R.wipes ? '✗ Flawless' : '✓ No wipes')));
   }
@@ -2819,7 +2819,7 @@
   // how a Trial level compares with a normal level-60 run: "−17% health and damage", "normal ...", "+23% ..."
   const trialStrength = (lvl) => { const d = Math.round((window.TRIALS.factor(lvl) - 1) * 100); return Math.abs(d) <= 2 ? 'normal health and damage' : `${d > 0 ? '+' : '−'}${Math.abs(d)}% health and damage`; };
   function trialDialog(act) {
-    const A = D.ACTIVITIES[act], par = D.DUNGEONS[A.dungeon].par, max = G.trialMax(act), T = window.TRIALS;
+    const A = D.ACTIVITIES[act], par = window.TRIALS.par(D.DUNGEONS[A.dungeon]), max = G.trialMax(act), T = window.TRIALS;
     let lvl = max;
     const draw = () => showDialog([h('h3', null, A.name),
       h('div', { class: 'btn-row', style: { alignItems: 'center', justifyContent: 'center' } },
@@ -3066,6 +3066,7 @@
   // prompt waits behind it, and its timer is held for as long as the card shows (G.holdRolls).
   function showRollCard() {
     const d = (ui.rollQueue || []).shift(); if (!d) return;
+    if (d.entries.some((e) => e.me && e.c === 'pass')) { if ((ui.rollQueue || []).length) showRollCard(); else renderRolls(); return; } // you passed: no need to watch it (the Loot chat has the winner)
     const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     const order = d.entries.slice().sort((a, b) => (a.c === 'pass') - (b.c === 'pass'));
     const STEP = calm ? 0 : order.length > 6 ? 150 : 320, COUNT = calm ? 0 : 650, SHOW = order.length > 6 ? 3400 : 2800; // a raid reveals faster and stays a little longer
@@ -3110,6 +3111,17 @@
     ui.rollCard = null;
     if ((ui.rollQueue || []).length) showRollCard(); else renderRolls();
   }
+  // inspect a drop: its details next to what you wear, the roll's clock stopped, and the choice right there (v10.4)
+  function inspectRoll(i) {
+    const R = G.S.run, r = R && R.rolls[i]; if (!r || r.done || r.player) return;
+    const it = r.item, cur = D.GEAR_SLOTS.includes(it.slot) ? G.S.player.equip[it.slot] : null;
+    G.pauseRolls(true);
+    const pickIt = (c) => { closeDialog(); G.pauseRolls(false); G.roll(i, c); renderRolls(); };
+    showDialog([itemTip(it), cur ? h('div', { class: 'sec-h' }, 'Currently equipped') : null, cur ? itemTip(cur) : null,
+      h('p', { class: 'ai-note', style: { margin: '6px 0' } }, 'The roll waits while you look.'),
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => pickIt('need') }, 'Need'), h('button', { class: 'btn alt', onclick: () => pickIt('greed') }, 'Greed'), h('button', { class: 'btn alt', onclick: () => pickIt('pass') }, 'Pass')),
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn alt wide', onclick: () => { closeDialog(); G.pauseRolls(false); } }, 'Back'))], false);
+  }
   function renderRolls() {
     if (ui.rollEl) { ui.rollEl.remove(); ui.rollEl = null; }
     if (ui.rollCard) return; // the result card is showing; the next prompt waits for it
@@ -3120,7 +3132,7 @@
     const { r, i } = open[0];
     const it = r.item;
     ui.rollEl = h('div', { class: 'roll' },
-      h('button', { style: { padding: 0 }, onclick: () => showDialog(itemTip(it), true) }, itemIcon(it, 'rollic')),
+      h('button', { style: { padding: 0 }, onclick: () => inspectRoll(i) }, itemIcon(it, 'rollic')),
       h('div', null,
         h('div', { class: 'q' + it.q, style: { fontWeight: 800 } }, it.name + (open.length > 1 ? `  (+${open.length - 1} more)` : ''), gearTag(it)),
         h('div', { class: 'bar' }, h('i', { 'data-roll': i, style: { width: '100%' } })),

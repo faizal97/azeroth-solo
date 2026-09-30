@@ -32,6 +32,20 @@ function fightFor(speed) {
 const one = fightFor(1), two = fightFor(2), three = fightFor(3);
 ok(Math.abs(one.fightSecs - 10) < 0.2 && Math.abs(two.fightSecs - 20) < 0.3 && Math.abs(three.fightSecs - 30) < 0.4, `fight time runs 1x/2x/3x (${one.fightSecs.toFixed(1)}, ${two.fightSecs.toFixed(1)}, ${three.fightSecs.toFixed(1)})`);
 ok(Math.abs(two.clock - two.fightSecs) < 0.3 && Math.abs(three.clock - three.fightSecs) < 0.4, `the run clock counts fight time, so par is the same at any speed (${two.clock.toFixed(1)} / ${three.clock.toFixed(1)})`);
+
+// loot rolls (v10.4): the clock waits during fights and while you inspect; it runs out in rests; the group does not wait
+{
+  G.newGame({ name: 'L', cls: 'warrior', race: 'human' }); G.S.flags.warModeAsked = true;
+  const roll = { item: G.genGear('chest', 10, 2), until: Date.now() + 25000, left: 25000, choices: {}, player: null, done: false };
+  G.S.group = { act: 'deadmines', members: [] };
+  G.S.run = { act: 'deadmines', phase: 'fight', rolls: [roll], pulls: [{ mobs: [] }], idx: 0, wipes: 0, started: Date.now(), restUntil: Date.now() };
+  const pass = (secs) => { for (let i = 0; i < secs; i++) { t += 1000; G.update(1); } };
+  pass(40); ok(!roll.player && roll.left > 20000, `the roll waits through a fight (${Math.round(roll.left / 1000)}s left)`);
+  G.S.run.phase = 'done'; G.pauseRolls(true); pass(30); ok(!roll.player && roll.left > 20000, 'and while you inspect the item');
+  G.pauseRolls(false); pass(10); ok(!roll.player && roll.left < 17000, 'then it counts down again');
+  pass(20); ok(roll.player && roll.player.c === 'pass', 'and runs out as a pass');
+  G.S.run = null; G.S.group = null;
+}
 G.setSpeed(1);
 console.log(`sellspeed: ${n - bad}/${n} checks pass`);
 process.exit(bad ? 1 : 0);

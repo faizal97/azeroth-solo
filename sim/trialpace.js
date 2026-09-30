@@ -40,7 +40,7 @@ function run(prof, cls, act, lvl) {
     if (S.run && S.run.wipes > 12) break;
     G.update(0.1); t += 100;
   }
-  const done = S.run && S.run.phase === 'done', secs = done ? G.runClock() : Infinity, par = D.DUNGEONS[D.ACTIVITIES[act].dungeon].par;
+  const done = S.run && S.run.phase === 'done', secs = done ? G.runClock() : Infinity, par = T.par(D.DUNGEONS[D.ACTIVITIES[act].dungeon]);
   return { done, timed: done && secs <= par, secs: Math.round(secs), par, wipes: S.run ? S.run.wipes : 99 };
 }
 const acts = ['blackfathom', 'stratholme'];

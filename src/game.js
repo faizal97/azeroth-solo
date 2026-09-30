@@ -2559,7 +2559,7 @@
 
   function addRoll(it) {
     const S = G.S, R = S.run;
-    const r = { item: it, until: now() + 25000, choices: {}, player: null, done: false };
+    const r = { item: it, until: now() + 25000, left: 25000, choices: {}, player: null, done: false }; // left: your time to decide, which stops during fights and while you inspect the item
     for (const m of S.group.members) {
       if (m.gone) continue;
       const usable = G.canUseItem(it, m.cls) && (!it.atype || it.atype === D.CLASSES[m.cls].armorType || it.slot === 'back') && (it.slot !== 'weapon' || D.CLASSES[m.cls].weapons.includes(it.wtype));
@@ -2574,7 +2574,9 @@
     emit('roll', r);
   }
   // the roll card is on screen: rolls you still have to decide wait for it instead of running out
-  G.holdRolls = function (ms) { const R = G.S && G.S.run; if (!R) return; for (const r of R.rolls) if (!r.done && !r.player) r.until += ms; };
+  G.holdRolls = function (ms) { const R = G.S && G.S.run; if (!R) return; for (const r of R.rolls) if (!r.done && !r.player) { r.left = (r.left != null ? r.left : r.until - now()) + ms; r.until = now() + r.left; } };
+  // inspecting a drop stops its clock (v10.4): read the item and compare it without losing the roll
+  G.pauseRolls = function (on) { const R = G.S && G.S.run; if (R) { R.rollPause = !!on; R.rollPauseAt = now(); } };
   G.roll = function (idx, c) {
     const R = G.S.run;
     if (!R || !R.rolls[idx] || R.rolls[idx].done) return;
@@ -2584,11 +2586,13 @@
   function rollsTick() {
     const S = G.S, R = S.run;
     if (!R) return;
-    const t = now();
+    const t = now(), dt = Math.max(0, t - (R.rollT || t)); R.rollT = t;
+    const still = (R.rollPause && t - (R.rollPauseAt || 0) < 60000) || R.phase === 'fight'; // an inspect pause lasts at most a minute // the clock waits during fights (the group does not wait for you) and while you inspect
     for (const r of R.rolls) {
       if (r.done) continue;
+      if (!r.player) { if (r.left == null) r.left = r.until - t; if (!still) r.left -= dt; r.until = t + r.left; }
       const botsIn = Object.values(r.choices).every((c) => c.at <= t);
-      if (t >= r.until && !r.player) r.player = { c: 'pass', v: 0 };
+      if (r.left <= 0 && !r.player) r.player = { c: 'pass', v: 0 };
       if (!(botsIn && r.player)) continue;
       r.done = true;
       const entries = Object.entries(r.choices).map(([name, c]) => ({ name, c: c.c, v: c.v, m: c.m })).concat([{ name: S.player.name, c: r.player.c, v: r.player.v, me: true }]);
@@ -2652,8 +2656,9 @@
       const waiting = S.group.members.some((m) => m.gone);
       // bot tank pulls on its own when rested; player tank pulls manually
       const pace = PACE[R.pace || 'normal'];
-      const topped = !pace.hp || (P.hp >= v.maxHp * pace.hp && (v.resType !== 'mana' || P.res >= v.maxRes * pace.mana) && S.group.members.every((m) => { if (m.gone || m.hp == null) return true; const st = E.statsFor(m); return m.hp >= st.maxHp * pace.hp && (D.CLASSES[m.cls].resource !== 'mana' || m.res == null || m.res >= st.maxMana * pace.mana); }));
-      if (G.role() !== 'tank' && t >= R.restUntil && (topped || t >= R.restUntil + 25000) && !waiting && !R.rolls.some((r) => !r.done && !r.player)) G.runPull();
+      const boss = R.pulls[R.idx] && R.pulls[R.idx].boss, need = boss ? { hp: Math.max(pace.hp, pace.bossHp), mana: Math.max(pace.mana, pace.bossHp) } : pace; // a group rests before a boss
+      const topped = !need.hp || (P.hp >= v.maxHp * need.hp && (v.resType !== 'mana' || P.res >= v.maxRes * need.mana) && S.group.members.every((m) => { if (m.gone || m.hp == null) return true; const st = E.statsFor(m); return m.hp >= st.maxHp * need.hp && (D.CLASSES[m.cls].resource !== 'mana' || m.res == null || m.res >= st.maxMana * need.mana); }));
+      if (G.role() !== 'tank' && t >= R.restUntil && (topped || t >= R.restUntil + 25000) && !waiting) G.runPull(); // rolls no longer hold the group: their clock waits for you instead (v10.4)
       emit('runTick');
     } else if (R.phase === 'wipe' && t >= R.restUntil) {
       R.phase = 'rest'; R.restUntil = t + 6000;
@@ -2664,7 +2669,9 @@
   // ---------- tactics: pull pace, kill-order marks, boss plan
   // careful: rest to full, the tank never grabs an extra pack; fast: short rests, more extra packs.
   G.REST_REGEN = 0.05; // share of health/mana regained per second while resting in a dungeon (tuned in sim/tactics.js)
-  const PACE = { careful: { rest: 1.6, hp: 0.95, mana: 0.9, extra: 0 }, normal: { rest: 1, hp: 0, mana: 0, extra: 1 }, fast: { rest: 0.35, hp: 0, mana: 0, extra: 2.2 } };
+  // hp / mana: what the bot tank waits for before the next pull (v10.4: normal and fast wait for the healer too, now that
+  // loot rolls no longer hold the group)
+  const PACE = { careful: { rest: 1.6, hp: 0.95, mana: 0.9, bossHp: 0.95, extra: 0 }, normal: { rest: 1, hp: 0.5, mana: 0.45, bossHp: 0.8, extra: 1 }, fast: { rest: 0.35, hp: 0.3, mana: 0.25, bossHp: 0.6, extra: 2.2 } };
   G.setPace = function (p) { const R = G.S.run; if (R && PACE[p]) { R.pace = p; sys(`Pull pace: ${p}.`); emit('runUpdate'); } };
   G.setBossPlan = function (p) { const R = G.S.run; if (R) { R.bossPlan = p; sys(p === 'adds' ? 'Boss plan: kill the adds first.' : 'Boss plan: burn the boss.'); emit('runUpdate'); } };
   const NEXT_MARK = { undefined: 'skull', skull: 'cross', cross: undefined };
@@ -2694,30 +2701,34 @@
   G.runClock = function () { const R = G.S.run; return R ? ((R.finishedAt || now()) - R.started) / 1000 + (R.fastSecs || 0) : 0; }; // fastSecs: fight time gained at 2x or 3x
   // v10.3: level-60 clears pay Mentor Marks, the currency for gear upgrades (Trials will pay more)
   G.clearMarks = (act) => { const A = D.ACTIVITIES[act], Dg = A && A.dungeon && D.DUNGEONS[A.dungeon]; return !Dg || (A.maxLvl || D.LEVEL_CAP) < D.LEVEL_CAP ? 0 : Dg.raid ? 15 : 5; };
+  // Par times (v10.4): the data's par was set when every run also waited for loot rolls; rolls no longer hold the group,
+  // so runs are about 18% faster and par is 15% shorter everywhere (the speed bonus and Trials both use it)
+  G.PAR_SCALE = 0.85;
+  G.par = (Dg) => (Dg && Dg.par ? Math.round(Dg.par * G.PAR_SCALE) : 0);
   function runBonuses(R) {
     const S = G.S, P = S.player, A = D.ACTIVITIES[R.act], Dg = A.dungeon && D.DUNGEONS[A.dungeon];
     if (!Dg) return;
     R.finishedAt = now();
     const secs = G.runClock(), L = G.syncLevel(R.act);
-    const speed = !R.noSpeed && Dg.par && secs <= Dg.par, flawless = !R.wipes; // flawless = the group never wiped
+    const speed = !R.noSpeed && G.par(Dg) && secs <= G.par(Dg), flawless = !R.wipes; // flawless = the group never wiped
     const cx = (P.codex = P.codex || {})[R.act] = Object.assign({ clears: 0, flawless: 0, speed: 0, best: null }, (P.codex || {})[R.act]);
     cx.clears++; if (flawless) cx.flawless++; if (speed) cx.speed++; if (cx.best == null || secs < cx.best) cx.best = Math.round(secs);
-    if (R.trial) G.trialDone(R, secs, Dg.par); // Trials pay their own Marks
+    if (R.trial) G.trialDone(R, secs, TR().par(Dg)); // Trials pay their own Marks, against their own par
     else if (P.level >= D.LEVEL_CAP && G.clearMarks(R.act)) G.addMarks(G.clearMarks(R.act), 'a level-60 clear');
-    R.bonus = { secs: Math.round(secs), par: Dg.par, speed, flawless };
+    R.bonus = { secs: Math.round(secs), par: G.par(Dg), speed, flawless };
     if (speed) {
       // the speed chest: half the time a blue from this dungeon's bosses, otherwise a green
       const blues = []; for (const pl of Dg.pulls) for (const k of pl.mobs) for (const id of (D.MOBS[k].loot || [])) if (!blues.includes(id)) blues.push(id);
       const it = Math.random() < 0.5 && blues.length ? G.copyItem(pick(blues)) : G.genGear(pick(D.GEAR_SLOTS), L, 2);
       G.addItem(it, 1); P.money += L * 150;
-      loot(`Speed bonus (under ${fmtClock(Dg.par)}): ${B.link(it.name, it.q)} and ${G.moneyText(L * 150)}.`);
+      loot(`Speed bonus (under ${fmtClock(G.par(Dg))}): ${B.link(it.name, it.q)} and ${G.moneyText(L * 150)}.`);
     }
     if (flawless) {
       const it = G.genGear(pick(D.GEAR_SLOTS), L, 2);
       G.addItem(it, 1); P.money += L * 200;
       loot(`Flawless clear (no wipes): ${B.link(it.name, it.q)} and ${G.moneyText(L * 200)}.`);
     }
-    if (!speed && !flawless) sys(`Cleared in ${fmtClock(secs)} (par ${fmtClock(Dg.par)}). No bonus this time.`);
+    if (!speed && !flawless) sys(`Cleared in ${fmtClock(secs)} (par ${fmtClock(G.par(Dg))}). No bonus this time.`);
     helpRewards(R);
     emit('lootGain', { items: 1 });
   }
