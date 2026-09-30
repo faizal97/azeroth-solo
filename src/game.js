@@ -1947,9 +1947,10 @@
     const lead = opts.leader && S.bots.find((b) => b.id === opts.leader);
     if (lead) { const i = grp.members.findIndex((m) => m.role === 'dps' && !m.legend); if (i >= 0) { const lc = G.botChar(Object.assign({}, lead, { level: grp.members[i].level, role: 'dps' })); lc.syncLevel = grp.members[i].syncLevel; grp.members[i] = lc; } }
     sys(`${lead ? lead.name + "'s" : 'The'} group summons you to ${D.ACTIVITIES[act].name}.`);
-    grp.members.forEach((m, i) => S.pending.push({ at: now() + 900 + i * 1400, bot: m.bot.id, ch: 'party', text: pick(m.bot.id === (lead && lead.id) ? ['ty for joining!', 'yay ty', 'nice, lets go'] : ['hi', 'hello', 'o/', 'hey']), fromName: m.name }));
+    grp.members.forEach((m, i) => S.pending.push({ at: now() + 900 + i * 1400, bot: m.bot.id, ch: 'party', text: m.cameo ? G.legendLine(m.legend, 'hello') : pick(m.bot.id === (lead && lead.id) ? ['ty for joining!', 'yay ty', 'nice, lets go'] : ['hi', 'hello', 'o/', 'hey']), fromName: m.name }));
     startRun(act);
     S.run.soc = opts.soc || null;
+    const guest = grp.members.find((m) => m.cameo); if (guest) emit('legendJoin', { key: guest.legend });
     emit('change');
     return true;
   };
@@ -2129,14 +2130,29 @@
       return;
     }
   };
+  // The cameo (v10.2): once their story is done, each Group Finder run has a 1 in 5 chance of one legend joining,
+  // at most once every 3 days per legend, and only one legend per run. P.legendMem[key] = { n, last, where }.
+  G.CAMEO_CHANCE = 0.2; G.CAMEO_GAP = 3 * 24 * 3600 * 1000;
+  G.legendMemory = (key) => ((G.S.player.legendMem || {})[key]) || { n: 0, last: 0, where: null };
+  G.rollCameo = function (A) {
+    const P = G.S.player;
+    const ready = Object.keys(D.LEGENDS || {}).filter((k) => G.legendUnlocked(k) && G.legendOn(k) && now() - G.legendMemory(k).last >= G.CAMEO_GAP);
+    if (!ready.length || Math.random() >= G.CAMEO_CHANCE) return null;
+    const key = pick(ready);
+    P.legendMem = P.legendMem || {}; P.legendMem[key] = Object.assign(G.legendMemory(key), { last: now() });
+    return key;
+  };
+  // what a legend says in the party when they arrive and leave (their own lines, in D.LEGENDS[key].cameo)
+  G.legendLine = (key, kind) => { const c = (D.LEGENDS[key] || {}).cameo || {}; return pick(c[kind] || ['o/']); };
   G.legendUnlocked = (key) => { const L = (D.LEGENDS || {})[key]; return !!(L && G.S && G.S.player.done[L.unlock]); };
   G.legendOn = (key) => !((G.S.player.legendOff || {})[key]);
   G.setLegendOn = function (key, on) { const P = G.S.player; P.legendOff = P.legendOff || {}; if (on) delete P.legendOff[key]; else P.legendOff[key] = true; G.save(); emit('change'); };
   G.legendChar = function (key, lvl) {
     const L = D.LEGENDS[key], C = D.CLASSES[L.cls];
     const b = { id: -1000 - Object.keys(D.LEGENDS).indexOf(key), name: L.short, cls: L.cls, race: L.race, level: lvl, role: L.role, skill: 0.85, react: 0.45, toxic: 0, legend: key };
-    const equip = { weapon: G.genGear('weapon', lvl, 3, { wtype: 'sword' }) };
-    for (const s of ['chest', 'legs', 'feet', 'hands', 'wrist', 'waist', 'back']) equip[s] = G.genGear(s, lvl, 3, s === 'back' ? {} : { atype: C.armorType });
+    // green gear (v10.2): a Legend in blue carried most runs on its own (docs/plans/2026-09-30-legends-story-heroes-design.md)
+    const equip = { weapon: G.genGear('weapon', lvl, 2, { wtype: 'sword' }) };
+    for (const s of ['chest', 'legs', 'feet', 'hands', 'wrist', 'waist', 'back']) equip[s] = G.genGear(s, lvl, 2, s === 'back' ? {} : { atype: C.armorType });
     return { name: L.short, cls: L.cls, race: L.race, level: lvl, equip, role: L.role, hp: null, res: null, auras: [], bot: b, legend: key, talents: G.autoTalents(L.cls, L.role, lvl, 7) };
   };
   function formGroup(act, opts) {
@@ -2151,17 +2167,18 @@
     const cap = A.maxLvl || D.LEVEL_CAP;
     for (const m of members) m.syncLevel = cap;
     if (opts && opts.firstTimers) for (const m of members) { m.bot.skill = Math.min(m.bot.skill, 0.25 + Math.random() * 0.2); m.level = Math.max(A.minLvl, Math.min(m.level, A.minLvl + 1)); }
-    // Legends (v10): an unlocked legend takes a slot in your group (his role if you don't play it), and always joins
-    // the run that finishes his own story
-    for (const key in (D.LEGENDS || {})) {
+    // Legends (v10.2, story heroes): a legend always joins the run that is part of their own story; after their story,
+    // only as a rare cameo (G.rollCameo). They take their role's slot, or a damage slot if you play that role.
+    const joins = Object.keys(D.LEGENDS || {}).filter((key) => A.needQuest && D.QUESTS[A.needQuest] && D.QUESTS[A.needQuest].legend === key);
+    const guest = joins.length || (opts && opts.firstTimers) ? null : G.rollCameo(A); // not in first-timer groups you mentor
+    if (guest) joins.push(guest);
+    for (const key of joins) {
       const L = D.LEGENDS[key];
-      const story = A.needQuest && D.QUESTS[A.needQuest] && D.QUESTS[A.needQuest].legend === key;
-      if (!story && !(G.legendUnlocked(key) && G.legendOn(key))) continue;
       const slot = members.findIndex((m) => m.role === L.role);
       const i = slot >= 0 ? slot : members.findIndex((m) => m.role === 'dps');
       if (i < 0) continue;
       const lc = G.legendChar(key, lvl);
-      lc.role = members[i].role; lc.syncLevel = cap;
+      lc.role = members[i].role; lc.syncLevel = cap; lc.cameo = key === guest;
       members[i] = lc;
     }
     S.player.syncLevel = cap;
@@ -2175,8 +2192,9 @@
     stopActions();
     const grp = formGroup(act);
     sys(`You have joined a group for ${D.ACTIVITIES[act].name}.`);
-    grp.members.forEach((m, i) => { if (Math.random() < 0.7) S.pending.push({ at: now() + 800 + i * 1400 + Math.random() * 1500, bot: m.bot.id, ch: 'party', text: B.partyLine(m.bot, 'hello'), fromName: m.name }); });
+    grp.members.forEach((m, i) => { if (m.cameo || Math.random() < 0.7) S.pending.push({ at: now() + 800 + i * 1400 + Math.random() * 1500, bot: m.bot.id, ch: 'party', text: m.cameo ? G.legendLine(m.legend, 'hello') : B.partyLine(m.bot, 'hello'), fromName: m.name }); });
     startRun(act);
+    const guest = grp.members.find((m) => m.cameo); if (guest) emit('legendJoin', { key: guest.legend });
     emit('change');
   };
   G.declinePop = function () { G.S.queue = null; sys('You declined the group.'); emit('change'); };
@@ -2294,7 +2312,8 @@
         sys(`${R.name} complete!`);
         runBonuses(R);
         emit('runComplete', { act: R.act, soc: R.soc || null, wipes: R.wipes });
-        S.group.members.filter((m) => !m.gone).forEach((m, i) => S.pending.push({ at: now() + 2000 + i * 1600, bot: m.bot.id, ch: 'party', text: B.partyLine(m.bot, 'bye'), fromName: m.name }));
+        S.group.members.filter((m) => !m.gone).forEach((m, i) => S.pending.push({ at: now() + 2000 + i * 1600, bot: m.bot.id, ch: 'party', text: m.cameo ? G.legendLine(m.legend, 'bye') : B.partyLine(m.bot, 'bye'), fromName: m.name }));
+        for (const m of S.group.members) if (m.cameo && !m.gone) { const P = S.player; P.legendMem = P.legendMem || {}; const mem = G.legendMemory(m.legend); P.legendMem[m.legend] = Object.assign(mem, { n: (mem.n || 0) + 1, where: R.name }); } // the memory on the Hero screen
       } else { R.phase = 'rest'; R.restUntil = now() + 6500 * (PACE[R.pace || 'normal'].rest); }
     } else {
       R.wipes++; R.momentum = 0;
@@ -2304,6 +2323,7 @@
       const toxicOne = alive.slice().sort((a, b) => b.bot.toxic - a.bot.toxic)[0];
       if (toxicOne) partySay(toxicOne, B.partyLine(toxicOne.bot, 'wipe'));
       for (const m of alive) {
+        if (m.legend) continue; // a Legend never walks out on you
         const pLeave = 0.08 + m.bot.toxic * 0.25 + (R.wipes - 1) * 0.12;
         if (Math.random() < pLeave) {
           m.gone = true;

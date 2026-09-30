@@ -472,7 +472,7 @@
   function chatLineHtml(m) {
     const ch = D.CHANNELS[m.ch] || D.CHANNELS.system;
     const color = ch.color;
-    const name = m.from ? `<span class="who ${m.cls ? 'cls-' + m.cls : ''}">[${esc(m.from)}]</span>` : '';
+    const name = m.from ? `<span class="who ${m.legend ? 'legend' : m.cls ? 'cls-' + m.cls : ''}">[${esc(m.from)}]</span>` : '';
     let pre = '';
     if (m.ch === 'whisper') pre = m.me ? `To ${m.to ? `<span class="who">[${esc(m.to)}]</span>` : ''}: ` : `${name} whispers: `;
     else if (m.ch === 'say') pre = `${name} says: `;
@@ -2044,18 +2044,22 @@
         for (const key in (D.LEGENDS || {})) {
           const L = D.LEGENDS[key], on = G.legendUnlocked(key);
           const started = Object.keys(P.done).concat(Object.keys(P.quests)).some((q) => D.QUESTS[q] && D.QUESTS[q].legend === key);
-          b.append(h('div', { class: 'sec-h' }, 'Legend: ' + L.name, h('small', null, on ? (G.legendOn(key) ? 'joins your groups' : 'resting') : started ? 'story in progress' : 'not met yet')));
+          b.append(h('div', { class: 'sec-h' }, 'Legend: ' + L.name, h('small', null, on ? (G.legendOn(key) ? 'story done · cameos on' : 'story done · cameos off') : started ? 'story in progress' : 'not met yet')));
           const box = h('div', { class: 'ai-box' }, h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', 'legend_' + key))), h('div', { class: 't' }, h('b', { style: { color: '#ff8000' } }, L.name), h('small', null, L.title))));
           if (on || started) {
             const open = ui.heroStory === key;
             if (open) for (const para of L.story) box.append(h('p', { style: { margin: '6px 0' } }, para));
-            box.append(h('button', { class: 'chip', style: { marginTop: '6px' }, onclick: () => { ui.heroStory = open ? null : key; ui.sheetFn(); } }, open ? 'Hide story' : 'Read his story'));
+            box.append(h('button', { class: 'chip', style: { marginTop: '6px' }, onclick: () => { ui.heroStory = open ? null : key; ui.sheetFn(); } }, open ? 'Hide story' : `Read ${L.pronoun || 'their'} story`));
           }
           else box.append(h('p', { style: { margin: '6px 0' } }, 'A wood elf knight, said to have died five years ago, has been seen among the ashes of Silverleaf Lodge in the Kinloch Highlands (level 37+).'));
-          if (on) box.append(h('p', { class: 'ai-note' }, `${L.short} takes a ${L.role} slot in your groups (a damage slot if you are the ${L.role}), with his own abilities: ${L.abilities.map((a) => D.ABILITIES[a].name).join(' and ')}.`));
+          if (on) {
+            const mem = G.legendMemory(key);
+            box.append(h('p', { class: 'ai-note' }, `Now and then ${L.short} turns up in one of your group runs, with ${L.pronoun || 'their'} own abilities: ${L.abilities.map((a) => D.ABILITIES[a].name).join(' and ')}.`
+              + (mem.n ? ` Fought beside you ${mem.n} time${mem.n > 1 ? 's' : ''} · last in ${mem.where}.` : '')));
+          }
           box.append(h('p', { class: 'ai-note' }, L.credit));
           b.append(box);
-          if (on) b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { G.setLegendOn(key, !G.legendOn(key)); ui.sheetFn(); } }, `${L.short} joins groups: ${G.legendOn(key) ? 'On' : 'Off'}`)));
+          if (on) b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { G.setLegendOn(key, !G.legendOn(key)); ui.sheetFn(); } }, `Cameos: ${G.legendOn(key) ? 'On' : 'Off'}`)));
         }
         const titles = D.TITLES.filter(G.titleUnlocked);
         b.append(h('div', { class: 'sec-h' }, 'Title', h('small', null, `${titles.length}/${D.TITLES.length} unlocked · ${G.account().marks} Mentor Marks`)));
@@ -3318,6 +3322,18 @@
   function bind() {
     if (bound) return; bound = true;
     G.on('change', renderAll);
+    // a Legend's cameo: their name across the scene and a short sound, without stopping the game
+    // (after a dungeon's first-entry intro, if one plays, so the banner is not hidden under it)
+    G.on('legendJoin', (d) => {
+      const L = D.LEGENDS[d.key]; if (!L) return;
+      let tries = 0;
+      const show = () => {
+        if (!G.S || !G.S.run) return;
+        if (window.CS && CS.playing && tries++ < 240) return setTimeout(show, 500);
+        banner(`${L.name} joins your group`, L.title); if (window.SND) SND.play('quest_done', { vol: 0.7 });
+      };
+      setTimeout(show, 1400);
+    });
     G.on('change', () => { if (G.S && window.FRIENDS && FRIENDS.on()) FRIENDS.touch(G.S.id); });
     G.on('arrive', () => { if (G.S && window.FRIENDS && FRIENDS.on()) FRIENDS.touch(G.S.id); }); // a new place is news for friends
     G.on('arrive', (d) => { closeSheet(); renderAll(); if (d.first) banner(D.PLACES[d.place].name, D.PLACES[d.place].zone !== D.PLACES[d.place].name ? D.PLACES[d.place].zone : ''); });

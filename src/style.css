@@ -373,6 +373,8 @@ img { max-width: 100%; display: block; }
 /* Friends */
 .fr-code { font: 28px/1.2 var(--display); letter-spacing: .12em; color: var(--gold); text-align: center; padding: 6px 0 2px; user-select: all; }
 .fr-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #6a6a6a; margin-right: 6px; vertical-align: middle; }
+/* a Legend's name in chat (v10.2) */
+.who.legend { color: #ff8000; }
 .fr-dot.on { background: #3ad13a; box-shadow: 0 0 5px #3ad13a; }
 .chatbox { display: grid; grid-template-columns: auto 1fr auto; gap: 6px; }
 .chatbox select, .chatbox input { min-height: 44px; background: #0c0906; color: var(--text); border: 1px solid #5c4526; border-radius: 3px; padding: 0 8px; min-width: 0; }

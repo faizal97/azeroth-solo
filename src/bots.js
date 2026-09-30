@@ -367,6 +367,7 @@
   // Emit one chat message into S.chat. from: bot | null (system)
   B.post = function (S, ch, from, text) {
     const m = { id: (S.chatSeq = (S.chatSeq || 0) + 1), t: Date.now(), ch, from: from ? from.name : null, cls: from ? from.cls : null, fromId: from ? from.id : null, text };
+    if (from && from.legend) m.legend = true; // a Legend speaks in their own colour
     S.chat.push(m);
     if (ch === 'whisper' && from && from.name) S.lastWhisper = from.name;
     if (S.chat.length > 160) S.chat.splice(0, S.chat.length - 160);
@@ -391,7 +392,7 @@
       S.pending = S.pending.filter((p) => p.at > now);
       for (const p of ready) {
         let bot;
-        if (p.fromName) { const gm = S.group && S.group.members.find((m) => m.name === p.fromName); bot = { name: p.fromName, cls: gm ? gm.cls : null, id: p.bot }; }
+        if (p.fromName) { const gm = S.group && S.group.members.find((m) => m.name === p.fromName); bot = { name: p.fromName, cls: gm ? gm.cls : null, id: p.bot, legend: !!(gm && gm.legend) }; }
         else bot = S.bots.find((b) => b.id === p.bot) || onl();
         B.post(S, p.ch, bot, p.text);
         if (p.onPost) p.onPost(bot);
@@ -471,7 +472,10 @@
   };
 
   // Party banter hooks
+  // A Legend speaks in their own voice (D.LEGENDS[key].cameo[kind]), never in bot shorthand
+  const LEGEND_VOICE = { hello: ['Well met.'], pull: ['On me.', 'Ready when you are.', 'Steady. Now.'], wipe: ['Up. We go again, slower.', 'Breathe. Again.'], win: ['Well fought.', 'Good.', 'That will do.'], loot: ['Take it. It suits you.', 'Keep it. I travel light.'], bye: ['Go well.'] };
   B.partyLine = function (bot, kind) {
+    if (bot && bot.legend && root.D && D.LEGENDS && D.LEGENDS[bot.legend]) { const c = D.LEGENDS[bot.legend].cameo || {}; const L = c[kind] || LEGEND_VOICE[kind] || LEGEND_VOICE.hello; return L[Math.floor(Math.random() * L.length)]; }
     const T = {
       hello: ['hi', 'hey all', 'yo', 'sup', 'hello', 'o/', 'halo'],
       pull: ['pulling', 'ready?', 'go go', 'inc', 'lets go'],

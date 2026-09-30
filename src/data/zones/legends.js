@@ -10,6 +10,12 @@
     name: 'Lyveus Cloveus', short: 'Lyveus', nick: 'Lyv', title: 'The Exiled Knight', npc: 'lyveus', unlock: 'lg_lyv_oath',
     cls: 'paladin', race: 'nightelf', role: 'tank', abilities: ['oathbound_strike', 'ancients_bulwark'],
     credit: 'An original character created by a friend, adapted for Caldreth.',
+    pronoun: 'his',
+    // the cameo (v10.2): what he says when he turns up in one of your runs, and when he leaves
+    cameo: {
+      hello: ['Heard you were headed in. I\'ll hold the front.', 'The Ledger\'s blades aren\'t the only ones out tonight. I\'ll walk with you.', 'Vyn says I need more company. So. Here I am.', 'Room for one more? I keep quiet and I keep watch.'],
+      bye: ['Good work. Ghosts keep watch; I\'ll keep watching.', 'Go well. If anyone asks, you never saw me.', 'That was a good fight. Until the next one.', 'I\'ve somewhere to be. The grove doesn\'t guard itself.'],
+    },
     story: [
       'Long before the Long War, the black dragon Ossarak, whom the elves of the Kinloch forests call the Black Ruin, tore the world open. He was driven off, but never destroyed.',
       'Lyveus grew up in Silverleaf Lodge, a wood elf village in the Kinloch pines, learning blade, bow and the old grove oath of his people. Seven years ago, when a Kingsmere caravan was ambushed near the forest, the Light burst from him in its defence. Kingsmere took him into its guard, as a fighter and as a sign that the old alliance of men and elves still held.',

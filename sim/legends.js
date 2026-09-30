@@ -34,7 +34,8 @@ for (const cls of ['mage', 'warrior', 'priest']) {
 // hidden when not on the quest
 G.newGame({ name: 'T', cls: 'mage', race: 'human' }); G.S.player.level = 60; G.S.player.place = 'silverleaf_lodge';
 if (G.activityBlock('lg_marrow') !== 'hidden') fail('lg_marrow should be hidden off-quest');
-// unlocked: joins a dungeon
+// unlocked: a cameo (forced here) joins a dungeon and uses his own abilities
+G.CAMEO_CHANCE = 1;
 for (const cls of ['mage', 'warrior']) {
   const r = run('stratholme', cls, (P) => { for (const q of chain) P.done[q] = true; });
   console.log(`stratholme as ${cls}: Lyveus ${r.lyv ? r.role : 'MISSING'} · done ${r.done} · wipes ${r.wipes} · used ${r.used.join(',')}`);
@@ -42,6 +43,32 @@ for (const cls of ['mage', 'warrior']) {
 }
 // switched off: does not join
 { const r = run('stratholme', 'mage', (P) => { for (const q of chain) P.done[q] = true; P.legendOff = { lyveus: true }; }); if (r.lyv) fail('joined while off'); }
+// story heroes (v10.2): no standard slot. About 1 run in 5 when a cameo is due, then none for 3 days.
+G.CAMEO_CHANCE = 0.2;
+{
+  G.newGame({ name: 'T', cls: 'mage', race: 'human' }); const S = G.S, P = S.player; P.level = 60; S.flags.warModeAsked = true;
+  for (const q of chain) P.done[q] = true;
+  const joinsIn = (runs, gap) => { let n = 0; for (let i = 0; i < runs; i++) { if (gap != null) t += gap; if (G.rollCameo(D.ACTIVITIES.stratholme)) n++; } return n; };
+  const due = joinsIn(2000, G.CAMEO_GAP);
+  console.log(`cameo: ${due} of 2000 runs when due (about 1 in 5), `);
+  if (due < 330 || due > 470) fail('cameo chance is not about 1 in 5');
+  P.legendMem = {}; t += G.CAMEO_GAP;
+  let first = 0; while (!G.rollCameo(D.ACTIVITIES.stratholme) && first < 200) first++;
+  const soon = joinsIn(300, 10 * 60 * 1000); // runs every 10 minutes for the next 50 hours
+  console.log(`cameo: then ${soon} more in the next 50 hours (the gap is 3 days)`);
+  if (soon !== 0) fail('a second cameo inside 3 days');
+  t += G.CAMEO_GAP; P.legendOff = { lyveus: true };
+  if (joinsIn(200, 0)) fail('a cameo while switched off');
+  // a cameo run is remembered for the Hero screen
+  P.legendOff = {}; P.legendMem = {}; G.CAMEO_CHANCE = 1;
+  const r = run('stratholme', 'mage', (Pp) => { for (const q of chain) Pp.done[q] = true; });
+  const mem = G.legendMemory('lyveus');
+  console.log(`cameo memory: fought beside you ${mem.n} time(s), last in ${mem.where}`);
+  if (!r.lyv || mem.n !== 1 || !mem.where) fail('cameo memory');
+  G.CAMEO_CHANCE = 0.2;
+}
+// the title comes from finishing his story
+{ const T = D.TITLES.find((x) => x.id === 'oathkeeper'); G.newGame({ name: 'T', cls: 'mage', race: 'human' }); if (G.titleUnlocked(T)) fail('title before the story'); G.S.player.done.lg_lyv_oath = true; if (!G.titleUnlocked(T)) fail('title after the story'); }
 // the hooded wanderer: steps into hard solo fights from level 15, at most 3 times per zone, never after the lodge
 {
   G.newGame({ name: 'T', cls: 'mage', race: 'human' }); const S = G.S, P = S.player; P.level = 18; S.flags.warModeAsked = true; P.place = 'moonbrook';
