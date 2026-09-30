@@ -20,6 +20,10 @@ Every number, label, icon and glow has to explain itself, on the screen, without
 - **Nothing on screen is empty or broken.** No stray "null", no "#1 of 1", no "Upgrade 0/0". If a value can be missing,
   design the empty state ("Not tried yet", "Your first month").
 - **Plain words.** Name the thing ("Mentor Marks", "par time"), not the system behind it.
+- **Give every fact, never the answer.** Show players all the information they need to plan (enemy health, what a
+  boss does, what an Omen changes, what drops) and let them work out what to do. Never recommend or suggest: no
+  "this Omen needs X", no "counter:", no "finish it fast". Explaining how a mechanic works ("tap it while it glows")
+  is fine; telling them the best choice is not.
 
 ## 2. UI must scale
 

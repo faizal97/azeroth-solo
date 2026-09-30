@@ -75,7 +75,8 @@
     return M.seasons[k].slice();
   };
 
-  // ---- Omens: this week's rules. One per tier, each from its own Trial level; a tier tests one lever (tier 1: what to
+  // ---- Omens: this week's rules. `counter` is for the design and the sims only: the game shows the rule and never
+  // tells players how to beat it (docs/design-mindset.md). One per tier, each from its own Trial level; a tier tests one lever (tier 1: what to
   // kill first). The list is open: a new Omen joins the rotation from the next period (content-proof).
   T.OMENS = {
     frenzied: { tier: 1, icon: 'berserker_rage', name: 'Frenzied', rule: 'Enemies below 30% health deal 50% more damage.', counter: 'Finish one enemy at a time: mark a kill order, and stun the ones about to enrage.' },

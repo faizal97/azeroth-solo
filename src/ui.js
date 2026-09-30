@@ -118,8 +118,8 @@
     if (r.bear || r.id === 'bear') out.push('Bear Form: much more armor and health, attacks use rage.');
     if (r.id === 'momentum') out.push('Built by pulling again quickly. Resting resets it.');
     if (r.proc) out.push(r.proc.teach);
-    if (r.id === 'omen' && window.TRIALS) { const O = TRIALS.OMENS[r.omen]; out.push(O.rule, 'Counter: ' + O.counter); }
-    if (r.id === 'frenzy') out.push('Deals 50% more damage now that it is under 30% health (Omen: Frenzied). Finish it fast, or stun it.');
+    if (r.id === 'omen' && window.TRIALS) out.push(TRIALS.OMENS[r.omen].rule); // the rule, never how to beat it: players work that out
+    if (r.id === 'frenzy') out.push('Deals 50% more damage now that it is under 30% health (Omen: Frenzied).');
     if (r.id === 'rally') out.push(`Hits ${10 * r.n}% harder: ${r.n} of its allies fell (Omen: Rallying).`);
     if (!out.length) { const ab = D.ABILITIES[a.icon]; if (ab && ab.desc) out.push(ab.desc.replace(/\{[a-z]+\}/g, '').replace(/\s+([.,])/g, '$1')); }
     return out;
@@ -937,7 +937,7 @@
       h('span', null, '⏱ ', h('b', { class: 'tnum', 'data-clock': '1' }, G.fmtClock(G.runClock())), ` / par ${G.fmtClock(R.trial ? window.TRIALS.par(Dg) : G.par(Dg))}`),
       R.momentum ? h('span', { class: 'mom' }, `Momentum ×${R.momentum}`) : h('span', { class: 'dim' }, 'Pull within 5s to build Momentum'),
       h('span', { class: R.wipes ? 'no' : 'ok' }, R.wipes ? '✗ Flawless' : '✓ No wipes')));
-    if ((R.omens || []).length) p.append(h('div', { class: 'chips', style: { margin: '4px 0' } }, h('small', { class: 'dim', style: { alignSelf: 'center' } }, 'Omens:'), ...R.omens.map((k) => omenChip(k)))); // tap one for its counter
+    if ((R.omens || []).length) p.append(h('div', { class: 'chips', style: { margin: '4px 0' } }, h('small', { class: 'dim', style: { alignSelf: 'center' } }, 'Omens:'), ...R.omens.map((k) => omenChip(k)))); // tap one for its rule
   }
   function tacticsBlock(p, R) {
     const pace = R.pace || 'normal';
@@ -2798,10 +2798,10 @@
   // For You holds only what you can do now; each kind tab folds what is still to come and what you have outlevelled.
   const actKind = (A) => ((A.size || 5) > 5 ? 'raid' : A.dungeon ? 'dungeon' : 'wanted');
   const KIND_LABEL = { dungeon: 'Dungeon', raid: 'Raid', wanted: 'Wanted' };
-  // an Omen as a chip: tap it for its rule and its counter (v10.4)
+  // an Omen as a chip: tap it for its rule (v10.4; never how to beat it)
   function omenChip(k, lvl) {
     const O = window.TRIALS.OMENS[k];
-    return h('button', { class: 'chip', onclick: () => showDialog([h('h3', null, `Omen: ${O.name}`), h('p', null, O.rule), h('p', null, h('b', null, 'Counter: '), O.counter), h('p', { class: 'ai-note' }, `From Trial ${window.TRIALS.TIER_LVL[O.tier]}. Omens change every week, on the 1st, 8th, 15th and 22nd.`), h('div', { class: 'btn-row' }, h('button', { class: 'btn alt wide', onclick: closeDialog }, 'Got it'))], true) }, O.name, lvl ? h('small', null, `from ${lvl}`) : null);
+    return h('button', { class: 'chip', onclick: () => showDialog([h('h3', null, `Omen: ${O.name}`), h('p', null, O.rule), h('p', { class: 'ai-note' }, `From Trial ${window.TRIALS.TIER_LVL[O.tier]}. Omens change every week, on the 1st, 8th, 15th and 22nd.`), h('div', { class: 'btn-row' }, h('button', { class: 'btn alt wide', onclick: closeDialog }, 'Got it'))], true) }, O.name, lvl ? h('small', null, `from ${lvl}`) : null);
   }
   // ---------- Trials (v10.4): this month's 8 dungeons, rating and realm rank, the weekly goal; a row opens a level picker
   const clockText = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
@@ -2829,12 +2829,73 @@
         h('div', { class: 'ic mob' }, img(mobArt(A.boss || finalBoss(A) || 'vancleef'))),
         h('div', { class: 't' }, h('b', null, A.name), h('small', null, why || (best ? `Best: Trial ${best.lvl}, ${best.timed ? 'in time' : 'over par'}` : 'Not tried yet'))),
         queued ? h('button', { class: 'chip', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave')
-          : h('button', { class: 'chip gold', style: { whiteSpace: 'nowrap' }, disabled: !!why || !!S.queue, onclick: () => trialDialog(act) }, `Trial ${max}`)));
+          : h('button', { class: 'chip gold', style: { whiteSpace: 'nowrap' }, disabled: !!why || !!S.queue, onclick: () => openTrialBriefing(act) }, `Trial ${max}`)));
     }
-    b.append(note('Beat par to open the next level, or beat it by a wide margin to open two. Each clear pays 5 Mentor Marks plus the Trial level. Omens are extra rules that change every week: tap one to see how to beat it.'));
+    b.append(note('Beat par to open the next level, or beat it by a wide margin to open two. Each clear pays 5 Mentor Marks plus the Trial level. Omens are extra rules that change every week: tap one to read it.'));
   }
   // how a Trial level compares with a normal level-60 run: "−17% health and damage", "normal ...", "+23% ..."
   const trialStrength = (lvl) => { const d = Math.round((window.TRIALS.factor(lvl) - 1) * 100); return Math.abs(d) <= 2 ? 'normal health and damage' : `${d > 0 ? '+' : '−'}${Math.abs(d)}% health and damage`; };
+  // The briefing (v10.4): everything about a dungeon, raid, Wanted target or Trial, so you can plan before you queue:
+  // level and strength, par and bonuses, (Trials) this level's Omens, and every pull with each
+  // enemy's health and hits, what the bosses do and what they drop.
+  function openBriefing(act, trial, lvlIn) {
+    const A = D.ACTIVITIES[act], Dg = A.dungeon ? D.DUNGEONS[A.dungeon] : null, T = window.TRIALS, kind = actKind(A);
+    const max = trial ? G.trialMax(act) : 1;
+    ui.trialLvl = trial ? Math.max(1, Math.min(max, lvlIn || max)) : 0;
+    const sub = trial ? `Trial briefing · ${T.name(T.season(new Date()))}` : `${KIND_LABEL[kind]} briefing · ${A.size || 5} players`;
+    openSheet('brief', A.name, sub, (b) => {
+      const lvl = ui.trialLvl, P = G.S.player, om = trial ? T.active(lvl, new Date()) : [], f = trial ? T.factor(lvl) : 1;
+      const k = (n) => (n >= 10000 ? (n / 1000).toFixed(n >= 100000 ? 0 : 1) + 'k' : String(Math.round(n)));
+      const pulls = Dg ? Dg.pulls : A.pulls || [], mobLvl = trial ? D.LEVEL_CAP : null;
+      if (trial) b.append(h('div', { class: 'btn-row', style: { alignItems: 'center', justifyContent: 'center', margin: '0 0 8px' } },
+        h('button', { class: 'btn alt', disabled: lvl <= 1, onclick: () => { ui.trialLvl--; ui.sheetFn(); } }, '−'),
+        h('b', { class: 'tnum', style: { fontSize: '20px', minWidth: '110px', textAlign: 'center' } }, `Trial ${lvl}`),
+        h('button', { class: 'btn alt', disabled: lvl >= max, onclick: () => { ui.trialLvl++; ui.sheetFn(); } }, '+')));
+      const rows = [];
+      const row = (a, v) => rows.push(h('div', { class: 'ai-row' }, h('span', null, a), h('b', null, v)));
+      if (trial) {
+        const Rec = G.trials(), best = Rec.best[act];
+        row('Enemies', `Level ${D.LEVEL_CAP}, ${trialStrength(lvl)}`); row('Par time', clockText(T.par(Dg)));
+        row('Beat par', `opens Trial ${lvl + 1} (Trial ${lvl + 2} if 20% faster)`); row('Pays', `${5 + lvl} Mentor Marks`);
+        row('Your best here', best ? `Trial ${best.lvl}, ${best.timed ? 'in time' : 'over par'}` : 'Not tried yet');
+      } else {
+        const cx = (P.codex || {})[act];
+        row('Level', A.minLvl === A.maxLvl ? String(A.minLvl) : `${A.minLvl}–${A.maxLvl}${P.level > A.maxLvl ? ` (you are synced to ${A.maxLvl})` : ''}`);
+        if (Dg && G.par(Dg)) row('Par time', `${clockText(G.par(Dg))} (beating it gives a speed chest)`);
+        if (Dg) row('Flawless', 'a clear without a wipe gives a bonus');
+        if (cx && cx.clears) row('Your record', `${cx.clears} clear${cx.clears > 1 ? 's' : ''}${cx.best ? ', best ' + clockText(cx.best) : ''}`);
+        const why = G.activityBlock(act); if (why && why !== 'hidden') row('Now', why);
+      }
+      b.append(h('div', { class: 'ai-box' }, ...rows));
+      if (trial) {
+        b.append(h('div', { class: 'sec-h' }, 'Omens', h('small', null, om.length ? 'this week, at this level' : `from Trial ${Math.min(...Object.values(T.TIER_LVL))}`)));
+        if (!om.length) b.append(h('p', { class: 'ai-note', style: { margin: 0 } }, 'No Omens at this level.'));
+        for (const key of om) { const O = T.OMENS[key]; b.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(abIcon(O.icon))), h('div', { class: 't' }, h('b', null, O.name), h('small', { style: { whiteSpace: 'normal' } }, O.rule)))); }
+      }
+      // every pull, with the numbers you will meet (a Trial's at the level picked, Omens included)
+      const tm = (Dg && Dg.trashMult) || { hp: 1, dmg: 1 }, bmu = (Dg && Dg.bossMult) || { hp: 1, dmg: 1 };
+      const trash = { hp: (tm.hp || 1) * f, dmg: (tm.dmg || 1) * f }, boss = { hp: (bmu.hp || 1) * f * (om.includes('hardened') ? 1.3 : 1), dmg: (bmu.dmg || 1) * f };
+      b.append(h('div', { class: 'sec-h' }, 'Pulls', h('small', null, `${pulls.length} in order${om.includes('swarming') ? ' · each +1 enemy (Swarming)' : ''}`)));
+      const list = h('div', { class: 'list' });
+      for (const p of pulls) {
+        const counts = {}; for (const m of p.mobs) counts[m] = (counts[m] || 0) + 1;
+        const lines = Object.entries(counts).map(([m, n]) => { const M = D.MOBS[m], L = mobLvl || (M.lvl ? M.lvl[1] : A.maxLvl), u2 = E.mobUnit(m, L, M.boss ? boss : trash); return `${n > 1 ? n + '× ' : ''}${M.name} (${L}): ${k(u2.maxHp)} health, hits for ${k(u2.dmg[0])}–${k(u2.dmg[1])}`; });
+        const bk = p.mobs.find((m) => D.MOBS[m].boss), bm = bk ? D.MOBS[bk] : null;
+        const drops = bm && bm.loot && !trial ? bm.loot.map((id) => D.ITEMS[id]).filter(Boolean) : [];
+        list.append(h('div', { class: 'row' }, h('div', { class: 'ic mob' }, img(mobArt(bk || p.mobs[0]))),
+          h('div', { class: 't' }, h('b', null, p.label || D.MOBS[p.mobs[0]].name, bm ? h('span', { class: 'gf-kind k-raid', style: { marginLeft: '6px' } }, 'Boss') : null),
+            ...lines.map((l) => h('small', { style: { whiteSpace: 'normal' } }, l)),
+            bm && bm.specialText ? h('small', { style: { whiteSpace: 'normal', color: 'var(--gold)' } }, 'Special: ' + bm.specialText) : null,
+            drops.length ? h('small', { style: { whiteSpace: 'normal' } }, 'Drops: ', ...drops.map((it, i) => h('span', { class: 'q' + it.q }, (i ? ', ' : '') + it.name))) : null)));
+      }
+      b.append(list);
+      const why = trial ? G.trialBlock(act) : G.activityBlock(act), queued = G.S.queue && G.S.queue.act === act;
+      b.append(h('div', { class: 'btn-row', style: { marginTop: '10px' } }, queued
+        ? h('button', { class: 'btn alt', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave the queue')
+        : h('button', { class: 'btn', disabled: !!why || !!G.S.queue, onclick: () => { if (trial ? G.queueTrial(act, ui.trialLvl) : (G.queueFor(act), !!G.S.queue)) closeSheet(); } }, why ? (why === 'hidden' ? 'Only for the other faction' : why) : trial ? `Queue for Trial ${lvl}` : 'Queue')));
+    });
+  }
+  const openTrialBriefing = (act, lvl) => openBriefing(act, true, lvl);
   function trialDialog(act) {
     const A = D.ACTIVITIES[act], par = window.TRIALS.par(D.DUNGEONS[A.dungeon]), max = G.trialMax(act), T = window.TRIALS;
     let lvl = max;
@@ -2910,7 +2971,7 @@
       const btn = queued ? h('button', { class: 'chip', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave')
         : travel(x) ? h('button', { class: 'chip', disabled: !!S.queue, onclick: () => { closeSheet(); G.travelRoute(A.where); renderAll(); } }, 'Travel')
         : h('button', { class: 'chip gold', disabled: !!x.why || !!S.queue, onclick: () => { G.queueFor(x.k); ui.sheetFn(); } }, 'Queue');
-      return h('div', { class: 'row gf-row' + (!doable(x) ? ' gf-locked' : '') + (queued ? ' gf-queued' : '') },
+      return h('div', { class: 'row gf-row tap' + (!doable(x) ? ' gf-locked' : '') + (queued ? ' gf-queued' : ''), onclick: (e) => { if (e.target.closest('button')) return; openBriefing(x.k, false); } }, // tap the row for its briefing (v10.4)
         h('div', { class: 'ic mob' }, img(mobArt(A.boss || finalBoss(A) || 'vancleef'))),
         h('div', { class: 't' }, h('b', null, A.name, h('span', { class: 'gf-lvl tnum' }, A.minLvl === A.maxLvl ? String(A.minLvl) : `${A.minLvl}–${A.maxLvl}`)),
           h('small', null, showKind ? h('span', { class: 'gf-kind k-' + kind }, KIND_LABEL[kind]) : null, note)),
