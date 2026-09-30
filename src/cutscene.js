@@ -366,9 +366,9 @@
       { bg: 'scene:gold_coast_quarry', dur: 10, cam: [[-3, 0, 1.1], [0, 0, 1.04]], fx: ['fadein', 'fadeout'],
         lines: [{ t: 0.5, text: 'The overseers keep neat books. Every cart of ore goes the same way: to a cove under Fenwick.' }, { t: 5, text: 'Paid in full, by a lender nobody in Longfield has met: the Black Ledger.' }] },
     ] },
-    { id: 'ms_caravan', beat: true, scene: true, faction: 'horde', level: 16, title: 'Whatever Banner You Fly', music: 'town', shots: [
-      { bg: 'scene:@here', dur: 10, cam: [[0, 0, 1.08], [0, 2, 1.18]], fx: ['fadein', 'fadeout'],
-        lines: [{ t: 0.5, text: 'A Krugar caravan master signs for a loan in black ink.' }, { t: 4.5, who: 'The Ledger\'s clerk', text: 'Whatever banner you fly, the Ledger holds your debts.' }] },
+    { id: 'ms_caravan', faction: 'horde', scene: true, quest: 'venture_contracts', on: 'done', level: 16, title: 'Whatever Banner You Fly', music: 'town', shots: [
+      { bg: 'scene:crossroads', dur: 12, cam: [[0, 0, 1.08], [0, 2, 1.18]], fx: ['fadein', 'fadeout'],
+        lines: [{ t: 0.5, text: 'Norrin spreads the goblin contracts across the table. The Deepgold Company is not the one paying.' }, { t: 4.5, who: 'Apothecary Norrin', text: 'Same black seal on every page. And this one is signed by one of our own caravan masters.' }, { t: 8.5, text: 'At the foot of each page, in small print: whatever banner you fly, the Ledger holds your debts.' }] },
     ] },
     { id: 'ms_whelps', faction: 'alliance', scene: true, quest: 'whelp_hunt', on: 'done', level: 23, title: 'The Strongbox', music: 'dungeon', shots: [
       { bg: 'scene:galardell_valley', dur: 10, cam: [[0, 2, 1.16], [0, 0, 1.04]], fx: ['fadein', 'fadeout'],
@@ -525,6 +525,19 @@
       { bg: 'scene:@here', dur: 10, cam: [[0, 0, 1.12], [0, 0, 1.0]], fx: ['fadeout'],
         actors: [{ a: 'hero:player', x: 38, y: 2, w: 26, anim: 'breathe' }],
         lines: [{ t: 0.5, text: 'The creditor has gone to ground in her lair in Saltmarsh, {name}. While she lives, her storm hides the new isle.' }, { t: 5.5, text: 'Harborwatch and Mudwall are already gathering. Look for her trail in your quest log.' }] },
+    ] },
+    // Veshmira is dead: Thorne gives herself up in the lair and names Vale for what he is; then The Drowned Crown
+    { id: 'thorne_end', level: 60, title: 'The Mistress of Coin', music: 'dungeon', after: ['dw_onyxia_a', 'dw_onyxia_h'], then: 'x1', shots: [
+      { bg: 'scene:lair_cavern', dur: 10, cam: [[0, 2, 1.16], [0, 0, 1.04]], fx: ['fadein', 'embers'],
+        lines: [{ t: 0.5, text: 'Behind the nests, among the ledgers Veshmira kept, Lady Thorne sits at a folding desk. She is still writing.' }, { t: 5.5, who: 'Lady Thorne', text: 'She is dead, then. Her debts are not. Debts never are.' }] },
+      { bg: 'scene:lair_cavern', dur: 10, cam: [[-3, 0, 1.12], [3, 0, 1.12]],
+        actors: [{ a: 'story:lady_prestor', x: 40, y: 2, w: 36, anim: 'breathe', from: { o: 0 }, dur: 1.6 }],
+        lines: [{ t: 0.5, who: 'Lady Thorne', text: 'I will come quietly. I have always kept my word. It is the one thing I never sold.' }, { t: 5.5, text: 'She hands over her pen as if she were settling a bill.' }] },
+      { bg: 'story:blackrock_mountain', dur: 11, cam: [[0, 0, 1.05], [0, 2, 1.2]], fx: ['embers', 'shake@6'],
+        actors: [{ a: 'story:nefarian', x: 40, y: 2, w: 36, anim: 'breathe', from: { o: 0 }, dur: 2 }],
+        lines: [{ t: 0.5, who: 'Lady Thorne', text: 'You think the Ledger ends here. Ask who keeps the vault in the Spire.' }, { t: 5.5, who: 'Lady Thorne', text: 'Lord Kethran Vale is Kethriax, her eldest. He has waited a long time to inherit.' }] },
+      { bg: 'story:stormwind_keep', dur: 10, cam: [[0, 0, 1.12], [0, 0, 1.0]], fx: ['fadeout'],
+        lines: [{ t: 0.5, text: 'Kingsmere takes Thorne back to its own gaol, to a cell among the debtors she put there.' }, { t: 5, text: 'The Spire stays shut, and its keeper has not come down. Not yet.' }] },
     ] },
     // plays once Veshmira is dead (after: any of these quests done); her death breaks the storm over the isle
     { id: 'x1', level: 60, title: 'The Drowned Crown', music: 'dungeon', needs: 'tidewatch', after: ['dw_onyxia_a', 'dw_onyxia_h'], shots: [

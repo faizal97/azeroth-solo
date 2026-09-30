@@ -67,7 +67,7 @@ whelps guarding the Ledger's strongboxes are hints; that the Ledger's master is 
 - **Chapter 4 (40), "Cinderpeak Rising".** The Slagborn borrowed to rebuild and pay by digging toward Vulcarn. Lord Kethran Vale keeps the Ledger's vault in the Spire, guarded by the Cinderpeak orcs. Hale is alive, in chains.
 - **Chapter 5 (50), "Balancing the Books".** Hale has counted every warm coin to one purse; the Emperor keeps his notes. The coronation is set, and the Regent signs what Thorne writes.
 - **Chapter 6 (60), "The Creditor".** Hale walks free with Lyveus and reads his notes to the court. Thorne denies nothing and hands over the deed: the kingdom is already sold. Veshmira comes for her collateral, is beaten back, and flies south to her lair in Saltmarsh with Thorne. A storm closes over the sea behind her; land appears where none has been for ten thousand years, but no ship can reach it while she lives.
-- **The endgame raids (60).** *Veshmira's Lair*: the Accord from Harborwatch and the Krugar from Mudwall Village hunt the creditor in the Dragonmire. Her death breaks the storm and opens the expansion. *The Magma Throne*: with Emperor Grimmark dead in Cinderpeak Depths, nothing keeps Vulcarn asleep; players go down beneath the mountain to face the King Below and his Steward.
+- **The endgame raids (60).** *Veshmira's Lair*: the Accord from Harborwatch and the Krugar from Mudwall Village hunt the creditor in the Dragonmire. Her death breaks the storm and opens the expansion. Behind her nests the players find Thorne, still writing; she gives herself up without a fight, is taken to Kingsmere Gaol among the debtors she put there, and names Lord Kethran Vale as Kethriax, Veshmira's eldest, who keeps the Spire and waits to inherit ("The Mistress of Coin", played before "The Drowned Crown"). The Spire stays shut: Kethriax is set up for later content. *The Magma Throne*: with Emperor Grimmark dead in Cinderpeak Depths, nothing keeps Vulcarn asleep; players go down beneath the mountain to face the King Below and his Steward.
 - **Expansion (60), "The Drowned Crown".** Opens when Veshmira dies and her storm breaks. The Stormveil Isle: Sael'anor and its prince, the drowned Wavebreakers, and beneath them Nal'veshra. The Accord lands at the Tidewatch Coast (from Gullhaven, on Brineholt ships with Admiral Vane); the Krugar at the Skullreef Isles (from Camp Skarn with Mazu).
 
 ### Dungeon intros (first entry)
@@ -81,10 +81,10 @@ may name her as the creditor, since it opens at 60.
 
 ### The Black Ledger
 
-- **Lady Meriel Thorne.** Mistress of Coin at the Kingsmere court. Human. Patient, precise, never cruel for its own sake. Believes a debt is the most honest promise there is. Never says who the Ledger answers to before 60.
+- **Lady Meriel Thorne.** Mistress of Coin at the Kingsmere court. Human. Patient, precise, never cruel for its own sake. Believes a debt is the most honest promise there is. Never says who the Ledger answers to before 60. Her end: she surrenders in Veshmira's lair, keeps her word to the last ("It is the one thing I never sold.") and sits in Kingsmere Gaol.
 - **Veshmira of the Black Brood.** The Ledger's creditor, a black dragon who lends her hoard. Speaks of owning, not ruling ("I do not want your little kingdom. I own it."). Unnamed before 60.
 - **Corvin Blackwell.** Captain of the Grey Hoods. A ruined shipwright working off his debt by collecting everyone else's. Tired, not evil; stopped asking questions long ago.
-- **Lord Kethran Vale.** Keeps the Ledger's vault in Cinderpeak Spire. Cold and practical ("A burning mountain is a cheap mine."). There is more to him than he shows (see Reveals).
+- **Lord Kethran Vale.** Keeps the Ledger's vault in Cinderpeak Spire. Cold and practical ("A burning mountain is a cheap mine."). There is more to him than he shows (see Reveals): he is **Kethriax**, Veshmira's eldest son, in human form. Thorne gives him away at 60. He has not been fought yet.
 - **Lord Cassius Marrow.** A Kingsmere noble deep in the Ledger's debt; his seal is on the cabal's orders, his gold goes through Sirocco to the Slagborn, and he burned Silverleaf Lodge. Killed at level 60 at the grove where Lyveus took his oath.
 
 ### The crown and its people
@@ -164,7 +164,7 @@ several sharing a line separated by " / ".
 - **Ossarak / Black Ruin** — the black dragon who tore the world open long ago
 - **Veshmira** — the Ledger's creditor (named at 60)
 - **Meriel Thorne / Thorne** — the Mistress of Coin
-- **Kethriax** — who Lord Kethran Vale really is (revealed at 60)
+- **Kethriax** — Veshmira's eldest; who Lord Kethran Vale really is (revealed at 60)
 - **Lord Kethran Vale / Vale** — keeper of the Ledger's vault in Cinderpeak Spire
 - **Vulcarn / King Below** — the fire under Cinderpeak
 - **King Rhodric Aldane / Rhodric / Aldane** — the late king of Kingsmere
