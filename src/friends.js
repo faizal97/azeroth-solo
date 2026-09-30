@@ -6,7 +6,7 @@
 //   Realtime Database: status/{uid}/{conn} (one entry per open game) · see/{uid}/{other} (who may read my status)
 (function (root) {
   const FRIENDS = root.FRIENDS = {};
-  const KEY = 'azsolo.friends'; // { on, code, sent: { <uid>: { code, at } }, wrote: { <charId>: hash }, playing: hash, seenAt }
+  const KEY = 'azsolo.friends'; // { on, switchedAt, pendingOn, code, sent: { <uid>: { code, at } }, wrote: { <charId>: hash }, playing: hash, seenAt }
   const V = 1; // profile format
   const EVERY = 60 * 1000; // profile writes at most this often while playing
   const SEEN_EVERY = 10 * 60 * 1000; // "last played" moves at least this often
@@ -112,17 +112,22 @@
     return flushing;
   };
 
-  // ---- turning Friends on and off
-  FRIENDS.turnOn = async function () {
+  // ---- turning Friends on and off. The switch follows the player: cloud save's account file carries it
+  // ({ on, at }, newest wins; cloud.js), and remoteSwitch below acts on a change made on another device.
+  // opts.at: the time of that other device's change (then nothing here asks the player to sign in).
+  FRIENDS.switchInfo = () => { const st = read(); return st.switchedAt ? { on: !!st.on, at: st.switchedAt } : null; };
+  FRIENDS.onSwitch = null; // the UI's refresh, after a switch made elsewhere took effect here
+  FRIENDS.turnOn = async function (opts) {
+    opts = opts || {};
     const b = back();
-    await b.signIn(true);
+    await b.signIn(!opts.at);
     const me = b.uid();
     let code = read().code || null;
     if (!code) { const mine = await b.getProfile(me).catch(() => null); if (mine && mine.code) code = mine.code; } // made on another device
     if (code && (await b.getCode(code)) !== me) code = null;
     for (let i = 0; !code && i < 6; i++) { const c = FRIENDS.newCode(); if (await b.createCode(c)) code = c; }
     if (!code) throw err('code', 'Could not make a friend code. Try again in a moment.');
-    patch({ on: true, code, wrote: {}, playing: undefined, seenAt: 0 });
+    patch({ on: true, switchedAt: opts.at || Date.now(), pendingOn: null, code, wrote: {}, playing: undefined, seenAt: 0 });
     if (root.G) for (const ch of G.characters()) dirty.add(ch.id);
     const r = await FRIENDS.flush(true);
     if (r && r.error) throw r.error;
@@ -130,16 +135,32 @@
     return code;
   };
   // everything about you goes; the friendships (two ids and a date) and your code stay, so on again restores them
-  FRIENDS.turnOff = async function () {
+  FRIENDS.turnOff = async function (opts) {
+    opts = opts || {};
     const b = back();
-    await b.signIn(true);
+    await b.signIn(!opts.at);
     const me = b.uid(), st = read();
     await b.presence(null).catch(() => {});
     await b.deleteProfile();
     await b.clearSee();
     for (const to in st.sent) await b.deleteRequest(to, me).catch(() => {});
-    patch({ on: false, sent: {}, wrote: {}, playing: undefined, seenAt: 0 });
+    patch({ on: false, switchedAt: opts.at || Date.now(), pendingOn: null, sent: {}, wrote: {}, playing: undefined, seenAt: 0 });
     dirty.clear();
+  };
+  // Friends was switched on another device (newer than anything here). On: connect quietly if this device can (the
+  // app can, once Google has allowed it); otherwise the tab offers one tap to connect. Off: clean up here too, so this
+  // device does not put a profile back; when it cannot sign in, it just stops.
+  FRIENDS.remoteSwitch = function (sw) {
+    const st = read();
+    if (!sw || !sw.at || (st.switchedAt || 0) >= sw.at || !be) return Promise.resolve(null);
+    const done = () => { if (FRIENDS.onSwitch) FRIENDS.onSwitch(); };
+    if (sw.on) {
+      if (st.on) { patch({ switchedAt: sw.at }); return Promise.resolve(null); }
+      patch({ pendingOn: sw.at });
+      return FRIENDS.turnOn({ at: sw.at }).then(done, () => { done(); return null; });
+    }
+    if (!st.on) { patch({ switchedAt: sw.at, pendingOn: null }); done(); return Promise.resolve(null); }
+    return FRIENDS.turnOff({ at: sw.at }).catch(() => { patch({ on: false, switchedAt: sw.at, pendingOn: null }); dirty.clear(); }).then(done);
   };
   // ... and this removes the rest: every friendship on both sides, the requests waiting for you, and the code
   FRIENDS.deleteAll = async function () {
@@ -315,7 +336,12 @@
       signedIn: () => !!(fb && fb.A.currentUser),
       async signIn(interactive) {
         if (fb && fb.A.currentUser) return;
-        if (!interactive) { await load(); if (fb.A.currentUser) return; throw err('auth', 'Sign in to use Friends.'); }
+        if (!interactive) {
+          await load(); if (fb.A.currentUser) return;
+          // the app can ask Google quietly once it has allowed the game before; a browser cannot without a tap
+          if (inApp() && !EMU) { const tok = await bridge('token', { interactive: false, scopes: ['openid'] }); await fb.auth.signInWithCredential(fb.A, fb.auth.GoogleAuthProvider.credential(null, tok)); return; }
+          throw err('auth', 'Sign in to use Friends.');
+        }
         if (EMU) { await load(); await fb.auth.signInWithCredential(fb.A, fb.auth.GoogleAuthProvider.credential(JSON.stringify({ sub: EMU, email_verified: false }))); return; }
         const tokP = googleToken(); // first, while still inside the tap
         await load();

@@ -132,6 +132,8 @@
   // The same file carries what else only ever grows and belongs to no save: the story scenes seen (azsolo.story, which
   // also stops seen chapters replaying), the Lore Journal pages read (azsolo.loreread) and the tips already shown
   // (azsolo.tips .seen). Those merge by combining; whether tips are on stays a setting of each device.
+  // And the Friends switch (v10.2, friends.js): { on, at }, where the newest change wins, so turning Friends on or off
+  // on one device does the same on the others.
   const ACCOUNT_FILE = 'account.azs';
   const LISTS = ['heirlooms', 'story', 'lore', 'tips'];
   const union = (x, y) => { const out = []; for (const id of (x || []).concat(y || [])) if (!out.includes(id)) out.push(id); return out; };
@@ -139,12 +141,14 @@
     a = a || {}; b = b || {};
     const m = Object.assign({}, b, a, { marks: Math.max(+a.marks || 0, +b.marks || 0) });
     for (const k of LISTS) m[k] = union(a[k], b[k]);
+    const fa = a.friends && a.friends.at ? a.friends : null, fb = b.friends && b.friends.at ? b.friends : null;
+    if (fa || fb) m.friends = !fb || (fa && fa.at >= fb.at) ? fa : fb; else delete m.friends;
     return m;
   };
-  const same = (x, y) => JSON.stringify([+x.marks || 0].concat(LISTS.map((k) => (x[k] || []).slice().sort()))) === JSON.stringify([+y.marks || 0].concat(LISTS.map((k) => (y[k] || []).slice().sort())));
+  const same = (x, y) => JSON.stringify([+x.marks || 0, x.friends || null].concat(LISTS.map((k) => (x[k] || []).slice().sort()))) === JSON.stringify([+y.marks || 0, y.friends || null].concat(LISTS.map((k) => (y[k] || []).slice().sort())));
   const readList = (key, field) => { try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return (field ? v && v[field] : v) || []; } catch (e) { return []; } };
   // everything the account file holds, as this device has it
-  const localAccount = () => Object.assign({}, G.account(), { story: readList('azsolo.story'), lore: readList('azsolo.loreread'), tips: readList('azsolo.tips', 'seen') });
+  const localAccount = () => { const a = Object.assign({}, G.account(), { story: readList('azsolo.story'), lore: readList('azsolo.loreread'), tips: readList('azsolo.tips', 'seen') }); const f = root.FRIENDS && FRIENDS.switchInfo(); if (f) a.friends = f; return a; };
   function writeLocal(m) {
     G.saveAccount({ marks: m.marks, heirlooms: m.heirlooms });
     try {
@@ -155,6 +159,7 @@
       if (!t) t = { off: (G.characters() || []).some((c) => c.level >= 5) };
       t.seen = m.tips; localStorage.setItem('azsolo.tips', JSON.stringify(t));
     } catch (e) { }
+    if (m.friends && root.FRIENDS) FRIENDS.remoteSwitch(m.friends); // Friends was switched on another device
   }
   CLOUD.syncAccount = async function (files) {
     if (!root.G || !G.account) return null;

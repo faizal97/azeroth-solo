@@ -367,6 +367,8 @@ img { max-width: 100%; display: block; }
 .tabs button { padding: 8px 12px; border: 1px solid #3b2d18; border-radius: 3px; font: 700 13px var(--body); white-space: nowrap; color: var(--muted); }
 .tabs button.on { color: var(--gold); border-color: var(--gold); }
 .tabs button { position: relative; }
+.tabs-fit { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.tabs-fit button { padding: 8px 2px; text-align: center; overflow: hidden; text-overflow: ellipsis; }
 .tabs button.dot::after { content: ''; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; background: #ffd100; box-shadow: 0 0 5px #ffd100; }
 /* Friends */
 .fr-code { font: 28px/1.2 var(--display); letter-spacing: .12em; color: var(--gold); text-align: center; padding: 6px 0 2px; user-select: all; }

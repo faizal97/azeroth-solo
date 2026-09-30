@@ -233,6 +233,22 @@ const fails = async (p, code) => { try { await p; return false; } catch (e) { re
   await FRIENDS.deleteAll();
   ok(!profileOf('cat') && !server.docs.has('codes/' + codeC) && !server.docs.has('friends/cat/list/ben') && !server.docs.has('friends/ben/list/cat') && !FRIENDS.on(), 'Delete my Friends data: profile, code and every friendship, on both sides');
 
+  // 15. the switch follows the player: amy turned on on her phone; her browser hears it from cloud save
+  use(amyPhone); G.load(A2); const swOn = FRIENDS.switchInfo();
+  ok(swOn && swOn.on === true && swOn.at > 0, 'turning on records when, for cloud save to carry');
+  const amyTab = dev('amyTab', 'amy'); use(amyTab); G.newGame({ name: 'Ash', cls: 'hunter', race: 'dwarf' }); const A4 = G.S.id; G.save();
+  ok(!FRIENDS.on(), 'a new device starts with Friends off');
+  await FRIENDS.remoteSwitch(swOn);
+  ok(FRIENDS.on() && FRIENDS.state().code === codeA && profileOf('amy').chars[A4] && profileOf('amy').chars[A1], 'the switch arrives: this device connects by itself, same code, and adds its character');
+  await FRIENDS.remoteSwitch({ on: false, at: swOn.at - 1 });
+  ok(FRIENDS.on(), 'an older switch is ignored');
+  t += 1000; await FRIENDS.remoteSwitch({ on: false, at: t });
+  ok(!FRIENDS.on() && !profileOf('amy'), 'turned off elsewhere: this device stops, and removes the profile it would otherwise keep alive');
+  const quiet = backend('amy'); quiet.signIn = async (interactive) => { if (!interactive) throw Object.assign(new Error('no quiet sign-in in a browser'), { code: 'auth' }); };
+  const amyWeb2 = { name: 'amyWeb2', uid: 'amy', ls: mem(), be: quiet }; use(amyWeb2);
+  t += 1000; await FRIENDS.remoteSwitch({ on: true, at: t });
+  ok(!FRIENDS.on() && FRIENDS.state().pendingOn === t, 'a browser that cannot sign in quietly waits, and the tab offers one tap to connect');
+
   stop(); bstop();
   console.log(`friends: ${pass}/${pass + fail} checks pass`);
   process.exit(fail ? 1 : 0);

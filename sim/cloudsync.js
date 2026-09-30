@@ -210,6 +210,13 @@ const ok = (cond, what) => { if (cond) pass++; else { fail++; console.log('FAIL'
   ok(Array.isArray(files) && n401 === 1 && cleared === 1, 'an expired token is cleared and the call retried once');
   globalThis.fetch = realFetch;
 
+  // 14. the Friends switch rides in the account file: the newest change wins, either way
+  const on1 = CLOUD.mergeAccount({ friends: { on: true, at: 5 } }, { friends: { on: false, at: 3 } });
+  const off2 = CLOUD.mergeAccount({ friends: { on: true, at: 5 } }, { friends: { on: false, at: 9 } });
+  const none = CLOUD.mergeAccount({ marks: 1 }, { marks: 2 });
+  ok(on1.friends.on === true && off2.friends.on === false && off2.friends.at === 9 && !('friends' in none), 'the Friends switch: the newest change wins, and no switch stays no switch');
+  ok(CLOUD.mergeAccount({}, { friends: { on: true, at: 7 } }).friends.on === true, 'a device that never switched takes the other device\'s switch');
+
   console.log(`cloudsync: ${pass}/${pass + fail} checks pass`);
   process.exit(fail ? 1 : 0);
 })().catch((e) => { console.error(e); process.exit(1); });

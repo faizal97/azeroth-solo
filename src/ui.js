@@ -2268,6 +2268,8 @@
     }).catch(() => {}).finally(() => { fw.starting = false; });
   }
   function friendsStop() { if (fw.stop) fw.stop(); fw.stop = null; fw.view = null; if (G.S) renderNavDots(); }
+  const friendsShare = () => { if (window.CLOUD && CLOUD.on() && CLOUD.fresh()) CLOUD.syncAccount().catch(() => {}); }; // the switch, to your other devices now
+  if (window.FRIENDS) FRIENDS.onSwitch = () => { if (FRIENDS.on()) friendsStart(); else friendsStop(); if ((ui.sheet === 'social' && ui.socialTab === 'friends') && ui.sheetFn) ui.sheetFn(); };
   const friendsWaiting = () => !!(fw.view && fw.view.requests.length);
   const friendErr = (e) => { if (e && e.code === 'cancelled') return; toast((e && e.message) || 'Friends did not answer. Try again.'); };
   const friendNote = (t) => h('p', { class: 'ai-note', style: { margin: 0 } }, t);
@@ -2319,12 +2321,13 @@
     if (!FRIENDS.on()) {
       const on = h('button', { class: 'btn', onclick: () => {
         on.disabled = true; on.textContent = 'Turning on…';
-        FRIENDS.turnOn().then(() => { toast('Friends is on. Send your code to a friend.', true); friendsStart(); ui.sheetFn(); if (ui.friendCode) { const c = ui.friendCode; ui.friendCode = null; friendAdd(c); } })
+        FRIENDS.turnOn().then(() => { toast('Friends is on. Send your code to a friend.', true); friendsStart(); friendsShare(); ui.sheetFn(); if (ui.friendCode) { const c = ui.friendCode; ui.friendCode = null; friendAdd(c); } })
           .catch((e) => { friendErr(e); ui.sheetFn(); });
-      } }, 'Turn on Friends');
+      } }, FRIENDS.state().pendingOn ? 'Connect Friends here' : 'Turn on Friends');
       b.append(h('div', { class: 'sec-h' }, 'Friends', h('small', null, 'real players')),
         h('p', null, 'Add the people you know by friend code, see their characters and gear, and see when they are playing.'),
-        friendNote('Optional, and off until you turn it on. It uses your Google sign-in (only to know it is you, not your email). Your friends see the characters you share: their level, gear, talents, professions and guild, where you are, and when you last played. Nobody else does.'),
+        FRIENDS.state().pendingOn ? friendNote('You turned Friends on on another device. Connect here with one tap to see your friends on this one too.')
+          : friendNote('Optional, and off until you turn it on. It uses your Google sign-in (only to know it is you, not your email). Your friends see the characters you share: their level, gear, talents, professions and guild, where you are, and when you last played. Nobody else does. With cloud save on, the switch follows you to your other devices.'),
         ...(code ? [friendNote(`Turn on Friends to add ${FRIENDS.showCode(FRIENDS.cleanCode(code) || '')}.`)] : []),
         h('div', { class: 'btn-row' }, on), privacyLink('How Friends handles your data'));
       return;
@@ -2385,11 +2388,11 @@
   function friendsFooter(b) {
     b.append(h('div', { class: 'btn-row', style: { marginTop: '14px' } },
       h('button', { class: 'btn alt', onclick: () => showDialog([h('h3', null, 'Turn off Friends?'),
-        h('p', null, 'Your profile, online status and sent requests are deleted from Firebase, and friends see you as "Friends turned off". Your friends and your code are kept, so turning it on again brings everything back.'),
-        h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); FRIENDS.turnOff().then(() => { friendsStop(); toast('Friends is off.', true); ui.sheetFn(); }).catch(friendErr); } }, 'Turn off'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))]) }, 'Turn off Friends'),
+        h('p', null, 'Your profile, online status and sent requests are deleted from Firebase, and friends see you as "Friends turned off". Your friends and your code are kept, so turning it on again brings everything back. With cloud save on, Friends turns off on your other devices too.'),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); FRIENDS.turnOff().then(() => { friendsStop(); friendsShare(); toast('Friends is off.', true); ui.sheetFn(); }).catch(friendErr); } }, 'Turn off'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))]) }, 'Turn off Friends'),
       h('button', { class: 'btn alt', onclick: () => showDialog([h('h3', null, 'Delete your Friends data?'),
         h('p', null, 'Everything Friends keeps about you is deleted: your profile, status, code, requests and every friendship (you leave your friends\' lists too). This cannot be undone; to be friends again, you would add each other again.'),
-        h('div', { class: 'btn-row' }, h('button', { class: 'btn', style: { background: '#a01010' }, onclick: () => { closeDialog(); FRIENDS.deleteAll().then(() => { friendsStop(); toast('Your Friends data is deleted.', true); ui.sheetFn(); }).catch(friendErr); } }, 'Delete'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))]) }, 'Delete my Friends data')),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn', style: { background: '#a01010' }, onclick: () => { closeDialog(); FRIENDS.deleteAll().then(() => { friendsStop(); friendsShare(); toast('Your Friends data is deleted.', true); ui.sheetFn(); }).catch(friendErr); } }, 'Delete'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))]) }, 'Delete my Friends data')),
       privacyLink('How Friends handles your data'));
   }
   // a friend's profile: every character they share; tap one for its gear
@@ -2589,12 +2592,11 @@
   function openSocial(tab) {
     ui.socialTab = tab || ui.socialTab || 'group';
     openSheet('social', 'Social', `${D.REALM} · ${B.onlineCount(G.S, new Date())} players online`, (b) => {
-      const tabs = h('div', { class: 'tabs' });
-      for (const [k, label] of [['group', 'Group Finder'], ['chat', 'Chat'], ['news', 'Realm News'], ['guild', 'Guild'], ['friends', 'Friends']]) tabs.append(h('button', { class: (ui.socialTab === k ? 'on' : '') + (k === 'friends' && friendsWaiting() ? ' dot' : ''), onclick: () => { ui.socialTab = k; ui.sheetFn(); } }, label));
+      const tabs = h('div', { class: 'tabs tabs-fit' }); // five equal tabs that always fit a phone
+      for (const [k, label] of [['group', 'Groups'], ['chat', 'Chat'], ['news', 'News'], ['guild', 'Guild'], ['friends', 'Friends']]) tabs.append(h('button', { class: (ui.socialTab === k ? 'on' : '') + (k === 'friends' && friendsWaiting() ? ' dot' : ''), onclick: () => { ui.socialTab = k; ui.sheetFn(); } }, label));
       // pinned, so you can switch tabs even when the chat is scrolled to the newest line
       ui.socialHead = h('div', { class: 'sheet-stick' }, tabs);
       b.append(ui.socialHead);
-      const onTab = tabs.querySelector('.on'); if (onTab && onTab.scrollIntoView) setTimeout(() => onTab.scrollIntoView({ block: 'nearest', inline: 'nearest' }), 0); // Friends sits past the edge on a phone
       if (ui.socialTab === 'group') groupTab(b);
       else if (ui.socialTab === 'chat') chatTab(b);
       else if (ui.socialTab === 'news') newsTab(b);
@@ -2922,7 +2924,7 @@
     level: 'You levelled up. Your XP bar is under your health and mana: tap it to see how far you have to go.',
     request: 'Chat messages marked ▸ are requests from other players. Tap one to help, trade or join a group.',
     roll: 'Loot! Need if you will use it, Greed if you would sell it, Pass to leave it to others.',
-    dungeon: 'Dungeons are open. Social → Group Finder: queue from the dungeon\'s zone and the finder fills your group.',
+    dungeon: 'Dungeons are open. Social → Groups: queue from the dungeon\'s zone and the finder fills your group.',
     run: 'In a group the tank pulls. Tap Pull (or Ready) when you are set; Tactics set the pace.',
     talents: 'Talents are open: Hero → Abilities → Talents. You get a new point every level.',
   };
@@ -3351,7 +3353,7 @@
     G.on('error', (t) => toast(t));
     G.on('pop', (q) => { renderNavDots(); showPop(q); });
     G.on('invite', showInvite);
-    G.on('helpWanted', (r) => toast(`Help Wanted: a group in ${D.ACTIVITIES[r.act].name} needs a ${r.role === 'dps' ? 'damage dealer' : r.role}. See Social → Group Finder.`, true));
+    G.on('helpWanted', (r) => toast(`Help Wanted: a group in ${D.ACTIVITIES[r.act].name} needs a ${r.role === 'dps' ? 'damage dealer' : r.role}. See Social → Groups.`, true));
     // wait for a calm moment: no fight, no run, no other dialog, no cutscene
     const introWhenCalm = () => { if (!G.S) return; if (G.fight || G.S.run || G.paused || document.querySelector('.dialog')) return setTimeout(introWhenCalm, 3000); showWarModeIntro(); };
     G.on('warModeIntro', introWhenCalm);
