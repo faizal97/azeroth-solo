@@ -46,7 +46,7 @@
   // an item that is exactly the game's own goes as its id; a rolled one (random stats) goes whole
   const gearOf = function (eq) {
     const out = {};
-    for (const slot in eq || {}) { const it = eq[slot]; if (!it) continue; const base = root.D && D.ITEMS[it.id]; out[slot] = base && same(base, it) ? { id: it.id } : it; }
+    for (const slot in eq || {}) { const it = eq[slot]; if (!it) continue; const base = root.D && D.ITEMS[it.id]; if (base && same(base, it)) out[slot] = { id: it.id }; else { const { base: _drop, ...shown } = it; out[slot] = shown; } } // an upgraded item (v10.3) goes without its as-dropped copy
     return out;
   };
   const rankName = function (rep) { const R = root.SOC && SOC.RANKS; if (!R) return null; let r = 0; R.forEach((k, i) => { if ((rep || 0) >= k.at) r = i; }); return R[r].name; };

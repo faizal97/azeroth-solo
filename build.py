@@ -19,6 +19,8 @@ if subprocess.run(['node', os.path.join(R, 'sim', 'friends.js')]).returncode != 
     sys.exit('build stopped: a Friends rule is broken (node sim/friends.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'legends.js')], stdout=subprocess.DEVNULL).returncode != 0:
     sys.exit('build stopped: a Legend rule is broken (node sim/legends.js lists which)')
+if subprocess.run(['node', os.path.join(R, 'sim', 'upgrades.js')]).returncode != 0:
+    sys.exit('build stopped: a gear upgrade rule is broken (node sim/upgrades.js lists which)')
 DATA = ['src/data/' + f for f in json.load(open(os.path.join(R, 'src', 'data', 'files.json')))]
 # music ships only once he has listened and approved the track
 APPROVED = set(open(os.path.join(R, 'audio', 'approved.txt')).read().split()) if os.path.exists(os.path.join(R, 'audio', 'approved.txt')) else set()

@@ -1799,6 +1799,7 @@
       if (npc === 'mentor_alliance' || npc === 'mentor_horde') {
         const acc = G.account();
         b.append(h('div', { class: 'sec-h' }, 'Heirlooms', h('small', null, `${acc.marks} Mentor Marks · shared by all your characters`)));
+        b.append(h('p', { style: { color: 'var(--muted)', fontSize: '13px', margin: '4px 0 8px' } }, 'Mentor Marks also upgrade level-60 blue and purple gear: tap the item in your bags or on your character, then Upgrade.'));
         const list = h('div', { class: 'list' });
         for (const id in D.HEIRLOOMS) {
           const H = D.HEIRLOOMS[id], it = G.makeHeirloom(id, P.level), owned = acc.heirlooms.includes(id);
