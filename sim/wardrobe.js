@@ -36,6 +36,12 @@ ok(G.gearLooks(P).back === D.ITEMS[cape].look[1], 'the wardrobe choice wins over
 G.setWardrobe('back', null);
 ok(G.gearLooks(P).back === G.gearLooks({ equip: { back: P.equip.back } }).back, 'Your gear shows the worn cloak again');
 
+// the collection log: every look the class could show, collected or not; keepsakes only once earned
+const G2 = G.S.player; const allBack = G.wardrobeAll('back');
+ok(allBack.length >= G.wardrobeOptions('back').filter((o) => !o.keepsake).length && allBack.some((o) => !o.have), 'the log lists uncollected looks too');
+ok(allBack.filter((o) => o.have).every((o) => G.wardrobeOptions('back').some((x) => x.key === o.key)), 'collected in the log means choosable');
+ok(!G.wardrobeAll('weapon').some((o) => o.key === D.ITEMS[sword].look[1]), 'the log never offers a mage a sword');
+ok(G.wardrobeAll('back').every((o) => !o.keepsake || G.legendUnlocked(o.keepsake)), 'a keepsake is listed only once earned');
 // keepsakes: offered in the Back row once the Legend's questline is done; an old P.keepsake moves to the wardrobe
 const lk = Object.keys(D.LEGENDS).find((k) => D.LEGENDS[k].keepsake), L = D.LEGENDS[lk];
 ok(!keys('back').includes(L.keepsake.look), 'no keepsake before the questline');

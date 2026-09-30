@@ -1999,23 +1999,44 @@
   }
 
   // ---------- hero
-  // the wardrobe (v10.3): pick what shows in each place from the looks this account has collected
+  // the wardrobe (v10.3): one row per place; a place opens a grid of every look the class could show (a collection log:
+  // uncollected ones greyed), where a tap tries it on the preview and "Show this" keeps it
+  const WPLACE = { weapon: 'Weapon', ranged: 'Ranged', chest: 'Chest', legs: 'Legs', back: 'Back' };
+  const heroPreview = (c) => h('div', { style: { display: 'flex', justifyContent: 'center', margin: '0 0 6px' } }, h('img', { src: art('hero', looks(c)), alt: '', draggable: 'false', style: { width: '112px', height: '112px' } }));
   function openWardrobe() {
     G.seedWardrobe();
     openSheet('wardrobe', 'Wardrobe', 'Looks are shared by all your characters. Stats never change.', (b) => {
-      const P = G.S.player, W = P.wardrobe || {}, NAME = { weapon: 'Weapon', ranged: 'Ranged', chest: 'Chest', legs: 'Legs', back: 'Back' };
-      b.append(h('div', { style: { display: 'flex', justifyContent: 'center', margin: '0 0 6px' } }, h('img', { src: art('hero', looks(P)), alt: '', draggable: 'false', style: { width: '112px', height: '112px' } })));
+      const P = G.S.player, W = P.wardrobe || {};
+      b.append(heroPreview(P));
+      const list = h('div', { class: 'list' });
       for (const pl of G.WARDROBE_PLACES) {
-        const opts = G.wardrobeOptions(pl), cur = W[pl] || null;
-        b.append(h('div', { class: 'sec-h' }, NAME[pl], h('small', null, opts.length ? `${opts.length} look${opts.length > 1 ? 's' : ''}` : 'none collected yet')));
-        const row = h('div', { class: 'chips' });
-        const chip = (key, label, icon, q) => h('button', { class: 'chip' + (cur === key ? ' gold' : ''), onclick: () => { G.setWardrobe(pl, key); ui.sheetFn(); } }, icon ? img(art('icon', icon)) : null, icon ? ' ' : null, h('span', { class: q != null ? 'q' + q : '' }, label));
-        row.append(chip(null, 'Your gear'));
-        for (const o of opts) row.append(chip(o.key, o.name, o.icon, o.q));
-        if (pl === 'back' || pl === 'ranged') row.append(chip('hidden', 'Hidden'));
-        b.append(row);
+        const all = G.wardrobeAll(pl), got = all.filter((o) => o.have).length, cur = W[pl], o = cur && cur !== 'hidden' ? all.find((x) => x.key === cur) : null, worn = P.equip[pl];
+        list.append(h('button', { class: 'row', onclick: () => { ui.wTry = W[pl] || null; openWardrobePlace(pl); } },
+          h('div', { class: 'ic' }, o ? img(art('icon', o.icon)) : worn && !cur ? img(art('icon', worn.icon)) : ''),
+          h('div', { class: 't' }, h('b', { class: o ? 'q' + o.q : '' }, o ? o.name : cur === 'hidden' ? 'Hidden' : 'Your gear'), h('small', null, WPLACE[pl])),
+          h('div', { class: 'r' }, all.length ? `${got} / ${all.length}` : '')));
       }
-      b.append(h('p', { class: 'ai-note', style: { marginTop: '8px' } }, 'Every item with its own look joins the wardrobe when you loot, buy or wear it.'));
+      b.append(list, h('p', { class: 'ai-note', style: { marginTop: '8px' } }, 'Every item with its own look joins the wardrobe when you loot, buy or wear it.'));
+    });
+  }
+  function openWardrobePlace(pl) {
+    openSheet('wardrobe_' + pl, WPLACE[pl], 'Tap a look to try it on', (b) => {
+      const P = G.S.player, all = G.wardrobeAll(pl), t = ui.wTry, tried = t && t !== 'hidden' ? all.find((x) => x.key === t) : null;
+      const W = Object.assign({}, P.wardrobe); if (t) W[pl] = t; else delete W[pl];
+      b.append(heroPreview(Object.assign({}, P, { wardrobe: W })));
+      const g = h('div', { class: 'bags looks' });
+      const cell = (key, inner, cls, title) => h('button', { class: 'slot ' + (cls || '') + (t === key ? ' sel' : ''), title, onclick: () => { ui.wTry = key; ui.sheetFn(); } }, inner);
+      g.append(cell(null, h('span', { class: 'lbl' }, 'Your gear')));
+      if (pl === 'back' || pl === 'ranged') g.append(cell('hidden', h('span', { class: 'lbl' }, 'Hidden')));
+      for (const o of all) g.append(cell(o.key, img(art('icon', o.icon)), o.have ? 'qb' + o.q : 'locked', o.name));
+      const got = all.filter((o) => o.have).length;
+      b.append(h('div', { class: 'sec-h' }, 'Looks', h('small', null, `${got} of ${all.length} collected`)), g);
+      const info = h('div', { style: { marginTop: '10px' } });
+      if (tried) info.append(h('b', { class: tried.have ? 'q' + tried.q : '' }, tried.name), h('div', { class: 'ai-note' }, tried.have ? (tried.source || 'In your collection') : `Not collected yet. ${tried.source ? 'Drops from ' + tried.source + '.' : 'Found somewhere in the world.'}`));
+      const same = (P.wardrobe || {})[pl] === (t || undefined) || (!t && !(P.wardrobe || {})[pl]);
+      info.append(h('div', { class: 'btn-row', style: { marginTop: '8px' } },
+        h('button', { class: 'btn', disabled: same || (tried && !tried.have), onclick: () => { G.setWardrobe(pl, t || null); toast(t === 'hidden' ? `${WPLACE[pl]} hidden.` : tried ? `Showing ${tried.name}.` : 'Showing your gear.', true); ui.sheetFn(); } }, same ? 'Showing' : 'Show this')));
+      b.append(info);
     });
   }
   function openHero(tab) {

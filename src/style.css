@@ -342,6 +342,9 @@ img { max-width: 100%; display: block; }
 .slot.qb0 { box-shadow: 0 0 0 1px #5a5a5a; } .slot.qb2 { box-shadow: 0 0 0 2px #1eff00; } .slot.qb3 { box-shadow: 0 0 0 2px #0070dd; } .slot.qb4 { box-shadow: 0 0 0 2px #a335ee; }
 .slot .up { position: absolute; left: 3px; top: 1px; font: 900 15px var(--body); color: #2dff2d; text-shadow: 0 1px 1px #000; }
 .slot.sel { outline: 2px solid var(--gold); }
+.bags.looks { grid-template-columns: repeat(5, 1fr); }
+.slot.locked img { filter: grayscale(1) brightness(0.4); }
+.slot .lbl { font-size: 11px; line-height: 1.1; text-align: center; color: var(--muted); padding: 2px; }
 .gear { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
 .gear .row { grid-template-columns: 34px minmax(0, 1fr); min-width: 0; }
 .gear .row b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

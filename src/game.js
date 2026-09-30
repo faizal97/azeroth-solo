@@ -1677,6 +1677,18 @@
     if (place === 'back') for (const lk in D.LEGENDS || {}) { const L = D.LEGENDS[lk]; if (L.keepsake && G.legendUnlocked(lk)) out.push({ key: L.keepsake.look, name: L.keepsake.name, icon: L.keepsake.icon, q: 5, keepsake: lk }); }
     return out;
   };
+  // every look this class could show in one place, collected or not (the wardrobe's collection log), sorted by level.
+  // Keepsakes appear only once earned, so a Legend's name never shows before their story does.
+  G.wardrobeAll = function (place) {
+    const P = G.S.player, have = new Set((G.account().looks || []).filter((k) => k.startsWith(place + ':')).map((k) => k.slice(place.length + 1))), seen = new Set(), out = [];
+    for (const id in D.ITEMS) {
+      const it = D.ITEMS[id], l = it.look; if (!l || l[0] !== place || seen.has(l[1]) || !G.canUseItem(it, P.cls)) continue;
+      seen.add(l[1]); out.push({ key: l[1], name: it.name, icon: it.icon, q: it.q, lvl: it.lvl || 1, source: it.source || null, have: have.has(l[1]) });
+    }
+    out.sort((a, b) => a.lvl - b.lvl || a.name.localeCompare(b.name));
+    for (const o of G.wardrobeOptions(place)) if (o.keepsake) out.push(Object.assign({ lvl: 60, have: true, source: 'A Legend\'s keepsake' }, o));
+    return out;
+  };
   G.setWardrobe = function (place, key) { // key: an artKey, 'hidden', or null for the worn item's look
     const P = G.S.player; if (!G.WARDROBE_PLACES.includes(place)) return false;
     if (key === 'hidden' && place !== 'back' && place !== 'ranged') return false;

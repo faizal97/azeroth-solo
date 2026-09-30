@@ -20,10 +20,14 @@ to come: Trial season looks, Hard raid recolours, keepsakes.
 
 ## Showing
 
-- Hero → Character: a **Wardrobe** button beside Equipment.
-- One row per place (Weapon, Ranged, Chest, Legs, Back). Each row picks **Your gear** (the worn item's look, as now),
-  any owned look the class could wear (armour type for chest and legs, weapon type for weapon and ranged, the same
-  rules as `G.canUseItem`), or **Hidden** (back and ranged only).
+- Hero → Character: a **Wardrobe** button under Equipment. It shows one row per place (Weapon, Ranged, Chest, Legs,
+  Back) with the look showing now and a count ("2 / 9").
+- Tapping a place opens a **grid of every look the class could wear** there (armour type for chest and legs, weapon type
+  for weapon and ranged, the same rules as `G.canUseItem`), sorted by level: a collection log. Collected looks are in
+  colour, the rest greyed; tapping one tries it on the preview, and a greyed one says where it drops. **Show this**
+  keeps it. **Your gear** (the worn item's look) and **Hidden** (back and ranged only) come first. (A row of buttons
+  per place was built first and replaced the same day: it would not scale to many looks.)
+- Keepsakes join a place's grid only once earned, so a Legend's name never shows before their story.
 - Saved per character as `P.wardrobe = { place: artKey | 'hidden' }`. Stats never change.
 - `G.gearLooks` applies `c.wardrobe` over the worn looks, so it shows wherever your character is drawn: the hero, your
   party sprite, the character select. (Friends only see a portrait, never gear, so their card needs no change.)
@@ -35,6 +39,7 @@ to come: Trial season looks, Hard raid recolours, keepsakes.
 
 - Looting, equipping and buying collect a look; the first open collects from existing characters.
 - Class limits: a mage cannot show mail or a sword; Hidden only for back and ranged.
+- The log lists uncollected looks, never one the class cannot wear, and keepsakes only once earned.
 - A chosen look shows in `G.gearLooks`; Your gear falls back to the worn item.
 - `CLOUD.mergeAccount` unions `looks` (and cloud save's account writer now keeps them; it used to keep only Marks and
   heirlooms).
