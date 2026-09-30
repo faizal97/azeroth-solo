@@ -24,12 +24,13 @@
 
 - At any time the strongest gear sits at the **current ceiling** (today: Tidecrown Citadel). Each new raid raises it
   by about 5%.
-- Every level-60 blue or purple item has an **upgrade level** (`it.up`, from 0). Each step raises its stats and
-  costs Mentor Marks, more for later steps. The top step always equals the current ceiling, so a new raid gives every
+- Every level-57+ blue or purple item can be upgraded a step at a time. Each step raises its stats and costs Mentor
+  Marks. The top step always equals the current ceiling, so a new raid gives every
   old piece new steps. Greens can't be upgraded.
 - An item's effect, set bonus and look never change; only its numbers do. That keeps a Magma Throne sword a real
   choice next to a Tidecrown one.
-- Stats are computed from `it.up` when the item is read, so old items load as step 0. No save migration.
+- The item's stats are rewritten when a step is bought and saved with it; items without `it.pw` load as they dropped.
+  No save migration.
 - Mentor Marks are account-wide, so an alt's runs pay for your main's upgrades.
 - First step: measure the current gear gap between Magma Throne, Veshmira's Lair and Tidecrown from the data, and set
   the step size from it.
@@ -37,6 +38,11 @@
   Lair 92%, Magma Throne 91%, Temple of Shal'zua 96% and the Sunken Archive 93% (both blue, so they already beat older
   purples), the Blackcloister 85%, Graymouth 82%, Cinderpeak Depths 68% (all items). Weapon damage per second: Tidecrown
   42.7, the rest 33–38.5, so upgrades scale weapon damage as well as stats.
+- **Stored as power, shown as a percentage (changed while building, 2026-09-30):** an upgraded item stores the power it
+  reached (`it.pw`), not a step count. A step count would grow forever (every new raid adds about 2 steps, so labels
+  like 64/66) and, since a step is measured against the current ceiling, would make old upgrades stronger for free
+  whenever the ceiling moved. The tooltip reads "Power 91% of the ceiling"; the price is 5 Marks per 1% gained (15 a
+  step); a step that would leave less than half a step goes straight to the ceiling.
 - **Step size and caps:** one step is 3% of the ceiling. Purples upgrade to 100% of the ceiling, blues to about 92%, so
   raids stay the top of power and a blue can still win on its effect. Magma Throne gear takes 3–4 steps; a 5% ceiling
   raise adds about 2 steps to everything.
@@ -91,7 +97,7 @@
 
 Each step ships to beta alone with its own sim.
 
-1. **Gear upgrades:** measure the gap, add `it.up` and its Marks cost, an Upgrade button in the item sheet.
+1. **Gear upgrades:** measure the gap, add `it.pw` and its Marks cost, an Upgrade button in the item sheet.
 2. **The wardrobe.**
 3. **Trials:** season pool, Omens with counters, rating, bots by rating, chat requests, the Trials tab, rewards.
 4. **Hard raids and the featured raid.**

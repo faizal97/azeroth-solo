@@ -1656,22 +1656,27 @@
     }
     return upRef[upKey(it)] || G.itemPoints(it.base || it) * upRef['*lead']; // a family seen nowhere: its own power, raised by the lead
   };
+  G.upgradeRef.reset = () => { upRef = null; }; // when D.UPGRADE.raid moves (sims)
   const upBase = (it) => it.base || { stats: Object.assign({}, it.stats), armor: it.armor, sp: it.sp, dmg: it.dmg && it.dmg.slice() };
+  // An upgraded item stores the power it reached (it.pw, in stat points), not a step count, so a new ceiling raid never
+  // changes an item on its own, and the label is a percentage of the ceiling that never grows past 100.
   G.upgradeInfo = function (it) {
-    const U = D.UPGRADE, up = (it && it.up) || 0;
-    const none = { max: 0, up, cost: 0 };
+    const U = D.UPGRADE, none = { ok: false, room: false, cost: 0 };
     if (!it || it.heirloom || !D.GEAR_SLOTS.includes(it.slot) || !U.cap[it.q] || (it.lvl || 0) < U.minLvl) return none;
-    const ref = G.upgradeRef(it), p0 = G.itemPoints(upBase(it)), capPts = U.cap[it.q] * ref;
-    if (p0 <= 0 || p0 >= capPts) return none;
-    const max = Math.ceil((capPts - p0) / (U.step * ref) - 1e-9);
-    return { max, up, cost: up < max ? U.cost(up + 1) : 0 };
+    const ref = G.upgradeRef(it), p0 = G.itemPoints(upBase(it)); if (p0 <= 0) return none;
+    const capPts = U.cap[it.q] * ref, pts = it.pw || p0, st = U.step * ref, room = capPts - pts > 0.01;
+    const next = capPts - (pts + st) < st / 2 ? capPts : pts + st; // less than half a step left: go straight to the ceiling
+    const pc = (x) => Math.round((x / ref) * 100);
+    return { ok: true, room, pts, next, pct: pc(pts), nextPct: pc(next), capPct: Math.round(U.cap[it.q] * 100), cost: room ? Math.max(1, Math.round(((next - pts) / ref) * 100 * U.perPct)) : 0 };
   };
-  G.upgradedCopy = function (it, up) {
-    const U = D.UPGRADE, b = upBase(it), inf = G.upgradeInfo(it); up = Math.max(0, Math.min(up, inf.max));
-    const out = JSON.parse(JSON.stringify(it));
-    if (!up) { if (it.base) { Object.assign(out, JSON.parse(JSON.stringify(b))); delete out.base; delete out.up; } return out; }
-    const ref = G.upgradeRef(it), p0 = G.itemPoints(b), f = Math.min(p0 + up * U.step * ref, U.cap[it.q] * ref) / p0;
-    out.base = JSON.parse(JSON.stringify(b)); out.up = up;
+  // the item at a given power (stat points); its own power or less gives back the item as it dropped
+  G.upgradedCopy = function (it, pw) {
+    const b = upBase(it), p0 = G.itemPoints(b), inf = G.upgradeInfo(it), out = JSON.parse(JSON.stringify(it));
+    const capPts = inf.ok ? D.UPGRADE.cap[it.q] * G.upgradeRef(it) : p0;
+    pw = Math.min(pw, Math.max(capPts, it.pw || 0));
+    if (!inf.ok || pw <= p0 + 1e-9) { if (it.base) { Object.assign(out, JSON.parse(JSON.stringify(b))); delete out.base; delete out.pw; } return out; }
+    const f = pw / p0;
+    out.base = JSON.parse(JSON.stringify(b)); out.pw = Math.round(pw * 100) / 100;
     out.stats = {}; for (const k in b.stats || {}) out.stats[k] = Math.round(b.stats[k] * f);
     if (b.sp) out.sp = Math.round(b.sp * f);
     if (b.armor) out.armor = Math.round(b.armor * f);
@@ -1684,13 +1689,13 @@
     if (!it) return false;
     if (G.fight) { toast('You are in combat.'); return false; }
     const inf = G.upgradeInfo(it);
-    if (inf.up >= inf.max) { toast('This item is at the ceiling.'); return false; }
+    if (!inf.room) { toast('This item is at the ceiling.'); return false; }
     const a = G.account();
     if (a.marks < inf.cost) { toast(`You need ${inf.cost} Mentor Marks.`); return false; }
     a.marks -= inf.cost; G.saveAccount(a);
-    const next = G.upgradedCopy(it, inf.up + 1);
+    const next = G.upgradedCopy(it, inf.next);
     if (where.slot) P.equip[where.slot] = next; else P.bags[where.bag].item = next;
-    loot(`${B.link(next.name, next.q)} is now upgrade ${next.up}/${inf.max} (${inf.cost} Mentor Marks).`);
+    loot(`${B.link(next.name, next.q)} is now at ${inf.nextPct}% of the ceiling (${inf.cost} Mentor Marks).`);
     G.save(); emit('change');
     return true;
   };

@@ -441,10 +441,10 @@
     heirloom_ring: { name: 'Veteran\'s Band', slot: 'finger', stat: ['sta', 'int'], cost: 40, icon: 'ring' },
   };
   // Gear upgrades (v10.3): Mentor Marks raise a level-57+ blue or purple item one step at a time. A step adds 3% of the
-  // ceiling (the average power of that slot in the ceiling raid's loot); purples stop at 100% of it, blues at 92%.
-  // A new raid moves `raid` to itself, which gives every older item new steps. Design:
+  // ceiling (the power of the item's own family in the ceiling raid's loot); purples stop at 100% of it, blues at 92%.
+  // A new raid moves `raid` to itself, which gives every older item room to climb. An item keeps the power it reached. Design:
   // docs/plans/2026-09-30-horizontal-progression-design.md
-  D.UPGRADE = { raid: 'tidecrown_citadel', step: 0.03, cap: { 3: 0.92, 4: 1 }, minLvl: 57, cost: (n) => 10 + 5 * n };
+  D.UPGRADE = { raid: 'tidecrown_citadel', step: 0.03, cap: { 3: 0.92, 4: 1 }, minLvl: 57, perPct: 5 }; // 5 Mentor Marks per 1% of the ceiling gained, so a step costs 15
   // Titles show next to your name. `need` is checked against your records (see G.titleUnlocked).
   D.TITLES = [
     { id: 'mentor', name: '%s the Mentor', need: { mentor: 5 }, how: 'Help 5 groups through Help Wanted' },
