@@ -2428,8 +2428,10 @@
     S.run = { act, name, pulls, mult, bossMult, idx: 0, phase: 'rest', restUntil: now() + 6000, wipes: 0, rolls: [], returnTo: S.player.place, started: now() };
     if (trial) { // Trials (v10.4): enemies at the level cap, stronger with each Trial level
       const f = TR().factor(trial), sc = (m) => ({ hp: ((m && m.hp) || 1) * f, dmg: ((m && m.dmg) || 1) * f }), Rec = G.trials();
-      const omens = TR().active(trial, new Date()), bm = sc(bossMult); if (omens.includes('hardened')) bm.hp *= TR().OMENS.hardened.hp; // Omens are fixed when the run starts
-      Object.assign(S.run, { mult: sc(mult), bossMult: bm, mobLevel: D.LEVEL_CAP, omens, name: `${name} · Trial ${trial}`, trial: { lvl: trial, season: Rec.season, bestHere: (Rec.best[act] || {}).lvl || 0 } });
+      const omens = TR().active(trial, new Date()), OMS = TR().OMENS, bm = sc(bossMult), tm = sc(mult); // Omens are fixed when the run starts
+      if (omens.includes('hardened')) bm.hp *= OMS.hardened.hp;
+      if (omens.includes('hasty')) { bm.hp *= OMS.hasty.hp; tm.hp *= OMS.hasty.hp; }
+      Object.assign(S.run, { mult: tm, bossMult: bm, mobLevel: D.LEVEL_CAP, omens, name: `${name} · Trial ${trial}`, trial: { lvl: trial, season: Rec.season, bestHere: (Rec.best[act] || {}).lvl || 0 } });
     }
     emit('instanceEnter', { act, dungeon: A.dungeon || null });
     S.player.hp = S.player.hp == null ? null : S.player.hp;
@@ -2461,6 +2463,11 @@
       if (marks[i]) u.mark = marks[i];
       return u;
     });
+    if ((R.omens || []).some((k) => k === 'warded' || k === 'vengeful' || k === 'sheltered') && enemies.length >= 2) enemies[pull.mobs.length - 1].focus = true; // Tier 3: the last enemy listed
+    if ((R.omens || []).includes('restless') && R.lastFightEnd && now() - R.lastFightEnd > TR().OMENS.restless.rest * 1000) { // Restless: a long rest draws a patrol
+      const trash = (R.pulls.find((p) => !p.boss) || { mobs: [] }).mobs[0];
+      if (trash) { for (let i = 0; i < TR().OMENS.restless.extra; i++) enemies.push(E.mobUnit(trash, R.mobLevel || null, R.mult || { hp: 1, dmg: 1 })); sys('A patrol heard you resting and joins the fight!'); }
+    }
     if ((R.omens || []).includes('swarming')) { // Swarming: one more enemy in every pull
       const trash = pull.mobs.find((k) => !D.MOBS[k].boss) || (R.pulls.find((p) => !p.boss) || { mobs: [] }).mobs[0];
       const SW = TR().OMENS.swarming, m0 = R.mult || { hp: 1, dmg: 1 };
@@ -2723,7 +2730,7 @@
     const speed = !R.noSpeed && G.par(Dg) && secs <= G.par(Dg), flawless = !R.wipes; // flawless = the group never wiped
     const cx = (P.codex = P.codex || {})[R.act] = Object.assign({ clears: 0, flawless: 0, speed: 0, best: null }, (P.codex || {})[R.act]);
     cx.clears++; if (flawless) cx.flawless++; if (speed) cx.speed++; if (cx.best == null || secs < cx.best) cx.best = Math.round(secs);
-    if (R.trial) G.trialDone(R, secs, TR().par(Dg)); // Trials pay their own Marks, against their own par
+    if (R.trial) G.trialDone(R, secs, TR().par(Dg, R.omens)); // Trials pay their own Marks, against their own par
     else if (P.level >= D.LEVEL_CAP && G.clearMarks(R.act)) G.addMarks(G.clearMarks(R.act), 'a level-60 clear');
     R.bonus = { secs: Math.round(secs), par: G.par(Dg), speed, flawless };
     if (speed) {

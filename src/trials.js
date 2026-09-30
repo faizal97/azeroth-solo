@@ -8,8 +8,8 @@
   T.SIZE = 8; // dungeons per season
   T.NEW_PER = 4; // dungeons never in a season that are guaranteed a place, per season
   T.PAR = 1; // a Trial's par is the dungeon's own data par (normal runs use G.par, 15% shorter)
-  T.par = (Dg) => (Dg && Dg.par ? Math.round(Dg.par * T.PAR) : 0);
-  T.BASE = 1; T.STEP = 1.06; // enemy health and damage: BASE at Trial 1, then STEP per level, compounding (tuned by sim/trialpace.js)
+  T.par = (Dg, omens) => (Dg && Dg.par ? Math.round(Dg.par * T.PAR * (omens && omens.includes('hasty') ? T.OMENS.hasty.par : 1)) : 0); // Hasty: shorter par
+  T.BASE = 0.9; T.STEP = 1.05; // enemy health and damage: BASE at Trial 1, then STEP per level, compounding (tuned by sim/trialpace.js)
   T.LAUNCH = '2026-10-01'; // the `since` date of every dungeon that existed when Trials began
   const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -84,6 +84,16 @@
     rallying: { tier: 1, off: true, icon: 'rallying_cry', name: 'Rallying', heal: 0, dmg: 0.5, text: (O) => `When an enemy dies, the rest of its pull hit ${Math.round(O.dmg * 100)}% harder (this adds up).`, counter: 'Kill order: spread, so they fall together.' },
     guarded: { tier: 1, icon: 'shield_wall', name: 'Guarded', taken: 0.5, text: (O) => `Bosses take ${Math.round((1 - O.taken) * 100)}% less damage while any other enemy in their pull is alive.`, counter: 'Boss plan: adds first.' },
     enraging: { tier: 1, icon: 'berserker_rage', name: 'Enraging', every: 8, dmg: 0.25, text: (O) => `Bosses hit ${Math.round(O.dmg * 100)}% harder every ${O.every} seconds of the fight.`, counter: 'Boss plan: burn the boss.' },
+    // Tier 2, from Trial 5: pull pace (careful / normal / fast)
+    volatile: { tier: 2, icon: 'fire_nova_totem', name: 'Volatile', delay: 3, blast: 0.25, text: (O) => `Enemies explode ${O.delay} seconds after they die, hitting your whole group for ${Math.round(O.blast * 100)}% of their health.`, counter: 'Pace: careful, full health and one pack at a time.' },
+    hasty: { tier: 2, icon: 'aspect_hawk', name: 'Hasty', par: 0.8, hp: 0.9, text: (O) => `Par time is ${Math.round((1 - O.par) * 100)}% shorter, and enemies have ${Math.round((1 - O.hp) * 100)}% less health.`, counter: 'Pace: fast.' },
+    restless: { tier: 2, icon: 'hunters_mark', name: 'Restless', rest: 15, extra: 2, text: (O) => `Resting longer than ${O.rest} seconds between pulls draws a patrol of ${O.extra} enemies into your next pull.`, counter: 'Pace: fast, keep moving.' },
+    // Tier 3, from Trial 8: who to kill first (the kill-order marks). In every pull of two or more, the last enemy listed
+    // is the Omen's focus (shown in the pull list and the briefing)
+    warded: { tier: 3, icon: 'mana_shield', name: 'Warded', taken: 0.5, text: (O) => `In every pull of two or more, the last enemy listed wards the rest: they take ${Math.round((1 - O.taken) * 100)}% less damage while it lives.`, counter: 'Marks: the warden first.' },
+    sheltered: { tier: 3, icon: 'divine_protection', name: 'Sheltered', text: () => 'In every pull of two or more, the last enemy listed cannot be hurt while any other enemy in its pull lives.', counter: 'Marks: the others first, it last.' },
+    // Vengeful is off: even at triple damage, trash pulls here are too small and short for it to matter (sim)
+    vengeful: { tier: 3, off: true, icon: 'berserker_rage', name: 'Vengeful', dmg: 3, text: (O) => `In every pull of two or more, when the last enemy listed dies, the rest of its pull deal ${O.dmg === 2 ? 'double' : O.dmg === 3 ? 'triple' : Math.round((O.dmg - 1) * 100) + '% more'} damage.`, counter: 'Marks: the others first, it last.' },
     // out of the rotation (off): they only made runs harder, with no answer a player could choose (sim, 2026-09-30).
     // Frenzied, Rallying and Mending are off too: they rested on Kill order (one at a time / spread), and in three sims
     // (2026-09-30) the kill order changed almost nothing, so they offered no real choice. Tier 1 rests on the boss plan:

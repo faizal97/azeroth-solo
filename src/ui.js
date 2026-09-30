@@ -93,7 +93,9 @@
       if (u.stunUntil > C.t) out.push({ id: 'stun', icon: 'hammer_justice', name: 'Stunned', debuff: true, left: u.stunUntil - C.t, raw: { id: 'stun' }, unit: u });
       // Trials Omens (v10.4): every enemy shows the run's Omens, and what they did to it (a frenzy, a rally)
       if (u.side === 'enemy' && C.opts.omens && window.TRIALS) for (const k of C.opts.omens) { const O = TRIALS.OMENS[k]; if (O) out.push({ id: 'omen_' + k, icon: O.icon, name: 'Omen: ' + O.name, debuff: false, left: Infinity, raw: { id: 'omen', omen: k }, unit: u }); }
+      if (u.focus && C.opts.omens) { const k = C.opts.omens.find((x) => x === 'warded' || x === 'vengeful' || x === 'sheltered'); if (k) out.push({ id: 'focus_' + k, icon: TRIALS.OMENS[k].icon, name: k === 'warded' ? 'The warden' : k === 'sheltered' ? 'Sheltered' : 'Vengeance', debuff: false, left: Infinity, raw: { id: 'focus', omen: k }, unit: u }); }
       if (u.frenzy) out.push({ id: 'frenzy', icon: 'berserker_rage', name: 'Frenzied', debuff: false, left: Infinity, raw: { id: 'frenzy' }, unit: u });
+      if (u.vengeance) out.push({ id: 'vengeance', icon: 'berserker_rage', name: 'Vengeance', debuff: false, left: Infinity, raw: { id: 'vengeance' }, unit: u });
       if (u.rally) out.push({ id: 'rally', icon: 'rallying_cry', name: 'Rallied', debuff: false, left: Infinity, raw: { id: 'rally', n: u.rally }, unit: u });
     } else if (!C && G.S) {
       for (const a of (G.S.player.auras || [])) { const left = (a.until - Date.now()) / 1000; if (left > 0) out.push(Object.assign(auraInfo(a, null), { left, raw: a })); }
@@ -119,6 +121,8 @@
     if (r.id === 'momentum') out.push('Built by pulling again quickly. Resting resets it.');
     if (r.proc) out.push(r.proc.teach);
     if (r.id === 'omen' && window.TRIALS) out.push(TRIALS.OMENS[r.omen].rule); // the rule, never how to beat it: players work that out
+    if (r.id === 'focus') out.push(r.omen === 'warded' ? 'While it lives, the rest of its pull take half damage (Omen: Warded).' : r.omen === 'sheltered' ? 'Cannot be hurt while any other enemy in its pull lives (Omen: Sheltered).' : `When it dies, the rest of its pull deal ${TRIALS.OMENS.vengeful.dmg}× damage (Omen: Vengeful).`);
+    if (r.id === 'vengeance') out.push(`Deals ${TRIALS.OMENS.vengeful.dmg}× damage: the one it was sworn to fell (Omen: Vengeful).`);
     if (r.id === 'frenzy') out.push('Deals 50% more damage now that it is under 30% health (Omen: Frenzied).');
     if (r.id === 'rally') out.push(`Hits ${10 * r.n}% harder: ${r.n} of its allies fell (Omen: Rallying).`);
     if (!out.length) { const ab = D.ABILITIES[a.icon]; if (ab && ab.desc) out.push(ab.desc.replace(/\{[a-z]+\}/g, '').replace(/\s+([.,])/g, '$1')); }
@@ -127,7 +131,7 @@
   function showAura(a, box) {
     const cur = (box && box._list && box._list.find((x) => x.id === a.id)) || a;
     const src = cur.raw && cur.raw.src != null && G.fight && G.fight.units[cur.raw.src];
-    const rid = cur.raw && cur.raw.id, left = rid === 'omen' ? 'For the whole Trial.' : rid === 'frenzy' || rid === 'rally' ? 'For the rest of the fight.' : cur.left > 86400 ? 'Lasts until you cancel it.' : `${fmtLeft(cur.left)}${cur.left >= 60 ? '' : ' sec'} left.`;
+    const rid = cur.raw && cur.raw.id, left = rid === 'omen' ? 'For the whole Trial.' : rid === 'frenzy' || rid === 'rally' || rid === 'focus' || rid === 'vengeance' ? 'For the rest of the fight.' : cur.left > 86400 ? 'Lasts until you cancel it.' : `${fmtLeft(cur.left)}${cur.left >= 60 ? '' : ' sec'} left.`;
     showDialog(h('div', { class: 'tooltip' },
       h('div', { class: 'nm', style: { color: a.debuff ? '#ff6a5a' : '#5fd46a' } }, img(abIcon(a.icon)), ' ', a.name, h('small', { class: 'dim' }, a.debuff ? '  debuff' : '  buff')),
       ...auraEffects(cur).map((t) => h('div', { style: { color: '#ffd100' } }, t)),
@@ -934,7 +938,7 @@
       return;
     }
     p.append(h('div', { class: 'score' },
-      h('span', null, '⏱ ', h('b', { class: 'tnum', 'data-clock': '1' }, G.fmtClock(G.runClock())), ` / par ${G.fmtClock(R.trial ? window.TRIALS.par(Dg) : G.par(Dg))}`),
+      h('span', null, '⏱ ', h('b', { class: 'tnum', 'data-clock': '1' }, G.fmtClock(G.runClock())), ` / par ${G.fmtClock(R.trial ? window.TRIALS.par(Dg, R.omens) : G.par(Dg))}`),
       R.momentum ? h('span', { class: 'mom' }, `Momentum ×${R.momentum}`) : h('span', { class: 'dim' }, 'Pull within 5s to build Momentum'),
       h('span', { class: R.wipes ? 'no' : 'ok' }, R.wipes ? '✗ Flawless' : '✓ No wipes')));
     if ((R.omens || []).length) p.append(h('div', { class: 'chips', style: { margin: '4px 0' } }, h('small', { class: 'dim', style: { alignSelf: 'center' } }, 'Omens:'), ...R.omens.map((k) => omenChip(k)))); // tap one for its rule
@@ -951,7 +955,8 @@
     const pull = R.pulls[R.idx]; if (!pull) return;
     const marks = (R.marks && R.marks[R.idx]) || {};
     const next = h('div', { class: 'chips' });
-    pull.mobs.forEach((k, i) => next.append(h('button', { class: 'chip mark-' + (marks[i] || 'none'), onclick: () => { G.cycleMark(i); renderPanel(); } }, h('span', { class: 'mk' }, MARK_SYM[marks[i]] || '·'), D.MOBS[k].name)));
+    const fk = (R.omens || []).find((x) => x === 'warded' || x === 'vengeful' || x === 'sheltered'), fi = fk && pull.mobs.length >= 2 ? pull.mobs.length - 1 : -1; // Tier 3 Omen focus
+    pull.mobs.forEach((k, i) => next.append(h('button', { class: 'chip mark-' + (marks[i] || 'none'), onclick: () => { G.cycleMark(i); renderPanel(); } }, h('span', { class: 'mk' }, MARK_SYM[marks[i]] || '·'), D.MOBS[k].name, i === fi ? h('small', null, fk === 'warded' ? ' warden' : fk === 'sheltered' ? ' sheltered' : ' vengeance') : null)));
     p.append(h('div', { class: 'sec-h' }, 'Next: ' + pull.label, h('small', null, 'tap to mark: ☠ first, ✖ second')), next);
     if (pull.boss) {
       const bp = R.bossPlan;
@@ -2858,7 +2863,7 @@
       const row = (a, v) => rows.push(h('div', { class: 'ai-row' }, h('span', null, a), h('b', null, v)));
       if (trial) {
         const Rec = G.trials(), best = Rec.best[act];
-        row('Enemies', `Level ${D.LEVEL_CAP}, ${trialStrength(lvl)}`); row('Par time', clockText(T.par(Dg)));
+        row('Enemies', `Level ${D.LEVEL_CAP}, ${trialStrength(lvl)}`); row('Par time', clockText(T.par(Dg, om)) + (om.includes('hasty') ? ' (Hasty)' : ''));
         row('Beat par', `opens Trial ${lvl + 1} (Trial ${lvl + 2} if 20% faster)`); row('Pays', `${5 + lvl} Mentor Marks`);
         row('Your best here', best ? `Trial ${best.lvl}, ${best.timed ? 'in time' : 'over par'}` : 'Not tried yet');
       } else {
@@ -2882,7 +2887,8 @@
       const list = h('div', { class: 'list' });
       for (const p of pulls) {
         const counts = {}; for (const m of p.mobs) counts[m] = (counts[m] || 0) + 1;
-        const lines = Object.entries(counts).map(([m, n]) => { const M = D.MOBS[m], L = mobLvl || (M.lvl ? M.lvl[1] : A.maxLvl), u2 = E.mobUnit(m, L, M.boss ? boss : trash); return `${n > 1 ? n + '× ' : ''}${M.name} (${L}): ${k(u2.maxHp)} health, hits for ${k(u2.dmg[0])}–${k(u2.dmg[1])}`; });
+        const fk3 = om.find((x) => x === 'warded' || x === 'vengeful' || x === 'sheltered'), fName = fk3 && p.mobs.length >= 2 ? D.MOBS[p.mobs[p.mobs.length - 1]].name : null;
+        const lines = Object.entries(counts).map(([m, n]) => { const M = D.MOBS[m], L = mobLvl || (M.lvl ? M.lvl[1] : A.maxLvl), u2 = E.mobUnit(m, L, M.boss ? boss : trash); return `${n > 1 ? n + '× ' : ''}${M.name} (${L}): ${k(u2.maxHp)} health, hits for ${k(u2.dmg[0])}–${k(u2.dmg[1])}${fName === M.name ? (fk3 === 'warded' ? ' · the warden' : fk3 === 'sheltered' ? ' · sheltered' : ' · vengeance') : ''}`; });
         const bk = p.mobs.find((m) => D.MOBS[m].boss || m === A.boss), bm = bk ? D.MOBS[bk] : null; // a Wanted target is named on the activity
         const drops = bm && bm.loot && !trial ? bm.loot.map((id) => D.ITEMS[id]).filter(Boolean) : [];
         list.append(h('div', { class: 'row' }, h('div', { class: 'ic mob' }, img(mobArt(bk || p.mobs[0]))),

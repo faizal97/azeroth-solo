@@ -88,8 +88,9 @@ const drop = (keys) => { for (const k of keys) { delete D.DUNGEONS[k]; delete D.
 
 // ---- Omens (tier 1): the weekly rotation, levels, and what each one does
 {
-  const ids = []; for (let id = -4; id < 60; id++) ids.push(T.omensFor(id)[0]);
-  ok(ids.every((k, i) => !i || k !== ids[i - 1]), 'an Omen never repeats two weeks in a row');
+  const weeks = []; for (let id = -4; id < 60; id++) weeks.push(T.omensFor(id)); const ids = weeks.flat();
+  ok(weeks.every((w, i) => !i || w.every((k, t) => k !== weeks[i - 1][t])), 'no tier repeats its Omen two weeks in a row');
+  ok(weeks.every((w) => w.length === new Set(w.map((k) => T.OMENS[k].tier)).size), 'one Omen per tier each week');
   ok(Object.keys(T.OMENS).filter((k) => !T.OMENS[k].off).every((k) => ids.includes(k)) && !ids.some((k) => T.OMENS[k].off), 'every Omen in the rotation comes round, and retired ones never do');
   ok(T.active(1, new Date()).length === 0 && T.active(2, new Date()).length === 1, 'Omens start at Trial 2');
   G.newGame({ name: 'Om', cls: 'warrior', race: 'human' }); G.S.player.level = 60; G.S.flags.warModeAsked = true;
@@ -147,6 +148,32 @@ const drop = (keys) => { for (const k of keys) { delete D.DUNGEONS[k]; delete D.
   const w = E.mobUnit('mangy_wolf', 60), F = E.fight([me], [w], { omens: ['mending'] }); w.hp = w.maxHp * 0.3;
   for (let i = 0; i < 50; i++) E.tick(F, 0.1);
   ok(w.hp > w.maxHp * 0.37 && w.hp < w.maxHp * 0.45, `Mending: a wounded enemy heals about 2% a second (${Math.round(w.hp / w.maxHp * 100)}% after 5 sec)`);
+}
+
+// ---- Tier 2 and 3 Omens
+{
+  G.newGame({ name: 'T23', cls: 'mage', race: 'human' }); G.S.player.level = 60; G.S.player.hp = null;
+  const bag = () => { const me = E.charUnit(G.S.player, 'ally', 'bot', Date.now()); me.maxHp = me.hp = 100000; me.auto = false; me.bot = { skill: 0, react: 99, afkUntil: 999 }; return me; };
+  // Volatile: a dying enemy blasts the group 3 sec later
+  { const me = bag(), w = E.mobUnit('mangy_wolf', 60, { hp: 1, dmg: 0 }); const F = E.fight([me], [w, E.mobUnit('mangy_wolf', 60, { hp: 50, dmg: 0 })], { omens: ['volatile'] }); w.hp = 1;
+    me.auto = true; me.bot = { skill: 0.8, react: 0.3 }; me.target = w.uid; let died = null; for (let i = 0; i < 100; i++) { E.tick(F, 0.1); if (w.dead && died == null) { died = F.t; me.auto = false; me.bot = { skill: 0, react: 99, afkUntil: 999 }; } }
+    ok(died != null && me.hp <= 100000 - 100000 * T.OMENS.volatile.blast + 1, `Volatile: the group takes the blast (${Math.round((100000 - me.hp) / 1000)}% of health)`); }
+  // Hasty: the Trial's par is shorter
+  ok(T.par(D.DUNGEONS.stratholme, ['hasty']) === Math.round(D.DUNGEONS.stratholme.par * T.PAR * T.OMENS.hasty.par), 'Hasty: a shorter par');
+  // Warded: while the focus lives, the others take half damage
+  const hitOn = (om, killFocus) => { let s2 = 0, n2 = 0; for (let r = 0; r < 20; r++) { const me = bag(); me.auto = true; me.bot = { skill: 0.8, react: 0.3 };
+    const a = E.mobUnit('mangy_wolf', 60, { hp: 50, dmg: 0 }), f = E.mobUnit('mangy_wolf', 60, { hp: 50, dmg: 0 }); f.focus = true; if (killFocus) f.dead = true;
+    const F = E.fight([me], [a, f], { omens: om }); me.target = a.uid; for (let i = 0; i < 60; i++) { E.tick(F, 0.1); for (const e of F.events) if (e.type === 'dmg' && e.tgt === a.uid && !e.crit) { s2 += e.amount; n2++; } F.events.length = 0; } } return s2 / Math.max(1, n2); };
+  const w1 = hitOn(['warded'], false), w0 = hitOn([], false), w2 = hitOn(['warded'], true);
+  ok(w1 < w0 * 0.65 && w2 > w0 * 0.8, `Warded: the rest take about half damage while the warden lives (${Math.round(w1)} vs ${Math.round(w0)}; warden dead ${Math.round(w2)})`);
+  // Sheltered: the focus cannot be hurt while another enemy lives
+  { const me = bag(); me.auto = true; me.bot = { skill: 0.8, react: 0.3 }; const a = E.mobUnit('mangy_wolf', 60, { hp: 50, dmg: 0 }), f = E.mobUnit('mangy_wolf', 60, { hp: 50, dmg: 0 }); f.focus = true;
+    const F = E.fight([me], [a, f], { omens: ['sheltered'] }); me.target = f.uid; const hp0 = f.hp; for (let i = 0; i < 60; i++) E.tick(F, 0.1);
+    ok(f.hp === hp0, 'Sheltered: the focus takes no damage while another enemy lives'); }
+  // Vengeful: when the focus dies, the rest heal to full
+  { const me = bag(); me.auto = true; me.bot = { skill: 0.8, react: 0.3 }; const a = E.mobUnit('mangy_wolf', 60, { hp: 50, dmg: 0 }), f = E.mobUnit('mangy_wolf', 60, { hp: 1, dmg: 0 }); f.focus = true;
+    const F = E.fight([me], [a, f], { omens: ['vengeful'] }); a.hp = a.maxHp * 0.3; f.hp = 1; me.target = f.uid; for (let i = 0; i < 100 && !f.dead; i++) E.tick(F, 0.1);
+    ok(f.dead && a.vengeance === true, 'Vengeful: when its focus dies, the rest swear vengeance (double damage)'); }
 }
 // ---- a character's Trials: blocks, levels, rating, Marks, the weekly goal, history
 G.newGame({ name: 'Trier', cls: 'warrior', race: 'human' });

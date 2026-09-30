@@ -24,19 +24,24 @@ const PROFILES = [
 ];
 function run(prof, cls, act, lvl) {
   G.newGame({ name: 'Pace', cls, race: 'human' }); const S = G.S, P = S.player; P.level = 60; S.flags.warModeAsked = true;
-  P.talents = G.autoTalents(cls, cls === 'warrior' ? 'tank' : cls === 'priest' ? 'healer' : 'dps', 60, 0);
-  if (cls === 'warrior') P.role = 'tank'; if (cls === 'priest') P.role = 'healer';
+  P.talents = G.autoTalents(cls, 'dps', 60, 0); P.role = 'dps'; // the bot tank follows the pace rules
   gear(P, prof.sources, prof.upgrade);
   P.trials = { season: 0, best: {}, open: { [act]: lvl }, week: null, history: [], bestEver: 0, bestRank: null };
   if (!G.queueTrial(act, lvl)) return null;
   G.acceptPop();
+  // a good player reads the week: the right answer to each active Omen (the same answers sim/omens.js proves)
+  for (const k of S.run.omens || []) {
+    if (k === 'guarded') S.run.bossPlan = 'adds'; if (k === 'enraging') S.run.bossPlan = 'boss';
+    if (k === 'volatile') S.run.pace = 'careful'; if (k === 'hasty' || k === 'restless') S.run.pace = 'fast';
+    if (k === 'warded' || k === 'vengeful' || k === 'sheltered') { S.run.marks = {}; S.run.pulls.forEach((p, i) => { const n = p.mobs.length; if (n < 2) return; S.run.marks[i] = k === 'warded' ? { [n - 1]: 'skull' } : n >= 3 ? { 0: 'skull', 1: 'cross' } : { 0: 'skull' }; }); }
+  }
   if (prof.pace) S.run.pace = prof.pace; // pushers chain pulls
   for (const m of S.group.members) { m.bot.skill = prof.skill; if (prof.upgrade || prof.sources[0] !== 'stratholme') gear(m, prof.sources, prof.upgrade); }
   let g = 0;
   while (S.run && S.run.phase !== 'done' && g++ < 400000) {
     if (G.fight && G.pUnit && G.pUnit.kind === 'player') { G.pUnit.kind = 'bot'; G.pUnit.bot = { skill: prof.me, react: 0.5 }; G.pUnit.role = G.role(); }
     for (const r of (S.run.rolls || [])) if (!r.done && r.player && r.choice == null) { try { G.roll(S.run.rolls.indexOf(r), 'greed'); } catch (e) {} }
-    if (S.run && S.run.phase === 'rest' && S.run.restUntil <= t) { try { G.runPull(); } catch (e) {} }
+    // the bot tank pulls on its own, following the pace rules
     if (S.run && S.run.wipes > 12) break;
     G.update(0.1); t += 100;
   }
@@ -49,7 +54,7 @@ for (const prof of PROFILES.filter((p) => !process.env.PACE_ONLY || p.name.start
   let wall = 0; const line = [];
   for (let lvl = 1; lvl <= 22; lvl += (lvl < 5 ? 2 : 2)) {
     let timed = 0, total = 0;
-    for (const act of acts) for (let i = 0; i < N; i++) { const cls = ['warrior', 'mage', 'priest'][i % 3], r = run(prof, cls, act, lvl); if (!r) continue; if (process.env.PACE_DEBUG) console.log(`  ${prof.name.slice(0, 6)} T${lvl} ${act} ${cls}: ${r.done ? r.secs + 's of ' + r.par : 'not done'}, ${r.wipes} wipes`); total++; if (r.timed) timed++; }
+    for (const act of acts) for (let i = 0; i < N; i++) { const cls = ['mage', 'rogue', 'hunter'][i % 3], r = run(prof, cls, act, lvl); if (!r) continue; if (process.env.PACE_DEBUG) console.log(`  ${prof.name.slice(0, 6)} T${lvl} ${act} ${cls}: ${r.done ? r.secs + 's of ' + r.par : 'not done'}, ${r.wipes} wipes`); total++; if (r.timed) timed++; }
     line.push(`T${lvl}:${timed}/${total}`);
     if (total && timed * 2 >= total) wall = lvl; else if (lvl > wall + 3) break;
   }

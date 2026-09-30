@@ -104,6 +104,14 @@ Rules that apply: UI must scale; automatic systems must be content-proof (both i
   burn the boss). They alternate weekly until Tiers 2 and 3 add variety.
 - The game never shows counters (design mindset: give every fact, never the answer). `counter` in the data is for the
   sims only. `node sim/omens.js [runs] [level]` checks that the right answer clearly beats the wrong one.
-- Next: Tier 2 on pull pace (careful / fast), which the dungeon sims show is a strong lever; then retune Trial pacing
-  with Omens in place.
+- **Tier 2 (from Trial 5), pull pace:** Volatile (dying enemies explode 3 sec later for 25% of the group's health; the
+  last blast goes off before the fight ends: careful), Hasty (par 20% shorter, enemies 10% less health: fast), Restless
+  (resting over 15 sec draws a patrol of 2: fast). All three proven (Volatile on safety: 3% vs 20% of runs wipe).
+- **Tier 3 (from Trial 8), kill-order marks:** in every pull of two or more the last enemy listed is the focus (shown
+  in the pull list and the briefing). Warded (the rest take half damage while it lives: mark it first) and Sheltered (it
+  cannot be hurt while another lives: mark it last; bots give up on it after 4 sec). Both proven (Sheltered 98% vs 40% in
+  time). Vengeful (its death makes the rest hit harder) is off: even at triple damage the trash pulls are too short.
+- **Pacing with Omens, answered right** (`node sim/trialpace.js 4`, the sim plays each week's right answers): Trial 1
+  at 90%, +5% a level. Walls: about 6-7 (fresh 60), 15 (raider), 17 (pusher, fully upgraded); Trial 19 only 1 time in 8.
+  The pusher finally climbs above the raider.
 

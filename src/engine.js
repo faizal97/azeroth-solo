@@ -276,10 +276,13 @@
     if (tgt.auras.some((a) => a.immune)) { ev(C, { type: 'avoid', src: src.uid, tgt: tgt.uid, what: 'immune', ab: o.ab || null }); return 0; }
     const om = C.opts.omens; // Trials Omens (v10.4)
     if (om && tgt.boss && om.includes('guarded') && root.TRIALS && C.enemies.some((x) => !x.dead && x !== tgt)) amount *= root.TRIALS.OMENS.guarded.taken;
+    if (om && tgt.side === 'enemy' && !tgt.focus && om.includes('warded') && root.TRIALS && C.enemies.some((x) => !x.dead && x.focus)) amount *= root.TRIALS.OMENS.warded.taken;
+    if (om && tgt.focus && om.includes('sheltered') && C.enemies.some((x) => !x.dead && x !== tgt)) { ev(C, { type: 'avoid', src: src.uid, tgt: tgt.uid, what: 'immune', ab: o.ab || null }); return 0; } // Sheltered
     if (om && src.side === 'enemy') {
       const OM = (root.TRIALS && root.TRIALS.OMENS) || {};
       if (om.includes('frenzied') && OM.frenzied && src.hp < src.maxHp * OM.frenzied.below) amount *= OM.frenzied.dmg;
       if (src.rally && OM.rallying) amount *= 1 + OM.rallying.dmg * src.rally;
+      if (src.vengeance && OM.vengeful) amount *= OM.vengeful.dmg;
       if (om.includes('enraging') && OM.enraging && src.boss) amount *= 1 + OM.enraging.dmg * Math.floor(C.t / OM.enraging.every);
     }
     if (auraOf(tgt, 'hunters_mark') && (src.cls === 'hunter' || (src.kind === 'pet' && C.units[src.owner] && C.units[src.owner].cls === 'hunter'))) amount *= 1.1;
@@ -347,6 +350,8 @@
   function kill(C, u, by) {
     u.dead = true; u.hp = 0; u.cast = null; u.auras = [];
     ev(C, { type: 'die', uid: u.uid, by: by && by.uid });
+    if (u.side === 'enemy' && u.focus && C.opts.omens && C.opts.omens.includes('vengeful')) { const rest = C.enemies.filter((x) => !x.dead && x !== u); for (const x of rest) x.vengeance = true; if (rest.length) ev(C, { type: 'emote', uid: rest[0].uid, text: 'The pull swears vengeance!' }); }
+    if (u.side === 'enemy' && C.opts.omens && C.opts.omens.includes('volatile') && root.TRIALS) { const VO = root.TRIALS.OMENS.volatile; (C.blasts = C.blasts || []).push({ t: C.t + VO.delay, name: u.name }); ev(C, { type: 'emote', uid: u.uid, text: `${u.name} starts to glow...` }); }
     if (u.side === 'enemy' && C.opts.omens && C.opts.omens.includes('rallying')) { // Rallying: the rest of the pull heal and hit harder
       const rest = C.enemies.filter((x) => !x.dead && x !== u);
       const RO = root.TRIALS.OMENS.rallying; for (const x of rest) { if (RO.heal) x.hp = Math.min(x.maxHp, x.hp + x.maxHp * RO.heal); x.rally = (x.rally || 0) + 1; }
@@ -695,14 +700,18 @@
     const mine = u ? friends(C, u) : C.allies, theirs = u ? foes(C, u) : C.enemies;
     // Kill order: spread puts each damage dealer on a different enemy (the tank keeps its own)
     if (C.opts.killOrder === 'spread' && u && u.side === 'ally' && u.role !== 'tank') { const al = alive(theirs).sort((x, y) => x.uid - y.uid); if (al.length) return al[u.uid % al.length]; }
+    // Omen Sheltered: a target that cannot be hurt is dropped after a few seconds of trying (a real player would notice)
+    const om = C.opts.omens, shelt = (x) => om && x.focus && om.includes('sheltered') && alive(theirs).some((y) => y !== x);
+    if (u && u.side === 'ally' && om && om.includes('sheltered')) { const cur = C.units[u.target]; if (cur && shelt(cur)) { u.stuckOn = u.stuckOn || C.t; } else u.stuckOn = 0; }
+    const giveUp = (x) => shelt(x) && u && u.stuckOn && C.t - u.stuckOn > 4;
     // kill order marks come first: skull, then cross
-    const marked = alive(theirs).filter((x) => x.mark).sort((x, y) => (x.mark === 'skull' ? 0 : 1) - (y.mark === 'skull' ? 0 : 1));
+    const marked = alive(theirs).filter((x) => x.mark && !giveUp(x)).sort((x, y) => (x.mark === 'skull' ? 0 : 1) - (y.mark === 'skull' ? 0 : 1));
     if (marked.length) return marked[0];
     const tank = alive(mine).find((x) => x.role === 'tank');
     const t = tank && C.units[tank.target];
-    if (t && !t.dead) return t;
-    const en = alive(theirs);
-    return en.sort((a, b) => a.hp - b.hp)[0] || null;
+    if (t && !t.dead && !giveUp(t)) return t;
+    const en = alive(theirs).filter((x) => !giveUp(x));
+    return en.sort((a, b) => a.hp - b.hp)[0] || alive(theirs)[0] || null;
   }
   E.focusTarget = focusTarget;
 
@@ -916,6 +925,11 @@
   E.tick = function (C, dt) {
     if (C.over) return;
     C.t += dt;
+    if (C.blasts && C.blasts.length) { // Omen Volatile: the dead explode (v10.4)
+      const VO = root.TRIALS.OMENS.volatile;
+      for (const bl of C.blasts.filter((x) => x.t <= C.t)) { for (const a of alive(C.allies)) dealDamage(C, { uid: -1, side: 'enemy', name: bl.name, auras: [], kind: 'mob' }, a, a.maxHp * VO.blast, { school: 'fire', ab: 'volatile' }); ev(C, { type: 'emote', uid: -1, text: `${bl.name} explodes!` }); }
+      C.blasts = C.blasts.filter((x) => x.t > C.t);
+    }
     const all = C.allies.concat(C.enemies);
     for (const u of all) {
       if (u.dead) continue;
@@ -989,7 +1003,7 @@
         if (f && u.kind === 'player' && C.opts.autoRetarget !== false) u.target = f.uid;
       }
     }
-    if (!alive(C.enemies).length) C.over = 'win';
+    if (!alive(C.enemies).length && !(C.blasts && C.blasts.length)) C.over = 'win'; // Volatile: the last blast goes off before the fight ends
     else if (!alive(C.allies).length) C.over = 'lose';
     else if (C.opts.soloUid && C.units[C.opts.soloUid].dead) C.over = 'lose';
   };
