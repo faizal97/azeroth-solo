@@ -630,6 +630,7 @@ img.qm.new, img.qm.ready { filter: drop-shadow(0 0 3px rgba(255, 209, 0, .6)); }
 .gf-lvl { display: inline-block; margin-left: 8px; padding: 0 6px; border-radius: 9px; background: #2a2016; border: 1px solid #5c4526; color: #d8c8a0; font: 700 12px/18px var(--body); vertical-align: 2px; }
 .gf-kind { display: inline-block; margin-right: 6px; padding: 0 6px; border-radius: 3px; font: 800 11px/16px var(--body); text-transform: uppercase; letter-spacing: .06em; vertical-align: 1px; }
 .gf-kind.k-dungeon { background: #1e3350; color: #bcd6ff; } .gf-kind.k-raid { background: #4e1a26; color: #ffc4cc; } .gf-kind.k-wanted { background: #44340f; color: #ffe0a0; }
+.gf-kind.k-featured { background: #5a4410; color: #ffd76a; }
 .gf-locked { opacity: .55; }
 .gf-queued { border-color: var(--gold); }
 .gf-tabs button { position: relative; }

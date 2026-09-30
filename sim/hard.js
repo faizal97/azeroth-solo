@@ -79,5 +79,55 @@ for (const act of raids) {
   check(!G.hardBonusLeft(act, b0), 'the weekly bonus was taken by the kill');
   check((S.run.rolls || []).some((r) => r.item.hard), 'the kill dropped Hard items');
 }
+// the featured raid: fixed for a whole week, every raid gets a turn, and new raids (none, one, many) join cleanly
+{
+  const W = (y, m, d) => new RealDate(y, m - 1, d, 12), fr = (d) => G.featuredRaid(d);
+  check(fr(W(2026, 10, 12)) === fr(W(2026, 10, 18)), 'the featured raid is the same Monday to Sunday');
+  const turns = new Set([0, 1, 2, 3, 4, 5].map((i) => fr(W(2026, 10, 5 + 7 * i))));
+  check(turns.size === G.raidActs().length, `every raid is featured in turn (${[...turns].join(', ')})`);
+  const before = [0, 1, 2, 3].map((i) => fr(W(2026, 10, 12 + 7 * i)));
+  const addRaid = (k, since) => { D.DUNGEONS[k] = Object.assign({}, D.DUNGEONS.onyxias_lair, { since }); D.ACTIVITIES[k] = Object.assign({}, D.ACTIVITIES.onyxias_lair, { dungeon: k }); };
+  const drop = (...ks) => { for (const k of ks) { delete D.DUNGEONS[k]; delete D.ACTIVITIES[k]; } };
+  addRaid('zz_new_a', '2026-10-14'); // one new raid, shipped on a Wednesday
+  check(fr(W(2026, 10, 12)) === before[0] && fr(W(2026, 10, 18)) === before[0], 'a raid shipped mid-week does not change that week');
+  check(fr(W(2026, 10, 19)) === 'zz_new_a', 'a new raid is featured the first full week after it ships');
+  addRaid('zz_new_b', '2026-10-15'); // many: two in the same week
+  check(fr(W(2026, 10, 19)) === 'zz_new_b', 'two new raids: the newest first');
+  const later = new Set([1, 2, 3, 4, 5, 6, 7].map((i) => fr(W(2026, 10, 19 + 7 * i))));
+  check(later.has('zz_new_a') && later.has('zz_new_b') && later.size === G.raidActs().length, 'afterwards the new ones take turns with the rest');
+  drop('zz_new_a', 'zz_new_b');
+  check([0, 1, 2, 3].every((i) => fr(W(2026, 10, 12 + 7 * i)) === before[i]), 'no new raid: the rotation is as before');
+}
+// the featured bonus: the first clear of the featured raid in a week pays the Marks once
+{
+  const act = G.raidActs()[0], Dg = D.DUNGEONS[D.ACTIVITIES[act].dungeon];
+  while (G.featuredRaid(new Date(t)) !== act) t += 7 * 86400000;
+  const runOnce = () => {
+    G.newGame({ name: 'F', cls: 'warrior', race: 'human' }); const S = G.S, P = S.player; S.flags.warModeAsked = true; P.level = 60; P.place = D.ACTIVITIES[act].where;
+    P.equip = G.botChar({ name: 'x', cls: 'warrior', race: 'human', level: 60, skill: 0.8 }).equip; P.talents = G.autoTalents('warrior', 'dps', 60, 0);
+    const saved = [Dg.bossMult, Dg.trashMult]; Dg.bossMult = { hp: 1, dmg: 1 }; Dg.trashMult = { hp: 1, dmg: 1 };
+    G.queueFor(act); G.acceptPop();
+    let g = 0; while (S.run && S.run.phase !== 'done' && g++ < 300000) {
+      if (G.fight && G.pUnit && G.pUnit.kind === 'player') { G.pUnit.kind = 'bot'; G.pUnit.bot = { skill: 0.8, react: 0.4 }; G.pUnit.role = G.role(); }
+      for (const r of (S.run.rolls || [])) if (!r.done && !r.player) { try { G.roll(S.run.rolls.indexOf(r), 'pass'); } catch (e) {} }
+      if (S.run && S.run.phase === 'rest' && S.run.restUntil <= t) { try { G.runPull(); } catch (e) {} }
+      G.update(0.1); t += 100;
+    }
+    [Dg.bossMult, Dg.trashMult] = saved; return S;
+  };
+  const m0 = G.account().marks; const S1 = runOnce(); const m1 = G.account().marks;
+  check(S1.run && S1.run.phase === 'done' && m1 - m0 === G.clearMarks(act) + G.FEATURED_MARKS && G.featuredClaimed(), `the featured clear pays +${G.FEATURED_MARKS} once (${m1 - m0})`);
+  const P1 = S1.player; P1.level = 60; S1.run = null; S1.group = null; P1.place = D.ACTIVITIES[act].where;
+  G.queueFor(act); G.acceptPop(); const m2a = G.account().marks;
+  const saved = [Dg.bossMult, Dg.trashMult]; Dg.bossMult = { hp: 1, dmg: 1 }; Dg.trashMult = { hp: 1, dmg: 1 };
+  let g = 0; while (S1.run && S1.run.phase !== 'done' && g++ < 300000) {
+    if (G.fight && G.pUnit && G.pUnit.kind === 'player') { G.pUnit.kind = 'bot'; G.pUnit.bot = { skill: 0.8, react: 0.4 }; G.pUnit.role = G.role(); }
+    for (const r of (S1.run.rolls || [])) if (!r.done && !r.player) { try { G.roll(S1.run.rolls.indexOf(r), 'pass'); } catch (e) {} }
+    if (S1.run && S1.run.phase === 'rest' && S1.run.restUntil <= t) { try { G.runPull(); } catch (e) {} }
+    G.update(0.1); t += 100;
+  }
+  [Dg.bossMult, Dg.trashMult] = saved;
+  check(G.account().marks - m2a === G.clearMarks(act), `the second clear that week pays only the normal Marks (${G.account().marks - m2a})`);
+}
 console.log(`hard: ${ok}/${ok + bad} checks pass`);
 process.exitCode = bad ? 1 : 0;

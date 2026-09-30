@@ -2176,6 +2176,7 @@
     if (dg.length || rd.length || wa.length) add('hearthstone', [dg.length ? `${dg.length} dungeon${dg.length > 1 ? 's' : ''}` : '', rd.length ? `${rd.length} raid${rd.length > 1 ? 's' : ''}` : '', wa.length ? `${wa.length} Wanted` : ''].filter(Boolean).join(', ') + ' at your level', dg.concat(rd, wa).slice(0, 3).map((k) => D.ACTIVITIES[k].name).join(', ') + (dg.length + rd.length + wa.length > 3 ? ', ...' : ''), () => { closeSheet(); openSocial('groups'); });
     if (G.rouletteOptions().length) add('hearthstone', G.rouletteReady() ? 'Dungeon Roulette: ready today' : 'Dungeon Roulette: done today', null, () => { closeSheet(); openSocial('groups'); });
     const bh = G.bountiesHeld(); if (bh) add('journal', `${bh} bount${bh === 1 ? 'y' : 'ies'} in progress`, null, null);
+    { const fr = P.level >= cap && G.featuredRaid(); if (fr) add('hearthstone', `Featured raid: ${D.ACTIVITIES[fr].name}`, G.featuredClaimed() ? 'Bonus taken this week' : `First clear this week: +${G.FEATURED_MARKS} Mentor Marks`, () => { ui.gfTab = 'raid'; closeSheet(); openSocial('groups'); }); }
     if (P.level >= cap && window.TRIALS && TRIALS.open(TRIALS.season(new Date()))) { add('journal', `${TRIALS.name(TRIALS.season(new Date()))} Trials: rating ${G.trialRating()}`, `Realm rank #${G.trialBoard().rank} of ${G.trialBoard().of}`, () => { ui.gfTab = 'trials'; closeSheet(); openSocial('groups'); }); }
     // the next thing that opens with a level
     const nexts = [[D.TALENT_START, 'Talents'], [D.RIDING.lvl, 'Riding'], [cap, 'Trials, raids and gear upgrades']].filter(([l]) => P.level < l).sort((x, y) => x[0] - y[0]);
@@ -2940,6 +2941,10 @@
         if (Dg && G.par(Dg)) row('Par time', `${clockText(G.par(Dg))} (beating it gives a speed chest)`);
         if (Dg) row('Flawless', 'a clear without a wipe gives a bonus');
         if (cx && cx.clears) row('Your record', `${cx.clears} clear${cx.clears > 1 ? 's' : ''}${cx.hard ? ` (${cx.hard} on Hard)` : ''}${cx.best ? ', best ' + clockText(cx.best) : ''}`);
+        if (Dg && Dg.raid && act === G.featuredRaid()) {
+          const looks = G.raidLooksLeft(act).length;
+          row('Featured this week', G.featuredClaimed() ? 'bonus taken this week (a new raid is featured on Monday)' : `the first clear this week (Normal or Hard) gives +${G.FEATURED_MARKS} Mentor Marks${looks ? ' and a look from its set' : ''}`);
+        }
         if (hard) {
           row('Hard', 'stronger enemies and one extra mechanic per boss');
           row('Hard loot', `the first kill of each boss each week drops its items ${G.HARD_STEPS} upgrade steps up (+${G.HARD_STEPS * Math.round(D.UPGRADE.step * 100)}% power toward the ceiling); after that, Normal items until Monday`);
@@ -3081,7 +3086,7 @@
       return h('div', { class: 'row gf-row tap' + (!doable(x) ? ' gf-locked' : '') + (queued ? ' gf-queued' : ''), onclick: (e) => { if (e.target.closest('button')) return; openBriefing(x.k, false); } }, // tap the row for its briefing (v10.4)
         h('div', { class: 'ic mob' }, img(mobArt(A.boss || finalBoss(A) || 'vancleef'))),
         h('div', { class: 't' }, h('b', null, A.name, h('span', { class: 'gf-lvl tnum' }, A.minLvl === A.maxLvl ? String(A.minLvl) : `${A.minLvl}–${A.maxLvl}`)),
-          h('small', null, showKind ? h('span', { class: 'gf-kind k-' + kind }, KIND_LABEL[kind]) : null, note)),
+          h('small', null, showKind ? h('span', { class: 'gf-kind k-' + kind }, KIND_LABEL[kind]) : null, x.k === G.featuredRaid() ? h('span', { class: 'gf-kind k-featured' }, 'Featured this week') : null, note)),
         btn);
     };
     const byLevel = (a, c) => a.A.minLvl - c.A.minLvl || kinds.indexOf(actKind(a.A)) - kinds.indexOf(actKind(c.A));

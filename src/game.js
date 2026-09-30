@@ -2271,6 +2271,39 @@
   G.raidWeek = function () { const P = G.S.player; if (!P.raidWeek || P.raidWeek.week !== weekKey()) P.raidWeek = { week: weekKey(), got: {} }; return P.raidWeek; };
   G.hardBonusLeft = (act, boss) => !G.raidWeek().got[act + ':' + boss];
   G.HARD_STEPS = 2;
+  // The featured raid (v10.7): one raid a week, worked out from the date and the data so every device agrees and it
+  // never changes mid-week. A raid joins on its `since` date (the raids that shipped before this are from RAID_START);
+  // one that joined during last week is featured the first full week after, newest first; otherwise they take turns.
+  // Its first clear that week (Normal or Hard) pays FEATURED_MARKS and a look from its set you do not have yet, if it
+  // has looks (docs/plans/2026-09-30-horizontal-progression-design.md, section 3).
+  G.RAID_START = '2026-09-28'; G.FEATURED_MARKS = 30;
+  const mondayOf = (d) => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x; };
+  const dayNum = (x) => Math.round(new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime() / 86400000);
+  const sinceDay = (str) => { const [y, m, d] = str.split('-').map(Number); return dayNum(new Date(y, m - 1, d)); };
+  G.raidActs = () => Object.keys(D.ACTIVITIES).filter((k) => { const A = D.ACTIVITIES[k], Dg = A.dungeon && D.DUNGEONS[A.dungeon]; return Dg && Dg.raid && !A.needQuest; });
+  G.featuredRaid = function (date) {
+    const ws = dayNum(mondayOf(date || new Date(now()))), since = (k) => sinceDay(D.DUNGEONS[D.ACTIVITIES[k].dungeon].since || G.RAID_START);
+    const open = G.raidActs().filter((k) => since(k) <= ws).sort((a, b) => since(a) - since(b) || (a < b ? -1 : 1));
+    if (!open.length) return null;
+    const fresh = open.filter((k) => since(k) > ws - 7 && since(k) > sinceDay(G.RAID_START));
+    if (fresh.length) return fresh[fresh.length - 1];
+    return open[Math.floor((ws - sinceDay(G.RAID_START)) / 7) % open.length];
+  };
+  G.featuredClaimed = () => !!G.raidWeek().featured;
+  // the looks in a raid's set that this account does not have yet, those this class can wear first
+  G.raidLooksLeft = function (act) {
+    const Dg = D.DUNGEONS[D.ACTIVITIES[act].dungeon], have = new Set(G.account().looks || []), ids = new Set();
+    for (const p of Dg.pulls) for (const m of p.mobs) for (const id of (D.MOBS[m].loot || [])) ids.add(id);
+    const left = [...ids].filter((id) => D.ITEMS[id].look && !have.has(D.ITEMS[id].look.join(':')));
+    return left.sort((a, b) => (G.canUseItem(D.ITEMS[b], G.S.player.cls) ? 1 : 0) - (G.canUseItem(D.ITEMS[a], G.S.player.cls) ? 1 : 0));
+  };
+  function featuredClear(act) {
+    const P = G.S.player; if (P.level < D.LEVEL_CAP || act !== G.featuredRaid() || G.featuredClaimed()) return;
+    G.raidWeek().featured = true;
+    G.addMarks(G.FEATURED_MARKS, 'the featured raid');
+    const left = G.raidLooksLeft(act);
+    if (left.length && G.collectLook(D.ITEMS[left[0]])) loot(`Featured raid: a new look for your wardrobe, ${B.link(D.ITEMS[left[0]].name, D.ITEMS[left[0]].q)}.`);
+  }
   G.hardExtra = function (act, boss) { const Dg = D.DUNGEONS[D.ACTIVITIES[act].dungeon], x = Dg && Dg.hard && Dg.hard.extra && Dg.hard.extra[boss]; return x ? x.map((e) => Object.assign({}, e)) : null; };
   G.hardCopy = function (id) {
     const it = G.copyItem(id), inf = G.upgradeInfo(it);
@@ -2756,6 +2789,7 @@
     const cx = (P.codex = P.codex || {})[R.act] = Object.assign({ clears: 0, flawless: 0, speed: 0, best: null }, (P.codex || {})[R.act]);
     cx.clears++; if (flawless) cx.flawless++; if (speed) cx.speed++; if (cx.best == null || secs < cx.best) cx.best = Math.round(secs);
     if (R.hard) cx.hard = (cx.hard || 0) + 1; // Hard clears (v10.7), shown in the codex
+    if (Dg.raid && !R.trial) featuredClear(R.act);
     if (R.trial) G.trialDone(R, secs, TR().par(Dg, R.omens)); // Trials pay their own Marks, against their own par
     else if (P.level >= D.LEVEL_CAP && G.clearMarks(R.act)) G.addMarks(G.clearMarks(R.act), 'a level-60 clear');
     R.bonus = { secs: Math.round(secs), par: G.par(Dg), speed, flawless };
