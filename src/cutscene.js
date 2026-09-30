@@ -71,6 +71,43 @@
         lines: [{ t: 0.5, text: 'He alone survived. Now he walks the roads under a hood, and the Black Brood stirs again.' }, { t: 6, who: 'Lyveus Cloveus', text: 'They made me a ghost. Ghosts keep watch.' }] },
     ] },
     // Quest scenes (v10.2): short moments on key quests (quest + on: 'accept' | 'done'), locked in the Theater until seen
+    { id: 'wid_meet', legend: 'widya', scene: true, quest: 'lg_wid_meet', on: 'accept', level: 22, title: 'Widya: A Borrowed Lute', music: 'town', shots: [
+      { bg: 'scene:mystral_lake', dur: 10, cam: [[0, 2, 1.14], [0, 0, 1.04]], fx: ['fadein'],
+        actors: [{ a: 'story:widya', x: 42, y: 2, w: 32, anim: 'breathe', from: { o: 0 }, dur: 1.6 }],
+        lines: [{ t: 0.5, text: 'On a jetty at Lake Aurel, a wood elf plays a borrowed lute, badly, and sings anyway.' }, { t: 5, who: 'Widya', text: 'Every song is somebody\'s. I\'m only keeping them warm.' }] },
+      { bg: 'scene:mystral_lake', dur: 8, cam: [[0, 0, 1.04], [0, -2, 1.18]], fx: ['fadeout'],
+        actors: [{ a: 'story:widya', x: 42, y: 2, w: 32, anim: 'breathe' }],
+        lines: [{ t: 0.5, who: 'Widya', text: 'This lute is awful. Mine was taken. Help me, and I\'ll sing you the whole story.' }] },
+    ] },
+    { id: 'wid_strings', legend: 'widya', scene: true, quest: 'lg_wid_strings', on: 'done', level: 24, title: 'Widya: Silver Strings', music: 'town', shots: [
+      { bg: 'scene:mystral_lake', dur: 10, cam: [[-3, 0, 1.1], [0, 0, 1.04]], fx: ['fadein', 'fadeout'],
+        actors: [{ a: 'story:widya', x: 42, y: 2, w: 32, anim: 'breathe', from: { o: 0 }, dur: 1.2 }],
+        lines: [{ t: 0.5, text: 'Widya winds the silver strings around her wrist, since there is no lute yet to put them on.' }, { t: 5, who: 'Widya', text: 'One piece. Three to go. Don\'t tell the lute, it worries.' }] },
+    ] },
+    { id: 'wid_harrowby', legend: 'widya', scene: true, quest: 'lg_wid_pegs', on: 'accept', level: 27, title: 'Widya: The Appraiser', music: 'dungeon', shots: [
+      { bg: 'scene:stromgarde_keep', dur: 10, cam: [[0, 2, 1.16], [0, 0, 1.04]], fx: ['fadein', 'fadeout'],
+        actors: [{ a: 'story:harrowby', x: 44, y: 2, w: 30, anim: 'breathe', from: { o: 0 }, dur: 1.6 }],
+        lines: [{ t: 0.5, text: 'Far away, a tired man in grey writes a price beside each piece of a lute.' }, { t: 5, who: 'Harrowby', text: 'Worth more apart. Most things are.' }] },
+    ] },
+    { id: 'wid_contest', legend: 'widya', scene: true, quest: 'lg_wid_contest', on: 'done', level: 33, title: 'Widya: A Song for the Neck', music: 'town', shots: [
+      { bg: 'scene:nesingwary_camp', dur: 9, cam: [[3, 0, 1.12], [0, 0, 1.04]], fx: ['fadein', 'embers'],
+        actors: [{ a: 'mob:sal_brightbell', x: 44, y: 0, w: 34, from: { o: 0 }, dur: 1.2 }],
+        lines: [{ t: 0.5, text: 'The fire burns low at Wexley\'s Expedition. The brawlers are asleep where they fell.' }, { t: 4.5, who: 'Sal Brightbell', text: 'Fine! Fine. The neck is yours. Where did you learn to sing like that?' }] },
+      { bg: 'scene:nesingwary_camp', dur: 8, cam: [[0, 0, 1.04], [0, -2, 1.18]], fx: ['embers', 'fadeout'],
+        actors: [{ a: 'story:widya', x: 42, y: 2, w: 32, anim: 'breathe', from: { o: 0 }, dur: 1.2 }],
+        lines: [{ t: 0.5, who: 'Widya', text: 'In Reedsong. Where everyone does.' }] },
+    ] },
+    { id: 'wid_song', legend: 'widya', scene: true, quest: 'lg_wid_song', on: 'done', level: 40, title: 'Widya: Reedsong\'s Song', music: 'town', shots: [
+      { bg: 'scene:highland_plains', dur: 9, cam: [[0, 2, 1.14], [0, 0, 1.04]], fx: ['fadein'],
+        actors: [{ a: 'story:harrowby', x: 44, y: 2, w: 30, anim: 'breathe', from: { o: 0 }, dur: 1.4 }],
+        lines: [{ t: 0.5, text: 'Harrowby climbs the plains with the body of the lute under his arm.' }, { t: 4.5, who: 'Harrowby', text: 'Play. I will know what it is worth when I hear it.' }] },
+      { bg: 'scene:highland_plains', dur: 10, cam: [[0, 0, 1.06], [0, -2, 1.2]], fx: ['embers'],
+        actors: [{ a: 'story:widya', x: 42, y: 2, w: 32, anim: 'breathe', from: { o: 0 }, dur: 1.4 }],
+        lines: [{ t: 0.5, text: 'She plays Reedsong\'s song, the one every family there knows. For once, Harrowby writes nothing down.' }] },
+      { bg: 'scene:highland_plains', dur: 10, cam: [[0, -2, 1.2], [0, 0, 1.04]], fx: ['fadeout'],
+        actors: [{ a: 'story:widya', x: 42, y: 2, w: 32, anim: 'breathe' }],
+        lines: [{ t: 0.5, who: 'Widya', text: 'He gave it back. The debt is still there, I know.' }, { t: 4.5, who: 'Widya', text: 'But look: the last name on the neck is mine.' }] },
+    ] },
     { id: 'lyv_hood', legend: 'lyveus', scene: true, quest: ['lg_hood_a', 'lg_hood_h'], on: 'accept', level: 17, title: 'The Hooded Wanderer', music: 'dungeon', shots: [
       { bg: 'scene:@here', dur: 10, cam: [[0, 0, 1.08], [0, -2, 1.2]], fx: ['fadein', 'fadeout'],
         actors: [{ a: 'story:lyveus_hooded', x: 42, y: 2, w: 32, anim: 'breathe', from: { o: 0 }, dur: 1.6 }],

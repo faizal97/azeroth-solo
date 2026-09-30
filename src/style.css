@@ -31,6 +31,7 @@ img { max-width: 100%; display: block; }
 .tnum { font-variant-numeric: tabular-nums; }
 .q0 { color: var(--q0); } .q1 { color: var(--q1); } .q2 { color: var(--q2); } .q3 { color: var(--q3); } .q4 { color: var(--q4); }
 .cls-warrior { color: var(--c-warrior); } .cls-mage { color: var(--c-mage); } .cls-priest { color: var(--c-priest); } .cls-rogue { color: var(--c-rogue); } .cls-paladin { color: var(--c-paladin); } .cls-warlock { color: var(--c-warlock); } .cls-hunter { color: var(--c-hunter); } .cls-druid { color: var(--c-druid); } .cls-shaman { color: #2a8bff; }
+.cls-bard { color: #2EC4B6; }
 
 #app { height: 100%; display: grid; grid-template-rows: auto auto auto minmax(0, 1fr) auto auto; max-width: 560px; margin: 0 auto; position: relative; }
 

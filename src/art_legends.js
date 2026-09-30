@@ -955,6 +955,680 @@
   }
 
   // =====================================================================
+  // WIDYA, the Songkeeper's Daughter: the second Legend, a wood elf bard of Reedsong (an original character by a friend
+  // of the developer, redrawn from her two reference pictures in the game's style). One rig, drawn FACING RIGHT in
+  // hero-sprite coordinates, playing Reedsong's lute; the story actor is the same rig in a dancing step, mirrored.
+  // Look: long, very wavy auburn hair past the waist with green leaf sprigs in it, freckles, warm brown eyes, long
+  // pointed ears; a loose moss-green tunic with wide sleeves, a gold-trimmed V neck and gold vine embroidery, a leather
+  // strap across the body to a satchel at the hip, brown leather trousers, tall slouched boots; a pear-shaped wooden
+  // lute with a round sound hole, carved leaves and a pegbox bent back.
+  // =====================================================================
+  var WI = {
+    skin: '#f6dcc8', skinD: '#ddb29c', hair: '#b25a2c', hairD: '#7a3517', hairL: '#e89454', eye: '#7a4620', brow: '#8a3c1a',
+    tunic: '#66803c', tunicD: '#45592a', gold: '#dcb24c', pants: '#7a5232', boot: '#6c4328', strap: '#553416', satchel: '#8a5a30', leafC: '#6aa844'
+  };
+  var LU = { wood: '#c47a38', woodL: '#eaaa64', woodD: '#86491c', neck: '#8a5226', board: '#34200f', peg: '#5e3416', str: '#f6eed6', hole: '#1e1008', carve: '#f4cc84' };
+  // a stroked circle
+  function ring(x, y, r, col, w, o) { return L('M' + n(x - r) + ',' + n(y) + ' A' + n(r) + ',' + n(r) + ' 0 1 0 ' + n(x + r) + ',' + n(y) + ' A' + n(r) + ',' + n(r) + ' 0 1 0 ' + n(x - r) + ',' + n(y), col, w, o); }
+  // a wavy run through the points: each segment bows out to alternate sides by amp (long curly hair)
+  function wavy(pts, amp) {
+    var d = '';
+    for (var i = 1; i < pts.length; i++) {
+      var a = pts[i - 1], b = pts[i], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.sqrt(dx * dx + dy * dy) || 1, s = (i % 2 ? 1 : -1) * amp;
+      d += ' Q' + n((a[0] + b[0]) / 2 - dy / l * s) + ',' + n((a[1] + b[1]) / 2 + dx / l * s) + ' ' + pt(b);
+    }
+    return d;
+  }
+
+  // ---- Reedsong's lute: body centred on (0,0), the neck along -y ----
+  var LUTE_BODY = 'M0,-17 C5,-16.5 12.6,-9 13,1.5 C13.4,11 7.4,18 0,18 C-7.4,18 -13.4,11 -13,1.5 C-12.6,-9 -5,-16.5 0,-17 Z';
+  // the pear-shaped bowl: warm wood, an inner binding line, carved leaves round the lower bowl, the rosette and bridge
+  function luteBody(c) {
+    var o = P(LUTE_BODY, c.lg([[0, LU.woodL], [0.42, LU.wood], [0.74, LU.wood], [1, LU.woodD]], 0.15, 0, 0.85, 1), 2.6);
+    o += CG(F('M-14,-4 C-12,-14 -4,-18 2,-18 L-14,14 Z', '#ffffff', 0.2) + F('M14,-2 C13,10 8,17 0,19 L16,19 Z', '#000000', 0.2), c.clip(LUTE_BODY));
+    o += G(L(LUTE_BODY, LU.woodD, 1.2, 0.75), 'scale(0.84)');
+    o += L('M-8,4.6 C-7,10.6 -3,13 0,13.2 C3,13 7,10.6 8,4.6', LU.carve, 1.1, 0.85);
+    [[-7.4, 8.6, -50], [-3.4, 12.4, -20], [3.4, 12.4, 20], [7.4, 8.6, 50]].forEach(function (q) {
+      o += G(F(leafD(0.34), LU.carve, 0.9), 'translate(' + q[0] + ',' + q[1] + ') rotate(' + q[2] + ')');
+    });
+    o += ring(0, -4, 5.9, LU.carve, 1.3) + C(0, -4, 4.4, LU.hole, 1.4);
+    o += L('M-3,-4 L3,-4 M0,-7 L0,-1 M-2.1,-6.1 L2.1,-1.9 M2.1,-6.1 L-2.1,-1.9', dk(LU.wood, 0.2), 0.7, 0.9);
+    o += R(-5.2, 8, 10.4, 2.8, LU.board, 1.3) + L('M-4,9.4 L4,9.4', LU.carve, 0.6, 0.7);
+    return o;
+  }
+  // neck and fretboard up to the nut at -len, then the pegbox bent back, three pegs down each side
+  function luteNeck(c, len) {
+    var t = -len, o = '';
+    var P1 = [-2.6, t], P2 = [2.6, t], P3 = [-3, t - 12.6], P4 = [-8, t - 10.2];
+    [[P2, P3, 1], [P1, P4, -1]].forEach(function (e) {
+      var a = e[0], b = e[1], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.sqrt(dx * dx + dy * dy), nx = -dy / l, ny = dx / l;
+      if (nx * e[2] < 0) { nx = -nx; ny = -ny; }
+      [0.3, 0.58, 0.86].forEach(function (f) {
+        var p = lerp(a, b, f), q = [p[0] + nx * 3, p[1] + ny * 3];
+        o += L('M' + pt(p) + ' L' + pt(q), OL, 2.6) + L('M' + pt(p) + ' L' + pt(q), LU.peg, 1.2) + E(q[0], q[1], 1.4, 1, c.cel(lt(LU.peg, 0.25)), 1, null, Math.atan2(ny, nx) * 180 / PI);
+      });
+    });
+    o += P(pd([P1, P2, P3, P4], true), c.lg([[0, lt(LU.neck, 0.28)], [1, dk(LU.neck, 0.25)]], 0, 0, 1, 0), 2.2);
+    o += L('M-1.2,' + n(t - 2.4) + ' L-4.6,' + n(t - 9.4), LU.board, 1.5, 0.85);
+    o += P('M-3.3,-14 L-2.6,' + t + ' L2.6,' + t + ' L3.3,-14 Z', c.lg([[0, lt(LU.neck, 0.22)], [0.5, LU.neck], [1, dk(LU.neck, 0.3)]], 0, 0, 1, 0), 2.2);
+    o += F('M-2.1,-15 L-1.7,' + t + ' L1.7,' + t + ' L2.1,-15 Z', LU.board);
+    for (var y = -19; y > t + 2; y -= 4.4) o += L('M-1.9,' + n(y) + ' L1.9,' + n(y), '#c8b48a', 0.55, 0.8);
+    return o;
+  }
+  function luteStrings(len) {
+    var t = -len - 0.4;
+    return R(-2.9, -len - 1.6, 5.8, 1.9, '#efe4c4', 1) +
+      L('M-1.7,9.4 L-1.2,' + t + ' M-0.57,9.4 L-0.4,' + t + ' M0.57,9.4 L0.4,' + t + ' M1.7,9.4 L1.2,' + t, LU.str, 0.55, 0.95);
+  }
+  function lute(c, len) { len = len || 44; return luteNeck(c, len) + luteBody(c) + luteStrings(len); }
+  // a point on the lute's centre line, t units up the neck from the body centre, for a lute placed at J.lute
+  function luteAt(J, t, x) { var a = J.lute[2] * PI / 180, s = J.lute[3]; x = x || 0; return [J.lute[0] + (x * Math.cos(a) + Math.sin(a) * t) * s, J.lute[1] + (x * Math.sin(a) - Math.cos(a) * t) * s]; }
+
+  // ---- Widya's rig ----
+  var WPOSE_SPRITE = {
+    head: [70, 27, 10.2], flow: 0, tilt: 0,
+    bSh: [59, 47], bEl: [74.5, 64], fSh: [76, 47], fEl: [66, 62], strum: [-6, -2],
+    bHip: [61, 80], bKn: [58, 99], bFt: [55, 117], fHip: [68, 80], fKn: [72.5, 99], fFt: [76, 117],
+    lute: [67, 75, 58, 0.94]
+  };
+  // the story pose: a dancing step (back heel lifted), head bowed to the lute, eyes closed, singing, hair swinging out
+  var WPOSE_ACTOR = {
+    head: [70, 27.5, 10.2], flow: 1, tilt: 9, closed: true, sing: true,
+    bSh: [59, 47], bEl: [74.5, 63], fSh: [76, 47], fEl: [66, 61], strum: [-6, -2],
+    bHip: [61, 80], bKn: [54, 97.5], bFt: [48, 113.5], bLift: 20, fHip: [68, 80], fKn: [75.5, 98], fFt: [79, 117],
+    lute: [67, 74, 54, 0.96]
+  };
+  function wiHairBack(c, J) {
+    var X = J.head[0], Y = J.head[1], r = J.head[2], f = J.flow || 0;
+    var outer = [[X - r * 0.9, Y - r * 0.95], [X - r * 1.45 - f * 1.5, Y - r * 0.2], [X - r * 1.75 - f * 3, Y + r * 0.6], [X - r * 1.95 - f * 4.5, Y + r * 1.4], [X - r * 2.1 - f * 6, Y + r * 2.2],
+      [X - r * 2.25 - f * 7.5, Y + r * 3.0], [X - r * 2.35 - f * 8.5, Y + r * 3.8], [X - r * 2.35 - f * 9.5, Y + r * 4.6], [X - r * 2.2 - f * 9, Y + r * 5.4]];
+    var e = outer[outer.length - 1];
+    var d = 'M' + n(X + r * 0.6) + ',' + n(Y - r * 1.25) + ' C' + n(X) + ',' + n(Y - r * 1.6) + ' ' + n(X - r * 0.7) + ',' + n(Y - r * 1.3) + ' ' + pt(outer[0]) + wavy(outer, 3) +
+      // curly tips at the bottom
+      ' Q' + n(e[0] - 1) + ',' + n(e[1] + 5) + ' ' + n(e[0] + 2) + ',' + n(e[1] + 6.4) + ' Q' + n(e[0] + 3.6) + ',' + n(e[1] + 2.4) + ' ' + n(e[0] + 5.4) + ',' + n(e[1] + 3) +
+      ' Q' + n(e[0] + 6.4) + ',' + n(e[1] + 7.6) + ' ' + n(e[0] + 9) + ',' + n(e[1] + 6.8) + ' Q' + n(e[0] + 9.6) + ',' + n(e[1] + 2.6) + ' ' + n(e[0] + 11.4) + ',' + n(e[1] + 1.4) +
+      wavy([[e[0] + 11.4, e[1] + 1.4], [X - r * 0.95 - f * 3, Y + r * 4.2], [X - r * 0.9 - f, Y + r * 2.6], [X - r * 0.7, Y + r * 1.2], [X - r * 0.2, Y + r * 0.4]], 1.4) + ' Z';
+    var o = P(d, c.lg([[0, WI.hairL], [0.3, WI.hair], [0.75, WI.hair], [1, WI.hairD]], 0.8, 0, 0.2, 1), 2.1);
+    var s1 = [[X - r * 1.1, Y - r * 0.2], [X - r * 1.5 - f, Y + r * 1.1], [X - r * 1.65 - f * 3, Y + r * 2.4], [X - r * 1.8 - f * 5, Y + r * 3.6], [X - r * 1.75 - f * 6, Y + r * 4.8], [X - r * 1.5 - f * 5, Y + r * 5.8]];
+    var s2 = [[X - r * 0.8, Y + r * 0.6], [X - r * 1.1 - f, Y + r * 1.8], [X - r * 1.2 - f * 2, Y + r * 3.1], [X - r * 1.3 - f * 3, Y + r * 4.3], [X - r * 1.2 - f * 3, Y + r * 5.4]];
+    o += CG(L('M' + pt(s1[0]) + wavy(s1, 1.8), WI.hairD, 1.1, 0.9) + L('M' + pt(s2[0]) + wavy(s2, 1.6), WI.hairD, 1, 0.8) +
+      L('M' + pt([s1[0][0] - 1.6, s1[0][1] + 2]) + wavy(s1.slice(1, 4).map(function (p) { return [p[0] - 2, p[1] + 1]; }), 1.6), WI.hairL, 1, 0.8), c.clip(d));
+    return o;
+  }
+  // the lock of hair that falls over the near shoulder
+  function wiLock(c, J) {
+    var X = J.head[0], Y = J.head[1], r = J.head[2];
+    var fr = [[X - r * 0.3, Y + r * 0.6], [X + r * 0.02, Y + r * 1.6], [X + r * 0.18, Y + r * 2.6], [X + r * 0.22, Y + r * 3.5]];
+    var bk = [[X - r * 0.26, Y + r * 3.35], [X - r * 0.44, Y + r * 2.25], [X - r * 0.6, Y + r * 1.15], [X - r * 0.8, Y + r * 0.3]];
+    var d = 'M' + pt(fr[0]) + wavy(fr, 1.6) + ' Q' + n(X + r * 0.3) + ',' + n(Y + r * 4.1) + ' ' + n(X + r * 0.02) + ',' + n(Y + r * 4.1) + ' Q' + n(X - r * 0.1) + ',' + n(Y + r * 3.6) + ' ' + pt(bk[0]) + wavy(bk, 1.2) + ' Z';
+    return P(d, c.lg([[0, WI.hairL], [0.4, WI.hair], [1, WI.hairD]], 0.8, 0, 0.2, 1), 1.9) +
+      L('M' + pt([X - r * 0.34, Y + r * 1.0]) + wavy([[X - r * 0.34, Y + r * 1.0], [X - r * 0.14, Y + r * 2.0], [X - r * 0.04, Y + r * 3.0], [X - r * 0.02, Y + r * 3.8]], 1), WI.hairD, 0.9, 0.85);
+  }
+  function wiHead(c, X, Y, r, J) {
+    function q(u, v) { return n(X + r * u) + ',' + n(Y + r * v); }
+    var o = '';
+    var face = 'M' + q(-1, 0.05) + ' C' + q(-1, -1.3) + ' ' + q(0.95, -1.3) + ' ' + q(1, -0.15) + ' L' + q(1.15, 0.3) + ' L' + q(0.97, 0.45) +
+      ' C' + q(0.95, 0.84) + ' ' + q(0.5, 1.06) + ' ' + q(0.04, 1.02) + ' C' + q(-0.68, 0.96) + ' ' + q(-1, 0.55) + ' ' + q(-1, 0.05) + ' Z';
+    o += P(face, c.cel(WI.skin), 2.1);
+    o += CG(F('M' + q(-1.1, -0.2) + ' L' + q(-0.25, -0.2) + ' C' + q(-0.4, 0.4) + ' ' + q(-0.2, 0.8) + ' ' + q(0.2, 1.2) + ' L' + q(-1.1, 1.2) + ' Z', WI.skinD, 0.5), c.clip(face));
+    // freckles over the nose and cheek, a warm blush
+    o += E(X + r * 0.3, Y + r * 0.42, 2.2, 1.3, '#f0968a', 0, 0.4);
+    [[0.14, 0.32], [0.3, 0.26], [0.24, 0.44], [0.42, 0.36], [0.62, 0.3], [0.08, 0.46]].forEach(function (p) { o += C(X + r * p[0], Y + r * p[1], 0.42, '#b86a4a', 0, 0.85); });
+    // warm brown eye with lashes (closed while she sings), a soft auburn brow
+    var ex = X + r * 0.5, ey = Y - r * 0.03;
+    if (J.closed) {
+      o += L('M' + n(ex - 2.3) + ',' + n(ey - 0.2) + ' Q' + n(ex) + ',' + n(ey + 1.6) + ' ' + n(ex + 2.3) + ',' + n(ey - 0.3), OL, 1.3) + L('M' + n(ex - 2.3) + ',' + n(ey - 0.2) + ' L' + n(ex - 3.3) + ',' + n(ey - 1.2), OL, 1);
+    } else {
+      o += E(ex, ey, 2.3, 1.9, '#fbf6ee') + C(ex + 0.55, ey + 0.2, 1.4, WI.eye) + C(ex + 0.8, ey + 0.2, 0.65, '#2a1408') + C(ex + 0.15, ey - 0.4, 0.5, '#ffffff');
+      o += L('M' + n(ex - 2.4) + ',' + n(ey - 0.8) + ' Q' + n(ex) + ',' + n(ey - 2.6) + ' ' + n(ex + 2.5) + ',' + n(ey - 1.2), OL, 1.4) + L('M' + n(ex - 2.4) + ',' + n(ey - 0.8) + ' L' + n(ex - 3.5) + ',' + n(ey - 2), OL, 1);
+    }
+    o += L('M' + n(ex - 2.8) + ',' + n(ey - 4.2) + ' Q' + n(ex) + ',' + n(ey - 5.8) + ' ' + n(ex + 3) + ',' + n(ey - 4.6), WI.brow, 1.3);
+    // mouth: a soft smile, or open in song
+    if (J.sing) o += P('M' + q(0.6, 0.6) + ' Q' + q(0.78, 0.55) + ' ' + q(0.92, 0.6) + ' Q' + q(0.9, 0.86) + ' ' + q(0.72, 0.84) + ' Q' + q(0.6, 0.76) + ' ' + q(0.6, 0.6) + ' Z', '#7a2a2c', 1) + F('M' + q(0.66, 0.78) + ' Q' + q(0.78, 0.72) + ' ' + q(0.88, 0.8) + ' Q' + q(0.78, 0.84) + ' ' + q(0.66, 0.78) + ' Z', '#e87a80');
+    else o += L('M' + q(0.54, 0.62) + ' Q' + q(0.74, 0.76) + ' ' + q(0.93, 0.6), '#8a3a30', 1.2) + L('M' + q(0.66, 0.8) + ' Q' + q(0.76, 0.84) + ' ' + q(0.86, 0.79), '#d8807a', 0.9, 0.8);
+    // hair over the crown: a side part, a wave falling over the brow, down the back of the head
+    var cap = 'M' + q(1.02, -0.42) + ' C' + q(1.1, -1.15) + ' ' + q(0.35, -1.58) + ' ' + q(-0.35, -1.42) + ' C' + q(-1.0, -1.3) + ' ' + q(-1.34, -0.7) + ' ' + q(-1.24, 0.05) +
+      ' C' + q(-1.22, 0.5) + ' ' + q(-1.1, 0.82) + ' ' + q(-0.95, 1.08) + ' L' + q(-0.62, 0.92) + ' C' + q(-0.62, 0.4) + ' ' + q(-0.46, 0.0) + ' ' + q(-0.24, -0.32) +
+      ' C' + q(0.06, -0.66) + ' ' + q(0.5, -0.6) + ' ' + q(0.74, -0.36) + ' C' + q(0.82, -0.5) + ' ' + q(0.95, -0.52) + ' ' + q(1.02, -0.42) + ' Z';
+    o += P(cap, c.lg([[0, WI.hairL], [0.35, WI.hair], [0.75, WI.hair], [1, WI.hairD]], 0.7, 0, 0.3, 1), 2);
+    o += L('M' + q(0.72, -0.72) + ' C' + q(0.3, -1.12) + ' ' + q(-0.3, -1.16) + ' ' + q(-0.8, -0.86) + ' M' + q(0.4, -0.56) + ' C' + q(0.0, -0.9) + ' ' + q(-0.6, -0.84) + ' ' + q(-1.0, -0.4), WI.hairD, 1, 0.85);
+    o += L('M' + q(0.84, -0.9) + ' C' + q(0.5, -1.26) + ' ' + q(0.0, -1.36) + ' ' + q(-0.4, -1.28), WI.hairL, 1.2, 0.9);
+    // long ear swept back and up through the hair
+    var ear = 'M' + q(-0.24, -0.06) + ' C' + q(-0.72, -0.34) + ' ' + q(-1.3, -0.82) + ' ' + q(-1.9, -1.26) + ' C' + q(-1.58, -0.52) + ' ' + q(-1.12, 0.2) + ' ' + q(-0.42, 0.48) + ' Z';
+    o += P(ear, c.cel(WI.skin), 1.8);
+    o += F('M' + q(-0.46, 0.14) + ' C' + q(-0.94, -0.14) + ' ' + q(-1.36, -0.64) + ' ' + q(-1.66, -0.98) + ' C' + q(-1.36, -0.4) + ' ' + q(-1.0, 0.12) + ' ' + q(-0.52, 0.3) + ' Z', WI.skinD, 0.85);
+    o += C(X - r * 0.36, Y + r * 0.46, 0.8, WI.gold, 0.7);
+    // green leaf sprigs tucked in the hair
+    o += leaf(c, X - r * 0.72, Y - r * 1.08, -72, 0.48, WI.leafC) + leaf(c, X - r * 0.62, Y - r * 1.16, -28, 0.42, '#8ac858') + leaf(c, X - r * 0.9, Y - r * 0.84, -118, 0.4, '#4e8a34');
+    o += leaf(c, X + r * 0.36, Y - r * 1.34, 18, 0.4, '#8ac858') + leaf(c, X + r * 0.3, Y - r * 1.3, 62, 0.36, WI.leafC);
+    return o;
+  }
+  // brown leather trousers into a tall slouched boot with a folded cuff
+  function wiLeg(c, h, kn, f, back, lift) {
+    var pc = back ? dk(WI.pants, 0.2) : WI.pants, bc = back ? dk(WI.boot, 0.18) : WI.boot, o = '';
+    o += tube([h, kn, [f[0] + 0.5, f[1] - 4]], 8.4, pc, back ? null : dk(pc, 0.28));
+    var tx = kn[0], ty = kn[1] + 2, ax = f[0] + 0.6, ay = f[1] - 2, dx = ax - tx, dy = ay - ty, l = Math.sqrt(dx * dx + dy * dy) || 1, px = -dy / l, py = dx / l;
+    function q(t, w) { return [tx + dx * t + px * w, ty + dy * t + py * w]; }
+    var x = f[0], y = f[1] + 5;
+    var ft = P('M' + n(x - 5.4) + ',' + n(y - 9.4) + ' L' + n(x + 3) + ',' + n(y - 9.4) + ' C' + n(x + 5.4) + ',' + n(y - 6.2) + ' ' + n(x + 11) + ',' + n(y - 5.4) + ' ' + n(x + 11) + ',' + n(y - 1.6) +
+      ' L' + n(x + 11) + ',' + n(y) + ' L' + n(x - 5.8) + ',' + n(y) + ' Z', c.cel(bc), 2.1) + R(x - 5.8, y - 2.6, 5.4, 2.6, dk(bc, 0.45), 1.2);
+    o += lift ? G(ft, 'rotate(' + lift + ' ' + n(x + 10) + ' ' + n(y) + ')') : ft;
+    o += P(pd([q(0.12, -5.4), q(0.55, -5.9), q(1, -5), q(1, 5), q(0.55, 5.9), q(0.12, 5.4)], true), c.cel(bc), 2);
+    o += L('M' + pt(q(0.46, -5.4)) + ' Q' + pt(q(0.56, 0)) + ' ' + pt(q(0.44, 5.4)) + ' M' + pt(q(0.72, -5.2)) + ' Q' + pt(q(0.8, 0)) + ' ' + pt(q(0.7, 5.2)), dk(bc, 0.4), 1, 0.85);
+    o += L('M' + pt(q(0.4, 3.8)) + ' L' + pt(q(0.9, 3.4)), lt(bc, 0.3), 1, 0.6);
+    // the slouched cuff folded over the top
+    o += P('M' + pt(q(-0.06, -6.6)) + ' L' + pt(q(-0.06, 6.6)) + ' L' + pt(q(0.2, 6.6)) + ' Q' + pt(q(0.24, 3.4)) + ' ' + pt(q(0.2, 1)) + ' Q' + pt(q(0.3, -2)) + ' ' + pt(q(0.24, -6.6)) + ' Z', c.cel(lt(bc, 0.14)), 1.9);
+    return o;
+  }
+  var WI_SKIRT = 'M55.4,72 L77,72 C80,79 83,87 85.4,96 L80.6,94.4 L77.4,101.4 L72,95.8 L66.2,102.6 L61,95.8 L55.6,101.8 L52.4,95 L47.4,97.8 C49,88 51.8,79 55.4,72 Z';
+  // the tunic's long skirt, split into pointed panels, a gold band above the hem
+  function wiSkirt(c) {
+    var o = P(WI_SKIRT, c.cel(WI.tunic), 2.1);
+    o += CG(F('M44,70 L60.5,70 L60.5,104 L44,104 Z', WI.tunicD, 0.5) + L('M84.6,93.2 L80.2,91.6 L77.2,98.4 L72,93 L66.2,99.6 L61,93 L55.6,98.8 L52.6,92.2 L48,94.8', WI.gold, 1.5) +
+      L('M66.6,76 L66.2,99 M73,78 C75,84 76.6,90 77.2,98', WI.tunicD, 1, 0.85) + L('M69,84 C67.6,87 70,88.6 68.8,91.4 M59,84 C57.6,87 60,88.6 58.8,91.4', WI.gold, 0.9, 0.9), c.clip(WI_SKIRT));
+    return o;
+  }
+  function wiSatchel(c) {
+    var o = P('M44.6,79 C44.4,77 45.4,76 47.2,76 L56,76.4 C57.6,76.5 58.2,77.6 58,79 L57,88.6 C56.8,90 56,90.6 54.6,90.6 L47.2,90.2 C45.8,90.2 45,89.4 45,88 Z', c.cel(WI.satchel), 1.9);
+    o += P('M44.6,78.8 C44.6,77 45.6,76 47.4,76 L56,76.4 C57.6,76.5 58.2,77.6 58,79 L57.6,83.4 C54,85 48,84.8 44.8,83.4 Z', c.cel(lt(WI.satchel, 0.12)), 1.6);
+    o += R(49.8, 82.4, 2.8, 3.2, WI.gold, 1) + L('M46.2,87.2 L56.4,87.6', dk(WI.satchel, 0.4), 0.8, 0.8);
+    return o;
+  }
+  var WI_TUNIC = 'M53,45 Q66,40.5 80,45 C82.6,52 81.4,60 78.4,66 C77.2,69 76.8,72 76.8,75 L56,75 C55,66 51.4,56 53,45 Z';
+  function wiTorso(c) {
+    var o = P(WI_TUNIC, c.cel(WI.tunic), 2.2);
+    o += CG(F('M48,40 L60,40 L61.4,80 L48,80 Z', WI.tunicD, 0.55) + F('M75,42 L84,42 L84,80 L74,80 Z', '#ffffff', 0.1) +
+      L('M58,50 C59,58 59.6,66 59.6,74 M76.4,52 C75.8,60 74.8,67 73.4,74', WI.tunicD, 1, 0.8), c.clip(WI_TUNIC));
+    // the V neck, gold-trimmed, the laced bodice just showing at its point, a thin chain with a small pendant
+    o += P('M62.8,40.6 L75.4,41 L70.2,52.4 Z', c.cel(WI.skin), 1.4);
+    o += F('M67.6,49 L72,49.2 L70.2,52.8 Z', '#6a4226') + L('M68.6,50 L71,50.1', '#c8a060', 0.6);
+    o += L('M62.6,40.4 L70.2,52.8 L75.8,40.8', OL, 3.2) + L('M62.6,40.4 L70.2,52.8 L75.8,40.8', WI.gold, 1.6);
+    o += L('M64.4,41.8 Q69.6,47.2 74.2,42', '#f0d078', 0.6) + C(69.5, 46.3, 0.8, WI.gold, 0.6);
+    // gold vine embroidery down the front
+    o += L('M70.2,54.6 C68.6,57.6 71.4,59.6 70,62.8 C68.8,65.4 71,67.6 69.8,70.6', WI.gold, 1.1);
+    [[69.4, 57.2, -60], [71, 61, 60], [69.4, 65.4, -60], [70.8, 69, 60]].forEach(function (p) { o += G(F(leafD(0.26), WI.gold), 'translate(' + p[0] + ',' + p[1] + ') rotate(' + p[2] + ')'); });
+    // belt, and the satchel strap across the body
+    o += P('M55.6,72 L77,72 L76.8,75.6 L56,75.6 Z', c.cel(WI.strap), 1.4) + R(64.4, 71.4, 3.6, 4.8, WI.gold, 1.1);
+    o += L('M75.6,42.6 L56.6,77', OL, 4) + L('M75.6,42.6 L56.6,77', WI.strap, 2.3) + L('M74.6,45 L57.8,75.4', lt(WI.strap, 0.3), 0.6, 0.7) + ring(68.4, 55.6, 1.5, WI.gold, 1);
+    return o;
+  }
+  // a wide bell sleeve on the forearm from el towards hd, its open end hanging down, gold at the cuff
+  function bellSleeve(c, el, hd, col, drop, side) {
+    var dx = hd[0] - el[0], dy = hd[1] - el[1], l = Math.sqrt(dx * dx + dy * dy) || 1, px = -dy / l, py = dx / l;
+    if (side ? px * side < 0 : py < 0) { px = -px; py = -py; }
+    function q(t, w, dd) { return [el[0] + dx * t + px * w, el[1] + dy * t + py * w + (dd || 0)]; }
+    // a trumpet along the forearm, the lower side sagging, the open cuff at 3/4 of the way to the hand
+    var a = q(-0.04, -4.2), b = q(0.74, -5.4), cc = q(0.74, 6, drop), d = q(-0.04, 4.2);
+    var sl = 'M' + pt(a) + ' L' + pt(b) + ' L' + pt(cc) + ' Q' + pt(q(0.38, 6.4, drop * 0.8)) + ' ' + pt(d) + ' Z';
+    var o = P(sl, c.cel(col), 2);
+    o += L('M' + pt(q(0.7, -4.6)) + ' L' + pt(q(0.7, 5.2, drop)), WI.gold, 1.6);
+    o += L('M' + pt(q(0.24, 1)) + ' Q' + pt(q(0.44, 3, drop * 0.4)) + ' ' + pt(q(0.6, 4.6, drop * 0.8)), dk(col, 0.32), 0.9, 0.85);
+    return o;
+  }
+  function wiHand(c, p, back) { return C(p[0], p[1], 3.5, c.cel(back ? WI.skinD : WI.skin), 1.8); }
+  function wiRig(c, J, opts) {
+    opts = opts || {};
+    var o = '', X = J.head[0], Y = J.head[1], r = J.head[2];
+    var L0 = J.lute, bHd = luteAt(J, 30, 1), fHd = luteAt(J, J.strum[0], J.strum[1]);
+    o += wiHairBack(c, J);
+    if (!opts.upper) {
+      o += tube([J.bSh, J.bEl], 7.6, dk(WI.tunic, 0.22));
+      o += wiLeg(c, J.bHip, J.bKn, J.bFt, true, J.bLift);
+      o += wiLeg(c, J.fHip, J.fKn, J.fFt, false);
+      o += wiSkirt(c);
+      o += wiSatchel(c);
+    }
+    o += tube([[66.8, 42], [X - r * 0.1, Y + r * 0.6]], 6.2, WI.skin);
+    o += wiTorso(c);
+    o += wiLock(c, J);
+    o += J.tilt ? G(wiHead(c, X, Y, r, J), 'rotate(' + J.tilt + ' ' + n(X - r * 0.2) + ' ' + n(Y + r) + ')') : wiHead(c, X, Y, r, J);
+    if (!opts.upper) {
+      // the fretting arm reaches round the front to the neck; the lute over it; the fingers over the neck
+      o += tube([lerp(J.bEl, bHd, 0.6), bHd], 4.4, WI.skinD) + bellSleeve(c, J.bEl, bHd, dk(WI.tunic, 0.14), 3);
+      o += G(lute(c), 'translate(' + L0[0] + ',' + L0[1] + ') rotate(' + L0[2] + ') scale(' + L0[3] + ')');
+      o += wiHand(c, bHd, true) + L('M' + n(bHd[0] - 1.2) + ',' + n(bHd[1] - 3) + ' L' + n(bHd[0] + 0.6) + ',' + n(bHd[1] - 0.6) + ' M' + n(bHd[0] + 1.2) + ',' + n(bHd[1] - 3.4) + ' L' + n(bHd[0] + 2.6) + ',' + n(bHd[1] - 1.2), dk(WI.skinD, 0.3), 0.8);
+      // the strumming arm over the bowl
+      o += tube([J.fSh, J.fEl], 8, WI.tunic, WI.tunicD);
+      o += tube([lerp(J.fEl, fHd, 0.6), fHd], 4.6, WI.skin) + bellSleeve(c, J.fEl, fHd, WI.tunic, 4, -1);
+      o += wiHand(c, fHd, false) + L('M' + n(fHd[0] - 2.6) + ',' + n(fHd[1] + 0.6) + ' L' + n(fHd[0] - 0.4) + ',' + n(fHd[1] + 2.8), dk(WI.skinD, 0.3), 0.8);
+    }
+    return o;
+  }
+  function widyaSprite(c) { return shadow(c, 64, 26) + wiRig(c, WPOSE_SPRITE); }
+  function widyaActor(c) {
+    var keep = SWM; SWM = 0.8;
+    try { return E(92, 155, 36, 5, c.rg([[0, '#000', 0.45], [0.65, '#000', 0.25], [1, '#000', 0]])) + G(wiRig(c, WPOSE_ACTOR), 'matrix(-1.25,0,0,1.25,176,2.5)'); } finally { SWM = keep; }
+  }
+
+  // =====================================================================
+  // HARROWBY: the Black Ledger's appraiser, a tired middle-aged clerk who prices what people lose. Not a villain.
+  // Drawn FACING RIGHT in hero-sprite coordinates (so he can stand in a scene as an NPC), a little stooped: a long
+  // grey-black coat over a drab waistcoat, round spectacles, grey at the temples, a thick oxblood ledger clamped under
+  // his far arm, a quill in his ink-stained near hand. The story actor is the same rig mirrored.
+  // =====================================================================
+  var HW = {
+    skin: '#ecc8a8', skinD: '#c9a084', hair: '#3e3a40', grey: '#a29ea8', coat: '#3a3c44', coatD: '#26272c', lapel: '#555862', shirt: '#ece6d8',
+    vest: '#6a5a44', trouser: '#4a4a50', shoe: '#221c1a', ink: '#1c2a52', book: '#6e2a22', page: '#efe6cc', brass: '#c8a050', quill: '#f2eee2'
+  };
+  // the ledger, cover to the viewer, the thick page block on top and the spine on the right, brass corners, a strap
+  function ledger(c) {
+    var o = P('M-9,-11 L-4.6,-15.4 L13.4,-15.4 L9,-11 Z', c.lg([[0, '#fbf4de'], [1, '#d8ccaa']]), 1.6);
+    o += L('M-6.6,-13 L11,-13 M-5.4,-14.2 L12.2,-14.2', '#b0a080', 0.5, 0.9);
+    o += P('M9,-11 L13.4,-15.4 L13.4,7 L9,11.4 Z', c.cel(dk(HW.book, 0.3)), 1.6);
+    o += P('M-9,-11 L9,-11 L9,11.4 L-9,11.4 Z', c.cel(HW.book), 1.8);
+    o += R(-6.6, -8.6, 13.2, 17.6, 'none', 0).replace('fill="none"', 'fill="none" stroke="' + lt(HW.book, 0.25) + '" stroke-width="0.8" opacity="0.8"');
+    o += P('M-9,-11 L-4.4,-11 L-9,-6.4 Z', c.cel(HW.brass), 1) + P('M-9,11.4 L-4.4,11.4 L-9,6.8 Z', c.cel(HW.brass), 1);
+    o += P('M5.2,-11.2 L9.4,-11.2 L9.4,11.6 L5.2,11.6 Z', c.cel('#3a2418'), 1.2) + R(4.4, -1.8, 5.8, 4, c.cel(HW.brass), 1);
+    o += R(-3.4, -2.4, 5.4, 4, '#e8dcbc', 0.8) + L('M-2.4,-1 L1,-1 M-2.4,0.6 L0.2,0.6', '#6a5a44', 0.5);
+    return o;
+  }
+  function hwHead(c, X, Y, r) {
+    function q(u, v) { return n(X + r * u) + ',' + n(Y + r * v); }
+    var o = '';
+    // grey-black hair at the back and sides, thin on top, grey at the temple
+    o += P('M' + q(0.3, -0.98) + ' C' + q(-0.4, -1.3) + ' ' + q(-1.2, -0.9) + ' ' + q(-1.16, -0.1) + ' C' + q(-1.14, 0.3) + ' ' + q(-1.0, 0.62) + ' ' + q(-0.84, 0.8) + ' L' + q(-0.5, 0.5) + ' Z', c.cel(HW.hair), 1.8);
+    var face = 'M' + q(-1, 0.05) + ' C' + q(-1, -1.3) + ' ' + q(0.95, -1.3) + ' ' + q(1, -0.15) + ' L' + q(1.24, 0.36) + ' L' + q(1.0, 0.52) +
+      ' C' + q(1.0, 0.96) + ' ' + q(0.5, 1.16) + ' ' + q(0.02, 1.08) + ' C' + q(-0.7, 1.0) + ' ' + q(-1, 0.55) + ' ' + q(-1, 0.05) + ' Z';
+    o += P(face, c.cel(HW.skin), 2.1);
+    o += CG(F('M' + q(-1.1, -0.2) + ' L' + q(-0.25, -0.2) + ' C' + q(-0.4, 0.4) + ' ' + q(-0.2, 0.8) + ' ' + q(0.2, 1.2) + ' L' + q(-1.1, 1.2) + ' Z', HW.skinD, 0.5) +
+      // grey stubble along the jaw
+      F('M' + q(-0.5, 0.5) + ' C' + q(-0.3, 0.9) + ' ' + q(0.3, 1.1) + ' ' + q(0.8, 0.96) + ' L' + q(1.1, 0.7) + ' L' + q(1.2, 1.4) + ' L' + q(-0.6, 1.4) + ' Z', '#8a8078', 0.35), c.clip(face));
+    o += L('M' + q(0.2, 0.4) + ' C' + q(0.3, 0.56) + ' ' + q(0.4, 0.62) + ' ' + q(0.52, 0.64), dk(HW.skin, 0.35), 0.9, 0.8);
+    // ear
+    o += E(X - r * 0.4, Y + r * 0.14, r * 0.2, r * 0.3, c.cel(HW.skin), 1.4, null, 10) + L('M' + q(-0.4, 0.0) + ' Q' + q(-0.3, 0.14) + ' ' + q(-0.38, 0.3), HW.skinD, 0.8);
+    // hair over the ear, receding, the grey temple
+    o += P('M' + q(-0.1, -0.9) + ' C' + q(-0.6, -1.0) + ' ' + q(-1.02, -0.7) + ' ' + q(-1.04, -0.12) + ' L' + q(-0.66, -0.06) + ' C' + q(-0.62, -0.34) + ' ' + q(-0.44, -0.56) + ' ' + q(-0.14, -0.68) + ' Z', c.cel(HW.hair), 1.6);
+    o += L('M' + q(-0.2, -0.76) + ' C' + q(-0.5, -0.74) + ' ' + q(-0.7, -0.5) + ' ' + q(-0.76, -0.14), HW.grey, 1.6, 0.95);
+    o += L('M' + q(0.62, -0.94) + ' C' + q(0.3, -1.08) + ' ' + q(0.0, -1.06) + ' ' + q(-0.26, -0.96), dk(HW.skin, 0.12), 0.9, 0.6);
+    // tired eye: heavy lid, a bag under it, behind round spectacles
+    var ex = X + r * 0.52, ey = Y - r * 0.02;
+    o += E(ex, ey + 0.2, 2, 1.4, '#f6f0e4') + C(ex + 0.6, ey + 0.4, 1.1, '#5a5a4a') + C(ex + 0.75, ey + 0.4, 0.5, '#141414');
+    o += P('M' + n(ex - 2.3) + ',' + n(ey - 0.4) + ' Q' + n(ex) + ',' + n(ey - 2.2) + ' ' + n(ex + 2.3) + ',' + n(ey - 0.3) + ' L' + n(ex + 2.2) + ',' + n(ey + 0.2) + ' Q' + n(ex) + ',' + n(ey - 0.8) + ' ' + n(ex - 2.2) + ',' + n(ey + 0.1) + ' Z', HW.skinD, 1);
+    o += L('M' + n(ex - 1.8) + ',' + n(ey + 2.2) + ' Q' + n(ex) + ',' + n(ey + 3.2) + ' ' + n(ex + 1.8) + ',' + n(ey + 2.1), dk(HW.skin, 0.3), 0.8, 0.9);
+    o += L('M' + n(ex - 3) + ',' + n(ey - 3.4) + ' Q' + n(ex) + ',' + n(ey - 4.4) + ' ' + n(ex + 2.8) + ',' + n(ey - 3.2), '#5a5458', 1.4);
+    o += ring(ex + 0.4, ey + 0.4, 3.3, OL, 2.2) + ring(ex + 0.4, ey + 0.4, 3.3, '#b8a060', 0.9) + L('M' + n(ex - 2.9) + ',' + n(ey - 0.2) + ' L' + q(-0.36, -0.1), OL, 1.1) + L('M' + n(ex + 1.6) + ',' + n(ey - 1.6) + ' L' + n(ex + 2.4) + ',' + n(ey - 0.6), '#ffffff', 0.9, 0.8);
+    // thin, downturned mouth
+    o += L('M' + q(0.56, 0.74) + ' Q' + q(0.76, 0.68) + ' ' + q(0.96, 0.78), '#6a3a32', 1.2);
+    return o;
+  }
+  function hwLeg(c, h, kn, f, back) {
+    var col = back ? dk(HW.trouser, 0.22) : HW.trouser, o = tube([h, kn, [f[0] + 0.5, f[1] - 3]], 8.6, col, back ? null : dk(col, 0.25));
+    var x = f[0], y = f[1] + 5;
+    o += P('M' + n(x - 5) + ',' + n(y - 7.4) + ' L' + n(x + 3) + ',' + n(y - 7.4) + ' C' + n(x + 6) + ',' + n(y - 5.6) + ' ' + n(x + 10.6) + ',' + n(y - 4.4) + ' ' + n(x + 10.6) + ',' + n(y - 1.4) + ' L' + n(x + 10.6) + ',' + n(y) + ' L' + n(x - 5.4) + ',' + n(y) + ' Z', c.cel(back ? dk(HW.shoe, 0.1) : HW.shoe), 2.1);
+    o += L('M' + n(x + 3.4) + ',' + n(y - 5.4) + ' Q' + n(x + 7) + ',' + n(y - 4.4) + ' ' + n(x + 9) + ',' + n(y - 2.6), '#8a8288', 0.9, 0.7);
+    return o;
+  }
+  function hwRig(c) {
+    var o = '';
+    var bSh = [58, 50], bEl = [53.5, 63], bHd = [54, 75], fSh = [75, 50], fEl = [82.5, 64.5], fHd = [89, 58];
+    // the coat's long skirt and back vent
+    o += P('M55,74 L77.6,74 C80.4,84 82.4,94 83.6,104.6 L74.4,105.6 L70.6,87 L64.4,87 L60.6,106.4 L48.6,104.4 C50.6,94 52.8,84 55,74 Z', c.cel(HW.coat), 2.1);
+    o += CG(F('M44,70 L60,70 L60,108 L44,108 Z', HW.coatD, 0.5), c.clip('M55,74 L77.6,74 C80.4,84 82.4,94 83.6,104.6 L74.4,105.6 L70.6,87 L64.4,87 L60.6,106.4 L48.6,104.4 C50.6,94 52.8,84 55,74 Z'));
+    // far arm down, the ledger clamped under it, the hand holding its corner
+    o += tube([bSh, bEl, bHd], 8.2, dk(HW.coat, 0.15));
+    o += G(ledger(c), 'translate(48.6,68) rotate(-7)');
+    o += C(bHd[0], bHd[1] + 2, 4.1, c.cel(HW.skinD), 1.8) + C(bHd[0] + 2.2, bHd[1] + 3.4, 0.9, HW.ink, 0, 0.8);
+    o += hwLeg(c, [61, 82], [60, 100], [57.5, 117], true);
+    o += hwLeg(c, [67, 82], [70, 100], [73.5, 117], false);
+    // re-draw the front of the coat skirt over the near thigh
+    o += P('M68,76 L77.6,74 C80.4,84 82.4,94 83.6,104.6 L74.4,105.6 L70.6,87 Z', c.cel(HW.coat), 2);
+    o += L('M77.4,78 C79.4,86 81,94 82,103', HW.lapel, 1.1, 0.8);
+    // waistcoat, shirt and neckcloth, the coat over the back and shoulder, its lapel
+    var body = 'M53,47 Q66,42 79,47 C81,58 79.4,68 77.6,78 L55.4,78 C54.6,68 51,58 53,47 Z';
+    o += P(body, c.cel(HW.vest), 2.2);
+    [52, 57, 62, 67, 72].forEach(function (y) { o += C(76.2 - (y - 52) * 0.03, y, 0.8, '#c8b078', 0.6); });
+    o += P('M69,41.6 L77,43.6 L76,50 L71.4,48 Z', c.cel(HW.shirt), 1.4) + P('M71,46 L75.4,47 L74,54 L72,53.4 Z', c.cel('#8a8478'), 1.1);
+    var coat = 'M53,47 Q60,43 67.6,42 L71.6,49.4 L72.4,78 L55.4,78 C54.6,68 51,58 53,47 Z';
+    o += P(coat, c.cel(HW.coat), 2.2) + CG(F('M48,40 L60,40 L61,82 L48,82 Z', HW.coatD, 0.5), c.clip(coat));
+    o += P('M67.6,42 L73,44.6 L71.8,58 L70.2,50 Z', c.cel(HW.lapel), 1.5);
+    o += P('M55.6,74.4 L72.4,74.4 L72.4,78 L55.4,78 Z', HW.coatD, 1.2);
+    // a pocket watch chain, and an ink blot on the waistcoat
+    o += L('M73.2,64 Q75,67 77.2,64.6', '#c8b078', 0.8) + E(74.8, 58.6, 1.1, 0.8, HW.ink, 0, 0.8);
+    o += tube([[67, 44], [71, 37]], 6.4, HW.skin);
+    o += hwHead(c, 72, 29.5, 10.4);
+    // near arm: coat sleeve, shirt cuff, the quill in ink-stained fingers
+    o += tube([fSh, fEl, fHd], 8.4, HW.coat, HW.coatD);
+    o += tube([lerp(fEl, fHd, 0.82), lerp(fEl, fHd, 0.9)], 8.8, HW.shirt);
+    var nib = [fHd[0] + 2.2, fHd[1] + 5], tip = [fHd[0] + 11, fHd[1] - 21];
+    o += L('M' + pt(nib) + ' L' + pt(lerp(nib, tip, 0.3)), OL, 2.6) + L('M' + pt(nib) + ' L' + pt(lerp(nib, tip, 0.3)), '#d8cfae', 1.1) + C(nib[0], nib[1], 0.9, HW.ink, 0.6);
+    o += P('M' + pt(lerp(nib, tip, 0.26)) + ' C' + n(fHd[0] + 1.6) + ',' + n(fHd[1] - 9) + ' ' + n(tip[0] - 4) + ',' + n(tip[1] + 3) + ' ' + pt(tip) + ' C' + n(tip[0] + 0.6) + ',' + n(tip[1] + 6) + ' ' + n(fHd[0] + 6.4) + ',' + n(fHd[1] - 4) + ' ' + pt(lerp(nib, tip, 0.3)) + ' Z', c.lg([[0, '#ffffff'], [1, '#c8c0ac']], 0, 0, 1, 0), 1.3);
+    o += L('M' + pt(lerp(nib, tip, 0.34)) + ' Q' + n(fHd[0] + 5) + ',' + n(fHd[1] - 9) + ' ' + pt(lerp(nib, tip, 0.94)), '#a89e88', 0.7);
+    o += C(fHd[0], fHd[1], 4.2, c.cel(HW.skin), 1.9) + F('M' + n(fHd[0] + 1.6) + ',' + n(fHd[1] - 2.6) + ' Q' + n(fHd[0] + 4.2) + ',' + n(fHd[1] - 0.6) + ' ' + n(fHd[0] + 3) + ',' + n(fHd[1] + 2.4) + ' Q' + n(fHd[0] + 2) + ',' + n(fHd[1]) + ' ' + n(fHd[0] + 1.6) + ',' + n(fHd[1] - 2.6) + ' Z', HW.ink, 0.85);
+    o += C(fHd[0] - 1.4, fHd[1] + 2.6, 0.7, HW.ink, 0, 0.8);
+    return o;
+  }
+  function harrowbySprite(c) { return shadow(c, 64, 27) + hwRig(c); }
+  function harrowbyActor(c) {
+    var keep = SWM; SWM = 0.8;
+    try { return E(84, 155, 36, 5, c.rg([[0, '#000', 0.45], [0.65, '#000', 0.25], [1, '#000', 0]])) + G(hwRig(c), 'matrix(-1.28,0,0,1.28,166,-1.2)'); } finally { SWM = keep; }
+  }
+
+  // =====================================================================
+  // SAL BRIGHTBELL, Camp Champion: the loud, cocky human singer who rules the song contests at Wexley's Expedition.
+  // Drawn facing right then mirrored (mobs face left): a plum cavalier hat with a big red-and-gold plume, a curled
+  // moustache, mouth wide open in song; a bright red waistcoat with gold diamonds over puffed white sleeves, a teal
+  // sash, blue breeches, brown boots with gold cuffs; a jingling hand drum held high.
+  // =====================================================================
+  var SB = { skin: '#f2c29c', hair: '#3a2212', hat: '#5e2a70', plume: '#e0402a', plumeT: '#f4c448', waist: '#c8302a', gold: '#f2c040', shirt: '#f6f2e8', sash: '#2a8a78', breeches: '#2f4a80', boot: '#6a4020', wood: '#b0743a', skinDrum: '#f0dcae' };
+  function sbDrum(c) {
+    // frame drum face-on: a wooden rim with brass jingles, a pale skin painted with a sun
+    var o = C(0, 0, 11.6, c.cel(SB.wood), 2.2) + C(0, 0, 8.8, c.rg([[0, '#fff6dc'], [0.7, SB.skinDrum], [1, '#cfb07a']], 0.4, 0.36, 0.7), 1.4);
+    o += P(sparkleD(0, 0, 5.2), c.cel('#e88a2a'), 1) + C(0, 0, 2, c.cel(SB.gold), 0.9);
+    [30, 100, 170, 240, 310].forEach(function (a) { var x = Math.cos(a * PI / 180) * 10.2, y = Math.sin(a * PI / 180) * 10.2; o += E(x, y, 2.2, 1.3, c.cel(SB.gold), 1, null, a + 90) + L('M' + n(x) + ',' + n(y - 0.9) + ' L' + n(x) + ',' + n(y + 0.9), OL, 0.6); });
+    return o;
+  }
+  function sparkleD(x, y, r) { var d = ''; for (var i = 0; i < 16; i++) { var a = i / 16 * PI * 2, rr = i % 2 ? r * 0.55 : r; d += (i ? ' L' : 'M') + n(x + Math.cos(a) * rr) + ',' + n(y + Math.sin(a) * rr); } return d + ' Z'; }
+  function sbLeg(c, h, kn, f, back) {
+    var col = back ? dk(SB.breeches, 0.22) : SB.breeches, bc = back ? dk(SB.boot, 0.18) : SB.boot, o = tube([h, kn], 9, col, back ? null : dk(col, 0.25));
+    o += tube([kn, [f[0] + 0.5, f[1] - 3]], 9.4, bc, back ? null : dk(bc, 0.3));
+    var x = f[0], y = f[1] + 5;
+    o += P('M' + n(x - 5.4) + ',' + n(y - 9) + ' L' + n(x + 3) + ',' + n(y - 9) + ' C' + n(x + 5.6) + ',' + n(y - 6) + ' ' + n(x + 11) + ',' + n(y - 5) + ' ' + n(x + 11) + ',' + n(y - 1.4) + ' L' + n(x + 11) + ',' + n(y) + ' L' + n(x - 5.8) + ',' + n(y) + ' Z', c.cel(bc), 2.1);
+    // gold-trimmed cuff under the knee
+    var dx = f[0] - kn[0], dy = f[1] - kn[1], l = Math.sqrt(dx * dx + dy * dy) || 1, px = -dy / l * 6.6, py = dx / l * 6.6, a = [kn[0] + dx / l * 1.5, kn[1] + dy / l * 1.5], b = [kn[0] + dx / l * 6, kn[1] + dy / l * 6];
+    o += P(pd([[a[0] - px, a[1] - py], [a[0] + px, a[1] + py], [b[0] + px * 0.9, b[1] + py * 0.9], [b[0] - px * 0.9, b[1] - py * 0.9]], true), c.cel(lt(bc, 0.15)), 1.8) + L(pd([[b[0] - px * 0.85, b[1] - py * 0.85], [b[0] + px * 0.85, b[1] + py * 0.85]]), SB.gold, 1.4);
+    return o;
+  }
+  function sbRig(c) {
+    var o = '';
+    var bSh = [57, 47], bEl = [47, 45], bHd = [42, 36], fSh = [76, 48], fEl = [87.5, 53], fHd = [97, 46];
+    // the drum arm raised behind, the drum held high
+    o += tube([bSh, bEl, bHd], 8.8, dk(SB.shirt, 0.18));
+    o += G(sbDrum(c), 'translate(36,30) rotate(-14)');
+    o += C(bHd[0] + 1, bHd[1] + 1, 4, c.cel(dk(SB.skin, 0.1)), 1.8);
+    o += sbLeg(c, [60, 81], [52.5, 99], [46.5, 117], true);
+    o += sbLeg(c, [69, 81], [78, 99], [84, 117], false);
+    // breeches seat, the sash with its hanging ends
+    o += P('M55,76 L77,76 L78.6,86 L53.6,86 Z', c.cel(SB.breeches), 2);
+    o += P('M55,72 L57.4,72 L52,92 L47.6,90 Z', c.cel(dk(SB.sash, 0.12)), 1.7) + P('M56,73 L59,73 L57,90 L52.6,89 Z', c.cel(SB.sash), 1.7);
+    // puffed white shirt, the red waistcoat with gold diamonds and buttons
+    var chest = 'M52.4,46 Q66,40 81,45.6 C83.4,57 80,68 77.6,77 L55.6,77 C54.6,68 50.6,57 52.4,46 Z';
+    o += P(chest, c.cel(SB.shirt), 2.2);
+    var wc = 'M52.4,46 Q60,42.4 66.4,42 L73,52 L75.8,42.6 Q79,43.6 81,45.6 C83.4,57 80,68 77.6,77 L55.6,77 C54.6,68 50.6,57 52.4,46 Z';
+    var dia = '';
+    for (var y = 44; y < 80; y += 8) for (var x = 50; x < 84; x += 8) { var ox = (Math.round((y - 44) / 8) % 2) * 4; dia += 'M' + (x + ox) + ',' + (y - 3) + ' L' + (x + ox + 2.6) + ',' + y + ' L' + (x + ox) + ',' + (y + 3) + ' L' + (x + ox - 2.6) + ',' + y + ' Z'; }
+    o += P(wc, c.cel(SB.waist), 2.2) + CG(F(dia, SB.gold, 0.85) + F('M48,40 L60,40 L61,80 L48,80 Z', '#000000', 0.25), c.clip(wc));
+    o += L('M73,52 L74.6,77', OL, 1.2);
+    [56, 62, 68, 74].forEach(function (y) { o += C(75.6 + (y - 56) * 0.04, y, 1.1, c.cel(SB.gold), 0.8); });
+    o += P('M55.6,74 L77.6,74 L77.2,78.2 L55.4,78.2 Z', c.cel(SB.sash), 1.5);
+    o += L('M66.4,42 L73,52 L75.8,42.6', SB.gold, 1.3);
+    // head: thrown back in song
+    var X = 71, Y = 26, r = 10.8;
+    function q(u, v) { return n(X + r * u) + ',' + n(Y + r * v); }
+    var h = '';
+    h += P('M' + q(-0.7, -0.6) + ' C' + q(-1.3, -0.4) + ' ' + q(-1.4, 0.4) + ' ' + q(-1.1, 0.8) + ' L' + q(-0.6, 0.6) + ' Z', c.cel(SB.hair), 1.8);
+    var face = 'M' + q(-1, 0.05) + ' C' + q(-1, -1.3) + ' ' + q(0.95, -1.3) + ' ' + q(1, -0.15) + ' L' + q(1.3, 0.3) + ' L' + q(1.02, 0.46) +
+      ' C' + q(1.06, 0.98) + ' ' + q(0.5, 1.2) + ' ' + q(0.04, 1.1) + ' C' + q(-0.7, 1.0) + ' ' + q(-1, 0.55) + ' ' + q(-1, 0.05) + ' Z';
+    h += P(face, c.cel(SB.skin), 2.1) + CG(F('M' + q(-1.1, -0.2) + ' L' + q(-0.25, -0.2) + ' C' + q(-0.4, 0.4) + ' ' + q(-0.2, 0.8) + ' ' + q(0.2, 1.2) + ' L' + q(-1.1, 1.2) + ' Z', dk(SB.skin, 0.2), 0.5), c.clip(face));
+    h += C(X - r * 0.36, Y + r * 0.14, r * 0.25, c.cel(SB.skin), 1.4);
+    // wide-open singing mouth, a curled moustache, a rosy cheek, a cocky raised brow, eye squeezed shut with gusto
+    h += P('M' + q(0.44, 0.6) + ' Q' + q(0.7, 0.5) + ' ' + q(1.02, 0.56) + ' Q' + q(1.0, 1.08) + ' ' + q(0.66, 1.04) + ' Q' + q(0.44, 0.9) + ' ' + q(0.44, 0.6) + ' Z', '#6a1a1c', 1.2);
+    h += F('M' + q(0.54, 0.9) + ' Q' + q(0.74, 0.78) + ' ' + q(0.94, 0.9) + ' Q' + q(0.8, 1.02) + ' ' + q(0.54, 0.9) + ' Z', '#e0707a') + F('M' + q(0.5, 0.6) + ' L' + q(1.0, 0.58) + ' L' + q(0.98, 0.66) + ' L' + q(0.52, 0.68) + ' Z', '#ffffff', 0.9);
+    h += P('M' + q(0.5, 0.52) + ' C' + q(0.7, 0.36) + ' ' + q(1.0, 0.4) + ' ' + q(1.14, 0.5) + ' C' + q(1.3, 0.56) + ' ' + q(1.42, 0.44) + ' ' + q(1.4, 0.3) + ' C' + q(1.5, 0.5) + ' ' + q(1.36, 0.7) + ' ' + q(1.12, 0.62) + ' C' + q(0.9, 0.56) + ' ' + q(0.66, 0.56) + ' ' + q(0.5, 0.52) + ' Z', c.cel(SB.hair), 1);
+    h += E(X + r * 0.26, Y + r * 0.34, 2.4, 1.4, '#f07a6a', 0, 0.5);
+    var ex = X + r * 0.5, ey = Y - r * 0.06;
+    h += L('M' + n(ex - 2.3) + ',' + n(ey + 0.3) + ' Q' + n(ex) + ',' + n(ey - 1.6) + ' ' + n(ex + 2.4) + ',' + n(ey + 0.2), OL, 1.4);
+    h += L('M' + n(ex - 2.8) + ',' + n(ey - 4) + ' Q' + n(ex) + ',' + n(ey - 6.6) + ' ' + n(ex + 3.2) + ',' + n(ey - 5), SB.hair, 1.6);
+    // dark curls under the hat brim
+    h += P('M' + q(-1.02, -0.2) + ' Q' + q(-1.2, 0.3) + ' ' + q(-0.9, 0.56) + ' Q' + q(-0.74, 0.3) + ' ' + q(-0.5, 0.46) + ' Q' + q(-0.5, 0.1) + ' ' + q(-0.2, -0.1) + ' L' + q(-0.2, -0.5) + ' Z', c.cel(SB.hair), 1.5);
+    // the plum cavalier hat, brim swept up at the back, a big plume
+    h += P('M' + q(-0.9, -0.66) + ' C' + q(-0.9, -1.7) + ' ' + q(0.6, -1.9) + ' ' + q(0.8, -0.84) + ' Z', c.cel(SB.hat), 2);
+    h += L('M' + q(-0.86, -0.86) + ' Q' + q(0, -1.1) + ' ' + q(0.8, -0.96), SB.gold, 1.8);
+    h += P('M' + q(-1.7, -1.3) + ' C' + q(-1.5, -0.7) + ' ' + q(-0.6, -0.56) + ' ' + q(0.4, -0.6) + ' C' + q(1.1, -0.62) + ' ' + q(1.6, -0.5) + ' ' + q(1.76, -0.72) + ' C' + q(1.4, -0.96) + ' ' + q(0.8, -0.96) + ' ' + q(0.2, -0.9) + ' C' + q(-0.6, -0.86) + ' ' + q(-1.3, -0.96) + ' ' + q(-1.7, -1.3) + ' Z', c.cel(dk(SB.hat, 0.06)), 2);
+    var plume = 'M' + q(-0.2, -1.0) + ' C' + q(-0.8, -2.2) + ' ' + q(-2.2, -2.6) + ' ' + q(-3.0, -1.8) + ' C' + q(-2.4, -2.0) + ' ' + q(-1.8, -1.9) + ' ' + q(-1.5, -1.5) + ' C' + q(-2.1, -1.6) + ' ' + q(-2.5, -1.2) + ' ' + q(-2.6, -0.8) + ' C' + q(-1.8, -1.4) + ' ' + q(-0.8, -1.3) + ' ' + q(-0.2, -1.0) + ' Z';
+    h += P(plume, c.lg([[0, SB.plume], [0.7, lt(SB.plume, 0.15)], [1, SB.plumeT]], 1, 1, 0, 0), 1.8);
+    h += L('M' + q(-0.3, -1.04) + ' C' + q(-1.0, -1.8) + ' ' + q(-1.9, -2.0) + ' ' + q(-2.6, -1.8), dk(SB.plume, 0.35), 0.9) + L('M' + q(-2.9, -1.84) + ' Q' + q(-2.6, -1.9) + ' ' + q(-2.3, -1.84), SB.plumeT, 1.4);
+    o += tube([[67, 43], [70, 36]], 7, SB.skin);
+    o += G(h, 'rotate(-8 ' + n(X - 2) + ' ' + n(Y + r) + ')');
+    // puffed near sleeve, the showman's flourish
+    o += tube([fSh, fEl], 10.4, SB.shirt, dk(SB.shirt, 0.2)) + tube([fEl, fHd], 8.2, SB.shirt, dk(SB.shirt, 0.2));
+    o += tube([lerp(fEl, fHd, 0.82), lerp(fEl, fHd, 0.9)], 8.6, SB.waist);
+    o += C(fHd[0], fHd[1], 4.4, c.cel(SB.skin), 2) + L('M' + n(fHd[0] + 1) + ',' + n(fHd[1] - 3) + ' L' + n(fHd[0] + 3) + ',' + n(fHd[1] - 9), OL, 4.2) + L('M' + n(fHd[0] + 1) + ',' + n(fHd[1] - 3) + ' L' + n(fHd[0] + 3) + ',' + n(fHd[1] - 9), SB.skin, 2.2);
+    return o;
+  }
+  function salMob(c) { return shadow(c, 64, 30) + G(sbRig(c), 'matrix(-1,0,0,1,128,0)'); }
+
+  // =====================================================================
+  // WIDYA'S ICONS (64 x 64): her portrait, the fifteen bard songs (music and nature: notes, strings, leaves, light,
+  // each on its own colour so they tell apart at a glance), the lute pieces of her questline and the keepsake lute
+  // =====================================================================
+  // music glyphs: a note head, an outlined stem, a flag; an eighth note (head at x,y, stem up), a beamed pair
+  function noteHead(c, x, y, s, col) { return E(x, y, 3.8 * s, 2.8 * s, c.lg([[0, lt(col, 0.55)], [0.5, col], [1, dk(col, 0.3)]], 0.2, 0, 0.8, 1), 1.6, null, -24); }
+  function stem(x, y0, y1, s, col) { var d = 'M' + n(x) + ',' + n(y0) + ' L' + n(x) + ',' + n(y1); return L(d, OL, 4.2 * s) + L(d, col, 1.8 * s); }
+  function flagD(x, y, s) { return 'M' + n(x) + ',' + n(y) + ' C' + n(x + 1 * s) + ',' + n(y + 4 * s) + ' ' + n(x + 7 * s) + ',' + n(y + 5 * s) + ' ' + n(x + 5 * s) + ',' + n(y + 12 * s) + ' C' + n(x + 5.4 * s) + ',' + n(y + 8 * s) + ' ' + n(x + 2 * s) + ',' + n(y + 6.4 * s) + ' ' + n(x) + ',' + n(y + 5.6 * s) + ' Z'; }
+  function note(c, x, y, s, col, flags) {
+    var sx = x + 3.3 * s, top = y - 17 * s, o = stem(sx, y - 0.6 * s, top, s, col);
+    for (var i = 0; i < (flags == null ? 1 : flags); i++) o += P(flagD(sx, top + i * 4.6 * s, s), c.cel(col), 1.4);
+    return o + noteHead(c, x, y, s, col);
+  }
+  function notePair(c, x, y, s, col) {
+    var x2 = x + 11 * s, y2 = y - 2.4 * s, s1 = x + 3.3 * s, s2 = x2 + 3.3 * s, t1 = y - 17 * s, t2 = y2 - 17 * s;
+    var beam = 'M' + n(s1 - 1 * s) + ',' + n(t1 - 0.6 * s) + ' L' + n(s2 + 1 * s) + ',' + n(t2 - 0.6 * s) + ' L' + n(s2 + 1 * s) + ',' + n(t2 + 3.6 * s) + ' L' + n(s1 - 1 * s) + ',' + n(t1 + 3.6 * s) + ' Z';
+    return stem(s1, y - 0.6 * s, t1 + 1 * s, s, col) + stem(s2, y2 - 0.6 * s, t2 + 1 * s, s, col) + P(beam, c.cel(col), 1.5) + noteHead(c, x, y, s, col) + noteHead(c, x2, y2, s, col);
+  }
+  // an outlined stroke (dark under colour) for strings, cords, vines and sound lines
+  function ol(d, col, w, o) { return L(d, OL, w + 2.4, o) + L(d, col, w, o); }
+  function rays(x, y, r0, r1, k, col, o, rot) {
+    var d = '';
+    for (var i = 0; i < k; i++) { var a = (rot || 0) + i / k * PI * 2, b = PI / k * 0.45; d += 'M' + n(x + Math.cos(a - b) * r0) + ',' + n(y + Math.sin(a - b) * r0) + ' L' + n(x + Math.cos(a) * r1) + ',' + n(y + Math.sin(a) * r1) + ' L' + n(x + Math.cos(a + b) * r0) + ',' + n(y + Math.sin(a + b) * r0) + ' Z'; }
+    return F(d, col, o);
+  }
+  var WICONS = {
+    legend_widya: function (c) {
+      var keep = SWM, g;
+      SWM = 0.9;
+      try {
+        g = G(lute(c, 44), 'translate(53,72) rotate(8) scale(0.92)') + G(wiRig(c, WPOSE_SPRITE, { upper: true }), 'matrix(1.24,0,0,1.24,-55,0.2)');
+      } finally { SWM = keep; }
+      return iconWrap(c, ['#a6c46a', '#1e2a0c'], iglow(c, 34, 26, 30, '#fff2c8', 0.35) + g);
+    },
+    // a quick single heal: a warm chord of three notes on one stem, soft light and a leaf
+    soothing_chord: function (c) {
+      var o = iglow(c, 30, 32, 30, '#f0ffd8', 0.85);
+      o += ol('M42,20 Q48,28 42,36 M47,16 Q56,28 47,40', '#e8ffd0', 1.6, 0.9);
+      o += stem(31.5, 46, 12, 1.2, '#fff4d6') + P(flagD(31.5, 12, 1.2), c.cel('#fff4d6'), 1.4);
+      o += noteHead(c, 27.4, 47, 1.2, '#fff4d6') + noteHead(c, 27.4, 39.6, 1.2, '#fff4d6') + noteHead(c, 27.4, 32.2, 1.2, '#fff4d6');
+      o += leaf(c, 46, 50, 60, 0.8, '#8ad05a') + leaf(c, 14, 22, -40, 0.6, '#a8e068');
+      return iconWrap(c, ['#8cd67c', '#0c2a12'], o + sparkle(50, 10, 3.2, '#ffffff') + sparkle(12, 44, 2.4, '#ffffff'));
+    },
+    // arcane damage: a cracked, clashing note throwing off jagged shocks
+    dissonant_note: function (c) {
+      var o = iglow(c, 28, 36, 30, '#ffb8ff', 0.75);
+      var st = '';
+      for (var i = 0; i < 10; i++) { var a = i / 10 * PI * 2 + 0.3, r0 = i % 2 ? 12 : 26; st += (i ? ' L' : 'M') + n(28 + Math.cos(a) * r0) + ',' + n(34 + Math.sin(a) * r0); }
+      o += F(st + ' Z', '#f08aff', 0.35);
+      o += note(c, 22, 46, 1.45, '#f6c4ff', 1);
+      o += ol('M17,40 L21.6,44 L19.4,46 L25,50', '#3a0a4a', 1.1);
+      var bolt = 'M36,24 L43,28 L40,30.6 L50,35 L46.4,37 L58,43';
+      o += ol(bolt, '#ffffff', 2) + ol('M38,16 L44,14 L43,18 L52,15', '#ffd8ff', 1.4) + ol('M40,44 L46,50 L42,51 L47,58', '#ffd8ff', 1.4);
+      return iconWrap(c, ['#c064e0', '#1a0626'], o + sparkle(54, 20, 3, '#ffffff') + sparkle(10, 18, 2.2, '#ffe0ff'));
+    },
+    // a heal over time on the party: a flowing ribbon of staff lines, notes riding it, leaves drifting down
+    song_of_rest: function (c) {
+      var o = iglow(c, 32, 32, 32, '#d8fff0', 0.7);
+      [0, 4.6, 9.2].forEach(function (d) { o += ol('M2,' + (48 + d) + ' C14,' + (36 + d) + ' 24,' + (52 + d) + ' 36,' + (38 + d) + ' C44,' + (29 + d) + ' 52,' + (32 + d) + ' 62,' + (24 + d), '#e8fff6', 1.3, 0.95); });
+      o += note(c, 14, 44, 0.8, '#ffffff') + note(c, 30, 40, 0.9, '#fff8e0') + note(c, 46, 33, 0.8, '#ffffff');
+      o += leaf(c, 20, 14, 30, 0.6, '#8ad05a') + leaf(c, 42, 10, -50, 0.55, '#a8e068') + leaf(c, 54, 52, 120, 0.55, '#6ab846');
+      return iconWrap(c, ['#62c8b4', '#08241e'], o + sparkle(8, 22, 2.4, '#ffffff') + sparkle(56, 12, 2.8, '#ffffff'));
+    },
+    // party haste: a marching side drum, crossed sticks, speed lines
+    marching_song: function (c) {
+      var o = iglow(c, 34, 32, 30, '#ffd8a0', 0.7);
+      o += ol('M4,30 L16,30 M2,38 L14,38 M6,46 L16,46', '#fff0d0', 1.6, 0.9);
+      var body = 'M18,28 L50,28 L50,46 C50,51 18,51 18,46 Z';
+      o += P(body, c.lg([[0, '#f0503a'], [0.6, '#c8281e'], [1, '#801410']], 0, 0, 1, 0), 2.2);
+      o += CG(ol('M18,31 L26,45 L34,31 L42,45 L50,31', '#f4c448', 1.2) + F('M18,28 L24,28 L24,52 L18,52 Z', '#ffffff', 0.2), c.clip(body));
+      o += E(34, 28, 16, 5.4, c.lg([[0, '#fff6e0'], [1, '#d8c8a0']]), 2.2) + P('M18,45 C18,50.4 50,50.4 50,45 L50,47.6 C50,53 18,53 18,47.6 Z', c.cel('#e8c060'), 1.6);
+      o += ol('M22,6 L42,26', '#e8c890', 2.2) + ol('M48,6 L28,26', '#e8c890', 2.2) + C(22, 6, 2.6, c.cel('#fff2d0'), 1.4) + C(48, 6, 2.6, c.cel('#fff2d0'), 1.4);
+      o += note(c, 52, 58, 0.6, '#ffffff');
+      return iconWrap(c, ['#f08a3a', '#2a0c04'], o + sparkle(58, 16, 2.6, '#ffffff'));
+    },
+    // sleep: a crescent moon, a note hanging from its tip, stars, drowsy curls
+    lullaby: function (c) {
+      var o = iglow(c, 34, 28, 30, '#e0e4ff', 0.6);
+      o += P('M40,6 C26,6 16,17 16,30 C16,43 27,53 40,53 C47,53 53,50 57,45 C45,47 34,39 34,27 C34,18 39,10 46,7 C44,6.3 42,6 40,6 Z', c.lg([[0, '#fffbe0'], [0.6, '#f4e8a8'], [1, '#c8b868']], 0.2, 0, 0.8, 1), 2.2);
+      o += L('M22,22 C21,30 24,40 32,46', '#ffffff', 1.4, 0.55);
+      o += L('M46,44 L46,50', '#d8dcf8', 0.8, 0.9) + note(c, 44, 56, 0.55, '#ffffff');
+      o += ol('M8,14 Q12,12 10,16 Q8,20 12,18', '#c8d0ff', 1, 0.9) + ol('M54,24 Q58,22 56,26 Q54,30 58,28', '#c8d0ff', 1, 0.9);
+      return iconWrap(c, ['#6a74d8', '#080a2a'], o + sparkle(52, 12, 2.8, '#ffffff') + sparkle(10, 44, 2.2, '#ffffff') + sparkle(26, 58, 1.8, '#ffffff', 0.8));
+    },
+    // a heal over time on one ally: a verse on a parchment page, a green vine stitched across it
+    verse_of_mending: function (c) {
+      var o = iglow(c, 32, 32, 30, '#f4ffc0', 0.6);
+      var pg = 'M12,14 C20,11 36,13 50,10 C49,24 51,38 50,52 C36,55 22,52 13,55 C14,40 11,26 12,14 Z';
+      o += G(P(pg, c.lg([[0, '#fffaea'], [0.6, '#efe2bc'], [1, '#c8b684']], 0.2, 0, 0.8, 1), 2.2) + L('M16,24 C26,22 36,23 46,21 M16,29 C26,27 36,28 46,26 M16,34 C26,32 36,33 46,31', '#9a8a68', 0.8, 0.9) + note(c, 26, 33, 0.85, '#58b840'), 'rotate(-6 32 32)');
+      var vine = 'M6,52 C16,42 24,50 32,42 C40,34 48,42 58,32';
+      o += ol(vine, '#4e9a34', 1.8) + L('M14,44 L18,50 M26,43 L28,50 M38,36 L40,43 M48,35 L50,41', '#e8ffd0', 1.1, 0.9);
+      o += leaf(c, 20, 46, -120, 0.55, '#8ad05a') + leaf(c, 36, 40, 40, 0.55, '#6ab846') + leaf(c, 52, 36, -150, 0.5, '#a8e068');
+      return iconWrap(c, ['#c4d468', '#1c2206'], o + sparkle(54, 12, 2.8, '#ffffff') + sparkle(8, 12, 2, '#ffffff'));
+    },
+    // an instant party heal: a grove tree in a burst of light, a ring of notes round it
+    chorus_grove: function (c) {
+      var o = iglow(c, 32, 30, 34, '#f0ffc0', 0.85) + rays(32, 28, 12, 31, 12, '#f8ffd8', 0.35);
+      o += P('M29.6,50 C30.4,44 30,38 28,32 L36,32 C34,38 33.6,44 34.6,50 Z', c.cel('#8a5a30'), 1.8);
+      o += C(24, 27, 8.6, c.cel('#5aa838'), 1.9) + C(40, 27, 8.6, c.cel('#5aa838'), 1.9) + C(32, 19, 10, c.cel('#78c048'), 1.9);
+      o += E(32, 51, 12, 2.6, '#2a4a14', 0, 0.5);
+      [[10, 20, 0.5], [12, 44, 0.48], [50, 12, 0.5], [54, 38, 0.5], [30, 60, 0.42]].forEach(function (q) { o += note(c, q[0], q[1] + 7, q[2], '#ffffff'); });
+      return iconWrap(c, ['#9ee060', '#0a2206'], o + sparkle(44, 6, 2.6, '#ffffff') + sparkle(6, 32, 2.2, '#ffffff'));
+    },
+    // a shield on one ally: two notes crossing, one up, one down, inside a bright bubble
+    counterpoint: function (c) {
+      var o = iglow(c, 32, 32, 30, '#d8f0ff', 0.6);
+      o += C(32, 32, 22, c.rg([[0, '#ffffff', 0.05], [0.75, '#a8d8ff', 0.3], [1, '#e8f6ff', 0.75]]), 0) + ring(32, 32, 22, OL, 4.4) + ring(32, 32, 22, '#e0f2ff', 2.2);
+      o += L('M18,20 A18,18 0 0 1 30,14', '#ffffff', 2, 0.85);
+      o += note(c, 23, 44, 1.05, '#fff2c8') + G(note(c, 23, 44, 1.05, '#9ac8f0'), 'rotate(180 32 32)');
+      return iconWrap(c, ['#74aee8', '#061626'], o + sparkle(52, 12, 3, '#ffffff') + sparkle(12, 52, 2.2, '#ffffff'));
+    },
+    // party Spirit and Intellect: a hearth fire in a ring of stones, notes rising in its warmth
+    hearthsong: function (c) {
+      var o = iglow(c, 32, 40, 30, '#ffe0a0', 0.9);
+      o += fire(c, 32, 50, 1.55, 0, 1.8);
+      [[16, 52, 5], [23, 55, 5.2], [32, 56.4, 5.4], [41, 55, 5.2], [48, 52, 5]].forEach(function (q) { o += E(q[0], q[1], q[2], 3.4, c.cel('#9a948a'), 1.6); });
+      o += L('M24,48 L28,52 M40,48 L36,52 M30,49 L34,52', '#6a3a1a', 2.4, 0.9);
+      o += note(c, 12, 26, 0.7, '#fff4d8') + note(c, 46, 18, 0.75, '#fff4d8');
+      return iconWrap(c, ['#eea24a', '#2a1004'], o + sparkle(22, 10, 2.4, '#ffffff') + sparkle(56, 34, 2.2, '#fff4c0'));
+    },
+    // a big slow heal: the crescendo hairpin opening into a burst of golden light
+    crescendo: function (c) {
+      var o = iglow(c, 46, 32, 26, '#fff4c0', 0.9);
+      o += F('M6,32 L54,12 L54,52 Z', c.lg([[0, '#fff6c0', 0], [1, '#fff6c0', 0.75]], 0, 0, 1, 0));
+      o += ol('M6,32 L54,12 M6,32 L54,52', '#f8d048', 2.6);
+      o += rays(50, 32, 6, 16, 10, '#ffffff', 0.7) + C(50, 32, 6, c.rg([[0, '#ffffff'], [1, '#ffe27a']]), 1.6);
+      o += note(c, 22, 38, 0.55, '#ffffff');
+      return iconWrap(c, ['#f4d060', '#2a1c02'], o + sparkle(58, 10, 2.8, '#ffffff') + sparkle(58, 54, 2.4, '#ffffff'));
+    },
+    // shadow damage over time: a drooping dark note, a wilted leaf, smoky wisps
+    dirge: function (c) {
+      var o = iglow(c, 30, 30, 30, '#c8a8f0', 0.55);
+      o += L('M6,58 C12,50 6,42 14,34 M52,60 C48,52 56,46 50,38 M30,62 C26,56 32,52 28,46', '#1a1024', 6, 0.75) + L('M6,58 C12,50 6,42 14,34 M52,60 C48,52 56,46 50,38 M30,62 C26,56 32,52 28,46', '#9a7ac0', 1.4, 0.75);
+      // the note wilts like a flower: its stem bends over, the flag hangs down
+      var sd = 'M25,44 C24,26 32,14 44,14 C48,14 50,17 50,21';
+      o += L(sd, OL, 5) + L(sd, '#b8a4d8', 2.2);
+      o += P('M50,21 C47,24 47,30 50,34 C51,30 53,27 56,26 C53,25 51,23 50,21 Z', c.cel('#a890cc'), 1.4);
+      o += G(noteHead(c, 0, 0, 1.4, '#a890cc'), 'translate(21.4,45.4) rotate(18)');
+      o += G(P(leafD(0.95), c.lg([[0, '#b09a5a'], [1, '#5a4626']], 0, 0, 1, 0), 1.3) + L('M0,-1 L0,-8.6', '#3a2a18', 0.7), 'translate(42,46) rotate(160)');
+      o += C(34, 26, 1.4, '#e8d8ff', 0, 0.7) + C(12, 20, 1, '#e8d8ff', 0, 0.6);
+      return iconWrap(c, ['#7c6a92', '#0c0812'], o + sparkle(54, 10, 2.2, '#e8d8ff', 0.9));
+    },
+    // party armour and Stamina: a standing stone with a carved glowing note, moss at its foot
+    anthem_of_stone: function (c) {
+      var o = iglow(c, 32, 30, 30, '#fff0c0', 0.5);
+      var st = 'M18,56 C16,40 17,22 22,12 C26,6 38,6 42,12 C47,22 48,40 46,56 Z';
+      o += P(st, c.lg([[0, '#d0c8b8'], [0.45, '#a8a090'], [1, '#6a6458']], 0.2, 0, 0.8, 1), 2.4);
+      o += CG(F('M36,6 L50,6 L50,58 L40,58 Z', '#000000', 0.2) + L('M24,20 L28,26 L26,32 M40,40 L36,46', '#5a5448', 1, 0.8), c.clip(st));
+      o += iglow(c, 32, 32, 12, '#ffd870', 0.8) + note(c, 29, 40, 0.95, '#ffd460');
+      o += F('M14,58 C18,52 24,54 26,50 C30,54 36,52 40,55 C44,51 48,53 50,58 Z', '#5a9a38') + tuft(20, 58, 1, '#8ac858') + tuft(44, 58, 1.1, '#8ac858');
+      o += ol('M6,26 Q2,32 6,38 M58,26 Q62,32 58,38', '#fff0c8', 1.2, 0.8);
+      return iconWrap(c, ['#aaa290', '#181410'], o + sparkle(50, 10, 2.6, '#ffffff'));
+    },
+    // a strong party heal over time: a leafy wreath turning back on itself like a repeat, flowers, a beamed pair
+    encore: function (c) {
+      var o = iglow(c, 32, 32, 30, '#ffe0f0', 0.7);
+      var arc = 'M50,22 A20,20 0 1 0 52,40';
+      o += L(arc, OL, 7) + L(arc, '#4e9a34', 4) + P('M44,16 L56,18 L52,28 Z', c.cel('#4e9a34'), 1.6);
+      [[14, 26, -60], [20, 50, -150], [40, 52, 150], [30, 12, 10]].forEach(function (q) { o += leaf(c, q[0], q[1], q[2], 0.6, '#8ad05a'); });
+      [[14, 40], [48, 44], [22, 14]].forEach(function (p) {
+        var f = '';
+        for (var i = 0; i < 5; i++) { var a = i / 5 * PI * 2; f += C(p[0] + Math.cos(a) * 2.6, p[1] + Math.sin(a) * 2.6, 2.3, c.cel('#ff9ac8'), 1.1); }
+        o += f + C(p[0], p[1], 1.5, '#ffe070', 0.8);
+      });
+      o += notePair(c, 24, 40, 0.85, '#ffffff');
+      return iconWrap(c, ['#ec74aa', '#2a0616'], o + sparkle(56, 8, 2.6, '#ffffff'));
+    },
+    // arcane damage to all nearby: rings of sound spreading from a dark note
+    requiem: function (c) {
+      var o = iglow(c, 32, 34, 32, '#c8c8ff', 0.6);
+      [[28, 0.35, 1.4], [21, 0.55, 1.8], [14, 0.8, 2.2]].forEach(function (q) { o += ring(32, 34, q[0], '#e0e0ff', q[2], q[1]); });
+      o += C(32, 34, 8, glow(c, '#ffffff', 0.7));
+      o += note(c, 29, 42, 0.95, '#6a70b0');
+      [[8, 18], [54, 16], [56, 50], [10, 52]].forEach(function (p) { o += noteHead(c, p[0], p[1], 0.5, '#e8e8ff'); });
+      return iconWrap(c, ['#5a6ad8', '#04061c'], o + sparkle(32, 6, 2.6, '#ffffff') + sparkle(60, 34, 2, '#ffffff'));
+    },
+    // the great party heal: the lute swung up in a starburst, leaves and notes flying
+    grand_finale: function (c) {
+      var o = iglow(c, 32, 30, 34, '#ffffff', 0.9) + rays(32, 30, 10, 32, 16, '#fff8d0', 0.55, 0.1);
+      o += G(lute(c, 44), 'translate(28,40) rotate(38) scale(0.62)');
+      o += note(c, 8, 20, 0.55, '#ffffff') + note(c, 50, 58, 0.5, '#ffffff') + leaf(c, 54, 14, 40, 0.55, '#8ad05a') + leaf(c, 10, 50, -130, 0.5, '#a8e068') + leaf(c, 46, 30, 90, 0.45, '#6ab846');
+      return iconWrap(c, ['#fff0a0', '#3a2006'], o + sparkle(46, 8, 3.4, '#ffffff') + sparkle(14, 34, 2.6, '#ffffff') + sparkle(56, 44, 2.4, '#ffffff'));
+    },
+    // quest item: a bundle of lake reeds with cattail heads, tied with twine, over water
+    lake_reed: function (c) {
+      var o = E(32, 54, 22, 4, '#bfe8f0', 0, 0.35) + L('M12,54 Q32,50 52,54', '#e8faff', 1, 0.6);
+      [[-6, 26, -8], [0, 30, 0], [6, 25, 8]].forEach(function (q) {
+        var bx = 32 + q[0] * 0.4, tx = 32 + q[0] * 2.4 + q[2] * 0.6, ty = 10 + (30 - q[1]) * 0.3;
+        o += ol('M' + n(bx) + ',56 Q' + n(bx + q[2] * 0.2) + ',36 ' + n(tx) + ',' + n(ty), '#7ab048', 1.8);
+        o += G(P('M-2.6,0 C-2.8,-5 -2.4,-9 0,-10 C2.4,-9 2.8,-5 2.6,0 C2.4,2 -2.4,2 -2.6,0 Z', c.cel('#8a5a30'), 1.4), 'translate(' + n(tx + (bx - tx) * 0.18) + ',' + n(ty + 12) + ') rotate(' + n(q[2] * 1.5) + ')');
+      });
+      o += ol('M20,56 Q16,40 10,26', '#9ad060', 1.4) + ol('M44,56 Q50,42 56,30', '#9ad060', 1.4);
+      o += ol('M26,42 Q32,45 38,42', '#d8b878', 1.6) + L('M28,43.6 L26,48 M36,43.6 L38,48', '#c8a060', 1, 0.9);
+      return iconWrap(c, ['#5e9aa4', '#081a1e'], o + sparkle(50, 12, 2.4, '#ffffff'));
+    },
+    // quest item: a coil of silver lute strings, the ends trailing
+    silver_lute_strings: function (c) {
+      var o = iglow(c, 30, 30, 24, '#e8f0ff', 0.45) + E(32, 52, 18, 3.4, '#000', 0, 0.3);
+      [[16, 11], [13.4, 9.2], [10.8, 7.4], [8.2, 5.6]].forEach(function (q, i) { o += G(ring(0, 0, q[0], OL, 3.2) + ring(0, 0, q[0], i % 2 ? '#c8d0dc' : '#f4f8ff', 1.3), 'translate(30,32) scale(1,' + n(q[1] / q[0]) + ') rotate(0)'); });
+      o += ol('M44,34 C50,40 52,48 58,50', '#e8eef8', 1.2) + ol('M42,38 C46,46 50,52 54,58', '#c8d0dc', 1.1);
+      o += L('M16,28 A16,11 0 0 1 30,21', '#ffffff', 1.6, 0.9);
+      return iconWrap(c, ['#8894ac', '#0c1016'], o + sparkle(20, 16, 3, '#ffffff') + sparkle(48, 24, 2.2, '#ffffff'));
+    },
+    // quest item: three heartwood tuning pegs, fanned out
+    heartwood_pegs: function (c) {
+      var o = iglow(c, 32, 30, 24, '#ffd8b0', 0.4) + E(32, 54, 18, 3.4, '#000', 0, 0.3);
+      // a tuning peg: a flat heart-shaped thumb grip, a collar, a tapered shaft with a string hole
+      function peg(x, y, a) {
+        return G(G(P('M-1.8,0 L-1,22 L1,22 L1.8,0 Z', c.lg([[0, '#d08a56'], [1, '#7a3a1a']], 0, 0, 1, 0), 1.6) + C(0, 16, 0.8, '#2a140a') +
+          P('M-2.8,-1 L2.8,-1 L2.8,2.4 L-2.8,2.4 Z', c.cel('#e8c890'), 1.2) +
+          P('M0,-1 C-3,-1.4 -7.6,-3 -7.6,-8.4 C-7.6,-12.6 -4,-14 -2,-12 L0,-10.4 L2,-12 C4,-14 7.6,-12.6 7.6,-8.4 C7.6,-3 3,-1.4 0,-1 Z', c.lg([[0, '#f0a468'], [0.45, '#b8582e'], [1, '#6a2810']], 0.2, 0, 0.8, 1), 1.9) +
+          L('M-4.6,-7.4 C-3.6,-4.6 -1.6,-3.4 0,-3.2 M4.6,-7.4 C3.6,-4.6 1.6,-3.4 0,-3.2', '#f4c890', 0.8, 0.8), 'scale(0.9)'), 'translate(' + n(x) + ',' + n(y) + ') rotate(' + a + ')');
+      }
+      // three pegs side by side along the diagonal, centred on the icon
+      o += peg(27.7, 23.1, 40) + peg(34.6, 28.9, 40) + peg(41.5, 34.7, 40);
+      return iconWrap(c, ['#a86a44', '#1c0c06'], o + sparkle(50, 10, 2.4, '#ffffff'));
+    },
+    // quest item: the carved neck and bent-back pegbox, names cut down its side
+    carved_lute_neck: function (c) {
+      var o = iglow(c, 32, 30, 26, '#ffe8c0', 0.4);
+      var ln = luteNeck(c, 30) + P('M-3.4,-10 L-3.3,-14 L3.3,-14 L3.4,-10 L1.4,-8.4 L0,-10.6 L-1.6,-8.2 Z', c.cel(LU.neck), 1.6);
+      for (var y = -16.4; y > -29; y -= 3) ln += L('M3.6,' + n(y) + ' L5,' + n(y - 1) + ' M3.6,' + n(y - 1.4) + ' L4.6,' + n(y - 1.6), LU.carve, 0.8, 0.9);
+      o += G(ln, 'translate(10.3,57.9) rotate(40) scale(1.35)');
+      return iconWrap(c, ['#c09460', '#1e1408'], o + sparkle(52, 12, 2.6, '#ffffff'));
+    },
+    // quest item: the lute's body, the neck broken away at the top
+    lute_body: function (c) {
+      var o = iglow(c, 32, 32, 26, '#ffe0b0', 0.4) + E(32, 57, 17, 3, '#000', 0, 0.3);
+      o += G(P('M-3.3,-14 L-3,-20 L-1.2,-18.4 L0.4,-21 L1.6,-18.6 L3,-20.4 L3.3,-14 Z', c.cel(LU.neck), 1.8) + luteBody(c) + R(-2.9, -15.4, 5.8, 1.4, LU.board, 0.8), 'translate(32,33) rotate(14) scale(1.3)');
+      return iconWrap(c, ['#c08a4c', '#1e0e06'], o + sparkle(50, 12, 2.6, '#ffffff'));
+    },
+    // the keepsake: Reedsong's lute whole again, a soft glow and a leaf
+    reedsong_lute: function (c) {
+      var o = iglow(c, 32, 32, 30, '#f4ffd8', 0.6);
+      o += G(lute(c, 44), 'translate(27,41) rotate(40) scale(0.72)');
+      o += leaf(c, 50, 50, 130, 0.55, '#8ad05a') + leaf(c, 12, 16, -40, 0.5, '#a8e068');
+      return iconWrap(c, ['#78ac6c', '#0c1a0a'], o + sparkle(48, 10, 3, '#ffffff') + sparkle(12, 40, 2.2, '#ffffff'));
+    }
+  };
+  Object.keys(WICONS).forEach(function (k) { ICONS[k] = WICONS[k]; });
+
+  // =====================================================================
   // INSTALL: extend ART.legend / ART.mob / ART.scene / ART.icon / ART.story
   // =====================================================================
   function has(t, k) { return typeof k === 'string' && Object.prototype.hasOwnProperty.call(t, k); }
@@ -976,10 +1650,10 @@
   }
   function addKeys(list, keys) { var a = Array.isArray(list) ? list : []; keys.forEach(function (k) { if (a.indexOf(k) < 0) a.push(k); }); return a; }
 
-  var LEGENDS = { lyveus: lyveusSprite, lyveus_hooded: lyveusHoodedSprite };
-  var MOBS = { lord_cassius_marrow: cassiusMob };
+  var LEGENDS = { lyveus: lyveusSprite, lyveus_hooded: lyveusHoodedSprite, widya: widyaSprite, harrowby: harrowbySprite };
+  var MOBS = { lord_cassius_marrow: cassiusMob, sal_brightbell: salMob };
   var SCENES = { silverleaf_lodge: lodgeScene };
-  var ACTORS = { lyveus: lyveusActor, vyn: vynActor, lyveus_hooded: lyveusHoodedActor, deathwing: deathwing };
+  var ACTORS = { lyveus: lyveusActor, vyn: vynActor, lyveus_hooded: lyveusHoodedActor, deathwing: deathwing, widya: widyaActor, harrowby: harrowbyActor };
   var STORY_SCENES = { silverleaf_burning: burningScene, caravan_road: caravanScene };
   var KEYS = ART.keys;
   try { if (!KEYS || typeof KEYS !== 'object') { KEYS = {}; ART.keys = KEYS; } } catch (e) { KEYS = {}; }

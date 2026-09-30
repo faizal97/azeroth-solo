@@ -1482,6 +1482,38 @@
     o.fItem = FI('shammace', 30);
     o.accent = '#0070DE';
   };
+  /* bard (v10.3, a hidden class for now: Widya's): a green leather tunic with a gold-trimmed V neck and a gold vine
+     down the front, a short skirt of pointed panels over leather trousers, a satchel strap across the chest to a
+     satchel at the back hip, wide sleeves, and a dagger */
+  var BARD = { tunic: '#5f8a3a', dark: '#43652a', gold: '#dcb24c', strap: '#553416', bag: '#8a5a30' };
+  function bardTorso(c, g) {
+    var b = g.b, x = g.scx, y = g.sy, hy = g.hy, sx = g.sx, wl = g.wl, wr = g.wr, out = '';
+    var sk = D`M${wl - 1},${hy - 4} L${wr + 1},${hy - 4} C${wr + 3},${hy + 5} ${wr + 5},${hy + 11} ${wr + 6},${hy + 17} L${sx + 7},${hy + 14} L${sx + 3},${hy + 19.5} L${sx - 1},${hy + 14} L${sx - 5},${hy + 19.5} L${sx - 8},${hy + 14.5} L${wl - 6},${hy + 17} C${wl - 4},${hy + 10} ${wl - 2},${hy + 4} ${wl - 1},${hy - 4} Z`;
+    out += P(sk, c.cel(BARD.tunic), 2.2) + CG(S(D`M${wr + 6.5},${hy + 14.6} L${sx + 7},${hy + 11.6} L${sx + 3},${hy + 17} L${sx - 1},${hy + 11.6} L${sx - 5},${hy + 17} L${sx - 8},${hy + 12} L${wl - 7},${hy + 14.6}`, BARD.gold, 1.6) +
+      F(D`M${wl - 8},${hy - 5} L${sx - 3},${hy - 5} L${sx - 3},${hy + 22} L${wl - 8},${hy + 22} Z`, BARD.dark, 0.45), c.clip(sk));
+    /* the V neck, gold-trimmed, and the vine embroidered down the front */
+    out += P(D`M${x - 4},${y - 2} L${x + b.shW - 4},${y - 1} L${x + 5},${y + 11} Z`, c.cel(g.b.neckC || '#f0d0b8'), 0) +
+      S(D`M${x - 5},${y - 1} L${x + 5},${y + 11} L${x + b.shW - 3},${y}`, OL, 3.6) + S(D`M${x - 5},${y - 1} L${x + 5},${y + 11} L${x + b.shW - 3},${y}`, BARD.gold, 1.8);
+    out += S(D`M${x + 5},${y + 13} C${x + 3},${y + 16} ${x + 7},${y + 18} ${x + 5},${y + 21} C${x + 3},${y + 24} ${x + 6.5},${hy - 9} ${x + 4.6},${hy - 6}`, BARD.gold, 1.3);
+    /* the satchel strap across the chest */
+    out += CG(S(D`M${x + b.shW - 2},${y - 2} L${sx - b.waistW - 1},${hy - 2}`, OL, 4.6) + S(D`M${x + b.shW - 2},${y - 2} L${sx - b.waistW - 1},${hy - 2}`, BARD.strap, 2.6), c.clip(g.torsoD));
+    return out;
+  }
+  function bardSatchel(c, g) {
+    var x = g.wl - 5, y = g.hy - 3;
+    return P(D`M${x - 6},${y + 1} C${x - 6.4},${y - 1} ${x - 5},${y - 2} ${x - 3},${y - 2} L${x + 5},${y - 1.6} C${x + 6.6},${y - 1.5} ${x + 7.2},${y - 0.4} ${x + 7},${y + 1} L${x + 6},${y + 10} C${x + 5.8},${y + 11.4} ${x + 5},${y + 12} ${x + 3.6},${y + 12} L${x - 3.6},${y + 11.6} C${x - 5},${y + 11.6} ${x - 5.8},${y + 10.8} ${x - 5.8},${y + 9.4} Z`, c.cel(BARD.bag), 2) +
+      P(D`M${x - 6},${y + 0.8} C${x - 6},${y - 1} ${x - 5},${y - 2} ${x - 3},${y - 2} L${x + 5},${y - 1.6} C${x + 6.6},${y - 1.5} ${x + 7.2},${y - 0.4} ${x + 7},${y + 1} L${x + 6.6},${y + 5} C${x + 3},${y + 6.6} ${x - 3},${y + 6.4} ${x - 5.8},${y + 5} Z`, c.cel(lt(BARD.bag, 0.12)), 1.6) +
+      R(x - 0.4, y + 3.8, 2.8, 3.2, BARD.gold, 1);
+  }
+  CLS.bard = function (o) {
+    o.torsoC = BARD.tunic; o.sleeve = BARD.tunic; o.bell = BARD.dark; o.pants = '#6e4a2c'; o.boots = '#5a3a22';
+    o.belt = '#4a2e1a'; o.buckle = GOLD;
+    o.body.neckC = o.skin;
+    o.torsoFx = bardTorso;
+    o.mid = bardSatchel;
+    o.fItem = FI('dagger', 36);
+    o.accent = '#9ACD5A';
+  };
 
 
   /* ================= v19 races: tauren, undead (Reclaimed) =================
@@ -2484,6 +2516,49 @@
       var d = D`M${g.scx + 9},${g.sy - 1} Q${g.scx - 1},${(g.sy + g.hy) / 2 - 2} ${g.scx - 12},${g.hy - 3}`;
       var m = [(g.scx + 9 + g.scx - 12) / 2 + 1, (g.sy - 1 + g.hy - 3) / 2 - 1];
       return S(d, '#2a1c10', 4.2) + S(d, '#6a4a2c', 2.4) + C(m[0], m[1], 1.9, '#c9b56a', 1.1);
+    }
+  };
+  /* the Reedsong Lute (v10.3): Widya's keepsake, a copy of the Songkeepers' lute, the same lute art_legends.js draws
+     for her. Worn as a look only (no slot, no stats): slung on the back, the pear-shaped body out behind the shoulder
+     blade and the neck leaning back past the head, the strap across the chest. Body centred on (0,0), the neck along -y. */
+  function reedLute(c) {
+    var body = 'M0,-17 C5,-16.5 12.6,-9 13,1.5 C13.4,11 7.4,18 0,18 C-7.4,18 -13.4,11 -13,1.5 C-12.6,-9 -5,-16.5 0,-17 Z';
+    var nk = '#8a5226', cv = '#f4cc84', out = '';
+    /* pegbox bent back from the nut, three pegs down each side */
+    var P1 = [-2.6, -44], P2 = [2.6, -44], P3 = [-3, -56.6], P4 = [-8, -54.2];
+    [[P2, P3, 1], [P1, P4, -1]].forEach(function (e) {
+      var a = e[0], b = e[1], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.sqrt(dx * dx + dy * dy), nx = -dy / l, ny = dx / l;
+      if (nx * e[2] < 0) { nx = -nx; ny = -ny; }
+      [0.3, 0.58, 0.86].forEach(function (f) {
+        var p = [a[0] + dx * f, a[1] + dy * f], q = [p[0] + nx * 3, p[1] + ny * 3], d = pl([p, q]);
+        out += S(d, OL, 2.6) + S(d, '#5e3416', 1.2) + E(q[0], q[1], 1.4, 1, c.cel('#7a4a28'), 1, null, r1(Math.atan2(ny, nx) * 180 / Math.PI));
+      });
+    });
+    out += P(pl([P1, P2, P3, P4]) + 'Z', c.lg([[0, lt(nk, 0.28)], [1, dk(nk, 0.25)]], 0, 0, 1, 0), 2.2) + S('M-1.2,-46.4 L-4.6,-53.4', '#34200f', 1.5, 0.85);
+    /* neck and fretboard */
+    out += P('M-3.3,-14 L-2.6,-44 L2.6,-44 L3.3,-14 Z', c.lg([[0, lt(nk, 0.22)], [0.5, nk], [1, dk(nk, 0.3)]], 0, 0, 1, 0), 2.2) + F('M-2.1,-15 L-1.7,-44 L1.7,-44 L2.1,-15 Z', '#34200f');
+    out += S('M-1.9,-19 L1.9,-19 M-1.9,-23.4 L1.9,-23.4 M-1.9,-27.8 L1.9,-27.8 M-1.9,-32.2 L1.9,-32.2 M-1.9,-36.6 L1.9,-36.6 M-1.9,-41 L1.9,-41', '#c8b48a', 0.55, 0.8);
+    /* the bowl: warm wood, a binding line, carved leaves, the rosette, the bridge */
+    out += P(body, c.lg([[0, '#eaaa64'], [0.42, '#c47a38'], [0.74, '#c47a38'], [1, '#86491c']], 0.15, 0, 0.85, 1), 2.6) +
+      CG(F('M-14,-4 C-12,-14 -4,-18 2,-18 L-14,14 Z', '#ffffff', 0.2) + F('M14,-2 C13,10 8,17 0,19 L16,19 Z', '#000000', 0.2), c.clip(body)) +
+      G(S(body, '#86491c', 1.2, 0.75), 'scale(0.84)');
+    out += S('M-8,4.6 C-7,10.6 -3,13 0,13.2 C3,13 7,10.6 8,4.6', cv, 1.1, 0.85);
+    [[-7.4, 8.6, -50], [-3.4, 12.4, -20], [3.4, 12.4, 20], [7.4, 8.6, 50]].forEach(function (q) {
+      out += G(F('M0,0 C-1.4,-0.7 -1.5,-2.4 0,-3.6 C1.5,-2.4 1.4,-0.7 0,0 Z', cv, 0.9), 'translate(' + q[0] + ',' + q[1] + ') rotate(' + q[2] + ')');
+    });
+    out += C(0, -4, 5.9, 'none', 0).replace('fill="none"', 'fill="none" stroke="' + cv + '" stroke-width="1.3"') + C(0, -4, 4.4, '#1e1008', 1.4) +
+      S('M-3,-4 L3,-4 M0,-7 L0,-1 M-2.1,-6.1 L2.1,-1.9 M2.1,-6.1 L-2.1,-1.9', '#9c6230', 0.7, 0.9);
+    out += R(-5.2, 8, 10.4, 2.8, '#34200f', 1.3);
+    /* strings from the bridge to the nut */
+    out += R(-2.9, -45.6, 5.8, 1.9, '#efe4c4', 1) + S('M-1.7,9.4 L-1.2,-44.4 M-0.57,9.4 L-0.4,-44.4 M0.57,9.4 L0.4,-44.4 M1.7,9.4 L1.2,-44.4', '#f6eed6', 0.55, 0.95);
+    return out;
+  }
+  GBACK.reedsong_lute = {
+    back: function (c, g) { return G(reedLute(c), 'translate(' + r1(g.bSh[0] - 11) + ',' + r1(g.sy + 22) + ') rotate(-24) scale(0.98)'); },
+    torso: function (c, g) {
+      var d = D`M${g.scx + 9},${g.sy - 1} Q${g.scx - 1},${(g.sy + g.hy) / 2 - 2} ${g.scx - 12},${g.hy - 3}`;
+      var m = [(g.scx + 9 + g.scx - 12) / 2 + 1, (g.sy - 1 + g.hy - 3) / 2 - 1];
+      return S(d, '#2a1c10', 4.2) + S(d, '#8a5a30', 2.4) + S(d, '#dcb24c', 0.6, 0.8) + C(m[0], m[1], 1.9, '#dcb24c', 1.1);
     }
   };
   var GEARKEYS = {

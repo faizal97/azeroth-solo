@@ -67,6 +67,43 @@ G.CAMEO_CHANCE = 0.2;
   if (!r.lyv || mem.n !== 1 || !mem.where) fail('cameo memory');
   G.CAMEO_CHANCE = 0.2;
 }
+// Widya (v10.2): her questline is in order, the singing contest can be won with her healing, and she uses her songs
+{
+  const wchain = Object.keys(D.QUESTS).filter((q) => D.QUESTS[q].legend === 'widya');
+  console.log('widya quests:', wchain.map((q) => `${q}@${D.QUESTS[q].lvl}`).join(' '));
+  for (const q of wchain) for (const p of D.QUESTS[q].pre || []) if (!D.QUESTS[p]) fail(`${q} needs missing ${p}`);
+  if (!D.QUESTS[D.LEGENDS.widya.unlock]) fail('widya unlock quest');
+  const realUse = E.use; let casts = null;
+  E.use = function (C, u, id, tg) { const r = realUse.apply(this, arguments); if (r === null && casts && u.legend === 'widya') casts[id] = (casts[id] || 0) + 1; return r; };
+  for (const cls of ['mage', 'warrior', 'rogue']) {
+    let used = {}, won = null; casts = {};
+    G.newGame({ name: 'T', cls, race: 'orc' }); const S = G.S, P = S.player; P.level = 35;
+    P.equip = G.botChar({ name: 'x', cls, race: 'orc', level: 35, skill: 0.6 }).equip; P.talents = G.autoTalents(cls, 'dps', 35, 0);
+    S.flags.warModeAsked = true; for (const q of wchain.slice(0, 4)) P.done[q] = true; P.quests.lg_wid_contest = { prog: [0] }; P.place = 'nesingwary_camp';
+    if (G.activityBlock('lg_contest')) { fail('lg_contest blocked: ' + G.activityBlock('lg_contest')); continue; }
+    G.queueFor('lg_contest'); G.acceptPop();
+    const wid = S.group.members.find((m) => m.legend === 'widya');
+    let g = 0;
+    while (S.run && S.run.phase !== 'done' && g++ < 300000) {
+      if (G.fight && G.pUnit && G.pUnit.kind === 'player') { G.pUnit.kind = 'bot'; G.pUnit.bot = { skill: 0.7, react: 0.5 }; G.pUnit.role = G.role(); }
+      if (S.run && S.run.phase === 'rest' && S.run.restUntil <= t) { try { G.runPull(); } catch (e) {} }
+      G.update(0.1); t += 100;
+    }
+    won = S.run && S.run.phase === 'done';
+    used = casts;
+    console.log(`lg_contest as ${cls}: Widya ${wid ? wid.role : 'MISSING'} · done ${won} · wipes ${S.run ? S.run.wipes : '?'} · cast ${Object.entries(used).map(([k, n]) => k + ' x' + n).join(', ')}`);
+    if (!wid || !won) fail('widya contest');
+    if (!Object.keys(used).some((k) => ['song_of_rest', 'soothing_chord', 'songkeepers_ballad', 'chorus_grove', 'verse_of_mending', 'counterpoint'].includes(k))) fail('widya never healed or shielded anyone');
+  }
+  E.use = realUse; casts = null;
+  // after her story: she is in the cameo pool too, and still only one legend per run
+  G.newGame({ name: 'T', cls: 'mage', race: 'human' }); const P = G.S.player; P.level = 60;
+  for (const q of chain.concat(wchain)) P.done[q] = true;
+  G.CAMEO_CHANCE = 1; const seen = {}; for (let i = 0; i < 40; i++) { t += G.CAMEO_GAP; const k = G.rollCameo(D.ACTIVITIES.stratholme); if (k) seen[k] = 1; }
+  G.CAMEO_CHANCE = 0.2;
+  console.log('cameo pool:', Object.keys(seen).join(', '));
+  if (!seen.widya || !seen.lyveus) fail('both legends can cameo');
+}
 // the keepsake: only after his story, and then it shows on your back
 { G.newGame({ name: 'T', cls: 'mage', race: 'human' }); G.setKeepsake('lyveus'); if (G.S.player.keepsake) fail('keepsake before the story');
   for (const q of chain) G.S.player.done[q] = true; G.setKeepsake('lyveus');

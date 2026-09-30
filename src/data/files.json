@@ -1,6 +1,7 @@
 [
   "core.js",
   "talents.js",
+  "bard.js",
   "zones/elwynn.js",
   "zones/dunmorogh.js",
   "zones/teldrassil.js",

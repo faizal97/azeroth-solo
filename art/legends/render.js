@@ -1,6 +1,7 @@
 // Verifies src/art_legends.js (the Legend characters: Lyveus Cloveus, his comrade Vyn, Lord Cassius Marrow,
-// Silverleaf Lodge, the four Lyveus icons; then the hooded wanderer, Deathwing and the two lore story scenes) and renders
-// contact sheets into art/legends/out/.
+// Silverleaf Lodge, the four Lyveus icons; then the hooded wanderer, Deathwing and the two lore story scenes; then Widya
+// the bard, Harrowby, Sal Brightbell and Widya's icons) and renders contact sheets into art/legends/out/. Also sheets
+// art.js's bard outfit and the Reedsong Lute back look on several races.
 // Usage: node art/legends/render.js
 const fs = require('fs');
 const path = require('path');
@@ -16,8 +17,11 @@ const read = (f) => fs.readFileSync(path.join(ROOT, 'src', f), 'utf8');
 const SELF = 'art_legends.js';
 const SRC = read(SELF);
 
-const NEW = { legends: ['lyveus', 'lyveus_hooded'], mobs: ['lord_cassius_marrow'], scenes: ['silverleaf_lodge'], icons: ['legend_lyveus', 'oathbound_strike', 'ancients_bulwark', 'silverleaf_aegis'],
-  actors: ['lyveus', 'vyn', 'lyveus_hooded', 'deathwing'], storyScenes: ['silverleaf_burning', 'caravan_road'] };
+const WIDYA_ICONS = ['legend_widya', 'soothing_chord', 'dissonant_note', 'song_of_rest', 'marching_song', 'lullaby', 'verse_of_mending', 'chorus_grove', 'counterpoint',
+  'hearthsong', 'crescendo', 'dirge', 'anthem_of_stone', 'encore', 'requiem', 'grand_finale', 'lake_reed', 'silver_lute_strings', 'heartwood_pegs', 'carved_lute_neck', 'lute_body', 'reedsong_lute'];
+const NEW = { legends: ['lyveus', 'lyveus_hooded', 'widya', 'harrowby'], mobs: ['lord_cassius_marrow', 'sal_brightbell'], scenes: ['silverleaf_lodge'],
+  icons: ['legend_lyveus', 'oathbound_strike', 'ancients_bulwark', 'silverleaf_aegis'].concat(WIDYA_ICONS),
+  actors: ['lyveus', 'vyn', 'lyveus_hooded', 'deathwing', 'widya', 'harrowby'], storyScenes: ['silverleaf_burning', 'caravan_road'] };
 // the first batch of keys must stay byte-identical: sha1 (first 12 hex) of each, drawn in a fresh world in this order
 const BASELINE = { legend_lyveus: '45e75da0f5b3', mob: '6d2bc85dee20', scene: '6dbbe3f65946', actor_lyveus: 'da9c4fab333e', actor_vyn: 'daa2bfec4958',
   icon_legend_lyveus: 'f528ef62b578', icon_oathbound_strike: '5d860cc9e318', icon_ancients_bulwark: '74aeffa4f137', icon_silverleaf_aegis: '19f94953de70' };
@@ -269,9 +273,9 @@ const heroLow = HEROES.map((o, i) => edges('hero_' + i, png(write('ref_hero_' + 
 // solid row is the round cap of the leg outline under the heel, about a pixel below the boot sole, hence the tolerance.
 for (const k of NEW.legends) if (Math.abs(ground['legend_' + k] - heroLow[0]) > 1.4) bad('ground: ' + k + ' feet at y=' + ground['legend_' + k].toFixed(1) + ', human paladin at y=' + heroLow[0].toFixed(1));
 const refMob = edges('ref_syndicate_highwayman', png(write('ref_mob_syndicate_highwayman', ART.mob('syndicate_highwayman')), 512), 4, true);
-if (Math.abs(ground.mob_lord_cassius_marrow - refMob) > 0.8) bad('ground: lord_cassius_marrow feet at y=' + ground.mob_lord_cassius_marrow.toFixed(1) + ', syndicate_highwayman at y=' + refMob.toFixed(1));
+for (const k of NEW.mobs) if (Math.abs(ground['mob_' + k] - refMob) > 0.8) bad('ground: ' + k + ' feet at y=' + ground['mob_' + k].toFixed(1) + ', syndicate_highwayman at y=' + refMob.toFixed(1));
 for (const k of NEW.actors) if (ground['actor_' + k] < 150 || ground['actor_' + k] > 159) bad('ground: actor ' + k + ' feet at y=' + ground['actor_' + k].toFixed(1) + ' (want the bottom edge)');
-console.log('feet (solid bottom row): lyveus ' + ground.legend_lyveus.toFixed(1) + ', hooded ' + ground.legend_lyveus_hooded.toFixed(1) + ', heroes ' + heroLow.map((v) => v.toFixed(1)).join(' ') + ', cassius ' + ground.mob_lord_cassius_marrow.toFixed(1) + ' (highwayman ' + refMob.toFixed(1) + '), actors ' + NEW.actors.map((k) => ground['actor_' + k].toFixed(1)).join(' '));
+console.log('feet (solid bottom row): ' + NEW.legends.map((k) => k + ' ' + ground['legend_' + k].toFixed(1)).join(', ') + ', sal ' + ground.mob_sal_brightbell.toFixed(1) + ', heroes ' + heroLow.map((v) => v.toFixed(1)).join(' ') + ', cassius ' + ground.mob_lord_cassius_marrow.toFixed(1) + ' (highwayman ' + refMob.toFixed(1) + '), actors ' + NEW.actors.map((k) => ground['actor_' + k].toFixed(1)).join(' '));
 
 // ---- 5. sheets ----
 const HEAD = /^<svg xmlns="http:\/\/www.w3.org\/2000\/svg" viewBox="([^"]+)"(?: width="[^"]+" height="[^"]+")?>/;
@@ -384,8 +388,40 @@ sheet('actors_stage', [
   stage('azeroth_dawn', [[ART.story.actor('deathwing'), 22, 4, 56]])
 ], 480, 270, 2, '#000');
 // icons at 128, 64 and 40, next to the icons they sit beside or could be confused with
+// Widya next to Lyveus and heroes; Harrowby next to the town humans he stands among as an NPC
+const widRow = [['widya', ART.legend('widya')], ['harrowby', ART.legend('harrowby')], ['lyveus', ART.legend('lyveus')], ['priest_f', ART.hero(HEROES[2])], ['bard_elf', ART.hero({ cls: 'bard', race: 'nightelf', gender: 'f' })]];
+sheet('widya_heroes', widRow, 256, 256, 5, '#8a9a8a', line);
+sheet('widya_heroes_ingame', widRow.concat(widRow.map(([k, s]) => [k, s, '#2a3440'])), 90, 90, 5, '#8a9a8a');
+sheet('widya_heroes_small', widRow.concat(widRow.map(([k, s]) => [k, s, '#2a3440'])), 48, 48, 5, '#8a9a8a');
+// Sal Brightbell next to the camp humanoids
+const salRow = [['sal', ART.mob('sal_brightbell')]].concat(['syndicate_highwayman', 'kurzen_commando'].filter((k) => ART.keys.mobs.includes(k)).map((k) => [k, ART.mob(k)]));
+sheet('sal_compare', salRow, 200, 200, salRow.length, '#c8b07a', line);
+sheet('sal_compare_small', salRow.concat(salRow.map(([k, s]) => [k, s, '#1e1a22'])), 70, 70, salRow.length, '#c8b07a');
+// the new story actors next to Lyveus, big and on a backdrop
+const wAct = [['widya', ART.story.actor('widya')], ['harrowby', ART.story.actor('harrowby')], ['lyveus', ART.story.actor('lyveus')]];
+sheet('widya_actors', wAct.concat(wAct.map(([k, s]) => [k, s, '#10161c'])), 300, 300, 3, '#6a7a8a');
+const wBg = ['mystral_lake', 'stromgarde_keep', 'nesingwary_camp'].filter((k) => ART.keys.scenes.includes(k));
+const sceneStage = (bgKey, placements) => {
+  let body = nest(ART.scene(bgKey), 0, 0, 480, 270);
+  for (const [s, x, y, w] of placements) { const sz = w * 4.8; body += nest(s, x * 4.8, 270 - y * 2.7 - sz, sz, sz); }
+  return [bgKey, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270" width="480" height="270">${body}</svg>`];
+};
+if (wBg.length) sheet('widya_stage', [sceneStage(wBg[0], [[ART.story.actor('widya'), 42, 2, 32]]), sceneStage(wBg[1] || wBg[0], [[ART.story.actor('harrowby'), 44, 2, 30]]),
+  sceneStage(wBg[2] || wBg[0], [[ART.mob('sal_brightbell'), 44, 0, 34]])], 480, 270, 3, '#000');
+// art.js: the bard outfit on every race, and the Reedsong Lute worn on the back next to the Silverleaf Aegis
+const RACES8 = [['human', 'm'], ['nightelf', 'f'], ['dwarf', 'm'], ['gnome', 'f'], ['orc', 'm'], ['troll', 'f'], ['tauren', 'm'], ['undead', 'f']];
+const CLS8 = ['warrior', 'mage', 'hunter', 'rogue', 'shaman', 'priest', 'bard', 'paladin'];
+sheet('bard_races', RACES8.map(([r, g]) => [r, ART.hero({ cls: 'bard', race: r, gender: g })]), 160, 160, 8, '#8a9a8a', line);
+const backRow = RACES8.map(([r, g], i) => [r, ART.hero({ cls: CLS8[i], race: r, gender: g, gear: { back: 'reedsong_lute' } })]);
+sheet('lute_back', backRow.concat(RACES8.map(([r, g], i) => [r, ART.hero({ cls: CLS8[i], race: r, gender: g, gear: { back: 'silverleaf_aegis' } })])), 160, 160, 8, '#8a9a8a', line);
+sheet('lute_back_small', backRow.concat(backRow.map(([k, s]) => [k, s, '#2a3440'])), 64, 64, 8, '#8a9a8a');
+if (!ART.keys.looks || !ART.keys.looks.back.includes('reedsong_lute')) bad('art.js: reedsong_lute is not a back look');
+for (const [r, g] of RACES8) { const s = ART.hero({ cls: 'bard', race: r, gender: g }); if (s.length < 4000) bad('art.js: bard ' + r + ' looks like the placeholder'); }
+// Widya's icons next to the bard-adjacent class icons
+const wIconRow = WIDYA_ICONS.map((k) => [k, ART.icon(k)]);
+for (const sz of [128, 64, 40]) sheet('widya_icons_' + sz, wIconRow, sz, sz, 11, '#1c1a20');
 const nearIcons = ['holy_shield', 'shield_wall', 'shield_block', 'crusader_strike', 'divine_protection', 'sword'].filter((k) => ART.keys.icons.includes(k));
-const iconRow = NEW.icons.map((k) => [k, ART.icon(k)]).concat(nearIcons.map((k) => [k, ART.icon(k)]));
+const iconRow = NEW.icons.slice(0, 4).map((k) => [k, ART.icon(k)]).concat(nearIcons.map((k) => [k, ART.icon(k)]));
 for (const sz of [128, 64, 40]) sheet('icons_' + sz, iconRow, sz, sz, iconRow.length, '#1c1a20');
 
 console.log('packs loaded before: ' + PACKS.join(' '));

@@ -471,14 +471,18 @@
       const per = (ab.dot.dmg + ab.dot.perLvl * L + (ab.dot.coef || 0) * u.st.sp) * (1 + (tmOf(u).dot[abId] || 0) / 100);
       addAura(C, tgt, { id: ab.dot.id, until: C.t + ab.dot.ticks * ab.dot.every, every: ab.dot.every, next: C.t + ab.dot.every, dot: per, school: ab.dot.school, src: u.uid, ab: abId });
     }
-    if (ab.hot && tgt) {
+    // a "party" heal or heal over time (the bard's songs, v10.2) reaches every living party member
+    const healWho = ab.target === 'party' ? alive(friends(C, u)) : tgt ? [tgt] : [];
+    if (ab.hot) {
       const per = (ab.hot.heal + ab.hot.perLvl * L + (ab.hot.coef || 0) * u.st.sp) * (1 + (tmOf(u).hot[abId] || 0) / 100);
-      addAura(C, tgt, { id: ab.hot.id, until: C.t + ab.hot.ticks * ab.hot.every, every: ab.hot.every, next: C.t + ab.hot.every, hot: per, src: u.uid, ab: abId });
+      for (const w of healWho) addAura(C, w, { id: ab.hot.id, until: C.t + ab.hot.ticks * ab.hot.every, every: ab.hot.every, next: C.t + ab.hot.every, hot: per, src: u.uid, ab: abId });
     }
-    if (ab.heal && tgt) {
-      const crit = Math.random() * 100 < u.st.spellCrit;
-      const amt = scaled(ab.heal.base, ab.heal.perLvl, L) + (ab.heal.coef || 0) * u.st.sp;
-      heal(C, u, tgt, crit ? amt * 1.5 : amt, { crit, ab: abId });
+    if (ab.heal) {
+      for (const w of healWho) {
+        const crit = Math.random() * 100 < u.st.spellCrit;
+        const amt = scaled(ab.heal.base, ab.heal.perLvl, L) + (ab.heal.coef || 0) * u.st.sp;
+        heal(C, u, w, crit ? amt * 1.5 : amt, { crit, ab: abId });
+      }
     }
     if (ab.shield && tgt) {
       const amt = Math.round((ab.shield.base + ab.shield.perLvl * L + ab.shield.coef * u.st.sp) * (1 + (tmOf(u).shield[abId] || 0) / 100));
@@ -681,6 +685,26 @@
       const low = allies.slice().sort((a, b2) => a.hp / a.maxHp - b2.hp / b2.maxHp)[0];
       const thr = 0.5 + 0.3 * (b.skill || 0.5);
       const tank = allies.find((a) => a.role === 'tank') || allies[0];
+      if (u.cls === 'bard') {
+        const hurt = allies.filter((a) => a.hp / a.maxHp < 0.8).length, low2 = allies.filter((a) => a.hp / a.maxHp < 0.55).length;
+        // Widya's own songs first (a Legend's abilities): the ballad when the party is hurting, the lullaby on a crowd
+        if (u.legend === 'widya') {
+          if (low2 >= 2 && try_('songkeepers_ballad')) return;
+          if (en.filter((e) => !e.boss).length >= 3 && try_('lakeside_lullaby')) return;
+        }
+        if (low2 >= 3 && has('grand_finale') && try_('grand_finale')) return;
+        if (low2 >= 2 && has('chorus_grove') && try_('chorus_grove')) return;
+        if (hurt >= 3 && has('encore') && try_('encore')) return;
+        if (hurt >= 2 && has('song_of_rest') && !auraOf(tank, 'song_of_rest') && try_('song_of_rest')) return;
+        if (low && low.hp / low.maxHp < 0.4 && has('crescendo') && low.hp / low.maxHp > 0.2 && try_('crescendo', low)) return;
+        if (low && low.hp / low.maxHp < thr && try_('soothing_chord', low)) return;
+        if (tank && tank.hp / tank.maxHp < 0.9 && has('counterpoint') && !auraOf(tank, 'pw_shield') && try_('counterpoint', tank)) return;
+        if (tank && tank.hp / tank.maxHp < 0.85 && has('verse_of_mending') && !auraOf(tank, 'verse_of_mending') && try_('verse_of_mending', tank)) return;
+        for (const s of ['marching_song', 'hearthsong', 'anthem_of_stone']) if (has(s) && !auraOf(u, s) && try_(s)) return;
+        if (en.length >= 3 && has('lullaby') && Math.random() < 0.3 * (b.skill || 0.5) && try_('lullaby')) return;
+        if (u.res / u.maxRes > 0.7 && Math.random() < 0.4) { const f = focusTarget(C, u); if (f && has('dirge') && !auraOf(f, 'dirge') && try_('dirge', f)) return; if (f) try_('dissonant_note', f); }
+        return;
+      }
       if (low && low.hp / low.maxHp < thr && has('lesser_heal') && try_('lesser_heal', low)) return;
       if (low && low.hp / low.maxHp < thr && has('holy_light') && try_('holy_light', low)) return;
       if (low && low.hp / low.maxHp < thr && has('healing_touch') && try_('healing_touch', low)) return;

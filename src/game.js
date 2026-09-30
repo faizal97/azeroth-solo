@@ -2158,7 +2158,7 @@
     const L = D.LEGENDS[key], C = D.CLASSES[L.cls];
     const b = { id: -1000 - Object.keys(D.LEGENDS).indexOf(key), name: L.short, cls: L.cls, race: L.race, level: lvl, role: L.role, skill: 0.85, react: 0.45, toxic: 0, legend: key };
     // green gear (v10.2): a Legend in blue carried most runs on its own (docs/plans/2026-09-30-legends-story-heroes-design.md)
-    const equip = { weapon: G.genGear('weapon', lvl, 2, { wtype: 'sword' }) };
+    const equip = { weapon: G.genGear('weapon', lvl, 2, { wtype: L.wtype || 'sword' }) };
     for (const s of ['chest', 'legs', 'feet', 'hands', 'wrist', 'waist', 'back']) equip[s] = G.genGear(s, lvl, 2, s === 'back' ? {} : { atype: C.armorType });
     return { name: L.short, cls: L.cls, race: L.race, level: lvl, equip, role: L.role, hp: null, res: null, auras: [], bot: b, legend: key, talents: G.autoTalents(L.cls, L.role, lvl, 7) };
   };

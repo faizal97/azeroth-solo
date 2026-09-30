@@ -3,6 +3,13 @@
   const { D, E, B, G } = window;
   const app = document.getElementById('app');
   const ui = { sheet: null, sheetFn: null, bagSel: null, chatCh: 'say', spriteEls: {}, dialog: null, lastQuestDot: false, rollEl: null };
+  // Scenes waiting to play (v10.2): a queue, so a chapter and a quest scene that come due together both play, in turn.
+  // ui.pendingChapter reads the next one; setting it adds one (once); setting null takes the next one off.
+  const sceneQueue = [];
+  Object.defineProperty(ui, 'pendingChapter', {
+    get: () => sceneQueue[0] || null,
+    set: (id) => { if (id == null) sceneQueue.shift(); else if (!sceneQueue.includes(id)) sceneQueue.push(id); },
+  });
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const now = () => Date.now();
 
@@ -280,7 +287,7 @@
     const sceneName = (nm) => { if (/ "/.test(nm)) return nm.split(' "')[0]; const w = nm.split(' '); return w.length > 2 ? w[w.length - 1] : nm; };
     list.forEach((n, i) => {
       const N = D.NPCS[n], mk = G.npcMarker(n);
-      const src = n === 'hooded_stranger' && window.ART && ART.legend ? art('legend', 'lyveus_hooded') : N.legend && window.ART && ART.legend ? art('legend', N.legend) : art('hero', npcLooks(n, place));
+      const src = n === 'hooded_stranger' && window.ART && ART.legend ? art('legend', 'lyveus_hooded') : (N.legend || N.art) && window.ART && ART.legend ? art('legend', N.legend || N.art) : art('hero', npcLooks(n, place));
       const tag = h('div', { class: 'np', style: { fontSize: '10px' } }, mk ? h('span', { class: mk === '…' ? '' : 'qmk', style: { color: mk === '…' ? '#bbb' : '#ffd100', fontWeight: 800 } }, (mk === '…' ? '?' : mk) + ' ') : null, h('span', { style: { color: '#ffd100' } }, sceneName(N.name)));
       const el = spriteEl(src, slots[i], 'idle flip npc tappable', tag);
       el.addEventListener('click', () => openNpc(n));
@@ -2051,7 +2058,7 @@
             if (open) for (const para of L.story) box.append(h('p', { style: { margin: '6px 0' } }, para));
             box.append(h('button', { class: 'chip', style: { marginTop: '6px' }, onclick: () => { ui.heroStory = open ? null : key; ui.sheetFn(); } }, open ? 'Hide story' : `Read ${L.pronoun || 'their'} story`));
           }
-          else box.append(h('p', { style: { margin: '6px 0' } }, 'A wood elf knight, said to have died five years ago, has been seen among the ashes of Silverleaf Lodge in the Kinloch Highlands (level 37+).'));
+          else box.append(h('p', { style: { margin: '6px 0' } }, L.teaser || 'A wood elf knight, said to have died five years ago, has been seen among the ashes of Silverleaf Lodge in the Kinloch Highlands (level 37+).'));
           if (on) {
             const mem = G.legendMemory(key);
             box.append(h('p', { class: 'ai-note' }, `Now and then ${L.short} turns up in one of your group runs, with ${L.pronoun || 'their'} own abilities: ${L.abilities.map((a) => D.ABILITIES[a].name).join(' and ')}.`
@@ -3434,7 +3441,7 @@
     const dt = (t - last) / 1000; last = t;
     if (G.S) {
       if (dt > 20) resume();
-      if (ui.pendingChapter && !G.fight && !ui.dialog && !(window.CS && CS.playing)) { const id = ui.pendingChapter; ui.pendingChapter = null; closeSheet(); setTimeout(() => { if (!(window.CS && CS.unlocked().has(id))) playChapter(id); }, 2600); } // seen on another device (cloud save) in the meantime: skip it
+      if (ui.pendingChapter && !ui.sceneBusy && !G.fight && !ui.dialog && !(window.CS && CS.playing)) { const id = ui.pendingChapter; ui.pendingChapter = null; ui.sceneBusy = true; closeSheet(); setTimeout(() => { const done = () => { ui.sceneBusy = false; }; if (!(window.CS && CS.unlocked().has(id))) Promise.resolve(playChapter(id)).then(done, done); else done(); }, 2600); } // one at a time; seen on another device (cloud save) in the meantime: skip it
       G.update(Math.min(dt, 1));
       cloudTick += dt; if (cloudTick > 30) { cloudTick = 0; cloudAuto(false); if (window.FRIENDS && FRIENDS.on()) FRIENDS.flush(false); }
       frame();

@@ -98,4 +98,79 @@
   Object.assign(D.ACTIVITIES, {
     lg_marrow: { name: 'The Oath of the Ancients', where: 'silverleaf_lodge', size: 3, minLvl: 58, maxLvl: 60, desc: "Lyveus's last stand at Silverleaf Lodge. 3 players.", boss: 'lord_cassius_marrow', needQuest: 'lg_lyv_oath', pulls: [{ scene: 'silverleaf_lodge', label: 'The burned hall', mobs: ['cabal_enforcer', 'cabal_enforcer'] }, { scene: 'silverleaf_lodge', label: 'The grove', mobs: ['cabal_enforcer', 'cabal_enforcer', 'cabal_enforcer'] }, { scene: 'silverleaf_lodge', label: 'Lord Cassius Marrow', mobs: ['lord_cassius_marrow'], boss: true }] },
   });
+
+  // ------------------------------------------------------------------------------------------------------------------
+  // Second legend (v10.2): Widya, the Songkeeper's Daughter, a wood elf bard of Reedsong on Lake Aurel (an original
+  // character by a friend of the developer). A small story on purpose: the Black Ledger took her hamlet's lute for its
+  // debt, and the appraiser Harrowby split it to sell; she wins it back piece by piece, levels 22-40, both factions.
+  // Design: docs/plans/2026-09-30-widya-bard-design.md. She plays a Bard (data/bard.js), a healer.
+  D.LEGENDS.widya = {
+    name: 'Widya', short: 'Widya', title: "The Songkeeper's Daughter", npc: 'widya', unlock: 'lg_wid_song',
+    cls: 'bard', race: 'nightelf', role: 'healer', wtype: 'dagger', abilities: ['songkeepers_ballad', 'lakeside_lullaby'], pronoun: 'her',
+    credit: 'An original character created by a friend, adapted for Caldreth.',
+    teaser: 'A wood elf singer has been seen on the jetties of Lake Aurel in Elderglen, playing a borrowed lute badly and singing anyway (level 22+).',
+    keepsake: { look: 'reedsong_lute', name: 'Reedsong Lute', icon: 'reedsong_lute', desc: 'A copy of the Songkeepers\' lute, carved by Widya for you. Worn on your back.' },
+    story: [
+      'Reedsong is a hamlet of reed houses and jetties on Lake Aurel. Its Songkeepers keep every family\'s story as a song, and every song is played on one lute, old as the hamlet, its neck carved with the name of every Songkeeper who ever played it.',
+      'After the Long War, Reedsong borrowed from the Black Ledger to rebuild its jetties. Last autumn the harvest failed. The collectors came, and the lute was the only thing of value, so they took it "on account".',
+      'The Ledger\'s appraiser, a tired clerk called Harrowby, found it sold better in pieces. Widya, the Songkeeper\'s daughter, went after every one of them: the silver strings, the heartwood pegs, the carved neck and the body.',
+      'She got them back. The debt is still there; that is not a thing a song can settle. But the lute plays again, and the last name on its neck is hers.',
+    ],
+    cameo: {
+      hello: ['Room for a singer? I heal better than I bargain.', 'I heard there was a fight. Somebody has to keep you all in tune.', 'Don\'t mind me, I\'m only here for the songs. And your lives.', 'Hello again! I brought the lute. Try not to die near it.'],
+      bye: ['That one goes in the Songbook. Take care of yourselves.', 'Good run! I\'ll get the words right by the next inn.', 'Off I go. Somebody at Lake Aurel owes me a supper.', 'Thank you for the song. It was a loud one.'],
+      pull: ['Here we go. Everyone breathe on the beat.', 'On the count. One, two...', 'Keep close. My songs don\'t carry far.'],
+      win: ['Ha! That\'s a verse.', 'Well played. Well fought.', 'Everyone still here? Good. I counted.'],
+      wipe: ['Up, up. The song isn\'t over.', 'Well, that was the sad verse. Again?'],
+      loot: ['Take it, it suits you.', 'Pretty! Not as pretty as the lute.'],
+      first: { say: 'A wood elf with a lute on her back runs to catch up with your group, out of breath and grinning.', line: 'Don\'t start without me! You fight, I sing, nobody dies. That\'s the deal.' },
+    },
+  };
+  Object.assign(D.ABILITIES, {
+    songkeepers_ballad: { name: "Songkeeper's Ballad", cls: 'legend', lvl: 1, cost: 0, cd: 40, target: 'party', icon: 'encore', hot: { id: 'songkeepers_ballad', ticks: 5, every: 2, heal: 30, perLvl: 3, coef: 0.15 }, desc: 'The song of Reedsong heals everyone in the party for {hh} over 10 sec. 40 sec cooldown.' },
+    lakeside_lullaby: { name: 'Lakeside Lullaby', cls: 'legend', lvl: 1, cost: 0, cd: 45, target: 'self', icon: 'lullaby', combatOnly: true, stompAll: 4, desc: 'A lullaby from the jetties: nearby enemies (not bosses) sleep for 4 sec. 45 sec cooldown.' },
+  });
+
+  D.item('silver_lute_strings', { name: 'Silver Lute Strings', slot: 'quest', q: 1, icon: 'silver_lute_strings' });
+  D.item('heartwood_pegs', { name: 'Heartwood Pegs', slot: 'quest', q: 1, icon: 'heartwood_pegs' });
+  D.item('carved_lute_neck', { name: 'The Carved Neck', slot: 'quest', q: 1, icon: 'carved_lute_neck' });
+
+  // the bearkin raided the collectors' cart; Harrowby's porters carry his strongbox through Grey Wolf Vale
+  D.MOBS.thistlefur_ursa.qdrops = (D.MOBS.thistlefur_ursa.qdrops || []).concat([['silver_lute_strings', 0.25]]);
+  D.MOBS.thistlefur_shaman.qdrops = (D.MOBS.thistlefur_shaman.qdrops || []).concat([['silver_lute_strings', 0.25]]);
+  Object.assign(D.MOBS, {
+    ledger_porter: { name: 'Ledger Porter', lvl: [26, 27], family: 'humanoid', sprite: 'syndicate_highwayman', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['heartwood_pegs', 0.35]], aggro: 'Hands off the strongbox. It\'s been appraised.' },
+    camp_brawler: { name: 'Camp Brawler', lvl: [33, 33], family: 'humanoid', sprite: 'kurzen_commando', hpMult: 1.1, drops: [['thieves_coin', 0.5]], aggro: 'Nobody out-sings Sal at this fire!' },
+    sal_brightbell: { name: 'Sal Brightbell', lvl: [34, 34], family: 'humanoid', elite: true, named: true, hpMult: 4.2, dmgMult: 2, special: 'kelris', summon: 'camp_brawler', specialText: 'Sal Brightbell hits a note so loud the camp joins in!', drops: [['thieves_coin', 1]], qdrops: [['carved_lute_neck', 1]], aggro: 'A contest is a contest, elf. Loser pays in teeth!' },
+  });
+  D.PLACES.the_howling_vale.mobs.push(['ledger_porter', 3]);
+
+  Object.assign(D.NPCS, {
+    widya: { name: 'Widya', title: "The Songkeeper's Daughter", legend: 'widya' },
+    harrowby: { name: 'Harrowby', title: 'Appraiser of the Black Ledger', art: 'harrowby' },
+  });
+  // a travelling singer: she is found at each stage of her story
+  D.PLACES.mystral_lake.npcs.push('widya');
+  D.PLACES.nesingwary_camp.npcs.push('widya');
+  D.PLACES.highland_plains.npcs.push('widya');
+  D.PLACES.stromgarde_keep.npcs = (D.PLACES.stromgarde_keep.npcs || []).concat(['harrowby']);
+
+  Q('lg_wid_meet', { name: 'A Borrowed Lute', lvl: 22, giver: 'widya', turnin: 'widya', legend: 'widya', text: "Oh! You heard that? Please don't judge the song by this lute. It's borrowed, and it's awful. Mine was taken. It's a long story, and I'll sing you all of it, but first: the bears have decided this jetty is theirs. Chase off 8 of them and I'll tell you everything.",
+    objs: [{ type: 'kill', mob: 'ashenvale_bear', n: 8 }], reward: { choice: ['fam_feet22'] } });
+  Q('lg_wid_strings', { name: 'Silver Strings', lvl: 24, giver: 'widya', turnin: 'widya', legend: 'widya', pre: ['lg_wid_meet'], text: "The Ledger's collectors took our lute for Reedsong's debt. On the road north, the Briarpelt bearkin raided their cart, and one of them has been seen wearing silver strings like a necklace. Those are ours. Bring them back to me.",
+    objs: [{ type: 'collect', item: 'silver_lute_strings', n: 1 }], reward: { choice: ['fam_waist24'] } });
+  Q('lg_wid_pegs', { name: 'The Appraiser', lvl: 27, giver: 'widya', turnin: 'widya', legend: 'widya', pre: ['lg_wid_strings'], text: "I found the collectors' paperwork. The lute was appraised by a man called Harrowby, and he split it up! Strings, pegs, neck, body, sold one by one, because it's worth more that way. His porters are carrying his strongbox through Grey Wolf Vale. The heartwood pegs are in it. Kill 6 of them and bring me the pegs.",
+    objs: [{ type: 'kill', mob: 'ledger_porter', n: 6 }, { type: 'collect', item: 'heartwood_pegs', n: 1 }], reward: { choice: ['fam_weapon27'] } });
+  Q('lg_wid_auction', { name: 'The Trophy Auction', lvl: 31, giver: 'widya', turnin: 'widya', legend: 'widya', pre: ['lg_wid_pegs'], text: "Harrowby sold the neck to a trophy dealer, who is auctioning it at Wexley's Expedition in the Vinewild, between a tiger's head and a troll's tusk. A trophy! It has names on it! Meet me there. I'll go ahead and look terribly rich.",
+    objs: [{ type: 'visit', place: 'nesingwary_camp' }], reward: { money: 2500 } });
+  Q('lg_wid_contest', { name: 'A Song for the Neck', lvl: 33, giver: 'widya', turnin: 'widya', legend: 'widya', pre: ['lg_wid_auction'], group: 3, text: "The neck went to Sal Brightbell, the camp's singing champion, and I haven't got the coin. But Sal says anyone can have it who out-sings him at the fire tonight. Easy. Except Sal cheats, and his friends are large. Come with me and bring two more. I'll sing. You keep me alive.",
+    objs: [{ type: 'collect', item: 'carved_lute_neck', n: 1 }], reward: { choice: ['fam_hands34'] } });
+  Q('lg_wid_body', { name: 'The Last Piece', lvl: 38, giver: 'widya', turnin: 'harrowby', legend: 'widya', pre: ['lg_wid_contest'], text: "The body is the last piece, and Harrowby kept it for himself. He's at Highhold Keep with the Ledger's highwaymen around him. I don't want a fight with him; I want to look him in the face. Clear me a way: 10 highwaymen. Then tell him Widya of Reedsong is coming.",
+    objs: [{ type: 'kill', mob: 'syndicate_highwayman', n: 10 }], reward: { choice: ['fam_chest38'] } });
+  Q('lg_wid_song', { name: "Reedsong's Song", lvl: 40, giver: 'harrowby', turnin: 'widya', legend: 'widya', pre: ['lg_wid_body'], text: "So the Songkeeper's daughter sends a fighter ahead of her. I appraise things. That's all I do. I once had a village too; the Ledger priced it, and I signed. Tell her to come up the plains and play me her village's song. Then we'll see what the body is worth.",
+    objs: [{ type: 'visit', place: 'highland_plains' }], reward: { choice: ['fam_ring_rare40'] } });
+
+  Object.assign(D.ACTIVITIES, {
+    lg_contest: { name: 'A Song for the Neck', where: 'nesingwary_camp', size: 3, minLvl: 31, maxLvl: 35, desc: "Widya's singing contest at Wexley's Expedition. 3 players.", boss: 'sal_brightbell', needQuest: 'lg_wid_contest', pulls: [{ scene: 'nesingwary_camp', label: 'The camp fire', mobs: ['camp_brawler', 'camp_brawler'] }, { scene: 'nesingwary_camp', label: 'Sal Brightbell', mobs: ['sal_brightbell'], boss: true }] },
+  });
 })(typeof window !== 'undefined' ? window : globalThis);
