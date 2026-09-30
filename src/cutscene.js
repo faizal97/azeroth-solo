@@ -262,6 +262,16 @@
         actors: [{ a: 'mob:chief_ukorz_sandscalp', x: 40, y: 0, w: 36, from: { y: -20, o: 0 }, dur: 2 }],
         lines: [{ t: 0.5, text: 'At the top of the temple waits their chief, Uzzak.' }, { t: 5, who: 'Chief Uzzak', text: "Who dares enter the Chief's city?" }] },
     ] },
+    { id: 'cw_intro', instance: 'coinworks', title: 'The Coinworks', music: 'dungeon', shots: [
+      { bg: 'scene:coinworks_gate', dur: 9, cam: [[0, 0, 1.15], [0, 2, 1.02]], fx: ['fadein'],
+        lines: [{ t: 0.5, text: 'Under the cliffs of Coppergulch, carts of gold roll through a brass door every night.' }, { t: 5, text: 'Nobody in town minted the coins that come back out.' }] },
+      { bg: 'scene:cw_smelter', dur: 10, cam: [[-4, 0, 1.12], [4, 0, 1.12]],
+        actors: [{ a: 'mob:foreman_nettlecog', x: 58, y: 2, w: 24 }, { a: 'mob:venture_mechanic', x: 28, y: 2, w: 20, from: { x: 8, o: 0 }, dur: 2 }],
+        lines: [{ t: 0.5, text: 'The Deepgold Company melts the gold down and strikes it into coins, still warm and stamped with a claw.' }, { t: 5.5, text: 'Most of them leave the same night, on the road to Cinderpeak.' }] },
+      { bg: 'scene:cw_vault', dur: 10, cam: [[0, 0, 1.0], [0, -2, 1.2]], fx: ['fadeout'],
+        actors: [{ a: 'mob:mintmaster_coinwhistle', x: 40, y: 0, w: 30, from: { y: -20, o: 0 }, dur: 2 }],
+        lines: [{ t: 0.5, text: 'In the counting house, the mintmaster writes down every coin.' }, { t: 5, who: 'Mintmaster Coinwhistle', text: 'Every coin in this room is counted. So are you.' }] },
+    ] },
     { id: 'md_intro', instance: 'maraudon', title: 'The Gemfall Caves', music: 'dungeon', shots: [
       { bg: 'scene:maraudon_gate', dur: 9, cam: [[0, 0, 1.15], [0, 2, 1.02]], fx: ['fadein'],
         lines: [{ t: 0.5, text: 'The centaur of Mournwaste keep one law: take nothing from under the ground. Long ago a khan broke it here.' }, { t: 5, text: 'What he woke has poisoned Mournwaste ever since.' }] },

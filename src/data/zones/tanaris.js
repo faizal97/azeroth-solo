@@ -43,13 +43,14 @@
 
   Object.assign(D.PLACES, {
     gadgetzan: { name: 'Coppergulch', zone: 'Sirocco', region: 'tanaris', scene: 'gadgetzan', lvl: [40, 50], safe: true, inn: true, mobs: [], pool: 0, npcs: ['noggenfogger', 'bilgewhizzle', 'sprinkle', 'fizzledowser', 'innkeeper_fizzgrimble', 'blizrik'], vendor: 'innkeeper_fizzgrimble', gearVendor: 'blizrik',
-      links: { waterspring_field: 16, thistleshrub_valley: 18, lost_rigger_cove: 20, noxious_lair: 18, nesingwary_camp: 50 }, via: { nesingwary_camp: 'Goblin zeppelin' } },
+      links: { waterspring_field: 16, thistleshrub_valley: 18, lost_rigger_cove: 20, noxious_lair: 18, nesingwary_camp: 50 , coinworks_gate: 8 }, via: { nesingwary_camp: 'Goblin zeppelin' } },
     waterspring_field: { name: 'Pumpworks Field', zone: 'Sirocco', region: 'tanaris', scene: 'waterspring_field', lvl: [40, 42], mobs: [['wastewander_bandit', 5], ['wastewander_shadow_mage', 4]], named: { caliph_scorpidsting: 300, ossa_drywell: 150 }, pool: 10, npcs: [], links: { gadgetzan: 16, eastmoon_ruins: 18 } },
     thistleshrub_valley: { name: 'Spinebush Valley', zone: 'Sirocco', region: 'tanaris', scene: 'thistleshrub_valley', lvl: [40, 42], mobs: [['thistleshrub_rootshaper', 6], ['wastewander_bandit', 2]], pool: 9, npcs: [], links: { gadgetzan: 18, zul_farrak_gate: 18 } },
     lost_rigger_cove: { name: 'Rotten Plank Cove', zone: 'Sirocco', region: 'tanaris', scene: 'lost_rigger_cove', lvl: [42, 44], mobs: [['southsea_pirate', 5], ['southsea_cannoneer', 4]], named: { kregg_keelhaul: 150 }, pool: 10, npcs: [], links: { gadgetzan: 20 } },
     noxious_lair: { name: 'The Stinging Hive', zone: 'Sirocco', region: 'tanaris', scene: 'noxious_lair', lvl: [42, 44], mobs: [['centipaar_worker', 5], ['centipaar_stinger', 4]], pool: 10, npcs: [], links: { gadgetzan: 18, dunemaul_compound: 18 } },
     eastmoon_ruins: { name: 'Dawnstone Ruins', zone: 'Sirocco', region: 'tanaris', scene: 'eastmoon_ruins', lvl: [43, 45], mobs: [['scorpid_dunestalker', 7]], pool: 9, npcs: [], links: { waterspring_field: 18, dunemaul_compound: 16 } },
     dunemaul_compound: { name: 'Sandbrute Compound', zone: 'Sirocco', region: 'tanaris', scene: 'dunemaul_compound', lvl: [44, 46], mobs: [['dunemaul_brute', 5], ['dunemaul_ogre_mage', 4]], pool: 10, npcs: [], links: { noxious_lair: 18, eastmoon_ruins: 16 } },
+    coinworks_gate: { name: 'The Coinworks', zone: 'Sirocco', region: 'tanaris', scene: 'coinworks_gate', lvl: [40, 44], mobs: [['cw_coinguard', 4], ['cw_smelter', 3]], pool: 7, npcs: [], links: { gadgetzan: 8 } },
     zul_farrak_gate: { name: "The Dune Temple", zone: 'Sirocco', region: 'tanaris', scene: 'zul_farrak_gate', lvl: [43, 47], mobs: [['sandfury_blood_drinker', 4], ['sandfury_shadowcaster', 3]], pool: 7, npcs: [], links: { thistleshrub_valley: 18 } },
   });
   D.PLACES.nesingwary_camp.links.gadgetzan = 50; D.PLACES.nesingwary_camp.via = Object.assign(D.PLACES.nesingwary_camp.via || {}, { gadgetzan: 'Goblin zeppelin' });

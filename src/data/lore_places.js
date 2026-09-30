@@ -147,6 +147,18 @@
       chief_ukorz_sandscalp: 'Chief of the Duneskin, who rules from the top of the temple. He sends his raiders against every caravan and counts the whole desert as his tribute.',
     } },
 
+    dg_coinworks: { title: 'The Coinworks', section: 'dungeon', dungeon: 'coinworks', text: [
+      'Under the cliff that Coppergulch is built against, the Deepgold Company dug a mint. Carts of gold come in by night from the northern roads, go into the furnaces, and come out as coins.',
+      'The coins are like nothing else in Sirocco. Every one is stamped with a single claw, and every one is still warm when it leaves the press. Nobody in Coppergulch minted them, and the Baron has never seen a copper of the profit.',
+      'Most of the coins leave again the same night, on the road to Cinderpeak. The Slagborn borrowed to rebuild their empire, and this is the money that pays their diggers. Some of the gold that comes in still carries the seal of a Kingsmere noble.',
+      'Deepgold workers say the strongrooms are guarded by black whelps that sleep on the gold, and that the mintmaster answers to someone he has never met. He writes every coin in his ledger all the same.',
+    ], bosses: {
+      foreman_nettlecog: 'Foreman of the smelting floor, who melts down whatever gold the carts bring and never asks where it was mined. He keeps a ladle of molten gold within reach at all times.',
+      the_great_press: 'The machine that strikes the coins, as big as a house and walking on its own legs. The claw on every coin is cut into its die plate.',
+      emberhide: 'A young black drake that sleeps on the strongboxes. The workers feed it and keep their distance; nobody at the mint will say who brought it.',
+      mintmaster_coinwhistle: 'The goblin who runs the Coinworks from the counting house. He counts every coin in and out, and blows his whistle when anything is missing.',
+    } },
+
     dg_maraudon: { title: 'The Gemfall Caves', section: 'dungeon', dungeon: 'maraudon', text: [
       'The centaur tribes of Mournwaste agree on little, but they all keep one law: nothing is taken from under the ground. The Gemfall Caves belong to Ghesra, the Stone Duchess, a spirit of the deep stone who grows her gems as slowly as a tree grows rings.',
       'Long ago a khan broke the law. He took his tribe down into the caves with picks and carts, and none of them came back up. Ghesra woke, buried them all, and has not slept since. Her anger seeps into the water that runs out of The Gemfall Caves, and the land it touches withers. Every tribe tells the story, and every tribe says the khan was from another one.',

@@ -541,6 +541,7 @@
     { id: 'stockade', name: 'Warden %s', need: { clear: 'stockade' }, how: 'Clear Kingsmere Gaol' },
     { id: 'shadowfang', name: '%s the Wolfslayer', need: { clear: 'shadowfang' }, how: 'Clear Greyhowl Keep' },
     { id: 'blackfathom', name: '%s of the Deeps', need: { clear: 'blackfathom' }, how: 'Clear The Tidehollow Deeps' },
+    { id: 'coinworks', name: '%s the Unminted', need: { clear: 'coinworks' }, how: 'Clear The Coinworks' },
     { id: 'zulfarrak', name: '%s the Sandbreaker', need: { clear: 'zul_farrak' }, how: "Clear The Dune Temple" },
     { id: 'maraudon', name: '%s of the Stone Circle', need: { clear: 'maraudon' }, how: 'Clear The Gemfall Caves' },
     { id: 'brd', name: '%s, Bane of the Slagborn', need: { clear: 'blackrock_depths' }, how: 'Clear Cinderpeak Depths' },
