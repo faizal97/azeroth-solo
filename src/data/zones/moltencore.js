@@ -87,7 +87,17 @@
       { scene: 'mc_domain', label: "The Steward's guard", mobs: ['molten_giant', 'flamewaker_guard', 'core_surger'] },
       { scene: 'mc_domain', label: 'Steward Cindral', mobs: ['majordomo_executus', 'flamewaker_elite', 'flamewaker_healer'], boss: true },
       { scene: 'mc_lake', label: 'Vulcarn', mobs: ['ragnaros'], boss: true },
-    ] },
+    ],
+    // Hard (v10.7): opens after a Normal clear; stronger enemies (tuned by sim/hardraid.js) and one extra mechanic per boss
+    hard: { trashMult: { hp: 4.5, dmg: 2.9 }, bossMult: { hp: 25, dmg: 10.4 }, extra: {
+      magmadar: [{ kind: 'enrage', at: 0.3, mult: 1.3, text: 'Cinderhound goes into a frenzy!' }],
+      garr: [{ kind: 'adds', at: 0.5, mob: 'firesworn', n: 2, lvl: 0, text: 'Stonecore pulls two more Firesworn out of the rock!' }],
+      baron_geddon: [{ kind: 'hit', every: 15, mult: 0.5, who: 'all', school: 'fire', text: 'Baron Ashfall bursts into a ring of fire!' }],
+      golemagg: [{ kind: 'heal', every: 20, heal: 0.04, text: 'Magmahulk sinks into the lava and comes out whole!' }],
+      sulfuron_harbinger: [{ kind: 'hit', every: 12, mult: 1, who: 'random', school: 'fire', text: 'Brimstone Harbinger hurls a ball of brimstone!' }],
+      majordomo_executus: [{ kind: 'adds', at: 0.5, mob: 'flamewaker_healer', n: 1, lvl: 0, text: 'Steward Cindral calls another healer to his side!' }],
+      ragnaros: [{ kind: 'adds', at: 0.25, mob: 'son_of_flame', n: 2, lvl: 0, text: 'Vulcarn roars, and two more Sons of Flame rise from the lava!' }],
+    } } },
   });
   Object.assign(D.ACTIVITIES, {
     molten_core: { name: 'The Magma Throne', dungeon: 'molten_core', where: 'molten_core_gate', size: 10, minLvl: 60, maxLvl: 60, desc: 'Raid beneath Cinderpeak. 10 players. Both factions.' },

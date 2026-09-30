@@ -2481,7 +2481,7 @@
       const M = D.MOBS[k];
       const u = E.mobUnit(k, R.mobLevel || null, M.boss ? mult : (R.mult || { hp: 1, dmg: 1 }));
       if (marks[i]) u.mark = marks[i];
-      const hx = R.hard && G.hardExtra(R.act, k); if (hx) u.extraAdds = hx; // Hard: the boss's extra mechanic
+      const hx = R.hard && G.hardExtra(R.act, k); if (hx) u.hardX = hx; // Hard: the boss's extra mechanic
       return u;
     });
     if ((R.omens || []).some((k) => k === 'warded' || k === 'vengeful' || k === 'sheltered') && enemies.length >= 2) enemies[pull.mobs.length - 1].focus = true; // Tier 3: the last enemy listed

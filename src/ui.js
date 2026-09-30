@@ -2966,8 +2966,13 @@
         list.append(h('div', { class: 'row' }, h('div', { class: 'ic mob' }, img(mobArt(bk || p.mobs[0]))),
           h('div', { class: 't' }, h('b', null, p.label || D.MOBS[p.mobs[0]].name, bm ? h('span', { class: 'gf-kind k-raid', style: { marginLeft: '6px' } }, 'Boss') : null),
             ...lines.map((l) => h('small', { style: { whiteSpace: 'normal' } }, l)),
-            bm && bm.specialText ? h('small', { style: { whiteSpace: 'normal', color: 'var(--gold)' } }, 'Special: ' + bm.specialText) : null,
-            ...(bm && (bm.special || hard) ? E.specialFacts(Object.assign(E.mobUnit(bk, mobLvl || (bm.lvl ? bm.lvl[1] : A.maxLvl), bm.boss ? boss : trash), hard ? { extraAdds: G.hardExtra(act, bk) } : {})).map((t) => h('small', { style: { whiteSpace: 'normal' } }, (bm.specialText || /^Hard/.test(t) ? '' : 'Special: ') + t)) : []),
+            // every boss in the pull (the Twin Tides are two): its special and, on Hard, its extra mechanic, with numbers
+            ...[...new Set(p.mobs.filter((m) => D.MOBS[m].boss || m === A.boss))].flatMap((key, _, all) => {
+              const M = D.MOBS[key], who = all.length > 1 ? M.name + ': ' : '', out = [];
+              if (M.specialText) out.push(h('small', { style: { whiteSpace: 'normal', color: 'var(--gold)' } }, who + 'Special: ' + M.specialText));
+              if (M.special || hard) for (const t of E.specialFacts(Object.assign(E.mobUnit(key, mobLvl || (M.lvl ? M.lvl[1] : A.maxLvl), M.boss ? boss : trash), hard ? { hardX: G.hardExtra(act, key) } : {}))) out.push(h('small', { style: { whiteSpace: 'normal' } }, who + (M.specialText || /^Hard/.test(t) ? '' : 'Special: ') + t));
+              return out;
+            }),
             hard && bm && bm.boss ? h('small', { style: { whiteSpace: 'normal' } }, G.hardBonusLeft(act, bk) ? `This week: ${G.HARD_STEPS} steps up (not taken yet)` : 'This week: bonus taken, Normal items until Monday') : null,
             drops.length ? h('small', { style: { whiteSpace: 'normal' } }, 'Drops (tap one): ', ...drops.map((id, i) => [i ? ', ' : '', h('button', { class: 'drop-link q' + D.ITEMS[id].q, onclick: () => showDialog(itemTip(G.copyItem(id)), true) }, D.ITEMS[id].name)]).flat()) : null)));
       }

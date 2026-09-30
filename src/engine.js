@@ -612,7 +612,7 @@
   const addLvl = (m, lv) => (lv > 0 ? lv : m.level + lv);
   // the plain facts of a boss's special, with the numbers of this unit (made by E.mobUnit at the level you will meet it)
   E.specialFacts = function (u) {
-    const sp = u && u.special, S = (sp && SPECIALS[sp.kind]) || {}; if (!sp && !(u && u.extraAdds)) return [];
+    const sp = u && u.special, S = (sp && SPECIALS[sp.kind]) || {}; if (!sp && !(u && u.hardX)) return [];
     const hit = (x) => `${Math.round(u.dmg[0] * x)}–${Math.round(u.dmg[1] * x)}`, out = [];
     const sch = S.school ? ` ${S.school}` : '';
     if (S.mult) out.push(`Every ${S.every} sec (first at ${SPECIAL_FIRST} sec): ${S.who === 'all' ? 'hits everyone in your group' : S.who === 'random' ? 'hits one group member at random' : 'hits its target'} for ${hit(S.mult)}${sch} damage.`);
@@ -624,23 +624,44 @@
     }
     if (S.stunAt) out.push(`At ${S.stunAt.map((x) => Math.round(x * 100) + '%').join(' and ')} health: stuns your whole group for ${S.stun} sec (orcs ${S.stunOrc} sec).`);
     if (S.enrageAt) out.push(`Below ${Math.round(S.enrageAt * 100)}% health: hits ${Math.round((S.enrage - 1) * 100)}% harder.`);
-    for (const x of u.extraAdds || []) out.push(`Hard: at ${Math.round(x.at * 100)}% health: ${joinText(x.n, x.mob, addLvl(u, x.lvl))}`);
+    for (const x of u.hardX || []) {
+      const kind = x.kind || 'adds', who = x.who === 'all' ? 'hits everyone in your group' : x.who === 'random' ? 'hits one group member at random' : 'hits its target';
+      if (kind === 'adds') out.push(`Hard: at ${Math.round(x.at * 100)}% health: ${joinText(x.n, x.mob, addLvl(u, x.lvl))}`);
+      else if (kind === 'enrage') out.push(`Hard: below ${Math.round(x.at * 100)}% health: hits ${Math.round((x.mult - 1) * 100)}% harder.`);
+      else if (kind === 'heal') out.push(`Hard: every ${x.every} sec (first at ${x.every / 2} sec): heals itself for ${Math.round(x.heal * 100)}% of its health (${Math.round(u.maxHp * x.heal)}).`);
+      else out.push(`Hard: every ${x.every} sec (first at ${x.every / 2} sec): ${who} for ${Math.round(u.dmg[0] * x.mult)}–${Math.round(u.dmg[1] * x.mult)}${x.school ? ' ' + x.school : ''} damage.`);
+    }
     return out;
   };
-  // Hard raids (v10.7): one extra mechanic per boss, set by the raid's data on the unit (u.extraAdds, same shape as
-  // SPECIALS adds plus an optional emote); it fires once at each health mark, on top of the boss's own special
-  function extraAdds(C, m) {
-    const pct = m.hp / m.maxHp;
-    for (const x of m.extraAdds) {
-      if (x.done || pct >= x.at) continue;
-      x.done = true;
-      if (x.text) ev(C, { type: 'emote', uid: m.uid, text: x.text });
-      for (let i = 0; i < x.n; i++) E.addEnemy(C, E.mobUnit(x.mob, addLvl(m, x.lvl), (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
+  // Hard raids (v10.7): one extra mechanic per boss, set by the raid's data on the unit (u.hardX), on top of the boss's
+  // own special. Kinds: adds { at, mob, n, lvl } once at a health mark; hit { every, mult, who: all|random|target,
+  // school } on a timer; enrage { at, mult } below a health mark; heal { every, heal } on a timer. `text` is the emote.
+  function hardExtra(C, m, dt) {
+    const pct = m.hp / m.maxHp, emote = (x) => { if (x.text) ev(C, { type: 'emote', uid: m.uid, text: x.text }); };
+    for (const x of m.hardX) {
+      const kind = x.kind || 'adds';
+      if (kind === 'adds' || kind === 'enrage') {
+        if (x.done || pct >= x.at) continue;
+        x.done = true; emote(x);
+        if (kind === 'enrage') m.enrage = (m.enrage || 1) * x.mult;
+        else for (let i = 0; i < x.n; i++) E.addEnemy(C, E.mobUnit(x.mob, addLvl(m, x.lvl), (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
+        continue;
+      }
+      if (stunned(C, m)) continue;
+      x.t = (x.t == null ? x.every / 2 : x.t) - dt; // the first comes halfway through its timer
+      if (x.t > 0) continue;
+      x.t = x.every;
+      if (kind === 'heal') { emote(x); heal(C, m, m, m.maxHp * x.heal, {}); continue; }
+      const allies = alive(C.allies), tgt = C.units[m.target];
+      const who = x.who === 'all' ? allies : x.who === 'random' ? [allies[rint(0, allies.length - 1)]] : [tgt && !tgt.dead ? tgt : null];
+      if (!who.filter(Boolean).length) continue;
+      emote(x);
+      for (const a of who) if (a) dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * x.mult, { school: x.school || 'physical', ab: 'hard_' + (x.school || 'hit') });
     }
   }
   const joinText = (n, key, lvl) => `${n > 1 ? `${n} ${D.MOBS[key].name}s join` : `${/^[AEIOU]/.test(D.MOBS[key].name) ? 'an' : 'a'} ${D.MOBS[key].name} joins`} the fight (level ${lvl}).`;
   function specials(C, m, dt) {
-    if (m.extraAdds && !m.dead) extraAdds(C, m);
+    if (m.hardX && !m.dead) hardExtra(C, m, dt);
     const sp = m.special;
     if (!sp || m.dead || stunned(C, m)) return;
     sp.t -= dt;

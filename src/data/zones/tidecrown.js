@@ -53,7 +53,16 @@
       { scene: 'citadel_throne', label: 'Prince Aeldran Tidecrown', mobs: ['prince_aeldran'], boss: true },
       { scene: 'citadel_abyss', label: 'The Abyss', mobs: ['abyssal_spawn', 'abyssal_spawn', 'tidecrown_tidecaller'] },
       { scene: 'citadel_abyss', label: "Nal'veshra the Deepmother", mobs: ['nalveshra'], boss: true },
-    ] },
+    ],
+    // Hard (v10.7): opens after a Normal clear; stronger enemies (tuned by sim/hardraid.js) and one extra mechanic per boss
+    hard: { trashMult: { hp: 5.7, dmg: 3.3 }, bossMult: { hp: 30, dmg: 9.8 }, extra: {
+      commander_serathis: [{ kind: 'hit', every: 14, mult: 0.45, who: 'all', school: 'frost', text: 'Serathis calls a wave over the courtyard!' }],
+      tide_twin_myrel: [{ kind: 'heal', every: 18, heal: 0.03, text: 'The rising tide mends Myrel!' }],
+      tide_twin_sorin: [{ kind: 'enrage', at: 0.3, mult: 1.3, text: 'Sorin fights harder as the tide falls!' }],
+      coralheart_colossus: [{ kind: 'adds', at: 0.5, mob: 'abyssal_spawn', n: 2, lvl: 0, text: 'Two spawn of the deep crawl out of the Colossus!' }],
+      prince_aeldran: [{ kind: 'enrage', at: 0.3, mult: 1.25, text: 'Aeldran fights with ten thousand years of grief!' }],
+      nalveshra: [{ kind: 'hit', every: 12, mult: 1, who: 'random', school: 'shadow', text: 'A tendril reaches up from the deep!' }],
+    } } },
   });
   Object.assign(D.ACTIVITIES, {
     tidecrown_citadel: { name: 'The Tidecrown Citadel', dungeon: 'tidecrown_citadel', where: 'tidecrown_gate', size: 10, minLvl: 60, maxLvl: 60, desc: 'Raid in the Stormveil Reach. 10 players. Both factions.' },

@@ -13,7 +13,7 @@ check(raids.length >= 1, 'at least one raid has Hard');
 for (const act of raids) {
   const Dg = D.DUNGEONS[D.ACTIVITIES[act].dungeon];
   check(Dg.hard.bossMult.hp > Dg.bossMult.hp && Dg.hard.bossMult.dmg > Dg.bossMult.dmg && Dg.hard.trashMult.hp > Dg.trashMult.hp, `${act}: Hard is stronger than Normal`);
-  const bosses = Dg.pulls.filter((p) => p.boss).map((p) => p.mobs[0]);
+  const bosses = [...new Set(Dg.pulls.filter((p) => p.boss).flatMap((p) => p.mobs.filter((m) => D.MOBS[m].boss)))]; // every boss, both Twin Tides too
   for (const b of bosses) check(Dg.hard.extra && Dg.hard.extra[b] && Dg.hard.extra[b].length, `${act}: ${b} has an extra Hard mechanic`);
   // opens after a Normal clear, at the cap
   G.newGame({ name: 'H', cls: 'warrior', race: 'human' }); const S = G.S, P = S.player; S.flags.warModeAsked = true; P.place = D.ACTIVITIES[act].where;
@@ -23,21 +23,39 @@ for (const act of raids) {
   P.codex = { [act]: { clears: 1 } }; check(G.hardOpen(act), `${act}: open after a Normal clear`);
   G.queueFor(act, { hard: true }); check(S.queue && S.queue.hard, `${act}: Hard queue`); G.acceptPop();
   check(S.run && S.run.hard && S.run.bossMult === Dg.hard.bossMult && /Hard/.test(S.run.name), `${act}: the run uses the Hard numbers`);
-  // the extra mechanic: fires once at its mark, and the briefing text names it
-  const b0 = bosses[0], x = Dg.hard.extra[b0][0];
-  const u = E.mobUnit(b0, 60, Dg.hard.bossMult); u.extraAdds = G.hardExtra(act, b0);
-  const facts = E.specialFacts(u).join(' ');
-  check(facts.includes('Hard: at ' + Math.round(x.at * 100) + '% health') && facts.includes(D.MOBS[x.mob].name), `${act}: the briefing names the extra mechanic (${facts})`);
-  const C = E.fight([E.charUnit(P, 'ally', 'bot', t)], [u], {});
-  u.hp = Math.floor(u.maxHp * (x.at + 0.05)); E.tick(C, 0.1); const n0 = C.enemies.length;
-  u.hp = Math.floor(u.maxHp * (x.at - 0.02)); E.tick(C, 0.1); const n1 = C.enemies.length; E.tick(C, 0.1);
-  check(n1 - n0 === x.n && C.enemies.length === n1, `${act}: ${x.n} join at ${x.at} (${n0} → ${n1}), once`);
+  // every boss's extra mechanic: the briefing text names it, and it does what it says
+  for (const b of bosses) for (const x of Dg.hard.extra[b]) {
+    const kind = x.kind || 'adds', mk = () => { const u = E.mobUnit(b, 60, Dg.hard.bossMult); u.hardX = G.hardExtra(act, b).filter((y) => (y.kind || 'adds') === kind); return u; };
+    const facts = E.specialFacts(mk()).join(' ');
+    check(/Hard: /.test(facts), `${act} ${b}: the briefing names the ${kind} mechanic (${facts})`);
+    // the mechanic itself, on a copy of the boss that barely hurts (so the fight runs long enough) and no own special
+    const u = E.mobUnit(b, 60, { hp: 50, dmg: 0.001 }); u.hardX = G.hardExtra(act, b).filter((y) => (y.kind || 'adds') === kind); u.special = null;
+    const C = E.fight([E.charUnit(P, 'ally', 'bot', t)], [u], {}), me = C.allies[0]; me.hp = me.maxHp = 1e9;
+    if (kind === 'adds') {
+      u.hp = Math.floor(u.maxHp * (x.at + 0.05)); E.tick(C, 0.1); const n0 = C.enemies.length;
+      u.hp = Math.floor(u.maxHp * (x.at - 0.02)); E.tick(C, 0.1); const n1 = C.enemies.length; E.tick(C, 0.1);
+      check(n1 - n0 === x.n && C.enemies.length === n1, `${act} ${b}: ${x.n} join at ${x.at} (${n0} → ${n1}), once`);
+    } else if (kind === 'enrage') {
+      u.hp = Math.floor(u.maxHp * (x.at + 0.05)); E.tick(C, 0.1); const e0 = u.enrage || 1;
+      u.hp = Math.floor(u.maxHp * (x.at - 0.02)); E.tick(C, 0.1); E.tick(C, 0.1);
+      check(e0 === 1 && Math.abs((u.enrage || 1) - x.mult) < 1e-9, `${act} ${b}: hits ${x.mult}x below ${x.at} (${e0} → ${u.enrage})`);
+    } else if (kind === 'heal') {
+      u.hp = Math.floor(u.maxHp * 0.5); const h0 = u.hp; let n = 0;
+      for (let i = 0; i < Math.round(x.every * 10 * 1.2); i++) { me.hp = me.maxHp; E.tick(C, 0.1); n += C.events.filter((e) => e.type === 'emote' && e.uid === u.uid && e.text === x.text).length; C.events.length = 0; }
+      check(n === 1, `${act} ${b}: heals once in ${x.every * 1.2} sec (${n})`);
+    } else {
+      let n = 0;
+      for (let i = 0; i < Math.round(x.every * 10 * 1.2); i++) { me.hp = me.maxHp; E.tick(C, 0.1); n += C.events.filter((e) => e.type === 'dmg' && e.src === u.uid && e.ab === 'hard_' + (x.school || 'hit')).length; C.events.length = 0; }
+      check(n >= 1 && n <= (x.who === 'all' ? C.allies.length : 1), `${act} ${b}: the timed hit lands once in ${x.every * 1.2} sec (${n})`);
+    }
+  }
+  const b0 = bosses[0];
   // loot: two steps up the first time this week, Normal the second time, again after Monday
   const it = G.hardCopy(D.MOBS[b0].loot[0]), base = G.copyItem(D.MOBS[b0].loot[0]), ib = G.upgradeInfo(base), ih = G.upgradeInfo(it);
   check(it.hard && Math.abs((ih.pts - ib.pts) - Math.min(G.HARD_STEPS * D.UPGRADE.step * G.upgradeRef(base), D.UPGRADE.cap[base.q] * G.upgradeRef(base) - ib.pts)) < 0.02, `${act}: a Hard drop is ${G.HARD_STEPS} steps up (${ib.pct}% → ${ih.pct}%)`);
   check(G.hardBonusLeft(act, b0), `${act}: bonus open at the start of the week`);
   G.raidWeek().got[act + ':' + b0] = true; check(!G.hardBonusLeft(act, b0), `${act}: bonus taken`);
-  t += 5 * 86400000; check(G.hardBonusLeft(act, b0), `${act}: bonus back after the Monday reset`);
+  t += 7 * 86400000; check(G.hardBonusLeft(act, b0), `${act}: bonus back after the Monday reset`);
 }
 // a real Hard clear with a very strong group: finishes, counts a Hard clear, and takes the weekly bonus
 {

@@ -42,7 +42,7 @@
     // Hard (v10.7): opens after a Normal clear. Stronger enemies (tuned by sim/hardraid.js: a group near the ceiling
     // wipes about 2-3 times on a first clear) and one extra mechanic per boss: her last phase calls the rest of the brood
     hard: { trashMult: { hp: 6.8, dmg: 3.45 }, bossMult: { hp: 44, dmg: 13.5 },
-      extra: { onyxia: [{ at: 0.25, mob: 'onyxian_whelp', n: 3, lvl: 0, text: 'Veshmira shrieks, and the rest of the brood pours out of the nests!' }] } } },
+      extra: { onyxia: [{ kind: 'adds', at: 0.25, mob: 'onyxian_whelp', n: 3, lvl: 0, text: 'Veshmira shrieks, and the rest of the brood pours out of the nests!' }] } } },
   });
   Object.assign(D.ACTIVITIES, {
     onyxias_lair: { name: "Veshmira's Lair", dungeon: 'onyxias_lair', where: 'onyxias_lair_gate', size: 10, minLvl: 60, maxLvl: 60, desc: 'Raid in Saltmarsh. 10 players. Both factions.' },
