@@ -2180,21 +2180,87 @@
     const nexts = [[D.TALENT_START, 'Talents'], [D.RIDING.lvl, 'Riding'], [cap, 'Trials, raids and gear upgrades']].filter(([l]) => P.level < l).sort((x, y) => x[0] - y[0]);
     if (nexts.length) add('journal', `Next at level ${nexts[0][0]}: ${nexts[0][1]}`, null, null);
     b.append(h('div', { class: 'sec-h' }, 'Open to you now', h('small', null, 'tap one to go there')), h('div', { class: 'list' }, ...rows));
-    // progress: bounded numbers only
+    // progress: bounded numbers only, and only what no row below already shows (level is in the sheet's title)
     const prog = [], pr = (label, a, n) => prog.push(h('div', { class: 'ai-row' }, h('span', null, label), h('b', { class: 'tnum' }, n != null ? `${a} of ${n}` : a)));
     const cx = P.codex || {}, dAll = Object.keys(D.ACTIVITIES).filter((k) => D.ACTIVITIES[k].dungeon && (D.ACTIVITIES[k].size || 5) <= 5 && G.activityBlock(k) !== 'hidden'), rAll = Object.keys(D.ACTIVITIES).filter((k) => (D.ACTIVITIES[k].size || 5) > 5 && G.activityBlock(k) !== 'hidden');
-    pr('Level', P.level, cap);
     pr('Dungeons cleared', dAll.filter((k) => cx[k] && cx[k].clears).length, dAll.length);
     if (rAll.length) pr('Raids cleared', rAll.filter((k) => cx[k] && cx[k].clears).length, rAll.length);
-    const L = Object.keys(D.LEGENDS || {}); if (L.length) pr('Legend stories finished', L.filter((k) => G.legendUnlocked(k)).length, L.length);
-    pr('Titles', D.TITLES.filter(G.titleUnlocked).length, D.TITLES.length);
-    if (G.WARDROBE_PLACES) { let got = 0, all = 0; for (const pl of G.WARDROBE_PLACES) { const w = G.wardrobeAll(pl); all += w.length; got += w.filter((o) => o.have).length; } pr('Looks collected', got, all); }
     if (P.level >= cap) {
       const up = D.GEAR_SLOTS.map((s) => P.equip[s]).filter((it) => it && G.upgradeInfo(it).ok);
       if (up.length) pr('Worn gear', `${Math.round(up.reduce((s, it) => s + G.upgradeInfo(it).pct, 0) / up.length)}% of the ceiling`);
-      if (P.trials) pr('Best Trial beaten in time', P.trials.bestEver || 0);
+      if (P.trials) pr('Best Trial beaten in time', P.trials.bestEver ? `Trial ${P.trials.bestEver}` : 'Not yet');
     }
+    if (P.level >= cap || G.account().marks) pr('Mentor Marks', G.account().marks);
     b.append(h('div', { class: 'sec-h' }, 'Progress'), h('div', { class: 'ai-box' }, ...prog));
+    // the story and collections: one row each, with its count; each opens its own screen, so this list stays short
+    // however many Legends, titles, looks or scenes later updates add
+    const nav = (title, sub, right, fn, dot) => h('button', { class: 'row nav', onclick: fn }, h('div', { class: 't' }, h('b', null, title, dot ? h('span', { class: 'tab-dot' }) : null), sub ? h('small', null, sub) : null), h('div', { class: 'r tnum' }, right || '', h('span', { class: 'nav-arr' }, '›')));
+    const nNew = loreUnread(), list = h('div', { class: 'list' });
+    list.append(nav('Lore Journal', 'What you have learned about Caldreth', nNew ? `${nNew} new` : '', () => openLore(), nNew > 0));
+    if (window.CS) { const un = CS.unlocked(), chs = CS.CHAPTERS.filter((c) => !c.faction || c.faction === G.myFaction()); list.append(nav('Theater', 'Replay the story chapters you have reached', `${chs.filter((c) => un.has(c.id)).length} / ${chs.length}`, () => openTheater())); }
+    const LK = Object.keys(D.LEGENDS || {});
+    if (LK.length) { const done = LK.filter((k) => G.legendUnlocked(k)).length, going = LK.filter((k) => !G.legendUnlocked(k) && legendStarted(k)).length; list.append(nav('Legends', going ? `${going} stor${going === 1 ? 'y' : 'ies'} in progress` : 'Characters with their own story, who then join your groups', `${done} / ${LK.length}`, () => openLegends())); }
+    const tOwn = D.TITLES.filter(G.titleUnlocked).length, tNow = P.title && D.TITLES.find((t) => t.id === P.title);
+    list.append(nav('Titles', tNow ? 'Wearing: ' + G.titleName(tNow, P.name) : 'No title worn', `${tOwn} / ${D.TITLES.length}`, () => openTitles()));
+    if (G.WARDROBE_PLACES) { let got = 0, all = 0; for (const pl of G.WARDROBE_PLACES) { const w = G.wardrobeAll(pl); all += w.length; got += w.filter((o) => o.have).length; } list.append(nav('Looks', 'The wardrobe, shared by all your characters', `${got} / ${all}`, () => openWardrobe())); }
+    list.append(nav('War Mode', P.level < 6 ? 'Enemy players show up from level 6' : `Honor ${G.pvpStats().honor}`, G.S.flags.warMode ? 'On' : 'Off', () => openWarMode()));
+    b.append(h('div', { class: 'sec-h' }, 'Story and collections'), list);
+  }
+  const legendStarted = (key) => { const P = G.S.player; return Object.keys(P.done).concat(Object.keys(P.quests)).some((q) => D.QUESTS[q] && D.QUESTS[q].legend === key); };
+  // Legends (v10): story, credit, and whether they join your groups
+  function openLegends() {
+    openSheet('legends', 'Legends', 'Characters with their own story, who then join your groups', (b) => {
+      const P = G.S.player;
+      for (const key in (D.LEGENDS || {})) {
+        const L = D.LEGENDS[key], on = G.legendUnlocked(key), started = legendStarted(key);
+        b.append(h('div', { class: 'sec-h' }, L.name, h('small', null, on ? (G.legendOn(key) ? 'story done · cameos on' : 'story done · cameos off') : started ? 'story in progress' : 'not met yet')));
+        const box = h('div', { class: 'ai-box' }, h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', 'legend_' + key))), h('div', { class: 't' }, h('b', { style: { color: '#ff8000' } }, L.name), h('small', null, L.title))));
+        if (on || started) {
+          const open = ui.heroStory === key;
+          if (open) for (const para of L.story) box.append(h('p', { style: { margin: '6px 0' } }, para));
+          box.append(h('button', { class: 'chip', style: { marginTop: '6px' }, onclick: () => { ui.heroStory = open ? null : key; ui.sheetFn(); } }, open ? 'Hide story' : `Read ${L.pronoun || 'their'} story`));
+        }
+        else box.append(h('p', { style: { margin: '6px 0' } }, L.teaser || 'A wood elf knight, said to have died five years ago, has been seen among the ashes of Silverleaf Lodge in the Kinloch Highlands (level 37+).'));
+        if (on) {
+          const mem = G.legendMemory(key);
+          box.append(h('p', { class: 'ai-note' }, `Now and then ${L.short} turns up in one of your group runs, with ${L.pronoun || 'their'} own abilities: ${L.abilities.map((a) => D.ABILITIES[a].name).join(' and ')}.`
+            + (mem.n ? ` Fought beside you ${mem.n} time${mem.n > 1 ? 's' : ''} · last in ${mem.where}.` : '')));
+        }
+        box.append(h('p', { class: 'ai-note' }, L.credit));
+        b.append(box);
+        if (on) {
+          const ks = L.keepsake, wearing = ks && (P.wardrobe || {}).back === ks.look;
+          if (ks) b.append(h('div', { class: 'row', style: { marginTop: '6px' } }, h('div', { class: 'ic' }, img(art('icon', ks.icon))), h('div', { class: 't' }, h('b', { style: { color: '#ff8000' } }, ks.name), h('small', { style: { whiteSpace: 'normal' } }, ks.desc)), h('div')));
+          b.append(h('div', { class: 'btn-row' },
+            ks ? h('button', { class: 'btn' + (wearing ? '' : ' alt'), onclick: () => { G.setKeepsake(wearing ? null : key); ui.sheetFn(); } }, wearing ? `Wearing the ${ks.name}` : `Wear the ${ks.name}`) : null,
+            h('button', { class: 'btn alt', onclick: () => { G.setLegendOn(key, !G.legendOn(key)); ui.sheetFn(); } }, `Cameos: ${G.legendOn(key) ? 'On' : 'Off'}`)));
+        }
+      }
+    });
+  }
+  // every title, earned ones first; the ones still to earn are greyed with how to earn them
+  function openTitles() {
+    openSheet('titles', 'Titles', 'Tap an earned title to wear it', (b, title) => {
+      const P = G.S.player, own = D.TITLES.filter(G.titleUnlocked), rest = D.TITLES.filter((t) => !G.titleUnlocked(t));
+      title.querySelector('small').textContent = `${own.length} of ${D.TITLES.length} earned · tap one to wear it`;
+      const row = (name, sub, worn, fn) => h('button', { class: 'row nav' + (fn ? '' : ' off') + (worn ? ' sel-char' : ''), onclick: fn }, h('div', { class: 't' }, h('b', null, name), sub ? h('small', { style: { whiteSpace: 'normal' } }, sub) : null), h('div', { class: 'r' }, worn ? 'Wearing' : ''));
+      const list = h('div', { class: 'list' }, row('No title', null, !P.title, () => { G.setTitle(null); ui.sheetFn(); }));
+      for (const t of own) list.append(row(G.titleName(t, P.name), t.how, P.title === t.id, () => { G.setTitle(t.id); ui.sheetFn(); }));
+      b.append(list);
+      if (rest.length) b.append(h('div', { class: 'sec-h' }, 'Still to earn', h('small', null, String(rest.length))), h('div', { class: 'list' }, ...rest.map((t) => row(G.titleName(t, P.name), t.how, false, null))));
+    });
+  }
+  function openWarMode() {
+    openSheet('warmode', 'War Mode', G.S.flags.warMode ? 'On · +10% experience and gold' : 'Off', (b, title) => {
+      const P = G.S.player, pv = G.pvpStats();
+      title.querySelector('small').textContent = G.S.flags.warMode ? 'On · +10% experience and gold' : 'Off';
+      b.append(h('div', { class: 'ai-box' }, h('div', { class: 'ai-row' }, h('span', null, 'Honor'), h('b', { class: 'tnum' }, String(pv.honor))),
+          h('div', { class: 'ai-row' }, h('span', null, 'Enemy players defeated'), h('b', { class: 'tnum' }, String(pv.kills))),
+          h('div', { class: 'ai-row' }, h('span', null, 'Died to enemy players'), h('b', { class: 'tnum' }, String(pv.deaths))),
+          h('div', { class: 'ai-row' }, h('span', null, 'Escaped'), h('b', { class: 'tnum' }, String(pv.escapes)))),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { G.setWarMode(!G.S.flags.warMode); ui.sheetFn(); } }, 'War Mode: ' + (G.S.flags.warMode ? 'On' : 'Off'))),
+        h('p', { class: 'ai-note' }, P.level < 6 ? 'Enemy players start showing up from level 6.' : 'Enemy players show up now and then. Towns are rare and guarded; capitals and starting valleys are safe. Honor unlocks PvP titles (see Titles).'));
+    });
   }
   function openHero(tab) {
     if (tab && typeof tab === 'string') ui.heroTab = tab;
@@ -2259,51 +2325,7 @@
               ...RC.text.map((tx) => h('div', { class: 'row', style: { minHeight: '36px' } }, h('div', { class: 'ic' }, '•'), h('div', { class: 't' }, h('b', { style: { fontWeight: 600 } }, tx)), h('div', { class: 'r' }, 'Passive')))));
         }
       } else if (ui.heroTab === 'journey') {
-          journeyOverview(b); // v10.5: what is open to you, and how far you are
-          const nNew = loreUnread();
-          b.append(h('div', { class: 'btn-row' },
-            h('button', { class: 'btn' + (nNew ? '' : ' alt'), onclick: () => openLore() }, nNew ? `Lore Journal · ${nNew} new` : 'Lore Journal'),
-            h('button', { class: 'btn alt', onclick: () => openTheater() }, 'Theater')));
-        // Legends (v10): story, credit, and whether they join your groups
-        for (const key in (D.LEGENDS || {})) {
-          const L = D.LEGENDS[key], on = G.legendUnlocked(key);
-          const started = Object.keys(P.done).concat(Object.keys(P.quests)).some((q) => D.QUESTS[q] && D.QUESTS[q].legend === key);
-          b.append(h('div', { class: 'sec-h' }, 'Legend: ' + L.name, h('small', null, on ? (G.legendOn(key) ? 'story done · cameos on' : 'story done · cameos off') : started ? 'story in progress' : 'not met yet')));
-          const box = h('div', { class: 'ai-box' }, h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', 'legend_' + key))), h('div', { class: 't' }, h('b', { style: { color: '#ff8000' } }, L.name), h('small', null, L.title))));
-          if (on || started) {
-            const open = ui.heroStory === key;
-            if (open) for (const para of L.story) box.append(h('p', { style: { margin: '6px 0' } }, para));
-            box.append(h('button', { class: 'chip', style: { marginTop: '6px' }, onclick: () => { ui.heroStory = open ? null : key; ui.sheetFn(); } }, open ? 'Hide story' : `Read ${L.pronoun || 'their'} story`));
-          }
-          else box.append(h('p', { style: { margin: '6px 0' } }, L.teaser || 'A wood elf knight, said to have died five years ago, has been seen among the ashes of Silverleaf Lodge in the Kinloch Highlands (level 37+).'));
-          if (on) {
-            const mem = G.legendMemory(key);
-            box.append(h('p', { class: 'ai-note' }, `Now and then ${L.short} turns up in one of your group runs, with ${L.pronoun || 'their'} own abilities: ${L.abilities.map((a) => D.ABILITIES[a].name).join(' and ')}.`
-              + (mem.n ? ` Fought beside you ${mem.n} time${mem.n > 1 ? 's' : ''} · last in ${mem.where}.` : '')));
-          }
-          box.append(h('p', { class: 'ai-note' }, L.credit));
-          b.append(box);
-          if (on) {
-            const ks = L.keepsake, wearing = ks && (P.wardrobe || {}).back === ks.look;
-            if (ks) b.append(h('div', { class: 'row', style: { marginTop: '6px' } }, h('div', { class: 'ic' }, img(art('icon', ks.icon))), h('div', { class: 't' }, h('b', { style: { color: '#ff8000' } }, ks.name), h('small', { style: { whiteSpace: 'normal' } }, ks.desc)), h('div')));
-            b.append(h('div', { class: 'btn-row' },
-              ks ? h('button', { class: 'btn' + (wearing ? '' : ' alt'), onclick: () => { G.setKeepsake(wearing ? null : key); ui.sheetFn(); } }, wearing ? `Wearing the ${ks.name}` : `Wear the ${ks.name}`) : null,
-              h('button', { class: 'btn alt', onclick: () => { G.setLegendOn(key, !G.legendOn(key)); ui.sheetFn(); } }, `Cameos: ${G.legendOn(key) ? 'On' : 'Off'}`)));
-          }
-        }
-        const titles = D.TITLES.filter(G.titleUnlocked);
-        b.append(h('div', { class: 'sec-h' }, 'Title', h('small', null, `${titles.length}/${D.TITLES.length} unlocked · ${G.account().marks} Mentor Marks`)));
-        const tchips = h('div', { class: 'chips' }, h('button', { class: 'chip' + (!P.title ? ' gold' : ''), onclick: () => { G.setTitle(null); ui.sheetFn(); } }, 'None'));
-        for (const t of titles) tchips.append(h('button', { class: 'chip' + (P.title === t.id ? ' gold' : ''), onclick: () => { G.setTitle(t.id); ui.sheetFn(); } }, G.titleName(t, P.name)));
-        b.append(tchips);
-        const nextT = D.TITLES.filter((t) => !G.titleUnlocked(t)).slice(0, 3);
-        if (nextT.length) b.append(h('p', { class: 'ai-note' }, 'Still to earn: ' + nextT.map((t) => `${G.titleName(t, P.name)} (${t.how.toLowerCase()})`).join(' · ') + '.'));
-        const pv = G.pvpStats();
-        b.append(h('div', { class: 'sec-h' }, 'War Mode', h('small', null, G.S.flags.warMode ? '+10% experience and gold' : 'off')),
-          h('div', { class: 'ai-box' }, h('div', { class: 'ai-row' }, h('span', null, 'Honor'), h('b', { class: 'tnum' }, String(pv.honor))),
-            h('div', { class: 'ai-row' }, h('span', null, 'Enemy players defeated'), h('b', { class: 'tnum' }, `${pv.kills} · died ${pv.deaths} · escaped ${pv.escapes}`))),
-          h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { G.setWarMode(!G.S.flags.warMode); ui.sheetFn(); } }, 'War Mode: ' + (G.S.flags.warMode ? 'On' : 'Off'))),
-          h('p', { class: 'ai-note' }, P.level < 6 ? 'Enemy players start showing up from level 6.' : 'Enemy players show up now and then. Towns are rare and guarded; capitals and starting valleys are safe. Honor unlocks PvP titles (see Title).'));
+        journeyOverview(b); // v10.5: what is open to you, how far you are, and one row per story or collection screen
       } else {
           b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { if (G.fight) return toast('You are in combat.'); G.logout(); showSelect(); } }, 'Switch character')));
           if (window.UPD) b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: manualUpdateCheck }, `Check for updates · v${UPD.current()}`)));

@@ -16,7 +16,8 @@ XP needed, and each system's unlock level), not from memory. Verdicts: **good**,
 | 51-59 | 105 | 1 | 3 | 0 | 4 | 26 | about 121% |
 | 60 | 63 | 1 | 4 | 3 | 3 | 18 | (level cap) |
 
-Quest XP is a rough count (faction filter by region; kill XP and dungeons fill the rest). Unlocks: War Mode ambushes at
+Quest XP here is a rough count and undercounts: the levelling sim (`sim/zoneflow.js`) gives 96-100% for 10-20, 30-40
+and 40-50. Unlocks: War Mode ambushes at
 6, looking-for-group chat at 8, guild invites from 5, professions at 5 (Journeyman at 10), talents at 10, riding at 40,
 Trials, gear upgrades and raids at 60; the wardrobe, Friends, bounty boards and the Roulette as soon as they apply.
 
@@ -24,11 +25,11 @@ Trials, gear upgrades and raids at 60; the wardrobe, Friends, bounty boards and 
 
 1. **New player (1-5): ok.** The intro scene, first-hour tips, quest marks and helpers (who takes a quest, where its
    objectives are), a story beat at 5, reaction cards the first time a mechanic fires. Gap: tips switch off for anyone
-   who already has a character above 5, so a friend's second account can miss them; there is no single "what can I do
-   now" view.
-2. **Early (6-20): gap at 11-20.** Plenty unlocks (dungeons, Wanted, ambushes, guilds, professions, talents at 10, story
-   every 3-5 levels, the hooded stranger at 17), but quests cover only about 59% of the XP for 11-20, the thinnest share
-   of any band, so this is where players grind; only 3 dungeons.
+   who already has a character above 5, so a friend's second account can miss them. The Journey tab now opens on "Open
+   to you now" (quests, talents, group content at your level, the next unlock), each row going to its screen.
+2. **Early (6-20): good (corrected).** Plenty unlocks (dungeons, Wanted, ambushes, guilds, professions, talents at 10,
+   story every 3-5 levels, the hooded stranger at 17). The first count said quests cover 59% of the XP here; the real
+   levelling sim (`sim/zoneflow.js`, every solo quest done as it opens) says 98-100%, with 27-31 quests left over at 20.
 3. **Early-mid (21-30): good.** The richest band: 184 quests, 7 dungeons, Widya's questline (22-40), the second class
    reactions (24-34), story scenes.
 4. **Late-mid (31-40): ok.** Different from early-mid through Lyveus (from 37), Widya's finale, the second reactions and
@@ -40,8 +41,9 @@ Trials, gear upgrades and raids at 60; the wardrobe, Friends, bounty boards and 
    from Trial 1, Mentor Marks from every level-60 clear feeding gear upgrades, the wardrobe.
 7. **Early endgame: good.** Three raids (Magma Throne, Veshmira's Lair, Tidecrown), climbing Trials with Omens, the realm
    leaderboard and month titles, Trial titles at 10/15/20, upgrades toward the ceiling.
-8. **Late endgame: ok.** The ceiling is close, Trial 15-17, top-10 chases. Gap: nothing shows how close you are (no
-   progress summary), and the planned top tier (Hard raids, the featured raid) is not built.
+8. **Late endgame: ok.** The ceiling is close, Trial 15-17, top-10 chases. The Journey tab's Progress shows how far you
+   are (clears, worn gear against the ceiling, best Trial). Gap: the planned top tier (Hard raids, the featured raid) is
+   not built.
 9. **Fully maxed: gap.** Monthly Trials (a new mix, a new rank each month), alts (heirlooms, the shared wardrobe and
    Marks), collecting looks and titles. Not built yet: Hard raids and the featured raid, Trials stage 4 (the Trialsworn
    looks, bot Trial groups in chat), world bosses, battlegrounds, hand-made seasonal extras. Tier 1 and 3 Omens have two
@@ -49,9 +51,10 @@ Trials, gear upgrades and raids at 60; the wardrobe, Friends, bounty boards and 
 
 ## Where the gaps are
 
-- **Levelling:** 11-20 (quest XP) and 41-50 (group content) are the two soft spots.
+- **Levelling:** quests carry every band (zoneflow: 96-100%); 40-50 runs out of quests right at 50. The soft spot is
+  41-50 group content (2 dungeons, 2 Wanted).
 - **The top:** phases 8 and 9 need the already-designed Hard raids and featured raid, and Trials stage 4.
-- **Guidance:** new players and late players both lack a "what can I do now / how far am I" view.
+- **Guidance:** done. The Journey tab has "Open to you now", Progress, and one row per story or collection screen.
 
 Sims to run before fixing levelling: `node sim/v191.js` style checks for 11-20 and 41-50 quest share, so the fix adds
 the right amount.

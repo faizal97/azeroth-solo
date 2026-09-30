@@ -251,6 +251,8 @@ img { max-width: 100%; display: block; }
 .row .t small { display: block; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .row .r { font: 700 12px var(--body); color: var(--muted); text-align: right; }
 .row.off { opacity: .45; }
+.row.nav { grid-template-columns: 1fr auto; }
+.row.nav .nav-arr { margin-left: 8px; font: 700 18px/1 var(--body); color: var(--gold); vertical-align: -1px; }
 .row .mark { font: 22px/1 var(--display); color: #ffd100; text-shadow: 0 0 6px rgba(255, 209, 0, .7), 0 1px 1px #000; }
 .row .mark.grey { color: #b8b8b8; text-shadow: none; }
 .row.quest-mob { border-color: #7a6320; }
