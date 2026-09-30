@@ -246,8 +246,11 @@
   function proc(C, u, on, abId) {
     const list = u && u.cls && !u.dead && D.PROCS && D.PROCS[u.cls]; if (!list) return;
     for (const p of list) {
-      if (!p.on.includes(on) || (p.from && !p.from.includes(abId)) || (p.chance != null && Math.random() >= p.chance)) continue;
+      if (!p.on.includes(on) || (p.from && !p.from.includes(abId)) || (p.minLvl && (u.level || 1) < p.minLvl) || (p.chance != null && Math.random() >= p.chance)) continue;
       if (!p.lights.some((l) => knows(u, l))) continue;
+      u.procAt = u.procAt || {}; const pk = p.aura || p.on[0];
+      if (p.icd && C.t - (u.procAt[pk] != null ? u.procAt[pk] : -99) < p.icd) continue; // icd: at most one light per so many seconds
+      u.procAt[pk] = C.t;
       const had = p.aura && auraOf(u, p.aura);
       if (p.aura) addAura(C, u, { id: p.aura, until: C.t + p.dur, proc: p });
       if (p.reset) for (const l of p.lights) u.cds[l] = 0;
@@ -372,6 +375,7 @@
     if (res === 'crit') dmg *= 2;
     const done = dealDamage(C, src, tgt, dmg, { school: 'physical', crit: res === 'crit', ab: o.ab || (o.ranged ? 'auto_shot' : null), threat: o.threat, melee: !o.ranged });
     proc(C, src, o.ranged ? (o.ab ? 'shot' : 'autoshot') : 'melee', o.ab);
+    if (res === 'crit') proc(C, src, 'crit', o.ab);
     const seal = !flat(src) && !o.ranged && src.auras.find((a) => a.seal);
     if (seal && !tgt.dead) dealDamage(C, src, tgt, seal.seal * rnd(0.9, 1.1) + src.st.sp * 0.1, { school: seal.sealSchool || 'holy', ab: seal.id === 'seal' ? 'seal_righteousness' : 'rockbiter_weapon' });
     const th = !o.ranged && tgt.auras.find((a) => a.thorns && a.thorns.charges > 0);
@@ -477,7 +481,7 @@
           if (r === 'miss' || r === 'dodge') { ev(C, { type: 'avoid', src: u.uid, tgt: t.uid, what: r === 'miss' && !phys ? 'resist' : r, ab: abId }); continue; }
           const crit = r === 'crit';
           dealDamage(C, u, t, crit ? base * (phys ? 2 : 1.5) : base, { school: ab.dmg.school, crit, ab: abId, threat: ab.threat, melee: phys });
-          proc(C, u, 'hit', abId);
+          proc(C, u, 'hit', abId); if (crit) proc(C, u, 'crit', abId);
           if (ab.slow && !t.dead) addAura(C, t, { id: abId + '_slow', until: C.t + ab.slow.dur, slow: ab.slow.pct });
         }
       }
@@ -822,8 +826,10 @@
       if (has('frostbolt') && Math.random() < 0.4 && try_('frostbolt', tgt)) return;
       try_('fireball', tgt);
     } else if (u.cls === 'rogue') {
-      if (has('slice_and_dice') && u.cp >= 2 && !auraOf(u, 'slice_and_dice') && u.cpTarget === tgt.uid && try_('slice_and_dice')) return;
-      if (u.cp >= (tgt.hp < tgt.maxHp * 0.25 ? 1 : (b.skill || 0.5) >= 0.6 ? 5 : 4) && u.cpTarget === tgt.uid && try_('eviscerate', tgt)) return; // good players wait for 5 combo points (it glows)
+      // 5 combo points go to Eviscerate first (it glows); Slice and Dice when it is down and the target will last
+      if (u.cp >= 5 && u.cpTarget === tgt.uid) { if (try_('eviscerate', tgt)) return; if (abCost(D.ABILITIES.eviscerate, u) > u.res) return; } // at 5, wait for the energy
+      if (has('slice_and_dice') && u.cp >= 2 && !auraOf(u, 'slice_and_dice') && tgt.hp > tgt.maxHp * 0.5 && u.cpTarget === tgt.uid && try_('slice_and_dice')) return;
+      if (u.cp >= (tgt.hp < tgt.maxHp * 0.25 ? 1 : (b.skill || 0.5) >= 0.6 ? 5 : 4) && u.cpTarget === tgt.uid && try_('eviscerate', tgt)) return; // good players wait for 5 combo points
       try_('sinister_strike', tgt);
     } else if (u.cls === 'shaman') {
       if (!u.auras.some((a) => a.seal) && try_('rockbiter_weapon')) return;

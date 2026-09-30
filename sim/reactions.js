@@ -33,7 +33,7 @@ function fight(cls, L, opts) {
   const u = E.charUnit(P, 'ally', 'bot', Date.now()), m = E.mobUnit(mobFor(6), 6), C = E.fight([u], [m], {});
   u.cds.fire_blast = C.t + 99; const pr = D.PROCS.mage[0], save = pr.chance; pr.chance = 1;
   E.proc(C, u, 'hit', 'fireball');
-  ok(E.lit(u, 'fire_blast') && (u.cds.fire_blast || 0) <= C.t && E.abCost(D.ABILITIES.fire_blast, u) === 0, 'Kindling: Fire Blast lit, ready and free');
+  ok(E.lit(u, 'fire_blast') && (u.cds.fire_blast || 0) <= C.t && E.abCost(D.ABILITIES.fire_blast, u) === 0, 'Ember Spark: Fire Blast lit, ready and free');
   ok(C.events.some((e) => e.type === 'proc' && e.src === u.uid), 'a proc tells the UI');
   const res0 = u.res; E.use(C, u, 'fire_blast', m.uid);
   ok(!E.lit(u, 'fire_blast') && u.res === res0, 'using it spends the light, and it cost nothing');
@@ -52,11 +52,26 @@ function fight(cls, L, opts) {
 {
   G.newGame({ name: 'Pr', cls: 'priest', race: 'human' }); const P = G.S.player; P.level = 4;
   const u = E.charUnit(P, 'ally', 'bot', Date.now()), m = E.mobUnit(mobFor(4), 4), C = E.fight([u], [m], {});
-  const pr = D.PROCS.priest[0], save = pr.chance; pr.chance = 1; E.proc(C, u, 'hit', 'smite'); pr.chance = save;
-  u.gcdUntil = 0; E.use(C, u, 'smite', m.uid);
-  ok(!u.cast && !E.lit(u, 'smite'), 'Inner Light: the next Smite is instant');
+  const pr = D.PROCS.priest[0], save = pr.chance; pr.chance = 1; E.proc(C, u, 'hit', 'smite'); pr.chance = 0; // no re-light from this Smite's own hit
+  u.gcdUntil = 0; E.use(C, u, 'smite', m.uid); pr.chance = save;
+  ok(!u.cast && !E.lit(u, 'smite'), 'Dawnlight: the next Smite is instant, and spends the light');
 }
 
+
+// ---- second reactions: they start at their level, and happen in mid-game fights
+for (const cls of CLASSES) {
+  const mid = (D.PROCS[cls] || []).find((p) => p.minLvl);
+  ok(!!mid, `${cls}: has a second, mid-game reaction`);
+  if (!mid) continue;
+  G.newGame({ name: 'Mid', cls, race: cls === 'shaman' || cls === 'hunter' ? 'orc' : 'human' }); G.S.player.level = mid.minLvl - 1;
+  const lo = E.charUnit(G.S.player, 'ally', 'bot', Date.now()), C0 = E.fight([lo], [E.mobUnit(mobFor(20), 20)], {});
+  const save = mid.chance; mid.chance = 1; for (const f of mid.from || [null]) for (const on of mid.on) E.proc(C0, lo, on, f);
+  ok(!mid.lights.some((l) => E.lit(lo, l)), `${cls}: ${mid.name} is off before level ${mid.minLvl}`);
+  G.S.player.level = mid.minLvl; const hi = E.charUnit(G.S.player, 'ally', 'bot', Date.now()), C1 = E.fight([hi], [E.mobUnit(mobFor(20), 20)], {});
+  for (const f of mid.from || [null]) for (const on of mid.on) E.proc(C1, hi, on, f);
+  mid.chance = save;
+  ok(mid.lights.some((l) => E.lit(hi, l)), `${cls}: ${mid.name} lights at level ${mid.minLvl}`);
+}
 // ---- the early game: different buttons per fight, by level (target: 3 or more by level 4)
 const report = [];
 for (const cls of CLASSES) {
