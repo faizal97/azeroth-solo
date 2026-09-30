@@ -391,10 +391,21 @@ def sfx_death():
     return x
 
 
+def sfx_legend():
+    # a Legend joins your group (v10.2): harp arpeggio rising (G major), a two-note flute call (G up to D), a warm pad
+    dur = 2.4; x = np.zeros(int(dur * SR))
+    for i, n in enumerate((55, 59, 62, 67, 71)):
+        s = int(i * 0.075 * SR); v = harp(n + 12, 1.1, gain=0.9); x[s:s + len(v)] += v[: len(x) - s]
+    for s0, n, d in ((0.32, 67, 0.34), (0.66, 74, 1.3)):
+        s = int(s0 * SR); v = flute(n + 12, d, gain=0.55); x[s:s + len(v)] += v[: len(x) - s]
+    x += pad([55, 59, 62, 67], dur, cut=1600, gain=0.7, a=0.3, r=0.9)
+    return x / max(1e-9, np.max(np.abs(x))) * 0.6
+
+
 SFX = {'hit': sfx_hit, 'crit': sfx_crit, 'miss': sfx_miss, 'fire': sfx_fire, 'frost': sfx_frost, 'holy': sfx_holy,
        'shadow': sfx_shadow, 'arcane': sfx_arcane, 'heal': sfx_heal, 'cast': sfx_cast, 'levelup': sfx_levelup,
        'quest_accept': sfx_quest_accept, 'quest_done': sfx_quest_done, 'coin': sfx_coin, 'loot': sfx_loot,
-       'click': sfx_click, 'error': sfx_error, 'pop': sfx_pop, 'death': sfx_death}
+       'click': sfx_click, 'error': sfx_error, 'pop': sfx_pop, 'death': sfx_death, 'legend': sfx_legend}
 
 
 # ----------------------------------------------------------------- output

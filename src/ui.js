@@ -3353,7 +3353,7 @@
         if (!G.S || !G.S.run) return;
         if (window.CS && CS.playing && tries++ < 240) return setTimeout(show, 500);
         const P = G.S.player, mem = (P.legendMem || {})[d.key] || {};
-        const bannerNow = () => { banner(`${L.name} joins your group`, L.title); if (window.SND) SND.play('quest_done', { vol: 0.7 }); };
+        const bannerNow = () => { banner(`${L.name} joins your group`, L.title); if (window.SND) SND.play('legend', { vol: 0.8 }); };
         if (!mem.intro && L.cameo && L.cameo.first) { P.legendMem = P.legendMem || {}; P.legendMem[d.key] = Object.assign(mem, { intro: true }); G.save(); playCameoScene(d.key).then(bannerNow); }
         else bannerNow();
       };
