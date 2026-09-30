@@ -2775,6 +2775,71 @@
   // For You holds only what you can do now; each kind tab folds what is still to come and what you have outlevelled.
   const actKind = (A) => ((A.size || 5) > 5 ? 'raid' : A.dungeon ? 'dungeon' : 'wanted');
   const KIND_LABEL = { dungeon: 'Dungeon', raid: 'Raid', wanted: 'Wanted' };
+  // ---------- Trials (v10.4): this month's 8 dungeons, rating and realm rank, the weekly goal; a row opens a level picker
+  const clockText = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  function trialsTab(b) {
+    const S = G.S, P = S.player, T = window.TRIALS, k = T.season(new Date());
+    const note = (t) => h('p', { class: 'ai-note', style: { margin: '4px 0' } }, t);
+    if (k < 0) { b.append(note(`Trials begin on 1 ${T.name(0)}. Every dungeon comes back at level ${D.LEVEL_CAP}, harder at each Trial level, with a new mix every month.`)); return; }
+    const picks = G.trialPicks();
+    if (P.level < D.LEVEL_CAP) {
+      b.append(h('div', { class: 'sec-h' }, `${T.name(k)} Trials`, h('small', null, `opens at level ${D.LEVEL_CAP}`)), note(`At level ${D.LEVEL_CAP}, this month's dungeons come back as Trials: ${picks.map((a) => D.ACTIVITIES[a].name).join(', ')}.`));
+      return;
+    }
+    const Rec = G.trials(), rating = G.trialRating(), board = G.trialBoard(), wk = Rec.week && Rec.week.id === T.period(new Date()).id ? Rec.week : { n: 0, paid: false }, days = T.daysLeft();
+    b.append(h('div', { class: 'sec-h' }, `${T.name(k)} Trials`, h('small', null, `${days} day${days === 1 ? '' : 's'} left`)));
+    b.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', 'journal'))),
+      h('div', { class: 't' }, h('b', null, `Rating ${rating} · Realm rank #${board.rank} of ${board.of}`), h('small', { style: { whiteSpace: 'normal' } }, `This week: ${Math.min(4, wk.n)} of 4 Trials at your best or higher${wk.paid ? ' · bonus paid' : ' · +25 Mentor Marks'}`))));
+    b.append(h('div', { class: 'btn-row', style: { margin: '6px 0' } }, h('button', { class: 'btn alt', onclick: () => openTrialBoard() }, 'Leaderboard'), h('button', { class: 'btn alt', onclick: () => openTrialHistory() }, 'History')));
+    b.append(h('div', { class: 'sec-h' }, 'This month', h('small', null, 'tap a Trial to pick its level')));
+    for (const act of picks) {
+      const A = D.ACTIVITIES[act], best = Rec.best[act], why = G.trialBlock(act), max = G.trialMax(act), queued = S.queue && S.queue.act === act && S.queue.trial;
+      b.append(h('div', { class: 'row gf-row' + (why ? ' gf-locked' : '') + (queued ? ' gf-queued' : '') },
+        h('div', { class: 'ic mob' }, img(mobArt(A.boss || finalBoss(A) || 'vancleef'))),
+        h('div', { class: 't' }, h('b', null, A.name), h('small', null, why || (best ? `Best: Trial ${best.lvl}, ${best.timed ? 'in time' : 'over par'}` : 'Not tried yet'))),
+        queued ? h('button', { class: 'chip', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave')
+          : h('button', { class: 'chip gold', style: { whiteSpace: 'nowrap' }, disabled: !!why || !!S.queue, onclick: () => trialDialog(act) }, `Trial ${max}`)));
+    }
+    b.append(note('Beat par to open the next level, or beat it by a wide margin to open two. Each clear pays 5 Mentor Marks plus the Trial level. Weekly Omens are coming in a later update.'));
+  }
+  function trialDialog(act) {
+    const A = D.ACTIVITIES[act], par = D.DUNGEONS[A.dungeon].par, max = G.trialMax(act), T = window.TRIALS;
+    let lvl = max;
+    const draw = () => showDialog([h('h3', null, A.name),
+      h('div', { class: 'btn-row', style: { alignItems: 'center', justifyContent: 'center' } },
+        h('button', { class: 'btn alt', disabled: lvl <= 1, onclick: () => { lvl--; draw(); } }, '−'),
+        h('b', { class: 'tnum', style: { fontSize: '20px', minWidth: '96px', textAlign: 'center' } }, `Trial ${lvl}`),
+        h('button', { class: 'btn alt', disabled: lvl >= max, onclick: () => { lvl++; draw(); } }, '+')),
+      h('p', null, `Enemies: level ${D.LEVEL_CAP} at ${Math.round(T.factor(lvl) * 100)}% strength. Par ${clockText(par)}. Pays ${5 + lvl} Mentor Marks.`),
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); if (G.queueTrial(act, lvl)) ui.sheetFn && ui.sheetFn(); } }, 'Queue'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true);
+    draw();
+  }
+  // the realm leaderboard: the top 10 and the players around you, never the whole realm
+  function openTrialBoard() {
+    const T = window.TRIALS, k = T.season(new Date());
+    openSheet('trialboard', 'Realm leaderboard', `${T.name(k)} Trials · simulated players climb all month`, (b) => {
+      const bd = G.trialBoard(), list = h('div', { class: 'list' });
+      let prev = 0;
+      for (const r of bd.rows) {
+        if (prev && r.rank > prev + 1) list.append(h('div', { class: 'ai-note', style: { textAlign: 'center' } }, '…'));
+        list.append(h('div', { class: 'row' + (r.me ? ' gf-queued' : '') }, h('div', { class: 'ic tnum', style: { fontWeight: 800, fontSize: r.rank >= 100 ? '11px' : '14px' } }, '#' + r.rank),
+          h('div', { class: 't' }, h('b', { style: r.cls && D.CLASSES[r.cls] ? { color: D.CLASSES[r.cls].color } : { color: 'var(--gold)' } }, r.me ? `${r.name} (you)` : r.name), h('small', null, r.cls && D.CLASSES[r.cls] ? D.CLASSES[r.cls].name : '')),
+          h('div', { class: 'r tnum' }, String(r.rating))));
+        prev = r.rank;
+      }
+      b.append(h('p', { class: 'ai-note' }, `You are #${bd.rank} of ${bd.of} level-${D.LEVEL_CAP} players on your realm. Finish the month in the top 10 for a title.`), list);
+    });
+  }
+  function openTrialHistory() {
+    openSheet('trialhistory', 'Trials history', 'Your past months', (b) => {
+      const H = (G.trials().history || []);
+      if (!H.length) { b.append(h('p', { class: 'ai-note' }, 'Your first month of Trials. When it ends, it is kept here.')); return; }
+      const list = h('div', { class: 'list' });
+      for (const x of H) list.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', 'journal'))),
+        h('div', { class: 't' }, h('b', null, x.name), h('small', null, `Best Trial ${x.best} · rating ${x.rating}`)), h('div', { class: 'r tnum' }, `#${x.rank}`)));
+      b.append(list);
+    });
+  }
   const ROLE_NAME = { tank: 'Tank', healer: 'Healer', dps: 'Damage' };
   function groupTab(b) {
     const S = G.S, P = S.player;
@@ -2787,7 +2852,7 @@
       : h('span', { class: 'chip gold' }, ROLE_NAME[r] || r));
     if (roles.length > 1) roleRow.append(h('span', { class: 'gf-hint' }, 'tanks and healers find groups faster'));
     top.append(roleRow);
-    if (S.queue) top.append(h('div', { class: 'gf-queue' }, h('span', null, 'In queue: ', h('b', null, D.ACTIVITIES[S.queue.act].name)),
+    if (S.queue) top.append(h('div', { class: 'gf-queue' }, h('span', null, 'In queue: ', h('b', null, D.ACTIVITIES[S.queue.act].name + (S.queue.trial ? ` · Trial ${S.queue.trial}` : ''))),
       h('button', { class: 'chip', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave')));
     b.append(top);
     // everything this character can see, with why it can't be done yet
@@ -2798,8 +2863,8 @@
     const hw = (S.helpWanted || []).filter((r) => r.expires > Date.now());
     const kinds = ['dungeon', 'raid', 'wanted'];
     const tab = ui.gfTab || 'you';
-    const tabs = h('div', { class: 'tabs gf-tabs' });
-    for (const [k, label] of [['you', 'For You'], ['dungeon', 'Dungeons'], ['raid', 'Raids'], ['wanted', 'Wanted']]) {
+    const tabs = h('div', { class: 'tabs gf-tabs tabs-fit' });
+    for (const [k, label] of [['you', 'For You'], ['dungeon', 'Dungeons'], ['raid', 'Raids'], ['wanted', 'Wanted'], ['trials', 'Trials']]) {
       const n = k === 'you' ? hw.length : 0;
       tabs.append(h('button', { class: (tab === k ? 'on' : '') + (n ? ' dot' : ''), onclick: () => { ui.gfTab = k; ui.sheetFn(); } }, label));
     }
@@ -2848,6 +2913,8 @@
       for (const x of mine) b.append(row(x, true));
       const next = all.filter((x) => !doable(x) && /^Requires level/.test(x.why)).sort(byLevel)[0];
       if (next) b.append(h('p', { class: 'ai-note', style: { margin: 0 } }, `Next to open: ${next.A.name} (${KIND_LABEL[actKind(next.A)].toLowerCase()}) at level ${next.A.minLvl}.`));
+    } else if (tab === 'trials') {
+      trialsTab(b);
     } else {
       const ofKind = all.filter((x) => actKind(x.A) === tab).sort(byLevel);
       const now = ofKind.filter(atLevel), up = ofKind.filter((x) => !doable(x)), low = ofKind.filter((x) => doable(x) && P.level > x.A.maxLvl);

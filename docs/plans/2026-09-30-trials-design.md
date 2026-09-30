@@ -74,3 +74,19 @@ counter clearly beats the wrong one for every Omen.
 - **Content-proof:** a new dungeon changes only the next season's picks; a new Omen joins from the next period.
 
 Rules that apply: UI must scale; automatic systems must be content-proof (both in memory).
+
+## Built differently (stages 1 and 2, 2026-09-30)
+
+- **Picks are per faction.** Only 8 dungeons are open to both factions, which would make every season the same. Each
+  faction's season draws from the dungeons its own players can reach by the road rule (Accord 12, Krugar 13 today).
+  Storm-locked ones show as locked until Veshmira falls.
+- **The leaderboard is the realm's level-60 bots plus a fixed ladder of 600 players** made the way the game makes bots
+  (same on every device). A young realm has no bots at 60 yet (they level with you), and "#1 of 1" is no server.
+- **Rank titles are top 10 and #1**, not top 100: the realm has hundreds of level-60 players, not thousands.
+- **Starting level:** one past your best in time on that dungeon, and never more than 2 below your best elsewhere, so a
+  new dungeon in the month does not start from Trial 1.
+- **Difficulty:** Trial 1 is 83% strength, then +4.5% a level, compounding (`TRIALS.BASE`, `TRIALS.STEP`). Measured by
+  `node sim/trialpace.js 3`: walls at Trial 5 (fresh 60, dungeon blues), 11 (raid purples), 13 (fully upgraded). The
+  top is two levels under its target: pushers run out of time (rests between pulls set a floor), not health, and fast
+  pace made them wipe more. Retune with Omens in stage 3.
+

@@ -65,6 +65,10 @@ for (const [k, A] of Object.entries(D.ACTIVITIES)) {
   for (const pl of A.pulls || []) for (const m of pl.mobs) if (!has('MOBS', m)) err(`activity ${k}: unknown mob '${m}'`);
 }
 for (const [k, Dg] of Object.entries(D.DUNGEONS)) if (!(Dg.par > 0)) err(`dungeon ${k}: needs a par time in seconds`);
+// Trials (v10.4): a dungeon added after Trials began needs the date it joins the game, so seasons pick it up next month
+// (src/trials.js). These 20 were there at launch and count from 2026-10-01.
+const LAUNCH_DUNGEONS = new Set(['ragefire', 'deadmines', 'wailing_caverns', 'stockade', 'shadowfang', 'blackfathom', 'gnomeregan', 'razorfen_kraul', 'sm_library', 'sm_cathedral', 'zul_farrak', 'maraudon', 'blackrock_depths', 'scholomance', 'stratholme', 'onyxias_lair', 'molten_core', 'sunken_archive', 'shalzua_temple', 'tidecrown_citadel']);
+for (const [k, Dg] of Object.entries(D.DUNGEONS)) { if (Dg.since == null ? !LAUNCH_DUNGEONS.has(k) : !/^\d{4}-\d\d-\d\d$/.test(Dg.since)) err(`dungeon ${k}: needs since: 'YYYY-MM-DD', the day it joins the game (Trials seasons use it)`); }
 for (const [k, Dg] of Object.entries(D.DUNGEONS)) for (const pl of Dg.pulls) for (const m of pl.mobs) if (!has('MOBS', m)) err(`dungeon ${k}: unknown mob '${m}'`);
 for (const [cls, trees] of Object.entries(D.TALENTS || {})) {
   if (!D.CLASSES[cls]) err(`talents: unknown class ${cls}`);

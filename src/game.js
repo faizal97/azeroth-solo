@@ -1793,6 +1793,8 @@
     if (n.clear) return !!(r.clears[n.clear] && r.clears[n.clear].clears);
     if (n.quest) return !!G.S.player.done[n.quest];
     if (n.guildRank != null) return !!(root.SOC && SOC.rank() >= n.guildRank);
+    if (n.trial) return ((G.S.player.trials || {}).bestEver || 0) >= n.trial; // Trials (v10.4): best level beaten in time
+    if (n.trialRank) { const r = (G.S.player.trials || {}).bestRank; return !!r && r <= n.trialRank; } // a month's final realm rank
     return Object.keys(n).every((k) => (r[k] || 0) >= n[k]);
   };
   G.titleName = function (t, name) { const horde = (D.RACES[G.S.player.race] || {}).faction === 'horde'; return (horde && t.horde ? t.horde : t.name).replace('%s', name); };
@@ -2186,6 +2188,66 @@
   };
   // the entrance itself must be reachable, not just its zone (the Vaskar foothills are Greymead, but Ashwick is not reachable from there)
   G.canReach = (from, place) => G.reachableRegions(from).places.has(place);
+  // ============================================================ Trials (v10.4): level-60 challenge runs in monthly
+  // seasons. The calendar, picks, rating and leaderboard are in src/trials.js; this is the character's side.
+  const TR = () => root.TRIALS;
+  // this character's record for the current month; when a new month starts, the old one goes into its history
+  G.trials = function () {
+    const P = G.S.player, T = TR(), k = T.season(new Date());
+    const Rec = P.trials = P.trials || { season: k, best: {}, open: {}, week: null, history: [], bestEver: 0, bestRank: null };
+    if (Rec.season !== k) {
+      if (Rec.season >= 0 && Object.keys(Rec.best).length) {
+        const picks = T.picks(Rec.season, G.myFaction()), rating = T.rating(Rec.best, picks);
+        const board = T.board(G.S.bots, rating, P.name, new Date(T.end(Rec.season) - 1000));
+        Rec.history.unshift({ season: Rec.season, name: T.name(Rec.season), rating, rank: board.rank, of: board.of, best: Math.max(0, ...Object.values(Rec.best).map((b) => b.lvl)), picks });
+        if (Rec.bestRank == null || board.rank < Rec.bestRank) Rec.bestRank = board.rank;
+      }
+      Object.assign(Rec, { season: k, best: {}, open: {}, week: null });
+    }
+    return Rec;
+  };
+  G.trialPicks = () => TR().picks(TR().season(new Date()), G.myFaction());
+  G.trialRating = () => TR().rating(G.trials().best, G.trialPicks());
+  G.trialBoard = () => TR().board(G.S.bots, G.trialRating(), G.S.player.name, new Date());
+  G.trialBlock = function (act) {
+    const S = G.S, P = S.player, T = TR(), A = D.ACTIVITIES[act];
+    if (T.season(new Date()) < 0) return `Trials begin on 1 ${T.name(0)}`;
+    if (P.level < D.LEVEL_CAP) return `Trials open at level ${D.LEVEL_CAP}`;
+    if (!G.trialPicks().includes(act)) return 'Not in this month\'s Trials';
+    if (A.where && G.stormBlocks(A.where)) return 'Requires Veshmira\'s defeat: her storm hides the isle';
+    if ((S.flags.deserterUntil || 0) > now()) return `Deserter: ${Math.ceil((S.flags.deserterUntil - now()) / 60000)} min`;
+    return null;
+  };
+  // the highest level you may start: one past your best in time here, and never more than 2 below your best elsewhere
+  G.trialMax = function (act) { const Rec = G.trials(), any = Math.max(1, ...Object.values(Rec.open)); return Math.max(Rec.open[act] || 1, any - 2, 1); };
+  G.queueTrial = function (act, lvl) {
+    const S = G.S, why = G.trialBlock(act);
+    if (why) { toast(why + '.'); return false; }
+    if (S.run || S.group || S.queue) { toast('Leave your current group first.'); return false; }
+    lvl = clamp(Math.round(lvl || 1), 1, G.trialMax(act));
+    if (S.wparty) disbandParty('You left your party for a Trial.');
+    const role = G.role(), wait = role === 'tank' ? rnd(4, 10) : role === 'healer' ? rnd(6, 15) : rnd(15, 45);
+    S.queue = { act, since: now(), popAt: now() + wait * 1000, trial: lvl };
+    sys(`You are queued for ${D.ACTIVITIES[act].name}, Trial ${lvl}.`);
+    emit('change');
+    return true;
+  };
+  // a Trial cleared: best level, the next levels open, Mentor Marks, the weekly goal
+  G.trialDone = function (R, secs, par) {
+    const T = TR(), Rec = G.trials(), lvl = R.trial.lvl, act = R.act;
+    if (R.trial.season !== Rec.season) { sys('The month turned during your run: it counts for the old Trials.'); return null; }
+    const timed = secs <= par, great = secs <= par * 0.8, b = Rec.best[act];
+    if (!b || lvl > b.lvl || (lvl === b.lvl && timed && !b.timed)) Rec.best[act] = { lvl, timed, secs: Math.round(secs) };
+    if (timed) { Rec.open[act] = Math.max(Rec.open[act] || 1, lvl + (great ? 2 : 1)); Rec.bestEver = Math.max(Rec.bestEver || 0, lvl); }
+    G.addMarks(5 + lvl, `Trial ${lvl}`);
+    const per = T.period(new Date()).id;
+    if (!Rec.week || Rec.week.id !== per) Rec.week = { id: per, n: 0, paid: false };
+    if (lvl >= R.trial.bestHere) Rec.week.n++;
+    if (Rec.week.n >= 4 && !Rec.week.paid) { Rec.week.paid = true; G.addMarks(25, 'this week\'s Trials goal'); }
+    const res = { lvl, timed, great, open: Rec.open[act] || 1, rating: G.trialRating() };
+    sys(timed ? `Trial ${lvl} beaten in time${great ? ' by a wide margin' : ''}! Trial ${res.open} is open here. Rating ${res.rating}.` : `Trial ${lvl} cleared, but over par: your level here stays. Rating ${res.rating}.`);
+    return (R.trialResult = res);
+  };
   G.activityBlock = function (act) {
     const S = G.S, P = S.player, A = D.ACTIVITIES[act];
     const region = A.where && D.PLACES[A.where].region;
@@ -2197,7 +2259,7 @@
     if ((S.flags.deserterUntil || 0) > now()) return `Deserter: ${Math.ceil((S.flags.deserterUntil - now()) / 60000)} min`;
     return null;
   };
-  G.syncLevel = (act) => Math.min(G.S.player.level, D.ACTIVITIES[act].maxLvl || D.LEVEL_CAP);
+  G.syncLevel = (act) => (G.S.run && G.S.run.trial && G.S.run.act === act ? D.LEVEL_CAP : Math.min(G.S.player.level, D.ACTIVITIES[act].maxLvl || D.LEVEL_CAP)); // a Trial is fought at the cap
   G.queueFor = function (act) {
     const S = G.S, A = D.ACTIVITIES[act];
     const why = G.activityBlock(act);
@@ -2312,11 +2374,12 @@
     const mine = G.role();
     roles.splice(roles.indexOf(mine), 1);
     const used = new Set(), usedCls = new Set([S.player.cls]);
-    const lvl = G.syncLevel(act);
+    const trial = opts && opts.trial, lvl = trial ? D.LEVEL_CAP : G.syncLevel(act);
     const members = roles.map((r) => G.botChar(recruit(r, lvl, used, usedCls, opts && opts.guild)));
-    // everyone fights at the activity's level
-    const cap = A.maxLvl || D.LEVEL_CAP;
+    // everyone fights at the activity's level (a Trial: at the level cap)
+    const cap = trial ? D.LEVEL_CAP : A.maxLvl || D.LEVEL_CAP;
     for (const m of members) m.syncLevel = cap;
+    if (trial) { const sk = TR().botSkill(G.trialRating()); for (const m of members) m.bot.skill = clamp(sk + rnd(-0.08, 0.05), 0.3, 0.95); } // your rating draws better players
     if (opts && opts.firstTimers) for (const m of members) { m.bot.skill = Math.min(m.bot.skill, 0.25 + Math.random() * 0.2); m.level = Math.max(A.minLvl, Math.min(m.level, A.minLvl + 1)); }
     // Legends (v10.2, story heroes): a legend always joins the run that is part of their own story; after their story,
     // only as a rare cameo (G.rollCameo). They take their role's slot, or a damage slot if you play that role.
@@ -2339,19 +2402,19 @@
   G.acceptPop = function () {
     const S = G.S;
     if (!S.queue) return;
-    const act = S.queue.act; S.queue = null;
+    const act = S.queue.act, trial = S.queue.trial || 0; S.queue = null;
     stopActions();
-    const grp = formGroup(act);
+    const grp = formGroup(act, trial ? { trial } : undefined);
     sys(`You have joined a group for ${D.ACTIVITIES[act].name}.`);
     grp.members.forEach((m, i) => { if (m.cameo || Math.random() < 0.7) S.pending.push({ at: now() + 800 + i * 1400 + Math.random() * 1500, bot: m.bot.id, ch: 'party', text: m.cameo ? G.legendLine(m.legend, 'hello') : B.partyLine(m.bot, 'hello'), fromName: m.name }); });
-    startRun(act);
+    startRun(act, trial);
     const guest = grp.members.find((m) => m.cameo); if (guest) emit('legendJoin', { key: guest.legend });
     emit('change');
   };
   G.declinePop = function () { G.S.queue = null; sys('You declined the group.'); emit('change'); };
 
   // ============================================================ runs (dungeon / hogger)
-  function startRun(act) {
+  function startRun(act, trial) {
     const S = G.S, A = D.ACTIVITIES[act];
     let pulls, mult = null, bossMult = null, name = A.name;
     if (A.dungeon) {
@@ -2361,6 +2424,10 @@
       pulls = A.pulls;
     }
     S.run = { act, name, pulls, mult, bossMult, idx: 0, phase: 'rest', restUntil: now() + 6000, wipes: 0, rolls: [], returnTo: S.player.place, started: now() };
+    if (trial) { // Trials (v10.4): enemies at the level cap, stronger with each Trial level
+      const f = TR().factor(trial), sc = (m) => ({ hp: ((m && m.hp) || 1) * f, dmg: ((m && m.dmg) || 1) * f }), Rec = G.trials();
+      Object.assign(S.run, { mult: sc(mult), bossMult: sc(bossMult), mobLevel: D.LEVEL_CAP, name: `${name} · Trial ${trial}`, trial: { lvl: trial, season: Rec.season, bestHere: (Rec.best[act] || {}).lvl || 0 } });
+    }
     emit('instanceEnter', { act, dungeon: A.dungeon || null });
     S.player.hp = S.player.hp == null ? null : S.player.hp;
     emit('runUpdate');
@@ -2387,7 +2454,7 @@
     const marks = (R.marks && R.marks[R.idx]) || {};
     const enemies = pull.mobs.map((k, i) => {
       const M = D.MOBS[k];
-      const u = E.mobUnit(k, null, M.boss ? mult : (R.mult || { hp: 1, dmg: 1 }));
+      const u = E.mobUnit(k, R.mobLevel || null, M.boss ? mult : (R.mult || { hp: 1, dmg: 1 }));
       if (marks[i]) u.mark = marks[i];
       return u;
     });
@@ -2635,7 +2702,8 @@
     const speed = !R.noSpeed && Dg.par && secs <= Dg.par, flawless = !R.wipes; // flawless = the group never wiped
     const cx = (P.codex = P.codex || {})[R.act] = Object.assign({ clears: 0, flawless: 0, speed: 0, best: null }, (P.codex || {})[R.act]);
     cx.clears++; if (flawless) cx.flawless++; if (speed) cx.speed++; if (cx.best == null || secs < cx.best) cx.best = Math.round(secs);
-    if (P.level >= D.LEVEL_CAP && G.clearMarks(R.act)) G.addMarks(G.clearMarks(R.act), 'a level-60 clear');
+    if (R.trial) G.trialDone(R, secs, Dg.par); // Trials pay their own Marks
+    else if (P.level >= D.LEVEL_CAP && G.clearMarks(R.act)) G.addMarks(G.clearMarks(R.act), 'a level-60 clear');
     R.bonus = { secs: Math.round(secs), par: Dg.par, speed, flawless };
     if (speed) {
       // the speed chest: half the time a blue from this dungeon's bosses, otherwise a green
@@ -2721,7 +2789,7 @@
         }
         if (C.kind === 'solo' && !C.wandererTried && C.t >= 3) G.wandererCheck(C);
         if (C.extraAt && C.t >= C.extraAt.t) {
-          for (const k of C.extraAt.mobs) E.addEnemy(C, E.mobUnit(k, null, S.run.mult));
+          for (const k of C.extraAt.mobs) E.addEnemy(C, E.mobUnit(k, S.run.mobLevel || null, S.run.mult));
           C.extraAt = null;
           const tb = S.group.members.find((m) => m.role === 'tank');
           sys('Another pack joins the fight!');

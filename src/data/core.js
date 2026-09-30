@@ -447,6 +447,11 @@
   D.UPGRADE = { raid: 'tidecrown_citadel', step: 0.03, cap: { 3: 0.92, 4: 1 }, minLvl: 57, perPct: 5 }; // 5 Mentor Marks per 1% of the ceiling gained, so a step costs 15
   // Titles show next to your name. `need` is checked against your records (see G.titleUnlocked).
   D.TITLES = [
+    { id: 'tried', name: '%s the Tried', need: { trial: 10 }, how: 'Beat par in a Trial 10' },
+    { id: 'unbroken', name: '%s the Unbroken', need: { trial: 15 }, how: 'Beat par in a Trial 15' },
+    { id: 'trialmaster', name: 'Trialmaster %s', need: { trial: 20 }, how: 'Beat par in a Trial 20' },
+    { id: 'realm_ten', name: '%s of the Ten', need: { trialRank: 10 }, how: 'Finish a month of Trials in your realm\'s top 10' },
+    { id: 'realm_first', name: 'Champion %s', need: { trialRank: 1 }, how: 'Finish a month of Trials first on your realm' },
     { id: 'mentor', name: '%s the Mentor', need: { mentor: 5 }, how: 'Help 5 groups through Help Wanted' },
     { id: 'guide', name: '%s the Guide', need: { mentor: 25 }, how: 'Help 25 groups through Help Wanted' },
     { id: 'flawless', name: '%s the Flawless', need: { flawless: 10 }, how: 'Clear dungeons without a wipe 10 times' },
