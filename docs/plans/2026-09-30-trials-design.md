@@ -20,16 +20,17 @@ Stamina and armour elixirs), Festering (hits stack a poison; healing potions, cl
 Draining (spells cost 50% more; mana potions, Spirit elixirs, careful pace).
 
 One from each tier per Omen period (36 combinations); periods start on the 1st, 8th, 15th and 22nd at local midnight,
-so a season holds exactly two (the one at month's end runs a few days longer). New engine hooks: on-death effects, enrage threshold, extra enemies,
+so a month holds four (the one at month's end runs a few days longer). New engine hooks: on-death effects, enrage threshold, extra enemies,
 stun immunity, poison on hit, mana cost and par multipliers, patrols after long rests. Sim: at Trial 10 the right
 counter clearly beats the wrong one for every Omen.
 
 ## 2. Seasons, levels, rating (agreed)
 
-- **Seasons are automatic and start on the 1st and the 15th of every month** at local midnight; Season 1 is
-  2026-10-01 to 2026-10-14. A season is found from the date alone, so if Trials ships mid-season, players simply join
-  it. 8 dungeons each:
-  1. dungeons never in a season get a guaranteed slot next season, up to 3 a season, oldest-added first (5 new at once
+- **Seasons are monthly, automatic, and named by their month** ("October 2026 Trials"), starting on the 1st at local
+  midnight; the first is October 2026. (Chosen over two weeks: a clear name, a month to climb before the rating
+  resets, and the four weekly Omen periods already keep it fresh.) A season is found from the date alone, so if Trials
+  ships mid-month, players simply join it. 8 dungeons each:
+  1. dungeons never in a season get a guaranteed slot next season, up to 4 a season, oldest-added first (6 new at once
      spread over two seasons);
   2. the other slots are weighted by how many seasons a dungeon has waited;
   3. with no new content, all 8 come from step 2.
@@ -44,7 +45,16 @@ counter clearly beats the wrong one for every Omen.
   level and rating stay in your history. Rating raises the bots' skill from about 0.6 at 0 to about 0.85 at 800.
 - Rewards: the Trialsworn look set, drawn once and earned once (cloak at Trial 5, weapon and mount at Trial 10);
   Marks per clear, 5 + the Trial level.
-- Sim: no, one and five new dungeons; nothing waits too long.
+- Sim: no, one and six new dungeons; nothing waits too long.
+- **Pacing (the sim tunes the per-level step to it):** a month of play reaches Trial 5–7 for a fresh 60 in dungeon
+  blues, Trial 10–12 by week 2–3 for a regular raider, and Trial 15–17 for a pusher fully upgraded to the ceiling
+  with good Omen reads; Trial 20 is barely reachable. Past the first push, climbing takes Marks (upgrades), rating
+  (better bots) and good Omen reads, so it lasts the month.
+- **Realm leaderboard:** the realm's simulated players have Trial ratings that climb through the month like real
+  players' (each bot's curve from its id and the date, so nothing is stored and every device agrees). The tab shows
+  your rank ("#214 of 3,012"), the top 10 and the players around you, never the whole list. Stop playing and bots pass
+  you. Month-end rank gives that month's title: top 100, top 10, #1 on the realm.
+- **Weekly goal:** each Omen period, finish 4 Trials at your best level or higher for bonus Mentor Marks.
 
 ## 3. Titles, the Trials tab, chat, history (agreed)
 
@@ -52,13 +62,13 @@ counter clearly beats the wrong one for every Omen.
   Tried", Trial 15 "%s the Unbroken", Trial 20 "Trialmaster %s".
 - **The Trials tab**, a fifth Group Finder tab (fitted to phone width, like the Social tabs):
   - below 60 it shows "Opens at level 60";
-  - top: season number and days left, rating, this period's three Omens as chips marked with the Trial level they start
+  - top: the month's name and days left, rating and realm rank, the weekly goal, this period's three Omens as chips marked with the Trial level they start
     at (tap: rule and counter);
   - then always 8 rows, one per season dungeon: best ("Best: Trial 7, in time") and next level; a row opens a dialog
     with a − / + level picker up to best + 1, the par time, the Omens active at that level, and Queue (from anywhere);
   - in the run, the run panel shows the active Omens as icons; tapping one repeats its counter.
-- **History:** one row per past season, newest first ("Season 7 · best Trial 12 · rating 940"); each season keeps its
-  own dungeon list, so rows stay right when content changes. About 26 rows a year; group by year if it gets long.
+- **History:** one row per past month, newest first ("October 2026 · best Trial 12 · rating 940 · rank #38"); each
+  season keeps its own dungeon list, so rows stay right when content changes. 12 rows a year; group by year later.
 - **Chat:** level-60 bots post real Trial groups ("lfm trial 9 caves need heals"), joinable when you have that level
   open (`sim/chatcheck.js`), plus flavour about the period's Omens ("volatile week, go slow"), never phrased as a request.
 - **Content-proof:** a new dungeon changes only the next season's picks; a new Omen joins from the next period.
