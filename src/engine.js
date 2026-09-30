@@ -240,6 +240,23 @@
     if (old) Object.assign(old, a); else u.auras.push(a);
     if (a.stats) E.recalc(u);
   }
+  // Reactions (v10.4, D.PROCS): an event lights an ability for a few seconds. A lit ability may be free, instant, or have
+  // its cooldown reset; using it spends the light. The UI shows the glow, a callout and a one-time card.
+  function knows(u, id) { const A = D.ABILITIES[id]; return !!A && A.cls === u.cls && A.lvl <= (u.level || 1); }
+  function proc(C, u, on, abId) {
+    const list = u && u.cls && !u.dead && D.PROCS && D.PROCS[u.cls]; if (!list) return;
+    for (const p of list) {
+      if (!p.on.includes(on) || (p.from && !p.from.includes(abId)) || (p.chance != null && Math.random() >= p.chance)) continue;
+      if (!p.lights.some((l) => knows(u, l))) continue;
+      const had = p.aura && auraOf(u, p.aura);
+      if (p.aura) addAura(C, u, { id: p.aura, until: C.t + p.dur, proc: p });
+      if (p.reset) for (const l of p.lights) u.cds[l] = 0;
+      if (!had) ev(C, { type: 'proc', src: u.uid, key: p.aura || p.on[0], ab: p.lights.find((l) => knows(u, l)) });
+    }
+  }
+  E.proc = proc;
+  const litAura = (u, abId) => (u.auras || []).find((a) => a.proc && a.proc.lights.includes(abId));
+  E.lit = (u, abId) => !!litAura(u, abId);
   function stunned(C, u) { return u.stunUntil > C.t; }
   function slowPct(u) {
     let p = 0;
@@ -346,6 +363,7 @@
     const res = meleeRoll(C, src, tgt);
     if (res === 'miss' || res === 'dodge') {
       ev(C, { type: 'avoid', src: src.uid, tgt: tgt.uid, what: res, ab: o.ab || null });
+      if (!o.ranged) { proc(C, src, 'avoided', o.ab); if (res === 'dodge') proc(C, tgt, 'dodged', o.ab); }
       if (tgt.side === 'enemy') tgt.threat[src.uid] = (tgt.threat[src.uid] || 0) + 1;
       return 0;
     }
@@ -353,6 +371,7 @@
     if (src.kind === 'mob' && src.enrage) dmg *= src.enrage;
     if (res === 'crit') dmg *= 2;
     const done = dealDamage(C, src, tgt, dmg, { school: 'physical', crit: res === 'crit', ab: o.ab || (o.ranged ? 'auto_shot' : null), threat: o.threat, melee: !o.ranged });
+    proc(C, src, o.ranged ? (o.ab ? 'shot' : 'autoshot') : 'melee', o.ab);
     const seal = !flat(src) && !o.ranged && src.auras.find((a) => a.seal);
     if (seal && !tgt.dead) dealDamage(C, src, tgt, seal.seal * rnd(0.9, 1.1) + src.st.sp * 0.1, { school: seal.sealSchool || 'holy', ab: seal.id === 'seal' ? 'seal_righteousness' : 'rockbiter_weapon' });
     const th = !o.ranged && tgt.auras.find((a) => a.thorns && a.thorns.charges > 0);
@@ -366,7 +385,7 @@
   }
 
   // ------------------------------------------------------------- abilities
-  function abCost(ab, u) { if (ab.shapeshift && u.form) return 0; const base = (ab.cost || 0) + (ab.costPerLvl || 0) * ((u.level || E.levelOf(u)) - 1); const off = ab.id ? Math.min(90, abPct(tmOf(u).abilCost, ab.id)) : 0; return Math.round(base * (1 - off / 100)); }
+  function abCost(ab, u) { if (ab.shapeshift && u.form) return 0; if (ab.id) { const la = litAura(u, ab.id); if (la && la.proc.free) return 0; } const base = (ab.cost || 0) + (ab.costPerLvl || 0) * ((u.level || E.levelOf(u)) - 1); const off = ab.id ? Math.min(90, abPct(tmOf(u).abilCost, ab.id)) : 0; return Math.round(base * (1 - off / 100)); }
   E.abCost = abCost;
 
   function spellRoll(src, tgt) {
@@ -386,6 +405,7 @@
     if (u.cast) return 'Busy';
     if (ab.gcd !== false && u.gcdUntil > C.t) return 'Not ready';
     if ((u.cds[abId] || 0) > C.t) return 'Not ready yet';
+    if (ab.needAura && !auraOf(u, ab.needAura)) return 'Not lit yet';
     if (abCost(ab, u) > u.res + 0.001) return u.resType === 'rage' ? 'Not enough rage' : u.resType === 'energy' ? 'Not enough energy' : 'Not enough mana';
     if (ab.finisher && (u.cp <= 0 || (ab.target === 'enemy' && u.cpTarget !== (tgt && tgt.uid)))) return 'No combo points';
     if (ab.form && u.form !== ab.form) return 'Requires Bear Form';
@@ -407,7 +427,7 @@
     const why = E.canUse(C, u, abId, ab.target === 'self' || ab.target === 'party' || ab.target === 'aoe' ? u : tgt);
     if (why) return why;
     if (ab.gcd !== false) u.gcdUntil = C.t + (ab.gcdLen || 1.5);
-    if (ab.cast) {
+    if (ab.cast && !((litAura(u, abId) || {}).proc || {}).instant) {
       const castT = Math.max(0.5, ab.cast - (tmOf(u).abilCast[abId] || 0)) / (1 + ((u.st && u.st.haste) || 0) / 100);
       u.cast = { ab: abId, tgt: tgt.uid, start: C.t, end: C.t + castT, channel: ab.channel || 0, ticks: 0, pushed: 0 };
       ev(C, { type: 'castStart', src: u.uid, ab: abId, tgt: tgt.uid, dur: castT });
@@ -425,6 +445,7 @@
     const ab = D.ABILITIES[abId];
     const L = u.level;
     u.res -= abCost(ab, u);
+    { const la = litAura(u, abId); if (la) u.auras = u.auras.filter((a) => a !== la); } // a reaction's light is spent
     if (ab.cd) u.cds[abId] = C.t + Math.max(1, ab.cd - (tmOf(u).abilCd[abId] || 0));
     if (u.resType === 'mana' && abCost(ab, u) > 0) u.lastCastT = C.t;
     ev(C, { type: 'ability', src: u.uid, ab: abId, tgt: tgt && tgt.uid });
@@ -456,6 +477,7 @@
           if (r === 'miss' || r === 'dodge') { ev(C, { type: 'avoid', src: u.uid, tgt: t.uid, what: r === 'miss' && !phys ? 'resist' : r, ab: abId }); continue; }
           const crit = r === 'crit';
           dealDamage(C, u, t, crit ? base * (phys ? 2 : 1.5) : base, { school: ab.dmg.school, crit, ab: abId, threat: ab.threat, melee: phys });
+          proc(C, u, 'hit', abId);
           if (ab.slow && !t.dead) addAura(C, t, { id: abId + '_slow', until: C.t + ab.slow.dur, slow: ab.slow.pct });
         }
       }
@@ -465,7 +487,8 @@
     if (ab.shapeshift) { if (u.form) E.shiftOut(C, u); else E.shiftIn(C, u, ab.shapeshift); }
     if (ab.cp && tgt) {
       if (u.cpTarget !== tgt.uid) u.cp = 0;
-      u.cpTarget = tgt.uid; u.cp = Math.min(5, u.cp + ab.cp);
+      const cp0 = u.cp; u.cpTarget = tgt.uid; u.cp = Math.min(5, u.cp + ab.cp);
+      if (cp0 < 5 && u.cp >= 5) proc(C, u, 'cp5', abId);
     }
     if (ab.dot && tgt && !tgt.dead) {
       const per = (ab.dot.dmg + ab.dot.perLvl * L + (ab.dot.coef || 0) * u.st.sp) * (1 + (tmOf(u).dot[abId] || 0) / 100);
@@ -679,6 +702,14 @@
       if ((rA.bloodFury || rA.berserk) || (rA.stompAll && en.length >= 2) || (hurt && (rA.cleanse || (rA.dropThreat && u.role !== 'tank'))) || (u.stunUntil > C.t && rA.freeOf)) { if (try_(rac)) return; }
     }
     const has = (id) => D.CLASSES[u.cls].abilities.includes(id) && D.ABILITIES[id].lvl <= u.level;
+    // a lit ability (a reaction, v10.4) first: it is free, instant or ready only for a few seconds; better players see it more
+    if (Math.random() < 0.45 + 0.55 * (b.skill || 0.5)) for (const a of u.auras) if (a.proc) for (const l of a.proc.lights) {
+      if (!knows(u, l)) continue;
+      const A = D.ABILITIES[l];
+      if (A.target === 'ally') { const al = alive(friends(C, u)).sort((x, y) => x.hp / x.maxHp - y.hp / y.maxHp)[0]; if (al && al.hp / al.maxHp < 0.8 && try_(l, al)) return; continue; }
+      if (u.role === 'healer') continue; // a healer does not trade a heal for an instant Smite
+      if (try_(l, focusTarget(C, u))) return;
+    }
 
     if (u.role === 'healer') {
       const allies = alive(friends(C, u));
@@ -792,7 +823,7 @@
       try_('fireball', tgt);
     } else if (u.cls === 'rogue') {
       if (has('slice_and_dice') && u.cp >= 2 && !auraOf(u, 'slice_and_dice') && u.cpTarget === tgt.uid && try_('slice_and_dice')) return;
-      if (u.cp >= (tgt.hp < tgt.maxHp * 0.25 ? 1 : 4) && u.cpTarget === tgt.uid && try_('eviscerate', tgt)) return;
+      if (u.cp >= (tgt.hp < tgt.maxHp * 0.25 ? 1 : (b.skill || 0.5) >= 0.6 ? 5 : 4) && u.cpTarget === tgt.uid && try_('eviscerate', tgt)) return; // good players wait for 5 combo points (it glows)
       try_('sinister_strike', tgt);
     } else if (u.cls === 'shaman') {
       if (!u.auras.some((a) => a.seal) && try_('rockbiter_weapon')) return;
@@ -841,6 +872,7 @@
           a.next += a.every;
           const src = C.units[a.src] || u;
           dealDamage(C, src, u, a.dot, { school: a.school, ab: a.ab });
+          proc(C, src, 'tick', a.ab);
           if (u.dead) break;
         }
         if (a.hot != null && a.next <= C.t + 1e-6) { a.next += a.every; heal(C, C.units[a.src] || u, u, a.hot, { ab: a.ab }); }

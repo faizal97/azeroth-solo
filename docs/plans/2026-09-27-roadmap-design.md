@@ -52,6 +52,7 @@ This document says where the game stands, how it is designed, and what comes nex
 | 10.1 | Cloud save to your own Google Drive; the Bounty Board; Throw away; account sync; real Friends (10.1.1) |
 | 10.2 (beta) | Legends as story heroes (cameos, keepsakes); 25 story scenes; Widya, the second Legend, and the hidden Bard class |
 | 10.3 (in progress) | Gear upgrades: Mentor Marks raise level-60 blue and purple gear a step at a time to the ceiling (purples 100%, blues 92%); level-60 dungeon and raid clears pay Marks; the account-wide wardrobe (Hero → Wardrobe), with Legend keepsakes in its Back row |
+| 10.4 (beta) | Trials (monthly seasons from October 2026, a one-day Preseason, rating, a realm leaderboard); class reactions (one per class: an ability lights up, with a callout and a one-time card) and three useful buttons for every class by level 4 |
 
 ## How the world works
 

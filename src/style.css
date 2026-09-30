@@ -109,6 +109,7 @@ img { max-width: 100%; display: block; }
 @keyframes lungeL { 40% { transform: translateX(-14%); } }
 .fct { position: absolute; font: 800 20px/1 var(--body); color: #fff; text-shadow: 0 2px 0 #000, 0 0 3px #000; pointer-events: none; animation: rise 1.15s ease-out forwards; white-space: nowrap; z-index: 150; }
 .fct.crit { font-size: 30px; color: #ffe14a; animation: pop 1.25s ease-out forwards; }
+.fct.proc { font-size: 17px; color: #ffd84a; animation: pop 1.6s ease-out forwards; }
 .fct.me { color: #ff4a3a; }
 .fct.heal { color: #4cff4c; }
 .fct.small { font-size: 14px; color: #e8e8e8; }
@@ -298,6 +299,10 @@ img { max-width: 100%; display: block; }
 .ab.nores img { filter: saturate(.3) brightness(.55) sepia(1) hue-rotate(190deg); }
 .ab.off img { filter: grayscale(1) brightness(.45); }
 .ab.on { box-shadow: 0 0 0 2px #ffd84a; }
+/* a reaction lit this ability (v10.4): a gold pulse you cannot miss (a fill over the icon, since a glow gets clipped) */
+.ab.lit { outline: 3px solid #ffd84a; outline-offset: -1px; transform: scale(1.06); z-index: 2; }
+.ab.lit::before { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit; background: radial-gradient(circle, rgba(255, 236, 140, .55) 0%, rgba(255, 190, 40, .25) 60%, transparent 100%); animation: litpulse .7s ease-in-out infinite alternate; }
+@keyframes litpulse { from { opacity: .35; } to { opacity: 1; } }
 .ab .cnt { position: absolute; right: 2px; bottom: 1px; font: 800 12px var(--body); text-shadow: 0 1px 1px #000; }
 .ab.empty { background: rgba(0,0,0,.35); box-shadow: 0 0 0 1px #2c2113; }
 .ab.pressed { filter: brightness(1.6); }

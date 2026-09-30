@@ -456,6 +456,7 @@
       if (S_ && meInvolved) {
         if (e.type === 'dmg') S_.play(e.school === 'nature' ? 'arcane' : e.school && e.school !== 'physical' ? e.school : e.crit ? 'crit' : 'hit', { vol: tgt && tgt.kind === 'player' ? 0.75 : 1 });
         else if (e.type === 'avoid') S_.play('miss', { vol: 0.7 });
+        else if (e.type === 'proc' && src && src.kind === 'player') S_.play('click', { vol: 0.9 });
         else if (e.type === 'heal' && e.amount > 0) S_.play('heal', { gap: 0.3, vol: 0.8 });
         else if (e.type === 'castStart' && src && src.kind === 'player') S_.play('cast', { vol: 0.5 });
         else if (e.type === 'die' && C.units[e.uid] && C.units[e.uid].kind === 'player') S_.play('death');
@@ -471,6 +472,9 @@
         if (e.crit && mine && els.tf && els.tUid === e.tgt) { els.tf.classList.remove('shake'); void els.tf.offsetWidth; els.tf.classList.add('shake'); }
       } else if (e.type === 'heal' && e.amount > 0) {
         fct(e.tgt, '+' + e.amount, 'heal' + (e.crit ? ' crit' : ''));
+      } else if (e.type === 'proc' && src && src.kind === 'player') {
+        const pr = ((D.PROCS || {})[src.cls] || []).find((x) => (x.aura || x.on[0]) === e.key);
+        if (pr) { fct(e.src, pr.tell, 'proc'); reactionCard(pr); }
       } else if (e.type === 'avoid') {
         fct(e.tgt, e.what === 'dodge' ? 'Dodge' : e.what === 'resist' ? 'Resist' : 'Miss', 'small');
         if (src) flash(e.src, src.side === 'ally' ? 'lunge-r' : 'lunge-l', 280);
@@ -1165,6 +1169,11 @@
     if (ab.shield) d = d.replace('{s}', f(ab.shield.base + ab.shield.perLvl * L));
     if (ab.lifetap) d = d.split('{lt}').join(f(ab.lifetap.base + ab.lifetap.perLvl * L));
     if (ab.buff && ab.buff.stats) for (const k in ab.buff.stats) d = d.replace('{' + k + '}', f(ab.buff.stats[k] + ((ab.buff.perLvl && ab.buff.perLvl[k]) || 0) * L));
+    // reactions (v10.4): say plainly what this ability lights up, or what lights it
+    for (const pr of (D.PROCS || {})[P.cls] || []) {
+      if (pr.lights.includes(id)) d += ` Reaction (${pr.name}): ${pr.teach}`;
+      else if ((pr.from || []).includes(id)) d += ` Can light up ${pr.lights.map((l) => D.ABILITIES[l].name).join(' or ')} (${pr.name}).`;
+    }
     const cost = E.abCost(ab, P);
     const res = D.CLASSES[P.cls].resource;
     return { name: ab.name, cost: cost ? `${cost} ${res === 'mana' ? 'Mana' : res === 'rage' ? 'Rage' : 'Energy'}` : '', cast: ab.cast ? (ab.channel ? 'Channeled' : ab.cast + ' sec cast') : 'Instant', cd: ab.cd ? ab.cd + ' sec cooldown' : '', d };
@@ -1356,6 +1365,8 @@
         btn.querySelector('.cdt').textContent = left > 1.5 ? Math.ceil(left) : '';
         btn.classList.toggle('nores', nores);
         btn.classList.toggle('on', on);
+        const u2 = C && G.pUnit, lit = !!u2 && (E.lit(u2, id) || (u2.cp >= 5 && ((D.PROCS || {})[u2.cls] || []).some((pr) => pr.on.includes('cp5') && pr.lights.includes(id))));
+        btn.classList.toggle('lit', lit); // a reaction lit this ability (v10.4)
       }
     }
     // timers in panel & scene
@@ -3190,6 +3201,17 @@
     return s;
   }
   const saveTips = (s) => { try { localStorage.setItem(TIP_KEY, JSON.stringify(s)); } catch (e) { } };
+  // a class reaction explained the first time it happens for this character (v10.4). Shown even with tips off:
+  // a glowing button alone is easy to miss.
+  function reactionCard(pr) {
+    const P = G.S.player, key = pr.aura || pr.on[0]; P.procSeen = P.procSeen || {};
+    if (P.procSeen[key]) return;
+    P.procSeen[key] = 1; G.save();
+    const el = h('div', { class: 'tip-card' }, h('div', { class: 'tip-t' }, h('b', { style: { color: 'var(--gold)' } }, 'New reaction! '), pr.teach),
+      h('div', { class: 'tip-b' }, h('button', { class: 'chip gold', onclick: () => el.remove() }, 'Got it')));
+    (document.getElementById('app') || document.body).append(el);
+    setTimeout(() => el.remove(), 14000);
+  }
   function tip(id) {
     const s = tipState(); if (s.off || s.seen.includes(id) || !TIPS[id]) return;
     s.seen.push(id); saveTips(s);
