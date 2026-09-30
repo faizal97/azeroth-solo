@@ -151,7 +151,7 @@
     return baseUnit({
       side: 'enemy', kind: 'mob', key, name: M.name, level: L, elite: !!(M.elite || M.boss), boss: !!M.boss,
       maxHp: hp, hp, res: 0, maxRes: 0, resType: null, dmg: [a * dm, b * dm], swingSpeed: 2.0,
-      armor: L * 20, dodge: 5, crit: 5, special: M.special ? { kind: M.special, t: 6, phase: 0, text: M.specialText || null, summon: M.summon || null } : null,
+      armor: L * 20, dodge: 5, crit: 5, special: M.special ? { kind: M.special, t: SPECIAL_FIRST, phase: 0, text: M.specialText || null, summon: M.summon || null } : null,
       swingT: rnd(1.4, 2.2),
     });
   };
@@ -595,6 +595,37 @@
   };
 
   // ------------------------------------------------------------- mob specials
+  // Every number a special uses lives here, so the fight and the briefing text (E.specialFacts) can never disagree.
+  // every: seconds between uses (the first comes FIRST sec into the fight); mult: × a normal hit; heal: share of max
+  // health; adds: [health share, mob (null = the boss's own summon), how many, level (+/- the boss's, or a fixed number)]
+  const SPECIAL_FIRST = 6;
+  const SPECIALS = {
+    slam: { every: 8, mult: 2.1, who: 'target' }, hogger: { every: 9, mult: 2.1, who: 'target' },
+    whirl: { every: 12, mult: 0.7, who: 'all' }, molten: { every: 10, mult: 1.4, who: 'random', school: 'fire' },
+    cook: { every: 15, heal: 0.08 },
+    arugal: { every: 12, mult: 0.9, who: 'random', school: 'shadow', adds: [[0.5, 'shadowfang_moonwalker', 1, -2]] },
+    kelris: { adds: [[0.5, null, 1, -2]] }, thredd: { adds: [[0.5, 'defias_insurgent', 2, -1]] }, vancleef: { adds: [[0.5, 'blackguard', 2, 11]] },
+    thermaplugg: { adds: [[0.66, 'gnomeregan_leper', 1, -2], [0.33, 'gnomeregan_leper', 1, -2]] },
+    smite: { stunAt: [0.66, 0.33], stun: 2, stunOrc: 1.5, enrageAt: 0.5, enrage: 1.35 },
+  };
+  E.SPECIALS = SPECIALS;
+  const addLvl = (m, lv) => (lv > 0 ? lv : m.level + lv);
+  // the plain facts of a boss's special, with the numbers of this unit (made by E.mobUnit at the level you will meet it)
+  E.specialFacts = function (u) {
+    const sp = u && u.special, S = sp && SPECIALS[sp.kind]; if (!S) return [];
+    const hit = (x) => `${Math.round(u.dmg[0] * x)}–${Math.round(u.dmg[1] * x)}`, out = [];
+    const sch = S.school ? ` ${S.school}` : '';
+    if (S.mult) out.push(`Every ${S.every} sec (first at ${SPECIAL_FIRST} sec): ${S.who === 'all' ? 'hits everyone in your group' : S.who === 'random' ? 'hits one group member at random' : 'hits its target'} for ${hit(S.mult)}${sch} damage.`);
+    if (S.heal) out.push(`Every ${S.every} sec (first at ${SPECIAL_FIRST} sec): heals itself for ${Math.round(S.heal * 100)}% of its health (${Math.round(u.maxHp * S.heal)}).`);
+    if (S.adds) {
+      const byMob = {};
+      for (const [at, key, n, lv] of S.adds) { const k = key || sp.summon || 'twilight_acolyte', id = k + ':' + n; (byMob[id] = byMob[id] || { k, n, lv, at: [] }).at.push(Math.round(at * 100) + '%'); }
+      for (const a of Object.values(byMob)) out.push(`At ${a.at.join(' and ')} health: ${a.n > 1 ? `${a.n} ${D.MOBS[a.k].name}s join` : `${/^[AEIOU]/.test(D.MOBS[a.k].name) ? 'an' : 'a'} ${D.MOBS[a.k].name} joins`} the fight (level ${addLvl(u, a.lv)}).`);
+    }
+    if (S.stunAt) out.push(`At ${S.stunAt.map((x) => Math.round(x * 100) + '%').join(' and ')} health: stuns your whole group for ${S.stun} sec (orcs ${S.stunOrc} sec).`);
+    if (S.enrageAt) out.push(`Below ${Math.round(S.enrageAt * 100)}% health: hits ${Math.round((S.enrage - 1) * 100)}% harder.`);
+    return out;
+  };
   function specials(C, m, dt) {
     const sp = m.special;
     if (!sp || m.dead || stunned(C, m)) return;
@@ -603,78 +634,85 @@
     const pct = m.hp / m.maxHp;
     const allies = alive(C.allies);
     if (sp.kind === 'smite') {
-      if (sp.phase === 0 && pct < 0.66) { sp.phase = 1; stomp(C, m, 'Mr. Clobber stomps the deck!'); say(C, m, 'You landlubbers are tougher than I thought! I\'ll have to improvise!', 'monster'); }
-      if (sp.phase === 1 && pct < 0.5) { sp.phase = 2; m.enrage = 1.35; ev(C, { type: 'emote', uid: m.uid, text: 'Mr. Clobber draws his hammer.' }); }
-      if (sp.phase === 2 && pct < 0.33) { sp.phase = 3; stomp(C, m, 'Mr. Clobber stomps the deck!'); say(C, m, 'D\'ah! Now you\'re making me angry!', 'monster'); }
+      const Sm = SPECIALS.smite;
+      if (sp.phase === 0 && pct < Sm.stunAt[0]) { sp.phase = 1; stomp(C, m, 'Mr. Clobber stomps the deck!'); say(C, m, 'You landlubbers are tougher than I thought! I\'ll have to improvise!', 'monster'); }
+      if (sp.phase === 1 && pct < Sm.enrageAt) { sp.phase = 2; m.enrage = Sm.enrage; ev(C, { type: 'emote', uid: m.uid, text: 'Mr. Clobber draws his hammer.' }); }
+      if (sp.phase === 2 && pct < Sm.stunAt[1]) { sp.phase = 3; stomp(C, m, 'Mr. Clobber stomps the deck!'); say(C, m, 'D\'ah! Now you\'re making me angry!', 'monster'); }
       return;
     }
     if (sp.kind === 'arugal') {
       // calls a worgen at half health; a shadow bolt at someone every 12 sec
-      if (sp.phase < 1 && pct < 0.5) {
+      const Sa = SPECIALS.arugal, [aAt, aKey, , aLv] = Sa.adds[0];
+      if (sp.phase < 1 && pct < aAt) {
         sp.phase++; say(C, m, 'You, too, shall serve!', 'monster');
-        E.addEnemy(C, E.mobUnit('shadowfang_moonwalker', m.level - 2, (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
+        E.addEnemy(C, E.mobUnit(aKey, addLvl(m, aLv), (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
       }
       if (sp.t <= 0) {
-        sp.t = 12; const a = allies[rint(0, allies.length - 1)];
-        if (a) { ev(C, { type: 'emote', uid: m.uid, text: 'Cairn hurls a bolt of shadow!' }); dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * 0.9, { school: 'shadow', ab: 'shadow_bolt' }); }
+        sp.t = Sa.every; const a = allies[rint(0, allies.length - 1)];
+        if (a) { ev(C, { type: 'emote', uid: m.uid, text: 'Cairn hurls a bolt of shadow!' }); dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * Sa.mult, { school: 'shadow', ab: 'shadow_bolt' }); }
       }
       return;
     }
     if (sp.kind === 'kelris') {
       // one add at half health (the boss's `summon` mob)
-      if (sp.phase === 0 && pct < 0.5) {
+      const [kAt, , , kLv] = SPECIALS.kelris.adds[0];
+      if (sp.phase === 0 && pct < kAt) {
         sp.phase = 1; if (sp.text) ev(C, { type: 'emote', uid: m.uid, text: sp.text }); else say(C, m, 'Sleep... and dream of the old gods!', 'monster');
-        E.addEnemy(C, E.mobUnit(sp.summon || 'twilight_acolyte', m.level - 2, (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
+        E.addEnemy(C, E.mobUnit(sp.summon || 'twilight_acolyte', addLvl(m, kLv), (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
       }
       return;
     }
     if (sp.kind === 'thermaplugg') {
       // a leper gnome joins at 66% and at 33%
-      if (sp.phase < 2 && pct < (sp.phase === 0 ? 0.66 : 0.33)) {
+      const St = SPECIALS.thermaplugg.adds;
+      if (sp.phase < St.length && pct < St[sp.phase][0]) {
+        const [, tKey, , tLv] = St[sp.phase];
         sp.phase++; say(C, m, sp.phase === 1 ? 'Usurpers! Gearhollow is mine!' : 'My machines are the future!', 'monster');
-        E.addEnemy(C, E.mobUnit('gnomeregan_leper', m.level - 2, (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
+        E.addEnemy(C, E.mobUnit(tKey, addLvl(m, tLv), (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
       }
       return;
     }
     if (sp.kind === 'thredd') {
-      if (sp.phase === 0 && pct < 0.5) {
+      const [dAt, dKey, dN, dLv] = SPECIALS.thredd.adds[0];
+      if (sp.phase === 0 && pct < dAt) {
         sp.phase = 1; say(C, m, 'To me, brothers! Show them what Kingsmere Gaol taught us!', 'monster');
-        for (let i = 0; i < 2; i++) E.addEnemy(C, E.mobUnit('defias_insurgent', m.level - 1, (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
+        for (let i = 0; i < dN; i++) E.addEnemy(C, E.mobUnit(dKey, addLvl(m, dLv), (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
       }
       return;
     }
     if (sp.kind === 'vancleef') {
-      if (sp.phase === 0 && pct < 0.5) {
+      const [vAt, vKey, vN, vLv] = SPECIALS.vancleef.adds[0];
+      if (sp.phase === 0 && pct < vAt) {
         sp.phase = 1; say(C, m, 'Lapdogs, all of you!', 'monster');
-        for (let i = 0; i < 2; i++) E.addEnemy(C, E.mobUnit('blackguard', 11, (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
+        for (let i = 0; i < vN; i++) E.addEnemy(C, E.mobUnit(vKey, addLvl(m, vLv), (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
       }
       if (sp.t <= 0 && tgt) { sp.t = 12; say(C, m, 'The Brotherhood shall prevail!', 'monster'); }
       return;
     }
     if (sp.t > 0) return;
     if (sp.kind === 'slam' || sp.kind === 'hogger') {
-      sp.t = sp.kind === 'hogger' ? 9 : 8;
+      const Ss = SPECIALS[sp.kind]; sp.t = Ss.every;
       if (tgt && !tgt.dead) {
         ev(C, { type: 'emote', uid: m.uid, text: sp.text || (sp.kind === 'hogger' ? `${m.name} lunges!` : `${m.name} slams the ground!`) });
-        dealDamage(C, m, tgt, rnd(m.dmg[0], m.dmg[1]) * 2.1, { school: 'physical', ab: 'slam' });
+        dealDamage(C, m, tgt, rnd(m.dmg[0], m.dmg[1]) * Ss.mult, { school: 'physical', ab: 'slam' });
       }
     } else if (sp.kind === 'whirl') {
-      sp.t = 12;
+      sp.t = SPECIALS.whirl.every;
       ev(C, { type: 'emote', uid: m.uid, text: sp.text || `${m.name === 'Big Chopper' ? 'Big Chopper' : 'The Shredder'} whirls its saw blades!` });
-      for (const a of allies) dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * 0.7, { school: 'physical', ab: 'whirl' });
+      for (const a of allies) dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * SPECIALS.whirl.mult, { school: 'physical', ab: 'whirl' });
     } else if (sp.kind === 'molten') {
-      sp.t = 10;
+      sp.t = SPECIALS.molten.every;
       const a = allies[rint(0, allies.length - 1)];
-      if (a) { ev(C, { type: 'emote', uid: m.uid, text: sp.text || `${m.name} splashes molten metal!` }); dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * 1.4, { school: 'fire', ab: 'molten' }); }
+      if (a) { ev(C, { type: 'emote', uid: m.uid, text: sp.text || `${m.name} splashes molten metal!` }); dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * SPECIALS.molten.mult, { school: 'fire', ab: 'molten' }); }
     } else if (sp.kind === 'cook') {
-      sp.t = 15;
+      sp.t = SPECIALS.cook.every;
       ev(C, { type: 'emote', uid: m.uid, text: sp.text || 'Crumbs eats some of his cooking.' });
-      heal(C, m, m, m.maxHp * 0.08, {});
+      heal(C, m, m, m.maxHp * SPECIALS.cook.heal, {});
     }
   }
   function stomp(C, m, text) {
     ev(C, { type: 'emote', uid: m.uid, text });
-    for (const a of alive(C.allies)) { if ((a.stunImmuneUntil || 0) > C.t) continue; a.stunUntil = C.t + (a.race === 'orc' ? 1.5 : 2); a.cast = null; }
+    for (const a of alive(C.allies)) { if ((a.stunImmuneUntil || 0) > C.t) continue; a.stunUntil = C.t + (a.race === 'orc' ? SPECIALS.smite.stunOrc : SPECIALS.smite.stun); a.cast = null; }
   }
 
   // ------------------------------------------------------------- AI

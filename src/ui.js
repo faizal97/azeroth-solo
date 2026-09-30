@@ -2954,6 +2954,7 @@
           h('div', { class: 't' }, h('b', null, p.label || D.MOBS[p.mobs[0]].name, bm ? h('span', { class: 'gf-kind k-raid', style: { marginLeft: '6px' } }, 'Boss') : null),
             ...lines.map((l) => h('small', { style: { whiteSpace: 'normal' } }, l)),
             bm && bm.specialText ? h('small', { style: { whiteSpace: 'normal', color: 'var(--gold)' } }, 'Special: ' + bm.specialText) : null,
+            ...(bm && bm.special ? E.specialFacts(E.mobUnit(bk, mobLvl || (bm.lvl ? bm.lvl[1] : A.maxLvl), bm.boss ? boss : trash)).map((t) => h('small', { style: { whiteSpace: 'normal' } }, (bm.specialText ? '' : 'Special: ') + t)) : []),
             drops.length ? h('small', { style: { whiteSpace: 'normal' } }, 'Drops (tap one): ', ...drops.map((id, i) => [i ? ', ' : '', h('button', { class: 'drop-link q' + D.ITEMS[id].q, onclick: () => showDialog(itemTip(G.copyItem(id)), true) }, D.ITEMS[id].name)]).flat()) : null)));
       }
       b.append(list);
