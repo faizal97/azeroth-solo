@@ -772,6 +772,14 @@
   // Routes (v9.4): the quickest way to any place you can reach, skipping enemy towns. { path: [from, ..., to], secs }
   G.route = function (from, to) {
     if (from === to || !D.PLACES[to] || G.enemyTown(to) || G.stormBlocks(to)) return null;
+    const { dist, prev } = routeSearch(from, to);
+    if (dist[to] == null) return null;
+    const path = [to]; while (path[0] !== from) path.unshift(prev[path[0]]);
+    return { path, secs: Math.round(dist[to]) };
+  };
+  // seconds from a place to every place you can reach from it (one search, for lists that rank many places)
+  G.travelTimes = (from) => routeSearch(from, null).dist;
+  function routeSearch(from, to) {
     const dist = { [from]: 0 }, prev = {}, done = new Set();
     const open = [from];
     while (open.length) {
@@ -784,10 +792,8 @@
         if (dist[b] == null || d < dist[b]) { dist[b] = d; prev[b] = a; open.push(b); }
       }
     }
-    if (dist[to] == null) return null;
-    const path = [to]; while (path[0] !== from) path.unshift(prev[path[0]]);
-    return { path, secs: Math.round(dist[to]) };
-  };
+    return { dist, prev };
+  }
   // Travel a whole route: one leg now, the rest as each leg ends (a fight or a manual trip cancels it).
   G.travelRoute = function (dest) {
     const P = G.S.player;

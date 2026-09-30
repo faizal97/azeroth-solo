@@ -702,7 +702,7 @@
       const ready = mk === '?' ? G.npcQuests(npc).filter((q) => q.st === 'complete').length : 0;
       here.append(h('button', { class: 'mcard' + (ready ? ' turnin' : ''), onclick: () => openNpc(npc) },
         h('div', { class: 'ic' }, mk ? qmark(MK_KIND[mk]) : img(art('icon', N.legend ? 'legend_' + N.legend : npc === place.vendor || npc === place.gearVendor ? 'coin' : 'hearthstone'))),
-        h('div', { class: 't' }, h('b', { style: { color: '#ffd100' } }, N.name), h('small', null, ready ? (ready === 1 ? 'Quest ready to hand in' : `${ready} quests ready to hand in`) : N.title))));
+        h('div', { class: 't' }, h('b', { style: { color: '#ffd100' } }, N.name), h('small', null, ready ? (ready === 1 ? 'Quest ready to hand in' : `${ready} quests ready to hand in`) : [N.title, mk === '!' ? offerLevels(npc) : null]))));
     }
     if (place.npcs.length || boardHere) b.append(here); else b.append(h('div', { class: 'people' }, 'No one to talk to here.'));
     const partyIds = new Set(((S.wparty && S.wparty.members) || []).map((m) => m.bot.id));
@@ -740,34 +740,67 @@
     questLeads(b);
     b.append(h('button', { class: 'btn alt wide', onclick: () => openQuests() }, 'Open quest log'));
   }
-  // Where the next quests are, so running out here never means running out.
+  // the level of the quests someone offers, each end in its difficulty colour: ' · Lv 5' or ' · Lv 4-8'
+  function offerLevels(npc) {
+    const lv = G.npcQuests(npc).filter((q) => q.st === 'available').map((q) => D.QUESTS[q.qid].lvl);
+    if (!lv.length) return null;
+    const lo = Math.min(...lv), hi = Math.max(...lv), num = (l) => h('span', { style: { color: conColor(l) } }, String(l));
+    return h('span', null, ' · Lv ', num(lo), lo === hi ? null : '-', lo === hi ? null : num(hi));
+  }
+  // ---------- where quest things happen: the map, the quest page, the tracker and the leads all ask here
+  // the places an objective is done in: a visit's place, where its mob lives or its item drops, where it is gathered
+  function objPlaces(o) {
+    if (o.type === 'visit') return [o.place];
+    const drops = (k) => (D.MOBS[k].qdrops || []).some((d) => d[0] === o.item);
+    return Object.keys(D.PLACES).filter((p) => { const pl = D.PLACES[p]; return (pl.mobs || []).some((m) => m[0] === o.mob || drops(m[0])) || (pl.named && Object.keys(pl.named).some((k) => k === o.mob || drops(k))) || (pl.gather && pl.gather.item === o.item); });
+  }
+  const npcPlace = (npc) => Object.keys(D.PLACES).find((p) => D.PLACES[p].npcs.includes(npc));
+  // a quest far below you is grey, the same line conColor draws
+  const trivialLvl = (lvl) => conColor(lvl) === '#9d9d9d';
+  // nearest first: where you stand (or are heading), then by travel time, places you can't reach last
+  function byNearness(places) {
+    const P = G.S.player, from = P.travel ? P.travel.to : P.place, t = G.travelTimes(from);
+    return places.slice().sort((a, b) => (t[a] ?? 1e9) - (t[b] ?? 1e9));
+  }
+  // 'Tinder Hollow', 'Tinder Hollow or Deepcut Mine', 'Tinder Hollow and 3 more'
+  function placeNames(places) {
+    const n = places.map((p) => D.PLACES[p].name);
+    return n.length <= 2 ? n.join(' or ') : `${n[0]} and ${n.length - 1} more`;
+  }
+  // Where the next quests are, so running out here never means running out. Grey quests (far below you) don't count;
+  // when this region has nothing for your level, the nearest places elsewhere that do.
   function questLeads(b) {
     const P = G.S.player, here = D.PLACES[P.place], region = here.region || 'elwynn';
-    const at = {}, soon = {};
+    const at = {};
     for (const k in D.PLACES) for (const n of (D.PLACES[k].npcs || [])) at[n] = k;
-    const places = {};
+    const places = {}, far = {};
     let nextLvl = 0;
     for (const qid in D.QUESTS) {
       const Q = D.QUESTS[qid], pk = at[Q.giver]; if (!pk) continue;
-      const pl = D.PLACES[pk]; if ((pl.region || 'elwynn') !== region) continue;
+      const near = (D.PLACES[pk].region || 'elwynn') === region;
       const st = G.questState(qid);
-      if (st === 'available') places[pk] = (places[pk] || 0) + 1;
-      else if (st === 'low' && (!nextLvl || Q.lvl - 2 < nextLvl)) nextLvl = Q.lvl - 2;
+      if (st === 'available' && !trivialLvl(Q.lvl)) { const m = near ? places : far; m[pk] = (m[pk] || 0) + 1; }
+      else if (near && st === 'low' && (!nextLvl || Q.lvl - 2 < nextLvl)) nextLvl = Q.lvl - 2;
     }
+    const count = (n) => `${n} quest${n > 1 ? 's' : ''}`;
     const others = Object.keys(places).filter((k) => k !== P.place);
     if (!others.length && !places[P.place]) {
-      const horde = (D.RACES[P.race] || {}).faction === 'horde';
-      const nextZone = P.level >= 9 && region !== 'westfall' && region !== 'barrens' ? (horde ? ' Next: the Scrublands. Head to Dustfort (from Bonewall, Ossa Village or Vazhrak).' : ' Next: Longfield. Head to Warrick\'s Rise (west of Brackenford).') : '';
-      b.append(h('div', { class: 'people' }, (nextLvl ? `No new quests in ${here.zone} until level ${nextLvl}. Hunt, or try the group finder.` : `You have done every quest in ${here.zone}.`) + nextZone));
+      const t = G.travelTimes(P.place);
+      const next = Object.keys(far).filter((k) => t[k] != null).sort((x, y) => t[x] - t[y]).slice(0, 3);
+      b.append(h('div', { class: 'people' }, (nextLvl ? `No new quests for your level in ${here.zone} until level ${nextLvl}.` : `No quests for your level left in ${here.zone}.`) + (next.length ? ' Try somewhere new:' : ' Hunt, or try the group finder.')));
+      if (!next.length) return;
+      const chips = h('div', { class: 'chips' });
+      for (const k of next) chips.append(h('button', { class: 'chip gold', onclick: () => routeDialog(k) }, D.PLACES[k].name, h('small', null, `${D.PLACES[k].zone} · ${count(far[k])}`)));
+      b.append(h('div', { class: 'sec-h' }, 'Quests for your level', h('small', null, 'nearest first')), chips);
       return;
     }
     if (!others.length) return;
     const chips = h('div', { class: 'chips' });
     for (const k of others.sort((x, y) => places[y] - places[x])) {
       const t = here.links && here.links[k];
-      chips.append(h('button', { class: 'chip gold', onclick: () => (t ? G.travelTo(k) : routeDialog(k)) }, D.PLACES[k].name, h('small', null, `${places[k]} quest${places[k] > 1 ? 's' : ''}${t ? ' · ' + t + 's' : ''}`)));
+      chips.append(h('button', { class: 'chip gold', onclick: () => (t ? G.travelTo(k) : routeDialog(k)) }, D.PLACES[k].name, h('small', null, `${count(places[k])}${t ? ' · ' + t + 's' : ''}`)));
     }
-    b.append(h('div', { class: 'sec-h' }, places[P.place] ? 'More quests nearby' : 'Quests for you', h('small', null, places[P.place] ? '' : 'none left here')), chips);
+    b.append(h('div', { class: 'sec-h' }, places[P.place] ? 'More quests nearby' : 'Quests for your level', h('small', null, places[P.place] ? '' : 'none left here')), chips);
   }
   function travelTab(b, place) {
     const P = G.S.player;
@@ -792,16 +825,19 @@
     }
     return out;
   }
+  // finished quests first (the ones to hand in), the rest in the order you took them
+  const readyFirst = (qs) => qs.filter((q) => G.questState(q) === 'complete').concat(qs.filter((q) => G.questState(q) !== 'complete'));
   function tracker(p, all) {
     const P = G.S.player;
-    const qs = Object.keys(P.quests), bs = G.myBounties();
+    const qs = readyFirst(Object.keys(P.quests)), bs = G.myBounties();
     if (!qs.length && !bs.length) return;
     const t = h('div', { class: 'tracker' });
     for (const qid of qs.slice(0, all ? 20 : 4)) {
-      const st = G.questState(qid);
+      const st = G.questState(qid), Q = D.QUESTS[qid];
       const fresh = ui.flashQ && ui.flashQ.qid === qid && Date.now() - ui.flashQ.at < 2500;
-      t.append(h('div', { class: 'q' + (fresh ? ' flash' : '') }, D.QUESTS[qid].name + (st === 'complete' ? ' (Complete)' : '')));
-      if (st !== 'complete') for (const pr of G.questProgress(qid)) t.append(h('div', { class: 'o tnum' + (pr.have >= pr.n ? ' done' : '') }, `- ${pr.label}: ${pr.have}/${pr.n}`));
+      t.append(h('div', { class: 'q' + (fresh ? ' flash' : '') }, Q.name + (st === 'complete' ? ' (Complete)' : '')));
+      if (st === 'complete') { const at = npcPlace(Q.turnin); t.append(h('div', { class: 'o done' }, `- Return to ${D.NPCS[Q.turnin].name}${at ? ', ' + D.PLACES[at].name : ''}`)); }
+      else for (const pr of G.questProgress(qid)) t.append(h('div', { class: 'o tnum' + (pr.have >= pr.n ? ' done' : '') }, `- ${pr.label}: ${pr.have}/${pr.n}`));
     }
     for (const x of bs.slice(0, all ? 6 : Math.max(0, 4 - qs.length))) {
       t.append(h('div', { class: 'q' }, `${x.weekly ? 'Weekly bounty' : 'Bounty'}: ${D.MOBS[x.mob].name}` + (x.complete ? ' (Complete)' : '')));
@@ -1671,10 +1707,7 @@
       for (const qid in P.quests) {
         const st = G.questState(qid);
         if (st === 'complete') { const npc = D.QUESTS[qid].turnin; for (const p in D.PLACES) if (D.PLACES[p].npcs.includes(npc)) qPlaces.set(p, 'ready'); continue; }
-        for (const o of D.QUESTS[qid].objs) {
-          if (o.type === 'visit') mark(o.place);
-          for (const p in D.PLACES) { const pl = D.PLACES[p]; if ((pl.mobs || []).some((m) => m[0] === o.mob || (D.MOBS[m[0]].qdrops || []).some((d) => d[0] === o.item)) || (pl.named && Object.keys(pl.named).some((k) => k === o.mob || (D.MOBS[k].qdrops || []).some((d) => d[0] === o.item))) || (pl.gather && pl.gather.item === o.item)) mark(p); }
-        }
+        for (const o of D.QUESTS[qid].objs) objPlaces(o).forEach(mark);
       }
       for (const p in MAP) {
         const [x, y] = MAP[p]; const pl = D.PLACES[p];
@@ -1773,6 +1806,13 @@
     const A = Object.values(D.ACTIVITIES).find((a) => a.dungeon === Q.dungeon) || D.ACTIVITIES[Q.dungeon];
     return { name: A ? A.name : (D.DUNGEONS[Q.dungeon] || {}).name || 'the dungeon', raid: !!(A && A.size >= 10) };
   }
+  // a finished quest says who takes it and where they stand ('Return to Marshal Brede in Brackenford, Ambermoor.')
+  function turninLine(Q) {
+    const N = D.NPCS[Q.turnin], P = G.S.player;
+    const at = npcPlace(Q.turnin);
+    const where = !at ? '' : at === P.place && !P.travel ? ` here in ${D.PLACES[at].name}` : ` in ${D.PLACES[at].name}, ${D.PLACES[at].zone}`;
+    return h('div', { class: 'obj turnin-to' }, qmark('ready'), ' Return to ', h('b', null, N.name), where + '.');
+  }
   function questDetail(qid, npc) {
     const Q = D.QUESTS[qid];
     const st = G.questState(qid);
@@ -1784,7 +1824,9 @@
       h('p', null, Q.text),
       questStory(qid),
       h('h4', null, 'Objectives'),
-      ...pr.map((p) => h('div', { class: 'obj tnum' + (p.have >= p.n ? ' done' : '') }, `${p.label}: ${p.have}/${p.n}`)),
+      ...pr.map((p) => { const where = p.have < p.n && p.o.type !== 'visit' ? byNearness(objPlaces(p.o)) : [];
+        return h('div', { class: 'obj tnum' + (p.have >= p.n ? ' done' : '') }, `${p.label}: ${p.have}/${p.n}`, where.length ? h('small', { class: 'obj-where' }, ' · ' + placeNames(where)) : null); }),
+      st === 'complete' ? turninLine(Q) : null,
       Q.group ? h('div', { class: 'obj', style: { color: '#8a1a10' } }, `Group quest (${Q.group} players). Use the group finder.`) : null,
       Q.dungeon ? h('div', { class: 'obj', style: { color: '#8a1a10' } }, `${questDungeon(Q).raid ? 'Raid' : 'Dungeon'} quest. Queue for ${questDungeon(Q).name} in Social.`) : null,
       h('h4', null, 'Rewards'),
@@ -1803,7 +1845,7 @@
   function openQuests() {
     openSheet('quests', 'Quest Log', `${Object.keys(G.S.player.quests).length}/20`, (b) => {
       const P = G.S.player;
-      const qs = Object.keys(P.quests);
+      const qs = readyFirst(Object.keys(P.quests));
       if (!qs.length) b.append(h('p', null, 'Your quest log is empty. Look for people with a yellow ! above their name.'));
       for (const qid of qs) {
         const st = G.questState(qid);
