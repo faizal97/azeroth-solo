@@ -49,7 +49,8 @@ const add = (src, lvl, text, extra) => { if (text) texts.push(Object.assign({ sr
 const instanceLvl = {};
 for (const A of Object.values(D.ACTIVITIES)) if (A.dungeon) instanceLvl[A.dungeon] = Math.min(instanceLvl[A.dungeon] || 99, A.minLvl);
 for (const c of CS.CHAPTERS) {
-  const lvl = c.legend ? 1 : c.level != null ? c.level : c.instance ? (instanceLvl[c.instance] || 60) : 60;
+  // legend lore is open in the Theater from the start; a quest scene (c.scene) only plays at its quest, at c.level
+  const lvl = c.legend && !c.scene ? 1 : c.level != null ? c.level : c.instance ? (instanceLvl[c.instance] || 60) : 60;
   for (const s of c.shots) for (const l of s.lines || []) add(`cutscene ${c.id}`, lvl, l.text.replace(/\{(name|zone)\}/g, ''));
 }
 for (const [k, Q] of Object.entries(D.QUESTS)) { add(`quest ${k}`, Q.lvl, Q.name, { faction: Q.faction, title: true }); add(`quest ${k}`, Q.lvl, Q.text, { faction: Q.faction, quest: k }); }

@@ -3125,10 +3125,10 @@
         if (ch.legend && !shownLeg) { shownLeg = true; list.append(h('div', { class: 'sec-h', style: { marginTop: '8px' } }, 'Legends')); }
         if (ch.instance && !shownInst) { shownInst = true; list.append(h('div', { class: 'sec-h', style: { marginTop: '8px' } }, 'Dungeons & Raids')); }
         if (!ch.instance && ch === ordered[0]) list.append(h('div', { class: 'sec-h' }, 'Story'));
-        const open = (un.has(ch.id) || ch.legend) && ch.shots; // legend lore is open from the start
-        list.append(h('button', { class: 'row' + (open ? '' : ' locked'), onclick: () => { if (open) { closeSheet(); playChapter(ch.id); } else toast(ch.instance ? 'Enter the dungeon to unlock.' : ch.shots ? `Reach level ${ch.level} to unlock.` : 'Arrives with a later update.'); } },
+        const open = (un.has(ch.id) || (ch.legend && !ch.scene)) && ch.shots; // legend lore is open from the start; quest scenes once seen
+        list.append(h('button', { class: 'row' + (open ? '' : ' locked'), onclick: () => { if (open) { closeSheet(); playChapter(ch.id); } else toast(ch.scene ? 'Plays during a quest. Keep going!' : ch.instance ? 'Enter the dungeon to unlock.' : ch.shots ? `Reach level ${ch.level} to unlock.` : 'Arrives with a later update.'); } },
           h('div', { class: 'ic' }, h('span', { class: 'mark' + (open ? '' : ' grey') }, open ? '▶' : '·')),
-          h('div', { class: 't' }, h('b', null, ch.title), h('small', null, ch.legend ? 'Legend lore' : ch.instance ? (open ? 'Dungeon intro' : 'Plays the first time you enter') : ch.id === 'intro' ? 'Plays after you create a character' : `Level ${ch.level}`)),
+          h('div', { class: 't' }, h('b', null, ch.scene && !open ? (ch.legend ? 'A Legend scene' : 'A story scene') : ch.title), h('small', null, ch.scene ? (open ? `${ch.legend ? 'Legend' : 'Story'} scene · level ${ch.level}` : `Plays during a quest (level ${ch.level})`) : ch.legend ? 'Legend lore' : ch.instance ? (open ? 'Dungeon intro' : 'Plays the first time you enter') : ch.id === 'intro' ? 'Plays after you create a character' : `Level ${ch.level}`)),
           h('div', { class: 'r' }, open ? 'Play' : ch.shots ? 'Locked' : 'Coming')));
       }
       b.append(list);
@@ -3374,6 +3374,10 @@
     G.on('runTick', () => {});
     // a chapter that waits on a quest (x1 waits for Veshmira) plays as soon as that quest is turned in
     G.on('questDone', (d) => { const ch = d && d.qid && window.CS && CS.CHAPTERS.find((c) => c.after && c.after.includes(d.qid) && c.shots && G.S.player.level >= c.level && !CS.unlocked().has(c.id)); if (ch) ui.pendingChapter = ch.id; });
+    // quest scenes (v10.2): a short scene on accepting or finishing a key quest, once
+    const questScene = (qid, on) => { const ch = qid && window.CS && CS.CHAPTERS.find((c) => c.scene && c.quest === qid && (c.on || 'done') === on && c.shots && !CS.unlocked().has(c.id)); if (ch) ui.pendingChapter = ch.id; };
+    G.on('questAccept', (d) => questScene(d && d.qid, 'accept'));
+    G.on('questDone', (d) => questScene(d && d.qid, 'done'));
     G.on('levelup', (d) => { const ch = window.CS && CS.CHAPTERS.find((c) => c.level === d.level && c.shots && c.id !== 'intro' && chapterReady(c)); if (ch) ui.pendingChapter = ch.id; renderAll(); banner('Level ' + d.level, d.learned.length ? 'New: ' + d.learned.map((a) => D.ABILITIES[a].name).join(', ') : 'Health and mana restored'); });
     G.on('combat', onCombat);
     G.on('instanceEnter', (d) => {

@@ -70,6 +70,31 @@
         actors: [{ a: 'story:lyveus_hooded', x: 40, y: 2, w: 32, anim: 'breathe', from: { o: 0 }, dur: 2 }],
         lines: [{ t: 0.5, text: 'He alone survived. Now he walks the roads under a hood, and the Black Brood stirs again.' }, { t: 6, who: 'Lyveus Cloveus', text: 'They made me a ghost. Ghosts keep watch.' }] },
     ] },
+    // Quest scenes (v10.2): short moments on key quests (quest + on: 'accept' | 'done'), locked in the Theater until seen
+    { id: 'lyv_unhood', legend: 'lyveus', scene: true, quest: 'lg_lyv_ashes', on: 'accept', level: 37, title: 'Lyveus: The Face Under the Hood', music: 'dungeon', shots: [
+      { bg: 'scene:silverleaf_lodge', dur: 8, cam: [[0, 0, 1.12], [0, 0, 1.04]], fx: ['fadein', 'embers'],
+        actors: [{ a: 'story:lyveus_hooded', x: 40, y: 2, w: 32, anim: 'breathe', from: { o: 0 }, dur: 1.6 }],
+        lines: [{ t: 0.5, text: 'In the ashes of Silverleaf Lodge, the hooded wanderer stops, and turns.' }] },
+      { bg: 'scene:silverleaf_lodge', dur: 11, cam: [[0, 0, 1.04], [0, -2, 1.2]], fx: ['embers', 'fadeout'],
+        actors: [{ a: 'story:lyveus', x: 40, y: 2, w: 32, anim: 'breathe', from: { o: 0 }, dur: 1.2 }],
+        lines: [{ t: 0.5, who: 'Lyveus', text: 'My name is Lyveus Cloveus. This was my home.' }, { t: 5, who: 'Lyveus', text: 'They told the world bandits burned it. I know better.' }] },
+    ] },
+    { id: 'lyv_vyn', legend: 'lyveus', scene: true, quest: 'lg_lyv_vyn', on: 'done', level: 44, title: 'Lyveus: A Friend in Coppergulch', music: 'town', shots: [
+      { bg: 'scene:gadgetzan', dur: 9, cam: [[-3, 0, 1.1], [0, 0, 1.04]], fx: ['fadein'],
+        actors: [{ a: 'story:vyn', x: 44, y: 2, w: 30, anim: 'breathe', from: { o: 0 }, dur: 1.4 }],
+        lines: [{ t: 0.5, who: 'Vyn', text: 'Lyv sent you? Light. Five years I told everyone I buried him.' }, { t: 5, who: 'Vyn', text: 'I knew it. I always knew it.' }] },
+      { bg: 'story:stormwind_keep', dur: 10, cam: [[0, 2, 1.16], [0, 0, 1.04]], fx: ['fadeout'],
+        actors: [{ a: 'story:lyveus', x: 20, y: 2, w: 30, flip: true, from: { o: 0 }, dur: 1.2 }, { a: 'story:vyn', x: 58, y: 2, w: 30, anim: 'breathe', from: { o: 0 }, dur: 1.2 }],
+        lines: [{ t: 0.5, text: 'An elf and a farm boy, once, in the guard of Kingsmere.' }, { t: 4.5, who: 'Vyn', text: 'Tell him the farm boy still has his back. Now, about that seal.' }] },
+    ] },
+    { id: 'lyv_oath', legend: 'lyveus', scene: true, quest: 'lg_lyv_oath', on: 'done', level: 60, title: 'Lyveus: The Oath Kept', music: 'dungeon', shots: [
+      { bg: 'scene:silverleaf_lodge', dur: 8, cam: [[0, 0, 1.18], [0, 0, 1.06]], fx: ['fadein', 'embers', 'shake@1'],
+        actors: [{ a: 'mob:lord_cassius_marrow', x: 44, y: 0, w: 36, from: { o: 0 }, dur: 1.2 }],
+        lines: [{ t: 0.5, text: 'Lord Cassius Marrow falls in the grove where Lyveus once took his oath.' }] },
+      { bg: 'story:silverleaf_burning', dur: 11, cam: [[0, 0, 1.04], [0, -2, 1.18]], fx: ['embers', 'fadeout'],
+        actors: [{ a: 'story:lyveus', x: 40, y: 2, w: 32, anim: 'breathe', from: { o: 0 }, dur: 1.6 }],
+        lines: [{ t: 0.5, who: 'Lyveus', text: 'The oath was to guard this grove and the people in it.' }, { t: 5.5, who: 'Lyveus', text: 'Most of them are gone. I will keep it for them.' }] },
+    ] },
     { id: 'dm_intro', instance: 'deadmines', title: 'The Smugglers\' Deep', music: 'dungeon', shots: [
       { bg: 'story:westfall', dur: 9, cam: [[0, 0, 1.15], [0, 2, 1.02]], fx: ['fadein', 'embers'],
         lines: [{ t: 0.5, text: 'Fenwick was once a quiet mining town in Longfield. The Ledger foreclosed on it, and now it stands empty.' }, { t: 4.8, text: 'Beneath it runs an old mine the Grey Hoods use as their road to the sea.' }] },
