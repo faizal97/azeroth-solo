@@ -323,7 +323,9 @@
       it.icon = slot === 'chest' ? 'chest_' + (atype || 'cloth') : D.SLOT_ICON[slot];
     }
     if (q >= 2) {
-      const budget = Math.max(1, Math.round(lvl * (q === 2 ? 0.55 : 0.9) + (q === 3 ? 2 : 1)));
+      // stat budget per level, matched to the hand-made items (v10.4: random blues had 70% more than named ones, and
+      // outranked raid purples): green 0.55, blue 0.55 + 1, purple 0.64 per level
+      const budget = Math.max(1, Math.round(q === 2 ? lvl * 0.55 + 1 : q === 3 ? lvl * 0.55 + 2 : lvl * 0.64 + 2));
       const af = opts.affix || pick(D.AFFIXES);
       const keys = Object.keys(af.stats);
       it.stats = {};
