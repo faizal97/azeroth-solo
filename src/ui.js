@@ -1354,6 +1354,8 @@
     const P = who || G.S.player;
     const t = h('div', { class: 'tooltip' });
     t.append(h('div', { class: 'nm q' + it.q }, it.name));
+    const upi = D.GEAR_SLOTS.includes(it.slot) ? G.upgradeInfo(it) : null;
+    if (upi && upi.max) t.append(h('div', { class: 'st', style: { color: '#7fd4ff' } }, `Upgrade ${upi.up}/${upi.max}`));
     const why = who ? null : blockReason(it);
     if (why) t.append(h('div', { class: 'red', style: { fontWeight: 800 } }, why.text));
     if (it.slot === 'quest') t.append(h('div', { class: 'st' }, 'Quest Item'));
@@ -1939,6 +1941,20 @@
     return g;
   }
   // Throw away: grey junk goes at once; anything better asks first, since it is gone for good
+  // gear upgrades (v10.3): show what the next step gives and what it costs, then buy it
+  function upgradeDialog(where) {
+    const P = G.S.player, it = where.slot ? P.equip[where.slot] : P.bags[where.bag].item, inf = G.upgradeInfo(it);
+    const next = G.upgradedCopy(it, inf.up + 1), marks = G.account().marks, NAME = { str: 'Strength', agi: 'Agility', sta: 'Stamina', int: 'Intellect', spi: 'Spirit' };
+    const diff = Object.keys(next.stats || {}).map((k) => [next.stats[k] - ((it.stats || {})[k] || 0), NAME[k] || k]).filter(([v]) => v > 0).map(([v, k]) => `+${v} ${k}`);
+    if (next.sp && next.sp > (it.sp || 0)) diff.push(`+${next.sp - (it.sp || 0)} spell power`);
+    if (next.armor && next.armor > (it.armor || 0)) diff.push(`+${next.armor - (it.armor || 0)} armor`);
+    if (next.dmg) diff.push(`+${(((next.dmg[0] + next.dmg[1]) - (it.dmg[0] + it.dmg[1])) / 2 / it.speed).toFixed(1)} damage per second`);
+    showDialog([h('h3', null, `Upgrade ${it.name}?`),
+      h('p', null, `Step ${inf.up + 1} of ${inf.max}: ${diff.join(', ') || 'a little stronger'}.`),
+      h('p', null, `Costs ${inf.cost} Mentor Marks. You have ${marks}. Its look and effects stay the same.`),
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', disabled: marks < inf.cost, onclick: () => { closeDialog(); G.upgradeItem(where); if (ui.sheetFn) ui.sheetFn(); } }, 'Upgrade'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true);
+  }
+  const canUpgrade = (it) => { const i = G.upgradeInfo(it); return i.up < i.max; };
   function throwAway(idx) {
     const b = G.S.player.bags[idx]; if (!b) return;
     const go = () => { if (G.discard(idx)) { ui.bagSel = null; if (ui.sheetFn) ui.sheetFn(); } };
@@ -1960,6 +1976,7 @@
         const it = sel.item;
         const acts = h('div', { class: 'btn-row' });
         if (D.GEAR_SLOTS.includes(it.slot)) acts.append(h('button', { class: 'btn', disabled: !G.canUseItem(it) || it.lvl > P.level, onclick: () => { G.equip(ui.bagSel); ui.bagSel = null; ui.sheetFn(); } }, 'Equip'));
+        if (canUpgrade(it)) acts.append(h('button', { class: 'btn alt', onclick: () => upgradeDialog({ bag: ui.bagSel }) }, 'Upgrade'));
         if (it.slot === 'food' || it.slot === 'drink') acts.append(h('button', { class: 'btn', onclick: () => { G.consume(it.slot); closeSheet(); } }, 'Use'));
         if (G.usable(it)) acts.append(h('button', { class: 'btn', onclick: () => { G.useItem(ui.bagSel); ui.bagSel = null; ui.sheetFn(); } }, it.slot === 'bag' ? 'Equip bag' : it.slot === 'recipe' ? 'Learn' : 'Use'));
         if (it.id === 'hearthstone') acts.append(h('button', { class: 'btn', onclick: () => { G.hearth(); closeSheet(); } }, 'Use'));
@@ -2014,7 +2031,7 @@
         const gear = h('div', { class: 'gear' });
         for (const slot of D.GEAR_SLOTS) {
           const it = P.equip[slot];
-          gear.append(h('button', { class: 'row' + (it ? '' : ' off'), onclick: () => { if (it) showDialog(itemTip(it, h('div', { class: 'btn-row', style: { marginTop: '8px' } }, h('button', { class: 'btn alt', onclick: () => { G.unequip(slot); closeDialog(); ui.sheetFn(); } }, 'Unequip'))), true); } },
+          gear.append(h('button', { class: 'row' + (it ? '' : ' off'), onclick: () => { if (it) showDialog(itemTip(it, h('div', { class: 'btn-row', style: { marginTop: '8px' } }, h('button', { class: 'btn alt', onclick: () => { G.unequip(slot); closeDialog(); ui.sheetFn(); } }, 'Unequip'), canUpgrade(it) ? h('button', { class: 'btn', onclick: () => { closeDialog(); upgradeDialog({ slot }); } }, 'Upgrade') : null)), true); } },
             h('div', { class: 'ic' }, it ? img(art('icon', it.icon)) : ''),
             h('div', { class: 't' }, h('b', { class: it ? 'q' + it.q : '' }, it ? it.name : 'Empty'), h('small', null, D.SLOT_LABEL[slot])), h('div')));
         }
