@@ -2059,7 +2059,13 @@
           }
           box.append(h('p', { class: 'ai-note' }, L.credit));
           b.append(box);
-          if (on) b.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => { G.setLegendOn(key, !G.legendOn(key)); ui.sheetFn(); } }, `Cameos: ${G.legendOn(key) ? 'On' : 'Off'}`)));
+          if (on) {
+            const ks = L.keepsake, wearing = ks && P.keepsake === ks.look;
+            if (ks) b.append(h('div', { class: 'row', style: { marginTop: '6px' } }, h('div', { class: 'ic' }, img(art('icon', ks.icon))), h('div', { class: 't' }, h('b', { style: { color: '#ff8000' } }, ks.name), h('small', { style: { whiteSpace: 'normal' } }, ks.desc)), h('div')));
+            b.append(h('div', { class: 'btn-row' },
+              ks ? h('button', { class: 'btn' + (wearing ? '' : ' alt'), onclick: () => { G.setKeepsake(wearing ? null : key); ui.sheetFn(); } }, wearing ? `Wearing the ${ks.name}` : `Wear the ${ks.name}`) : null,
+              h('button', { class: 'btn alt', onclick: () => { G.setLegendOn(key, !G.legendOn(key)); ui.sheetFn(); } }, `Cameos: ${G.legendOn(key) ? 'On' : 'Off'}`)));
+          }
         }
         const titles = D.TITLES.filter(G.titleUnlocked);
         b.append(h('div', { class: 'sec-h' }, 'Title', h('small', null, `${titles.length}/${D.TITLES.length} unlocked · ${G.account().marks} Mentor Marks`)));

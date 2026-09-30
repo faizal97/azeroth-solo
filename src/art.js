@@ -2464,6 +2464,28 @@
     },
     front: function (c, g) { return drape(c, g, SCAR, '#f4f0e8'); }
   };
+  /* the Silverleaf Aegis (v10.2): Lyveus's leaf-and-pearl kite shield, a keepsake for finishing his story. Worn as a
+     look only (no slot, no stats): slung on the back, with the carrying strap across the chest. The same shield as
+     art_legends.js draws for him. */
+  function aegisKite(c) {
+    var outer = 'M-12,-15 C-5,-18.5 5,-18.5 12,-15 L12.5,-4 C12,7 6,14 0,21 C-6,14 -12,7 -12.5,-4 Z';
+    var inner = 'M-9.6,-12.8 C-4,-15.6 4,-15.6 9.6,-12.8 L10,-4 C9.6,5.6 4.8,11.6 0,17.4 C-4.8,11.6 -9.6,5.6 -10,-4 Z';
+    var lf = 'M0,-12.5 C2.6,-9.6 6.4,-7 6.6,-2 C6.8,1.6 5.4,4.4 3.4,5.8 L5.6,8 C3,8 1.4,8.6 0,10.4 C-1.4,8.6 -3,8 -5.6,8 L-3.4,5.8 C-5.4,4.4 -6.8,1.6 -6.6,-2 C-6.4,-7 -2.6,-9.6 0,-12.5 Z';
+    return P(outer, c.lg([[0, '#9aa852'], [0.55, '#76853a'], [1, '#4e5a24']], 0.2, 0, 0.8, 1), 2.4) +
+      P(inner, c.lg([[0, '#fafbdc'], [0.35, '#e6edaa'], [0.7, '#cbd889'], [1, '#a4b663']], 0.15, 0, 0.85, 1), 1.1) +
+      CG(F('M-11,-2 L-1,-17 L4.5,-17 L-11,8 Z', '#ffffff', 0.5), c.clip(inner)) +
+      P(lf, c.lg([[0, '#ffffff'], [0.6, '#eef4c8'], [1, '#bccb7c']]), 1.1) +
+      S('M0,-10 L0,-2.5 M0,-7 L-2.6,-8.8 M0,-7 L2.6,-8.8 M0,-4 L-3.6,-6 M0,-4 L3.6,-6', '#7f9046', 0.8) +
+      C(0, 2.2, 3.7, c.rg([[0, '#ffffff'], [0.5, '#eef1f8'], [1, '#98a6c4']], 0.36, 0.34, 0.72), 1.3) + C(-1.2, 1, 1.05, '#ffffff');
+  }
+  GBACK.silverleaf_aegis = {
+    back: function (c, g) { return G(aegisKite(c), 'translate(' + r1(g.bSh[0] - 13) + ',' + r1(g.sy + 17) + ') rotate(-26) scale(1.25)'); },
+    torso: function (c, g) {
+      var d = D`M${g.scx + 9},${g.sy - 1} Q${g.scx - 1},${(g.sy + g.hy) / 2 - 2} ${g.scx - 12},${g.hy - 3}`;
+      var m = [(g.scx + 9 + g.scx - 12) / 2 + 1, (g.sy - 1 + g.hy - 3) / 2 - 1];
+      return S(d, '#2a1c10', 4.2) + S(d, '#6a4a2c', 2.4) + C(m[0], m[1], 1.9, '#c9b56a', 1.1);
+    }
+  };
   var GEARKEYS = {
     weapon: Object.keys(GKIND), ranged: ['militia_longbow'], back: Object.keys(GBACK), chest: Object.keys(GCHEST),
     legs: Object.keys(GLEGS), mask: Object.keys(GMASK)

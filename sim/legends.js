@@ -67,6 +67,10 @@ G.CAMEO_CHANCE = 0.2;
   if (!r.lyv || mem.n !== 1 || !mem.where) fail('cameo memory');
   G.CAMEO_CHANCE = 0.2;
 }
+// the keepsake: only after his story, and then it shows on your back
+{ G.newGame({ name: 'T', cls: 'mage', race: 'human' }); G.setKeepsake('lyveus'); if (G.S.player.keepsake) fail('keepsake before the story');
+  for (const q of chain) G.S.player.done[q] = true; G.setKeepsake('lyveus');
+  if ((G.gearLooks(G.S.player) || {}).back !== 'silverleaf_aegis') fail('keepsake look'); G.setKeepsake(null); if (G.S.player.keepsake) fail('keepsake off'); }
 // the title comes from finishing his story
 { const T = D.TITLES.find((x) => x.id === 'oathkeeper'); G.newGame({ name: 'T', cls: 'mage', race: 'human' }); if (G.titleUnlocked(T)) fail('title before the story'); G.S.player.done.lg_lyv_oath = true; if (!G.titleUnlocked(T)) fail('title after the story'); }
 // the hooded wanderer: steps into hard solo fights from level 15, at most 3 times per zone, never after the lodge

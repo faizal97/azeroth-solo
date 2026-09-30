@@ -11,6 +11,8 @@
     cls: 'paladin', race: 'nightelf', role: 'tank', abilities: ['oathbound_strike', 'ancients_bulwark'],
     credit: 'An original character created by a friend, adapted for Caldreth.',
     pronoun: 'his',
+    // the keepsake for finishing his story (v10.2): his shield, worn as a look on your back (no slot, no stats)
+    keepsake: { look: 'silverleaf_aegis', name: 'Silverleaf Aegis', icon: 'silverleaf_aegis', desc: 'The leaf-and-pearl shield of Silverleaf Lodge, given to you by Lyveus. Worn on your back.' },
     // the cameo (v10.2): what he says when he turns up in one of your runs, and when he leaves
     cameo: {
       hello: ['Heard you were headed in. I\'ll hold the front.', 'The Ledger\'s blades aren\'t the only ones out tonight. I\'ll walk with you.', 'Vyn says I need more company. So. Here I am.', 'Room for one more? I keep quiet and I keep watch.'],

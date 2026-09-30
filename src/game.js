@@ -278,6 +278,7 @@
         if (st) sets[st] = (sets[st] || 0) + 1;
       }
       if ((sets.defias || 0) >= D.SETS.defias.mask) g.mask = 'defias';
+      if (c.keepsake) g.back = c.keepsake; // a Legend's keepsake (v10.2) shows over any cloak's look
     } else if (c.level >= 10 && c.id != null) {
       // players you pass in the world: some capped ones have farmed The Smugglers' Deep
       if (B.hash(c.id, 71) < 0.15) g.back = 'cape_brotherhood';
@@ -2144,6 +2145,12 @@
   };
   // what a legend says in the party when they arrive and leave (their own lines, in D.LEGENDS[key].cameo)
   G.legendLine = (key, kind) => { const c = (D.LEGENDS[key] || {}).cameo || {}; return pick(c[kind] || ['o/']); };
+  // wearing a Legend's keepsake: its look on your back, only once their story is done
+  G.setKeepsake = function (key) {
+    const P = G.S.player, L = key && D.LEGENDS[key];
+    if (key && !(L && L.keepsake && G.legendUnlocked(key))) return;
+    P.keepsake = key ? L.keepsake.look : null; G.save(); emit('change');
+  };
   G.legendUnlocked = (key) => { const L = (D.LEGENDS || {})[key]; return !!(L && G.S && G.S.player.done[L.unlock]); };
   G.legendOn = (key) => !((G.S.player.legendOff || {})[key]);
   G.setLegendOn = function (key, on) { const P = G.S.player; P.legendOff = P.legendOff || {}; if (on) delete P.legendOff[key]; else P.legendOff[key] = true; G.save(); emit('change'); };
