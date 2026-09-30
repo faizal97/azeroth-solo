@@ -304,6 +304,34 @@
         actors: [{ a: 'mob:nalveshra', x: 40, y: 0, w: 42, from: { y: 20, o: 0 }, dur: 2.4 }],
         lines: [{ t: 0.5, text: 'Below the throne, the Deepmother waits in the dark.' }, { t: 5, who: "Nal'veshra", text: 'Little lights. I will swallow you as I swallowed the spirit.' }] },
     ] },
+    // Main-story quest scenes (v10.2): a short moment when a key story quest is done (both factions where there are two)
+    { id: 'ms_watch', scene: true, quest: 'peoples_militia', on: 'done', level: 11, title: 'The Watchfires of Warrick\'s Rise', music: 'elwynn', shots: [
+      { bg: 'scene:sentinel_hill', dur: 10, cam: [[0, 2, 1.14], [0, 0, 1.04]], fx: ['fadein', 'embers', 'fadeout'],
+        actors: [{ a: 'hero', x: 40, y: 2, w: 30, anim: 'breathe', from: { o: 0 }, dur: 1.4 }],
+        lines: [{ t: 0.5, text: 'The Grey Hood trappers are gone from the roads. At Warrick\'s Rise, the farmers light the watchfires again.' }, { t: 5.5, who: 'Bram Oakhollow', text: 'Let them count us now. The Farmers\' Watch still stands.' }] },
+    ] },
+    { id: 'ms_blackwell', scene: true, quest: 'defias_brotherhood', on: 'done', level: 20, title: 'The Account Remains Open', music: 'dungeon', shots: [
+      { bg: 'scene:deadmines_ship', dur: 9, cam: [[-3, 0, 1.12], [2, 0, 1.06]], fx: ['fadein'],
+        lines: [{ t: 0.5, text: 'Corvin Blackwell is dead. His last ship still sits in the cove, loaded with Longfield\'s grain.' }] },
+      { bg: 'scene:deadmines_ship', dur: 9, cam: [[2, 0, 1.06], [0, -2, 1.22]], fx: ['fadeout'],
+        lines: [{ t: 0.5, text: 'In his cabin lies a note, in a clerk\'s neat hand:' }, { t: 3.5, text: '"Payment received. The account remains open."' }] },
+    ] },
+    { id: 'ms_coin', scene: true, quest: ['venture_ledgers_a', 'venture_ledgers_h'], on: 'done', level: 33, title: 'The Warm Coin', music: 'dungeon', shots: [
+      { bg: 'scene:venture_base_camp', dur: 10, cam: [[0, 0, 1.06], [0, -2, 1.22]], fx: ['fadein', 'embers', 'fadeout'],
+        lines: [{ t: 0.5, text: 'The goblins\' ledgers balance to the copper.' }, { t: 4, text: 'Every page is paid in the same coin: warm to the touch, and stamped with a claw.' }] },
+    ] },
+    { id: 'ms_hale_cell', scene: true, quest: 'brd_jail_break', on: 'done', level: 54, title: 'The Last Door', music: 'dungeon', shots: [
+      { bg: 'scene:brd_prison', dur: 8, cam: [[0, 2, 1.16], [0, 0, 1.04]], fx: ['fadein', 'embers'],
+        actors: [{ a: 'story:windsor', x: 42, y: 2, w: 30, anim: 'breathe', from: { o: 0 }, dur: 1.6 }],
+        lines: [{ t: 0.5, text: 'Behind the last door of the detention block, Marshal Hale is still counting: in chalk, on the wall.' }] },
+      { bg: 'scene:brd_prison', dur: 10, cam: [[0, 0, 1.04], [0, -2, 1.2]], fx: ['embers', 'fadeout'],
+        actors: [{ a: 'story:windsor', x: 42, y: 2, w: 30, anim: 'breathe' }],
+        lines: [{ t: 0.5, who: 'Hale', text: 'My notes first. The Emperor keeps them.' }, { t: 4.5, who: 'Hale', text: 'Bring me those, and then we can talk about doors.' }] },
+    ] },
+    { id: 'ms_archive', scene: true, quest: ['st_ledger_a', 'st_ledger_h'], on: 'done', level: 58, title: 'Settled in Full', music: 'dungeon', shots: [
+      { bg: 'scene:strat_city', dur: 11, cam: [[3, 0, 1.12], [0, 0, 1.04]], fx: ['fadein', 'embers', 'fadeout'],
+        lines: [{ t: 0.5, text: 'The archivist listed every cart of grain that carried the plague into Wexmoor.' }, { t: 5, text: 'Beside one line he wrote, and underlined twice: "Account settled in full."' }] },
+    ] },
     { id: 'ch2', level: 20, title: 'Chapter 2: The Collector\'s Fleet', music: 'dungeon', shots: [
       { bg: 'story:stormwind_keep', dur: 10, cam: [[0, 2, 1.18], [0, 0, 1.04]], fx: ['fadein'],
         lines: [{ t: 0.5, text: 'Corvin Blackwell once built the finest ships in Longfield. The Ledger lent him the timber.' }, { t: 5.2, text: 'One bad season, and the Ledger took the yard, the ships and the house. It let him keep the debt.' }] },

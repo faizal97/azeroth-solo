@@ -3118,7 +3118,7 @@
       const un = window.CS ? CS.unlocked() : new Set();
       const list = h('div', { class: 'list theater' });
       const all = window.CS ? CS.CHAPTERS : [];
-      const ordered = all.filter((c) => !c.instance && !c.legend).concat(all.filter((c) => c.legend), all.filter((c) => c.instance));
+      const ordered = all.filter((c) => !c.instance && !c.legend).sort((a, b) => (a.level || 0) - (b.level || 0)).concat(all.filter((c) => c.legend), all.filter((c) => c.instance));
       let shownLeg = false;
       let shownInst = false;
       for (const ch of ordered) {
@@ -3375,7 +3375,7 @@
     // a chapter that waits on a quest (x1 waits for Veshmira) plays as soon as that quest is turned in
     G.on('questDone', (d) => { const ch = d && d.qid && window.CS && CS.CHAPTERS.find((c) => c.after && c.after.includes(d.qid) && c.shots && G.S.player.level >= c.level && !CS.unlocked().has(c.id)); if (ch) ui.pendingChapter = ch.id; });
     // quest scenes (v10.2): a short scene on accepting or finishing a key quest, once
-    const questScene = (qid, on) => { const ch = qid && window.CS && CS.CHAPTERS.find((c) => c.scene && c.quest === qid && (c.on || 'done') === on && c.shots && !CS.unlocked().has(c.id)); if (ch) ui.pendingChapter = ch.id; };
+    const questScene = (qid, on) => { const ch = qid && window.CS && CS.CHAPTERS.find((c) => c.scene && [].concat(c.quest).includes(qid) && (c.on || 'done') === on && c.shots && !CS.unlocked().has(c.id)); if (ch) ui.pendingChapter = ch.id; };
     G.on('questAccept', (d) => questScene(d && d.qid, 'accept'));
     G.on('questDone', (d) => questScene(d && d.qid, 'done'));
     G.on('levelup', (d) => { const ch = window.CS && CS.CHAPTERS.find((c) => c.level === d.level && c.shots && c.id !== 'intro' && chapterReady(c)); if (ch) ui.pendingChapter = ch.id; renderAll(); banner('Level ' + d.level, d.learned.length ? 'New: ' + d.learned.map((a) => D.ABILITIES[a].name).join(', ') : 'Health and mana restored'); });
