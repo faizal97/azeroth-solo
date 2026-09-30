@@ -16,6 +16,11 @@
   D.item('shalzaru_crown', { name: "Nazzir's Crown", slot: 'quest', q: 1, icon: 'ring' });
   D.item('rathtalon_cloak', { name: 'Black Plume Cloak', slot: 'back', q: 3, lvl: 48, armor: 62, stats: { agi: 11, sta: 10 }, icon: 'cloak', sell: 7600, source: 'Sister Hisk, Tatterwing Highlands' });
   D.item('grizzlegut_maul', { name: "Bramblebelly's Paw", slot: 'weapon', wtype: 'mace', q: 3, lvl: 47, dmg: [58, 96], speed: 2.8, stats: { str: 15, sta: 10 }, icon: 'mace', sell: 7800, source: 'Old Bramblebelly, the Lower Wilds' });
+  // v10.6: Wanted: Old Rotmaw (44-47), the Mossgut chieftain
+  D.item('rotmaw_tooth', { name: "Old Rotmaw's Tusk", slot: 'quest', q: 1, icon: 'pelt' });
+  D.item('rotmaw_axe', { name: 'Rotmaw Cleaver', slot: 'weapon', wtype: 'axe', q: 3, lvl: 47, dmg: [58, 96], speed: 2.7, stats: { str: 15, sta: 10 }, icon: 'axe', sell: 7800 });
+  D.item('rotmaw_leggings', { name: 'Mossgut Hide Leggings', slot: 'legs', atype: 'leather', q: 3, lvl: 47, armor: 182, stats: { agi: 15, sta: 11 }, icon: 'legs', sell: 7700 });
+  D.item('rotmaw_wraps', { name: 'Bone-Reader Wraps', slot: 'hands', atype: 'cloth', q: 3, lvl: 47, armor: 60, stats: { int: 12, spi: 9 }, sp: 14, icon: 'gloves', sell: 7400 });
   D.item('shalzaru_blade', { name: "Nazzir's Sword", slot: 'weapon', wtype: 'sword', q: 3, lvl: 50, dmg: [62, 102], speed: 2.6, stats: { agi: 15, str: 11 }, icon: 'sword', sell: 8800 });
   D.item('shalzaru_robe', { name: 'Robe of the Tides', slot: 'chest', atype: 'cloth', q: 3, lvl: 50, armor: 106, stats: { int: 18, spi: 13 }, sp: 22, icon: 'chest_cloth', sell: 8700 });
   D.item('shalzaru_mail', { name: 'Spitecoil Scale Armor', slot: 'chest', atype: 'mail', q: 3, lvl: 50, armor: 410, stats: { str: 18, sta: 15 }, icon: 'chest_mail', sell: 8900 });
@@ -33,6 +38,7 @@
     wandering_forest_walker: { name: 'Wandering Forest Walker', lvl: [49, 50], family: 'elemental', hpMult: 1.25, drops: [['trogg_stone', 0.2]], qdrops: [['walker_bark', 0.55]] },
     sister_rathtalon: { name: 'Sister Hisk', lvl: [48, 48], family: 'humanoid', named: true, hpMult: 2.2, dmgMult: 1.35, drops: [['rathtalon_cloak', 0.35], ['linen_cloth', 1]], qdrops: [['rathtalon_talon', 1]], aggro: 'The highlands are my hunting ground!' },
     old_grizzlegut: { name: 'Old Bramblebelly', lvl: [47, 47], family: 'beast', named: true, hpMult: 2.2, dmgMult: 1.35, drops: [['grizzlegut_maul', 0.35], ['ruined_pelt', 1]], qdrops: [['grizzlegut_hide', 1]] },
+    rotmaw: { name: 'Old Rotmaw', sprite: 'woodpaw_reaver', lvl: [47, 47], family: 'humanoid', elite: true, named: true, hpMult: 5.5, dmgMult: 2.6, special: 'slam', specialText: 'Old Rotmaw brings his cleaver down!', drops: [['gnoll_mane', 1]], qdrops: [['rotmaw_tooth', 1]], loot: ['rotmaw_axe', 'rotmaw_leggings', 'rotmaw_wraps'], aggro: 'Rotmaw eat you!' },
     lord_shalzaru: { name: 'Lord Nazzir', lvl: [50, 50], family: 'humanoid', elite: true, named: true, hpMult: 5.5, dmgMult: 2.6, special: 'whirl', specialText: 'Lord Nazzir whirls his four blades!', drops: [['thieves_coin', 1]], qdrops: [['shalzaru_crown', 1]], loot: ['shalzaru_blade', 'shalzaru_robe', 'shalzaru_mail'], aggro: 'The tide rises for you!' },
   });
 
@@ -42,7 +48,7 @@
     camp_mojache: { name: 'Camp Ruga', zone: 'Ferndeep', region: 'feralas', faction: 'horde', scene: 'camp_mojache', lvl: [44, 50], safe: true, inn: true, mobs: [], pool: 0, npcs: ['hadoken', 'orwin', 'innkeeper_greul', 'krueg'], vendor: 'innkeeper_greul', gearVendor: 'krueg',
       links: { woodpaw_hills: 16, gordunni_outpost: 18, lower_wilds: 20, thunder_bluff: 55 }, via: { thunder_bluff: 'Wind Rider' } },
     frayfeather_highlands: { name: 'Tatterwing Highlands', zone: 'Ferndeep', region: 'feralas', scene: 'frayfeather_highlands', lvl: [44, 46], mobs: [['frayfeather_stagwing', 5], ['frayfeather_skystormer', 4]], named: { sister_rathtalon: 300 }, pool: 10, npcs: [], links: { feathermoon_stronghold: 20, woodpaw_hills: 18, lower_wilds: 20 } },
-    woodpaw_hills: { name: 'Mossgut Hills', zone: 'Ferndeep', region: 'feralas', scene: 'woodpaw_hills', lvl: [45, 47], mobs: [['woodpaw_reaver', 5], ['woodpaw_mystic', 4]], pool: 10, npcs: [], links: { camp_mojache: 16, frayfeather_highlands: 18, maraudon_gate: 35 }, via: { maraudon_gate: 'Road to Mournwaste' } },
+    woodpaw_hills: { name: 'Mossgut Hills', zone: 'Ferndeep', region: 'feralas', scene: 'woodpaw_hills', lvl: [45, 47], mobs: [['woodpaw_reaver', 5], ['woodpaw_mystic', 4]], named: { rotmaw: 150 }, pool: 10, npcs: [], links: { camp_mojache: 16, frayfeather_highlands: 18, maraudon_gate: 35 }, via: { maraudon_gate: 'Road to Mournwaste' } },
     gordunni_outpost: { name: 'Stonegut Outpost', zone: 'Ferndeep', region: 'feralas', scene: 'gordunni_outpost', lvl: [46, 48], mobs: [['gordunni_ogre', 5], ['gordunni_mage_lord', 4]], pool: 10, npcs: [], links: { camp_mojache: 18, the_forgotten_coast: 20 } },
     the_forgotten_coast: { name: 'The Forgotten Coast', zone: 'Ferndeep', region: 'feralas', scene: 'the_forgotten_coast', lvl: [47, 49], mobs: [['hatecrest_warrior', 5], ['hatecrest_siren', 4]], named: { lord_shalzaru: 150 }, pool: 10, npcs: [], links: { feathermoon_stronghold: 16, gordunni_outpost: 20 } },
     lower_wilds: { name: 'The Lower Wilds', zone: 'Ferndeep', region: 'feralas', scene: 'lower_wilds', lvl: [48, 50], mobs: [['longtooth_runner', 5], ['wandering_forest_walker', 4]], named: { old_grizzlegut: 300 }, pool: 10, npcs: [], links: { camp_mojache: 20, frayfeather_highlands: 20, thistleshrub_valley: 45 }, via: { thistleshrub_valley: 'Road through Windgorge' } },
@@ -115,8 +121,12 @@
     [{ type: 'kill', mob: 'longtooth_runner', n: 10 }], ['vivianna', { choice: ['fam_chest50'] }], ['krueg', { choice: ['fam_chest50'] }], 'longtooth');
   both('shalzaru', 50, 'Wanted: Lord Nazzir', ['The naga lord Nazzir rules the Forgotten Coast. Bring me his crown. Take friends.', 'Lord Nazzir leads the naga. Bring me his crown. Take friends.'],
     [{ type: 'collect', item: 'shalzaru_crown', n: 1 }], ['shandris', { choice: ['fam_weapon50'] }], ['hadoken', { choice: ['fam_weapon50'] }]);
+  both('rotmaw', 47, 'Wanted: Old Rotmaw', ['The Mossgut follow the oldest of them, Old Rotmaw. Bring me his tusk and the pack breaks. Take friends.', 'Old Rotmaw leads the Mossgut raids on Camp Ruga. Bring me his tusk. Take friends.'],
+    [{ type: 'collect', item: 'rotmaw_tooth', n: 1 }], ['latronicus', { choice: ['fam_waist47'] }], ['hadoken', { choice: ['fam_waist47'] }], 'woodpaw');
+  D.QUESTS.fa_rotmaw.group = 3; D.QUESTS.fh_rotmaw.group = 3;
   D.QUESTS.fa_shalzaru.group = 3; D.QUESTS.fh_shalzaru.group = 3;
   Object.assign(D.ACTIVITIES, {
+    rotmaw: { name: 'Wanted: Old Rotmaw', where: 'woodpaw_hills', size: 3, minLvl: 44, maxLvl: 47, desc: 'Open-world elite in Ferndeep. 3 players.', boss: 'rotmaw', pulls: [{ scene: 'woodpaw_hills', label: 'The Mossgut camp', mobs: ['woodpaw_reaver', 'woodpaw_reaver'] }, { scene: 'woodpaw_hills', label: 'The Mossgut camp', mobs: ['woodpaw_mystic', 'woodpaw_reaver'] }, { scene: 'woodpaw_hills', label: 'Old Rotmaw', mobs: ['rotmaw'], boss: true }] },
     shalzaru: { name: 'Wanted: Lord Nazzir', where: 'the_forgotten_coast', size: 3, minLvl: 47, maxLvl: 50, desc: 'Open-world elite in Ferndeep. 3 players.', boss: 'lord_shalzaru', pulls: [{ scene: 'the_forgotten_coast', label: 'Naga ruins', mobs: ['hatecrest_warrior', 'hatecrest_warrior'] }, { scene: 'the_forgotten_coast', label: 'Naga ruins', mobs: ['hatecrest_siren', 'hatecrest_warrior'] }, { scene: 'the_forgotten_coast', label: 'Lord Nazzir', mobs: ['lord_shalzaru'], boss: true }] },
   });
 })(typeof window !== 'undefined' ? window : globalThis);
