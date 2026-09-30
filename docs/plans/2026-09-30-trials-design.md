@@ -89,4 +89,4 @@ Rules that apply: UI must scale; automatic systems must be content-proof (both i
   `node sim/trialpace.js 3`: walls at Trial 5 (fresh 60, dungeon blues), 11 (raid purples), 13 (fully upgraded). The
   top is two levels under its target: pushers run out of time (rests between pulls set a floor), not health, and fast
   pace made them wipe more. Retune with Omens in stage 3.
-
+- **Retuned for smarter bots (2026-09-30):** bots now use their whole kit, scaled by skill squared, so Trial groups (skill 0.6-0.85) got much stronger. Trial 1 is now 90% strength, then +5.4% a level. Walls: Trial 7 (fresh 60), 15 (raider), 15 (pusher, fully upgraded). The raider is above its 10-12 target; retune with Omens.

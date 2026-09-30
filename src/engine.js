@@ -689,6 +689,23 @@
   }
   E.focusTarget = focusTarget;
 
+  // a class's kit sorted for the bot AI (v10.4): defensive cooldowns, big offensive cooldowns, area attacks, short-cooldown hits
+  const KIT = {};
+  function kitOf(cls) {
+    if (KIT[cls]) return KIT[cls];
+    const k = { defensive: [], burst: [], aoe: [], hits: [] };
+    for (const id of (D.CLASSES[cls] || { abilities: [] }).abilities) {
+      const A = D.ABILITIES[id]; if (!A || A.form || A.shapeshift || A.opener || A.finisher || A.taunt || A.needAura) continue;
+      const st = (A.buff && A.buff.stats) || {}, offensive = st.sp || st.ap || st.haste || st.crit || st.str || st.agi || st.int;
+      const def = A.target === 'self' && A.cd && ((A.buff && A.buff.immune) || A.heal || A.shield || (!offensive && (st.armor || st.dodge || st.taken)));
+      if (def) k.defensive.push(id);
+      else if (A.target === 'self' && (A.cd || 0) >= 60 && A.buff) k.burst.push(id);
+      else if (A.target === 'aoe' && A.dmg) k.aoe.push(id);
+      else if (A.target === 'enemy' && A.dmg && A.cd && A.cd <= 30 && !A.stun) k.hits.push(id); // a stun breaks on damage: not a filler hit
+    }
+    return (KIT[cls] = k);
+  }
+  E.kitOf = kitOf;
   function botThink(C, u) {
     if (u.dead || u.cast) return;
     if (stunned(C, u)) { const rac = u.race && D.RACIALS[u.race] && D.RACIALS[u.race].active; if (rac && D.ABILITIES[rac].freeOf && Math.random() < 0.3) E.use(C, u, rac); return; }
@@ -776,6 +793,16 @@
       if (u.hp / u.maxHp < 0.55 && try_('ancients_bulwark')) return;
       if (t0 && try_('oathbound_strike', t0)) return;
     }
+    // The whole kit (v10.4): defensives when low, big cooldowns on bosses, elites and crowds, area attacks on 3 or
+    // more enemies, short-cooldown hits when ready. Better players use more of it; a poor one sticks to a few buttons.
+    if (!u.legend) {
+      const sk = b.skill || 0.5, kit = kitOf(u.cls), tk = C.units[u.target] && !C.units[u.target].dead && C.units[u.target].side !== u.side ? C.units[u.target] : focusTarget(C, u);
+      const use = sk * sk; // a casual player (0.35) reaches for the rest of the kit 1 time in 8, a strong one (0.8) 2 in 3
+      if (u.hp / u.maxHp < 0.35) for (const id of kit.defensive) if (has(id) && Math.random() < sk && try_(id)) return;
+      if (u.role !== 'healer' && en.some((e) => e.boss)) for (const id of kit.burst) if (has(id) && Math.random() < use * 0.5 && try_(id)) return; // big cooldowns on bosses
+      if (en.length >= 3 && tk) for (const id of kit.aoe) if (has(id) && Math.random() < use && try_(id, tk)) return;
+      if (u.role !== 'healer' && tk) for (const id of kit.hits) if (has(id) && Math.random() < use && try_(id, tk)) return;
+    }
     if (u.role === 'tank') {
       // grab loose mobs
       const loose = en.find((e) => e.target && e.target !== u.uid && C.units[e.target] && C.units[e.target].role !== 'tank');
@@ -843,6 +870,9 @@
       if (has('arcane_shot') && try_('arcane_shot', tgt)) return;
     } else if (u.cls === 'druid') {
       if (has('moonfire') && !auraOf(tgt, 'moonfire') && try_('moonfire', tgt)) return;
+      if (has('insect_swarm') && !auraOf(tgt, 'insect_swarm') && tgt.hp > tgt.maxHp * 0.3 && try_('insect_swarm', tgt)) return;
+      // Star Bolt, the big slow cast, on a target that will live through it; Wrath otherwise (v10.4)
+      if (has('starfire') && tgt.hp > tgt.maxHp * 0.4 && Math.random() < 0.3 + 0.5 * (b.skill || 0.5) && try_('starfire', tgt)) return;
       try_('wrath', tgt);
     } else if (u.cls === 'warlock') {
       if (has('life_tap') && u.res / u.maxRes < 0.25 && u.hp / u.maxHp > 0.6 && try_('life_tap')) return;
