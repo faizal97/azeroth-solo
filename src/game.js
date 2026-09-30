@@ -1678,6 +1678,22 @@
     if (b.dmg) out.dmg = [Math.round(b.dmg[0] * f), Math.round(b.dmg[1] * f)];
     return out;
   };
+  // where = { slot } for an equipped item or { bag } for a bag index. Returns true when a step was bought.
+  G.upgradeItem = function (where) {
+    const P = G.S.player, it = where.slot ? P.equip[where.slot] : (P.bags[where.bag] || {}).item;
+    if (!it) return false;
+    if (G.fight) { toast('You are in combat.'); return false; }
+    const inf = G.upgradeInfo(it);
+    if (inf.up >= inf.max) { toast('This item is at the ceiling.'); return false; }
+    const a = G.account();
+    if (a.marks < inf.cost) { toast(`You need ${inf.cost} Mentor Marks.`); return false; }
+    a.marks -= inf.cost; G.saveAccount(a);
+    const next = G.upgradedCopy(it, inf.up + 1);
+    if (where.slot) P.equip[where.slot] = next; else P.bags[where.bag].item = next;
+    loot(`${B.link(next.name, next.q)} is now upgrade ${next.up}/${inf.max} (${inf.cost} Mentor Marks).`);
+    G.save(); emit('change');
+    return true;
+  };
   // Titles
   G.records = function () {
     const P = G.S.player, cx = P.codex || {}; const pv = G.pvpStats();

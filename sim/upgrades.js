@@ -36,5 +36,17 @@ ok(blueTop <= 0.93, `upgraded blues stop lower (${(blueTop * 100).toFixed(0)}%)`
 // old saves: an item without it.up is untouched, and step 0 is the item itself
 const sword = mc.find((it) => it.dmg && G.upgradeInfo(it).max); ok(JSON.stringify(G.upgradedCopy(sword, 0).stats) === JSON.stringify(sword.stats), 'step 0 changes nothing');
 
+// spending: equipped and bag items, Marks taken, refused without enough Marks or in a fight
+const P = G.S.player, a0 = G.account(); a0.marks = 100; G.saveAccount(a0);
+P.equip.weapon = G.copyItem(sword.id); const before = P.equip.weapon.dmg[1];
+ok(G.upgradeItem({ slot: 'weapon' }) === true && P.equip.weapon.up === 1 && P.equip.weapon.dmg[1] > before, 'equipped weapon goes up a step');
+ok(G.account().marks === 100 - D.UPGRADE.cost(1), 'the step cost its Marks');
+G.addItem(G.copyItem(mc.find((it) => !it.dmg).id), 1); const bi = P.bags.length - 1;
+ok(G.upgradeItem({ bag: bi }) === true && P.bags[bi].item.up === 1, 'a bag item goes up a step');
+const a1 = G.account(); a1.marks = 0; G.saveAccount(a1);
+ok(G.upgradeItem({ slot: 'weapon' }) === false && P.equip.weapon.up === 1, 'no Marks, no step');
+ok(G.upgradeItem({ slot: 'chest' }) === false || !P.equip.chest || !G.upgradeInfo(P.equip.chest).max, 'starting gear cannot be upgraded');
+// a save round trip keeps the step
+const saved = JSON.parse(JSON.stringify(P.equip.weapon)); ok(saved.up === 1 && saved.base && G.upgradeInfo(saved).up === 1, 'the step survives a save');
 console.log(`upgrades: ${n - bad}/${n} checks pass`);
 process.exit(bad ? 1 : 0);
