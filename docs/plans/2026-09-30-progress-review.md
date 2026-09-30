@@ -34,9 +34,11 @@ Trials, gear upgrades and raids at 60; the wardrobe, Friends, bounty boards and 
    reactions (24-34), story scenes.
 4. **Late-mid (31-40): ok.** Different from early-mid through Lyveus (from 37), Widya's finale, the second reactions and
    the riding goal at 40; but fewer dungeons (4) and Wanted (2).
-5. **Late (41-59): gap at 41-50.** The thinnest band for group content: 2 dungeons and 2 Wanted in ten levels, and quests
-   cover about 88% of the XP. 51-59 is well stocked. The pull to 60 is the story's last chapters, and the Trials tab
-   already shows "opens at 60" with this month's dungeons.
+5. **Late (41-59): good (after the fixes).** 41-50 was the thinnest band (2 dungeons and 2 Wanted, and nothing at all at
+   40-43). Now: the Coinworks (40-44, a Chapter 4 story tie in Sirocco), the Dune Temple and the Gemfall Caves, and four
+   Wanted (Ossa Drywell 40-43, Captain Hookhand 43-46, Old Rotmaw 44-47, Lord Nazzir 47-50). 51-59 is well stocked. The
+   pull to 60 is the story's last chapters, and the Trials tab already shows "opens at 60" with this month's dungeons.
+   Bromli's Legend questline (44-55) is next and adds more to this band.
 6. **Fresh 60: good.** 63 level-60 quests (Saltmarsh, Veshmira's chain, the Drowned Crown), 4 level-60 dungeons, Trials
    from Trial 1, Mentor Marks from every level-60 clear feeding gear upgrades, the wardrobe.
 7. **Early endgame: good.** Three raids (Magma Throne, Veshmira's Lair, Tidecrown), climbing Trials with Omens, the realm
@@ -52,7 +54,7 @@ Trials, gear upgrades and raids at 60; the wardrobe, Friends, bounty boards and 
 ## Where the gaps are
 
 - **Levelling:** quests carry every band (zoneflow: 96-100%); 40-50 runs out of quests right at 50. The soft spot is
-  41-50 group content (2 dungeons, 2 Wanted).
+  41-50 group content, now fixed (3 dungeons, 4 Wanted, no level without group content).
 - **The top:** phases 8 and 9 need the already-designed Hard raids and featured raid, and Trials stage 4.
 - **Guidance:** done. The Journey tab has "Open to you now", Progress, and one row per story or collection screen.
 
