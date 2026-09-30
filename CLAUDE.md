@@ -25,6 +25,7 @@ A single-player fake MMO set in its own world, Caldreth: every other "player" is
 - `art/render.js` and `art/story/render.js` render contact sheets with `rsvg-convert`. Look at the sheets before shipping art.
 - `sim/*.js` are Node balance and playthrough sims (`node sim/group.js`, `node sim/v17.js` …).
 - `docs/plans/2026-09-27-roadmap-design.md` is **the roadmap**. Read it before planning anything.
+- `docs/design-mindset.md` is **the design mindset**: the player always knows what they are looking at, UI scales, automatic systems are content-proof, choices are real and proven by sim. Read it before designing any screen, label, number or system.
 - `docs/lore/canon.md` is **the lore bible**: timeline, characters, what is revealed at which level, and the names the story may use. Read it before writing any quest text, cutscene, Legend or lore page. `node tools/lorekeeper.js` checks all story text against it (spoilers, unknown names, typos, faction slips); `build.py` runs it, and `--selftest` proves each check still fires.
 - `app/` is the Flutter WebView wrapper that bundles `assets/game/index.html`.
 
