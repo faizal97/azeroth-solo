@@ -2538,6 +2538,8 @@
   // ---------- dungeon bonuses: beat par time (fast pays), clear flawless (careful pays); a good group can get both
   const MOMENTUM_WINDOW = 5000, MOMENTUM_MAX = 5;
   G.runClock = function () { const R = G.S.run; return R ? ((R.finishedAt || now()) - R.started) / 1000 : 0; };
+  // v10.3: level-60 clears pay Mentor Marks, the currency for gear upgrades (Trials will pay more)
+  G.clearMarks = (act) => { const A = D.ACTIVITIES[act], Dg = A && A.dungeon && D.DUNGEONS[A.dungeon]; return !Dg || (A.maxLvl || D.LEVEL_CAP) < D.LEVEL_CAP ? 0 : Dg.raid ? 15 : 5; };
   function runBonuses(R) {
     const S = G.S, P = S.player, A = D.ACTIVITIES[R.act], Dg = A.dungeon && D.DUNGEONS[A.dungeon];
     if (!Dg) return;
@@ -2546,6 +2548,7 @@
     const speed = !R.noSpeed && Dg.par && secs <= Dg.par, flawless = !R.wipes; // flawless = the group never wiped
     const cx = (P.codex = P.codex || {})[R.act] = Object.assign({ clears: 0, flawless: 0, speed: 0, best: null }, (P.codex || {})[R.act]);
     cx.clears++; if (flawless) cx.flawless++; if (speed) cx.speed++; if (cx.best == null || secs < cx.best) cx.best = Math.round(secs);
+    if (P.level >= D.LEVEL_CAP && G.clearMarks(R.act)) G.addMarks(G.clearMarks(R.act), 'a level-60 clear');
     R.bonus = { secs: Math.round(secs), par: Dg.par, speed, flawless };
     if (speed) {
       // the speed chest: half the time a blue from this dungeon's bosses, otherwise a green

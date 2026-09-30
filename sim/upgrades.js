@@ -48,5 +48,9 @@ ok(G.upgradeItem({ slot: 'weapon' }) === false && P.equip.weapon.up === 1, 'no M
 ok(G.upgradeItem({ slot: 'chest' }) === false || !P.equip.chest || !G.upgradeInfo(P.equip.chest).max, 'starting gear cannot be upgraded');
 // a save round trip keeps the step
 const saved = JSON.parse(JSON.stringify(P.equip.weapon)); ok(saved.up === 1 && saved.base && G.upgradeInfo(saved).up === 1, 'the step survives a save');
+// income: a level-60 dungeon clear pays 5, a raid 15; levelling dungeons nothing
+ok(G.clearMarks('stratholme') === 5 && G.clearMarks('molten_core') === 15, 'level-60 clears pay Marks');
+ok(G.clearMarks('deadmines') === 0, 'levelling dungeons pay none');
+ok(Math.ceil(D.UPGRADE.cost(1) / G.clearMarks('stratholme')) <= 5, 'the first step takes at most 5 dungeon runs');
 console.log(`upgrades: ${n - bad}/${n} checks pass`);
 process.exit(bad ? 1 : 0);
