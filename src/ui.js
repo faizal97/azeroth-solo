@@ -2803,6 +2803,8 @@
     }
     b.append(note('Beat par to open the next level, or beat it by a wide margin to open two. Each clear pays 5 Mentor Marks plus the Trial level. Weekly Omens are coming in a later update.'));
   }
+  // how a Trial level compares with a normal level-60 run: "−17% health and damage", "normal ...", "+23% ..."
+  const trialStrength = (lvl) => { const d = Math.round((window.TRIALS.factor(lvl) - 1) * 100); return Math.abs(d) <= 2 ? 'normal health and damage' : `${d > 0 ? '+' : '−'}${Math.abs(d)}% health and damage`; };
   function trialDialog(act) {
     const A = D.ACTIVITIES[act], par = D.DUNGEONS[A.dungeon].par, max = G.trialMax(act), T = window.TRIALS;
     let lvl = max;
@@ -2811,7 +2813,7 @@
         h('button', { class: 'btn alt', disabled: lvl <= 1, onclick: () => { lvl--; draw(); } }, '−'),
         h('b', { class: 'tnum', style: { fontSize: '20px', minWidth: '96px', textAlign: 'center' } }, `Trial ${lvl}`),
         h('button', { class: 'btn alt', disabled: lvl >= max, onclick: () => { lvl++; draw(); } }, '+')),
-      h('p', null, `Enemies: level ${D.LEVEL_CAP} at ${Math.round(T.factor(lvl) * 100)}% strength. Par ${clockText(par)}. Pays ${5 + lvl} Mentor Marks.`),
+      h('p', null, `Enemies: level ${D.LEVEL_CAP}, ${trialStrength(lvl)}. Par ${clockText(par)}. Pays ${5 + lvl} Mentor Marks.`),
       h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); if (G.queueTrial(act, lvl)) ui.sheetFn && ui.sheetFn(); } }, 'Queue'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true);
     draw();
   }
