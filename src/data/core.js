@@ -502,14 +502,14 @@
   TR('paladin', [
     R('divine_favor', 'Radiance', ['heal'], ['holy_light'], 0.3, ['holy_shock'], { reset: true, free: true }, 'Radiance! Holy Shock is ready', 'Radiance (Holy): Holy Light can make Holy Shock ready at once and free.'),
     R('blessing_sanctuary', 'Bulwark', ['dodged'], null, 0.5, ['holy_shield', 'consecration'], { reset: true, free: true }, 'Bulwark! Holy Shield is ready', 'Bulwark (Protection): when you dodge, Holy Shield (or Consecration before you learn it) becomes ready at once and free.'),
-    R('vengeance', 'Vengeful Strike', ['crit'], null, 0.6, ['crusader_strike', 'exorcism'], { reset: true }, 'Vengeful Strike! Crusader Strike is ready', 'Vengeful Strike (Retribution): your critical hits can make Crusader Strike (or Exorcism before you learn it) ready at once.')]);
+    R('vengeance', 'Vengeful Strike', ['crit'], null, 0.6, ['crusader_strike', 'exorcism'], { reset: true }, 'Vengeful Strike! Zealot Strike is ready', 'Vengeful Strike (Retribution): your critical hits can make Zealot Strike (or Exorcism before you learn it) ready at once.')]);
   TR('warlock', [
     R('amplify_curse', 'Withering', ['tick'], ['curse_of_agony'], 0.12, ['haunt', 'corruption'], { reset: true, instant: true }, 'Withering! Haunt is ready', 'Withering (Affliction): while Curse of Agony hurts an enemy, Haunt (or an instant Corruption before you learn it) can light up.'),
     R('soul_link', 'Soulfire Rush', ['hit'], ['shadow_bolt'], 0.2, ['soul_fire'], { reset: true, instant: true }, 'Soulfire Rush! Instant Soul Fire', 'Soulfire Rush (Demonology): Shadow Bolt can make your next Soul Fire instant and ready.'),
     R('ruin', 'Ruinous Flame', ['crit'], ['shadow_bolt', 'incinerate', 'searing_pain'], 1, ['shadowburn'], { reset: true, free: true }, 'Ruinous Flame! Shadowburn is ready', 'Ruinous Flame (Destruction): a critical Shadow Bolt, Incinerate or Searing Pain makes Shadowburn ready at once and free.')]);
   TR('hunter', [
     R('bestial_wrath', 'Pack Call', ['autoshot'], null, 0.12, ['kill_command', 'multi_shot'], { reset: true, free: true }, 'Pack Call! Kill Command is ready', 'Pack Call (Beast Mastery): your auto shots can make Kill Command (or Multi-Shot before you learn it) ready at once and free.'),
-    R('trueshot', 'Dead Aim', ['crit'], ['arcane_shot', 'aimed_shot'], 1, ['chimera_shot', 'aimed_shot'], { reset: true, instant: true }, 'Dead Aim! Chimera Shot is ready', 'Dead Aim (Marksmanship): a critical Arcane or Aimed Shot makes Chimera Shot (or an instant Aimed Shot before you learn it) ready.'),
+    R('trueshot', 'Dead Aim', ['crit'], ['arcane_shot', 'aimed_shot'], 1, ['chimera_shot', 'aimed_shot'], { reset: true, instant: true }, 'Dead Aim! Twinfang Shot is ready', 'Dead Aim (Marksmanship): a critical Arcane or Aimed Shot makes Twinfang Shot (or an instant Aimed Shot before you learn it) ready.'),
     R('deterrence', 'Quick Reflexes', ['dodged'], null, 0.6, ['counterattack', 'raptor_strike'], { reset: true, free: true }, 'Quick Reflexes! Counterattack', 'Quick Reflexes (Survival): when you dodge, Counterattack (or Savage Strike before you learn it) becomes ready at once and free.')]);
   TR('druid', [
     R('moonkin', 'Night Sky', ['crit'], ['wrath', 'starfire'], 1, ['starfall', 'hurricane'], { reset: true, free: true }, 'Night Sky! Falling Stars is ready', 'Night Sky (Balance): a critical Wrath or Star Bolt makes Falling Stars (or Hurricane before you learn it) ready at once and free.'),
@@ -517,7 +517,7 @@
     R('natures_swiftness', 'Clear Stream', ['heal'], ['rejuvenation', 'regrowth'], 0.08, ['healing_touch'], { instant: true }, 'Clear Stream! Instant Healing Touch', 'Clear Stream (Restoration): Rejuvenation and Regrowth can make your next Healing Touch instant.')]);
   TR('shaman', [
     R('elemental_fury', 'Molten Fury', ['crit'], ['lightning_bolt', 'chain_lightning'], 1, ['earthquake', 'flame_shock'], { reset: true, free: true }, 'Molten Fury! Earthquake is ready', 'Molten Fury (Elemental): a critical Lightning Bolt or Chain Lightning makes Earthquake (or Flame Shock before you learn it) ready at once and free.'),
-    R('flurry', 'Storm Surge', ['melee'], null, 0.15, ['stormstrike'], { reset: true, free: true }, 'Storm Surge! Stormstrike is ready', 'Storm Surge (Enhancement): your weapon hits can make Stormstrike ready at once and free.'),
+    R('flurry', 'Storm Surge', ['melee'], null, 0.15, ['stormstrike'], { reset: true, free: true }, 'Storm Surge! Storm Blade is ready', 'Storm Surge (Enhancement): your weapon hits can make Storm Blade ready at once and free.'),
     R('healing_way', 'Tidal Surge', ['heal'], ['healing_wave', 'lesser_healing_wave'], 0.25, ['chain_heal'], { instant: true, free: true }, 'Tidal Surge! Instant Chain Heal', 'Tidal Surge (Restoration): Healing Wave can make your next Chain Heal instant and free.')]);
   D.UPGRADE = { raid: 'tidecrown_citadel', step: 0.03, cap: { 3: 0.92, 4: 1 }, minLvl: 57, perPct: 5 }; // 5 Mentor Marks per 1% of the ceiling gained, so a step costs 15
   // Titles show next to your name. `need` is checked against your records (see G.titleUnlocked).
