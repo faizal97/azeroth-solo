@@ -3098,15 +3098,216 @@
   rsChest('tc_leather', tcLeather, TC, TC_H);
   rsChest('tc_mail', tcMail, TC, TC_H);
   rsLegs('tc_legs', tcLegs, TC, TC_H);
+  /* ================= the Trialsworn looks (v10.8): rewards for timed Trials at 60 =================
+     Polished silver steel, midnight-blue cloth and grips, gold fittings and an hourglass with pale-gold sand.
+     Every piece is ONE drawing that takes a tier t: 0 = the plain key, 1 = <key>_t15 (the sand glows, a faint light runs
+     along the trim), 2 = <key>_t20 (radiant: brighter glow, a soft aura, small drifting sand motes). The cloak also
+     takes a palette, so the monthly cloaks (trialsworn_cloak_mYYYYMM) are the same cloak recoloured. */
+  var TWM = '#22326a', TWMD = '#141d42', TWS = ['#ffffff', '#dde3eb', '#94a0b2'], TWSM = '#c6cfdb', TWG = '#f3dc8e';
+  var TWHEAD = [[0, '#f4f7fa'], [0.45, '#c3ccd8'], [1, '#6e7b8e']];
+  /* the base palette: cloth (lt/mid/dk), edge band (edge, hi = its highlight, trim = the line inside it), and the
+     hourglass (frame metal, glass top/mid/bottom, sand) */
+  var TWP = { lt: lt(TWM, 0.12), cloth: TWM, dk: TWMD, edge: '#b4c0d2', hi: '#ffffff', trim: GOLD, frame: GOLD, glass: ['#3e5aa8', TWM, TWMD], sand: TWG };
+  /* an hourglass centred on (x,y), s = half its height: caps and posts in the frame metal, the glass, sand running.
+     lv = how much the sand glows (0 none .. 2 radiant) */
+  function twGlass(c, x, y, s, lv, pal) {
+    pal = pal || TWP; lv = lv || 0;
+    var w = s * 0.6, nk = s * 0.1, cap = Math.max(1.4, s * 0.2), sw = s > 6 ? 1.5 : s > 4 ? 1.2 : 1, out = '';
+    var sand = lv >= 1 ? lt(pal.sand, 0.3) : pal.sand, core = lv >= 1 ? '#ffffff' : lt(pal.sand, 0.5);
+    var gd = D`M${x - w},${y - s} L${x + w},${y - s} C${x + w},${y - s * 0.4} ${x + nk},${y - s * 0.24} ${x + nk},${y} C${x + nk},${y + s * 0.24} ${x + w},${y + s * 0.4} ${x + w},${y + s} L${x - w},${y + s} C${x - w},${y + s * 0.4} ${x - nk},${y + s * 0.24} ${x - nk},${y} C${x - nk},${y - s * 0.24} ${x - w},${y - s * 0.4} ${x - w},${y - s} Z`;
+    if (lv > 0) out += C(x, y, s * (1.3 + lv * 0.45), c.rg([[0, '#fff6d2', Math.min(0.95, 0.45 + lv * 0.25)], [0.4, pal.sand, 0.14 + lv * 0.14], [1, pal.sand, 0]]), 0);
+    out += P(gd, c.lg([[0, pal.glass[0]], [0.55, pal.glass[1]], [1, pal.glass[2]]], 0, 0, 1, 0), 0) +
+      CG(F(D`M${x - w},${y - s * 0.42} L${x + w},${y - s * 0.42} L${x + w},${y} L${x - w},${y} Z`, sand) +
+        F(D`M${x - w},${y + s} L${x - w},${y + s * 0.66} Q${x},${y + s * 0.2} ${x + w},${y + s * 0.66} L${x + w},${y + s} Z`, sand) +
+        S(D`M${x},${y} L${x},${y + s * 0.5}`, core, Math.max(0.6, s * 0.1)) +
+        (s > 4 ? S(D`M${x - w * 0.55},${y - s * 0.86} L${x - w * 0.55},${y - s * 0.56}`, '#ffffff', s * 0.1, 0.7) : ''), c.clip(gd)) +
+      P(gd, 'none', sw);
+    var px = w + cap * 0.35, pd = D`M${x - px},${y - s} L${x - px},${y + s} M${x + px},${y - s} L${x + px},${y + s}`;
+    if (s > 3.5) out += S(pd, OL, cap * 0.55 + sw * 1.6) + S(pd, pal.frame, cap * 0.55);
+    var cw = w + cap * 0.9;
+    return out + R(x - cw, y - s - cap, cw * 2, cap, c.cel(pal.frame), sw) + R(x - cw, y + s, cw * 2, cap, c.cel(pal.frame), sw);
+  }
+  /* tier effects: light along a trim line (t >= 1), a soft aura behind (t = 2), drifting sand motes (t = 2) */
+  function twTrim(d, t, w) { return t ? S(d, TWG, (w || 2.4) + t * 1.2, 0.16 + t * 0.1) + S(d, '#fffbe8', t > 1 ? 0.9 : 0.6, 0.9) : ''; }
+  function twAura(c, x, y, rx, ry, t) { return t > 1 ? E(x, y, rx, ry, c.rg([[0, '#fff4c8', 0.55], [0.45, TWG, 0.26], [1, TWG, 0]]), 0) : ''; }
+  function twMotes(c, pts, t) {
+    if (t < 2) return '';
+    return pts.map(function (p) {
+      var x = p[0], y = p[1], r = p[2] || 1.4;
+      return C(x, y, r * 2.8, c.rg([[0, '#fff4c8', 0.6], [1, TWG, 0]]), 0) + P(D`M${x},${y - r * 1.5} L${x + r * 0.7},${y} L${x},${y + r * 1.5} L${x - r * 0.7},${y} Z`, '#fff8dc', 0.6);
+    }).join('');
+  }
+  /* midnight-blue grip with a silver spiral wrap, from y0 (top) to y1 */
+  function twGrip(c, w, y0, y1) {
+    var d = '';
+    for (var y = y0 + 2; y < y1; y += 3) d += D`M${-w},${y + 1.4} L${w},${y - 1}`;
+    return P(D`M${-w},${y0} L${w},${y0} L${w},${y1} L${-w},${y1} Z`, c.cel(TWM), 1.8) + S(d, TWS[1], 1.2);
+  }
+  function twPommel(c, y, k) {
+    k = k || 1;
+    return P(D`M${-3 * k},${y} L${3 * k},${y} L${2.2 * k},${y + 3.6 * k} L0,${y + 6 * k} L${-2.2 * k},${y + 3.6 * k} Z`, c.cel(GOLD), 1.5) + C(0, y + 2.6 * k, 1.1 * k, TWM, 0);
+  }
+  /* silver guard arms swept up, gold tips, the hourglass at the centre */
+  function twGuard(c, y, a, s, t) {
+    var arm = D`M-3,${y + 2} C-7,${y + 2} ${-a + 2},${y} ${-a},${y - 4} C${-a + 3},${y - 2.6} -6,${y - 2.4} -3,${y - 2.4} Z M3,${y + 2} C7,${y + 2} ${a - 2},${y} ${a},${y - 4} C${a - 3},${y - 2.6} 6,${y - 2.4} 3,${y - 2.4} Z`;
+    return P(arm, c.lg(TWS, 0, 0, 0, 1), 1.6) + twTrim(D`M${-a},${y - 4} C${-a + 3},${y - 2.6} -6,${y - 2.4} -3,${y - 2.4} M${a},${y - 4} C${a - 3},${y - 2.6} 6,${y - 2.4} 3,${y - 2.4}`, t, 1.4) +
+      C(-a, y - 4, 1.9, c.cel(GOLD), 1.2) + C(a, y - 4, 1.9, c.cel(GOLD), 1.2) + twGlass(c, 0, y, s, t);
+  }
+  var TWSHAFT = [[0, lt(TWM, 0.25)], [0.5, TWM], [1, TWMD]];
+  var GWT = {
+    trialsworn_sword: function (c, t) {
+      var bd = 'M-3.8,-8 L-3.8,-45 L0,-55 L3.8,-45 L3.8,-8 Z';
+      return twAura(c, 0, -32, 11, 30, t) + P(bd, c.lg(TWS, 0, 0, 1, 0), 2) +
+        CG(F('M-1.2,-12 L1.2,-12 L1.2,-41 L0,-44 L-1.2,-41 Z', TWM) + S('M0,-14 L0,-40', TWG, t ? 1.1 : 0.6, 0.9) + S('M-2.8,-10 L-2.8,-45', '#ffffff', 0.9, 0.8), c.clip(bd)) +
+        twTrim('M-3.8,-9 L-3.8,-45 L0,-55 L3.8,-45 L3.8,-9', t, 1.6) +
+        twGrip(c, 2.5, -3, 10) + twPommel(c, 9.5) + twGuard(c, -7.5, 13, 4.6, t) +
+        twMotes(c, [[-8, -26, 1.2], [7.5, -38, 1.4], [-5, -50, 1], [9, -18, 1]], t);
+    },
+    trialsworn_dagger: function (c, t) {
+      var bd = 'M-3.2,-7 L-3.2,-25 L0,-33 L3.2,-25 L3.2,-7 Z';
+      return twAura(c, 0, -18, 9, 18, t) + P(bd, c.lg(TWS, 0, 0, 1, 0), 1.9) +
+        CG(F('M-1,-10 L1,-10 L1,-23 L0,-26 L-1,-23 Z', TWM) + S('M-2.3,-9 L-2.3,-26', '#ffffff', 0.8, 0.8), c.clip(bd)) +
+        twTrim('M-3.2,-8 L-3.2,-25 L0,-33 L3.2,-25 L3.2,-8', t, 1.4) +
+        twGrip(c, 2.2, -2.5, 8.5) + twPommel(c, 8, 0.85) + twGuard(c, -6.5, 9.5, 3.8, t) +
+        twMotes(c, [[-7, -20, 1.1], [6.5, -28, 1.2], [7, -12, 0.9]], t);
+    },
+    /* the staff tops out in a floating hourglass held in a silver cradle */
+    trialsworn_staff: function (c, t) {
+      var arm = 'M-2.6,-47 C-9.5,-50 -11.5,-59 -7.5,-68 M2.6,-47 C9.5,-50 11.5,-59 7.5,-68';
+      var sp = function (x, y, r) { return P(D`M${x},${y - r} L${x + r * 0.55},${y} L${x},${y + r} L${x - r * 0.55},${y} Z`, '#fff4c8', 0.8); };
+      return twAura(c, 0, -60, 17, 17, t) +
+        P('M-2.2,38 L-2.6,-46 L2.6,-46 L2.2,38 Z', c.lg(TWSHAFT, 0, 0, 1, 0), 2) +
+        twGrip(c, 3.2, -10, 12) +
+        R(-3.4, -26, 6.8, 3, c.lg(TWS, 0, 0, 0, 1), 1.3) + R(-3.2, 22, 6.4, 3, c.lg(TWS, 0, 0, 0, 1), 1.3) +
+        P('M-3.2,34 L3.2,34 L1.6,41.5 L-1.6,41.5 Z', c.cel(GOLD), 1.5) +
+        S(arm, OL, 5.4) + S(arm, TWSM, 2.8) + S('M-3,-48 C-9,-51 -10.6,-58 -8,-66', '#ffffff', 0.8, 0.7) + twTrim(arm, t, 1.4) +
+        C(-7.5, -68, 1.8, c.cel(GOLD), 1.1) + C(7.5, -68, 1.8, c.cel(GOLD), 1.1) +
+        P('M-5,-50 L5,-50 L3.4,-45 L-3.4,-45 Z', c.cel(GOLD), 1.5) + C(0, -52, 1.6, TWG, 0.9) +
+        twGlass(c, 0, -60.5, 6.8, 0.6 + t * 0.7) + sp(-12.5, -56, 2.2) + sp(12, -63, 1.9) + sp(-10, -70, 1.4) +
+        twMotes(c, [[13.5, -52, 1.2], [-15, -64, 1.1], [9, -71, 1], [-4, -44, 0.9]], t);
+    },
+    /* flanged silver mace, the hourglass on a midnight boss at the centre, a gold crown point on top */
+    trialsworn_mace: function (c, t) {
+      var fl = 'M-6,-46 L-12.5,-41.5 L-12.5,-32.5 L-6,-28 Z M6,-46 L12.5,-41.5 L12.5,-32.5 L6,-28 Z';
+      var hd = 'M0,-50 C6,-49 8,-43 8,-37 C8,-31 6,-25 0,-24 C-6,-25 -8,-31 -8,-37 C-8,-43 -6,-49 0,-50 Z';
+      return twAura(c, 0, -38, 17, 16, t) +
+        P('M-2.2,11 L-2.4,-27 L2.4,-27 L2.2,11 Z', c.lg(TWSHAFT, 0, 0, 1, 0), 2) +
+        twGrip(c, 2.5, -1, 10) + twPommel(c, 9.5, 0.9) +
+        P(fl, c.lg(['#dfe5ec', '#9aa6b6', '#5e6a7c'], 0, 0, 1, 0), 1.8) +
+        P(hd, c.lg(TWHEAD, 0.2, 0, 0.8, 1), 2) + twTrim('M0,-49.5 C5.6,-48.5 7.5,-43 7.5,-37 C7.5,-31 5.6,-25.5 0,-24.5', t, 1.2) +
+        S('M-4.8,-45 C-6,-41 -6,-34 -4.8,-29', '#ffffff', 0.9, 0.8) +
+        P('M-2.4,-50 L0,-57 L2.4,-50 Z', c.cel(GOLD), 1.4) +
+        R(-3.8, -27.5, 7.6, 3.4, c.cel(GOLD), 1.4) +
+        C(0, -37, 6, c.cel(TWM), 1.4) + twGlass(c, 0, -37, 4, t) +
+        twMotes(c, [[-14, -48, 1.2], [14, -26, 1.1], [10, -52, 1]], t);
+    },
+    /* bearded silver axe with a gold edge and an hourglass inlay, a back spike */
+    trialsworn_axe: function (c, t) {
+      var bl = 'M2.4,-41 C7,-42 11,-45 14.5,-50 C20,-44 23.2,-36 22.8,-28 C22.4,-20 19.4,-14 15,-10 C12,-15 7,-20 2.4,-22 Z';
+      var eg = 'M14.5,-50 C20,-44 23.2,-36 22.8,-28 C22.4,-20 19.4,-14 15,-10 C16.8,-16 18.6,-21 18.9,-28 C19.2,-36 17.4,-43 14.5,-50 Z';
+      return twAura(c, 12, -31, 16, 20, t) +
+        P('M-2.3,12 L-2.5,-42 L2.5,-42 L2.3,12 Z', c.lg(TWSHAFT, 0, 0, 1, 0), 2) +
+        twGrip(c, 2.5, -2, 10) + twPommel(c, 9.5, 0.9) +
+        P('M-2,-40 L-9.5,-35 L-2,-29 Z', c.lg(TWS, 0, 0, 0, 1), 1.6) +
+        P(bl, c.lg(TWHEAD, 0.1, 0, 0.9, 1), 2.1) +
+        CG(F(eg, c.cel(GOLD)) + S('M16.4,-45 C19.6,-39 21,-33 20.8,-27', '#fff4c8', 0.8, 0.8) + S('M5,-39 C9,-41 12,-44 14,-47', '#ffffff', 0.9, 0.7), c.clip(bl)) +
+        S(eg.replace(/ Z$/, ''), OL, 1) + twTrim('M14.5,-50 C20,-44 23.2,-36 22.8,-28 C22.4,-20 19.4,-14 15,-10', t, 1.4) + twGlass(c, 10, -30, 4.2, t) +
+        R(-3.4, -44, 6.8, 4, c.cel(GOLD), 1.4) + R(-3.2, -27, 6.4, 3, c.cel(GOLD), 1.3) +
+        P('M-2.4,-44 L0,-50 L2.4,-44 Z', c.cel(GOLD), 1.3) +
+        twMotes(c, [[27, -38, 1.2], [26, -18, 1.1], [8, -53, 1], [-9, -44, 0.9]], t);
+    },
+    /* silver recurve bow: midnight riser with gold rims and an hourglass, gold tips */
+    trialsworn_bow: function (c, t) {
+      var st = 'M-3,-48 C-5.5,-47.5 -7.5,-45 -7.5,-41 C-1.5,-33 3.5,-19 2,-5 L2,5 C3.5,19 -1.5,33 -7.5,41 C-7.5,45 -5.5,47.5 -3,48';
+      var rs = 'M0.4,-21 C4.8,-17 6.4,-9 6,0 C6.4,9 4.8,17 0.4,21 L-1.4,0 Z';
+      return twAura(c, 0, 0, 13, 46, t) + S('M-7.5,-41 L-7.5,41', t ? '#fff4c8' : '#f3ecd8', 1.1, 0.95) +
+        S(st, OL, 7.4) + S(st, TWSM, 4) + S('M-6,-42 C-0.5,-33 3,-19 2.2,-7 M2.2,7 C3,19 -0.5,33 -6,42', '#ffffff', 1.1, 0.8) +
+        twTrim('M-7,-40 C-1,-32 4,-19 2.6,-6 M2.6,6 C4,19 -1,32 -7,40', t, 1.4) +
+        P(rs, c.cel(TWM), 1.8) + S('M0.8,-19.5 C4.6,-16 6,-9 5.6,-2 M5.6,2 C6,9 4.6,16 0.8,19.5', GOLD, 1.3) +
+        G(twGrip(c, 2.8, -6, 6), 'translate(2.4,0)') +
+        twGlass(c, 3.2, -13.5, 3.6, t) +
+        C(-3, -48, 2, c.cel(GOLD), 1.2) + C(-3, 48, 2, c.cel(GOLD), 1.2) +
+        twMotes(c, [[8, -34, 1.2], [9, 26, 1.1], [-12, -20, 1], [-11, 12, 0.9]], t);
+    }
+  };
+  /* ranged looks: bows drawn in a hunter's front hand */
+  var GRANGED = { militia_longbow: 1 };
+  var TWKIND = { trialsworn_sword: 'blade', trialsworn_dagger: 'dagger', trialsworn_staff: 'staff', trialsworn_mace: 'hammer', trialsworn_axe: 'hammer', trialsworn_bow: 'bow' };
+  Object.keys(GWT).forEach(function (k) {
+    [['', 0], ['_t15', 1], ['_t20', 2]].forEach(function (v) {
+      var key = k + v[0], f = function (c) { return GWT[k](c, v[1]); };
+      GW[key] = f; WP[key] = f;
+      if (TWKIND[k] === 'bow') GRANGED[key] = 1; else GKIND[key] = TWKIND[k];
+    });
+  });
+  /* the Trialsworn cloak: a silver edge with a line of the trim metal inside it, a large hourglass on the back, a small
+     hourglass clasp at the shoulder. t15: the sand glows and light runs along the edge; t20: radiant, an aura round the
+     hourglass and sand motes drifting up off the cloak */
+  function twCloak(pal, t) {
+    return {
+      back: function (c, g) {
+        var d = capeD(g, 'plain', 67), b = g.b, hx = g.sx - b.waistW - 12, hy = g.fy - 32;
+        return (t > 1 ? S(d, TWG, 8, 0.2) + S(d, '#fff4c8', 4, 0.3) : '') + P(d, c.lg([[0, pal.lt], [0.6, pal.cloth], [1, pal.dk]], 0.2, 0, 0.8, 1)) +
+          CG(capeFolds(g, pal.dk) + S(d, pal.trim, 6.4) + S(d, pal.edge, 4) + S(d, pal.hi, 1.1, 0.8) + (t ? S(d, '#fff4c8', 2.2 + t, 0.3 + t * 0.15) : '') +
+            (t > 1 ? C(hx, hy, 24, c.rg([[0, '#fff4c8', 0.4], [0.5, TWG, 0.16], [1, TWG, 0]]), 0) : ''), c.clip(d)) +
+          P(d, 'none', 2.5) + twGlass(c, hx, hy, 8, t ? t + 0.3 : 0, pal) +
+          twMotes(c, [[hx - 10, hy - 14, 1.4], [hx + 7, hy - 22, 1.2], [hx - 5, hy - 32, 1.1], [hx + 11, hy - 6, 1.1], [hx - 12, hy + 8, 1.2], [hx - 2, hy - 46, 1]], t);
+      },
+      torso: function (c, g) {
+        var d = collarD(g), tl = D`M${g.scx - 11},${g.sy + 6} Q${g.scx - 2},${g.sy - 2} ${g.scx + 11},${g.sy + 2.8}`;
+        return P(d, c.cel(pal.cloth), 1.8) + CG(S(tl, pal.edge, 2.4) + (t ? S(tl, '#fff4c8', 1, 0.8) : ''), c.clip(d));
+      },
+      front: function (c, g) {
+        var x = g.bSh[0] - 1 + g.b.shW * 0.42, y = g.sy - 1;
+        return drape(c, g, pal.cloth, pal.edge, t ? function (c, g) { return S(drapeD(g), '#fff4c8', 1.6 + t, 0.4); } : null) + twGlass(c, x, y, 3.2, t, pal);
+      }
+    };
+  }
+  GBACK.trialsworn_cloak = twCloak(TWP, 0);
+  GBACK.trialsworn_cloak_t15 = twCloak(TWP, 1);
+  GBACK.trialsworn_cloak_t20 = twCloak(TWP, 2);
+  /* ---- the monthly Trialsworn cloaks: the same cloak in the month's colours, key trialsworn_cloak_m<YYYYMM>.
+     A new month is one line here. Each: [month, cloth (light, mid, dark), edge band (edge, highlight, trim line),
+     hourglass (frame metal, glass top/mid/bottom, sand)].
+       October 2026   Emberwane     burnt ember orange, charcoal, bronze
+       November 2026  Bronzeleaf    russet brown, copper and bronze
+       December 2026  Hoarfrost     pale ice blue, frost white, silver frame, frost sand
+       January 2027   Rimewind      storm grey, icy white, silver frame, frost sand
+       February 2027  Heartsblood   deep crimson, gold
+       March 2027     Thawbloom     fresh spring green, pale gold
+       April 2027     Blossomrain   soft leaf green, blossom pink
+       May 2027       Greenhaven    deep emerald, gold
+       June 2027      Highsun       sun gold, azure
+       July 2027      Azure Tide    bright azure, gold
+       August 2027    Sunlit Sail   sail ivory, gold and azure
+       September 2027 Harvest Moon  harvest amber, deep brown, bronze ---- */
+  var TW_MONTHS = [
+    ['202610', ['#e0683a', '#c03c18', '#5e1a0a'], ['#2e2622', '#6a5a50', '#c88a3a'], ['#c88a3a', '#5a2a14', '#3a1a0c', '#241008', '#ffc070']],
+    ['202611', ['#8e5a3a', '#6a3a22', '#381c10'], ['#c47a3e', '#f0c08a', '#8a5a2a'], ['#c47a3e', '#6a3a22', '#4a2616', '#2a140a', '#f6c878']],
+    ['202612', ['#d6e8f6', '#a8c6de', '#6e8eae'], ['#ffffff', '#ffffff', '#8aa8c8'], ['#dfe6ee', '#6a8ab0', '#3e5a80', '#243a5a', '#e8f6ff']],
+    ['202701', ['#7e8ea2', '#56687e', '#2e3a4a'], ['#e8f0f8', '#ffffff', '#a8b8cc'], ['#d4dce6', '#4a6080', '#2e4060', '#1a2840', '#d6f0ff']],
+    ['202702', ['#b02a3a', '#861424', '#480810'], ['#e6b54a', '#fff0b8', '#6a0a14'], [GOLD, '#6a1420', '#4a0a14', '#2a040a', '#ffd6a0']],
+    ['202703', ['#8ad06e', '#56a044', '#2a6224'], ['#f4e6a4', '#ffffff', '#c8a848'], ['#d8b85a', '#2e6a3a', '#1e4a28', '#123018', '#fff2b0']],
+    ['202704', ['#a6d8a0', '#74b87a', '#3e7a4c'], ['#f2a6c0', '#ffe4ee', '#c86a8a'], ['#dcdfe6', '#3a6a52', '#27503c', '#163426', '#ffd6e4']],
+    ['202705', ['#3a9a68', '#1e6a44', '#0e3a24'], ['#e6c25a', '#fff2c0', '#8a6a20'], [GOLD, '#1a5a3a', '#0e3e28', '#062418', '#f6e08a']],
+    ['202706', ['#f6d466', '#e2ac28', '#9a6a10'], ['#2f7ad8', '#9ac8ff', '#1a4a9a'], ['#2f7ad8', '#6a4a10', '#4a3208', '#2a1c04', '#fff2b8']],
+    ['202707', ['#5aa6f0', '#2a78d0', '#123e80'], ['#f0c448', '#fff0b0', '#a07a20'], [GOLD, '#1a4a9a', '#12346e', '#0a1e44', '#fff0a8']],
+    ['202708', ['#fffaf0', '#eee2c6', '#b8a680'], ['#e0b040', '#fff4c8', '#2f7ad8'], [GOLD, '#2f6ab8', '#1e4a88', '#10284e', '#fff0a8']],
+    ['202709', ['#f2c060', '#d8961e', '#8a5608'], ['#5a3414', '#9a6a3a', '#e0b050'], ['#c8883a', '#6a3a10', '#4a260a', '#2a1404', '#ffe08a']]
+  ];
+  TW_MONTHS.forEach(function (m) {
+    var cl = m[1], e = m[2], h = m[3];
+    GBACK['trialsworn_cloak_m' + m[0]] = twCloak({ lt: cl[0], cloth: cl[1], dk: cl[2], edge: e[0], hi: e[1], trim: e[2], frame: h[0], glass: [h[1], h[2], h[3]], sand: h[4] }, 0);
+  });
   var GEARKEYS = {
-    weapon: Object.keys(GKIND), ranged: ['militia_longbow'], back: Object.keys(GBACK), chest: Object.keys(GCHEST),
+    weapon: Object.keys(GKIND), ranged: Object.keys(GRANGED), back: Object.keys(GBACK), chest: Object.keys(GCHEST),
     legs: Object.keys(GLEGS), mask: Object.keys(GMASK)
   };
   function gk(gear, slot, table) { var v = gear[slot]; return typeof v === 'string' && table.hasOwnProperty(v) ? v : null; }
   function applyGear(o, gear, cls) {
     var k;
     if ((k = gk(gear, 'weapon', GKIND))) gearWeapon(o, k, cls);
-    if (cls === 'hunter' && gear.ranged === 'militia_longbow') o.fItem = FI('militia_longbow', 0);
+    if (cls === 'hunter' && (k = gk(gear, 'ranged', GRANGED))) o.fItem = FI(k, 0);
     if ((k = gk(gear, 'chest', GCHEST))) { o.robe = null; o.robeFx = null; o.bell = null; GCHEST[k](o); }
     if ((k = gk(gear, 'legs', GLEGS))) { o.pants = GLEGS[k].pants; o.gLeg = GLEGS[k].fx; }
     if ((k = gk(gear, 'back', GBACK))) {

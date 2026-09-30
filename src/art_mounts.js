@@ -1,4 +1,4 @@
-/* art_mounts.js - riding mounts for Realm of Loner (the eight racial mounts plus the riding skill icon).
+/* art_mounts.js - riding mounts for Realm of Loner (the eight racial mounts, the Trialsworn charger, the riding skill icon).
  * Loads AFTER art.js and the other packs and EXTENDS window.ART:
  *   ART.mount(key)  NEW: a 160x128 SVG, transparent background, side view facing RIGHT, standing, saddled and
  *                   bridled, no rider. The game draws the hero FIRST and the mount on top, so the mount's body is
@@ -6,7 +6,7 @@
  *                   return a neutral placeholder. Never throws. Keys in ART.keys.mounts.
  *                   Rider placement used by the art/mounts contact sheet: hero SVG (128x128) drawn at x=33.6,
  *                   y=12.8 in mount units, scale 0.6 (so the hero's hips, hero y82, land on the seat at 72,62).
- *   ART.icon(key)   handles mount_<key> and riding, falls through to the previous ART.icon for every other key.
+ *   ART.icon(key)   handles mount_<key>, riding and trialsworn_hourglass (the Trials rewards emblem), falls through to the previous ART.icon for every other key.
  *                   Keys appended to ART.keys.icons. 64x64 item-style icons like art_icons5.js.
  * Self-contained: helpers are copies of art_stranglethorn.js / art_icons5.js (same maths, same look).
  * Style: bold dark outlines (#1a1009), 2-3 tone cel shading, flat shadows, no text, no filters, no images.
@@ -209,6 +209,86 @@
     var m = [(from[0] + to[0]) / 2, Math.max(from[1], to[1]) + (sag == null ? 8 : sag)];
     var d = 'M' + pt(from) + 'Q' + pt(m) + ' ' + pt(to);
     return L(d, OL, 3.6) + L(d, col || '#4a2e18', 1.8);
+  }
+
+  // an hourglass centred on (x,y), s = half its height, turned by rot degrees: gold caps and posts, midnight glass,
+  // pale-gold sand running (the Trialsworn emblem)
+  function hglass(c, x, y, s, lv, rot) {
+    var w = s * 0.6, nk = s * 0.1, cap = Math.max(1.3, s * 0.2), sw = s > 6 ? 1.6 : s > 4 ? 1.3 : 1, gold = '#e0b040', sand = lv ? '#fbeec0' : '#f3dc8e', out = '';
+    var q = function (u, v) { return pt([x + u, y + v]); };
+    var gd = 'M' + q(-w, -s) + 'L' + q(w, -s) + 'C' + q(w, -s * 0.4) + ' ' + q(nk, -s * 0.24) + ' ' + q(nk, 0) + 'C' + q(nk, s * 0.24) + ' ' + q(w, s * 0.4) + ' ' + q(w, s) +
+      'L' + q(-w, s) + 'C' + q(-w, s * 0.4) + ' ' + q(-nk, s * 0.24) + ' ' + q(-nk, 0) + 'C' + q(-nk, -s * 0.24) + ' ' + q(-w, -s * 0.4) + ' ' + q(-w, -s) + 'Z';
+    if (lv) out += C(x, y, s * (1.3 + lv * 0.45), glow(c, '#ffe9a0', Math.min(0.95, 0.45 + lv * 0.25)));
+    out += F(gd, c.lg([[0, '#3e5aa8'], [0.55, '#22326a'], [1, '#141d42']], 0, 0, 1, 0)) +
+      '<g clip-path="url(#' + c.clip(gd) + ')">' + F('M' + q(-w, -s * 0.42) + 'L' + q(w, -s * 0.42) + 'L' + q(w, 0) + 'L' + q(-w, 0) + 'Z', sand) +
+      F('M' + q(-w, s) + 'L' + q(-w, s * 0.66) + 'Q' + q(0, s * 0.2) + ' ' + q(w, s * 0.66) + 'L' + q(w, s) + 'Z', sand) +
+      L('M' + q(0, 0) + 'L' + q(0, s * 0.5), '#fff4c8', Math.max(0.6, s * 0.1)) +
+      (s > 4 ? L('M' + q(-w * 0.55, -s * 0.86) + 'L' + q(-w * 0.55, -s * 0.56), '#ffffff', s * 0.1, 0.7) : '') + '</g>' + P(gd, 'none', sw);
+    var px = w + cap * 0.35, pdd = 'M' + q(-px, -s) + 'L' + q(-px, s) + 'M' + q(px, -s) + 'L' + q(px, s);
+    if (s > 3.5) out += L(pdd, OL, cap * 0.55 + sw * 1.6) + L(pdd, gold, cap * 0.55);
+    var cw = w + cap * 0.9;
+    out += R(x - cw, y - s - cap, cw * 2, cap, c.cel(gold), sw) + R(x - cw, y + s, cw * 2, cap, c.cel(gold), sw);
+    return rot ? G(out, 'rotate(' + n(rot) + ' ' + n(x) + ' ' + n(y) + ')') : out;
+  }
+
+  /* the Trialsworn charger (v10.8, a Trials reward): a dark slate warhorse in polished silver barding (crinet,
+     chanfron, chest plate and crupper) over a midnight-blue caparison, gold hourglasses on the chest plate and the
+     caparison, and a pale-gold glowing mane and tail. t = tier: 0 the plain key, 1 = _t15 (the sand glows, light runs
+     along the gold trim), 2 = _t20 (radiant: brighter glow, a soft aura, sand motes drifting round it). */
+  function twCharger(c, o, t) {
+    var col = '#4c5468', dc = dk(col, 0.3), sand = '#f3dc8e', mid = '#22326a', gold = '#e0b040', s = o.icon ? '' : shadow(c, 80, 56);
+    var steel = function () { return c.lg([[0, '#f4f7fa'], [0.45, '#c3ccd8'], [1, '#6e7b8e']], 0.2, 0, 0.8, 1); };
+    var hoofS = function (x, y) { var d = 'M' + pt([x - 4.4, y - 7]) + 'L' + pt([x + 4.6, y - 7]); return hoof(x, y, 8.5, '#262a34') + L(d, OL, 4.2) + L(d, gold, 2.2) + (t ? L(d, '#fff4c8', 0.8, 0.9) : ''); };
+    // light along a gold trim line (t >= 1)
+    var trim = function (d, w) { return t ? L(d, '#ffe9a0', (w || 2.4) + t * 1.6, 0.2 + t * 0.1) + L(d, '#fffbe8', t > 1 ? 1 : 0.7, 0.9) : ''; };
+    var mote = function (x, y, r) { return C(x, y, r * 2.8, glow(c, '#ffe9a0', 0.6)) + P('M' + pt([x, y - r * 1.5]) + 'L' + pt([x + r * 0.7, y]) + 'L' + pt([x, y + r * 1.5]) + 'L' + pt([x - r * 0.7, y]) + 'Z', '#fff8dc', 0.6); };
+    // the aura stays below the seat and round the head: the mount is drawn over its rider, so it must not wash over them
+    if (t > 1) s += E(80, 100, 78, 28, c.rg([[0, '#fff4c8', 0.34], [0.55, '#ffe9a0', 0.16], [1, '#ffe9a0', 0]])) + C(140, 40, 24, glow(c, '#ffe9a0', 0.3));
+    s += leg([[52, 82], [58, 98, 13], [50, 108, 8], [51, 117, 6]], dc) + hoofS(51, 121);
+    s += leg([[104, 84], [106, 100, 12], [106, 110, 8], [107, 117, 6]], dc) + hoofS(107, 121);
+    // glowing tail
+    var T = taper([[40, 62], [30, 66], [23, 80], [22, 96], [28, 108]], 14, 5, 5);
+    s += F(T.d, glow(c, '#ffe9a0', 0.5 + t * 0.15)) + L(T.d, '#ffe9a0', 7 + t * 2, 0.25 + t * 0.08);
+    s += body(c, T.d, sand, L(along(T, 0.35, 2) + along(T, 0.7, 4), '#fffbe6', 1.2, 0.9) + L(along(T, 0.55, 3), dk(sand, 0.2), 1, 0.7), 2.2);
+    // body
+    var bd = 'M36,72 C33,60 42,54 54,56 C64,58 76,61 90,57 C98,55 104,52 110,54 C122,58 125,76 119,88 C113,96 101,96 90,94 C76,97 60,97 48,94 C38,90 37,82 36,72 Z';
+    s += body(c, bd, col, F('M30,86 C50,98 96,100 124,84 L126,104 L30,104 Z', dk(col, 0.22), 0.8) + F('M42,58 C54,56 66,60 80,62 L80,66 C66,64 52,62 42,64 Z', lt(col, 0.22), 0.55));
+    // crupper plate over the hindquarters
+    var cr = 'M37,64 C40,57 48,55 56,57 L57,79 C49,82 42,81 38,77 C36,73 36,68 37,64 Z', crt = 'M38.5,76 C44,80.5 51,81 56.6,78.4';
+    s += body(c, cr, '#c3ccd8', F('M36,74 C44,80 52,81 58,78 L58,84 L36,84 Z', '#6e7b8e', 0.7) + L('M40,62 C44,58 50,57 55,58', '#ffffff', 1.1, 0.8), 2.2) + L(crt, gold, 1.6) + trim(crt, 1.6) + stud(46.5, 68, 1.5, gold);
+    // neck: glowing mane on top, silver crinet lames below it
+    var N = taper([[104, 78], [112, 60], [122, 46], [131, 36]], 30, 18, 5);
+    s += F(fringe(N, 1, 15, 11 + t * 2, 'b'), glow(c, '#ffe9a0', 0.75 + t * 0.1));
+    s += body(c, N.d, col, F(ribbonBand(N, 0, 0.3), dk(col, 0.2), 0.8), 2.4);
+    var cn = ribbonBand(N, 0.34, 0.92);
+    s += body(c, cn, '#c3ccd8', L(bands(N, 3, 1), '#5e6a7c', 1.3) + L(along(N, 0.8, 1), '#ffffff', 1, 0.7) + L(along(N, 0.4, 1), '#8a96a8', 1, 0.8), 1.8);
+    s += P(fringe(N, 1, 15, 8, 'b'), c.lg([[0, '#fff6d0'], [0.45, '#f6d67a'], [1, '#d8a840']], 0, 0, 1, 1), 1.8) + L(along(N, 1.05, 2, 15), '#fffbe6', 1, 0.7);
+    // head, ears, silver chanfron with a gold hourglass and a gold crest spike
+    var hd = 'M124,28 C128,20 138,20 143,27 L155,47 C158,52 155,58 149,58 C143,58 139,56 135,52 C129,46 121,38 124,28 Z';
+    s += P('M130,24 L133,11 L138,22 Z', c.cel(dc), 1.6);
+    s += body(c, hd, col, F('M140,22 L160,22 L160,60 L150,60 C156,50 150,40 140,22 Z', dk(col, 0.22), 0.8) + L('M126,36 C130,44 136,46 138,44', dk(col, 0.35), 1.4), 2.3);
+    s += P('M125,26 L125,12 L132,22 Z', c.cel(col), 1.6) + F('M126.6,23 L126.8,16 L130,21.6 Z', dk(col, 0.4));
+    s += P('M128,22 L140,23 L152,43 L148,48 L136,36 C132,33 129,28 128,22 Z', steel(), 1.7) + L('M130,24 L139.5,25 L149.5,42.5', gold, 1.5) + trim('M130,24 L139.5,25 L149.5,42.5', 1.2) + L('M131,27 C133,31 136,34 139,36', '#ffffff', 1, 0.7);
+    s += hglass(c, 140.5, 32, 3.6, t, -32);
+    s += P('M129,23 L126,9 L133,21 Z', c.cel(gold), 1.4);
+    s += E(134, 34, 2.4, 2, '#1a0e08', 1) + C(133.4, 33.4, 0.7, '#ffffff') + E(151, 51, 1.4, 1, OL) + L('M146,56.6 L152,56', OL, 1.2);
+    // bridle
+    s += L('M127,27 L134,41 L147,55 M134,41 L143,47', OL, 3.2) + L('M127,27 L134,41 L147,55 M134,41 L143,47', mid, 1.6) + C(146.6, 55, 1.8, gold, 1);
+    // midnight caparison under the saddle, a dagged hem edged in silver and gold, a gold hourglass beside the stirrup
+    var cap = 'M49,56 L97,56 C99,66 100,78 99,90 L95,97 L90,92 L85,99 L80,93 L74,100 L68,93 L62,99 L57,92 L52,97 L48,90 C47,78 47,66 49,56 Z';
+    var hem = 'M48,90 L52,97 L57,92 L62,99 L68,93 L74,100 L80,93 L85,99 L90,92 L95,97 L99,90';
+    s += saddle(c, { leather: '#2a2f45', blanket: mid, blanketD: cap, trim: null, metal: '#d8dce2', rim: gold,
+      pattern: L(hem, '#c3ccd8', 5.4) + L(hem, gold, 1.6) + trim(hem, 1.6) + L('M49,60 L97,60', '#c3ccd8', 2.2) + L('M49,62.4 L97,62.4', gold, 1) + trim('M49,62.4 L97,62.4', 1),
+      emblem: hglass(c, 89, 79.5, 6.4, t, 0) });
+    s += leg([[44, 80], [50, 97, 16], [40, 108, 9], [41, 117, 6.5]], col) + hoofS(41, 121);
+    s += leg([[112, 82], [115, 100, 13], [116, 110, 8.5], [118, 117, 6.5]], col) + hoofS(118, 121);
+    // silver chest plate over the chest and the top of the near foreleg, a gold hourglass on it
+    var cp = 'M103,64 C112,65 120,70 124,77 C126,85 123,93 116,97 C110,94 104,88 101,82 C99,76 100,69 103,64 Z', cpt = 'M102.6,67.6 C111,68.6 119,73 122.8,79';
+    s += body(c, cp, '#c3ccd8', F('M98,86 C106,92 114,96 118,99 L128,99 L128,86 Z', '#6e7b8e', 0.6) + L('M104,67 C112,68 118,72 121.5,77', '#ffffff', 1.1, 0.8), 2.2) +
+      L(cpt, gold, 1.5) + trim(cpt, 1.4) + hglass(c, 113, 80.5, 5.6, t, 0);
+    s += reins([147, 55], [89, 57], mid, 7);
+    if (t > 1 && !o.icon) s += mote(22, 54, 1.4) + mote(12, 86, 1.2) + mote(154, 14, 1.1) + mote(156, 66, 1.2) + mote(134, 76, 1) + mote(30, 114, 1) + mote(128, 112, 1.1);
+    return s;
   }
 
   /* ================= the mounts (all face RIGHT; seat at 72,60; hooves on y 121) ================= */
@@ -567,7 +647,11 @@
       s += L('M127,27 L134,41 L147,55', OL, 3) + L('M127,27 L134,41 L147,55', '#6a6a76', 1.4) + C(146.6, 55, 1.8, '#9a9aa6', 1);
       s += reins([147, 55], [89, 57], '#2a2230', 7);
       return s;
-    }
+    },
+    /* the Trialsworn charger and its Trial 15 and Trial 20 tiers (drawn by twCharger) */
+    trialsworn_charger: function (c, o) { return twCharger(c, o, 0); },
+    trialsworn_charger_t15: function (c, o) { return twCharger(c, o, 1); },
+    trialsworn_charger_t20: function (c, o) { return twCharger(c, o, 2); }
   };
   // neutral placeholder: a plain grey saddled beast
   function phMount(c) {
@@ -603,7 +687,10 @@
     wolf: [134, 58, 1.06, ['#c83a24', '#240604']],
     raptor: [134, 38, 1.04, ['#8ac848', '#0e2408']],
     kodo: [132, 70, 0.96, ['#d0a060', '#281808']],
-    skeletal_horse: [134, 36, 1.02, ['#7a3ab0', '#0e0418']]
+    skeletal_horse: [134, 36, 1.02, ['#7a3ab0', '#0e0418']],
+    trialsworn_charger: [127, 44, 0.8, ['#b8964a', '#101a3c']],
+    trialsworn_charger_t15: [127, 44, 0.8, ['#d8b860', '#101a3c']],
+    trialsworn_charger_t20: [127, 44, 0.8, ['#fff0b0', '#1a2450']]
   };
   var ICONS = {};
   Object.keys(FOCUS).forEach(function (k) {
@@ -619,6 +706,13 @@
     var hs = 'M-12,12 C-16,2 -14,-12 0,-14 C14,-12 16,2 12,12 L6,12 C9,4 8,-7 0,-8 C-8,-7 -9,4 -6,12 Z';
     var shoe = P(hs, c.cel(steel), 2.2) + L('M-10,6 L-10.4,4 M-11,-2 L-11,-4 M10,6 L10.4,4 M11,-2 L11,-4 M-4,-11 L-2,-11.4 M4,-11 L2,-11.4', OL, 1.6) + L('M-9,-5 C-8,-9 -4,-11 0,-11.4', '#ffffff', 1.2, 0.6);
     return iconWrap(c, ['#c08040', '#2a1406'], g + G(shoe, 'translate(46,44) rotate(-20) scale(0.95)'));
+  };
+
+  /* the Trialsworn emblem, used for the Trials rewards: a gold hourglass with glowing sand on midnight blue */
+  ICONS.trialsworn_hourglass = function (c) {
+    var sp = function (x, y, r) { return P('M' + pt([x, y - r]) + 'L' + pt([x + r * 0.55, y]) + 'L' + pt([x, y + r]) + 'L' + pt([x - r * 0.55, y]) + 'Z', '#fff4c8', 0.9); };
+    return iconWrap(c, ['#3a52a0', '#080e24'], L(ellD(32, 32, 26, 26), '#e0b040', 1.4, 0.55) +
+      hglass(c, 32, 32, 19, 1, 0) + sp(12, 16, 2.6) + sp(52, 22, 2.2) + sp(50, 50, 1.8) + sp(14, 47, 1.6));
   };
 
   /* ================= extend the public API ================= */

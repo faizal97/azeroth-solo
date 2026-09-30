@@ -104,6 +104,7 @@
     S.pending = []; S.chatTimers = {};
     if (S.run && S.run.phase === 'fight') S.run.phase = 'rest', S.run.restUntil = now() + 3000;
     try { G.refreshHeirlooms(); } catch (e) { /* older save */ }
+    { const tw = G.account().trialsworn || {}; for (const k in tw) if (tw[k] && D.TRIALSWORN[k] && D.TRIALSWORN[k].mount) G.giveTrialswornMount(D.TRIALSWORN[k].mount); } // Trialsworn Chargers ride with every character
     if (S.player.keepsake) { S.player.wardrobe = Object.assign({ back: S.player.keepsake }, S.player.wardrobe); delete S.player.keepsake; } // v10.3: keepsakes moved into the wardrobe
     // v10: the world has new names. A save keeps copies of items, so their names come fresh from the data by id;
     // simulated players from other realms move to the new realm names; old chat goes (it quotes the old names),
@@ -1715,7 +1716,9 @@
     const P = G.S.player, have = new Set((G.account().looks || []).filter((k) => k.startsWith(place + ':')).map((k) => k.slice(place.length + 1))), seen = new Set(), out = [];
     for (const id in D.ITEMS) {
       const it = D.ITEMS[id], l = it.look; if (!l || l[0] !== place || seen.has(l[1]) || !G.canUseItem(it, P.cls)) continue;
-      seen.add(l[1]); out.push({ key: l[1], name: it.name, icon: it.icon, q: it.q, lvl: it.lvl || 1, source: it.source || null, have: have.has(l[1]) });
+      const tw = G.account().trialsworn || {}, mo = it.month != null ? root.TRIALS && root.TRIALS.name(it.month) : null;
+      const src = mo && have.has(l[1]) ? ((tw.earned || []).includes(it.month) ? `Earned in ${mo}` : 'Bought with Mentor Marks') : mo && root.TRIALS && it.month < root.TRIALS.season(new Date()) ? `${it.source}, or ${G.MONTH_CLOAK_COST} Mentor Marks at the Mentor Quartermaster now` : it.source || null;
+      seen.add(l[1]); out.push({ key: l[1], name: it.name, icon: it.icon, q: it.q, lvl: it.lvl || 1, source: src, have: have.has(l[1]) });
       if (G.hardLookIds().has(id)) out.push({ key: l[1] + '_hard', name: it.name + ' (Hard)', icon: it.icon, q: it.q, lvl: (it.lvl || 1) + 0.5, source: 'Drops on Hard', have: have.has(l[1] + '_hard') });
     }
     out.sort((a, b) => a.lvl - b.lvl || a.name.localeCompare(b.name));
@@ -2261,6 +2264,52 @@
     return true;
   };
   // a Trial cleared: best level, the next levels open, Mentor Marks, the weekly goal
+  // the Trialsworn set: each piece earned once for the whole account (account.trialsworn), the first time any character
+  // beats its Trial level in time; the Charger then rides with every character (added when one loads)
+  G.trialswornCheck = function (lvl) {
+    const a = G.account(), got = a.trialsworn = a.trialsworn || {}, won = [];
+    for (const [k, R] of Object.entries(D.TRIALSWORN)) {
+      if (got[k] || lvl < R.lvl) continue;
+      got[k] = true; won.push(k);
+    }
+    if (!won.length) return;
+    G.saveAccount(a);
+    for (const k of won) {
+      const R = D.TRIALSWORN[k];
+      for (const id of R.looks || []) G.collectLook(D.ITEMS[id]);
+      if (R.mount) G.giveTrialswornMount(R.mount);
+      loot(k === 'cloak' ? `Trialsworn: the ${B.link('Trialsworn Cloak', 4)} joins your wardrobe.` : k === 'weapons' ? `Trialsworn: a Trialsworn weapon look for every weapon type joins your wardrobe.` : k === 'mount' ? `Trialsworn: the ${D.MOUNTS[R.mount].name} is yours, on every character.`
+        : `Trialsworn: the whole set ${k === 't15' ? 'glows' : 'shines'} now. ${k === 't15' ? 'Glowing' : 'Radiant'} looks for the cloak and every weapon, and the ${D.MOUNTS[R.mount].name}, for every character.`);
+    }
+  };
+  // this month's cloak: beat Trial 10 in time during the month (earned once per month, per account)
+  G.monthCloak = function (season) { const id = Object.keys(D.ITEMS).find((i) => D.ITEMS[i].month === season && D.ITEMS[i].lookOnly); return id ? D.ITEMS[id] : null; };
+  G.MONTH_FALLBACK_MARKS = 40;
+  G.monthCloakCheck = function (lvl, season) {
+    if (lvl < 10 || season < 0) return; // not in the Preseason
+    const it = G.monthCloak(season);
+    if (it) { if (G.collectLook(it)) { const a = G.account(), tw = a.trialsworn = a.trialsworn || {}; (tw.earned = tw.earned || []).push(season); G.saveAccount(a); loot(`Trialsworn: this month's cloak, the ${B.link(it.name, 4)}, joins your wardrobe.`); } return; }
+    // a month without a planned cloak (validate warns months ahead): Marks instead, once per month per account
+    const a = G.account(), tw = a.trialsworn = a.trialsworn || {}, paid = tw.monthPaid = tw.monthPaid || [];
+    if (paid.includes(season)) return;
+    paid.push(season); G.saveAccount(a); G.addMarks(G.MONTH_FALLBACK_MARKS, "this month's Trial 10 (no cloak this month)");
+  };
+  // catch-up (his call, 2026-10-01): once a month is over, its cloak is sold for Mentor Marks at the Mentor
+  // Quartermaster; the month itself is still earned. The wardrobe says which were earned and which were bought.
+  G.MONTH_CLOAK_COST = 150;
+  G.pastMonthCloaks = function () { const now0 = TR().season(new Date()); return Object.keys(D.ITEMS).filter((i) => D.ITEMS[i].lookOnly && D.ITEMS[i].month != null && D.ITEMS[i].month < now0).sort((a, b) => D.ITEMS[a].month - D.ITEMS[b].month); };
+  G.buyMonthCloak = function (id) {
+    const it = D.ITEMS[id], a = G.account();
+    if (!it || !G.pastMonthCloaks().includes(id)) return toast('That cloak is earned in its own month.');
+    if ((a.looks || []).includes(it.look.join(':'))) return toast('You have that cloak already.');
+    if (a.marks < G.MONTH_CLOAK_COST) return toast(`You need ${G.MONTH_CLOAK_COST} Mentor Marks.`);
+    a.marks -= G.MONTH_CLOAK_COST; const tw = a.trialsworn = a.trialsworn || {}; (tw.bought = tw.bought || []).push(it.month); G.saveAccount(a);
+    G.collectLook(it); loot(`You bought the ${B.link(it.name, 4)} for ${G.MONTH_CLOAK_COST} Mentor Marks. It joins your wardrobe.`); emit('change');
+  };
+  G.giveTrialswornMount = function (k) {
+    const P = G.S && G.S.player; if (!P) return;
+    P.mounts = P.mounts || []; if (!P.mounts.includes(k)) P.mounts.push(k);
+  };
   G.trialDone = function (R, secs, par) {
     const T = TR(), Rec = G.trials(), lvl = R.trial.lvl, act = R.act;
     if (R.trial.season !== Rec.season) { sys('The month turned during your run: it counts for the old Trials.'); return null; }
@@ -2272,6 +2321,7 @@
     if (!Rec.week || Rec.week.id !== per) Rec.week = { id: per, n: 0, paid: false };
     if (lvl >= R.trial.bestHere) Rec.week.n++;
     if (Rec.week.n >= 4 && !Rec.week.paid) { Rec.week.paid = true; G.addMarks(25, 'this week\'s Trials goal'); }
+    if (timed) { G.trialswornCheck(lvl); G.monthCloakCheck(lvl, R.trial.season); }
     const res = { lvl, timed, great, open: Rec.open[act] || 1, rating: G.trialRating() };
     sys(timed ? `Trial ${lvl} beaten in time${great ? ' by a wide margin' : ''}! Trial ${res.open} is open here. Rating ${res.rating}.` : `Trial ${lvl} cleared, but over par: your level here stays. Rating ${res.rating}.`);
     return (R.trialResult = res);

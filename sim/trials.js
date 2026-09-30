@@ -215,5 +215,41 @@ const Rec = G.trials();
 ok(Rec.season === 1 && Rec.history.length === 1 && Rec.history[0].name === 'October 2026' && Rec.history[0].rating === oldRating && Object.keys(Rec.best).length === 0, 'November files October in the history and starts fresh');
 ok(Rec.history[0].picks.length === 8 && Rec.history[0].rank >= 1, 'the history keeps that month\'s dungeons and final rank');
 
+// the Trialsworn set (stage 4): earned once per account at Trial 5 (cloak) and 10 (weapon looks, Charger), in time only
+{
+  const a0 = G.account(); delete a0.trialsworn; a0.looks = []; G.saveAccount(a0);
+  G.newGame({ name: 'Ts', cls: 'warrior', race: 'human' }); G.S.player.level = 60;
+  G.trialswornCheck(4); ok(!(G.account().trialsworn || {}).cloak, 'no Trialsworn piece below Trial 5');
+  G.trialswornCheck(5); const a1 = G.account();
+  ok(a1.trialsworn.cloak && !a1.trialsworn.weapons && a1.looks.includes('back:trialsworn_cloak'), 'Trial 5 in time: the Trialsworn Cloak');
+  G.trialswornCheck(12); const a2 = G.account();
+  ok(a2.trialsworn.weapons && a2.trialsworn.mount && D.TRIALSWORN.weapons.looks.every((id) => a2.looks.includes(D.ITEMS[id].look.join(':'))), 'Trial 10 in time: every weapon look');
+  ok(G.S.player.mounts.includes('trialsworn_charger'), 'Trial 10 in time: the Trialsworn Charger');
+  const nLooks = a2.looks.length; G.trialswornCheck(12); ok(G.account().looks.length === nLooks, 'earned once: a second Trial 12 gives nothing new');
+  G.newGame({ name: 'Alt', cls: 'mage', race: 'human' }); const altId = G.S.id; G.save(); G.load(altId);
+  ok((G.S.player.mounts || []).includes('trialsworn_charger'), 'another character has the Charger when it loads');
+  ok(G.wardrobeOptions('weapon').some((o) => o.key === 'trialsworn_staff') && !G.wardrobeOptions('weapon').some((o) => o.key === 'trialsworn_axe'), 'a mage can show the Trialsworn Staff, not the Axe');
+  ok(!Object.keys(D.MOUNTS).filter((k) => D.MOUNTS[k].faction).includes('trialsworn_charger'), 'the Charger is never sold');
+  // the upgrades and the monthly cloak (for players who already own the set)
+  G.trialswornCheck(20); const a3 = G.account();
+  ok(a3.trialsworn.t15 && a3.trialsworn.t20 && a3.looks.includes('back:trialsworn_cloak_t20') && (G.S.player.mounts || []).includes('trialsworn_charger_t20'), 'Trial 20 in time: the glowing and radiant set and Chargers');
+  G.monthCloakCheck(9, 1); ok(!G.account().looks.includes('back:trialsworn_cloak_m202611'), 'no monthly cloak below Trial 10');
+  G.monthCloakCheck(10, 1); ok(G.account().looks.includes('back:trialsworn_cloak_m202611'), 'Trial 10 in time in November: the November cloak');
+  G.monthCloakCheck(10, 2); ok(G.account().looks.includes('back:trialsworn_cloak_m202612') && !G.account().looks.includes('back:trialsworn_cloak_m202701'), 'each month its own cloak');
+  const m0 = G.account().marks; G.monthCloakCheck(10, 40); G.monthCloakCheck(12, 40);
+  ok(G.account().marks - m0 === G.MONTH_FALLBACK_MARKS, 'a month without a planned cloak pays Marks instead, once');
+  const m1 = G.account().marks; G.monthCloakCheck(10, -1); ok(G.account().marks === m1, 'the Preseason has no monthly reward');
+  // catch-up: a past month's cloak can be bought with Marks, the current month's cannot; earned and bought are told apart
+  { const a4 = G.account(); a4.looks = a4.looks.filter((x) => !/trialsworn_cloak_m/.test(x)); a4.trialsworn.earned = []; a4.trialsworn.bought = []; a4.marks = 1000; G.saveAccount(a4); }
+  const RD = globalThis.Date, cur = T.season(new RD());
+  const pastIds = G.pastMonthCloaks(); ok(pastIds.every((id) => D.ITEMS[id].month < cur), 'only finished months are sold');
+  const curId = Object.keys(D.ITEMS).find((i) => D.ITEMS[i].month === cur && D.ITEMS[i].lookOnly);
+  if (curId) { const mk = G.account().marks; G.buyMonthCloak(curId); ok(G.account().marks === mk, "this month's cloak cannot be bought"); }
+  if (pastIds.length) {
+    const mk = G.account().marks; G.buyMonthCloak(pastIds[0]); ok(G.account().marks === mk - G.MONTH_CLOAK_COST && G.account().looks.includes(D.ITEMS[pastIds[0]].look.join(':')), 'a past cloak costs ' + G.MONTH_CLOAK_COST + ' Marks');
+    const mk2 = G.account().marks; G.buyMonthCloak(pastIds[0]); ok(G.account().marks === mk2, 'bought once only');
+    ok(G.wardrobeAll('back').find((o) => o.key === D.ITEMS[pastIds[0]].look[1]).source === 'Bought with Mentor Marks', 'the wardrobe says Bought');
+  }
+}
 console.log(`trials: ${n - bad}/${n} checks pass`);
 process.exit(bad ? 1 : 0);

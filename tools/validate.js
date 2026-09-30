@@ -119,6 +119,13 @@ for (const [k, E] of Object.entries(D.LORE || {})) {
 }
 
 for (const q in D.QUEST_STORY || {}) if (!D.QUESTS[q]) err(`quest story for unknown quest '${q}'`);
+// the monthly Trialsworn cloaks are planned ahead (D.TRIALSWORN_MONTHS, from October 2026): warn with fewer than 3
+// months left, stop the build when next month has none (a month without one pays Marks instead, but plan it)
+if (D.TRIALSWORN_MONTHS) {
+  const d = new Date(), season = (d.getFullYear() - 2026) * 12 + d.getMonth() - 9, left = D.TRIALSWORN_MONTHS.length - 1 - season;
+  if (left < 1) err(`Trialsworn: no monthly cloak planned for next month: add a palette in art.js and a name in D.TRIALSWORN_MONTHS`);
+  else if (left < 3) { warn.push(`Trialsworn: monthly cloaks planned for only ${left} more month(s)`); console.log(`  NOTE: Trialsworn monthly cloaks are planned for only ${left} more month(s); add the next ones (art.js palette + D.TRIALSWORN_MONTHS)`); }
+}
 const n = (t) => Object.keys(D[t]).length;
 console.log(`data: ${n('REGIONS')} zones, ${n('PLACES')} places, ${n('MOBS')} mobs, ${n('QUESTS')} quests, ${n('ITEMS')} items` + (warn.length ? ` · ${warn.length} warnings` : ''));
 if (process.argv.includes('-v')) warn.forEach((w) => console.log('  warn:', w));

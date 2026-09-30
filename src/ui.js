@@ -1913,6 +1913,15 @@
             h('div', { class: 'r' }, owned ? 'Copy' : `${H.cost} ✦`)));
         }
         b.append(list, h('p', { class: 'ai-note' }, 'Earn Mentor Marks by answering Help Wanted in the group finder and from the daily Roulette.'));
+        // past months' Trialsworn cloaks (v10.7): only the ones you are missing, so the list stays short
+        const past = G.pastMonthCloaks();
+        if (past.length) {
+          const have = new Set(acc.looks || []), miss = past.filter((id) => !have.has(D.ITEMS[id].look.join(':')));
+          b.append(h('div', { class: 'sec-h' }, 'Past Trialsworn cloaks', h('small', null, `you have ${past.length - miss.length} of ${past.length}`)));
+          if (!miss.length) b.append(h('p', { class: 'ai-note' }, 'You have every past month\'s cloak. This month\'s is earned in the Trials: Trial 10 in time.'));
+          else b.append(h('div', { class: 'list' }, ...miss.map((id) => { const it = D.ITEMS[id]; return h('button', { class: 'row', onclick: () => { G.buyMonthCloak(id); ui.sheetFn(); } },
+            h('div', { class: 'ic' }, img(art('icon', 'trialsworn_hourglass'))), h('div', { class: 't' }, h('b', { style: { color: D.QUALITY[4].color } }, it.name), h('small', null, `${window.TRIALS.name(it.month)} · a look for your back`)), h('div', { class: 'r' }, `${G.MONTH_CLOAK_COST} ✦`)); })));
+        }
       }
       for (const { qid, st } of qs) {
         const Q = D.QUESTS[qid];
@@ -2891,6 +2900,14 @@
     const weekOmens = T.omensFor(T.period(new Date()).id);
     if (weekOmens.length) b.append(h('div', { class: 'chips', style: { margin: '6px 0 0' } }, h('small', { class: 'dim', style: { alignSelf: 'center' } }, 'This week\'s Omens:'), ...weekOmens.map((k) => omenChip(k, T.TIER_LVL[T.OMENS[k].tier]))));
     b.append(h('div', { class: 'btn-row', style: { margin: '6px 0' } }, h('button', { class: 'btn alt', onclick: () => openTrialBoard() }, 'Leaderboard'), h('button', { class: 'btn alt', onclick: () => openTrialHistory() }, 'History')));
+    { // the Trialsworn set (v10.7): earned once per account, shown with what each step needs; and this month's cloak
+      const got = G.account().trialsworn || {}, TS = D.TRIALSWORN, n = Object.keys(TS).filter((x) => got[x]).length, part = (x, label) => `${label} ${got[x] ? '✓' : `(Trial ${TS[x].lvl})`}`;
+      const mc = k >= 0 ? G.monthCloak(k) : null, mHave = mc && (G.account().looks || []).includes(mc.look.join(':')), mPaid = ((got.monthPaid || []).includes(k));
+      const month = k < 0 ? 'The Preseason has no monthly cloak.' : mc ? `This month: the ${mc.name} for Trial 10 in time${mHave ? ' ✓' : ''}.` : `No cloak this month: Trial 10 in time pays ${G.MONTH_FALLBACK_MARKS} Mentor Marks${mPaid ? ' ✓' : ''}.`;
+      b.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', 'trialsworn_hourglass'))),
+        h('div', { class: 't' }, h('b', null, `Trialsworn set · ${n} of ${Object.keys(TS).length}`), h('small', { style: { whiteSpace: 'normal' } }, [part('cloak', 'Cloak'), part('weapons', 'weapon looks'), part('mount', 'Charger'), part('t15', 'glowing set'), part('t20', 'radiant set')].join(' · ') + ' (in time, for all your characters).'),
+          h('small', { style: { whiteSpace: 'normal', color: 'var(--gold)' } }, month))));
+    }
     b.append(h('div', { class: 'sec-h' }, k === -1 ? 'The Preseason' : 'This month', h('small', null, 'tap a Trial to pick its level')));
     for (const act of picks) {
       const A = D.ACTIVITIES[act], best = Rec.best[act], why = G.trialBlock(act), max = G.trialMax(act), queued = S.queue && S.queue.act === act && S.queue.trial;

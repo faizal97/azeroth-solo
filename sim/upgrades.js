@@ -66,7 +66,7 @@ ok(Math.ceil(15 / G.clearMarks('stratholme')) <= 5, 'a step takes at most 5 dung
 
 // random gear matches the hand-made items of its quality (v10.4: random blues had 70% more stats and beat raid purples)
 {
-  const named = (q) => { const a = Object.values(D.ITEMS).filter((it) => D.GEAR_SLOTS.includes(it.slot) && it.q === q && it.lvl >= 55 && !it.sp && !it.heirloom).map((it) => G.itemPoints(it)); return a.reduce((x, y) => x + y, 0) / a.length; };
+  const named = (q) => { const a = Object.values(D.ITEMS).filter((it) => D.GEAR_SLOTS.includes(it.slot) && it.q === q && it.lvl >= 55 && !it.sp && !it.heirloom && !it.lookOnly).map((it) => G.itemPoints(it)); return a.reduce((x, y) => x + y, 0) / a.length; };
   const rand = (q) => { let s = 0; for (let i = 0; i < 60; i++) s += G.itemPoints(G.genGear(['chest', 'legs', 'hands', 'back', 'finger', 'wrist'][i % 6], 60, q)); return s / 60; };
   const b = rand(3) / named(3), p = rand(4) / named(4);
   ok(b > 0.85 && b < 1.15, `a random level-60 blue is about as strong as a named one (${(b * 100).toFixed(0)}%)`);

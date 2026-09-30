@@ -115,3 +115,18 @@ Rules that apply: UI must scale; automatic systems must be content-proof (both i
   at 90%, +5% a level. Walls: about 6-7 (fresh 60), 15 (raider), 17 (pusher, fully upgraded); Trial 19 only 1 time in 8.
   The pusher finally climbs above the raider.
 
+## Stage 4 (2026-10-01)
+
+- **The Trialsworn set**, earned once per account, the first time any character beats the level in time: the cloak at
+  Trial 5; a weapon look for every weapon type and the Trialsworn Charger at Trial 10. The Charger rides with every
+  character.
+- **For players who already own it** (his call, 2026-10-01):
+  - **Upgrades:** the whole set glows at Trial 15 (glowing looks and a glowing Charger) and shines at Trial 20 (radiant).
+  - **A cloak every month:** beat Trial 10 in time during the month for that month's Trialsworn Cloak, a hand-picked
+    palette of the same cloak (`D.TRIALSWORN_MONTHS` names, the palette table in art.js). Twelve are planned, October
+    2026 to September 2027. A hand-made look for a month can take its slot.
+  - **Running out:** `tools/validate.js` warns when fewer than 3 months are planned and stops the build when next month
+    has none. If a month still has none, Trial 10 in time pays 40 Mentor Marks instead, once, and the Trials tab says so.
+- **Chat:** level-60 bots post real Trial groups at levels you have open, and talk about the week's Omens as plain
+  statements.
+

@@ -566,7 +566,32 @@
   // ---- mounts (v5.1): learn riding at 40 from a stable master in a capital, then buy a mount.
   // Riding makes every road 40% faster (boats, zeppelins, gryphons and trams keep their time).
   D.RIDING = { lvl: 40, cost: 400000, speed: 0.6 };
+  // The Trialsworn set (v10.7, Trials stage 4): looks earned once per account, the cloak for beating Trial 5 in time,
+  // a weapon look for every weapon type and the Trialsworn Charger for Trial 10. The items exist for their looks only.
+  const tsw = (id, name, slot, o) => D.item(id, Object.assign({ name, slot, q: 4, lvl: 60, look: [slot, id], source: slot === 'back' ? 'Trials: beat Trial 5 in time' : 'Trials: beat Trial 10 in time', lookOnly: true, sell: 0 }, o));
+  tsw('trialsworn_cloak', 'Trialsworn Cloak', 'back', { armor: 1, icon: 'cloak' });
+  for (const [w, nm] of [['sword', 'Blade'], ['dagger', 'Dirk'], ['staff', 'Staff'], ['mace', 'Mace'], ['axe', 'Axe']]) tsw('trialsworn_' + w, 'Trialsworn ' + nm, 'weapon', { wtype: w, dmg: [1, 2], speed: 2, icon: w === 'mace' ? 'mace' : w });
+  tsw('trialsworn_bow', 'Trialsworn Longbow', 'ranged', { wtype: 'bow', dmg: [1, 2], speed: 2.8, icon: 'bow' });
+  // the upgrades (for players who own the set): the whole set glowing at Trial 15, radiant at Trial 20
+  const TSW_W = ['sword', 'dagger', 'staff', 'mace', 'axe'], TSW_WN = { sword: 'Blade', dagger: 'Dirk', staff: 'Staff', mace: 'Mace', axe: 'Axe' };
+  for (const [t, adj] of [['t15', 'Glowing'], ['t20', 'Radiant']]) {
+    const lvl = t === 't15' ? 15 : 20, src = `Trials: beat Trial ${lvl} in time`;
+    tsw('trialsworn_cloak_' + t, `${adj} Trialsworn Cloak`, 'back', { armor: 1, icon: 'cloak', source: src });
+    for (const w of TSW_W) tsw('trialsworn_' + w + '_' + t, `${adj} Trialsworn ${TSW_WN[w]}`, 'weapon', { wtype: w, dmg: [1, 2], speed: 2, icon: w, source: src });
+    tsw('trialsworn_bow_' + t, `${adj} Trialsworn Longbow`, 'ranged', { wtype: 'bow', dmg: [1, 2], speed: 2.8, icon: 'bow', source: src });
+  }
+  const tswSet = (t) => ['trialsworn_cloak'].concat(TSW_W.map((w) => 'trialsworn_' + w), ['trialsworn_bow']).map((id) => (t ? id + '_' + t : id));
+  D.TRIALSWORN = { cloak: { lvl: 5, looks: ['trialsworn_cloak'] }, weapons: { lvl: 10, looks: tswSet('').slice(1) }, mount: { lvl: 10, mount: 'trialsworn_charger' },
+    t15: { lvl: 15, looks: tswSet('t15'), mount: 'trialsworn_charger_t15' }, t20: { lvl: 20, looks: tswSet('t20'), mount: 'trialsworn_charger_t20' } };
+  // a cloak for each month (season index from October 2026), earned by beating Trial 10 in time during that month.
+  // Hand-picked palettes, planned a year ahead (art.js, the Trialsworn month table); a month without one has no cloak.
+  D.TRIALSWORN_MONTHS = ['Emberwane', 'Bronzeleaf', 'Hoarfrost', 'Rimewind', 'Heartsblood', 'Thawbloom', 'Blossomrain', 'Greenhaven', 'Highsun', 'Azure Tide', 'Sunlit Sail', 'Harvest Moon']; // the palette names in art.js (TW_MONTHS)
+  D.TRIALSWORN_MONTHS.forEach((nm, k) => { const y = 2026 + Math.floor((9 + k) / 12), m = (9 + k) % 12 + 1, key = `trialsworn_cloak_m${y}${String(m).padStart(2, '0')}`;
+    tsw(key, `${nm} Trialsworn Cloak`, 'back', { armor: 1, icon: 'cloak', source: `Trials: beat Trial 10 in time in ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][m - 1]} ${y}`, month: k }); });
   D.MOUNTS = {
+    trialsworn_charger: { name: 'Trialsworn Charger', reward: 'Beat Trial 10 in time' }, // no faction: never sold
+    trialsworn_charger_t15: { name: 'Glowing Trialsworn Charger', reward: 'Beat Trial 15 in time' },
+    trialsworn_charger_t20: { name: 'Radiant Trialsworn Charger', reward: 'Beat Trial 20 in time' },
     horse: { name: 'Brown Horse', race: 'human', faction: 'alliance', cost: 100000 },
     ram: { name: 'Grey Ram', race: 'dwarf', faction: 'alliance', cost: 100000 },
     mechanostrider: { name: 'Red Clockwork Trike', race: 'gnome', faction: 'alliance', cost: 100000 },
