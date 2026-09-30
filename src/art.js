@@ -2581,6 +2581,523 @@
         S(D`M${x},${y - 1.6} L${x},${y + 1.6} M${x - 1.6},${y} L${x + 1.6},${y}`, '#9a6816', 0.8);
     }
   };
+  /* ================= raid set looks (v10.8): one set per raid, each with a Hard recolour =================
+     Every look is ONE drawing function that takes a palette. The plain key is drawn with the raid's Normal palette and
+     <key>_hard with its Hard palette (the same design: darker, with a glowing accent), so the two can never drift apart. */
+  /* point on the torso: u = -1 back edge .. +1 front edge, v = 0 shoulder line .. 1 hip line (follows lean and taper) */
+  function tq(g, u, v) { var cx = g.scx + (g.sx - g.scx) * v, hw = g.b.shW + (g.b.waistW - g.b.shW) * v; return [cx + u * hw, g.sy + (g.hy - g.sy) * v]; }
+  function tpl(g, pts) { return pl(pts.map(function (p) { return tq(g, p[0], p[1]); })); }
+  function rsPadD(x, y, rx) { return D`M${x - rx},${y + 3} C${x - rx},${y - rx * 0.95} ${x + rx},${y - rx * 0.95} ${x + rx},${y + 3} C${x + rx * 0.5},${y + 5.5} ${x - rx * 0.5},${y + 5.5} ${x - rx},${y + 3} Z`; }
+  function rsPadRim(x, y, rx) { return D`M${x - rx + 1.2},${y + 2.4} C${x - rx * 0.5},${y + 4.8} ${x + rx * 0.5},${y + 4.8} ${x + rx - 1.2},${y + 2.4}`; }
+  /* rows of overlapping scales (each arc is the lower edge of one scale), with a lighter sheen arc on each */
+  function rsScales(x0, x1, y0, y1, w, h) {
+    var d = '', s = '', row = 0;
+    for (var y = y0; y < y1; y += h, row++)
+      for (var x = x0 - w + (row % 2) * w / 2; x < x1; x += w) {
+        d += D`M${x},${y}q${w / 2},${h * 1.3} ${w},0`;
+        s += D`M${x + w * 0.2},${y - h * 0.2}q${w * 0.3},${h * 0.8} ${w * 0.6},0`;
+      }
+    return { d: d, s: s };
+  }
+  function rsScaleG(c, clip, x0, x1, y0, y1, w, h, line, sheen) {
+    var k = rsScales(x0, x1, y0, y1, w, h);
+    return CG((sheen ? S(k.s, sheen, 0.8, 0.5) : '') + S(k.d, line, 1.1, 0.95), clip);
+  }
+  /* a trim line: metal (Normal) or a glowing edge (palettes with glow): soft halo, dark edge, the colour, a hot core */
+  function rsEdge(d, w, pal, col) {
+    if (!pal.glow) return S(d, OL, w + 1.6) + S(d, col || pal.trim, w);
+    return S(d, pal.glow, w * 3.4, 0.28) + S(d, OL, w + 1.4) + S(d, pal.glow, w * 1.1) + S(d, pal.core, w * 0.4);
+  }
+  /* a glowing seam (magma and bioluminescence): halo, dark lip, glow, core */
+  function rsSeam(d, w, pal) {
+    return S(d, pal.glow, w * 3.2, 0.3) + S(d, OL, w + 1.4) + S(d, pal.mid || pal.glow, w) + S(d, pal.core, w * 0.4);
+  }
+  function rsDot(c, x, y, r, pal) { return C(x, y, r * 2.6, c.rg([[0, pal.core, 0.9], [0.35, pal.glow, 0.55], [1, pal.glow, 0]]), 0) + C(x, y, r * 0.7, pal.core, 0); }
+  /* the cape shape of capeD with a hem drawn by the look: hem(H0, H1, at) returns path commands from H0 to H1 */
+  function rsCape(g, hem) {
+    var b = g.b, scx = g.scx, sx = g.sx, sy = g.sy, hy = g.hy, fy = g.fy;
+    var A = [scx - b.shW - 2, sy + 6], H0 = [sx + b.waistW + 12, fy - 20], H1 = [sx - b.waistW - 20, fy - 11];
+    var at = function (t, drop) { return [H0[0] + (H1[0] - H0[0]) * t, H0[1] + (H1[1] - H0[1]) * t + Math.sin(Math.PI * t) * 5 + (drop || 0)]; };
+    var hs = hem(H0, H1, at);
+    return {
+      d: D`M${A[0]},${A[1]} Q${scx - b.shW},${sy - 5} ${scx - 3},${sy - 4} L${scx + b.shW - 3},${sy - 1} C${scx + b.shW + 6},${sy + 10} ${scx + b.shW + 8},${hy - 4} ${H0[0]},${H0[1]}` + hs +
+        D` C${scx - b.shW - 16},${hy + 2} ${scx - b.shW - 8},${sy + 22} ${A[0]},${A[1]} Z`,
+      hem: D`M${H0[0]},${H0[1]}` + hs, at: at
+    };
+  }
+  function rsChest(key, fn, N, H) { GCHEST[key] = function (o) { fn(o, N); }; GCHEST[key + '_hard'] = function (o) { fn(o, H); }; }
+  function rsLegs(key, fn, N, H) {
+    GLEGS[key] = { pants: N.pants, fx: function (c, g, L, f) { return fn(c, g, L, f, N); } };
+    GLEGS[key + '_hard'] = { pants: H.pants, fx: function (c, g, L, f) { return fn(c, g, L, f, H); } };
+  }
+  function rsBack(key, mk, N, H) { GBACK[key] = mk(N); GBACK[key + '_hard'] = mk(H); }
+
+  /* ---- Veshmira's Lair: the Brood Mother's hoard and the false court's finery. Black dragon scale with gold trim,
+     small horns and claws. Hard: blacker scale, the gold dimmed to violet steel, every edge glowing storm violet. ---- */
+  var VESH = {
+    base: '#262230', base2: '#1f1c28', dark: '#131018', line: '#0a080c', sheen: '#5a5468', trim: GOLD, trimDk: '#8a6420', horn: '#e2c070',
+    inner: '#6a1a22', glow: null, pants: '#221e2a'
+  };
+  var VESH_H = {
+    base: '#1a1622', base2: '#15121c', dark: '#0a080e', line: '#050407', sheen: '#6a4aa0', trim: '#8a7ab0', trimDk: '#3e3456', horn: '#cbb8ff',
+    inner: '#3a1a6a', glow: '#9a5aff', core: '#f0e4ff', pants: '#17131e'
+  };
+  function veshPad(c, x, y, rx, pal, front) {
+    var d = rsPadD(x, y, rx), out = '', hc = c.cel(pal.horn);
+    if (!front) {
+      /* one horn swept back off the far pad, away from the face */
+      var hx = x - rx * 0.45, hy = y - rx * 0.5, hd = D`M${hx - 2.6},${hy + 1.5} Q${hx - 3},${hy - rx * 0.5} ${hx - rx * 1.05},${hy - rx * 1.05} Q${hx - 0.4},${hy - rx * 0.75} ${hx + 2.6},${hy + 0.5} Z`;
+      out += (pal.glow ? S(hd, pal.glow, 3.4, 0.35) : '') + P(hd, hc, 1.5);
+    }
+    out += P(d, c.cel(pal.base)) + rsScaleG(c, c.clip(d), x - rx, x + rx, y - rx, y + 5, 4.6, 3.2, pal.line, pal.sheen) + rsEdge(rsPadRim(x, y, rx), front ? 1.8 : 1.4, pal);
+    if (front) [-0.5, 0, 0.5].forEach(function (k) {
+      /* three small claws hanging from the rim */
+      var cx = x + rx * k, cy = y + 4.2 + (k ? 0 : 0.6), cd = D`M${cx - 1.7},${cy - 1} Q${cx - 0.9},${cy + 3.2} ${cx + 1.3},${cy + 4.4} Q${cx + 0.6},${cy + 1.6} ${cx + 1.7},${cy - 1} Z`;
+      out += (pal.glow ? S(cd, pal.glow, 3, 0.35) : '') + P(cd, hc, 1.1);
+    });
+    return out;
+  }
+  function veshPads(pal) { return function (c, g) { return veshPad(c, g.bSh[0] - 1, g.sy + 2, 8, pal, 0) + veshPad(c, g.fSh[0] + 1, g.sy + 3, 9.5, pal, 1); }; }
+  /* high court collar: a dragon's frill standing up behind the neck, three horn points showing past the back of the
+     head, lined in deep red (Hard: violet), gold-edged */
+  function veshCollar(c, g, pal) {
+    var x = g.scx, y = g.sy, k = g.b.shW / 16;
+    var edge = D`M${x - 11 * k},${y + 6} Q${x - 16 * k},${y + 4} ${x - 20 * k},${y - 5 * k} Q${x - 14 * k},${y - 4 * k} ${x - 16 * k},${y - 13 * k} Q${x - 10 * k},${y - 9 * k} ${x - 8 * k},${y - 17 * k} Q${x - 3 * k},${y - 7 * k} ${x + 4},${y - 2}`;
+    var bk = edge + D` L${x + 4},${y + 3} Z`;
+    return P(bk, c.cel(pal.base), 1.8) + G(F(bk, pal.inner), 'matrix(0.74,0,0,0.74,' + r1((x - 2) * 0.26) + ',' + r1((y + 3) * 0.26) + ')') + rsEdge(edge, 1.4, pal) +
+      P(D`M${x + 4},${y + 2.5} L${x + 10 * k},${y - 4 * k} Q${x + 12 * k},${y + 1} ${x + 10 * k},${y + 4} Z`, c.cel(pal.base), 1.5) + rsEdge(D`M${x + 4.5},${y + 2} L${x + 10 * k},${y - 4 * k}`, 1.1, pal);
+  }
+  /* court robe: black and gold, high collar, scales across the shoulders, a gold panel down the front to the hem */
+  function veshRobe(o, pal) {
+    o.torsoC = pal.base; o.sleeve = pal.base2; o.bell = pal.dark;
+    o.robe = pal.base;
+    o.belt = pal.dark; o.buckle = pal.trim;
+    o.pads = veshPads(pal);
+    o.robeFx = function (c, g) {
+      var x = g.sx + 5, fy = g.fy, dm = '';
+      for (var y = g.hy + 6; y < fy - 10; y += 8) dm += D`M${x + 1 + (y - g.hy) * 0.06},${y} l2.4,2.8 l-2.4,2.8 l-2.4,-2.8 Z`;
+      return CG(rsEdge(D`M${g.wl - 14},${fy - 6.5} Q${g.sx},${fy - 2} ${g.wr + 14},${fy - 6.5}`, 2.4, pal) +
+        P(D`M${x - 3.4},${g.hy - 6} L${x + 3.4},${g.hy - 6} L${x + 6.4},${fy} L${x - 2},${fy} Z`, pal.dark, 0) +
+        rsEdge(D`M${x - 3.4},${g.hy - 6} L${x - 2},${fy}`, 1.1, pal) + rsEdge(D`M${x + 3.4},${g.hy - 6} L${x + 6.4},${fy}`, 1.1, pal) +
+        (pal.glow ? S(dm, pal.glow, 1.6, 0.5) + F(dm, pal.core) : F(dm, pal.trim)), c.clip(g.robeD));
+    };
+    o.torsoFx = function (c, g) {
+      var cl = c.clip(g.torsoD), top = tq(g, -1.3, 0.34), top2 = tq(g, 1.3, 0.3);
+      var band = D`M${g.scx - 30},${g.sy - 8} L${g.scx + 30},${g.sy - 8} L${top2[0]},${top2[1]} Q${g.scx},${g.sy + 16} ${top[0]},${top[1]} Z`;
+      var a = tq(g, 0.2, 0), b = tq(g, 0.44, 0), a1 = tq(g, 0.24, 1), b1 = tq(g, 0.5, 1);
+      return CG(CG(F(band, pal.dark) + rsScaleG(c, c.clip(band), g.scx - 30, g.scx + 30, g.sy - 6, g.sy + 14, 5, 3.4, pal.line, pal.sheen), c.clip(band)) +
+        rsEdge(D`M${top[0]},${top[1]} Q${g.scx},${g.sy + 16} ${top2[0]},${top2[1]}`, 1.6, pal) +
+        F(D`M${a[0]},${a[1]} L${b[0]},${b[1]} L${b1[0]},${b1[1]} L${a1[0]},${a1[1]} Z`, pal.dark) +
+        rsEdge(D`M${a[0]},${a[1]} L${a1[0]},${a1[1]} M${b[0]},${b[1]} L${b1[0]},${b1[1]}`, 1.1, pal), cl);
+    };
+    o.gTorso = function (c, g) { return veshCollar(c, g, pal); };
+  }
+  /* wyrmhide tunic: overlapping black scales all over, gold lacing up the front, claw-pointed flaps over the hips */
+  function veshTunic(o, pal) {
+    o.torsoC = pal.base; o.sleeve = pal.base2;
+    o.belt = pal.dark; o.buckle = pal.trim;
+    o.pads = veshPads(pal);
+    o.torsoFx = function (c, g) {
+      var cl = c.clip(g.torsoD), a = tq(g, 0.3, 0.05), b = tq(g, 0.33, 0.95), lace = '', i;
+      for (i = 0; i < 5; i++) {
+        var t0 = 0.12 + i * 0.17, t1 = t0 + 0.17, p = tq(g, 0.16, t0), q = tq(g, 0.48, t1), p2 = tq(g, 0.48, t0), q2 = tq(g, 0.16, t1);
+        lace += D`M${p[0]},${p[1]} L${q[0]},${q[1]} M${p2[0]},${p2[1]} L${q2[0]},${q2[1]} `;
+      }
+      return CG(rsScaleG(c, cl, g.scx - 30, g.scx + 30, g.sy - 6, g.hy, 5.6, 3.8, pal.line, pal.sheen) +
+        S(D`M${a[0]},${a[1]} L${b[0]},${b[1]}`, pal.dark, 5.2) + rsEdge(lace, 0.9, pal) +
+        rsEdge(D`M${g.scx - 9},${g.sy + 1} Q${g.scx},${g.sy - 3} ${g.scx + 11},${g.sy}`, 1.4, pal), cl);
+    };
+    o.gTorso = function (c, g) {
+      var out = '';
+      [-0.62, 0.02, 0.66].forEach(function (u, i) {
+        var x = g.sx + u * g.b.waistW, y = g.hy, fl = D`M${x - 4},${y - 1} L${x + 4},${y - 1} L${x + 1.2},${y + 9 - (i === 1 ? 0 : 1.5)} Z`;
+        out += P(fl, c.cel(pal.base2), 1.5) + rsEdge(D`M${x + 4},${y - 1} L${x + 1.2},${y + 9 - (i === 1 ? 0 : 1.5)} L${x - 4},${y - 1}`, 0.8, pal);
+      });
+      return out;
+    };
+  }
+  /* blackscale legguards: scale bands on thigh and shin, a gold claw-tipped knee plate */
+  function veshLegs(c, g, L, front, pal) {
+    var w = g.b.legW, sc = '', sh = '';
+    [[L[0], L[1]], [L[1], L[2]]].forEach(function (s, si) {
+      (si ? [0.3, 0.5, 0.7, 0.9] : [0.2, 0.4, 0.6, 0.8]).forEach(function (u) {
+        var a = lpt(s[0], s[1], u, -w * 0.42), m = lpt(s[0], s[1], u + 0.12, 0), b = lpt(s[0], s[1], u, w * 0.42);
+        var a2 = lpt(s[0], s[1], u - 0.05, -w * 0.25), m2 = lpt(s[0], s[1], u + 0.03, 0), b2 = lpt(s[0], s[1], u - 0.05, w * 0.25);
+        sc += D`M${a[0]},${a[1]} Q${m[0]},${m[1]} ${b[0]},${b[1]}`; sh += D`M${a2[0]},${a2[1]} Q${m2[0]},${m2[1]} ${b2[0]},${b2[1]}`;
+      });
+    });
+    var K = L[1], F2 = L[2], p = [lptA(K, F2, -4.5, -w * 0.56), lptA(K, F2, -4.5, w * 0.5), lptA(K, F2, 2.5, w * 0.46), lptA(K, F2, 7.5, -w * 0.05), lptA(K, F2, 2.5, -w * 0.56)];
+    var kd = pl(p) + 'Z', rid = pl([lptA(K, F2, -3.5, -w * 0.05), lptA(K, F2, 6, -w * 0.05)]);
+    var kc = front ? pal.trim : dk(pal.trim, 0.25);
+    return S(sh, pal.sheen, 0.8, front ? 0.5 : 0.3) + S(sc, pal.line, 1.1, 0.95) +
+      (pal.glow ? S(kd, pal.glow, 3.6, front ? 0.4 : 0.25) : '') + P(kd, c.cel(kc), 1.5) + S(rid, pal.glow ? pal.core : lt(kc, 0.4), 0.9, 0.8);
+  }
+  /* black scaled hide cloak with a jagged, wing-like hem: scalloped between bony points, the wing ribs showing */
+  function veshMantle(pal) {
+    function wing(g) {
+      return rsCape(g, function (H0, H1, at) {
+        var s = '', n = 4;
+        for (var i = 0; i < n; i++) {
+          var t0 = i / n, t1 = (i + 1) / n, m = at((t0 + t1) / 2, -7), e = at(t1, 5);
+          s += D` Q${m[0]},${m[1]} ${e[0]},${e[1]}`;
+        }
+        return s;
+      });
+    }
+    return {
+      back: function (c, g) {
+        var W2 = wing(g), d = W2.d, cl = c.clip(d), rb = '', o0 = [g.scx - 5, g.sy + 1];
+        for (var i = 1; i <= 4; i++) { var e = W2.at(i / 4, 5); rb += D`M${o0[0]},${o0[1]} Q${(o0[0] + e[0]) / 2 - 4},${(o0[1] + e[1]) / 2} ${e[0]},${e[1]} `; }
+        return P(d, c.cel(pal.base)) + CG(rsScaleG(c, cl, g.sx - 50, g.sx + 30, g.sy, g.hy + 4, 6, 4.2, pal.line, pal.sheen) +
+          S(rb, pal.dark, 2.6) + S(rb, pal.sheen, 0.8, 0.6) + rsEdge(W2.hem, 1.8, pal), cl) + P(d, 'none');
+      },
+      torso: function (c, g) {
+        var d = collarD(g);
+        return P(d, c.cel(pal.base), 1.8) + CG(rsEdge(D`M${g.scx - 11},${g.sy + 6} Q${g.scx - 2},${g.sy - 2} ${g.scx + 11},${g.sy + 2.8}`, 1.4, pal), c.clip(d));
+      },
+      front: function (c, g) {
+        var x = g.scx + 7, y = g.sy + 1.5, cw = '';
+        /* a gold three-claw clasp at the throat */
+        [-2.4, 0, 2.4].forEach(function (dx) { cw += D`M${x + dx - 1},${y - 2} Q${x + dx + 1.8},${y} ${x + dx},${y + 3.6} `; });
+        return drape(c, g, pal.base, null, function (c, g) { var bx = g.bSh[0]; return rsScaleG(c, c.clip(drapeD(g)), bx - 12, bx + 12, g.sy - 6, g.sy + 16, 4.6, 3.2, pal.line, pal.sheen) + CG(rsEdge(drapeD(g), 2, pal), c.clip(drapeD(g))); }) +
+          C(x, y, 2.8, c.cel(pal.dark), 1.2) + rsEdge(cw, 1.1, pal, pal.trim);
+      }
+    };
+  }
+  rsBack('vesh_mantle', veshMantle, VESH, VESH_H);
+  rsChest('vesh_robe', veshRobe, VESH, VESH_H);
+  rsChest('vesh_tunic', veshTunic, VESH, VESH_H);
+  rsLegs('vesh_legs', veshLegs, VESH, VESH_H);
+
+  /* ---- The Magma Throne: a fire lord's domain under a burning mountain. Dark rock and char with molten orange cracks.
+     Hard: obsidian black with white-hot, pale blue flame in the cracks. ---- */
+  var MC = {
+    rock: '#40322c', rockLt: '#6a5448', rockDk: '#1e1614', glow: '#ff5a0a', mid: '#ffa01e', core: '#fff2a8',
+    cloth: '#8e2410', clothDk: '#4a120a', flame: ['#ff5a0a', '#ffa01e', '#ffe680'], leather: '#4e3426', leatherDk: '#261a14', pants: '#2e2420', sheen: null
+  };
+  var MC_H = {
+    rock: '#1e1c26', rockLt: '#3c3850', rockDk: '#0a090e', glow: '#2f8fff', mid: '#9ad8ff', core: '#ffffff',
+    cloth: '#1e1c30', clothDk: '#0c0b16', flame: ['#2f7fff', '#8fd0ff', '#f2fbff'], leather: '#26232e', leatherDk: '#0e0d12', pants: '#16151c', sheen: '#7a74a8'
+  };
+  /* obsidian gets a glassy sheen stripe on Hard */
+  function mcSheen(c, g, pal, cl) {
+    if (!pal.sheen) return '';
+    var a = tq(g, -0.7, 0.05), b = tq(g, -0.1, 0.05), a1 = tq(g, -0.95, 0.9), b1 = tq(g, -0.62, 0.9);
+    return CG(F(D`M${a[0]},${a[1]} L${b[0]},${b[1]} L${b1[0]},${b1[1]} L${a1[0]},${a1[1]} Z`, pal.sheen, 0.22), cl);
+  }
+  function mcPad(c, x, y, rx, pal, front, col) {
+    var d = rsPadD(x, y, rx);
+    return P(d, c.cel(col || pal.rock)) + CG(rsSeam(D`M${x - rx * 0.7},${y - rx * 0.3} L${x - rx * 0.1},${y + 0.5} L${x + rx * 0.3},${y - rx * 0.45} L${x + rx * 0.8},${y + 1}`, front ? 1 : 0.8, pal) +
+      (pal.sheen ? F(D`M${x - rx * 0.8},${y} C${x - rx * 0.7},${y - rx * 0.6} ${x - rx * 0.1},${y - rx * 0.8} ${x + rx * 0.2},${y - rx * 0.75} L${x - rx * 0.4},${y + 1} Z`, pal.sheen, 0.3) : ''), c.clip(d)) + P(d, 'none');
+  }
+  function mcPads(pal, col) { return function (c, g) { return mcPad(c, g.bSh[0] - 1, g.sy + 2, 8, pal, 0, col) + mcPad(c, g.fSh[0] + 1, g.sy + 3, 9.5, pal, 1, col); }; }
+  /* flame tongues rising from a hem line between x0 and x1 at y, heights h0..h1 */
+  function mcFlames(c, x0, x1, y, n, h0, h1, seed, pal, k) {
+    var R_ = rnd(seed), out = ['', '', ''], i, j;
+    for (j = 0; j < 3; j++) {
+      var s = 1 - j * 0.3, d = D`M${x0},${y + 4}`;
+      R_ = rnd(seed);
+      for (i = 0; i < n; i++) {
+        var a = x0 + (x1 - x0) * i / n, b = x0 + (x1 - x0) * (i + 1) / n, m = (a + b) / 2, hh = (h0 + R_() * (h1 - h0)) * s * (k || 1);
+        d += D` L${a + (b - a) * 0.12 * j},${y} Q${m - (b - a) * 0.1},${y - hh * 0.5} ${m + (b - a) * 0.15},${y - hh} Q${m + (b - a) * 0.2},${y - hh * 0.4} ${b - (b - a) * 0.12 * j},${y}`;
+      }
+      out[j] = d + D` L${x1},${y + 4} Z`;
+    }
+    return F(out[0], pal.flame[0], 0.95) + F(out[1], pal.flame[1]) + F(out[2], pal.flame[2]);
+  }
+  /* magma-forged hauberk: rock plates with molten seams between them, a rock gorget */
+  function mcMail(o, pal) {
+    o.torsoC = pal.rock; o.sleeve = dk(pal.rock, 0.12);
+    o.belt = pal.rockDk; o.buckle = pal.mid;
+    o.pads = mcPads(pal);
+    o.torsoFx = function (c, g) {
+      var cl = c.clip(g.torsoD);
+      var seams = tpl(g, [[-1.3, 0.36], [-0.7, 0.3], [-0.25, 0.38], [0.25, 0.31], [0.7, 0.37], [1.3, 0.33]]) +
+        tpl(g, [[-1.3, 0.7], [-0.6, 0.66], [-0.05, 0.73], [0.5, 0.67], [1.3, 0.72]]) +
+        tpl(g, [[-0.35, 0.0], [-0.28, 0.18], [-0.38, 0.34]]) + tpl(g, [[0.42, 0.0], [0.34, 0.16], [0.44, 0.33]]) +
+        tpl(g, [[-0.6, 0.35], [-0.5, 0.52], [-0.62, 0.67]]) + tpl(g, [[0.08, 0.37], [0.0, 0.55], [0.1, 0.72]]) + tpl(g, [[0.72, 0.36], [0.64, 0.52], [0.74, 0.68]]) +
+        tpl(g, [[-0.3, 0.71], [-0.36, 0.86], [-0.28, 1.0]]) + tpl(g, [[0.38, 0.68], [0.3, 0.85], [0.4, 1.0]]);
+      var chips = '';
+      [[-0.75, 0.08], [0.0, 0.08], [0.62, 0.08], [-0.95, 0.42], [-0.35, 0.42], [0.3, 0.42], [0.85, 0.42], [-0.7, 0.76], [0.0, 0.78], [0.6, 0.76]].forEach(function (p) {
+        var a = tq(g, p[0], p[1]), b = tq(g, p[0] + 0.28, p[1] - 0.02);
+        chips += D`M${a[0]},${a[1] + 1.5} L${b[0]},${b[1] + 1.5}`;
+      });
+      return CG(S(chips, pal.rockLt, 1.3, 0.7) + rsSeam(seams, 1.1, pal), cl) + mcSheen(c, g, pal, cl);
+    };
+    o.gTorso = function (c, g) {
+      var d = collarD(g, 1);
+      return P(d, c.cel(pal.rockDk), 1.8) + CG(rsSeam(D`M${g.scx - 10},${g.sy + 4.5} Q${g.scx - 2},${g.sy - 2} ${g.scx + 10},${g.sy + 1.2}`, 0.8, pal), c.clip(d));
+    };
+  }
+  /* firehide tunic: charred leather, glowing ember seams with stitches, a strap with ember studs */
+  function mcLeather(o, pal) {
+    o.torsoC = pal.leather; o.sleeve = pal.leatherDk;
+    o.belt = pal.leatherDk; o.buckle = pal.mid;
+    o.pads = function (c, g) { return mcPad(c, g.bSh[0] - 1, g.sy + 2, 7, pal, 0, pal.leatherDk) + mcPad(c, g.fSh[0] + 1, g.sy + 3, 8.5, pal, 1, pal.leatherDk); };
+    o.torsoFx = function (c, g) {
+      var cl = c.clip(g.torsoD), R_ = rnd(59), ch = '', st = '', i;
+      for (i = 0; i < 6; i++) { var p = tq(g, -0.9 + R_() * 1.7, 0.1 + R_() * 0.8); ch += F(blob(p[0], p[1], 3 + R_() * 2.5, 2 + R_() * 2, 6, R_, 0.5), '#000000', 0.28); }
+      var s1 = tpl(g, [[-0.52, 0.02], [-0.6, 0.5], [-0.5, 1.0]]), s2 = tpl(g, [[0.66, 0.02], [0.58, 0.5], [0.68, 1.0]]);
+      var sa = tq(g, -0.9, 0.08), sb = tq(g, 0.95, 0.9);
+      for (i = 0; i < 6; i++) {
+        var u = i / 5, q1 = tq(g, -0.56 - 0.04 * Math.sin(u * 3), u * 0.95 + 0.03), q2 = tq(g, 0.62 + 0.04 * Math.sin(u * 3), u * 0.95 + 0.03);
+        st += D`M${q1[0] - 1.8},${q1[1] - 0.6} L${q1[0] + 1.8},${q1[1] + 0.6} M${q2[0] - 1.8},${q2[1] - 0.6} L${q2[0] + 1.8},${q2[1] + 0.6} `;
+      }
+      var studs = '';
+      [0.25, 0.5, 0.75].forEach(function (t) { studs += rsDot(c, sa[0] + (sb[0] - sa[0]) * t, sa[1] + (sb[1] - sa[1]) * t, 1.2, pal); });
+      return CG(ch + rsSeam(s1 + s2, 0.9, pal) + S(st, OL, 1.1) +
+        S(D`M${sa[0]},${sa[1]} L${sb[0]},${sb[1]}`, OL, 6.4) + S(D`M${sa[0]},${sa[1]} L${sb[0]},${sb[1]}`, pal.leatherDk, 4.2) + studs +
+        rsSeam(D`M${g.scx - 8},${g.sy + 0.5} L${g.scx + 4},${g.sy + 9} L${g.scx + 13},${g.sy + 1}`, 0.9, pal), cl) + mcSheen(c, g, pal, cl);
+    };
+  }
+  /* robe of living flame: flames rising from the hem, glowing runes down the front, flame-licked shoulders */
+  function mcRuneD(x, y, s, i) {
+    var k = i % 4;
+    if (k === 0) return D`M${x},${y - 2.6 * s} L${x + 2 * s},${y} L${x},${y + 2.6 * s} L${x - 2 * s},${y} Z`;
+    if (k === 1) return D`M${x - 2 * s},${y - 1.8 * s} L${x},${y} L${x + 2 * s},${y - 1.8 * s} M${x - 2 * s},${y + 0.8 * s} L${x},${y + 2.6 * s} L${x + 2 * s},${y + 0.8 * s}`;
+    if (k === 2) return D`M${x},${y - 2.6 * s} L${x + 2.2 * s},${y + 2 * s} L${x - 2.2 * s},${y + 2 * s} Z M${x},${y - 0.2 * s} L${x},${y + 1.2 * s}`;
+    return D`M${x - 2 * s},${y - 2 * s} L${x + 2 * s},${y - 2 * s} M${x},${y - 2 * s} L${x},${y + 2.4 * s} M${x - 1.6 * s},${y + 0.4 * s} L${x + 1.6 * s},${y + 0.4 * s}`;
+  }
+  function mcRobe(o, pal) {
+    o.torsoC = pal.cloth; o.sleeve = dk(pal.cloth, 0.1); o.bell = pal.clothDk;
+    o.robe = pal.cloth;
+    o.belt = pal.rockDk; o.buckle = pal.mid;
+    o.pads = function (c, g) {
+      var out = '';
+      [[g.bSh[0] - 1, g.sy + 2, 8, 0], [g.fSh[0] + 1, g.sy + 3, 9.5, 1]].forEach(function (p) {
+        var x = p[0], y = p[1], rx = p[2];
+        out += mcFlames(c, x - rx * 0.9, x + rx * 0.9, y - rx * 0.3, 3, rx * 0.8, rx * 1.2, 17 + p[3], pal) + P(rsPadD(x, y, rx), c.cel(pal.clothDk)) + rsSeam(rsPadRim(x, y, rx), p[3] ? 1 : 0.8, pal);
+      });
+      return out;
+    };
+    o.robeFx = function (c, g) {
+      var x = g.sx + 5, fy = g.fy, rn = '', i = 0;
+      for (var y = g.hy + 4; y < fy - 22; y += 8, i++) rn += mcRuneD(x + 1.6 + (y - g.hy) * 0.08, y, 0.9, i);
+      return CG(F(g.robeD, c.lg([[0, pal.clothDk, 0.9], [0.45, pal.clothDk, 0], [1, pal.clothDk, 0]]), 1) +
+        P(D`M${x - 3},${g.hy - 6} L${x + 3.4},${g.hy - 6} L${x + 6.4},${fy} L${x - 2},${fy} Z`, pal.clothDk, 0) + rsSeam(rn, 0.7, pal) +
+        mcFlames(c, g.wl - 14, g.wr + 16, fy - 3, 7, 12, 22, 29, pal), c.clip(g.robeD));
+    };
+    o.torsoFx = function (c, g) {
+      var cl = c.clip(g.torsoD), a = tq(g, 0.2, 0), a1 = tq(g, 0.3, 1), rn = '', i;
+      for (i = 0; i < 3; i++) { var p = tq(g, 0.26 + i * 0.02, 0.28 + i * 0.26); rn += mcRuneD(p[0] + 1.2, p[1], 0.85, i + 1); }
+      return CG(F(g.torsoD, c.lg([[0, pal.clothDk, 0.7], [0.6, pal.clothDk, 0], [1, pal.clothDk, 0]])) +
+        S(D`M${a[0] + 1},${a[1]} L${a1[0] + 1.6},${a1[1]}`, pal.clothDk, 6.4) + rsSeam(rn, 0.7, pal) +
+        rsSeam(D`M${g.scx - 8},${g.sy + 0.5} L${g.scx + 4},${g.sy + 8} L${g.scx + 13},${g.sy + 1}`, 0.9, pal), cl);
+    };
+  }
+  /* cinderhound legguards: dark plates, glowing seams between them, a rock knee plate */
+  function mcLegs(c, g, L, front, pal) {
+    var w = g.b.legW, sm = '', ch = '';
+    [[L[0], L[1], [0.35, 0.72]], [L[1], L[2], [0.42, 0.75]]].forEach(function (s) {
+      s[2].forEach(function (u, i) {
+        var a = lpt(s[0], s[1], u, -w * 0.48), m = lpt(s[0], s[1], u + 0.05, w * 0.02), b = lpt(s[0], s[1], u - 0.02, w * 0.48);
+        sm += pl([a, m, b]);
+        var c1 = lpt(s[0], s[1], u - 0.25, -w * 0.3), c2 = lpt(s[0], s[1], u - 0.12, -w * 0.3);
+        if (i === 0) ch += pl([c1, c2]);
+      });
+    });
+    var sd = pl([lpt(L[0], L[1], 0.05, -w * 0.12), lpt(L[0], L[1], 0.35, -w * 0.18)]) + pl([lpt(L[1], L[2], 0.42, -w * 0.15), lpt(L[1], L[2], 0.75, -w * 0.1)]);
+    var K = L[1], F2 = L[2], kd = pl([lptA(K, F2, -4.5, -w * 0.55), lptA(K, F2, -5, w * 0.45), lptA(K, F2, 3.5, w * 0.5), lptA(K, F2, 5.5, -w * 0.1), lptA(K, F2, 3, -w * 0.58)]) + 'Z';
+    var pal2 = front ? pal : { glow: pal.glow, mid: dk(pal.mid, 0.25), core: dk(pal.core, 0.2) };
+    return S(ch, pal.rockLt, 1.2, 0.6) + rsSeam(sm + sd, front ? 1 : 0.8, pal2) + P(kd, c.cel(front ? pal.rock : pal.rockDk), 1.5) +
+      CG(rsSeam(pl([lptA(K, F2, -4, 0), lptA(K, F2, 0, w * 0.1), lptA(K, F2, 4, -w * 0.05)]), 0.7, pal2), c.clip(kd));
+  }
+  /* smouldering cloak: charred dark cloth, a burnt ragged hem glowing like embers, cracks and sparks rising from it */
+  function mcCloak(pal) {
+    function cape(g) {
+      return rsCape(g, function (H0, H1, at) {
+        var s = '', n = 9, R_ = rnd(41);
+        for (var i = 0; i < n; i++) { var m = at((i + 0.5) / n, 2 + R_() * 5), e = at((i + 1) / n, -1 - R_() * 2); s += D` L${m[0] + (R_() - 0.5) * 3},${m[1]} L${e[0]},${e[1]}`; }
+        return s;
+      });
+    }
+    var col = function (pal) { return pal.sheen ? pal.rockDk : '#2a201c'; };
+    return {
+      back: function (c, g) {
+        var K = cape(g), d = K.d, cl = c.clip(d), R_ = rnd(67), cr = '', sp = '', i;
+        for (i = 0; i < 5; i++) {
+          var p = K.at(0.1 + i * 0.2, 0), x = p[0], y = p[1];
+          cr += D`M${x},${y + 2} L${x + (R_() - 0.5) * 6},${y - 6 - R_() * 4} L${x + (R_() - 0.5) * 8},${y - 14 - R_() * 8}`;
+        }
+        for (i = 0; i < 9; i++) { var q = K.at(R_(), -6 - R_() * 22); sp += rsDot(c, q[0], q[1], 0.6 + R_() * 0.5, pal); }
+        return P(d, c.cel(col(pal))) + CG(capeFolds(g, '#000000') + F(d, c.lg([[0, pal.glow, 0], [0.62, pal.glow, 0], [0.86, pal.glow, 0.45], [1, pal.mid, 0.9]])) +
+          rsSeam(cr, 0.8, pal) + sp + S(K.hem, pal.glow, 6, 0.5) + S(K.hem, pal.mid, 2.2) + S(K.hem, pal.core, 0.8), cl) + P(d, 'none');
+      },
+      torso: function (c, g) {
+        var d = collarD(g);
+        return P(d, c.cel(col(pal)), 1.8) + CG(rsSeam(D`M${g.scx - 11},${g.sy + 6} Q${g.scx - 2},${g.sy - 2} ${g.scx + 11},${g.sy + 2.8}`, 0.9, pal), c.clip(d));
+      },
+      front: function (c, g) {
+        return drape(c, g, col(pal), null, function (c, g) {
+          var bx = g.bSh[0], by = g.sy;
+          return F(drapeD(g), c.lg([[0, pal.glow, 0], [0.6, pal.glow, 0], [1, pal.mid, 0.75]])) + rsDot(c, bx - 6, by + 9, 0.8, pal) + rsDot(c, bx - 1, by + 11, 0.7, pal) + rsDot(c, bx - 9, by + 4, 0.6, pal);
+        });
+      }
+    };
+  }
+  rsBack('mc_cloak', mcCloak, MC, MC_H);
+  rsChest('mc_robe', mcRobe, MC, MC_H);
+  rsChest('mc_leather', mcLeather, MC, MC_H);
+  rsChest('mc_mail', mcMail, MC, MC_H);
+  rsLegs('mc_legs', mcLegs, MC, MC_H);
+
+  /* ---- The Tidecrown Citadel: a drowned elven court ruled by a sea spirit. Sea teal and pearl with coral accents.
+     Hard: abyssal indigo and black, the pearl and trim lit a bioluminescent cyan. ---- */
+  var TC = {
+    base: '#2a8e96', base2: '#237880', dark: '#12464e', light: '#8ad8d4', pearl: '#f2f4ec', pearlDk: '#aebcb8', coral: '#ec7258', coralDk: '#a83e2c',
+    trim: '#f2f4ec', glow: null, pants: '#1e5e66'
+  };
+  var TC_H = {
+    base: '#262466', base2: '#1e1c52', dark: '#0a0a22', light: '#4a5ac0', pearl: '#9af8ff', pearlDk: '#2a9ec0', coral: '#3e2c86', coralDk: '#1e1648',
+    trim: '#9af8ff', glow: '#22e4ff', core: '#eaffff', mid: '#7af2ff', pants: '#17153e'
+  };
+  function tcPearl(c, x, y, r, pal) {
+    return (pal.glow ? C(x, y, r * 2.4, c.rg([[0, pal.glow, 0.7], [1, pal.glow, 0]]), 0) : '') +
+      C(x, y, r, c.rg([[0, '#ffffff'], [0.5, pal.pearl], [1, pal.pearlDk]], 0.36, 0.34, 0.72), 1.2) + C(x - r * 0.35, y - r * 0.35, r * 0.3, '#ffffff');
+  }
+  /* a line of curling wave crests from (x0,y) to (x1,y), crest height h */
+  function tcWaveD(x0, x1, y, n, h) {
+    var d = D`M${x0},${y}`, w = (x1 - x0) / n;
+    for (var i = 0; i < n; i++) {
+      var a = x0 + w * i;
+      d += D` C${a + w * 0.35},${y} ${a + w * 0.45},${y - h} ${a + w * 0.72},${y - h} C${a + w * 0.95},${y - h} ${a + w * 0.92},${y - h * 0.45} ${a + w * 0.74},${y - h * 0.5} C${a + w * 0.84},${y - h * 0.1} ${a + w * 0.9},${y} ${a + w},${y}`;
+    }
+    return d;
+  }
+  /* scallop-shell pad: a fan with ridges */
+  function tcShell(c, x, y, rx, pal, col) {
+    var d = D`M${x - rx},${y + 3}`, rg = '', n = 5, i;
+    for (i = 0; i < n; i++) {
+      var a0 = Math.PI * (1 + i / n), a1 = Math.PI * (1 + (i + 1) / n), am = (a0 + a1) / 2;
+      d += D` Q${x + Math.cos(am) * rx * 1.18},${y + 3 + Math.sin(am) * rx * 1.08} ${x + Math.cos(a1) * rx},${y + 3 + Math.sin(a1) * rx * 0.98}`;
+      if (i) rg += D`M${x},${y + 4} L${x + Math.cos(a0) * rx * 0.92},${y + 3 + Math.sin(a0) * rx * 0.9} `;
+    }
+    d += D` Q${x},${y + 7} ${x - rx},${y + 3} Z`;
+    return (pal.glow ? S(d, pal.glow, 3.4, 0.35) : '') + P(d, c.cel(col || pal.pearl)) + CG(S(rg, pal.pearlDk, 1, 0.9), c.clip(d)) + C(x, y + 4.5, 2, c.cel(pal.coral), 1.1);
+  }
+  function tcShells(pal) { return function (c, g) { return tcShell(c, g.bSh[0] - 1, g.sy + 2, 7.5, pal) + tcShell(c, g.fSh[0] + 1, g.sy + 3, 9, pal); }; }
+  /* a line of pearl (Normal) or lit cyan (Hard) */
+  function tcTrim(d, w, pal) { return pal.glow ? S(d, pal.glow, w * 3, 0.3) + S(d, OL, w + 1.2) + S(d, pal.mid, w) + S(d, pal.core, w * 0.4) : S(d, OL, w + 1.4) + S(d, pal.pearl, w); }
+  /* robe of the abyss: flowing teal, a band of curling waves at the hem, a wave across the chest, shell shoulders */
+  function tcRobe(o, pal) {
+    o.torsoC = pal.base; o.sleeve = pal.base2; o.bell = pal.dark;
+    o.robe = pal.base;
+    o.belt = pal.coral; o.buckle = pal.pearl;
+    o.pads = tcShells(pal);
+    o.robeFx = function (c, g) {
+      var fy = g.fy, y = fy - 14, x0 = g.wl - 16, x1 = g.wr + 18, wv = tcWaveD(x0, x1, y, 4, 7), wv2 = tcWaveD(x0 - 5, x1, y - 13, 4, 5);
+      return CG(F(wv + D` L${x1},${fy + 4} L${x0},${fy + 4} Z`, pal.dark) + tcTrim(wv, 1.4, pal) + S(wv2, pal.light, 1.3, 0.8) +
+        F(D`M${g.sx + 2},${g.hy - 6} L${g.sx + 8},${g.hy - 6} L${g.sx + 12},${fy} L${g.sx + 3},${fy} Z`, pal.base2, 0.9) +
+        tcTrim(D`M${g.wl - 14},${fy - 5.5} Q${g.sx},${fy - 1} ${g.wr + 14},${fy - 5.5}`, 1.2, pal), c.clip(g.robeD));
+    };
+    o.torsoFx = function (c, g) {
+      var cl = c.clip(g.torsoD), a = tq(g, -1.1, 0.62), b = tq(g, 1.2, 0.5);
+      var wv = tcWaveD(a[0], b[0], (a[1] + b[1]) / 2 + 2, 3, 4.5);
+      return CG(F(wv + D` L${b[0]},${g.hy + 4} L${a[0]},${g.hy + 4} Z`, pal.base2) + S(wv, pal.light, 1.3) +
+        tcTrim(D`M${g.scx - 8},${g.sy} L${g.scx + 4},${g.sy + 9} L${g.scx + 13},${g.sy + 1}`, 1.3, pal), cl);
+    };
+  }
+  /* leviathan hide tunic: sleek dark-backed hide, a pale pleated belly down the front, a fin on the shoulder */
+  function tcFin(c, x, y, s, pal) {
+    var d = D`M${x + 5 * s},${y + 2} C${x + 2 * s},${y - 5 * s} ${x - 6 * s},${y - 10 * s} ${x - 14 * s},${y - 11 * s} C${x - 10 * s},${y - 5 * s} ${x - 9 * s},${y} ${x - 7 * s},${y + 3} Z`;
+    var rb = D`M${x - 5 * s},${y + 2} L${x - 11 * s},${y - 9 * s} M${x - 1 * s},${y + 2} L${x - 6 * s},${y - 7.5 * s} M${x + 2.5 * s},${y + 1} L${x - 1.5 * s},${y - 5 * s}`;
+    return (pal.glow ? S(d, pal.glow, 3.6, 0.32) : '') + P(d, c.lg([[0, pal.light], [0.5, pal.base], [1, pal.dark]], 1, 0, 0, 1), 1.6) + CG(S(rb, pal.dark, 1, 0.85), c.clip(d)) +
+      (pal.glow ? rsDot(c, x - 11 * s, y - 9.5 * s, 0.7, pal) + rsDot(c, x - 6 * s, y - 7.5 * s, 0.6, pal) : '');
+  }
+  function tcLeather(o, pal) {
+    o.torsoC = pal.base; o.sleeve = pal.dark;
+    o.belt = pal.dark; o.buckle = pal.pearl;
+    o.pads = function (c, g) {
+      var k = g.b.shW / 16;
+      return tcFin(c, g.bSh[0], g.sy + 3, 0.7 * k, pal) + P(rsPadD(g.bSh[0] - 1, g.sy + 2, 7), c.cel(pal.dark)) +
+        tcFin(c, g.fSh[0] + 1, g.sy + 2, 0.95 * k, pal) + P(rsPadD(g.fSh[0] + 1, g.sy + 3, 8.5), c.cel(pal.base2)) + tcTrim(rsPadRim(g.fSh[0] + 1, g.sy + 3, 8.5), 0.9, pal);
+    };
+    o.torsoFx = function (c, g) {
+      var cl = c.clip(g.torsoD), bl = tpl(g, [[0.05, -0.2], [0.72, -0.2], [0.78, 0.5], [0.62, 1.1], [0.02, 1.1], [-0.08, 0.5]]) + 'Z', pl2 = '', i;
+      for (i = 0; i < 7; i++) { var a = tq(g, 0.0, 0.1 + i * 0.13), b = tq(g, 0.8, 0.08 + i * 0.13); pl2 += D`M${a[0]},${a[1]} Q${(a[0] + b[0]) / 2},${(a[1] + b[1]) / 2 + 1.6} ${b[0]},${b[1]}`; }
+      var bk = tpl(g, [[-1.3, -0.2], [-0.55, -0.2], [-0.7, 0.5], [-0.62, 1.1], [-1.3, 1.1]]) + 'Z';
+      return CG(F(bk, pal.dark, 0.7) + F(bl, pal.pearlDk, pal.glow ? 0.35 : 0.8) + S(pl2, pal.glow ? pal.glow : pal.dark, pal.glow ? 1.1 : 0.9, pal.glow ? 0.8 : 0.55) +
+        S(bl, OL, 1.4) + (pal.glow ? rsDot(c, tq(g, -0.3, 0.3)[0], tq(g, -0.3, 0.3)[1], 0.7, pal) + rsDot(c, tq(g, -0.4, 0.6)[0], tq(g, -0.4, 0.6)[1], 0.6, pal) + rsDot(c, tq(g, -0.28, 0.85)[0], tq(g, -0.28, 0.85)[1], 0.7, pal) : ''), cl);
+    };
+  }
+  /* coral trim along a line: a band with little branching nubs */
+  function tcCoral(c, d, w, pal) { return S(d, OL, w + 2) + S(d, pal.coral, w) + S(d, lt(pal.coral, 0.35), w * 0.3, 0.8); }
+  /* scale hauberk: fish scales with pearl sheen, coral trim at the collar and the scalloped hem over the hips */
+  function tcMail(o, pal) {
+    o.torsoC = pal.base; o.sleeve = pal.base2;
+    o.belt = pal.coralDk; o.buckle = pal.pearl;
+    o.pads = function (c, g) {
+      var out = '';
+      [[g.bSh[0] - 1, g.sy + 2, 8, 0], [g.fSh[0] + 1, g.sy + 3, 9.5, 1]].forEach(function (p) {
+        var d = rsPadD(p[0], p[1], p[2]);
+        out += P(d, c.cel(pal.base2)) + rsScaleG(c, c.clip(d), p[0] - p[2], p[0] + p[2], p[1] - p[2], p[1] + 5, 4.2, 3, pal.dark, pal.light) + tcCoral(c, rsPadRim(p[0], p[1], p[2]), 1.6, pal);
+      });
+      return out;
+    };
+    o.torsoFx = function (c, g) {
+      var cl = c.clip(g.torsoD);
+      return CG(rsScaleG(c, cl, g.scx - 30, g.scx + 30, g.sy - 6, g.hy, 5.2, 3.6, pal.dark, pal.glow ? pal.glow : pal.pearl) +
+        tcCoral(c, D`M${g.scx - 9},${g.sy + 1} Q${g.scx},${g.sy - 3} ${g.scx + 12},${g.sy}`, 2, pal), cl);
+    };
+    o.gTorso = function (c, g) {
+      /* the hauberk's skirt over the hips: three rounded lobes, scaled, edged in coral along the bottom */
+      var x0 = g.wl - 2, x1 = g.wr + 2.5, y = g.hy - 1, n = 3, w = (x1 - x0) / n, hem = D`M${x0},${y + 2}`, i;
+      for (i = 0; i < n; i++) { var a = x0 + w * i; hem += D` C${a + w * 0.05},${y + 9.5} ${a + w * 0.95},${y + 9.5} ${a + w},${y + 2}`; }
+      var d = hem + D` L${x1},${y} L${x0},${y} Z`;
+      return P(d, c.cel(pal.base2), 1.4) + rsScaleG(c, c.clip(d), x0, x1, y, y + 9, 4.6, 3.2, pal.dark, pal.light) + tcCoral(c, hem, 1.6, pal);
+    };
+  }
+  /* tide commander's legplates: scale bands, a scallop-shell knee guard */
+  function tcLegs(c, g, L, front, pal) {
+    var w = g.b.legW, sc = '';
+    [[L[0], L[1], [0.25, 0.5, 0.75]], [L[1], L[2], [0.45, 0.65, 0.85]]].forEach(function (s) {
+      s[2].forEach(function (u) {
+        var a = lpt(s[0], s[1], u, -w * 0.44), m = lpt(s[0], s[1], u + 0.12, 0), b = lpt(s[0], s[1], u, w * 0.44);
+        sc += D`M${a[0]},${a[1]} Q${m[0]},${m[1]} ${b[0]},${b[1]}`;
+      });
+    });
+    var K = L[1], F2 = L[2], dx = F2[0] - K[0], dy = F2[1] - K[1], ang = Math.atan2(dy, dx) * 180 / Math.PI - 90, kc = lptA(K, F2, 1.5, -w * 0.05);
+    var s = w / 9.5 * (front ? 1.3 : 1.15);
+    var shell = G(tcShell(c, 0, -3, 5.6, pal, front ? pal.pearl : pal.pearlDk), 'translate(' + r1(kc[0]) + ',' + r1(kc[1]) + ') rotate(' + r1(ang) + ') scale(' + r1(s) + ')');
+    return S(sc, pal.dark, 1.2, 0.9) + (pal.glow ? S(sc, pal.glow, 0.6, front ? 0.7 : 0.4) : S(sc, pal.light, 0.5, front ? 0.6 : 0.35)) + shell;
+  }
+  /* the drowned prince's mantle: flowing teal, a wave-cut hem edged in pearl foam, curls in the cloth, a pearl clasp */
+  function tcMantle(pal) {
+    function cape(g) {
+      return rsCape(g, function (H0, H1, at) {
+        var s = '', n = 5;
+        for (var i = 0; i < n; i++) {
+          var a = at(i / n), e = at((i + 1) / n), m = at((i + 0.55) / n, 6), cu = at((i + 0.8) / n, 1);
+          s += D` C${a[0] - 1},${a[1] + 4} ${m[0] + 3},${m[1] + 2} ${m[0]},${m[1]} C${m[0] - 2},${m[1] - 2} ${cu[0] + 1},${cu[1] - 3} ${cu[0] - 1},${cu[1] - 1} L${e[0]},${e[1]}`;
+        }
+        return s;
+      });
+    }
+    return {
+      back: function (c, g) {
+        var K = cape(g), d = K.d, cl = c.clip(d), wl = '', i;
+        for (i = 0; i < 3; i++) {
+          var p = K.at(0.18 + i * 0.3, -12 - i * 3), x = p[0], y = p[1];
+          wl += D`M${x + 9},${y + 3} C${x + 4},${y - 2} ${x - 2},${y - 3} ${x - 4},${y + 1} C${x - 5},${y + 4} ${x - 1},${y + 5} ${x},${y + 2}`;
+        }
+        var flow = D`M${g.scx - 6},${g.sy + 2} C${g.sx - 20},${g.hy - 10} ${g.sx - 12},${g.hy + 6} ${g.sx - 26},${g.fy - 20} M${g.scx + 2},${g.sy + 4} C${g.sx - 8},${g.hy} ${g.sx - 2},${g.hy + 10} ${g.sx - 8},${g.fy - 22}`;
+        return P(d, c.lg([[0, pal.base], [0.6, pal.base2], [1, pal.dark]])) + CG(S(flow, pal.dark, 1.6, 0.7) + S(wl, pal.light, 1.3, 0.85) + tcTrim(K.hem, 1.6, pal), cl) + P(d, 'none');
+      },
+      torso: function (c, g) {
+        var d = collarD(g);
+        return P(d, c.cel(pal.base), 1.8) + CG(tcTrim(D`M${g.scx - 11},${g.sy + 6} Q${g.scx - 2},${g.sy - 2} ${g.scx + 11},${g.sy + 2.8}`, 1.2, pal), c.clip(d));
+      },
+      front: function (c, g) {
+        return drape(c, g, pal.base, null, function (c, g) { var bx = g.bSh[0], by = g.sy; return S(tcWaveD(bx - 12, bx + 8, by + 10, 2, 3.5), pal.light, 1.2, 0.85) + CG(tcTrim(drapeD(g), 1.6, pal), c.clip(drapeD(g))); }) +
+          tcCoral(c, D`M${g.scx + 4},${g.sy + 4.5} l2.6,-3.2 M${g.scx + 5.5},${g.sy + 3} l-1.2,-2.6`, 1.2, pal) + tcPearl(c, g.scx + 8, g.sy + 1.5, 2.8, pal);
+      }
+    };
+  }
+  rsBack('tc_mantle', tcMantle, TC, TC_H);
+  rsChest('tc_robe', tcRobe, TC, TC_H);
+  rsChest('tc_leather', tcLeather, TC, TC_H);
+  rsChest('tc_mail', tcMail, TC, TC_H);
+  rsLegs('tc_legs', tcLegs, TC, TC_H);
   var GEARKEYS = {
     weapon: Object.keys(GKIND), ranged: ['militia_longbow'], back: Object.keys(GBACK), chest: Object.keys(GCHEST),
     legs: Object.keys(GLEGS), mask: Object.keys(GMASK)

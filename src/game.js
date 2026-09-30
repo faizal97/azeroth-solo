@@ -1672,7 +1672,14 @@
   let lookItems = null;
   G.lookItem = function (place, key) { // an item that has this look, for its name, icon and the class rules
     if (!lookItems) { lookItems = {}; for (const id in D.ITEMS) { const l = D.ITEMS[id].look; if (l && !lookItems[l[0] + ':' + l[1]]) lookItems[l[0] + ':' + l[1]] = D.ITEMS[id]; } }
-    return lookItems[place + ':' + key] || null;
+    const hk = /_hard$/.test(key) && lookItems[place + ':' + key.slice(0, -5)];
+    return lookItems[place + ':' + key] || (hk ? Object.assign({}, hk, { name: hk.name + ' (Hard)', look: [place, key] }) : null);
+  };
+  // raid pieces with a look also have a Hard recolour (dropped on Hard); the collection log lists both
+  let hardLookIds = null;
+  G.hardLookIds = function () {
+    if (!hardLookIds) { hardLookIds = new Set(); for (const k in D.DUNGEONS) { const Dg = D.DUNGEONS[k]; if (!Dg.hard) continue; for (const p of Dg.pulls) for (const m of p.mobs) for (const id of (D.MOBS[m].loot || [])) if (D.ITEMS[id].look) hardLookIds.add(id); } }
+    return hardLookIds;
   };
   G.collectLook = function (it) {
     const l = lookOf(it); if (!l) return false;
@@ -1709,6 +1716,7 @@
     for (const id in D.ITEMS) {
       const it = D.ITEMS[id], l = it.look; if (!l || l[0] !== place || seen.has(l[1]) || !G.canUseItem(it, P.cls)) continue;
       seen.add(l[1]); out.push({ key: l[1], name: it.name, icon: it.icon, q: it.q, lvl: it.lvl || 1, source: it.source || null, have: have.has(l[1]) });
+      if (G.hardLookIds().has(id)) out.push({ key: l[1] + '_hard', name: it.name + ' (Hard)', icon: it.icon, q: it.q, lvl: (it.lvl || 1) + 0.5, source: 'Drops on Hard', have: have.has(l[1] + '_hard') });
     }
     out.sort((a, b) => a.lvl - b.lvl || a.name.localeCompare(b.name));
     for (const o of G.wardrobeOptions(place)) if (o.keepsake) out.push(Object.assign({ lvl: 60, have: true, source: 'A Legend\'s keepsake' }, o));
@@ -1793,6 +1801,7 @@
   G.titleUnlocked = function (t) {
     const r = G.records(), n = t.need;
     if (n.clear) return !!(r.clears[n.clear] && r.clears[n.clear].clears);
+    if (n.hard) return !!(r.clears[n.hard] && r.clears[n.hard].hard); // a whole raid cleared on Hard (v10.7)
     if (n.quest) return !!G.S.player.done[n.quest];
     if (n.guildRank != null) return !!(root.SOC && SOC.rank() >= n.guildRank);
     if (n.trial) return ((G.S.player.trials || {}).bestEver || 0) >= n.trial; // Trials (v10.4): best level beaten in time
@@ -2308,7 +2317,9 @@
   G.hardCopy = function (id) {
     const it = G.copyItem(id), inf = G.upgradeInfo(it);
     if (!inf.ok) return it;
-    const out = G.upgradedCopy(it, inf.pts + G.HARD_STEPS * D.UPGRADE.step * G.upgradeRef(it)); out.hard = true; return out;
+    const out = G.upgradedCopy(it, inf.pts + G.HARD_STEPS * D.UPGRADE.step * G.upgradeRef(it)); out.hard = true;
+    if (it.look) out.look = [it.look[0], it.look[1] + '_hard']; // the Hard recolour of the raid's set
+    return out;
   };
   G.queueFor = function (act, opts) {
     const S = G.S, A = D.ACTIVITIES[act], hard = !!(opts && opts.hard);

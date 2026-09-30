@@ -129,5 +129,24 @@ for (const act of raids) {
   [Dg.bossMult, Dg.trashMult] = saved;
   check(G.account().marks - m2a === G.clearMarks(act), `the second clear that week pays only the normal Marks (${G.account().marks - m2a})`);
 }
+// the raid sets (v10.7): every raid has looks; a Hard drop carries the Hard recolour; the wardrobe lists both; the
+// featured bonus gives a look you do not have; a whole raid on Hard gives its title
+{
+  for (const act of raids) {
+    const Dg = D.DUNGEONS[D.ACTIVITIES[act].dungeon], ids = new Set(); for (const p of Dg.pulls) for (const m of p.mobs) for (const id of (D.MOBS[m].loot || [])) ids.add(id);
+    const withLook = [...ids].filter((id) => D.ITEMS[id].look);
+    check(withLook.length >= 4, `${act}: its set has ${withLook.length} looks`);
+    const hc = G.hardCopy(withLook[0]); check(hc.look && hc.look[1] === D.ITEMS[withLook[0]].look[1] + '_hard', `${act}: a Hard drop carries the Hard look (${hc.look})`);
+    const T = D.TITLES.find((x) => x.need && x.need.hard === act);
+    G.newGame({ name: 'L', cls: 'priest', race: 'human' }); G.S.player.level = 60;
+    check(T && !G.titleUnlocked(T), `${act}: a Hard title, locked before a Hard clear`);
+    G.S.player.codex = { [act]: { clears: 3, hard: 1 } }; check(T && G.titleUnlocked(T), `${act}: the Hard title after a Hard clear`);
+  }
+  G.newGame({ name: 'L', cls: 'priest', race: 'human' });
+  const all = G.wardrobeAll('chest'), n = all.filter((o) => /_hard$/.test(o.key)).length, base = all.filter((o) => all.some((h) => h.key === o.key + '_hard')).length;
+  check(n >= 3 && n === base, `the wardrobe lists a Hard recolour for each raid chest a priest can wear (${n})`);
+  const a0 = G.account(); a0.looks = []; G.saveAccount(a0); const act = G.raidActs()[0], left = G.raidLooksLeft(act);
+  check(left.length && G.canUseItem(D.ITEMS[left[0]], 'priest'), `the featured look is one this class can wear first (${left[0]})`);
+}
 console.log(`hard: ${ok}/${ok + bad} checks pass`);
 process.exitCode = bad ? 1 : 0;

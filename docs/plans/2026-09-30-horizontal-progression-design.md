@@ -100,4 +100,4 @@ Each step ships to beta alone with its own sim.
 1. **Gear upgrades:** measure the gap, add `it.pw` and its Marks cost, an Upgrade button in the item sheet.
 2. **The wardrobe.**
 3. **Trials:** season pool, Omens with counters, rating, bots by rating, chat requests, the Trials tab, rewards.
-4. **Hard raids and the featured raid.**
+4. **Hard raids and the featured raid.** Built (v10.7): Hard for all three raids (sim/hardraid.js tunes, sim/hard.js checks), the featured raid, and the raid sets (armour looks per raid with a Hard recolour; weapon looks still to come).

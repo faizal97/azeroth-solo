@@ -20,6 +20,13 @@
   epic('deepmother_leather', 'Leviathan Hide Tunic', 'chest', { atype: 'leather', lvl: 60, armor: 310, stats: { agi: 29, sta: 21 }, icon: 'chest_leather', sell: 19600 });
   epic('deepmother_plate', 'Deepmother Scale Hauberk', 'chest', { atype: 'mail', lvl: 60, armor: 580, stats: { str: 29, sta: 25 }, icon: 'chest_mail', sell: 19800 });
 
+  // the raid's set (v10.7): each piece has its look, and a recoloured Hard look when it drops on Hard (G.hardCopy)
+  D.ITEMS.aeldran_cloak.look = ['back', 'tc_mantle'];
+  D.ITEMS.deepmother_robe.look = ['chest', 'tc_robe'];
+  D.ITEMS.deepmother_leather.look = ['chest', 'tc_leather'];
+  D.ITEMS.deepmother_plate.look = ['chest', 'tc_mail'];
+  D.ITEMS.serathis_legs.look = ['legs', 'tc_legs'];
+
   Object.assign(D.MOBS, {
     tidecrown_guard: { name: 'Tidecrown Royal Guard', lvl: [60, 60], family: 'humanoid', hpMult: 1.2, drops: [['thieves_coin', 0.6], ['linen_cloth', 0.3]], aggro: 'Kneel before the Prince!' },
     tidecrown_tidecaller: { name: 'Tidecrown Tidecaller', lvl: [60, 60], family: 'humanoid', drops: [['thieves_coin', 0.6], ['linen_cloth', 0.4]] },

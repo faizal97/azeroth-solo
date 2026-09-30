@@ -17,6 +17,12 @@
   epic('onyx_dagger', "Meriel's Kiss", 'weapon', { wtype: 'dagger', lvl: 60, dmg: [52, 95], speed: 1.8, stats: { agi: 19, sta: 12 }, icon: 'dagger', sell: 17600 });
   epic('onyx_staff', "Stormcaller's Staff", 'weapon', { wtype: 'staff', lvl: 60, dmg: [94, 135], speed: 3, stats: { int: 27, spi: 20 }, sp: 45, icon: 'staff', sell: 18400 });
 
+  // the raid's set (v10.7): each piece has its look, and a recoloured Hard look when it drops on Hard (G.hardCopy)
+  D.ITEMS.onyx_mantle.look = ['back', 'vesh_mantle'];
+  D.ITEMS.onyx_robe.look = ['chest', 'vesh_robe'];
+  D.ITEMS.onyx_tunic.look = ['chest', 'vesh_tunic'];
+  D.ITEMS.onyx_legs.look = ['legs', 'vesh_legs'];
+
   Object.assign(D.MOBS, {
     onyxian_warder: { name: 'Veshmiran Warder', lvl: [60, 60], family: 'dragonkin', hpMult: 1.2, drops: [['thieves_coin', 0.6]], aggro: 'The mother sleeps. You will not wake her.' },
     onyxian_whelp: { name: 'Veshmiran Whelp', lvl: [60, 60], family: 'dragonkin', hpMult: 0.6, dmgMult: 0.7, drops: [['ruined_pelt', 0.2]] },

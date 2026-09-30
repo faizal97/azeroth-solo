@@ -31,6 +31,13 @@
   epic('ragnaros_leather', 'Firehide Tunic', 'chest', { atype: 'leather', lvl: 60, armor: 279, stats: { agi: 26, sta: 19 }, icon: 'chest_leather', sell: 17600 });
   epic('ragnaros_mail', 'Magmaforged Hauberk', 'chest', { atype: 'mail', lvl: 60, armor: 522, stats: { str: 26, sta: 22 }, icon: 'chest_mail', sell: 17800 });
 
+  // the raid's set (v10.7): each piece has its look, and a recoloured Hard look when it drops on Hard (G.hardCopy)
+  D.ITEMS.magmadar_cloak.look = ['back', 'mc_cloak'];
+  D.ITEMS.ragnaros_robe.look = ['chest', 'mc_robe'];
+  D.ITEMS.ragnaros_leather.look = ['chest', 'mc_leather'];
+  D.ITEMS.ragnaros_mail.look = ['chest', 'mc_mail'];
+  D.ITEMS.magmadar_legs.look = ['legs', 'mc_legs'];
+
   Object.assign(D.MOBS, {
     // trash
     core_hound: { name: 'Core Hound', lvl: [60, 60], family: 'beast', drops: [['gold_dust', 0.2]] },
