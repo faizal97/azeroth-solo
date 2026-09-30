@@ -2263,7 +2263,7 @@
     if (!window.FRIENDS || !FRIENDS.available() || !FRIENDS.on() || fw.stop || fw.starting) return;
     fw.starting = true;
     FRIENDS.resume().then(() => {
-      fw.stop = FRIENDS.watch((v) => { fw.view = v; if (G.S) renderNavDots(); if (ui.sheet === 'social' && ui.socialTab === 'friends' && !ui.dialog) ui.sheetFn(); else if (ui.sheet === 'friend' && ui.sheetFn) ui.sheetFn(); });
+      fw.stop = FRIENDS.watch((v) => { fw.view = v; if (G.S) renderNavDots(); if (ui.sheet === 'social' && ui.socialTab === 'friends') ui.sheetFn(); else if (ui.sheet === 'friend' && ui.sheetFn) ui.sheetFn(); });
       FRIENDS.online(!document.hidden);
     }).catch(() => {}).finally(() => { fw.starting = false; });
   }
