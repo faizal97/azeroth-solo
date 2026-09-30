@@ -2949,12 +2949,12 @@
         const fk3 = om.find((x) => x === 'warded' || x === 'vengeful' || x === 'sheltered'), fName = fk3 && p.mobs.length >= 2 ? D.MOBS[p.mobs[p.mobs.length - 1]].name : null;
         const lines = Object.entries(counts).map(([m, n]) => { const M = D.MOBS[m], L = mobLvl || (M.lvl ? M.lvl[1] : A.maxLvl), u2 = E.mobUnit(m, L, M.boss ? boss : trash); return `${n > 1 ? n + '× ' : ''}${M.name} (${L}): ${k(u2.maxHp)} health, hits for ${k(u2.dmg[0])}–${k(u2.dmg[1])}${fName === M.name ? (fk3 === 'warded' ? ' · the warden' : fk3 === 'sheltered' ? ' · sheltered' : ' · vengeance') : ''}`; });
         const bk = p.mobs.find((m) => D.MOBS[m].boss || m === A.boss), bm = bk ? D.MOBS[bk] : null; // a Wanted target is named on the activity
-        const drops = bm && bm.loot && !trial ? bm.loot.map((id) => D.ITEMS[id]).filter(Boolean) : [];
+        const drops = bm && bm.loot && !trial ? bm.loot.filter((id) => D.ITEMS[id]) : [];
         list.append(h('div', { class: 'row' }, h('div', { class: 'ic mob' }, img(mobArt(bk || p.mobs[0]))),
           h('div', { class: 't' }, h('b', null, p.label || D.MOBS[p.mobs[0]].name, bm ? h('span', { class: 'gf-kind k-raid', style: { marginLeft: '6px' } }, 'Boss') : null),
             ...lines.map((l) => h('small', { style: { whiteSpace: 'normal' } }, l)),
             bm && bm.specialText ? h('small', { style: { whiteSpace: 'normal', color: 'var(--gold)' } }, 'Special: ' + bm.specialText) : null,
-            drops.length ? h('small', { style: { whiteSpace: 'normal' } }, 'Drops: ', ...drops.map((it, i) => h('span', { class: 'q' + it.q }, (i ? ', ' : '') + it.name))) : null)));
+            drops.length ? h('small', { style: { whiteSpace: 'normal' } }, 'Drops (tap one): ', ...drops.map((id, i) => [i ? ', ' : '', h('button', { class: 'drop-link q' + D.ITEMS[id].q, onclick: () => showDialog(itemTip(G.copyItem(id)), true) }, D.ITEMS[id].name)]).flat()) : null)));
       }
       b.append(list);
       const why = trial ? G.trialBlock(act) : G.activityBlock(act), queued = G.S.queue && G.S.queue.act === act;
