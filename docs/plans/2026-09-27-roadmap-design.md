@@ -51,6 +51,7 @@ This document says where the game stands, how it is designed, and what comes nex
 | 10.0 | The world becomes Caldreth: every name, story and piece of art is our own; the story becomes The Black Ledger |
 | 10.1 | Cloud save to your own Google Drive; the Bounty Board; Throw away; account sync; real Friends (10.1.1) |
 | 10.2 (beta) | Legends as story heroes (cameos, keepsakes); 25 story scenes; Widya, the second Legend, and the hidden Bard class |
+| 10.3 (in progress) | Gear upgrades: Mentor Marks raise level-60 blue and purple gear a step at a time to the ceiling (purples 100%, blues 92%); level-60 dungeon and raid clears pay Marks |
 
 ## How the world works
 
