@@ -611,28 +611,34 @@
   E.SPECIALS = SPECIALS;
   const addLvl = (m, lv) => (lv > 0 ? lv : m.level + lv);
   // the plain facts of a boss's special, with the numbers of this unit (made by E.mobUnit at the level you will meet it)
-  E.specialFacts = function (u) {
-    const sp = u && u.special, S = (sp && SPECIALS[sp.kind]) || {}; if (!sp && !(u && u.hardX)) return [];
-    const hit = (x) => `${Math.round(u.dmg[0] * x)}–${Math.round(u.dmg[1] * x)}`, out = [];
-    const sch = S.school ? ` ${S.school}` : '';
-    if (S.mult) out.push(`Every ${S.every} sec (first at ${SPECIAL_FIRST} sec): ${S.who === 'all' ? 'hits everyone in your group' : S.who === 'random' ? 'hits one group member at random' : 'hits its target'} for ${hit(S.mult)}${sch} damage.`);
-    if (S.heal) out.push(`Every ${S.every} sec (first at ${SPECIAL_FIRST} sec): heals itself for ${Math.round(S.heal * 100)}% of its health (${Math.round(u.maxHp * S.heal)}).`);
+  // A boss's mechanics as rows for the boss card (v10.7): { name, when, what, hard }, with this unit's numbers.
+  // name says the kind in plain words, when is the timer or health mark, what is the effect. specialFacts joins them.
+  E.specialRows = function (u) {
+    const sp = u && u.special, S = (sp && SPECIALS[sp.kind]) || {}, out = []; if (!sp && !(u && u.hardX)) return out;
+    const hit = (x) => `${Math.round(u.dmg[0] * x)}–${Math.round(u.dmg[1] * x)}`;
+    const hitRow = (every, first, x, who, school, hard) => out.push({ name: who === 'all' ? 'Group hit' : who === 'random' ? 'Random hit' : 'Heavy hit', when: `Every ${every} sec (first at ${first} sec)`, what: `${who === 'all' ? 'hits everyone in your group' : who === 'random' ? 'hits one group member at random' : 'hits its target'} for ${hit(x)}${school ? ' ' + school : ''} damage.`, hard });
+    const healRow = (every, first, x, hard) => out.push({ name: 'Heals itself', when: `Every ${every} sec (first at ${first} sec)`, what: `heals for ${Math.round(x * 100)}% of its health (${Math.round(u.maxHp * x)}).`, hard });
+    if (S.mult) hitRow(S.every, SPECIAL_FIRST, S.mult, S.who, S.school, false);
+    if (S.heal) healRow(S.every, SPECIAL_FIRST, S.heal, false);
     if (S.adds) {
       const byMob = {};
       for (const [at, key, n, lv] of S.adds) { const k = key || sp.summon || 'twilight_acolyte', id = k + ':' + n; (byMob[id] = byMob[id] || { k, n, lv, at: [] }).at.push(Math.round(at * 100) + '%'); }
-      for (const a of Object.values(byMob)) out.push(`At ${a.at.join(' and ')} health: ${joinText(a.n, a.k, addLvl(u, a.lv))}`);
+      for (const a of Object.values(byMob)) out.push({ name: 'Calls help', when: `At ${a.at.join(' and ')} health`, what: joinText(a.n, a.k, addLvl(u, a.lv)), hard: false });
     }
-    if (S.stunAt) out.push(`At ${S.stunAt.map((x) => Math.round(x * 100) + '%').join(' and ')} health: stuns your whole group for ${S.stun} sec (orcs ${S.stunOrc} sec).`);
-    if (S.enrageAt) out.push(`Below ${Math.round(S.enrageAt * 100)}% health: hits ${Math.round((S.enrage - 1) * 100)}% harder.`);
+    if (S.stunAt) out.push({ name: 'Stuns the group', when: `At ${S.stunAt.map((x) => Math.round(x * 100) + '%').join(' and ')} health`, what: `stuns your whole group for ${S.stun} sec (orcs ${S.stunOrc} sec).`, hard: false });
+    if (S.enrageAt) out.push({ name: 'Frenzy', when: `Below ${Math.round(S.enrageAt * 100)}% health`, what: `hits ${Math.round((S.enrage - 1) * 100)}% harder.`, hard: false });
     for (const x of u.hardX || []) {
-      const kind = x.kind || 'adds', who = x.who === 'all' ? 'hits everyone in your group' : x.who === 'random' ? 'hits one group member at random' : 'hits its target';
-      if (kind === 'adds') out.push(`Hard: at ${Math.round(x.at * 100)}% health: ${joinText(x.n, x.mob, addLvl(u, x.lvl))}`);
-      else if (kind === 'enrage') out.push(`Hard: below ${Math.round(x.at * 100)}% health: hits ${Math.round((x.mult - 1) * 100)}% harder.`);
-      else if (kind === 'heal') out.push(`Hard: every ${x.every} sec (first at ${x.every / 2} sec): heals itself for ${Math.round(x.heal * 100)}% of its health (${Math.round(u.maxHp * x.heal)}).`);
-      else out.push(`Hard: every ${x.every} sec (first at ${x.every / 2} sec): ${who} for ${Math.round(u.dmg[0] * x.mult)}–${Math.round(u.dmg[1] * x.mult)}${x.school ? ' ' + x.school : ''} damage.`);
+      const kind = x.kind || 'adds';
+      if (kind === 'adds') out.push({ name: 'Calls help', when: `At ${Math.round(x.at * 100)}% health`, what: joinText(x.n, x.mob, addLvl(u, x.lvl)), hard: true });
+      else if (kind === 'enrage') out.push({ name: 'Frenzy', when: `Below ${Math.round(x.at * 100)}% health`, what: `hits ${Math.round((x.mult - 1) * 100)}% harder.`, hard: true });
+      else if (kind === 'heal') healRow(x.every, x.every / 2, x.heal, true);
+      else hitRow(x.every, x.every / 2, x.mult, x.who, x.school, true);
     }
     return out;
   };
+  const lc = (t) => t.charAt(0).toLowerCase() + t.slice(1), uc = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+  E.specialFacts = (u) => E.specialRows(u).map((r) => (r.hard ? 'Hard: ' + lc(r.when) : r.when) + ': ' + r.what);
+  E.ucFirst = uc;
   // Hard raids (v10.7): one extra mechanic per boss, set by the raid's data on the unit (u.hardX), on top of the boss's
   // own special. Kinds: adds { at, mob, n, lvl } once at a health mark; hit { every, mult, who: all|random|target,
   // school } on a timer; enrage { at, mult } below a health mark; heal { every, heal } on a timer. `text` is the emote.

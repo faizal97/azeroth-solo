@@ -2963,24 +2963,43 @@
         const lines = Object.entries(counts).map(([m, n]) => { const M = D.MOBS[m], L = mobLvl || (M.lvl ? M.lvl[1] : A.maxLvl), u2 = E.mobUnit(m, L, M.boss ? boss : trash); return `${n > 1 ? n + '× ' : ''}${M.name} (${L}): ${k(u2.maxHp)} health, hits for ${k(u2.dmg[0])}–${k(u2.dmg[1])}${fName === M.name ? (fk3 === 'warded' ? ' · the warden' : fk3 === 'sheltered' ? ' · sheltered' : ' · vengeance') : ''}`; });
         const bk = p.mobs.find((m) => D.MOBS[m].boss || m === A.boss), bm = bk ? D.MOBS[bk] : null; // a Wanted target is named on the activity
         const drops = bm && bm.loot && !trial ? bm.loot.filter((id) => D.ITEMS[id]) : [];
-        list.append(h('div', { class: 'row' }, h('div', { class: 'ic mob' }, img(mobArt(bk || p.mobs[0]))),
+        // a boss row stays short: its numbers and one line of what the card holds; the card has the rest (v10.7)
+        const bkeys = [...new Set(p.mobs.filter((m) => D.MOBS[m].boss || m === A.boss))];
+        const unitOf = (key) => { const M = D.MOBS[key], u = E.mobUnit(key, mobLvl || (M.lvl ? M.lvl[1] : A.maxLvl), M.boss ? boss : trash); if (hard) u.hardX = G.hardExtra(act, key); return u; };
+        const abil = bkeys.flatMap((key) => E.specialRows(unitOf(key))), nHard = abil.filter((r) => r.hard).length;
+        const summary = bkeys.length ? [abil.length ? `${abil.length} ${abil.length === 1 ? 'ability' : 'abilities'}` : 'no special abilities', nHard ? `${nHard} Hard` : '', drops.length ? `${drops.length} drops` : '', 'tap for details'].filter(Boolean).join(' · ') : null;
+        list.append(h(bkeys.length ? 'button' : 'div', { class: 'row', onclick: bkeys.length ? () => openBossCard({ act, label: p.label || bm.name, keys: bkeys, unitOf, hard, drops }) : null }, h('div', { class: 'ic mob' }, img(mobArt(bk || p.mobs[0]))),
           h('div', { class: 't' }, h('b', null, p.label || D.MOBS[p.mobs[0]].name, bm ? h('span', { class: 'gf-kind k-raid', style: { marginLeft: '6px' } }, 'Boss') : null),
             ...lines.map((l) => h('small', { style: { whiteSpace: 'normal' } }, l)),
-            // every boss in the pull (the Twin Tides are two): its special and, on Hard, its extra mechanic, with numbers
-            ...[...new Set(p.mobs.filter((m) => D.MOBS[m].boss || m === A.boss))].flatMap((key, _, all) => {
-              const M = D.MOBS[key], who = all.length > 1 ? M.name + ': ' : '', out = [];
-              if (M.specialText) out.push(h('small', { style: { whiteSpace: 'normal', color: 'var(--gold)' } }, who + 'Special: ' + M.specialText));
-              if (M.special || hard) for (const t of E.specialFacts(Object.assign(E.mobUnit(key, mobLvl || (M.lvl ? M.lvl[1] : A.maxLvl), M.boss ? boss : trash), hard ? { hardX: G.hardExtra(act, key) } : {}))) out.push(h('small', { style: { whiteSpace: 'normal' } }, who + (M.specialText || /^Hard/.test(t) ? '' : 'Special: ') + t));
-              return out;
-            }),
-            hard && bm && bm.boss ? h('small', { style: { whiteSpace: 'normal' } }, G.hardBonusLeft(act, bk) ? `This week: ${G.HARD_STEPS} steps up (not taken yet)` : 'This week: bonus taken, Normal items until Monday') : null,
-            drops.length ? h('small', { style: { whiteSpace: 'normal' } }, 'Drops (tap one): ', ...drops.map((id, i) => [i ? ', ' : '', h('button', { class: 'drop-link q' + D.ITEMS[id].q, onclick: () => showDialog(itemTip(G.copyItem(id)), true) }, D.ITEMS[id].name)]).flat()) : null)));
+            summary ? h('small', { style: { whiteSpace: 'normal', color: 'var(--gold)' } }, summary) : null),
+          bkeys.length ? h('div', { class: 'r' }, h('span', { class: 'nav-arr' }, '›')) : null));
       }
       b.append(list);
       const why = trial ? G.trialBlock(act) : G.activityBlock(act), queued = G.S.queue && G.S.queue.act === act;
       b.append(h('div', { class: 'btn-row', style: { marginTop: '10px' } }, queued
         ? h('button', { class: 'btn alt', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave the queue')
         : h('button', { class: 'btn', disabled: !!why || !!G.S.queue, onclick: () => { if (trial ? G.queueTrial(act, ui.trialLvl) : (G.queueFor(act, hard ? { hard: true } : undefined), !!G.S.queue)) closeSheet(); } }, why ? (why === 'hidden' ? 'Only for the other faction' : why) : trial ? `Queue for Trial ${lvl}` : hard ? 'Queue for Hard' : 'Queue')));
+    });
+  }
+  // the boss card (v10.7): one boss (or both Twin Tides) in full: numbers, each ability as its own row (name, when, what,
+  // Hard ones tagged), this week's Hard bonus and the drops as rows. Facts only (docs/design-mindset.md).
+  function openBossCard(o) {
+    const { act, label, keys, unitOf, hard, drops } = o, k = (n) => (n >= 10000 ? (n / 1000).toFixed(n >= 100000 ? 0 : 1) + 'k' : String(Math.round(n)));
+    openSheet('bosscard', label, hard ? 'Boss · Hard' : 'Boss', (b) => {
+      for (const key of keys) {
+        const M = D.MOBS[key], u = unitOf(key), rows = E.specialRows(u);
+        b.append(h('div', { class: 'row' }, h('div', { class: 'ic mob' }, img(mobArt(key))), h('div', { class: 't' }, h('b', null, M.name), h('small', null, `Level ${u.level} · ${k(u.maxHp)} health · hits for ${k(u.dmg[0])}–${k(u.dmg[1])}`))));
+        if (M.specialText) b.append(h('p', { class: 'ai-note', style: { fontStyle: 'italic', margin: '6px 2px' } }, `“${M.specialText}”`));
+        b.append(h('div', { class: 'sec-h' }, keys.length > 1 ? `${M.short || M.name.split(' ')[0]}'s abilities` : 'Abilities', h('small', null, rows.length ? String(rows.length) : 'none')));
+        if (!rows.length) b.append(h('p', { class: 'ai-note' }, 'No special abilities: only its normal attacks.'));
+        else b.append(h('div', { class: 'list' }, ...rows.map((r) => h('div', { class: 'row nav' + (r.hard ? ' hard' : '') },
+          h('div', { class: 't' }, h('b', null, r.name, r.hard ? h('span', { class: 'tag-hard' }, 'Hard') : null), h('small', { style: { whiteSpace: 'normal' } }, `${r.when}: ${r.what}`))))));
+      }
+      if (hard && G.S.player) b.append(h('div', { class: 'ai-box', style: { marginTop: '8px' } }, h('div', { class: 'ai-row' }, h('span', null, 'Hard bonus this week'), h('b', null, G.hardBonusLeft(act, keys[0]) ? `${G.HARD_STEPS} upgrade steps up (not taken yet)` : 'taken: Normal items until Monday'))));
+      if (drops && drops.length) {
+        b.append(h('div', { class: 'sec-h' }, 'Drops', h('small', null, `${drops.length <= 2 ? 'both drop' : `2 of ${drops.length} drop`} per kill · tap one`)));
+        b.append(h('div', { class: 'list' }, ...drops.map((id) => { const it = hard && G.hardBonusLeft(act, keys[0]) ? G.hardCopy(id) : G.copyItem(id); return itemRow(it, 1, '', () => showDialog(itemTip(it), true)); })));
+      }
     });
   }
   const openTrialBriefing = (act, lvl) => openBriefing(act, true, lvl);
