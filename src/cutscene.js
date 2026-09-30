@@ -71,6 +71,18 @@
         lines: [{ t: 0.5, text: 'He alone survived. Now he walks the roads under a hood, and the Black Brood stirs again.' }, { t: 6, who: 'Lyveus Cloveus', text: 'They made me a ghost. Ghosts keep watch.' }] },
     ] },
     // Quest scenes (v10.2): short moments on key quests (quest + on: 'accept' | 'done'), locked in the Theater until seen
+    { id: 'lyv_hood', legend: 'lyveus', scene: true, quest: ['lg_hood_a', 'lg_hood_h'], on: 'accept', level: 17, title: 'The Hooded Wanderer', music: 'dungeon', shots: [
+      { bg: 'scene:@here', dur: 10, cam: [[0, 0, 1.08], [0, -2, 1.2]], fx: ['fadein', 'fadeout'],
+        actors: [{ a: 'story:lyveus_hooded', x: 42, y: 2, w: 32, anim: 'breathe', from: { o: 0 }, dur: 1.6 }],
+        lines: [{ t: 0.5, text: 'A hooded knight waits by the road, as if he has been waiting for you.' }, { t: 4.5, who: 'Hooded Wanderer', text: 'Don\'t look at my face. Look at the seals.' }] },
+    ] },
+    { id: 'lyv_page', legend: 'lyveus', scene: true, quest: 'lg_lyv_page', on: 'done', level: 54, title: 'Lyveus: The Name on the Page', music: 'dungeon', shots: [
+      { bg: 'scene:brd_prison', dur: 9, cam: [[0, 2, 1.14], [0, 0, 1.04]], fx: ['fadein'],
+        lines: [{ t: 0.5, text: 'A torn page of Hale\'s notes. Near the bottom, one line:' }, { t: 3.5, text: '"The elf guard who should be dead. Lyveus Cloveus. Ask him."' }] },
+      { bg: 'scene:silverleaf_lodge', dur: 9, cam: [[0, 0, 1.04], [0, -2, 1.18]], fx: ['embers', 'fadeout'],
+        actors: [{ a: 'story:lyveus', x: 40, y: 2, w: 32, anim: 'breathe', from: { o: 0 }, dur: 1.2 }],
+        lines: [{ t: 0.5, who: 'Lyveus', text: 'He saw it too. Five years, and someone else saw it too.' }] },
+    ] },
     { id: 'lyv_unhood', legend: 'lyveus', scene: true, quest: 'lg_lyv_ashes', on: 'accept', level: 37, title: 'Lyveus: The Face Under the Hood', music: 'dungeon', shots: [
       { bg: 'scene:silverleaf_lodge', dur: 8, cam: [[0, 0, 1.12], [0, 0, 1.04]], fx: ['fadein', 'embers'],
         actors: [{ a: 'story:lyveus_hooded', x: 40, y: 2, w: 32, anim: 'breathe', from: { o: 0 }, dur: 1.6 }],
@@ -304,13 +316,68 @@
         actors: [{ a: 'mob:nalveshra', x: 40, y: 0, w: 42, from: { y: 20, o: 0 }, dur: 2.4 }],
         lines: [{ t: 0.5, text: 'Below the throne, the Deepmother waits in the dark.' }, { t: 5, who: "Nal'veshra", text: 'Little lights. I will swallow you as I swallowed the spirit.' }] },
     ] },
+    // level beats (v10.2): a short scene on reaching a level, where you are (@here); faction: only that side
+    { id: 'ms_notice', beat: true, scene: true, level: 5, title: 'The Notice', music: 'town', shots: [
+      { bg: 'scene:@here', dur: 10, cam: [[0, 0, 1.08], [0, -2, 1.2]], fx: ['fadein', 'fadeout'],
+        lines: [{ t: 0.5, text: 'Across the realm, the same notice goes up on every inn door.' }, { t: 4.5, text: 'It lists debts: farms, forges, fishing boats. At the bottom, a black seal, a closed ledger.' }] },
+    ] },
+    { id: 'ms_smokepit', faction: 'horde', scene: true, quest: 'hidden_enemies', on: 'done', level: 13, title: 'The Offering Bowl', music: 'dungeon', shots: [
+      { bg: 'scene:ragefire_chasm', dur: 10, cam: [[0, 2, 1.14], [0, 0, 1.04]], fx: ['fadein', 'embers', 'fadeout'],
+        lines: [{ t: 0.5, text: 'Bazzak the Hungerer falls in the Smoke Pit beneath Vazhrak.' }, { t: 4.5, text: 'In the cult\'s offering bowl lies a coin, still warm, stamped with a claw.' }] },
+    ] },
+    { id: 'ms_quarry', faction: 'alliance', scene: true, quest: 'quarry_ledgers', on: 'done', level: 16, title: 'Where the Ore Goes', music: 'elwynn', shots: [
+      { bg: 'scene:gold_coast_quarry', dur: 10, cam: [[-3, 0, 1.1], [0, 0, 1.04]], fx: ['fadein', 'fadeout'],
+        lines: [{ t: 0.5, text: 'The overseers keep neat books. Every cart of ore goes the same way: to a cove under Fenwick.' }, { t: 5, text: 'Paid in full, by a lender nobody in Longfield has met: the Black Ledger.' }] },
+    ] },
+    { id: 'ms_caravan', beat: true, scene: true, faction: 'horde', level: 16, title: 'Whatever Banner You Fly', music: 'town', shots: [
+      { bg: 'scene:@here', dur: 10, cam: [[0, 0, 1.08], [0, 2, 1.18]], fx: ['fadein', 'fadeout'],
+        lines: [{ t: 0.5, text: 'A Krugar caravan master signs for a loan in black ink.' }, { t: 4.5, who: 'The Ledger\'s clerk', text: 'Whatever banner you fly, the Ledger holds your debts.' }] },
+    ] },
+    { id: 'ms_whelps', faction: 'alliance', scene: true, quest: 'whelp_hunt', on: 'done', level: 23, title: 'The Strongbox', music: 'dungeon', shots: [
+      { bg: 'scene:galardell_valley', dur: 10, cam: [[0, 2, 1.16], [0, 0, 1.04]], fx: ['fadein', 'fadeout'],
+        actors: [{ a: 'mob:black_dragon_whelp', x: 44, y: 2, w: 26, anim: 'breathe', from: { o: 0 }, dur: 1.4 }],
+        lines: [{ t: 0.5, text: 'The black whelps sleep curled around a strongbox, like cats around a stove.' }, { t: 5, text: 'Its lock is stamped with a closed ledger.' }] },
+    ] },
+    { id: 'ms_crates', beat: true, scene: true, faction: 'horde', level: 23, title: 'Stamped Crates', music: 'town', shots: [
+      { bg: 'scene:@here', dur: 10, cam: [[0, 0, 1.08], [0, -2, 1.18]], fx: ['fadein', 'fadeout'],
+        lines: [{ t: 0.5, text: 'The camp\'s new axes arrive in crates stamped with a closed ledger.' }, { t: 4.5, text: 'The quartermaster signs for them without reading. Everyone signs without reading.' }] },
+    ] },
+    { id: 'ms_wyrmchain', faction: 'alliance', scene: true, quest: 'whelp_collars', on: 'done', level: 29, title: 'New Chains', music: 'dungeon', shots: [
+      { bg: 'scene:angerfang_encampment', dur: 10, cam: [[0, 2, 1.14], [0, 0, 1.04]], fx: ['fadein', 'embers', 'fadeout'],
+        lines: [{ t: 0.5, text: 'The Wyrmchain\'s chains are new, and the collars on the whelps are fine steel.' }, { t: 5, text: 'Folded in a collar is the smith\'s receipt: paid by the Black Ledger, in advance.' }] },
+    ] },
+    { id: 'ms_badges', faction: 'horde', scene: true, quest: 'syndicate_badges', on: 'done', level: 27, title: 'Scratched Seals', music: 'dungeon', shots: [
+      { bg: 'scene:durnholde_keep', dur: 10, cam: [[3, 0, 1.12], [0, 0, 1.04]], fx: ['fadein', 'fadeout'],
+        lines: [{ t: 0.5, text: 'Every badge carries the seal of a noble house of Kingsmere.' }, { t: 4.5, text: 'On every one, someone has scratched the seal away.' }] },
+    ] },
+    { id: 'ms_initial', scene: true, quest: ['a_documents', 'h_documents'], on: 'done', level: 38, title: 'Signed M.', music: 'dungeon', shots: [
+      { bg: 'scene:stromgarde_keep', dur: 10, cam: [[0, 0, 1.06], [0, -2, 1.2]], fx: ['fadein', 'fadeout'],
+        lines: [{ t: 0.5, text: 'The orders are dry and exact: who to rob, who to pay, who to bury.' }, { t: 5, text: 'Each one is signed with a single letter: M.' }] },
+    ] },
+    { id: 'ms_deeds', beat: true, scene: true, level: 43, title: 'Deeds by the Stack', music: 'town', shots: [
+      { bg: 'scene:gadgetzan', dur: 10, cam: [[-3, 0, 1.1], [0, 0, 1.04]], fx: ['fadein', 'fadeout'],
+        lines: [{ t: 0.5, text: 'In Coppergulch, the Black Ledger has opened an office.' }, { t: 4.5, text: 'Farm deeds from Longfield sell by the stack. Nobody asks where the farmers went.' }] },
+    ] },
+    { id: 'ms_courier', beat: true, scene: true, level: 46, title: 'Count the Coins', music: 'dungeon', shots: [
+      { bg: 'scene:@here', dur: 10, cam: [[0, 0, 1.06], [0, 2, 1.18]], fx: ['fadein', 'fadeout'],
+        actors: [{ a: 'hero', x: 40, y: 2, w: 30, anim: 'breathe', from: { o: 0 }, dur: 1.2 }],
+        lines: [{ t: 0.5, text: 'A courier finds you on the road, hands you a folded note, and will not say who sent him.' }, { t: 5, text: 'Smuggled out of the mountain, in a careful hand: "Count the coins. G. H."' }] },
+    ] },
+    { id: 'ms_vale', scene: true, quest: ['bsa_blackrock', 'bsh_blackrock'], on: 'done', level: 53, title: 'A Cheap Mine', music: 'dungeon', shots: [
+      { bg: 'story:blackrock_mountain', dur: 10, cam: [[0, 2, 1.16], [0, 0, 1.04]], fx: ['fadein', 'embers', 'fadeout'],
+        lines: [{ t: 0.5, text: 'High on the Spire, Lord Kethran Vale watches the Cinderpeak orcs drill.' }, { t: 5, who: 'Lord Vale', text: 'A burning mountain is a cheap mine.' }] },
+    ] },
+    { id: 'ms_broodwing', faction: 'horde', scene: true, quest: 'bsh_broodlings', on: 'done', level: 54, title: 'Gold Among the Eggs', music: 'dungeon', shots: [
+      { bg: 'scene:terror_wing_path', dur: 10, cam: [[0, 0, 1.08], [0, -2, 1.2]], fx: ['fadein', 'embers', 'fadeout'],
+        lines: [{ t: 0.5, text: 'On the Broodwing Path, the broodlings hatch by the dozen.' }, { t: 4.5, text: 'Someone has scattered gold among the eggs, the way a farmer scatters grain for hens.' }] },
+    ] },
     // Main-story quest scenes (v10.2): a short moment when a key story quest is done (both factions where there are two)
-    { id: 'ms_watch', scene: true, quest: 'peoples_militia', on: 'done', level: 11, title: 'The Watchfires of Warrick\'s Rise', music: 'elwynn', shots: [
+    { id: 'ms_watch', faction: 'alliance', scene: true, quest: 'peoples_militia', on: 'done', level: 11, title: 'The Watchfires of Warrick\'s Rise', music: 'elwynn', shots: [
       { bg: 'scene:sentinel_hill', dur: 10, cam: [[0, 2, 1.14], [0, 0, 1.04]], fx: ['fadein', 'embers', 'fadeout'],
         actors: [{ a: 'hero', x: 40, y: 2, w: 30, anim: 'breathe', from: { o: 0 }, dur: 1.4 }],
         lines: [{ t: 0.5, text: 'The Grey Hood trappers are gone from the roads. At Warrick\'s Rise, the farmers light the watchfires again.' }, { t: 5.5, who: 'Bram Oakhollow', text: 'Let them count us now. The Farmers\' Watch still stands.' }] },
     ] },
-    { id: 'ms_blackwell', scene: true, quest: 'defias_brotherhood', on: 'done', level: 20, title: 'The Account Remains Open', music: 'dungeon', shots: [
+    { id: 'ms_blackwell', faction: 'alliance', scene: true, quest: 'defias_brotherhood', on: 'done', level: 20, title: 'The Account Remains Open', music: 'dungeon', shots: [
       { bg: 'scene:deadmines_ship', dur: 9, cam: [[-3, 0, 1.12], [2, 0, 1.06]], fx: ['fadein'],
         lines: [{ t: 0.5, text: 'Corvin Blackwell is dead. His last ship still sits in the cove, loaded with Longfield\'s grain.' }] },
       { bg: 'scene:deadmines_ship', dur: 9, cam: [[2, 0, 1.06], [0, -2, 1.22]], fx: ['fadeout'],
@@ -320,7 +387,7 @@
       { bg: 'scene:venture_base_camp', dur: 10, cam: [[0, 0, 1.06], [0, -2, 1.22]], fx: ['fadein', 'embers', 'fadeout'],
         lines: [{ t: 0.5, text: 'The goblins\' ledgers balance to the copper.' }, { t: 4, text: 'Every page is paid in the same coin: warm to the touch, and stamped with a claw.' }] },
     ] },
-    { id: 'ms_hale_cell', scene: true, quest: 'brd_jail_break', on: 'done', level: 54, title: 'The Last Door', music: 'dungeon', shots: [
+    { id: 'ms_hale_cell', faction: 'alliance', scene: true, quest: 'brd_jail_break', on: 'done', level: 54, title: 'The Last Door', music: 'dungeon', shots: [
       { bg: 'scene:brd_prison', dur: 8, cam: [[0, 2, 1.16], [0, 0, 1.04]], fx: ['fadein', 'embers'],
         actors: [{ a: 'story:windsor', x: 42, y: 2, w: 30, anim: 'breathe', from: { o: 0 }, dur: 1.6 }],
         lines: [{ t: 0.5, text: 'Behind the last door of the detention block, Marshal Hale is still counting: in chalk, on the wall.' }] },

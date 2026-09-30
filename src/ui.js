@@ -3122,10 +3122,12 @@
       let shownLeg = false;
       let shownInst = false;
       for (const ch of ordered) {
+        if (ch.faction && G.S && ch.faction !== G.myFaction()) continue; // the other faction's scenes
         if (ch.legend && !shownLeg) { shownLeg = true; list.append(h('div', { class: 'sec-h', style: { marginTop: '8px' } }, 'Legends')); }
         if (ch.instance && !shownInst) { shownInst = true; list.append(h('div', { class: 'sec-h', style: { marginTop: '8px' } }, 'Dungeons & Raids')); }
         if (!ch.instance && ch === ordered[0]) list.append(h('div', { class: 'sec-h' }, 'Story'));
-        const open = (un.has(ch.id) || (ch.legend && !ch.scene)) && ch.shots; // legend lore is open from the start; quest scenes once seen
+        const P = G.S.player, passed = ch.scene && (ch.faction ? ch.faction === G.myFaction() : true) && (ch.quest ? [].concat(ch.quest).some((q) => P.done[q] || (ch.on === 'accept' && P.quests[q])) : P.level >= ch.level);
+        const open = (un.has(ch.id) || (ch.legend && !ch.scene) || passed) && ch.shots; // legend lore open from the start; scenes once seen or passed
         list.append(h('button', { class: 'row' + (open ? '' : ' locked'), onclick: () => { if (open) { closeSheet(); playChapter(ch.id); } else toast(ch.scene ? 'Plays during a quest. Keep going!' : ch.instance ? 'Enter the dungeon to unlock.' : ch.shots ? `Reach level ${ch.level} to unlock.` : 'Arrives with a later update.'); } },
           h('div', { class: 'ic' }, h('span', { class: 'mark' + (open ? '' : ' grey') }, open ? '▶' : '·')),
           h('div', { class: 't' }, h('b', null, ch.scene && !open ? (ch.legend ? 'A Legend scene' : 'A story scene') : ch.title), h('small', null, ch.scene ? (open ? `${ch.legend ? 'Legend' : 'Story'} scene · level ${ch.level}` : `Plays during a quest (level ${ch.level})`) : ch.legend ? 'Legend lore' : ch.instance ? (open ? 'Dungeon intro' : 'Plays the first time you enter') : ch.id === 'intro' ? 'Plays after you create a character' : `Level ${ch.level}`)),
@@ -3278,7 +3280,7 @@
     start(); if (rep.away > 120000) showAway(rep);
     friendsEnter();
     // a chapter added in an update after you passed its level plays the next time you come in
-    if (window.CS) { const seen = CS.unlocked(); const ch = CS.CHAPTERS.find((c) => c.shots && c.level > 1 && c.level <= G.S.player.level && !seen.has(c.id) && chapterReady(c)); if (ch) ui.pendingChapter = ch.id; }
+    if (window.CS) { const seen = CS.unlocked(); const ch = CS.CHAPTERS.find((c) => c.shots && !c.scene && c.level > 1 && c.level <= G.S.player.level && !seen.has(c.id) && chapterReady(c)); if (ch) ui.pendingChapter = ch.id; }
   }
   function confirmDeleteChar(c, after) {
     const input = h('input', { type: 'text', placeholder: 'Type DELETE', style: { minHeight: '44px', background: '#0c0906', color: 'var(--text)', border: '1px solid #5c4526', borderRadius: '3px', padding: '0 10px', width: '100%', fontSize: '16px' } });
@@ -3378,7 +3380,7 @@
     const questScene = (qid, on) => { const ch = qid && window.CS && CS.CHAPTERS.find((c) => c.scene && [].concat(c.quest).includes(qid) && (c.on || 'done') === on && c.shots && !CS.unlocked().has(c.id)); if (ch) ui.pendingChapter = ch.id; };
     G.on('questAccept', (d) => questScene(d && d.qid, 'accept'));
     G.on('questDone', (d) => questScene(d && d.qid, 'done'));
-    G.on('levelup', (d) => { const ch = window.CS && CS.CHAPTERS.find((c) => c.level === d.level && c.shots && c.id !== 'intro' && chapterReady(c)); if (ch) ui.pendingChapter = ch.id; renderAll(); banner('Level ' + d.level, d.learned.length ? 'New: ' + d.learned.map((a) => D.ABILITIES[a].name).join(', ') : 'Health and mana restored'); });
+    G.on('levelup', (d) => { const ch = window.CS && CS.CHAPTERS.find((c) => c.level === d.level && c.shots && c.id !== 'intro' && (!c.scene || c.beat) && (!c.faction || c.faction === G.myFaction()) && !CS.unlocked().has(c.id) && chapterReady(c)); if (ch) ui.pendingChapter = ch.id; renderAll(); banner('Level ' + d.level, d.learned.length ? 'New: ' + d.learned.map((a) => D.ABILITIES[a].name).join(', ') : 'Health and mana restored'); });
     G.on('combat', onCombat);
     G.on('instanceEnter', (d) => {
       const ch = d.dungeon && window.CS && CS.forInstance(d.dungeon);
