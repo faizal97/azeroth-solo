@@ -2160,6 +2160,42 @@
       b.append(info);
     });
   }
+  // Journey overview (v10.5): facts only, never advice (docs/design-mindset.md). "Open to you" lists what exists for you
+  // right now; "Progress" shows how far you are, in bounded numbers. Each row opens the screen it is about.
+  function journeyOverview(b) {
+    const S = G.S, P = S.player, region = (D.PLACES[P.place] || {}).region, cap = D.LEVEL_CAP;
+    const rows = [], add = (ic, title, sub, fn) => rows.push(h(fn ? 'button' : 'div', { class: 'row', onclick: fn || null }, h('div', { class: 'ic' }, img(art('icon', ic))), h('div', { class: 't' }, h('b', null, title), sub ? h('small', { style: { whiteSpace: 'normal' } }, sub) : null)));
+    // quests: here, in your log, ready to hand in
+    const here = Object.keys(D.QUESTS).filter((q) => { const Q = D.QUESTS[q]; if (G.questState(q) !== 'available' || P.level - Q.lvl > 5) return false; const pl = Object.values(D.PLACES).find((x) => (x.npcs || []).includes(Q.giver)); return pl && pl.region === region; }).length;
+    const log = Object.keys(P.quests).length, ready = Object.keys(P.quests).filter((q) => G.questState(q) === 'complete').length;
+    add('journal', `${log} quest${log === 1 ? '' : 's'} in your log${ready ? `, ${ready} ready to hand in` : ''}`, `${here} more to pick up in ${D.REGIONS[region] ? D.REGIONS[region].name : 'this zone'} at your level`, () => { closeSheet(); openQuests(); });
+    const tp = G.talentPoints(); if (tp.free) add('journal', `${tp.free} talent point${tp.free === 1 ? '' : 's'} to spend`, 'Hero → Abilities → Talents', () => { ui.heroTab = 'abil'; ui.sheetFn(); });
+    const acts = Object.keys(D.ACTIVITIES).filter((k) => { const A = D.ACTIVITIES[k]; return !A.needQuest && P.level >= A.minLvl && P.level <= A.maxLvl && G.activityBlock(k) !== 'hidden'; });
+    const dg = acts.filter((k) => D.ACTIVITIES[k].dungeon && (D.ACTIVITIES[k].size || 5) <= 5), rd = acts.filter((k) => (D.ACTIVITIES[k].size || 5) > 5), wa = acts.filter((k) => !D.ACTIVITIES[k].dungeon);
+    if (dg.length || rd.length || wa.length) add('hearthstone', [dg.length ? `${dg.length} dungeon${dg.length > 1 ? 's' : ''}` : '', rd.length ? `${rd.length} raid${rd.length > 1 ? 's' : ''}` : '', wa.length ? `${wa.length} Wanted` : ''].filter(Boolean).join(', ') + ' at your level', dg.concat(rd, wa).slice(0, 3).map((k) => D.ACTIVITIES[k].name).join(', ') + (dg.length + rd.length + wa.length > 3 ? ', ...' : ''), () => { closeSheet(); openSocial('groups'); });
+    if (G.rouletteOptions().length) add('hearthstone', G.rouletteReady() ? 'Dungeon Roulette: ready today' : 'Dungeon Roulette: done today', null, () => { closeSheet(); openSocial('groups'); });
+    const bh = G.bountiesHeld(); if (bh) add('journal', `${bh} bount${bh === 1 ? 'y' : 'ies'} in progress`, null, null);
+    if (P.level >= cap && window.TRIALS && TRIALS.open(TRIALS.season(new Date()))) { add('journal', `${TRIALS.name(TRIALS.season(new Date()))} Trials: rating ${G.trialRating()}`, `Realm rank #${G.trialBoard().rank} of ${G.trialBoard().of}`, () => { ui.gfTab = 'trials'; closeSheet(); openSocial('groups'); }); }
+    // the next thing that opens with a level
+    const nexts = [[D.TALENT_START, 'Talents'], [D.RIDING.lvl, 'Riding'], [cap, 'Trials, raids and gear upgrades']].filter(([l]) => P.level < l).sort((x, y) => x[0] - y[0]);
+    if (nexts.length) add('journal', `Next at level ${nexts[0][0]}: ${nexts[0][1]}`, null, null);
+    b.append(h('div', { class: 'sec-h' }, 'Open to you now', h('small', null, 'tap one to go there')), h('div', { class: 'list' }, ...rows));
+    // progress: bounded numbers only
+    const prog = [], pr = (label, a, n) => prog.push(h('div', { class: 'ai-row' }, h('span', null, label), h('b', { class: 'tnum' }, n != null ? `${a} of ${n}` : a)));
+    const cx = P.codex || {}, dAll = Object.keys(D.ACTIVITIES).filter((k) => D.ACTIVITIES[k].dungeon && (D.ACTIVITIES[k].size || 5) <= 5 && G.activityBlock(k) !== 'hidden'), rAll = Object.keys(D.ACTIVITIES).filter((k) => (D.ACTIVITIES[k].size || 5) > 5 && G.activityBlock(k) !== 'hidden');
+    pr('Level', P.level, cap);
+    pr('Dungeons cleared', dAll.filter((k) => cx[k] && cx[k].clears).length, dAll.length);
+    if (rAll.length) pr('Raids cleared', rAll.filter((k) => cx[k] && cx[k].clears).length, rAll.length);
+    const L = Object.keys(D.LEGENDS || {}); if (L.length) pr('Legend stories finished', L.filter((k) => G.legendUnlocked(k)).length, L.length);
+    pr('Titles', D.TITLES.filter(G.titleUnlocked).length, D.TITLES.length);
+    if (G.WARDROBE_PLACES) { let got = 0, all = 0; for (const pl of G.WARDROBE_PLACES) { const w = G.wardrobeAll(pl); all += w.length; got += w.filter((o) => o.have).length; } pr('Looks collected', got, all); }
+    if (P.level >= cap) {
+      const up = D.GEAR_SLOTS.map((s) => P.equip[s]).filter((it) => it && G.upgradeInfo(it).ok);
+      if (up.length) pr('Worn gear', `${Math.round(up.reduce((s, it) => s + G.upgradeInfo(it).pct, 0) / up.length)}% of the ceiling`);
+      if (P.trials) pr('Best Trial beaten in time', P.trials.bestEver || 0);
+    }
+    b.append(h('div', { class: 'sec-h' }, 'Progress'), h('div', { class: 'ai-box' }, ...prog));
+  }
   function openHero(tab) {
     if (tab && typeof tab === 'string') ui.heroTab = tab;
     ui.heroTab = ui.heroTab || 'char';
@@ -2223,6 +2259,7 @@
               ...RC.text.map((tx) => h('div', { class: 'row', style: { minHeight: '36px' } }, h('div', { class: 'ic' }, '•'), h('div', { class: 't' }, h('b', { style: { fontWeight: 600 } }, tx)), h('div', { class: 'r' }, 'Passive')))));
         }
       } else if (ui.heroTab === 'journey') {
+          journeyOverview(b); // v10.5: what is open to you, and how far you are
           const nNew = loreUnread();
           b.append(h('div', { class: 'btn-row' },
             h('button', { class: 'btn' + (nNew ? '' : ' alt'), onclick: () => openLore() }, nNew ? `Lore Journal · ${nNew} new` : 'Lore Journal'),
