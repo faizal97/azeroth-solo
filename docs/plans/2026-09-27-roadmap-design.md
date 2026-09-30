@@ -1,20 +1,22 @@
-# Azeroth Solo roadmap
+# Realm of Loner roadmap
 
-Azeroth Solo is a single-player "fake MMO" set in the world of classic World of Warcraft. You level from 1 to 60 as Alliance or Horde through the classic zones and dungeons, and every other player on the "server" is simulated. They quest around you, fill your dungeon groups, post in chat, ask you for help and run their own guilds. After 60 the story continues in an original expansion.
+Realm of Loner is a single-player "fake MMO" set in Caldreth, a world of its own in the style of the classic online RPGs. You level from 1 to 60 as Accord or Krugar through its zones and dungeons, and every other player on the "server" is simulated. They quest around you, fill your dungeon groups, post in chat, ask you for help and run their own guilds. After 60 the story continues in an original expansion.
 
 > Unofficial, non-commercial fan project. Not affiliated with, endorsed by or sponsored by Blizzard Entertainment. All art, music and code are original.
 
 This document says where the game stands, how it is designed, and what comes next.
 
-## Where it stands (v9.9)
+## Where it stands (v10.1.1, with v10.2 in beta)
 
-- **Levels 1–60, both factions, all eight classic races and nine classes.** About 25 zones, from the starting valleys to Winterspring and the Western Plaguelands.
-- **Every classic dungeon along the way,** from Ragefire Chasm and the Deadmines to Blackrock Depths, Scholomance and Stratholme, each with a lore intro.
-- **The main story,** the Black Dragonflight conspiracy, told in six chapters at levels 10–60.
-- **The classic endgame raids at 60:** Molten Core, beneath Blackrock Mountain, and Onyxia's Lair in the new Dustwallow Marsh. Onyxia's death opens the expansion.
+- **Levels 1–60, both factions, eight races and nine classes** (any race any class), in the original world of Caldreth (since v10). About 25 zones, from the starting valleys to Icewold and the West Rotmoor.
+- **Every classic dungeon along the way,** from The Smoke Pit and the Smugglers' Deep to Cinderpeak Depths, The Blackcloister and Graymouth, each with a lore intro.
+- **The main story, The Black Ledger:** six chapters at levels 10–60, and short story scenes on key quests and levels in between (a story moment every 3–5 levels, for both factions).
+- **The classic endgame raids at 60:** Magma Throne, beneath Cinderpeak, and Veshmira's Lair in the new Saltmarsh. Veshmira's death opens the expansion.
 - **An original expansion at 60, "The Drowned Crown":** two new zones, two dungeons and a 10-player raid.
-- **Legends:** hand-made characters with their own questline, who then fight at your side.
+- **Legends:** hand-made story heroes (most created by the developer's friends) with their own questline, who later turn up in your runs now and then.
 - **A server that feels alive:** working chat, guilds, requests, trades, duels and rare sightings.
+- **Real friends (v10.1.1):** add real players by friend code and see their characters, gear and online status live (Firebase). The base for co-op later.
+- **Cloud save:** an optional copy of your characters in your own Google Drive.
 - **The app updates itself.** New versions come from GitHub releases, with release notes, through the in-app updater. Public releases come in batches; test builds go to players who turn on Beta updates first (GitHub pre-releases, and the /beta/ web page).
 
 ## Design principles
@@ -31,29 +33,32 @@ This document says where the game stands, how it is designed, and what comes nex
 
 | Version | Highlights |
 |---|---|
-| 1.x | Elwynn Forest and the Deadmines; all nine classes; Dun Morogh, Teldrassil, Durotar, Mulgore and Tirisfal starting zones; the Horde; Ragefire Chasm; story cutscenes; an optional on-device AI chat pack (removed in 9.6.1) |
-| 2.x | Westfall and the Barrens (10–20); the Deadmines and Wailing Caverns at their real levels; world PvP ambushes with War Mode; talents; Stormwind; banks and auction houses; Help Wanted, Mentor Marks, heirlooms, titles and the daily Roulette; hub bounty boards; professions |
-| 3.0 | Redridge and Stonetalon (18–25); the Stockade |
-| 4.x | Duskwood, the Wetlands, Hillsbrad and contested Ashenvale (20–30); Shadowfang Keep; Blackfathom Deeps |
-| 5.x | Stranglethorn Vale and the Arathi Highlands (30–40); Gnomeregan, Razorfen Kraul and the Scarlet Monastery; mounts at 40 |
-| 6.0 | Tanaris and Feralas (40–50); Zul'Farrak and Maraudon |
-| 7.0 | Un'Goro Crater and the Burning Steppes (48–55); Blackrock Depths |
-| 8.0 | The Western Plaguelands and Winterspring (55–60); Scholomance and Stratholme; level 60 |
+| 1.x | Ambermoor and the Smugglers' Deep; all nine classes; Kaldvik, Greatbough, Dunescar, Greensward and Pallmoor starting zones; the Krugar; The Smoke Pit; story cutscenes; an optional on-device AI chat pack (removed in 9.6.1) |
+| 2.x | Longfield and the Scrublands (10–20); the Smugglers' Deep and The Dreaming Caves at their real levels; world PvP ambushes with War Mode; talents; Kingsmere; banks and auction houses; Help Wanted, Mentor Marks, heirlooms, titles and the daily Roulette; hub bounty boards; professions |
+| 3.0 | Stoneharrow and Highcrag (18–25); the Gaol |
+| 4.x | Wraithwood, the Greenfen, Greymead and contested Elderglen (20–30); Greyhowl Keep; The Tidehollow Deeps |
+| 5.x | The Vinewild and the Kinloch Highlands (30–40); Gearhollow, The Thorn Warrens and the The Pyre Abbey; mounts at 40 |
+| 6.0 | Sirocco and Ferndeep (40–50); The Dune Temple and The Gemfall Caves |
+| 7.0 | Greenmaw Crater and the The Cinderfields (48–55); Cinderpeak Depths |
+| 8.0 | The West Rotmoor and Icewold (55–60); The Blackcloister and Graymouth; level 60 |
 | 9.0 | The expansion "The Drowned Crown", with a 10-player raid |
 | 9.1–9.2 | Legends: Lyveus Cloveus, the Exiled Knight |
 | 9.3 | In-app updates |
 | 9.4 | World map with routes, NPCs in town scenes, easier selling |
 | 9.5–9.6 | Working chat and guilds; custom chat tabs, a tabbed Hero sheet |
 | 9.7 | The Lore Journal (story, dungeons, zones, books, quest stories), a browser version, save files, Discord |
-| 9.8 | Molten Core and Onyxia's Lair; Dustwallow Marsh |
+| 9.8 | Magma Throne and Veshmira's Lair; Saltmarsh |
+| 10.0 | The world becomes Caldreth: every name, story and piece of art is our own; the story becomes The Black Ledger |
+| 10.1 | Cloud save to your own Google Drive; the Bounty Board; Throw away; account sync; real Friends (10.1.1) |
+| 10.2 (beta) | Legends as story heroes (cameos, keepsakes); 25 story scenes; Widya, the second Legend, and the hidden Bard class |
 
 ## How the world works
 
 ### Zones and factions
 
 - Each faction has its own zones up to about 30. From there the zones are **contested**: both factions quest there, each from its own town, and enemy players are more common.
-- **Enemy towns are closed.** You can't enter the other faction's hubs or capitals, so routes and the group finder go around them. Some dungeons are therefore one faction's own (the Stockade for the Alliance, Shadowfang Keep for the Horde). Dungeons in contested land are open to both.
-- **Neutral towns** (Gadgetzan, Marshal's Refuge, Everlook) welcome everyone.
+- **Enemy towns are closed.** You can't enter the other faction's hubs or capitals, so routes and the group finder go around them. Some dungeons are therefore one faction's own (the Gaol for the Accord, Greyhowl Keep for the Krugar). Dungeons in contested land are open to both.
+- **Neutral towns** (Coppergulch, Marshal's Refuge, Coldcoin) welcome everyone.
 - **The world map** shows every zone and how they connect by road, ship or flight. Tap any place for the fastest route there, and travel it in one go.
 - **Mounts at 40:** learn riding and buy your race's mount. Roads are 40% faster; boats and flights keep their times.
 
@@ -79,31 +84,31 @@ This document says where the game stands, how it is designed, and what comes nex
 
 ### Story and cutscenes
 
-- **The main story** is the Black Dragonflight conspiracy: the Defias Brotherhood, the Blackrock orcs, Marshal Windsor's capture, and Lady Prestor, who is Onyxia in disguise. An intro plays at character creation, then a chapter at 10, 20, 30, 40, 50 and 60.
+- **The main story** is The Black Ledger (docs/lore/canon.md): after the Long War everyone rebuilt on the Ledger's credit; its collectors take the farms, a marshal who audits its vault vanishes, and at 60 its master is revealed, the black dragon Veshmira, with Lady Thorne, the crown's Mistress of Coin, as her voice at court. An intro plays at character creation, then a chapter at 10, 20, 30, 40, 50 and 60.
+- **Story scenes** (15–25 seconds, skippable) play on key quests and on reaching some levels, so the story is followed even by players who skip quest text: about every 3–5 levels on both sides.
 - **Every dungeon and raid has a lore intro** that plays the first time you enter.
 - **The Theater** replays everything you've unlocked, in sections for the story, Legends, and dungeons and raids.
 
 ### The endgame raids (level 60)
 
-- **Onyxia's Lair.** After Chapter 6 the Brood Mother flies to her lair in the Wyrmbog, in Dustwallow Marsh. The Alliance gathers at Theramore (a ship from Menethil Harbor) and the Horde at Brackenwall Village (the road south from the Crossroads). Her storm hides the new isle; it breaks when she dies, and that opens the expansion.
-- **Molten Core.** With Emperor Thaurissan dead in Blackrock Depths, Ragnaros stirs beneath the mountain. Seven bosses, from Magmadar to the Firelord. Not a gate, but the recommended gear step before the isle.
+- **Veshmira's Lair.** After Chapter 6 the Brood Mother flies to her lair in the Dragonmire, in Saltmarsh. The Accord gathers at Harborwatch (a ship from Gullhaven) and the Krugar at Mudwall Village (the road south from Dustfort). Her storm hides the new isle; it breaks when she dies, and that opens the expansion.
+- **Magma Throne.** With Emperor Grimmark dead in Cinderpeak Depths, Vulcarn stirs beneath the mountain. Seven bosses, from Cinderhound to the King Below. Not a gate, but the recommended gear step before the isle.
 - Both are 10-player raids, open to both factions, just below the Tidecrown Citadel in power.
 
 ### The expansion: "The Drowned Crown" (level 60)
 
-- When Onyxia is unmasked and flees, the storm she raises tears the sea open. The **Stormveil Isle** rises: Sael'anor, a Highborne city that sank ten thousand years ago. Its prince, Aeldran Tidecrown, bargained with a sea spirit, Nal'veshra the Deepmother, to keep his court alive beneath the waves. The drowned Wavebreaker trolls rose with it, and their sea loa has been swallowed by the Deepmother.
-- **Alliance:** the Tidewatch Coast, reached from Menethil Harbor. Its dungeon is the Sunken Archive.
-- **Horde:** the Skullreef Isles, reached from Grom'gol. Its dungeon is the Temple of Shal'zua.
+- When Veshmira is unmasked and flees, the storm she raises tears the sea open. The **Stormveil Isle** rises: Sael'anor, a Starborn city that sank ten thousand years ago. Its prince, Aeldran Tidecrown, bargained with a sea spirit, Nal'veshra the Deepmother, to keep his court alive beneath the waves. The drowned Wavebreaker trolls rose with it, and their sea loa has been swallowed by the Deepmother.
+- **Accord:** the Tidewatch Coast, reached from Gullhaven. Its dungeon is the Sunken Archive.
+- **Krugar:** the Skullreef Isles, reached from Camp Skarn. Its dungeon is the Temple of Shal'zua.
 - **Raid (both factions):** the Tidecrown Citadel, 10 players, five bosses, ending with Nal'veshra.
 
 ### Legends
 
-- Legends are hand-made characters with their own story. You meet them along the way, follow their questline, and they then join your groups with abilities of their own.
-- **The first is Lyveus Cloveus, the Exiled Knight,** an original character created by a friend and adapted for Azeroth. He is a high elf paladin of the Stormwind guard who overheard Lady Prestor's cabal and was hunted for it.
-  - From level 15 a hooded stranger crosses your path.
-  - At 37 you meet him properly at the ruins of his home in the Arathi Highlands.
-  - His story runs through Gadgetzan and Blackrock Depths to a showdown at 60.
-  - After that he fights at your side as a tank. His lore cutscene is in the Theater from the start.
+- **Story heroes.** Hand-made characters, most created by the developer's friends, whom the story turns around. Each has a personal want (not a mission), a questline with its own scenes, and later chapters in new expansions. Design: docs/plans/2026-09-30-legends-story-heroes-design.md.
+- They fight beside you in their own story fights, and before you know them they may step into a hard fight once in a while. After their questline, a **rare cameo**: about 1 Group Finder run in 5, at most every 3 days each, one per run, with a banner, a sting, their own lines and a goodbye. A **keepsake** (a look, no stats) and a title reward the story.
+- **Lyveus Cloveus, the Exiled Knight** (levels 17–60): a wood elf paladin of the Kingsmere guard who overheard the cabal and was hunted for it. Tank. Keepsake: the Silverleaf Aegis.
+- **Widya, the Songkeeper's Daughter** (levels 22–40): a wood elf bard whose hamlet's lute the Ledger took for its debt; she wins it back piece by piece. Healer (the Bard class, hidden until it becomes playable). Keepsake: the Reedsong Lute.
+- **Next: Bromli Beerhammer**, a mountain dwarf warrior (damage), levels about 44–55; his creator is choosing his story.
 
 ### Chat and guilds
 
@@ -123,7 +128,7 @@ This document says where the game stands, how it is designed, and what comes nex
 
 At the level cap, power stops climbing; what you collect and what you can do keeps growing.
 
-- **A power ceiling.** The raids are the last real step up in power: Molten Core and Onyxia's Lair, then the Tidecrown Citadel at the top. Everything after that adds options and looks, not bigger numbers.
+- **A power ceiling.** The raids are the last real step up in power: Magma Throne and Veshmira's Lair, then the Tidecrown Citadel at the top. Everything after that adds options and looks, not bigger numbers.
 - **Synced power everywhere.** Each dungeon and raid scales you to its level plus a small overgear bonus, so older content stays a real fight.
 - **Challenge is the loop.** Every dungeon returns as a level-60 keystone dungeon, with weekly rotating affixes and tiers that make enemies harder, not you stronger.
 - **Collections are the reward:** looks, titles, mounts, rare-boss trophies and a codex of every boss beaten, in a wardrobe shared by all your characters.
@@ -138,15 +143,15 @@ Roughly in priority order:
 1. **Keystone dungeons and the account-wide wardrobe.** The core of the after-60 loop.
 2. **World bosses and level-60 rares,** with trophies.
 3. **Battlegrounds,** with Honor ranks for looks and titles.
-4. **Booty Bay and the Gurubashi Arena event** in southern Stranglethorn.
+4. **Rumhook Bay and the Bloodsand Arena event** in southern Vinewild.
 5. **Expert professions** (skill 225) with new materials.
 6. **Drops with unique effects** (procs and set bonuses).
 7. **Server events:** a Darkmoon Faire week, guild server-first races, and town defences in War Mode.
-8. **More Legends.**
-9. **Friends in your world** (parked). Your real friends' characters would appear on your server as simulated players, via a small online service and friend codes.
+8. **More Legends:** Bromli Beerhammer next.
+9. **Co-op with real friends,** built on Friends (sign-in, friend list, online status); the connection for live fights is decided when co-op is designed.
 
 ## Open questions
 
 - How keystone affixes should work with synced power.
-- Whether battlegrounds should use simulated players only, or also the friends feature if it ever ships.
-- Which character becomes the next Legend.
+- Whether battlegrounds should use simulated players only, or also real friends.
+- Whether the Bard becomes a playable class, and when.
