@@ -857,6 +857,12 @@
       if (u.hp / u.maxHp < 0.55 && try_('ancients_bulwark')) return;
       if (t0 && try_('oathbound_strike', t0)) return;
     }
+    // Bromli: the brawl spin when two or more are close, otherwise he charges whatever the group is hitting
+    if (u.legend === 'bromli') {
+      const t0 = C.units[u.target] && !C.units[u.target].dead && C.units[u.target].side !== u.side ? C.units[u.target] : focusTarget(C, u);
+      if (en.length >= 2 && t0 && try_('tavern_brawl', t0)) return;
+      if (t0 && try_('beerhammer_charge', t0)) return;
+    }
     // The whole kit (v10.4): defensives when low, big cooldowns on bosses, elites and crowds, area attacks on 3 or
     // more enemies, short-cooldown hits when ready. Better players use more of it; a poor one sticks to a few buttons.
     if (!u.legend) {

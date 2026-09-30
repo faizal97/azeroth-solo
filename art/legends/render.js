@@ -104,11 +104,12 @@ function fake() {
 // ---- 2. real load: art.js + every art pack build.py lists (build order, story packs included), with and without this pack ----
 const BUILD = fs.readFileSync(path.join(ROOT, 'build.py'), 'utf8');
 const LISTED = [...BUILD.matchAll(/'src\/(art[a-z0-9_]*\.js)'/g)].map((m) => m[1]).filter((f, i, a) => a.indexOf(f) === i);
-const PACKS = LISTED.filter((f) => f !== SELF && fs.existsSync(path.join(ROOT, 'src', f)));
+// the packs listed before this one (later packs such as art_bromli.js wrap ART.legend on top of it and have their own check)
+const PACKS = (LISTED.includes(SELF) ? LISTED.slice(0, LISTED.indexOf(SELF)) : LISTED).filter((f) => f !== SELF && fs.existsSync(path.join(ROOT, 'src', f)));
 if (PACKS.length < 20 || PACKS[0] !== 'art.js') bad('could not read the art pack list from build.py');
 if (!LISTED.includes(SELF)) notes.push(SELF + ' is not in build.py yet: loaded here after every listed pack');
-else if (LISTED.indexOf(SELF) < LISTED.length - 1) notes.push(SELF + ' is listed before ' + LISTED.slice(LISTED.indexOf(SELF) + 1).join(', ') + ' in build.py; this check loads it last');
-for (const f of fs.readdirSync(path.join(ROOT, 'src')).filter((f) => /^art_.*\.js$/.test(f) && f !== SELF && !PACKS.includes(f))) notes.push('on disk but not in build.py (not loaded): ' + f);
+else if (LISTED.indexOf(SELF) < LISTED.length - 1) notes.push('listed after ' + SELF + ' in build.py (not loaded here): ' + LISTED.slice(LISTED.indexOf(SELF) + 1).join(', '));
+for (const f of fs.readdirSync(path.join(ROOT, 'src')).filter((f) => /^art_.*\.js$/.test(f) && f !== SELF && !LISTED.includes(f))) notes.push('on disk but not in build.py (not loaded): ' + f);
 function world(withPack) {
   const w = {}; w.window = w; vm.createContext(w);
   const added = { scenes: [], mobs: [], icons: [], actors: [] };

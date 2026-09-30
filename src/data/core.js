@@ -551,6 +551,7 @@
     { id: 'shalzua', name: '%s, Spirit-Breaker', need: { clear: 'shalzua_temple' }, how: "Clear the Temple of Shal'zua" },
     { id: 'guild_champion', name: '%s, Champion of the Guild', need: { guildRank: 4 }, how: 'Reach Champion rank in a guild' },
     { id: 'oathkeeper', name: '%s the Oathkeeper', need: { quest: 'lg_lyv_oath' }, how: "Finish Lyveus Cloveus's story" },
+    { id: 'balladworthy', name: '%s the Ballad-Worthy', need: { quest: 'lg_bro_ballad' }, how: "Finish Bromli Beerhammer's story" },
     { id: 'tidecrown', name: '%s of the Drowned Crown', need: { clear: 'tidecrown_citadel' }, how: 'Clear the Tidecrown Citadel' },
     { id: 'scarlet', name: '%s the Crusader\'s Bane', need: { clear: 'sm_cathedral' }, how: 'Clear the Pyre Abbey Cathedral' },
     { id: 'rider', name: '%s the Rider', need: { riding: 1 }, how: 'Learn to ride' },

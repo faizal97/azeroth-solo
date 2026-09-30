@@ -23,7 +23,7 @@ function run(act, cls, setup) {
     if (S.run && S.run.phase === 'rest' && S.run.restUntil <= t) { try { G.runPull(); } catch (e) {} }
     G.update(0.1); t += 100;
   }
-  return { lyv: !!lyv, role: lyv && lyv.role, done: S.run && S.run.phase === 'done', wipes: S.run ? S.run.wipes : 99, used: Object.keys(used) };
+  return { lyv: !!lyv, role: lyv && lyv.role, legends: S.group.members.filter((m) => m.legend).map((m) => m.legend + ':' + m.role), done: S.run && S.run.phase === 'done', wipes: S.run ? S.run.wipes : 99, used: Object.keys(used) };
 }
 // the story fight, while on the last quest (not unlocked yet)
 for (const cls of ['mage', 'warrior', 'priest']) {
@@ -127,6 +127,32 @@ G.CAMEO_CHANCE = 0.2;
   P.done.lg_lyv_ashes = true; G.fight = null; P.place = 'the_dead_acre'; let after = 0;
   for (let f = 0; f < 20; f++) { S.mobs = null; const m = G.placeMobs().find((x) => x.state === 'alive'); if (!m) continue; G.engage(m.id); if (!G.fight) continue; G.fight.units[G.pUnit.uid].hp = 10; let g = 0; while (G.fight && g++ < 3000) { if (G.fight.wanderer) after++; G.update(0.1); t += 100; } P.ghostUntil = 0; P.hp = null; t += 120000; }
   if (after) fail('wanderer appeared after the lodge');
+}
+// Bromli (v10.6): his questline in order, each story fight won with him in the damage slot using his own abilities,
+// hidden off-quest; then the keepsake, the title, and a place in the cameo pool
+{
+  const bchain = Object.keys(D.QUESTS).filter((q) => D.QUESTS[q].legend === 'bromli');
+  console.log('bromli quests:', bchain.map((q) => `${q}@${D.QUESTS[q].lvl}`).join(' '));
+  for (const q of bchain) for (const p of D.QUESTS[q].pre || []) if (!D.QUESTS[p]) fail(`${q} needs missing ${p}`);
+  for (let i = 1; i < bchain.length; i++) if (D.QUESTS[bchain[i]].lvl < D.QUESTS[bchain[i - 1]].lvl) fail(`${bchain[i]} is lower than the quest before it`);
+  for (const [act, q] of [['lg_duneback', 'lg_bro_giant'], ['lg_kingstomp', 'lg_bro_king'], ['lg_pit', 'lg_bro_pit']]) {
+    { G.newGame({ name: 'T', cls: 'mage', race: 'human' }); G.S.player.level = 60; G.S.player.place = D.ACTIVITIES[act].where; if (G.activityBlock(act) !== 'hidden') fail(`${act} should be hidden off-quest`); }
+    for (const cls of ['mage', 'warrior', 'priest']) {
+      const r = run(act, cls, (P) => { for (const x of bchain.slice(0, bchain.indexOf(q))) P.done[x] = true; P.quests[q] = { prog: [0] }; });
+      if (!r) continue;
+      console.log(`${act} as ${cls}: ${r.legends.join(',') || 'no legend'} · done ${r.done} · wipes ${r.wipes} · used ${r.used.filter((k) => D.ABILITIES[k] && D.ABILITIES[k].cls === 'legend').join(',')}`);
+      if (!r.legends.includes('bromli:dps')) fail(`${act}: Bromli is not in the damage slot`);
+      if (!r.done) fail(`${act} as ${cls} not won`);
+      if (!r.used.includes('beerhammer_charge') && !r.used.includes('tavern_brawl')) fail(`${act}: Bromli never used his abilities`);
+    }
+  }
+  G.newGame({ name: 'T', cls: 'mage', race: 'human' }); G.setKeepsake('bromli'); if (G.S.player.keepsake) fail('bromli keepsake before the story');
+  for (const q of bchain) G.S.player.done[q] = true; G.setKeepsake('bromli');
+  if ((G.gearLooks(G.S.player) || {}).back !== 'beerhammer_cloak') fail('bromli keepsake look');
+  const BT = D.TITLES.find((x) => x.id === 'balladworthy'); if (!BT || !G.titleUnlocked(BT)) fail('ballad-worthy title after the story');
+  G.CAMEO_CHANCE = 1; const seen = {}; for (let i = 0; i < 40; i++) { t += G.CAMEO_GAP; const k = G.rollCameo(D.ACTIVITIES.stratholme); if (k) seen[k] = 1; }
+  G.CAMEO_CHANCE = 0.2;
+  if (!seen.bromli) fail('bromli can cameo after his story');
 }
 console.log(bad ? `${bad} problem(s)` : 'legends sim OK');
 process.exitCode = bad ? 1 : 0;

@@ -2392,10 +2392,12 @@
       const L = D.LEGENDS[key];
       const slot = members.findIndex((m) => m.role === L.role);
       const i = slot >= 0 ? slot : members.findIndex((m) => m.role === 'dps');
-      if (i < 0) continue;
+      // a Legend's own story fight always has them: if your role takes their only slot (a damage Legend in a 3-player
+      // group with you as the damage), they come along as a fourth
+      if (i < 0 && key === guest) continue;
       const lc = G.legendChar(key, lvl);
-      lc.role = members[i].role; lc.syncLevel = cap; lc.cameo = key === guest;
-      members[i] = lc;
+      lc.role = i >= 0 ? members[i].role : L.role; lc.syncLevel = cap; lc.cameo = key === guest;
+      if (i >= 0) members[i] = lc; else members.push(lc);
     }
     S.player.syncLevel = cap;
     S.group = { act, members };

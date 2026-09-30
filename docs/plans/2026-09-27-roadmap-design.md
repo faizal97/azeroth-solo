@@ -110,7 +110,7 @@ This document says where the game stands, how it is designed, and what comes nex
 - They fight beside you in their own story fights, and before you know them they may step into a hard fight once in a while. After their questline, a **rare cameo**: about 1 Group Finder run in 5, at most every 3 days each, one per run, with a banner, a sting, their own lines and a goodbye. A **keepsake** (a look, no stats) and a title reward the story.
 - **Lyveus Cloveus, the Exiled Knight** (levels 17–60): a wood elf paladin of the Kingsmere guard who overheard the cabal and was hunted for it. Tank. Keepsake: the Silverleaf Aegis.
 - **Widya, the Songkeeper's Daughter** (levels 22–40): a wood elf bard whose hamlet's lute the Ledger took for its debt; she wins it back piece by piece. Healer (the Bard class, hidden until it becomes playable). Keepsake: the Reedsong Lute.
-- **Next: Bromli Beerhammer**, a mountain dwarf warrior (damage), levels about 44–55; his creator is choosing his story.
+- **Bromli Beerhammer, the Unsung** (levels 44–55): a mountain dwarf warrior (damage) who wants a ballad about himself, goes after the south's famous beasts for one, and falls off all of them; Widya writes it. Keepsake: the Beerhammer Cloak. Design: `docs/plans/2026-09-30-bromli-design.md`.
 
 ### Chat and guilds
 
@@ -150,7 +150,7 @@ Roughly in priority order:
 5. **Expert professions** (skill 225) with new materials.
 6. **Drops with unique effects** (procs and set bonuses).
 7. **Server events:** a Darkmoon Faire week, guild server-first races, and town defences in War Mode.
-8. **More Legends:** Bromli Beerhammer next.
+8. **More Legends:** after Bromli Beerhammer (built in v10.6), the next one when a creator brings one.
 9. **Co-op with real friends,** built on Friends (sign-in, friend list, online status); the connection for live fights is decided when co-op is designed.
 
 ## Open questions

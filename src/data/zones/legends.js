@@ -173,4 +173,72 @@
   Object.assign(D.ACTIVITIES, {
     lg_contest: { name: 'A Song for the Neck', where: 'nesingwary_camp', size: 3, minLvl: 31, maxLvl: 35, desc: "Widya's singing contest at Wexley's Expedition. 3 players.", boss: 'sal_brightbell', needQuest: 'lg_wid_contest', pulls: [{ scene: 'nesingwary_camp', label: 'The camp fire', mobs: ['camp_brawler', 'camp_brawler'] }, { scene: 'nesingwary_camp', label: 'Sal Brightbell', mobs: ['sal_brightbell'], boss: true }] },
   });
+  // Third legend (v10.6): Bromli Beerhammer, the Unsung, a mountain dwarf warrior (damage), levels 44-55, both factions.
+  // An original character by a friend of the developer. Design: docs/plans/2026-09-30-bromli-design.md. Funny and warm:
+  // he wants a ballad, goes after the south's most famous beasts for one, and falls off all of them.
+  D.LEGENDS.bromli = {
+    name: 'Bromli Beerhammer', short: 'Bromli', title: 'The Unsung', npc: 'bromli', unlock: 'lg_bro_ballad',
+    cls: 'warrior', race: 'dwarf', role: 'dps', wtype: 'sword', abilities: ['beerhammer_charge', 'tavern_brawl'], pronoun: 'his',
+    credit: 'An original character created by a friend, adapted for Caldreth.',
+    teaser: 'A dwarf in sunglasses has been telling everyone at the Coppergulch inn that nobody ever wrote a song about him (level 44+).',
+    keepsake: { look: 'beerhammer_cloak', name: 'Beerhammer Cloak', icon: 'beerhammer_cloak', desc: 'A torn red cloak like Bromli\'s, from Bromli. It has fallen off more things than you have. Worn on your back.' },
+    story: [
+      'Bromli Beerhammer has fought in every war in the land and started most of its tavern brawls. He has a greatsword taller than he is, a pair of sunglasses he will not explain, and one sorrow: nobody has ever written a song about him.',
+      'So he went looking for a deed worth singing. He climbed Old Duneback, the sand giant of Sirocco, and fell off. He rode King Stomp, the king of Greenmaw Crater, and fell off. He fought Thudd the Unbeaten in the Smokebelly fire pit and was thrown out of the ring twice, and climbed back in both times.',
+      'Widya wrote the song. The Ballad of Bromli Beerhammer has eleven verses, and nine of them are about him falling off things.',
+      'He knows it by heart. He sings it in every inn from Keldrun to Coppergulch, and he has never been happier.',
+    ],
+    cameo: {
+      hello: ['Room for one more? I brought my own greatsword and my own applause.', 'Heard there was a fight. Heard nobody was writing it down. I\'ll fix both.', 'Bromli Beerhammer! You may have heard the song. Nine verses about falling. Ask me about the other two.', 'Don\'t mind me. Just here for the glory and the loot. Mostly the glory.'],
+      bye: ['Tell the singer about this one! The bits where I stayed on my feet.', 'Good run! Next round\'s on me. The one after, you.', 'Off I go. Somewhere, something big needs climbing.', 'Well fought. That\'s a verse, that is.'],
+      pull: ['Right! Watch this!', 'Stand back, I\'m going in sunglasses first.', 'Somebody count how many I get!'],
+      win: ['Did anyone see that? Somebody tell me they saw that.', 'Ha! Still standing. Write that down.', 'That\'s one for the ballad.'],
+      wipe: ['I meant to lie down. It\'s a tactic.', 'Up we get. Nobody writes songs about the ones who stay down.'],
+      loot: ['Take it! Heroes share.', 'Shiny. Not as shiny as my glasses.'],
+      first: { say: 'A dwarf in gold-rimmed sunglasses charges up to your group, a greatsword on his shoulder.', line: 'Bromli Beerhammer! Don\'t start without me. And if anyone here can sing, stay close to me.' },
+    },
+  };
+  Object.assign(D.ABILITIES, {
+    beerhammer_charge: { name: 'Beerhammer Charge', cls: 'legend', lvl: 1, cost: 0, cd: 15, target: 'enemy', dmg: { base: [170, 210], perLvl: 5, coef: 0.4, school: 'physical' }, stun: 2, icon: 'beerhammer_charge', desc: 'Bromli charges in, greatsword first: {b} damage and the target is knocked down for 2 sec. 15 sec cooldown.' },
+    tavern_brawl: { name: 'Tavern Brawl', cls: 'legend', lvl: 1, cost: 0, cd: 12, target: 'aoe', dmg: { base: [120, 150], perLvl: 4, coef: 0.3, school: 'physical' }, icon: 'tavern_brawl', desc: 'Bromli spins as if it were closing time: {b} damage to every nearby enemy. 12 sec cooldown.' },
+  });
+  D.item('duneback_stone', { name: "A Chip of Old Duneback", slot: 'quest', q: 1, icon: 'stone' });
+  D.item('thick_thunderer_hide', { name: 'Thick Thunderer Hide', slot: 'quest', q: 1, icon: 'pelt' });
+  D.item('stomp_crest', { name: "King Stomp's Crest", slot: 'quest', q: 1, icon: 'claw' });
+  D.item('champions_belt', { name: "Thudd's Champion Belt", slot: 'quest', q: 1, icon: 'belt' });
+  D.MOBS.ungoro_thunderer.qdrops = (D.MOBS.ungoro_thunderer.qdrops || []).concat([['thick_thunderer_hide', 0.5]]);
+  D.MOBS.king_mosh.qdrops = (D.MOBS.king_mosh.qdrops || []).concat([['stomp_crest', 1]]);
+  Object.assign(D.MOBS, {
+    duneback: { name: 'Old Duneback', lvl: [47, 47], family: 'giant', elite: true, named: true, hpMult: 5.5, dmgMult: 2.6, special: 'slam', specialText: 'Old Duneback brings his boulder down!', drops: [['thieves_coin', 1]], qdrops: [['duneback_stone', 1]], aggro: 'Who is climbing me?' },
+    pit_brawler: { name: 'Pit Brawler', lvl: [53, 53], family: 'giant', sprite: 'firegut_brute', hpMult: 1.2, drops: [['thieves_coin', 0.5]], aggro: 'Fight! Fight! Fight!' },
+    thudd: { name: 'Thudd the Unbeaten', lvl: [55, 55], family: 'giant', elite: true, named: true, hpMult: 5.5, dmgMult: 2.6, special: 'whirl', specialText: 'Thudd swings round the ring with both fists!', drops: [['thieves_coin', 1]], qdrops: [['champions_belt', 1]], aggro: 'Nobody beat Thudd. Nobody!' },
+  });
+  Object.assign(D.NPCS, {
+    bromli: { name: 'Bromli Beerhammer', title: 'The Unsung', legend: 'bromli' },
+    // Widya at the Coppergulch inn for Bromli's ballad only (her own story starts at Lake Aurel)
+    widya_ballad: { name: 'Widya', title: "The Songkeeper's Daughter", legend: 'widya' },
+  });
+  // he follows the famous beasts south: Coppergulch, Marshal's Refuge, then the Smokebelly fire pit at Brokemaw Rock
+  D.PLACES.gadgetzan.npcs.push('bromli', 'widya_ballad');
+  D.PLACES.marshals_refuge.npcs.push('bromli');
+  D.PLACES.dreadmaul_rock.npcs = (D.PLACES.dreadmaul_rock.npcs || []).concat(['bromli']);
+  Q('lg_bro_meet', { name: 'Nobody Sings About Bromli', lvl: 44, giver: 'bromli', turnin: 'bromli', legend: 'bromli', text: "Every war in the land, I was in it. Every tavern brawl, I probably started it. And not one song! Not one verse! I hear there's a wood elf bard who writes songs about heroes. So I need a deed, and I need a witness. Come and watch me thrash the Sandbrute ogres. Count them. Out loud.",
+    objs: [{ type: 'kill', mob: 'dunemaul_brute', n: 8 }], reward: { choice: ['fam_waist45'] } });
+  Q('lg_bro_giant', { name: 'The Dune Giant', lvl: 46, giver: 'bromli', turnin: 'bromli', legend: 'bromli', pre: ['lg_bro_meet'], group: 3, text: "Ogres are warm-up. Old Duneback is a deed. Biggest giant in Sirocco, sleeps in the Dawnstone Ruins with a bird's nest on his head. I climb him, you hit him, and afterwards we both say I climbed him. Bring back a chip of him for the singer.",
+    objs: [{ type: 'collect', item: 'duneback_stone', n: 1 }], reward: { choice: ['fam_weapon47'] } });
+  Q('lg_bro_hides', { name: 'Dinosaur-Proof', lvl: 49, giver: 'bromli', turnin: 'bromli', legend: 'bromli', pre: ['lg_bro_giant'], text: "The giant's done. Mostly. I stayed on him for a whole verse. Next: the king of the dinosaurs. First I want armour a dinosaur can't bite through, and the Greenmaw Thunderers at Steamcrack Springs have hides thick as a door. Bring me 8. I'll do the stitching. How hard can stitching be?",
+    objs: [{ type: 'collect', item: 'thick_thunderer_hide', n: 8 }], reward: { money: 5200 } });
+  Q('lg_bro_king', { name: 'King of the Crater', lvl: 52, giver: 'bromli', turnin: 'bromli', legend: 'bromli', pre: ['lg_bro_hides'], group: 3, text: "King Stomp. A hundred teeth and a worse temper than mine. He rules the Tooth Run, and I'm going to ride him. Don't look at me like that. Bring me his crest; a singer needs a detail.",
+    objs: [{ type: 'collect', item: 'stomp_crest', n: 1 }], reward: { choice: ['fam_weapon52'] } });
+  Q('lg_bro_bouts', { name: 'Entry Fee', lvl: 53, giver: 'bromli', turnin: 'bromli', legend: 'bromli', pre: ['lg_bro_king'], text: "The Smokebelly ogres of Brokemaw Rock have a fire pit, and a champion nobody has ever beaten. They won't let a fighter into the ring until he's beaten 8 of their brutes. I said he. I meant us. Mostly you, my armour is still sore.",
+    objs: [{ type: 'kill', mob: 'firegut_brute', n: 8 }], reward: { money: 5600 } });
+  Q('lg_bro_pit', { name: 'The Champion of the Pit', lvl: 54, giver: 'bromli', turnin: 'bromli', legend: 'bromli', pre: ['lg_bro_bouts'], group: 3, text: "Thudd the Unbeaten. Tonight he gets beaten. If I get thrown out of the ring, throw me back in. Bring me his belt when we're done; I want to hold it up while somebody cheers.",
+    objs: [{ type: 'collect', item: 'champions_belt', n: 1 }], reward: { choice: ['fam_back_rare55'] } });
+  Q('lg_bro_ballad', { name: 'The Ballad of Bromli Beerhammer', lvl: 55, giver: 'bromli', turnin: 'widya_ballad', legend: 'bromli', pre: ['lg_bro_pit'], text: "That's all three! The giant, the king and the champion. Now for the song. The singer is at the Coppergulch inn; she said she'd hear me out if I stopped shouting. Come on. You're in it too. A bit.",
+    objs: [{ type: 'visit', place: 'gadgetzan' }], reward: { choice: ['fam_ring_rare55'] } });
+  Object.assign(D.ACTIVITIES, {
+    lg_duneback: { name: 'The Dune Giant', where: 'eastmoon_ruins', size: 3, minLvl: 44, maxLvl: 48, desc: "Bromli climbs Old Duneback in the Dawnstone Ruins. 3 players.", boss: 'duneback', needQuest: 'lg_bro_giant', pulls: [{ scene: 'eastmoon_ruins', label: 'The ruins', mobs: ['scorpid_dunestalker', 'scorpid_dunestalker'] }, { scene: 'eastmoon_ruins', label: 'Old Duneback', mobs: ['duneback'], boss: true }] },
+    lg_kingstomp: { name: 'King of the Crater', where: 'terror_run', size: 3, minLvl: 50, maxLvl: 54, desc: "Bromli tries to ride King Stomp on the Tooth Run. 3 players.", boss: 'king_mosh', needQuest: 'lg_bro_king', pulls: [{ scene: 'terror_run', label: 'The run', mobs: ['ungoro_stomper', 'ungoro_stomper'] }, { scene: 'terror_run', label: 'King Stomp', mobs: ['king_mosh'], boss: true }] },
+    lg_pit: { name: 'The Champion of the Pit', where: 'dreadmaul_rock', size: 3, minLvl: 52, maxLvl: 56, desc: "Bromli fights for the Smokebelly championship. 3 players.", boss: 'thudd', needQuest: 'lg_bro_pit', pulls: [{ scene: 'smokebelly_pit', label: 'The undercard', mobs: ['pit_brawler', 'pit_brawler'] }, { scene: 'smokebelly_pit', label: 'Thudd the Unbeaten', mobs: ['thudd'], boss: true }] },
+  });
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -2561,6 +2561,26 @@
       return S(d, '#2a1c10', 4.2) + S(d, '#8a5a30', 2.4) + S(d, '#dcb24c', 0.6, 0.8) + C(m[0], m[1], 1.9, '#dcb24c', 1.1);
     }
   };
+  /* the Beerhammer Cloak (v10.7): Bromli's keepsake, a torn red cloak like his, the same red art_bromli.js draws for
+     him. Worn as a look only (no slot, no stats): a shredded hem, a couple of holes torn through, the cloak wrapped
+     round the neck like a scarf, and a small gold compass-star clasp at the throat. */
+  var BEERRED = '#b3191f';
+  GBACK.beerhammer_cloak = {
+    back: function (c, g) {
+      var d = capeD(g, 'rag', 47), b = g.b, x = g.sx - b.waistW - 16, y = g.hy;
+      return P(d, c.cel(BEERRED)) + CG(capeFolds(g, '#6a0b10') + S(d, '#6a0b10', 3.2) +
+        E(x, y - 2, 1.3, 2.8, OL, 0, 0.9, 14) + E(x - 3, y + 11, 1.1, 2.4, OL, 0, 0.9, 6), c.clip(d)) + P(d, 'none', 2.5);
+    },
+    torso: function (c, g) {
+      var d = collarD(g, 1), x = g.scx, y = g.sy;
+      return P(d, c.cel(BEERRED), 1.8) + CG(S(D`M${x - 11},${y + 5} Q${x - 2},${y - 3} ${x + 11},${y + 1.8}`, '#6a0b10', 1.6, 0.9), c.clip(d));
+    },
+    front: function (c, g) {
+      var x = g.bSh[0] - 1 + g.b.shW * 0.42, y = g.sy - 1.5;
+      return drape(c, g, BEERRED, '#6a0b10') + C(x, y, 2.4, c.cel('#e6b33c'), 1.1) +
+        S(D`M${x},${y - 1.6} L${x},${y + 1.6} M${x - 1.6},${y} L${x + 1.6},${y}`, '#9a6816', 0.8);
+    }
+  };
   var GEARKEYS = {
     weapon: Object.keys(GKIND), ranged: ['militia_longbow'], back: Object.keys(GBACK), chest: Object.keys(GCHEST),
     legs: Object.keys(GLEGS), mask: Object.keys(GMASK)
