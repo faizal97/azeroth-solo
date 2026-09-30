@@ -2780,18 +2780,19 @@
   function trialsTab(b) {
     const S = G.S, P = S.player, T = window.TRIALS, k = T.season(new Date());
     const note = (t) => h('p', { class: 'ai-note', style: { margin: '4px 0' } }, t);
-    if (k < 0) { b.append(note(`Trials begin on 1 ${T.name(0)}. Every dungeon comes back at level ${D.LEVEL_CAP}, harder at each Trial level, with a new mix every month.`)); return; }
+    if (!T.open(k)) { b.append(note(`Trials begin on 1 ${T.name(0)}. Every dungeon comes back at level ${D.LEVEL_CAP}, harder at each Trial level, with a new mix every month.`)); return; }
+    const pre = k === -1 ? note(`The Preseason: a trial run until ${T.name(0)} begins at midnight. It counts in your history, but gives no rank title.`) : null;
     const picks = G.trialPicks();
     if (P.level < D.LEVEL_CAP) {
       b.append(h('div', { class: 'sec-h' }, `${T.name(k)} Trials`, h('small', null, `opens at level ${D.LEVEL_CAP}`)), note(`At level ${D.LEVEL_CAP}, this month's dungeons come back as Trials: ${picks.map((a) => D.ACTIVITIES[a].name).join(', ')}.`));
       return;
     }
     const Rec = G.trials(), rating = G.trialRating(), board = G.trialBoard(), wk = Rec.week && Rec.week.id === T.period(new Date()).id ? Rec.week : { n: 0, paid: false }, days = T.daysLeft();
-    b.append(h('div', { class: 'sec-h' }, `${T.name(k)} Trials`, h('small', null, `${days} day${days === 1 ? '' : 's'} left`)));
+    b.append(h('div', { class: 'sec-h' }, `${T.name(k)} Trials`, h('small', null, k === -1 ? `until ${T.name(0)}` : `${days} day${days === 1 ? '' : 's'} left`)), pre);
     b.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', 'journal'))),
       h('div', { class: 't' }, h('b', null, `Rating ${rating} · Realm rank #${board.rank} of ${board.of}`), h('small', { style: { whiteSpace: 'normal' } }, `This week: ${Math.min(4, wk.n)} of 4 Trials at your best or higher${wk.paid ? ' · bonus paid' : ' · +25 Mentor Marks'}`))));
     b.append(h('div', { class: 'btn-row', style: { margin: '6px 0' } }, h('button', { class: 'btn alt', onclick: () => openTrialBoard() }, 'Leaderboard'), h('button', { class: 'btn alt', onclick: () => openTrialHistory() }, 'History')));
-    b.append(h('div', { class: 'sec-h' }, 'This month', h('small', null, 'tap a Trial to pick its level')));
+    b.append(h('div', { class: 'sec-h' }, k === -1 ? 'The Preseason' : 'This month', h('small', null, 'tap a Trial to pick its level')));
     for (const act of picks) {
       const A = D.ACTIVITIES[act], best = Rec.best[act], why = G.trialBlock(act), max = G.trialMax(act), queued = S.queue && S.queue.act === act && S.queue.trial;
       b.append(h('div', { class: 'row gf-row' + (why ? ' gf-locked' : '') + (queued ? ' gf-queued' : '') },

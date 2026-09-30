@@ -13,9 +13,13 @@
 
   // ---- the calendar: season k is the k-th month from October 2026; Omen periods start on the 1st, 8th, 15th and 22nd
   T.season = (date) => { const d = date || new Date(); return (d.getFullYear() - T.FIRST.y) * 12 + d.getMonth() - T.FIRST.m; };
-  T.start = (k) => new Date(T.FIRST.y, T.FIRST.m + k, 1);
+  // The Preseason (season -1): a one-day trial run on the beta, from 30 September 2026 until October begins. It counts
+  // like a season (its own picks, rating, history) but gives no month-end rank title, and it never touches October's picks.
+  T.PRESEASON = { y: 2026, m: 8, d: 30 };
+  T.open = (k) => k >= 0 || (k === -1 && Date.now() >= new Date(T.PRESEASON.y, T.PRESEASON.m, T.PRESEASON.d).getTime());
+  T.start = (k) => (k === -1 ? new Date(T.PRESEASON.y, T.PRESEASON.m, T.PRESEASON.d) : new Date(T.FIRST.y, T.FIRST.m + k, 1));
   T.end = (k) => T.start(k + 1);
-  T.name = (k) => { const s = T.start(k); return `${MONTHS[s.getMonth()]} ${s.getFullYear()}`; };
+  T.name = (k) => { if (k === -1) return 'Preseason'; const s = T.start(k); return `${MONTHS[s.getMonth()]} ${s.getFullYear()}`; };
   T.daysLeft = (date) => { const d = date || new Date(); return Math.max(0, Math.ceil((T.end(T.season(d)) - d) / 86400000)); };
   T.monthFrac = (date) => { const d = date || new Date(), k = T.season(d), a = T.start(k), b = T.end(k); return Math.min(1, Math.max(0, (d - a) / (b - a))); };
   T.period = (date) => { const d = date || new Date(), k = T.season(d), day = d.getDate(), p = day < 8 ? 0 : day < 15 ? 1 : day < 22 ? 2 : 3; return { k, p, id: k * 4 + p }; };
@@ -47,6 +51,7 @@
   // Replays the rule from the first season: dungeons added after launch and never picked go first (up to NEW_PER a
   // season, oldest first); the other places are drawn with a weight that grows with the seasons a dungeon has waited.
   T.picks = function (k, faction) {
+    if (k === -1) { const all = T.eligible(faction).filter((a) => dayOf(sinceOf(a)) <= dayOf(T.LAUNCH)), r = rng(4049 + (faction === 'horde' ? 17 : 0)), out = []; const rest = all.slice(); while (out.length < T.SIZE && rest.length) out.push(rest.splice(Math.floor(r() * rest.length), 1)[0]); return out; } // the Preseason: 8 at random, no history
     if (k < 0) return [];
     const all = T.eligible(faction), sig = all.map((a) => a + '@' + sinceOf(a)).join(',');
     if (!memo[faction] || memo[faction].sig !== sig) memo[faction] = { sig, seasons: [], last: {} };

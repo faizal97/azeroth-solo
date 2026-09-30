@@ -2196,11 +2196,11 @@
     const P = G.S.player, T = TR(), k = T.season(new Date());
     const Rec = P.trials = P.trials || { season: k, best: {}, open: {}, week: null, history: [], bestEver: 0, bestRank: null };
     if (Rec.season !== k) {
-      if (Rec.season >= 0 && Object.keys(Rec.best).length) {
+      if (Rec.season >= -1 && Object.keys(Rec.best).length) {
         const picks = T.picks(Rec.season, G.myFaction()), rating = T.rating(Rec.best, picks);
         const board = T.board(G.S.bots, rating, P.name, new Date(T.end(Rec.season) - 1000));
         Rec.history.unshift({ season: Rec.season, name: T.name(Rec.season), rating, rank: board.rank, of: board.of, best: Math.max(0, ...Object.values(Rec.best).map((b) => b.lvl)), picks });
-        if (Rec.bestRank == null || board.rank < Rec.bestRank) Rec.bestRank = board.rank;
+        if (Rec.season >= 0 && (Rec.bestRank == null || board.rank < Rec.bestRank)) Rec.bestRank = board.rank; // the Preseason gives no rank title
       }
       Object.assign(Rec, { season: k, best: {}, open: {}, week: null });
     }
@@ -2211,7 +2211,7 @@
   G.trialBoard = () => TR().board(G.S.bots, G.trialRating(), G.S.player.name, new Date());
   G.trialBlock = function (act) {
     const S = G.S, P = S.player, T = TR(), A = D.ACTIVITIES[act];
-    if (T.season(new Date()) < 0) return `Trials begin on 1 ${T.name(0)}`;
+    if (!T.open(T.season(new Date()))) return `Trials begin on 1 ${T.name(0)}`;
     if (P.level < D.LEVEL_CAP) return `Trials open at level ${D.LEVEL_CAP}`;
     if (!G.trialPicks().includes(act)) return 'Not in this month\'s Trials';
     if (A.where && G.stormBlocks(A.where)) return 'Requires Veshmira\'s defeat: her storm hides the isle';

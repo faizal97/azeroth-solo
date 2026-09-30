@@ -68,6 +68,23 @@ const drop = (keys) => { for (const k of keys) { delete D.DUNGEONS[k]; delete D.
   ok(tops[0] > 1100 && tops[Math.floor(tops.length / 2)] < 700, `a few bots push past 1100, most sit lower (best ${tops[0]}, median ${tops[Math.floor(tops.length / 2)]})`);
 }
 
+
+// ---- the Preseason: a one-day trial run on 30 September, its own picks, filed as "Preseason", no rank title
+{
+  const oct = JSON.stringify(T.picks(0, 'alliance'));
+  fake = new RealDate(2026, 8, 30, 20).getTime();
+  ok(T.season(new Date()) === -1 && T.open(-1) && T.name(-1) === 'Preseason', 'the Preseason is open on 30 September');
+  ok(T.picks(-1, 'alliance').length === 8 && JSON.stringify(T.picks(0, 'alliance')) === oct, 'it has its own 8 and leaves October alone');
+  G.newGame({ name: 'Pre', cls: 'warrior', race: 'human' }); G.S.player.level = 60;
+  const pa = G.trialPicks().find((a) => G.trialBlock(a) === null);
+  ok(!!pa, 'a Preseason Trial can be queued');
+  G.trialDone({ act: pa, trial: { lvl: 2, season: -1, bestHere: 0 } }, 100, 200);
+  fake = new RealDate(2026, 9, 1, 9).getTime();
+  const R2 = G.trials();
+  ok(R2.season === 0 && R2.history[0].name === 'Preseason' && R2.bestRank == null, 'October files the Preseason in history, with no rank title');
+  fake = new RealDate(2026, 8, 20, 12).getTime(); ok(!T.open(T.season(new Date())), 'before the Preseason, Trials are shut');
+  fake = new RealDate(2026, 9, 10, 12).getTime();
+}
 // ---- a character's Trials: blocks, levels, rating, Marks, the weekly goal, history
 G.newGame({ name: 'Trier', cls: 'warrior', race: 'human' });
 const P = G.S.player; G.S.flags.warModeAsked = true;
