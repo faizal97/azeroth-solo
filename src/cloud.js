@@ -161,6 +161,7 @@
     } catch (e) { }
     if (m.friends && root.FRIENDS) FRIENDS.remoteSwitch(m.friends); // Friends was switched on another device
   }
+  const accountMark = () => { const a = localAccount(); return JSON.stringify([+a.marks || 0, a.friends || null].concat(LISTS.map((k) => (a[k] || []).slice().sort()))); };
   CLOUD.syncAccount = async function (files) {
     if (!root.G || !G.account) return null;
     const f = (files || await drv().list()).find((x) => x.name === ACCOUNT_FILE) || null;
@@ -172,6 +173,7 @@
       const props = { kind: 'account', marks: String(merged.marks), heirlooms: String(merged.heirlooms.length), at: String(Date.now()), dev: CLOUD.device() };
       if (f) await drv().update(f.id, props, JSON.stringify(merged)); else await drv().create(ACCOUNT_FILE, props, JSON.stringify(merged));
     }
+    patch({ accountMark: accountMark() }); // the account as the Drive now has it
     return merged;
   };
 
@@ -188,6 +190,13 @@
     if (!CLOUD.on() || !root.G || !G.S) return null;
     const st = read();
     if (!force && Date.now() - (st.lastAuto || 0) < EVERY) return null;
+    // Nothing new since the last backup: Drive already has it all, so no Google token is needed. (In a browser the
+    // token lives in memory only, so without this every reload ended in "Reconnect" with nothing waiting to go up.)
+    const rec = st.chars[G.S.id];
+    if (!CLOUD.fresh() && rec && rec.mark === CLOUD.mark(G.S) && st.accountMark && st.accountMark === accountMark()) {
+      if (st.lastError && st.lastError.code === 'auth') patch({ lastError: null });
+      return null;
+    }
     patch({ lastAuto: Date.now() });
     try { const r = await CLOUD.sync(G.S.id, null, true); await CLOUD.syncAccount(); patch({ lastError: null }); return r; }
     catch (e) { patch({ lastError: { code: e.code || 'drive', message: e.message, at: Date.now() } }); return { what: 'error', error: e }; }

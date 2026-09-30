@@ -134,10 +134,25 @@ const ok = (cond, what) => { if (cond) pass++; else { fail++; console.log('FAIL'
   drive.create = cr; drive.update = up;
   ok(uploads === 0 && CLOUD.state().lastError === null && CLOUD.state().lastBackup === t, 'Back up now with nothing to upload still clears Reconnect and counts as a backup');
 
-  // 8. automatic backup during play never loads a newer copy over the character being played
-  use(web); G.load(A); play(20, 0);
+  // 7c. a browser reload (the Google token is gone) with nothing new to back up: no Drive call, so no Reconnect
+  use(web); G.load(A); await CLOUD.sync(A); await CLOUD.syncAccount(); G.load(A); // a sync may have brought in the phone's copy
+  localStorage.setItem('azsolo.cloud', JSON.stringify(Object.assign(CLOUD.state(), { lastError: null })));
+  let calls7c = drive.calls; drive.down = true; t += 11 * 60 * 1000; r = await CLOUD.maybeBackup(true);
+  ok(r === null && drive.calls === calls7c && CLOUD.state().lastError === null, 'reloaded with nothing new: no Drive call and no Reconnect');
+  localStorage.setItem('azsolo.cloud', JSON.stringify(Object.assign(CLOUD.state(), { lastError: { code: 'auth', message: 'ran out', at: t } })));
+  r = await CLOUD.maybeBackup(true);
+  ok(r === null && CLOUD.state().lastError === null, 'and an old "ran out" goes, since the Drive already has everything');
+  play(60, 5); calls7c = drive.calls; r = await CLOUD.maybeBackup(true);
+  ok(r.what === 'error' && CLOUD.state().lastError.code === 'auth', 'with new progress waiting, the sign-in is needed, so Reconnect shows');
+  drive.down = false;
+
+  // 8. automatic backup during play never loads a newer copy over the character being played (with a live token, so
+  // the check runs even though nothing changed here)
+  const realFresh = CLOUD.fresh; CLOUD.fresh = () => true;
+  use(web); G.load(A); await CLOUD.sync(A);
   use(phone); G.load(A); play(600, 1); await CLOUD.sync(A);
   use(web); G.load(A); r = await CLOUD.maybeBackup(true);
+  CLOUD.fresh = realFresh;
   ok(r.what === 'newer' && G.S && G.S.id === A, 'a newer copy is only reported while playing');
 
   // 9. an old save from before cloud save: no records at all, still loads, and is treated as never synced
