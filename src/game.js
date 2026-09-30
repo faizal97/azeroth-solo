@@ -2262,16 +2262,32 @@
     return null;
   };
   G.syncLevel = (act) => (G.S.run && G.S.run.trial && G.S.run.act === act ? D.LEVEL_CAP : Math.min(G.S.player.level, D.ACTIVITIES[act].maxLvl || D.LEVEL_CAP)); // a Trial is fought at the cap
-  G.queueFor = function (act) {
-    const S = G.S, A = D.ACTIVITIES[act];
+  // Hard raids (v10.7): a raid with a `hard` block opens it on this character after one Normal clear, at the level cap
+  G.hardOpen = function (act) {
+    const A = D.ACTIVITIES[act], Dg = A && A.dungeon && D.DUNGEONS[A.dungeon], cx = ((G.S.player.codex || {})[act]) || {};
+    return !!(Dg && Dg.hard && G.S.player.level >= D.LEVEL_CAP && cx.clears);
+  };
+  // this week's Hard bonus: each boss drops its loot two upgrade steps up once per week (P.raidWeek, reset on Monday)
+  G.raidWeek = function () { const P = G.S.player; if (!P.raidWeek || P.raidWeek.week !== weekKey()) P.raidWeek = { week: weekKey(), got: {} }; return P.raidWeek; };
+  G.hardBonusLeft = (act, boss) => !G.raidWeek().got[act + ':' + boss];
+  G.HARD_STEPS = 2;
+  G.hardExtra = function (act, boss) { const Dg = D.DUNGEONS[D.ACTIVITIES[act].dungeon], x = Dg && Dg.hard && Dg.hard.extra && Dg.hard.extra[boss]; return x ? x.map((e) => Object.assign({}, e)) : null; };
+  G.hardCopy = function (id) {
+    const it = G.copyItem(id), inf = G.upgradeInfo(it);
+    if (!inf.ok) return it;
+    const out = G.upgradedCopy(it, inf.pts + G.HARD_STEPS * D.UPGRADE.step * G.upgradeRef(it)); out.hard = true; return out;
+  };
+  G.queueFor = function (act, opts) {
+    const S = G.S, A = D.ACTIVITIES[act], hard = !!(opts && opts.hard);
     const why = G.activityBlock(act);
     if (why) return toast(why === 'hidden' ? 'Only for the other faction.' : why + '.');
+    if (hard && !G.hardOpen(act)) return toast('Hard opens after a Normal clear at level ' + D.LEVEL_CAP + '.');
     if (S.wparty) disbandParty('You left your party to use the group finder.');
     if (S.run || S.group) return toast('Leave your current group first.');
     const role = G.role();
     const wait = role === 'tank' ? rnd(4, 12) : role === 'healer' ? rnd(8, 20) : rnd(25, 70);
-    S.queue = { act, since: now(), popAt: now() + wait * 1000 };
-    sys(`You are queued for ${A.name} as ${role === 'tank' ? 'Tank' : role === 'healer' ? 'Healer' : 'Damage'}.`);
+    S.queue = { act, since: now(), popAt: now() + wait * 1000, hard: hard || undefined };
+    sys(`You are queued for ${A.name}${hard ? ' (Hard)' : ''} as ${role === 'tank' ? 'Tank' : role === 'healer' ? 'Healer' : 'Damage'}.`);
     emit('change');
   };
   G.leaveQueue = function () { G.S.queue = null; sys('You left the queue.'); emit('change'); };
@@ -2382,6 +2398,7 @@
     const cap = trial ? D.LEVEL_CAP : A.maxLvl || D.LEVEL_CAP;
     for (const m of members) m.syncLevel = cap;
     if (trial) { const sk = TR().botSkill(G.trialRating()); for (const m of members) m.bot.skill = clamp(sk + rnd(-0.08, 0.05), 0.3, 0.95); } // your rating draws better players
+    if (opts && opts.hard) { const sk = TR().botSkill(G.trialRating()) + 0.05; for (const m of members) m.bot.skill = clamp(sk + rnd(-0.06, 0.05), 0.3, 0.95); } // Hard: skilled players, a little above your Trial rating
     if (opts && opts.firstTimers) for (const m of members) { m.bot.skill = Math.min(m.bot.skill, 0.25 + Math.random() * 0.2); m.level = Math.max(A.minLvl, Math.min(m.level, A.minLvl + 1)); }
     // Legends (v10.2, story heroes): a legend always joins the run that is part of their own story; after their story,
     // only as a rare cameo (G.rollCameo). They take their role's slot, or a damage slot if you play that role.
@@ -2406,28 +2423,29 @@
   G.acceptPop = function () {
     const S = G.S;
     if (!S.queue) return;
-    const act = S.queue.act, trial = S.queue.trial || 0; S.queue = null;
+    const act = S.queue.act, trial = S.queue.trial || 0, hard = !!S.queue.hard; S.queue = null;
     stopActions();
-    const grp = formGroup(act, trial ? { trial } : undefined);
+    const grp = formGroup(act, trial ? { trial } : hard ? { hard } : undefined);
     sys(`You have joined a group for ${D.ACTIVITIES[act].name}.`);
     grp.members.forEach((m, i) => { if (m.cameo || Math.random() < 0.7) S.pending.push({ at: now() + 800 + i * 1400 + Math.random() * 1500, bot: m.bot.id, ch: 'party', text: m.cameo ? G.legendLine(m.legend, 'hello') : B.partyLine(m.bot, 'hello'), fromName: m.name }); });
-    startRun(act, trial);
+    startRun(act, trial, hard);
     const guest = grp.members.find((m) => m.cameo); if (guest) emit('legendJoin', { key: guest.legend });
     emit('change');
   };
   G.declinePop = function () { G.S.queue = null; sys('You declined the group.'); emit('change'); };
 
   // ============================================================ runs (dungeon / hogger)
-  function startRun(act, trial) {
+  function startRun(act, trial, hard) {
     const S = G.S, A = D.ACTIVITIES[act];
     let pulls, mult = null, bossMult = null, name = A.name;
     if (A.dungeon) {
       const Dg = D.DUNGEONS[A.dungeon];
       pulls = Dg.pulls; mult = Dg.trashMult; bossMult = Dg.bossMult;
+      if (hard && Dg.hard) { mult = Dg.hard.trashMult; bossMult = Dg.hard.bossMult; name += ' · Hard'; } else hard = false;
     } else {
-      pulls = A.pulls;
+      pulls = A.pulls; hard = false;
     }
-    S.run = { act, name, pulls, mult, bossMult, idx: 0, phase: 'rest', restUntil: now() + 6000, wipes: 0, rolls: [], returnTo: S.player.place, started: now() };
+    S.run = { act, name, pulls, mult, bossMult, idx: 0, phase: 'rest', restUntil: now() + 6000, wipes: 0, rolls: [], returnTo: S.player.place, started: now(), hard: hard || undefined };
     if (trial) { // Trials (v10.4): enemies at the level cap, stronger with each Trial level
       const f = TR().factor(trial), sc = (m) => ({ hp: ((m && m.hp) || 1) * f, dmg: ((m && m.dmg) || 1) * f }), Rec = G.trials();
       const omens = TR().active(trial, new Date()), OMS = TR().OMENS, bm = sc(bossMult), tm = sc(mult); // Omens are fixed when the run starts
@@ -2463,6 +2481,7 @@
       const M = D.MOBS[k];
       const u = E.mobUnit(k, R.mobLevel || null, M.boss ? mult : (R.mult || { hp: 1, dmg: 1 }));
       if (marks[i]) u.mark = marks[i];
+      const hx = R.hard && G.hardExtra(R.act, k); if (hx) u.extraAdds = hx; // Hard: the boss's extra mechanic
       return u;
     });
     if ((R.omens || []).some((k) => k === 'warded' || k === 'vengeful' || k === 'sheltered') && enemies.length >= 2) enemies[pull.mobs.length - 1].focus = true; // Tier 3: the last enemy listed
@@ -2524,7 +2543,10 @@
       if (pull.boss) {
         const M = D.MOBS[pull.mobs[0]];
         const table = (M.loot || []).slice().sort(() => Math.random() - 0.5);
-        const drops = table.slice(0, 2).map(G.copyItem);
+        // Hard: the first kill of each boss in a week drops its loot two upgrade steps up; after that, the Normal items
+        const bonus = R.hard && G.hardBonusLeft(R.act, pull.mobs[0]);
+        const drops = table.slice(0, 2).map(bonus ? G.hardCopy : G.copyItem);
+        if (R.hard) { if (bonus) { G.raidWeek().got[R.act + ':' + pull.mobs[0]] = true; sys(`Hard bonus: ${M.name} drops loot ${G.HARD_STEPS} upgrade steps up (once a week).`); } else sys(`${M.name}'s Hard bonus is taken this week: Normal loot until Monday.`); }
         for (const it of drops) addRoll(it);
         const rr = G.rareRecipeDrop(); if (rr) addRoll(rr);
         if (!D.ACTIVITIES[R.act].dungeon || Math.random() < 0.25) addRoll(G.genGear(pick(D.GEAR_SLOTS), G.syncLevel(R.act), !D.ACTIVITIES[R.act].dungeon ? 2 : 3));
@@ -2665,6 +2687,7 @@
         const used = new Set(S.group.members.map((x) => x.bot.id));
         const nb = G.botChar(recruit(m.role, G.syncLevel(R.act), used, new Set(S.group.members.filter((x) => !x.gone).map((x) => x.cls).concat([P.cls])), null, !!R.trial));
         nb.syncLevel = D.ACTIVITIES[R.act].maxLvl || D.LEVEL_CAP;
+        if (R.hard) nb.bot.skill = clamp(TR().botSkill(G.trialRating()) + 0.05 + rnd(-0.06, 0.05), 0.3, 0.95); // a Hard group refills with skilled players too
         const i = S.group.members.indexOf(m);
         S.group.members[i] = nb;
         sys(`${nb.name} has joined the group.`);
@@ -2732,6 +2755,7 @@
     const speed = !R.noSpeed && G.par(Dg) && secs <= G.par(Dg), flawless = !R.wipes; // flawless = the group never wiped
     const cx = (P.codex = P.codex || {})[R.act] = Object.assign({ clears: 0, flawless: 0, speed: 0, best: null }, (P.codex || {})[R.act]);
     cx.clears++; if (flawless) cx.flawless++; if (speed) cx.speed++; if (cx.best == null || secs < cx.best) cx.best = Math.round(secs);
+    if (R.hard) cx.hard = (cx.hard || 0) + 1; // Hard clears (v10.7), shown in the codex
     if (R.trial) G.trialDone(R, secs, TR().par(Dg, R.omens)); // Trials pay their own Marks, against their own par
     else if (P.level >= D.LEVEL_CAP && G.clearMarks(R.act)) G.addMarks(G.clearMarks(R.act), 'a level-60 clear');
     R.bonus = { secs: Math.round(secs), par: G.par(Dg), speed, flawless };

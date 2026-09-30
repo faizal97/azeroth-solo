@@ -1450,6 +1450,7 @@
     const t = h('div', { class: 'tooltip' });
     t.append(h('div', { class: 'nm q' + it.q }, it.name));
     const upi = D.GEAR_SLOTS.includes(it.slot) ? G.upgradeInfo(it) : null;
+    if (it.hard) t.append(h('div', { class: 'st', style: { color: '#ff8a5a' } }, `Dropped on Hard: ${G.HARD_STEPS} upgrade steps up`));
     if (upi && upi.ok) t.append(h('div', { class: 'st', style: { color: '#7fd4ff' } }, upi.room ? `Power ${upi.pct}% of the ceiling${upi.capPct < 100 ? ` (blues stop at ${upi.capPct}%)` : ''}` : `Power ${upi.pct}%: at the ceiling`));
     const why = who ? null : blockReason(it);
     if (why) t.append(h('div', { class: 'red', style: { fontWeight: 800 } }, why.text));
@@ -2910,8 +2911,16 @@
     const max = trial ? G.trialMax(act) : 1;
     ui.trialLvl = trial ? Math.max(1, Math.min(max, lvlIn || max)) : 0;
     const sub = trial ? `Trial briefing · ${T.name(T.season(new Date()))}` : `${KIND_LABEL[kind]} briefing · ${A.size || 5} players`;
+    if (!trial && !(Dg && Dg.hard && G.hardOpen(act))) ui.briefHard = false;
     openSheet('brief', A.name, sub, (b) => {
       const lvl = ui.trialLvl, P = G.S.player, om = trial ? T.active(lvl, new Date()) : [], f = trial ? T.factor(lvl) : 1;
+      const hard = !trial && !!(Dg && Dg.hard) && !!ui.briefHard; // Hard raids (v10.7): Normal or Hard, chosen here
+      if (!trial && Dg && Dg.hard) {
+        const open = G.hardOpen(act);
+        b.append(h('div', { class: 'chips', style: { justifyContent: 'center', margin: '0 0 8px' } },
+          h('button', { class: 'chip' + (!hard ? ' gold' : ''), onclick: () => { ui.briefHard = false; ui.sheetFn(); } }, 'Normal'),
+          h('button', { class: 'chip' + (hard ? ' gold' : '') + (open ? '' : ' off'), onclick: () => { if (!open) return toast(`Hard opens after a Normal clear at level ${D.LEVEL_CAP}.`); ui.briefHard = true; ui.sheetFn(); } }, open ? 'Hard' : 'Hard (clear Normal first)')));
+      }
       const k = (n) => (n >= 10000 ? (n / 1000).toFixed(n >= 100000 ? 0 : 1) + 'k' : String(Math.round(n)));
       const pulls = Dg ? Dg.pulls : A.pulls || [], mobLvl = trial ? D.LEVEL_CAP : null;
       if (trial) b.append(h('div', { class: 'btn-row', style: { alignItems: 'center', justifyContent: 'center', margin: '0 0 8px' } },
@@ -2930,7 +2939,11 @@
         row('Level', A.minLvl === A.maxLvl ? String(A.minLvl) : `${A.minLvl}–${A.maxLvl}${P.level > A.maxLvl ? ` (you are synced to ${A.maxLvl})` : ''}`);
         if (Dg && G.par(Dg)) row('Par time', `${clockText(G.par(Dg))} (beating it gives a speed chest)`);
         if (Dg) row('Flawless', 'a clear without a wipe gives a bonus');
-        if (cx && cx.clears) row('Your record', `${cx.clears} clear${cx.clears > 1 ? 's' : ''}${cx.best ? ', best ' + clockText(cx.best) : ''}`);
+        if (cx && cx.clears) row('Your record', `${cx.clears} clear${cx.clears > 1 ? 's' : ''}${cx.hard ? ` (${cx.hard} on Hard)` : ''}${cx.best ? ', best ' + clockText(cx.best) : ''}`);
+        if (hard) {
+          row('Hard', 'stronger enemies and one extra mechanic per boss');
+          row('Hard loot', `the first kill of each boss each week drops its items ${G.HARD_STEPS} upgrade steps up (+${G.HARD_STEPS * Math.round(D.UPGRADE.step * 100)}% power toward the ceiling); after that, Normal items until Monday`);
+        }
         const why = G.activityBlock(act); if (why && why !== 'hidden') row('Now', why);
       }
       b.append(h('div', { class: 'ai-box' }, ...rows));
@@ -2940,7 +2953,7 @@
         for (const key of om) { const O = T.OMENS[key]; b.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(abIcon(O.icon))), h('div', { class: 't' }, h('b', null, O.name), h('small', { style: { whiteSpace: 'normal' } }, O.rule)))); }
       }
       // every pull, with the numbers you will meet (a Trial's at the level picked, Omens included)
-      const tm = (Dg && Dg.trashMult) || { hp: 1, dmg: 1 }, bmu = (Dg && Dg.bossMult) || { hp: 1, dmg: 1 };
+      const tm = (hard ? Dg.hard.trashMult : Dg && Dg.trashMult) || { hp: 1, dmg: 1 }, bmu = (hard ? Dg.hard.bossMult : Dg && Dg.bossMult) || { hp: 1, dmg: 1 };
       const trash = { hp: (tm.hp || 1) * f, dmg: (tm.dmg || 1) * f }, boss = { hp: (bmu.hp || 1) * f * (om.includes('hardened') ? T.OMENS.hardened.hp : 1), dmg: (bmu.dmg || 1) * f }; // (Guarded and Enraging change fights, not numbers)
       b.append(h('div', { class: 'sec-h' }, 'Pulls', h('small', null, `${pulls.length} in order${om.includes('swarming') ? ' · each +1 enemy (Swarming)' : ''}`)));
       const list = h('div', { class: 'list' });
@@ -2954,14 +2967,15 @@
           h('div', { class: 't' }, h('b', null, p.label || D.MOBS[p.mobs[0]].name, bm ? h('span', { class: 'gf-kind k-raid', style: { marginLeft: '6px' } }, 'Boss') : null),
             ...lines.map((l) => h('small', { style: { whiteSpace: 'normal' } }, l)),
             bm && bm.specialText ? h('small', { style: { whiteSpace: 'normal', color: 'var(--gold)' } }, 'Special: ' + bm.specialText) : null,
-            ...(bm && bm.special ? E.specialFacts(E.mobUnit(bk, mobLvl || (bm.lvl ? bm.lvl[1] : A.maxLvl), bm.boss ? boss : trash)).map((t) => h('small', { style: { whiteSpace: 'normal' } }, (bm.specialText ? '' : 'Special: ') + t)) : []),
+            ...(bm && (bm.special || hard) ? E.specialFacts(Object.assign(E.mobUnit(bk, mobLvl || (bm.lvl ? bm.lvl[1] : A.maxLvl), bm.boss ? boss : trash), hard ? { extraAdds: G.hardExtra(act, bk) } : {})).map((t) => h('small', { style: { whiteSpace: 'normal' } }, (bm.specialText || /^Hard/.test(t) ? '' : 'Special: ') + t)) : []),
+            hard && bm && bm.boss ? h('small', { style: { whiteSpace: 'normal' } }, G.hardBonusLeft(act, bk) ? `This week: ${G.HARD_STEPS} steps up (not taken yet)` : 'This week: bonus taken, Normal items until Monday') : null,
             drops.length ? h('small', { style: { whiteSpace: 'normal' } }, 'Drops (tap one): ', ...drops.map((id, i) => [i ? ', ' : '', h('button', { class: 'drop-link q' + D.ITEMS[id].q, onclick: () => showDialog(itemTip(G.copyItem(id)), true) }, D.ITEMS[id].name)]).flat()) : null)));
       }
       b.append(list);
       const why = trial ? G.trialBlock(act) : G.activityBlock(act), queued = G.S.queue && G.S.queue.act === act;
       b.append(h('div', { class: 'btn-row', style: { marginTop: '10px' } }, queued
         ? h('button', { class: 'btn alt', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave the queue')
-        : h('button', { class: 'btn', disabled: !!why || !!G.S.queue, onclick: () => { if (trial ? G.queueTrial(act, ui.trialLvl) : (G.queueFor(act), !!G.S.queue)) closeSheet(); } }, why ? (why === 'hidden' ? 'Only for the other faction' : why) : trial ? `Queue for Trial ${lvl}` : 'Queue')));
+        : h('button', { class: 'btn', disabled: !!why || !!G.S.queue, onclick: () => { if (trial ? G.queueTrial(act, ui.trialLvl) : (G.queueFor(act, hard ? { hard: true } : undefined), !!G.S.queue)) closeSheet(); } }, why ? (why === 'hidden' ? 'Only for the other faction' : why) : trial ? `Queue for Trial ${lvl}` : hard ? 'Queue for Hard' : 'Queue')));
     });
   }
   const openTrialBriefing = (act, lvl) => openBriefing(act, true, lvl);

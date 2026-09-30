@@ -29,6 +29,8 @@ if subprocess.run(['node', os.path.join(R, 'sim', 'trials.js')]).returncode != 0
     sys.exit('build stopped: a Trials rule is broken (node sim/trials.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'reactions.js')], stdout=subprocess.DEVNULL).returncode != 0:
     sys.exit('build stopped: a class reaction rule is broken (node sim/reactions.js lists which)')
+if subprocess.run(['node', os.path.join(R, 'sim', 'hard.js')]).returncode != 0:
+    sys.exit('build stopped: a Hard raid rule is broken (node sim/hard.js lists which)')
 DATA = ['src/data/' + f for f in json.load(open(os.path.join(R, 'src', 'data', 'files.json')))]
 # music ships only once he has listened and approved the track
 APPROVED = set(open(os.path.join(R, 'audio', 'approved.txt')).read().split()) if os.path.exists(os.path.join(R, 'audio', 'approved.txt')) else set()

@@ -612,7 +612,7 @@
   const addLvl = (m, lv) => (lv > 0 ? lv : m.level + lv);
   // the plain facts of a boss's special, with the numbers of this unit (made by E.mobUnit at the level you will meet it)
   E.specialFacts = function (u) {
-    const sp = u && u.special, S = sp && SPECIALS[sp.kind]; if (!S) return [];
+    const sp = u && u.special, S = (sp && SPECIALS[sp.kind]) || {}; if (!sp && !(u && u.extraAdds)) return [];
     const hit = (x) => `${Math.round(u.dmg[0] * x)}–${Math.round(u.dmg[1] * x)}`, out = [];
     const sch = S.school ? ` ${S.school}` : '';
     if (S.mult) out.push(`Every ${S.every} sec (first at ${SPECIAL_FIRST} sec): ${S.who === 'all' ? 'hits everyone in your group' : S.who === 'random' ? 'hits one group member at random' : 'hits its target'} for ${hit(S.mult)}${sch} damage.`);
@@ -620,13 +620,27 @@
     if (S.adds) {
       const byMob = {};
       for (const [at, key, n, lv] of S.adds) { const k = key || sp.summon || 'twilight_acolyte', id = k + ':' + n; (byMob[id] = byMob[id] || { k, n, lv, at: [] }).at.push(Math.round(at * 100) + '%'); }
-      for (const a of Object.values(byMob)) out.push(`At ${a.at.join(' and ')} health: ${a.n > 1 ? `${a.n} ${D.MOBS[a.k].name}s join` : `${/^[AEIOU]/.test(D.MOBS[a.k].name) ? 'an' : 'a'} ${D.MOBS[a.k].name} joins`} the fight (level ${addLvl(u, a.lv)}).`);
+      for (const a of Object.values(byMob)) out.push(`At ${a.at.join(' and ')} health: ${joinText(a.n, a.k, addLvl(u, a.lv))}`);
     }
     if (S.stunAt) out.push(`At ${S.stunAt.map((x) => Math.round(x * 100) + '%').join(' and ')} health: stuns your whole group for ${S.stun} sec (orcs ${S.stunOrc} sec).`);
     if (S.enrageAt) out.push(`Below ${Math.round(S.enrageAt * 100)}% health: hits ${Math.round((S.enrage - 1) * 100)}% harder.`);
+    for (const x of u.extraAdds || []) out.push(`Hard: at ${Math.round(x.at * 100)}% health: ${joinText(x.n, x.mob, addLvl(u, x.lvl))}`);
     return out;
   };
+  // Hard raids (v10.7): one extra mechanic per boss, set by the raid's data on the unit (u.extraAdds, same shape as
+  // SPECIALS adds plus an optional emote); it fires once at each health mark, on top of the boss's own special
+  function extraAdds(C, m) {
+    const pct = m.hp / m.maxHp;
+    for (const x of m.extraAdds) {
+      if (x.done || pct >= x.at) continue;
+      x.done = true;
+      if (x.text) ev(C, { type: 'emote', uid: m.uid, text: x.text });
+      for (let i = 0; i < x.n; i++) E.addEnemy(C, E.mobUnit(x.mob, addLvl(m, x.lvl), (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
+    }
+  }
+  const joinText = (n, key, lvl) => `${n > 1 ? `${n} ${D.MOBS[key].name}s join` : `${/^[AEIOU]/.test(D.MOBS[key].name) ? 'an' : 'a'} ${D.MOBS[key].name} joins`} the fight (level ${lvl}).`;
   function specials(C, m, dt) {
+    if (m.extraAdds && !m.dead) extraAdds(C, m);
     const sp = m.special;
     if (!sp || m.dead || stunned(C, m)) return;
     sp.t -= dt;
