@@ -1999,6 +1999,25 @@
   }
 
   // ---------- hero
+  // the wardrobe (v10.3): pick what shows in each place from the looks this account has collected
+  function openWardrobe() {
+    G.seedWardrobe();
+    openSheet('wardrobe', 'Wardrobe', 'Looks are shared by all your characters. Stats never change.', (b) => {
+      const P = G.S.player, W = P.wardrobe || {}, NAME = { weapon: 'Weapon', ranged: 'Ranged', chest: 'Chest', legs: 'Legs', back: 'Back' };
+      b.append(h('div', { style: { display: 'flex', justifyContent: 'center', margin: '0 0 6px' } }, h('img', { src: art('hero', looks(P)), alt: '', draggable: 'false', style: { width: '112px', height: '112px' } })));
+      for (const pl of G.WARDROBE_PLACES) {
+        const opts = G.wardrobeOptions(pl), cur = W[pl] || null;
+        b.append(h('div', { class: 'sec-h' }, NAME[pl], h('small', null, opts.length ? `${opts.length} look${opts.length > 1 ? 's' : ''}` : 'none collected yet')));
+        const row = h('div', { class: 'chips' });
+        const chip = (key, label, icon, q) => h('button', { class: 'chip' + (cur === key ? ' gold' : ''), onclick: () => { G.setWardrobe(pl, key); ui.sheetFn(); } }, icon ? img(art('icon', icon)) : null, icon ? ' ' : null, h('span', { class: q != null ? 'q' + q : '' }, label));
+        row.append(chip(null, 'Your gear'));
+        for (const o of opts) row.append(chip(o.key, o.name, o.icon, o.q));
+        if (pl === 'back' || pl === 'ranged') row.append(chip('hidden', 'Hidden'));
+        b.append(row);
+      }
+      b.append(h('p', { class: 'ai-note', style: { marginTop: '8px' } }, 'Every item with its own look joins the wardrobe when you loot, buy or wear it.'));
+    });
+  }
   function openHero(tab) {
     if (tab && typeof tab === 'string') ui.heroTab = tab;
     ui.heroTab = ui.heroTab || 'char';
@@ -2037,6 +2056,7 @@
             h('div', { class: 't' }, h('b', { class: it ? 'q' + it.q : '' }, it ? it.name : 'Empty'), h('small', null, D.SLOT_LABEL[slot])), h('div')));
         }
         b.append(gear);
+        b.append(h('button', { class: 'btn wide alt', style: { marginTop: '8px' }, onclick: () => openWardrobe() }, 'Wardrobe'));
       } else if (ui.heroTab === 'abil') {
         b.append(h('button', { class: 'btn wide' + (tp.free ? '' : ' alt'), onclick: () => openTalents() }, P.level < D.TALENT_START ? `Talents (from level ${D.TALENT_START})` : tp.free ? `Talents · ${tp.free} point${tp.free > 1 ? 's' : ''} to spend` : `Talents · ${tp.spent} spent`));
         b.append(h('button', { class: 'btn wide alt', onclick: () => openProfessions() }, Object.keys(G.profs()).length ? 'Professions · ' + Object.entries(G.profs()).map(([k, p]) => `${D.PROFESSIONS[k].name} ${p.skill}`).join(', ') : 'Professions (learn from a trainer in a city)'));
@@ -2085,7 +2105,7 @@
           box.append(h('p', { class: 'ai-note' }, L.credit));
           b.append(box);
           if (on) {
-            const ks = L.keepsake, wearing = ks && P.keepsake === ks.look;
+            const ks = L.keepsake, wearing = ks && (P.wardrobe || {}).back === ks.look;
             if (ks) b.append(h('div', { class: 'row', style: { marginTop: '6px' } }, h('div', { class: 'ic' }, img(art('icon', ks.icon))), h('div', { class: 't' }, h('b', { style: { color: '#ff8000' } }, ks.name), h('small', { style: { whiteSpace: 'normal' } }, ks.desc)), h('div')));
             b.append(h('div', { class: 'btn-row' },
               ks ? h('button', { class: 'btn' + (wearing ? '' : ' alt'), onclick: () => { G.setKeepsake(wearing ? null : key); ui.sheetFn(); } }, wearing ? `Wearing the ${ks.name}` : `Wear the ${ks.name}`) : null,

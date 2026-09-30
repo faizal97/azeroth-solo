@@ -135,7 +135,7 @@
   // And the Friends switch (v10.2, friends.js): { on, at }, where the newest change wins, so turning Friends on or off
   // on one device does the same on the others.
   const ACCOUNT_FILE = 'account.azs';
-  const LISTS = ['heirlooms', 'story', 'lore', 'tips'];
+  const LISTS = ['heirlooms', 'story', 'lore', 'tips', 'looks'];
   const union = (x, y) => { const out = []; for (const id of (x || []).concat(y || [])) if (!out.includes(id)) out.push(id); return out; };
   CLOUD.mergeAccount = function (a, b) {
     a = a || {}; b = b || {};
@@ -150,7 +150,7 @@
   // everything the account file holds, as this device has it
   const localAccount = () => { const a = Object.assign({}, G.account(), { story: readList('azsolo.story'), lore: readList('azsolo.loreread'), tips: readList('azsolo.tips', 'seen') }); const f = root.FRIENDS && FRIENDS.switchInfo(); if (f) a.friends = f; return a; };
   function writeLocal(m) {
-    G.saveAccount({ marks: m.marks, heirlooms: m.heirlooms });
+    G.saveAccount(Object.assign(G.account(), { marks: m.marks, heirlooms: m.heirlooms, looks: m.looks })); // keeps the wardrobe's own flags
     try {
       localStorage.setItem('azsolo.story', JSON.stringify(m.story));
       localStorage.setItem('azsolo.loreread', JSON.stringify(m.lore));

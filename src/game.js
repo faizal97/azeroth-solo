@@ -104,6 +104,7 @@
     S.pending = []; S.chatTimers = {};
     if (S.run && S.run.phase === 'fight') S.run.phase = 'rest', S.run.restUntil = now() + 3000;
     try { G.refreshHeirlooms(); } catch (e) { /* older save */ }
+    if (S.player.keepsake) { S.player.wardrobe = Object.assign({ back: S.player.keepsake }, S.player.wardrobe); delete S.player.keepsake; } // v10.3: keepsakes moved into the wardrobe
     // v10: the world has new names. A save keeps copies of items, so their names come fresh from the data by id;
     // simulated players from other realms move to the new realm names; old chat goes (it quotes the old names),
     // except requests still open. Keyed by id throughout, so nothing else changes.
@@ -278,7 +279,8 @@
         if (st) sets[st] = (sets[st] || 0) + 1;
       }
       if ((sets.defias || 0) >= D.SETS.defias.mask) g.mask = 'defias';
-      if (c.keepsake) g.back = c.keepsake; // a Legend's keepsake (v10.2) shows over any cloak's look
+      if (c.keepsake) g.back = c.keepsake; // a Legend character's own keepsake (v10.2)
+      for (const pl in c.wardrobe || {}) { if (c.wardrobe[pl] === 'hidden') delete g[pl]; else g[pl] = c.wardrobe[pl]; } // the wardrobe (v10.3)
     } else if (c.level >= 10 && c.id != null) {
       // players you pass in the world: some capped ones have farmed The Smugglers' Deep
       if (B.hash(c.id, 71) < 0.15) g.back = 'cape_brotherhood';
@@ -343,6 +345,7 @@
     }
     if (G.bagsFull()) { toast('Inventory is full.'); return false; }
     P.bags.push({ item: it, n });
+    if (G.collectLook) G.collectLook(it); // the wardrobe (v10.3)
     return true;
   };
   G.countItem = function (id) { let n = 0; for (const b of G.S.player.bags) if (b.item.id === id) n += b.n; return n; };
@@ -1637,6 +1640,50 @@
     loot(owned ? `You take a copy of ${B.link(H.name, 5)}.` : `You bought ${B.link(H.name, 5)} for ${H.cost} Mentor Marks. Every character can take a copy.`);
     emit('change');
   };
+  // ---- the wardrobe (v10.3): looks are account-wide (account.looks, 'place:artKey'); each character picks what shows
+  // in P.wardrobe ({ place: artKey | 'hidden' }; no entry = the worn item's look). Design: docs/plans/2026-09-30-wardrobe-design.md
+  G.WARDROBE_PLACES = ['weapon', 'ranged', 'chest', 'legs', 'back'];
+  const lookOf = (it) => it && (it.look || ((D.ITEMS[it.id] || {}).look));
+  let lookItems = null;
+  G.lookItem = function (place, key) { // an item that has this look, for its name, icon and the class rules
+    if (!lookItems) { lookItems = {}; for (const id in D.ITEMS) { const l = D.ITEMS[id].look; if (l && !lookItems[l[0] + ':' + l[1]]) lookItems[l[0] + ':' + l[1]] = D.ITEMS[id]; } }
+    return lookItems[place + ':' + key] || null;
+  };
+  G.collectLook = function (it) {
+    const l = lookOf(it); if (!l) return false;
+    const a = G.account(), k = l[0] + ':' + l[1]; a.looks = a.looks || [];
+    if (a.looks.includes(k)) return false;
+    a.looks.push(k); G.saveAccount(a); return true;
+  };
+  // the first open collects every look already on this device's characters: worn, in bags, in the bank
+  G.seedWardrobe = function () {
+    const a = G.account(); if (a.lookSeed) return;
+    a.looks = a.looks || [];
+    for (const c of G.characters()) {
+      const S = G.S && c.id === G.S.id ? G.S : G.readSave(c.id), P = S && S.player; if (!P) continue;
+      for (const it of Object.values(P.equip || {}).concat((P.bags || []).map((b) => b.item), (P.bank || []).map((b) => b.item))) {
+        const l = lookOf(it); if (l && !a.looks.includes(l[0] + ':' + l[1])) a.looks.push(l[0] + ':' + l[1]);
+      }
+    }
+    a.lookSeed = 1; G.saveAccount(a);
+  };
+  // what this character can show in one place: owned looks its class could wear, plus finished Legends' keepsakes
+  G.wardrobeOptions = function (place) {
+    const P = G.S.player, out = [];
+    for (const k of G.account().looks || []) {
+      const i = k.indexOf(':'), pl = k.slice(0, i), key = k.slice(i + 1); if (pl !== place) continue;
+      const it = G.lookItem(pl, key); if (it && G.canUseItem(it, P.cls)) out.push({ key, name: it.name, icon: it.icon, q: it.q });
+    }
+    if (place === 'back') for (const lk in D.LEGENDS || {}) { const L = D.LEGENDS[lk]; if (L.keepsake && G.legendUnlocked(lk)) out.push({ key: L.keepsake.look, name: L.keepsake.name, icon: L.keepsake.icon, q: 5, keepsake: lk }); }
+    return out;
+  };
+  G.setWardrobe = function (place, key) { // key: an artKey, 'hidden', or null for the worn item's look
+    const P = G.S.player; if (!G.WARDROBE_PLACES.includes(place)) return false;
+    if (key === 'hidden' && place !== 'back' && place !== 'ranged') return false;
+    if (key && key !== 'hidden' && !G.wardrobeOptions(place).some((o) => o.key === key)) return false;
+    P.wardrobe = Object.assign({}, P.wardrobe); if (key) P.wardrobe[place] = key; else delete P.wardrobe[place];
+    G.save(); emit('change'); return true;
+  };
   // ---- gear upgrades (v10.3): it.up is the step, it.base the item as it dropped; stats are rewritten from it.base
   G.itemPoints = (it) => { let n = (it && it.sp) || 0; for (const k in ((it && it.stats) || {})) n += it.stats[k]; return n; };
   // The ceiling for an item is its own family's piece in the ceiling raid (same slot, weapon or armour type, and caster
@@ -2211,7 +2258,7 @@
   G.setKeepsake = function (key) {
     const P = G.S.player, L = key && D.LEGENDS[key];
     if (key && !(L && L.keepsake && G.legendUnlocked(key))) return;
-    P.keepsake = key ? L.keepsake.look : null; G.save(); emit('change');
+    G.setWardrobe('back', key ? L.keepsake.look : null); // keepsakes live in the wardrobe's Back row (v10.3)
   };
   G.legendUnlocked = (key) => { const L = (D.LEGENDS || {})[key]; return !!(L && G.S && G.S.player.done[L.unlock]); };
   G.legendOn = (key) => !((G.S.player.legendOff || {})[key]);

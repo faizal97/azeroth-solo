@@ -25,17 +25,17 @@ to come: Trial season looks, Hard raid recolours, keepsakes.
   any owned look the class could wear (armour type for chest and legs, weapon type for weapon and ranged, the same
   rules as `G.canUseItem`), or **Hidden** (back and ranged only).
 - Saved per character as `P.wardrobe = { place: artKey | 'hidden' }`. Stats never change.
-- `G.gearLooks` applies `c.wardrobe` over the worn looks, so everyone sees it: the hero, bots' views of you, and
-  Friends (the Friends card gains `wardrobe`; today it sends no keepsake either).
+- `G.gearLooks` applies `c.wardrobe` over the worn looks, so it shows wherever your character is drawn: the hero, your
+  party sprite, the character select. (Friends only see a portrait, never gear, so their card needs no change.)
 - **Legend keepsakes move into the Back row.** A keepsake is offered once that character has finished the Legend's
-  questline (as now). The Hero screen's "Wear the ..." button goes; an existing `P.keepsake` becomes
-  `P.wardrobe.back` on load.
+  questline (as now). The Legend page's "Wear the ..." button stays as a shortcut to the same Back row setting; an
+  existing `P.keepsake` becomes `P.wardrobe.back` on load.
 
 ## Checks (sim/wardrobe.js, run by build.py)
 
 - Looting, equipping and buying collect a look; the first open collects from existing characters.
 - Class limits: a mage cannot show mail or a sword; Hidden only for back and ranged.
 - A chosen look shows in `G.gearLooks`; Your gear falls back to the worn item.
-- The Friends card carries the wardrobe.
-- `CLOUD.mergeAccount` unions `looks`.
+- `CLOUD.mergeAccount` unions `looks` (and cloud save's account writer now keeps them; it used to keep only Marks and
+  heirlooms).
 - An old save with `P.keepsake` loads with the keepsake on the back.
