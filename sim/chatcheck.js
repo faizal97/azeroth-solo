@@ -2,12 +2,12 @@
 // the player can act on (m.act), or point at one (m.ref). Also reports how varied each channel is.
 // Runs hours of chat at a few levels for both factions.  node sim/chatcheck.js
 globalThis.localStorage = { getItem() { return null; }, setItem() {}, removeItem() {} };
-require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js'); require('../src/social.js');
+require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js'); require('../src/social.js'); require('../src/trials.js');
 const { G, D, B, SOC } = globalThis;
 let t = Date.now(); Date.now = () => t;
 const REQ = /\b(LF\d?M|LFG|WTS|WTB|pst|inv pls|recruit(ing)?|group up|team up|party up|carry me|can (u|you) (help|carry|craft|make|run)|help me|need (a|an|\d+) |anyone (want|wanna|up for|free|selling|got|spare)|who has|spare \d|selling|buying|will pay|ill pay|ill tip)\b|\bduel\?/i;
 let bad = 0;
-const runs = [['human', 'paladin', 'goldshire', 10], ['human', 'mage', 'darkshire', 26], ['orc', 'warrior', 'crossroads', 18], ['undead', 'priest', 'tarren_mill', 32], ['dwarf', 'hunter', 'gadgetzan', 46], ['tauren', 'druid', 'everlook', 57]];
+const runs = [['human', 'warrior', 'stormwind', 60], ['orc', 'priest', 'orgrimmar', 60], ['human', 'paladin', 'goldshire', 10], ['human', 'mage', 'darkshire', 26], ['orc', 'warrior', 'crossroads', 18], ['undead', 'priest', 'tarren_mill', 32], ['dwarf', 'hunter', 'gadgetzan', 46], ['tauren', 'druid', 'everlook', 57]];
 const seen = {}, total = {};
 for (const [race, cls, place, lvl] of runs) {
   G.newGame({ name: 'T', cls, race }); const S = G.S, P = S.player;

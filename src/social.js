@@ -225,6 +225,8 @@
     }
     if (G.fight || S.run) return;
     if (P.level >= 8 && due('lfg', 45, 100) && openActs((a) => a.kind === 'lfg').length < 2) makeLfg();
+    if (P.level >= D.LEVEL_CAP && due('trial_lfg', 150, 320) && !openActs((a) => a.kind === 'trial_lfg').length) makeTrialLfg();
+    if (P.level >= D.LEVEL_CAP && due('trial_talk', 500, 1100)) trialTalk();
     if (P.level >= 4 && due('whisper', 130, 300) && !openActs((a) => a.whisper).length) makeWhisper();
     if (P.level >= 5 && due('trade', 240, 480)) makeTrade();
     if (P.level >= 8 && due('rare', 900, 1800)) makeRare();
@@ -253,6 +255,28 @@
     const size = A.size || 5, have = rint(1, size - 1);
     const c = { role: roleWord(role), name: A.name, have, size };
     post(guild ? 'guild' : 'lfg', lead, pick(guild ? GUILD_LFG_TEXT : LFG_TEXT)(c), { kind: 'lfg', act: k, role, leader: lead.id, guild: !!guild, until: now() + 4 * 60000 });
+  }
+
+  // Trials in chat (v10.7, stage 4): level-60 bots post real Trial groups, always at a level you have open on that
+  // dungeon, so every one can be joined; and they talk about the week's Omens as plain statements, never requests
+  const TRIAL_LFG_TEXT = [
+    (c) => `LFM trial ${c.lvl} ${c.name}, need ${c.role}`, (c) => `LF1M ${c.role} ${c.name} trial ${c.lvl}, going for par`,
+    (c) => `trial ${c.lvl} ${c.name} ${c.have}/5, need ${c.role}`, (c) => `${c.name} trial ${c.lvl}, timed run, need a ${c.role}`,
+    (c) => `need ${c.role} for trial ${c.lvl} ${c.name}, chill but fast`];
+  function makeTrialLfg() {
+    const T = root.TRIALS; if (!T || !T.open(T.season(new Date()))) return;
+    const acts = G.trialPicks().filter((k) => !G.trialBlock(k)); if (!acts.length) return;
+    const k = pick(acts), max = G.trialMax(k), lvl = rint(Math.max(1, max - 3), max);
+    const lead = pick(myBots().filter((b) => b.level >= D.LEVEL_CAP)); if (!lead) return;
+    const role = pick(G.roles()), c = { role: roleWord(role), name: D.ACTIVITIES[k].name, lvl, have: rint(2, 4) };
+    post('lfg', lead, pick(TRIAL_LFG_TEXT)(c), { kind: 'trial_lfg', act: k, lvl, role, leader: lead.id, until: now() + 4 * 60000 });
+  }
+  function trialTalk() {
+    const T = root.TRIALS; if (!T || !T.open(T.season(new Date()))) return;
+    const om = T.active(20, new Date()), b = pick(myBots().filter((x) => x.level >= D.LEVEL_CAP)); if (!om.length || !b) return;
+    const O = T.OMENS[pick(om)].name.toLowerCase(), month = T.name(T.season(new Date())).split(' ')[0];
+    post('general', b, pick([`${O} week again, my trial times are awful`, `timed trial ${rint(6, 14)} on ${O} week, so happy`, `${O} this week, i hate it`,
+      `${month} rating finally went up`, `${O} week is my favourite, dont care what anyone says`, `one more trial and i log, for real this time`, `just missed par by 4 seconds on ${O} week`]));
   }
 
   function makeWhisper() {
@@ -423,6 +447,9 @@
     const help = () => { weekProgress('help', 1); };
     if (a.kind === 'lfg') {
       return [{ label: `Join as ${roleName(a.role)}`, primary: true, fn: () => { if (G.joinChatGroup(a.act, a.role, { leader: a.leader, guild: a.guild ? P.guild : null, soc: a.guild ? { kind: 'g_run' } : null })) { close(); help(); } } }, decline];
+    }
+    if (a.kind === 'trial_lfg') {
+      return [{ label: `Join Trial ${a.lvl} as ${roleName(a.role)}`, primary: true, fn: () => { if (G.joinChatTrial(a.act, a.lvl, a.role, { leader: a.leader })) { close(); help(); } } }, decline];
     }
     if (a.kind === 'help_wanted') {
       const r = (S.helpWanted || []).find((x) => x.id === a.hw);

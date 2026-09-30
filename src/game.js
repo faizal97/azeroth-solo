@@ -2112,6 +2112,23 @@
     emit('change');
     return true;
   };
+  // a Trial group from chat (v10.7, Trials stage 4): a level-60 bot's real post, joinable at a level you have open
+  G.joinChatTrial = function (act, lvl, role, opts) {
+    const S = G.S; opts = opts || {};
+    if (S.run || S.queue || G.fight) { toast('Leave your current group first.'); return false; }
+    const why = G.trialBlock(act); if (why) { toast(why + '.'); return false; }
+    if (lvl > G.trialMax(act)) { toast(`You have Trial ${G.trialMax(act)} open on ${D.ACTIVITIES[act].name}.`); return false; }
+    if (S.wparty) disbandParty('You left your party to join another group.');
+    if (role && G.roles().includes(role)) S.player.role = role;
+    stopActions();
+    const grp = formGroup(act, { trial: lvl });
+    const lead = opts.leader && S.bots.find((b) => b.id === opts.leader);
+    if (lead) { const i = grp.members.findIndex((m) => m.role === 'dps' && !m.legend); if (i >= 0) { const lc = G.botChar(Object.assign({}, lead, { level: D.LEVEL_CAP, role: 'dps' })); lc.syncLevel = D.LEVEL_CAP; grp.members[i] = lc; } }
+    sys(`${lead ? lead.name + "'s" : 'The'} group summons you to ${D.ACTIVITIES[act].name}, Trial ${lvl}.`);
+    startRun(act, lvl);
+    emit('change');
+    return true;
+  };
   G.leaveParty = function (quiet) {
     const S = G.S;
     if (!S.wparty) return;
