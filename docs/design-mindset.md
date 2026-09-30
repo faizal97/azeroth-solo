@@ -11,6 +11,9 @@ Every number, label, icon and glow has to explain itself, on the screen, without
   (a normal level-60 run is 0%)" is not. "Power 91% of the ceiling" names its ceiling.
 - **Every chip, badge and icon has a label or a tap that explains it.** An Omen chip opens its rule and its counter; a
   Trial row says "Best: Trial 7, in time".
+- **Every buff and debuff explains itself.** Tapping one (on you, a party member or an enemy) shows its name, what it
+  does in plain words ("Attack speed +20%", "Takes 12 Shadow damage every 3 sec"), who put it there and the time left.
+  This goes for Omen effects, reactions and Momentum too.
 - **Mechanics are told, not left to the description.** Players do not read tooltips. A class reaction gets a glow on
   the button, a callout over the character and a one-time card the first time; the tooltip is the backup, not the
   explanation.
