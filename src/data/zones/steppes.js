@@ -58,7 +58,7 @@
   const H = (id, q) => { q.faction = 'horde'; D.QUESTS[id] = q; };
   A('lakeshire_steppes', { name: "Drummond's Vigil", lvl: 52, giver: 'solomon', turnin: 'marshal_maxwell', text: "South of Stoneharrow lies the Cinderfields. Marshal Kettering holds Drummond's Vigil there, in the shadow of Cinderpeak. He asked for you by name.",
     objs: [{ type: 'visit', place: 'morgans_vigil' }], reward: { money: 2600 } });
-  H('org_steppes', { name: 'Brand Crest', lvl: 52, giver: 'thrall_herald', turnin: 'thal_kaur', text: "The Warchief sends scouts to watch Cinderpeak. Take the wyvern rider to Brand Crest.",
+  H('org_steppes', { name: 'Brand Crest', lvl: 52, giver: 'thrall_herald', turnin: 'thal_kaur', text: "The High Chief sends scouts to watch Cinderpeak. Take the wyvern rider to Brand Crest.",
     objs: [{ type: 'visit', place: 'flame_crest' }], reward: { money: 2600 } });
   const both = (key, lvl, name, text, objs, ra, rh, pre) => {
     A('bsa_' + key, Object.assign({ name, lvl, giver: ra[0], turnin: ra[0], text: text[0], objs, reward: ra[1] }, pre ? { pre: ['bsa_' + pre] } : {}));

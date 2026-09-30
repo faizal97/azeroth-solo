@@ -29,7 +29,7 @@
   const H = (id, q) => { q.faction = 'horde'; D.QUESTS[id] = q; };
   A('dw_onyxia_a', { name: 'The Brood Mother', lvl: 60, giver: 'commander_ashby', turnin: 'commander_ashby', dungeon: 'onyxias_lair', pre: ['dw_a_lair'], text: 'Veshmira sleeps in that cave with her brood around her. The storm she raised still hangs over the sea, and the sailors say it will not break while she lives. No ship reaches the new isle until it does. Bring me her head. Take nine good people with you.',
     objs: [{ type: 'collect', item: 'onyxia_head', n: 1 }], reward: { choice: ['fam_back_rare60'] } });
-  H('dw_onyxia_h', { name: 'The Brood Mother', lvl: 60, giver: 'warlord_durnak', turnin: 'warlord_durnak', dungeon: 'onyxias_lair', pre: ['dw_h_lair'], text: 'The dragon is in her cave. Her storm sits on the sea like a lid, and it will not lift while she breathes. The Warchief wants that sea open. Bring me her head, and take nine warriors with you.',
+  H('dw_onyxia_h', { name: 'The Brood Mother', lvl: 60, giver: 'warlord_durnak', turnin: 'warlord_durnak', dungeon: 'onyxias_lair', pre: ['dw_h_lair'], text: 'The dragon is in her cave. Her storm sits on the sea like a lid, and it will not lift while she breathes. The High Chief wants that sea open. Bring me her head, and take nine warriors with you.',
     objs: [{ type: 'collect', item: 'onyxia_head', n: 1 }], reward: { choice: ['fam_back_rare60'] } });
 
   Object.assign(D.DUNGEONS, {

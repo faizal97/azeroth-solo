@@ -19,7 +19,7 @@
   D.item('vile_fang_claw', { name: 'Vile Fang Claw', slot: 'quest', q: 1, icon: 'claw' });
   D.item('naraxis_fang', { name: "Skittra's Fang", slot: 'quest', q: 1, icon: 'claw' });
   D.item('mor_ladim_skull', { name: "Morlan the Unburied's Skull", slot: 'quest', q: 1, icon: 'head' });
-  D.item('stitches_cleaver', { name: "Patchwork' Cleaver", slot: 'quest', q: 1, icon: 'axe' });
+  D.item('stitches_cleaver', { name: "Patchwork's Cleaver", slot: 'quest', q: 1, icon: 'axe' });
   // named and elite drops
   D.item('naraxis_legs', { name: 'Silk-Spun Leggings', slot: 'legs', atype: 'cloth', q: 3, lvl: 26, armor: 50, stats: { int: 8, spi: 6 }, sp: 10, icon: 'legs', sell: 3000, source: 'Skittra, the Blackreed Bank' });
   D.item('mor_ladim_blade', { name: "Morlan the Unburied's Greatsword", slot: 'weapon', wtype: 'sword', q: 3, lvl: 29, dmg: [37, 62], speed: 2.6, stats: { str: 9, sta: 6 }, icon: 'sword', sell: 3800, source: "Morlan the Unburied, Harlow Cemetery" });

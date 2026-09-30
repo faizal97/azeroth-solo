@@ -10,10 +10,10 @@
   D.item('nightsaber_pelt', { name: 'Shadowcat Pelt', slot: 'quest', q: 1, icon: 'pelt' });
   D.item('owl_feather', { name: 'Strigid Owl Feather', slot: 'quest', q: 1, icon: 'feather' });
   D.item('timberling_seed', { name: 'Rootling Seed', slot: 'quest', q: 1, icon: 'seed' });
-  D.item('melenas_head', { name: "Varneth' Head", slot: 'quest', q: 1, icon: 'head' });
+  D.item('melenas_head', { name: "Varneth's Head", slot: 'quest', q: 1, icon: 'head' });
   D.item('githyiss_shroud', { name: "Skitterfang's Silken Shroud", slot: 'back', q: 3, lvl: 5, armor: 9, stats: { agi: 1, int: 2 }, icon: 'cloak', sell: 130, source: 'Skitterfang the Vile, Webhollow Cave', look: ['back', 'githyiss_shroud'] });
   D.item('oakenscowl_staff', { name: "Old Barkjaw's Totem Staff", slot: 'weapon', wtype: 'staff', q: 3, lvl: 10, dmg: [15, 23], speed: 3, stats: { sta: 3, int: 3, spi: 3 }, sp: 8, icon: 'staff', sell: 800, source: "Old Barkjaw, Rootdeep Barrow", look: ['weapon', 'oakenscowl_staff'] });
-  D.item('melenas_blade', { name: "Varneth' Wicked Blade", slot: 'weapon', wtype: 'sword', q: 3, lvl: 10, dmg: [11, 20], speed: 2.2, stats: { agi: 3, str: 2 }, icon: 'sword', sell: 800, source: 'Lord Varneth, Gloomrock', look: ['weapon', 'melenas_blade'] });
+  D.item('melenas_blade', { name: "Varneth's Wicked Blade", slot: 'weapon', wtype: 'sword', q: 3, lvl: 10, dmg: [11, 20], speed: 2.2, stats: { agi: 3, str: 2 }, icon: 'sword', sell: 800, source: 'Lord Varneth, Gloomrock', look: ['weapon', 'melenas_blade'] });
   D.item('gnarlpine_totem', { name: 'Mossback Totem', slot: 'quest', q: 1, icon: 'voodoo_doll' });
   D.item('grell_fang', { name: 'Thornling Fang', slot: 'quest', q: 1, icon: 'claw' });
 
@@ -87,7 +87,7 @@
       objs: [{ type: 'kill', mob: 'gnarlpine_warrior', n: 6 }, { type: 'kill', mob: 'gnarlpine_shaman', n: 6 }], reward: { choice: ['fam_back'] } },
     oakenscowl_q: { name: 'The Elder Bearkin', lvl: 10, giver: 'tallonkai', turnin: 'tallonkai', pre: ['gnarlpine_corruption'], text: 'Their elder, Old Barkjaw, leads the corruption from deep in the barrow. Defeat him.',
       objs: [{ type: 'kill', mob: 'oakenscowl', n: 1 }], reward: { choice: ['fam_chest9'] } },
-    melenas_q: { name: "Varneth' Head", lvl: 10, giver: 'kyra', turnin: 'kyra', text: 'A satyr named Lord Varneth hides in Gloomrock, poisoning the land. Bring me his head.',
+    melenas_q: { name: "Varneth's Head", lvl: 10, giver: 'kyra', turnin: 'kyra', text: 'A satyr named Lord Varneth hides in Gloomrock, poisoning the land. Bring me his head.',
       objs: [{ type: 'collect', item: 'melenas_head', n: 1 }], reward: { choice: ['fam_waist'] } },
     crown_earth: { name: 'The Heart of the Tree', lvl: 8, giver: 'tallonkai', turnin: 'saelienne', pre: ['road_dolanaar'], text: 'Travel west to Nyrwen, city of the Sylari, and see the heart of Greatbough.',
       objs: [{ type: 'visit', place: 'darnassus' }], reward: {} },

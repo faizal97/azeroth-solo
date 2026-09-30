@@ -97,7 +97,7 @@
       objs: [{ type: 'kill', mob: 'scarlet_warrior', n: 8 }], reward: { choice: ['fam_legs9'] } },
     scarlet_converts: { name: 'Converts No More', lvl: 10, giver: 'renee', turnin: 'renee', text: 'The Order of the Pyre recruits the living to hunt us. Stop 8 converts before they are trained.',
       objs: [{ type: 'kill', mob: 'scarlet_convert', n: 8 }], reward: { choice: ['fam_hands9'] } },
-    crossroads_tirisfal: { name: 'Service to the Krugar', lvl: 10, giver: 'sevren', turnin: 'thork', text: 'The Pale Queen supports the Warchief. Take the zeppelin to Vazhrak and report to Grukk at Dustfort.',
+    crossroads_tirisfal: { name: 'Service to the Krugar', lvl: 10, giver: 'sevren', turnin: 'thork', text: 'The Pale Queen supports the High Chief. Take the zeppelin to Vazhrak and report to Grukk at Dustfort.',
       objs: [{ type: 'visit', place: 'crossroads' }], reward: {} },
   });
 

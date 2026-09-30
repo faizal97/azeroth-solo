@@ -48,7 +48,7 @@
   });
 
   const H = (id, q) => { q.faction = 'horde'; D.QUESTS[id] = q; };
-  H('x_to_skullreef', { name: 'The Drowned Crown', lvl: 60, storm: true, giver: 'thrall_herald', turnin: 'shadow_hunter_zulkesh', text: "An island has risen from the sea, and with the dragon dead the storm around it has broken. The Kessari say its reefs are full of their drowned ancestors. The Warchief wants the Krugar there first. Take the Bloodtide ship from Camp Skarn.",
+  H('x_to_skullreef', { name: 'The Drowned Crown', lvl: 60, storm: true, giver: 'thrall_herald', turnin: 'shadow_hunter_zulkesh', text: "An island has risen from the sea, and with the dragon dead the storm around it has broken. The Kessari say its reefs are full of their drowned ancestors. The High Chief wants the Krugar there first. Take the Bloodtide ship from Camp Skarn.",
     objs: [{ type: 'visit', place: 'bloodtide_landing' }], reward: { money: 4000 } });
   H('sr_makrura', { name: 'Coralbone Beach', lvl: 60, giver: 'shadow_hunter_zulkesh', turnin: 'shadow_hunter_zulkesh', text: 'Makrura crawl up the beach at night. Kill 12.',
     objs: [{ type: 'kill', mob: 'reef_makrura', n: 12 }], reward: { choice: ['fam_feet60'] } });

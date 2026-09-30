@@ -80,7 +80,7 @@
     vanira: { name: 'Mezzi', title: 'Kessari Witch Doctor' },
     gryshka: { name: 'Innkeeper Ruzha', title: 'Innkeeper' },
     rahauro: { name: 'Aru', title: 'Weaponsmith' },
-    thrall_herald: { name: 'Herald of Grask', title: "Warchief's Voice" },
+    thrall_herald: { name: 'Herald of Grask', title: "High Chief's Voice" },
   });
 
   // quests
@@ -109,7 +109,7 @@
       objs: [{ type: 'collect', item: 'zalazane_head', n: 1 }], reward: { choice: ['militia'] } },
     hidden_enemies: { name: 'The Cult Below', lvl: 12, giver: 'thrall_herald', turnin: 'thrall_herald', dungeon: 'ragefire', text: 'Cultists of the Hollow Eye hide in The Smoke Pit beneath Vazhrak. Slay Bazzak the Hungerer and bring his heart.',
       objs: [{ type: 'collect', item: 'taragaman_heart', n: 1 }], reward: { choice: ['fam_back_rare'] } },
-    enter_orgrimmar: { name: 'Welcome to Vazhrak', lvl: 8, giver: 'garthok', turnin: 'gryshka', pre: ['report_razor_hill'], text: "Go north to Vazhrak, the capital of the Krugar, and see the Warchief's city.",
+    enter_orgrimmar: { name: 'Welcome to Vazhrak', lvl: 8, giver: 'garthok', turnin: 'gryshka', pre: ['report_razor_hill'], text: "Go north to Vazhrak, the capital of the Krugar, and see the High Chief's city.",
       objs: [{ type: 'visit', place: 'orgrimmar' }], reward: {} },
     dire_boar_meat_q: { name: 'Meat for the Barracks', lvl: 5, giver: 'grosk', turnin: 'grosk', text: 'The grunts eat more than they fight. Bring me 6 cuts of dire boar meat from Rumblestone Ridge.',
       objs: [{ type: 'collect', item: 'dire_boar_meat', n: 6 }], reward: { money: 90 } },

@@ -51,7 +51,7 @@
   const H = (id, q) => { q.faction = 'horde'; D.QUESTS[id] = q; };
   A('dw_to_theramore', { name: 'The Brood Mother', lvl: 60, giver: 'thelwater', turnin: 'commander_ashby', text: 'The Ledger\'s creditor was a dragon, Veshmira, and Lady Thorne sold the kingdom to her. They fled south over the sea, to a lair in Saltmarsh. Harborwatch watches that marsh. Take the ship from Gullhaven and report to Commander Ashby.',
     objs: [{ type: 'visit', place: 'theramore_isle' }], reward: { money: 4000 } });
-  H('dw_to_brackenwall', { name: 'The Brood Mother', lvl: 60, giver: 'thrall_herald', turnin: 'warlord_durnak', text: 'The dragon who bought the human crown with her gold has gone to ground in Saltmarsh, and the Krugar owe her too. The Warchief wants eyes on her. Take the road south from Dustfort to Mudwall Village and find Warlord Durnak.',
+  H('dw_to_brackenwall', { name: 'The Brood Mother', lvl: 60, giver: 'thrall_herald', turnin: 'warlord_durnak', text: 'The dragon who bought the human crown with her gold has gone to ground in Saltmarsh, and the Krugar owe her too. The High Chief wants eyes on her. Take the road south from Dustfort to Mudwall Village and find Warlord Durnak.',
     objs: [{ type: 'visit', place: 'brackenwall_village' }], reward: { money: 4000 } });
 
   // the marsh chain: same objectives for both factions, each with its own givers

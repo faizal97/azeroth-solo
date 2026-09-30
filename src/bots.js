@@ -249,7 +249,7 @@
   const GENERAL_HORDE = [
     () => 'how do i get to vazhrak', () => 'ok ok', () => "blood and dust!", () => 'for the krugar',
     () => 'the the blooding grounds is so crowded lol', () => 'who keeps killing all the boars', () => 'bonewall inn is the best inn',
-    () => 'grask is the best warchief', () => 'hornwind mesa elevators scare me', () => 'gravenhold has a smell and i love it',
+    () => 'grask is the best high chief', () => 'hornwind mesa elevators scare me', () => 'gravenhold has a smell and i love it',
     () => 'dustfort is always under attack lol', () => 'scrublands chat is a way of life', () => "camp skarn boat is taking forever",
   ];
   // what people talk about at your stage of the game

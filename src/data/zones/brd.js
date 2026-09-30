@@ -39,7 +39,7 @@
     objs: [{ type: 'collect', item: 'prison_cell_key', n: 1 }], reward: { choice: ['fam_back_rare55'] } });
   A('brd_emperor_a', { name: 'The Emperor', lvl: 55, giver: 'marshal_maxwell', turnin: 'marshal_maxwell', dungeon: 'blackrock_depths', text: "Hale's notes were taken to the Emperor himself. Kill Haldor Grimmark and bring them back. They name Kingsmere's traitor.",
     objs: [{ type: 'collect', item: 'windsor_notes', n: 1 }], reward: { choice: ['fam_weapon55'] } });
-  H('brd_emperor_h', { name: 'The Heart of the Mountain', lvl: 55, giver: 'thal_kaur', turnin: 'thal_kaur', dungeon: 'blackrock_depths', text: 'The Slagborn Emperor, Haldor Grimmark, rules the mountain. The Warchief wants his crown.',
+  H('brd_emperor_h', { name: 'The Heart of the Mountain', lvl: 55, giver: 'thal_kaur', turnin: 'thal_kaur', dungeon: 'blackrock_depths', text: 'The Slagborn Emperor, Haldor Grimmark, rules the mountain. The High Chief wants his crown.',
     objs: [{ type: 'collect', item: 'thaurissan_crown', n: 1 }], reward: { choice: ['fam_weapon55'] } });
   H('brd_golem_core', { name: 'The Golem Lord', lvl: 54, giver: 'gorzeeki', turnin: 'gorzeeki', dungeon: 'blackrock_depths', text: "Golemsmith Kragg makes the Slagborn golems. Bring me the core he carries. I have plans for it.",
     objs: [{ type: 'collect', item: 'argelmach_core', n: 1 }], reward: { choice: ['fam_back_rare55'] } });

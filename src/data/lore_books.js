@@ -54,7 +54,7 @@
       'Last entry: The water is moving upward. After ten thousand years, I can feel the moon again. I do not know whose tide this is.',
     ] },
     bk_blade: { title: 'Against the Hollow Eye', section: 'book', book: true, lvl: 8, faction: 'horde', from: { yarrog: 0.35, jergosh: 0.3 }, text: [
-      'From the shamans of the Warchief, to every orc of Dunescar. Read it, or have it read to you.',
+      'From the shamans of the High Chief, to every orc of Dunescar. Read it, or have it read to you.',
       'The Hollow Eye will find you. They wait in the coven caves by the Blooding Grounds, and they have crept into the caves beneath Vazhrak itself. They speak kindly to the young. They say the spirits are slow and the Krugar has grown soft. They offer strength that comes quickly.',
       'Your grandfathers took that offer. The warlocks of the old Krugar made pacts with demons, and for a time the clans were stronger than they had ever been. We paid with our homeland. We paid with the fire in our blood, and with the years in the camps when that fire went out and left us sick and hollow. Grask broke those chains. He did not break them so that we could forge new ones.',
       'If they come to you, do not follow them into the caves. Tell a shaman at Bonewall or in Vazhrak. There is no shame in being tempted. The shame is in keeping quiet.',

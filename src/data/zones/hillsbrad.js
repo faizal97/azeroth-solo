@@ -16,7 +16,7 @@
   D.item('yeti_horn', { name: 'Ferocious Yeti Horn', slot: 'quest', q: 1, icon: 'tusk' });
   D.item('moonrage_fang', { name: 'Howlmoor Fang', slot: 'quest', q: 1, icon: 'claw' });
   D.item('bonds_hammer', { name: "Foreman Cutts' Hammer", slot: 'quest', q: 1, icon: 'mace' });
-  D.item('samras_pelt', { name: "Big Bruin' Pelt", slot: 'quest', q: 1, icon: 'pelt' });
+  D.item('samras_pelt', { name: "Big Bruin's Pelt", slot: 'quest', q: 1, icon: 'pelt' });
   D.item('arugal_head', { name: 'Head of Cairn', slot: 'quest', q: 1, icon: 'head' });
   D.item('springvale_seal', { name: "Ashdown's Seal", slot: 'quest', q: 1, icon: 'coin' });
   D.item('sfk_journal', { name: "Gravestalker Adamant's Journal", slot: 'quest', q: 1, icon: 'journal' });

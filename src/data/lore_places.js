@@ -8,7 +8,7 @@
     dg_ragefire: { title: 'The Smoke Pit', section: 'dungeon', dungeon: 'ragefire', text: [
       'The caves under Vazhrak are older than the city. When the Krugar raised its walls on the red earth, the tunnels below were left to the heat and the dark, and nobody thought much about what lived in them.',
       'The cavekin did. They came up from the deep rock, bred in the warm caves and fought anything that came down. Behind them came something worse: orcs of the Hollow Eye, cousins of the Hollow Eye that haunt the caves near the Blooding Grounds.',
-      'The Hollow Eye want back what the Krugar gave up: the old pacts with demons, and the power that came with them. They meet in the lowest caves, a short climb from the Warchief\'s own streets, and call up things that should have stayed on the other side.',
+      'The Hollow Eye want back what the Krugar gave up: the old pacts with demons, and the power that came with them. They meet in the lowest caves, a short climb from the High Chief\'s own streets, and call up things that should have stayed on the other side.',
       'For the orcs of Vazhrak this is a matter of shame as much as danger. The rot is not an invader. It is their own.',
     ], bosses: {
       oggleflint: 'Skagg leads the cavekin of the upper tunnels. He is a brute, not a schemer, and the cult lets his tribe hold the way in so its own work goes undisturbed.',
@@ -290,7 +290,7 @@
     ] },
     zn_orgrimmar: { title: 'Vazhrak', section: 'zone', zone: 'Vazhrak', text: [
       'Vazhrak was built in a canyon of red stone, fast and strong, by a people who had lived too long in camps. It is loud, hot and proud of both.',
-      'This is where the Warchief speaks and the Krugar listens. Orcs, trolls, hornfolk and Reclaimed trade in its streets. Not everyone below them is loyal: the Hollow Eye hides in the chasm under the city.',
+      'This is where the High Chief speaks and the Krugar listens. Orcs, trolls, hornfolk and Reclaimed trade in its streets. Not everyone below them is loyal: the Hollow Eye hides in the chasm under the city.',
     ] },
     zn_mulgore: { title: 'Greensward', section: 'zone', zone: 'Greensward', text: [
       'Greensward is wide grass and gentle hills, the homeland the hornfolk fought long years to reach. They hunt the plains as they always have, and give thanks to the Grass Mother for each kill.',

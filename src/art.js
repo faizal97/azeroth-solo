@@ -1973,7 +1973,7 @@
       out += S('M-8,-44 L8,-43', '#c8a860', 2.2) + S('M-8,-44 L8,-43', OL, 0.6, 0.6);
       return out;
     },
-    /* Lord Varneth' blade: a strongly curved satyr blade, dark metal, gloom-green cutting edge */
+    /* Lord Varneth's blade: a strongly curved satyr blade, dark metal, gloom-green cutting edge */
     melenas_blade: function (c) {
       var bd = 'M-3,-5 C-7,-18 -6,-32 2,-44 C5,-49 10,-52 13,-52 C9,-46 7,-40 6.4,-32 C5.6,-22 4.4,-13 3.4,-5 Z';
       return C(6, -30, 13, c.rg([[0, '#b8ff6a', 0.45], [0.5, FEL, 0.18], [1, FEL, 0]]), 0) +

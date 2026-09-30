@@ -5895,7 +5895,7 @@
   "kind": "quest",
   "region": "Teldrassil",
   "status": "rename",
-  "new": "Varneth' Head"
+  "new": "Varneth's Head"
  },
  "Crown of the Earth": {
   "kind": "quest",
@@ -9375,7 +9375,7 @@
   "kind": "item",
   "region": "",
   "status": "rename",
-  "new": "Varneth' Wicked Blade"
+  "new": "Varneth's Wicked Blade"
  },
  "Gnarlpine Totem": {
   "kind": "item",
@@ -10449,7 +10449,7 @@
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": "Patchwork' Cleaver"
+  "new": "Patchwork's Cleaver"
  },
  "Silk-Spun Leggings": {
   "kind": "item",
@@ -10539,7 +10539,7 @@
   "kind": "item",
   "region": "",
   "status": "review",
-  "new": "Big Bruin' Pelt"
+  "new": "Big Bruin's Pelt"
  },
  "Head of Arugal": {
   "kind": "item",
@@ -16674,6 +16674,24 @@
   "new": null
  },
  "Zaetar": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Elune": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Warchief": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "High Chieftain": {
   "kind": "lore",
   "region": "",
   "status": "forbid",

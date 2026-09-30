@@ -150,7 +150,7 @@ several sharing a line separated by " / ".
 - **Grey Hoods / Hoods** — the Ledger's collectors in Longfield
 - **Black Brood / Brood** — Veshmira's dragonflight
 - **Mistress of Coin / Mistress** — Lady Thorne's office
-- **Sylari** — the wood elves' own name
+- **Sylari** — the wood elves' own name; they bless by the moon ("May the moon guide your blade"), with no named goddess
 - **Unmaking** — the demon army of old
 - **Heartfire** — its bursting sank Sael'anor ten thousand years ago
 - **Drowning** — the night the Heartfire burst
@@ -190,5 +190,6 @@ several sharing a line separated by " / ".
 - **Scorchmaw** — a rare drake of Veshmira's brood in the Scorched Fen
 - **Brant Ashby** — Commander of Harborwatch's watch
 - **Durnak** — Warlord of Mudwall Village
+- **High Chief** — Grask's title, as leader of the Krugar (never "Warchief")
 - **Emberfall** — the King Below's hammer, a Magma Throne drop
 - **Grand** — as in the Grand Crusader

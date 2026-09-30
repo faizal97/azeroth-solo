@@ -69,7 +69,7 @@
     objs: [{ type: 'collect', item: 'executus_rune', n: 1 }], reward: { choice: ['fam_ring_rare60'] } });
   A('mc_firelord_a', { name: 'The King Below Wakes', lvl: 60, giver: 'marshal_maxwell', turnin: 'marshal_maxwell', dungeon: 'molten_core', text: 'The Emperor is dead, and the mountain has not gone quiet. The Slagborn dug for Vulcarn for two hundred years. With Grimmark gone, nothing keeps their master asleep. Go down into the Magma Throne and put him back in the fire. Bring me his essence.',
     objs: [{ type: 'collect', item: 'firelord_essence', n: 1 }], reward: { choice: ['fam_back_rare60'] } });
-  H('mc_firelord_h', { name: 'The King Below Wakes', lvl: 60, giver: 'thal_kaur', turnin: 'thal_kaur', dungeon: 'molten_core', text: 'The Emperor\'s fall woke something worse. Vulcarn stirs in the Magma Throne, and the whole mountain shakes with him. The Warchief will not wait for him to climb out. Take nine others down there and bring back his essence.',
+  H('mc_firelord_h', { name: 'The King Below Wakes', lvl: 60, giver: 'thal_kaur', turnin: 'thal_kaur', dungeon: 'molten_core', text: 'The Emperor\'s fall woke something worse. Vulcarn stirs in the Magma Throne, and the whole mountain shakes with him. The High Chief will not wait for him to climb out. Take nine others down there and bring back his essence.',
     objs: [{ type: 'collect', item: 'firelord_essence', n: 1 }], reward: { choice: ['fam_back_rare60'] } });
 
   Object.assign(D.DUNGEONS, {
