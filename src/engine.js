@@ -274,6 +274,11 @@
     if (tgt.dead) return 0;
     o = o || {};
     if (tgt.auras.some((a) => a.immune)) { ev(C, { type: 'avoid', src: src.uid, tgt: tgt.uid, what: 'immune', ab: o.ab || null }); return 0; }
+    const om = C.opts.omens; // Trials Omens (v10.4)
+    if (om && src.side === 'enemy') {
+      if (om.includes('frenzied') && src.hp < src.maxHp * 0.3) amount *= 1.5;
+      if (src.rally) amount *= 1 + 0.1 * src.rally;
+    }
     if (auraOf(tgt, 'hunters_mark') && (src.cls === 'hunter' || (src.kind === 'pet' && C.units[src.owner] && C.units[src.owner].cls === 'hunter'))) amount *= 1.1;
     const tRP = tgt.race && D.RACIALS[tgt.race] && D.RACIALS[tgt.race].passives;
     if (tRP && tRP.resist && o.school && tRP.resist[o.school]) amount *= 1 - tRP.resist[o.school] / 100;
@@ -296,6 +301,7 @@
       if (sh.absorb <= 0) tgt.auras = tgt.auras.filter((a) => a !== sh);
     }
     tgt.hp -= dmg;
+    if (C.opts.omens && tgt.side === 'enemy' && !tgt.frenzy && tgt.hp > 0 && tgt.hp < tgt.maxHp * 0.3 && C.opts.omens.includes('frenzied')) { tgt.frenzy = true; ev(C, { type: 'emote', uid: tgt.uid, text: `${tgt.name} goes into a frenzy!` }); }
     // threat
     if (tgt.side === 'enemy') {
       let mult = o.threat || 1;
@@ -338,6 +344,11 @@
   function kill(C, u, by) {
     u.dead = true; u.hp = 0; u.cast = null; u.auras = [];
     ev(C, { type: 'die', uid: u.uid, by: by && by.uid });
+    if (u.side === 'enemy' && C.opts.omens && C.opts.omens.includes('rallying')) { // Rallying: the rest of the pull heal and hit harder
+      const rest = C.enemies.filter((x) => !x.dead && x !== u);
+      for (const x of rest) { x.hp = Math.min(x.maxHp, x.hp + x.maxHp * 0.2); x.rally = (x.rally || 0) + 1; }
+      if (rest.length) ev(C, { type: 'emote', uid: rest[0].uid, text: `${rest.length > 1 ? 'The pull rallies' : rest[0].name + ' rallies'}!` });
+    }
     if (u.side === 'enemy') {
       for (const e of C.enemies) delete e.threat[u.uid];
     } else {

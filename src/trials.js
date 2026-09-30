@@ -75,6 +75,35 @@
     return M.seasons[k].slice();
   };
 
+  // ---- Omens: this week's rules. One per tier, each from its own Trial level; a tier tests one lever (tier 1: what to
+  // kill first). The list is open: a new Omen joins the rotation from the next period (content-proof).
+  T.OMENS = {
+    frenzied: { tier: 1, icon: 'berserker_rage', name: 'Frenzied', rule: 'Enemies below 30% health deal 50% more damage.', counter: 'Finish one enemy at a time: mark a kill order, and stun the ones about to enrage.' },
+    rallying: { tier: 1, icon: 'rallying_cry', name: 'Rallying', rule: 'When an enemy dies, the rest of its pull heal 20% of their health and hit 10% harder.', counter: 'Burn the boss first (boss plan: burn the boss), so only its adds are left to rally.' },
+    swarming: { tier: 1, icon: 'multi_shot', name: 'Swarming', rule: 'Every pull brings one extra enemy.', counter: 'Kill the adds first (boss plan: adds first), and use area attacks and stuns.' },
+    hardened: { tier: 1, icon: 'shield_wall', name: 'Hardened', rule: 'Bosses have 30% more health.', counter: 'Burn the boss with everything you have: big cooldowns, elixirs and potions.' },
+  };
+  T.TIER_LVL = { 1: 2, 2: 5, 3: 8 };
+  // the period's Omens, one per tier, never the same one twice in a row: worked out week by week from the Preseason
+  // (period -4), memoized per Omen list so a new Omen changes only the weeks after it is added
+  const omenMemo = {};
+  T.omensFor = function (periodId) {
+    const out = [];
+    for (const tier of Object.keys(T.TIER_LVL).map(Number)) {
+      const keys = Object.keys(T.OMENS).filter((k) => T.OMENS[k].tier === tier).sort(); if (!keys.length) continue;
+      const sig = tier + ':' + keys.join(','), M = (omenMemo[sig] = omenMemo[sig] || { from: -4, picks: [] });
+      for (let id = M.from + M.picks.length; id <= periodId; id++) {
+        let k = keys[Math.floor(rng(104729 * (id + 7) + tier)() * keys.length)];
+        const prev = M.picks[M.picks.length - 1];
+        if (keys.length > 1 && k === prev) k = keys[(keys.indexOf(k) + 1) % keys.length];
+        M.picks.push(k);
+      }
+      out.push(periodId >= M.from ? M.picks[periodId - M.from] : keys[0]);
+    }
+    return out;
+  };
+  T.active = (lvl, date) => T.omensFor(T.period(date).id).filter((k) => lvl >= T.TIER_LVL[T.OMENS[k].tier]);
+
   // ---- difficulty, rating, and the bots you are grouped with
   T.factor = (lvl) => T.BASE * Math.pow(T.STEP, Math.max(0, lvl - 1));
   T.score = (b) => (b ? Math.round(b.lvl * 10 * (b.timed ? 1 : 0.5)) : 0);

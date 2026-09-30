@@ -85,6 +85,36 @@ const drop = (keys) => { for (const k of keys) { delete D.DUNGEONS[k]; delete D.
   fake = new RealDate(2026, 8, 20, 12).getTime(); ok(!T.open(T.season(new Date())), 'before the Preseason, Trials are shut');
   fake = new RealDate(2026, 9, 10, 12).getTime();
 }
+
+// ---- Omens (tier 1): the weekly rotation, levels, and what each one does
+{
+  const ids = []; for (let id = -4; id < 60; id++) ids.push(T.omensFor(id)[0]);
+  ok(ids.every((k, i) => !i || k !== ids[i - 1]), 'an Omen never repeats two weeks in a row');
+  ok(Object.keys(T.OMENS).every((k) => ids.includes(k)), 'every Omen comes round');
+  ok(T.active(1, new Date()).length === 0 && T.active(2, new Date()).length === 1, 'Omens start at Trial 2');
+  G.newGame({ name: 'Om', cls: 'warrior', race: 'human' }); G.S.player.level = 60; G.S.flags.warModeAsked = true;
+  const a = G.trialPicks().find((x) => G.trialBlock(x) === null);
+  const withOmen = (key, lvl) => { const real = T.omensFor; T.omensFor = () => [key]; G.S.run = null; G.S.group = null; G.S.player.trials = { season: G.trials().season, best: {}, open: { [a]: 20 }, week: null, history: [], bestEver: 0, bestRank: null }; G.queueTrial(a, lvl); G.acceptPop(); T.omensFor = real; return G.S.run; };
+  const plain = withOmen('frenzied', 1), hard = withOmen('hardened', 5);
+  ok(plain.omens.length === 0 && hard.omens[0] === 'hardened', 'a run keeps the Omens it started with');
+  ok(Math.abs(hard.bossMult.hp / (T.factor(5) * ((D.DUNGEONS[D.ACTIVITIES[a].dungeon].bossMult || { hp: 1 }).hp)) - 1.3) < 1e-6, 'Hardened: bosses +30% health');
+  const sw = withOmen('swarming', 5); sw.restUntil = 0; const n0 = sw.pulls[0].mobs.length; G.runPull();
+  ok(G.fight.enemies.length === n0 + 1, 'Swarming: one extra enemy in the pull');
+  // Frenzied and Rallying in the engine
+  const fz = E.fight([E.charUnit(G.S.player, 'ally', 'bot', Date.now())], [E.mobUnit('mangy_wolf', 60)], { omens: ['frenzied'] });
+  const m = fz.enemies[0]; fz.allies[0].bot = { skill: 0.8, react: 0.4 }; m.hp = m.maxHp * 0.34; let said = false;
+  for (let i = 0; i < 600 && !m.frenzy && !m.dead; i++) { E.tick(fz, 0.1); if (fz.events.some((e) => e.type === 'emote' && /frenzy/.test(e.text))) said = true; fz.events.length = 0; }
+  ok(m.frenzy === true && said, 'Frenzied: an enemy under 30% goes into a frenzy, and it is called out');
+  const hit = (om) => { const F = E.fight([E.charUnit(G.S.player, 'ally', 'bot', Date.now())], [E.mobUnit('mangy_wolf', 60)], { omens: om }); const w = F.enemies[0], p = F.allies[0]; w.hp = w.maxHp * 0.2; p.auto = false; const h0 = p.hp; let n = 0; for (let i = 0; i < 600 && n < 1; i++) { E.tick(F, 0.1); for (const e of F.events) if (e.type === 'dmg' && e.src === w.uid && !e.crit) { n++; return e.amount; } F.events.length = 0; } return 0; };
+  const avg = (om) => { const v = []; for (let i = 0; i < 40 && v.length < 30; i++) { const d = hit(om); if (d > 0) v.push(d); } return v.reduce((x, y) => x + y, 0) / Math.max(1, v.length); };
+  const a1 = avg(['frenzied']), a2 = avg([]);
+  ok(a1 > a2 * 1.3, `Frenzied: a low enemy hits about 50% harder (${Math.round(a1)} vs ${Math.round(a2)})`);
+  const rl = E.fight([E.charUnit(G.S.player, 'ally', 'bot', Date.now())], [E.mobUnit('mangy_wolf', 60), E.mobUnit('mangy_wolf', 60)], { omens: ['rallying'] });
+  const [x, y] = rl.enemies; y.hp = y.maxHp * 0.5; x.hp = 1;
+  for (let i = 0; i < 400 && !x.dead; i++) E.tick(rl, 0.1);
+  ok(x.dead && y.rally === 1 && y.hp > y.maxHp * 0.6, `Rallying: when one dies, the rest heal and hit harder (${Math.round(y.hp / y.maxHp * 100)}%)`);
+  G.fight = null; G.S.run = null; G.S.group = null;
+}
 // ---- a character's Trials: blocks, levels, rating, Marks, the weekly goal, history
 G.newGame({ name: 'Trier', cls: 'warrior', race: 'human' });
 const P = G.S.player; G.S.flags.warModeAsked = true;

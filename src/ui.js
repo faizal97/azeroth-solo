@@ -77,6 +77,7 @@
   const AURA_NAME = { momentum: 'Momentum', weakened_soul: 'Weakened Soul', chilled: 'Chilled', stun: 'Stunned', fireball_burn: 'Burning', seal: 'Seal' };
   const DEBUFF_IDS = new Set(['weakened_soul', 'hunters_mark', 'chilled', 'stun']);
   function auraInfo(a, u) {
+    if (a.proc) return { id: a.id, icon: a.proc.lights[0], name: a.proc.name, debuff: false }; // a reaction's light (v10.4)
     let base = a.id.replace(/_slow$/, '');
     if (a.id === 'rockbiter' && a.sealSchool === 'fire') base = 'flametongue_weapon';
     const ab = D.ABILITIES[AURA_ALIAS[base] || base];
@@ -90,6 +91,10 @@
     if (u && C) {
       for (const a of u.auras) { const left = a.until - C.t; if (left > 0) out.push(Object.assign(auraInfo(a, u), { left, raw: a, unit: u })); }
       if (u.stunUntil > C.t) out.push({ id: 'stun', icon: 'hammer_justice', name: 'Stunned', debuff: true, left: u.stunUntil - C.t, raw: { id: 'stun' }, unit: u });
+      // Trials Omens (v10.4): every enemy shows the run's Omens, and what they did to it (a frenzy, a rally)
+      if (u.side === 'enemy' && C.opts.omens && window.TRIALS) for (const k of C.opts.omens) { const O = TRIALS.OMENS[k]; if (O) out.push({ id: 'omen_' + k, icon: O.icon, name: 'Omen: ' + O.name, debuff: false, left: Infinity, raw: { id: 'omen', omen: k }, unit: u }); }
+      if (u.frenzy) out.push({ id: 'frenzy', icon: 'berserker_rage', name: 'Frenzied', debuff: false, left: Infinity, raw: { id: 'frenzy' }, unit: u });
+      if (u.rally) out.push({ id: 'rally', icon: 'rallying_cry', name: 'Rallied', debuff: false, left: Infinity, raw: { id: 'rally', n: u.rally }, unit: u });
     } else if (!C && G.S) {
       for (const a of (G.S.player.auras || [])) { const left = (a.until - Date.now()) / 1000; if (left > 0) out.push(Object.assign(auraInfo(a, null), { left, raw: a })); }
     }
@@ -112,13 +117,17 @@
     if (r.id === 'hunters_mark') out.push('Takes 10% more damage from the hunter and their pet.');
     if (r.bear || r.id === 'bear') out.push('Bear Form: much more armor and health, attacks use rage.');
     if (r.id === 'momentum') out.push('Built by pulling again quickly. Resting resets it.');
+    if (r.proc) out.push(r.proc.teach);
+    if (r.id === 'omen' && window.TRIALS) { const O = TRIALS.OMENS[r.omen]; out.push(O.rule, 'Counter: ' + O.counter); }
+    if (r.id === 'frenzy') out.push('Deals 50% more damage now that it is under 30% health (Omen: Frenzied). Finish it fast, or stun it.');
+    if (r.id === 'rally') out.push(`Hits ${10 * r.n}% harder: ${r.n} of its allies fell (Omen: Rallying).`);
     if (!out.length) { const ab = D.ABILITIES[a.icon]; if (ab && ab.desc) out.push(ab.desc.replace(/\{[a-z]+\}/g, '').replace(/\s+([.,])/g, '$1')); }
     return out;
   }
   function showAura(a, box) {
     const cur = (box && box._list && box._list.find((x) => x.id === a.id)) || a;
     const src = cur.raw && cur.raw.src != null && G.fight && G.fight.units[cur.raw.src];
-    const left = cur.left > 86400 ? 'Lasts until you cancel it.' : `${fmtLeft(cur.left)}${cur.left >= 60 ? '' : ' sec'} left.`;
+    const rid = cur.raw && cur.raw.id, left = rid === 'omen' ? 'For the whole Trial.' : rid === 'frenzy' || rid === 'rally' ? 'For the rest of the fight.' : cur.left > 86400 ? 'Lasts until you cancel it.' : `${fmtLeft(cur.left)}${cur.left >= 60 ? '' : ' sec'} left.`;
     showDialog(h('div', { class: 'tooltip' },
       h('div', { class: 'nm', style: { color: a.debuff ? '#ff6a5a' : '#5fd46a' } }, img(abIcon(a.icon)), ' ', a.name, h('small', { class: 'dim' }, a.debuff ? '  debuff' : '  buff')),
       ...auraEffects(cur).map((t) => h('div', { style: { color: '#ffd100' } }, t)),
@@ -925,9 +934,10 @@
       return;
     }
     p.append(h('div', { class: 'score' },
-      h('span', null, '⏱ ', h('b', { class: 'tnum', 'data-clock': '1' }, G.fmtClock(G.runClock())), ` / par ${G.fmtClock(G.par(Dg))}`),
+      h('span', null, '⏱ ', h('b', { class: 'tnum', 'data-clock': '1' }, G.fmtClock(G.runClock())), ` / par ${G.fmtClock(R.trial ? window.TRIALS.par(Dg) : G.par(Dg))}`),
       R.momentum ? h('span', { class: 'mom' }, `Momentum ×${R.momentum}`) : h('span', { class: 'dim' }, 'Pull within 5s to build Momentum'),
       h('span', { class: R.wipes ? 'no' : 'ok' }, R.wipes ? '✗ Flawless' : '✓ No wipes')));
+    if ((R.omens || []).length) p.append(h('div', { class: 'chips', style: { margin: '4px 0' } }, h('small', { class: 'dim', style: { alignSelf: 'center' } }, 'Omens:'), ...R.omens.map((k) => omenChip(k)))); // tap one for its counter
   }
   function tacticsBlock(p, R) {
     const pace = R.pace || 'normal';
@@ -2788,6 +2798,11 @@
   // For You holds only what you can do now; each kind tab folds what is still to come and what you have outlevelled.
   const actKind = (A) => ((A.size || 5) > 5 ? 'raid' : A.dungeon ? 'dungeon' : 'wanted');
   const KIND_LABEL = { dungeon: 'Dungeon', raid: 'Raid', wanted: 'Wanted' };
+  // an Omen as a chip: tap it for its rule and its counter (v10.4)
+  function omenChip(k, lvl) {
+    const O = window.TRIALS.OMENS[k];
+    return h('button', { class: 'chip', onclick: () => showDialog([h('h3', null, `Omen: ${O.name}`), h('p', null, O.rule), h('p', null, h('b', null, 'Counter: '), O.counter), h('p', { class: 'ai-note' }, `From Trial ${window.TRIALS.TIER_LVL[O.tier]}. Omens change every week, on the 1st, 8th, 15th and 22nd.`), h('div', { class: 'btn-row' }, h('button', { class: 'btn alt wide', onclick: closeDialog }, 'Got it'))], true) }, O.name, lvl ? h('small', null, `from ${lvl}`) : null);
+  }
   // ---------- Trials (v10.4): this month's 8 dungeons, rating and realm rank, the weekly goal; a row opens a level picker
   const clockText = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
   function trialsTab(b) {
@@ -2801,9 +2816,11 @@
       return;
     }
     const Rec = G.trials(), rating = G.trialRating(), board = G.trialBoard(), wk = Rec.week && Rec.week.id === T.period(new Date()).id ? Rec.week : { n: 0, paid: false }, days = T.daysLeft();
-    b.append(h('div', { class: 'sec-h' }, `${T.name(k)} Trials`, h('small', null, k === -1 ? `until ${T.name(0)}` : `${days} day${days === 1 ? '' : 's'} left`)), pre);
+    b.append(h('div', { class: 'sec-h' }, `${T.name(k)} Trials`, h('small', null, k === -1 ? `until ${T.name(0)}` : `${days} day${days === 1 ? '' : 's'} left`))); if (pre) b.append(pre);
     b.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', 'journal'))),
       h('div', { class: 't' }, h('b', null, `Rating ${rating} · Realm rank #${board.rank} of ${board.of}`), h('small', { style: { whiteSpace: 'normal' } }, `This week: ${Math.min(4, wk.n)} of 4 Trials at your best or higher${wk.paid ? ' · bonus paid' : ' · +25 Mentor Marks'}`))));
+    const weekOmens = T.omensFor(T.period(new Date()).id);
+    if (weekOmens.length) b.append(h('div', { class: 'chips', style: { margin: '6px 0 0' } }, h('small', { class: 'dim', style: { alignSelf: 'center' } }, 'This week\'s Omens:'), ...weekOmens.map((k) => omenChip(k, T.TIER_LVL[T.OMENS[k].tier]))));
     b.append(h('div', { class: 'btn-row', style: { margin: '6px 0' } }, h('button', { class: 'btn alt', onclick: () => openTrialBoard() }, 'Leaderboard'), h('button', { class: 'btn alt', onclick: () => openTrialHistory() }, 'History')));
     b.append(h('div', { class: 'sec-h' }, k === -1 ? 'The Preseason' : 'This month', h('small', null, 'tap a Trial to pick its level')));
     for (const act of picks) {
@@ -2814,7 +2831,7 @@
         queued ? h('button', { class: 'chip', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave')
           : h('button', { class: 'chip gold', style: { whiteSpace: 'nowrap' }, disabled: !!why || !!S.queue, onclick: () => trialDialog(act) }, `Trial ${max}`)));
     }
-    b.append(note('Beat par to open the next level, or beat it by a wide margin to open two. Each clear pays 5 Mentor Marks plus the Trial level. Weekly Omens are coming in a later update.'));
+    b.append(note('Beat par to open the next level, or beat it by a wide margin to open two. Each clear pays 5 Mentor Marks plus the Trial level. Omens are extra rules that change every week: tap one to see how to beat it.'));
   }
   // how a Trial level compares with a normal level-60 run: "−17% health and damage", "normal ...", "+23% ..."
   const trialStrength = (lvl) => { const d = Math.round((window.TRIALS.factor(lvl) - 1) * 100); return Math.abs(d) <= 2 ? 'normal health and damage' : `${d > 0 ? '+' : '−'}${Math.abs(d)}% health and damage`; };
@@ -2827,6 +2844,7 @@
         h('b', { class: 'tnum', style: { fontSize: '20px', minWidth: '96px', textAlign: 'center' } }, `Trial ${lvl}`),
         h('button', { class: 'btn alt', disabled: lvl >= max, onclick: () => { lvl++; draw(); } }, '+')),
       h('p', null, `Enemies: level ${D.LEVEL_CAP}, ${trialStrength(lvl)}. Par ${clockText(par)}. Pays ${5 + lvl} Mentor Marks.`),
+      (() => { const om = T.active(lvl, new Date()); return om.length ? h('div', { class: 'chips' }, h('small', { class: 'dim', style: { alignSelf: 'center' } }, 'Omens:'), ...om.map((k) => omenChip(k))) : h('p', { class: 'ai-note' }, `No Omens yet: they start at Trial ${Math.min(...Object.values(T.TIER_LVL))}.`); })(),
       h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); if (G.queueTrial(act, lvl)) ui.sheetFn && ui.sheetFn(); } }, 'Queue'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true);
     draw();
   }

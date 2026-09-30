@@ -2428,7 +2428,8 @@
     S.run = { act, name, pulls, mult, bossMult, idx: 0, phase: 'rest', restUntil: now() + 6000, wipes: 0, rolls: [], returnTo: S.player.place, started: now() };
     if (trial) { // Trials (v10.4): enemies at the level cap, stronger with each Trial level
       const f = TR().factor(trial), sc = (m) => ({ hp: ((m && m.hp) || 1) * f, dmg: ((m && m.dmg) || 1) * f }), Rec = G.trials();
-      Object.assign(S.run, { mult: sc(mult), bossMult: sc(bossMult), mobLevel: D.LEVEL_CAP, name: `${name} · Trial ${trial}`, trial: { lvl: trial, season: Rec.season, bestHere: (Rec.best[act] || {}).lvl || 0 } });
+      const omens = TR().active(trial, new Date()), bm = sc(bossMult); if (omens.includes('hardened')) bm.hp *= 1.3; // Omens are fixed when the run starts
+      Object.assign(S.run, { mult: sc(mult), bossMult: bm, mobLevel: D.LEVEL_CAP, omens, name: `${name} · Trial ${trial}`, trial: { lvl: trial, season: Rec.season, bestHere: (Rec.best[act] || {}).lvl || 0 } });
     }
     emit('instanceEnter', { act, dungeon: A.dungeon || null });
     S.player.hp = S.player.hp == null ? null : S.player.hp;
@@ -2460,9 +2461,13 @@
       if (marks[i]) u.mark = marks[i];
       return u;
     });
+    if ((R.omens || []).includes('swarming')) { // Swarming: one more enemy in every pull
+      const trash = pull.mobs.find((k) => !D.MOBS[k].boss) || (R.pulls.find((p) => !p.boss) || { mobs: [] }).mobs[0];
+      if (trash) enemies.push(E.mobUnit(trash, R.mobLevel || null, R.mult || { hp: 1, dmg: 1 }));
+    }
     const tank = allies.find((a) => a.role === 'tank') || pu;
     G.pUnit = pu;
-    G.fight = E.fight(allies, enemies, { puller: tank, dungeonMult: R.mult });
+    G.fight = E.fight(allies, enemies, { puller: tank, dungeonMult: R.mult, omens: R.omens || null });
     G.fight.kind = 'run';
     pu.target = (enemies.find((e) => e.mark === 'skull') || enemies[0]).uid;
     // Momentum: pulling again within 5 sec of the last fight stacks a group buff; resting resets it
