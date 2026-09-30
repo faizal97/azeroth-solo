@@ -129,18 +129,19 @@ This document says where the game stands, how it is designed, and what comes nex
 At the level cap, power stops climbing; what you collect and what you can do keeps growing.
 
 - **A power ceiling.** The raids are the last real step up in power: Magma Throne and Veshmira's Lair, then the Tidecrown Citadel at the top. Everything after that adds options and looks, not bigger numbers.
-- **Synced power everywhere.** Each dungeon and raid scales you to its level plus a small overgear bonus, so older content stays a real fight.
-- **Challenge is the loop.** Every dungeon returns as a level-60 keystone dungeon, with weekly rotating affixes and tiers that make enemies harder, not you stronger.
+- **Full gear counts.** Each dungeon and raid scales your level to its own, but your gear keeps its full stats, so old normal dungeons become quick farming runs for looks, trophies and Marks.
+- **A slowly rising ceiling with upgrades.** Each new raid raises the ceiling about 5%, and Mentor Marks upgrade any level-60 blue or purple item up to it, so old gear stays a real choice.
+- **Challenge is the loop: Trials and Hard raids.** Trials are level-60 dungeons at rising levels, with weekly Omens (each with a counter you choose) and seasons of 8 dungeons; your Trial rating draws better bots. Raids come in Normal and Hard. Design: docs/plans/2026-09-30-horizontal-progression-design.md.
 - **Collections are the reward:** looks, titles, mounts, rare-boss trophies and a codex of every boss beaten, in a wardrobe shared by all your characters.
 - **Drops that change how you play:** procs and set bonuses that open new builds, rather than flat upgrades.
-- **New content never makes old content obsolete.** New dungeons join the keystone pool beside the old ones, and old dungeons keep their own rewards.
+- **New content never makes old content obsolete.** New dungeons join the Trials season beside old ones, one raid is featured each week, and old dungeons keep their own rewards.
 - **Alts are breadth.** The shared wardrobe and Mentor Mark heirlooms make levelling another class worthwhile.
 
 ## What's next
 
 Roughly in priority order:
 
-1. **Keystone dungeons and the account-wide wardrobe.** The core of the after-60 loop.
+1. **Horizontal progression:** gear upgrades, then the account-wide wardrobe, then Trials, then Hard raids and the featured raid. The core of the after-60 loop.
 2. **World bosses and level-60 rares,** with trophies.
 3. **Battlegrounds,** with Honor ranks for looks and titles.
 4. **Rumhook Bay and the Bloodsand Arena event** in southern Vinewild.
@@ -152,6 +153,5 @@ Roughly in priority order:
 
 ## Open questions
 
-- How keystone affixes should work with synced power.
 - Whether battlegrounds should use simulated players only, or also real friends.
 - Whether the Bard becomes a playable class, and when.
