@@ -1,6 +1,6 @@
-# Trials: design (draft, sections 1–2 agreed, section 3 still to do)
+# Trials: design
 
-2026-09-30. Step 3 of docs/plans/2026-09-30-horizontal-progression-design.md. Paused for hotfixes.
+2026-09-30. Agreed with Faizal. Step 3 of docs/plans/2026-09-30-horizontal-progression-design.md.
 
 ## 1. Omens (agreed)
 
@@ -19,18 +19,21 @@ shorter, enemies 10% less health; fast pace), Restless (long rests draw a patrol
 Stamina and armour elixirs), Festering (hits stack a poison; healing potions, cleanse racials, healing talents),
 Draining (spells cost 50% more; mana potions, Spirit elixirs, careful pace).
 
-One from each tier a week (36 combinations). New engine hooks: on-death effects, enrage threshold, extra enemies,
+One from each tier per Omen period (36 combinations); periods start on the 1st, 8th, 15th and 22nd at local midnight,
+so a season holds exactly two (the one at month's end runs a few days longer). New engine hooks: on-death effects, enrage threshold, extra enemies,
 stun immunity, poison on hit, mana cost and par multipliers, patrols after long rests. Sim: at Trial 10 the right
 counter clearly beats the wrong one for every Omen.
 
 ## 2. Seasons, levels, rating (agreed)
 
-- **Seasons are automatic and 2 weeks long** (two Omen weeks). 8 dungeons each:
+- **Seasons are automatic and start on the 1st and the 15th of every month** at local midnight; Season 1 is
+  2026-10-01 to 2026-10-14. A season is found from the date alone, so if Trials ships mid-season, players simply join
+  it. 8 dungeons each:
   1. dungeons never in a season get a guaranteed slot next season, up to 3 a season, oldest-added first (5 new at once
      spread over two seasons);
   2. the other slots are weighted by how many seasons a dungeon has waited;
   3. with no new content, all 8 come from step 2.
-- Every dungeon has a `since` date (existing ones: the Trials launch date); `tools/validate.js` refuses one without it.
+- Every dungeon has a `since` date (existing ones: 2026-10-01); `tools/validate.js` refuses one without it.
   A season is computed from the date and the data by replaying the rule from the first season: every device agrees,
   nothing stored can drift, and a dungeon added mid-season joins the next season (a live season never changes).
 - Optional hand-made extras (a seasonal Omen, looks, an intro) attach to the next season after they ship; without
@@ -43,8 +46,21 @@ counter clearly beats the wrong one for every Omen.
   Marks per clear, 5 + the Trial level.
 - Sim: no, one and five new dungeons; nothing waits too long.
 
-## 3. Still to design
+## 3. Titles, the Trials tab, chat, history (agreed)
 
-Titles, the Trials tab (Omens at the top, one row per season dungeon, level picker), bot chat requests, history view.
+- **Titles** are permanent, so automatic seasons never need names made for them: Trial 10 in any season "%s the
+  Tried", Trial 15 "%s the Unbroken", Trial 20 "Trialmaster %s".
+- **The Trials tab**, a fifth Group Finder tab (fitted to phone width, like the Social tabs):
+  - below 60 it shows "Opens at level 60";
+  - top: season number and days left, rating, this period's three Omens as chips marked with the Trial level they start
+    at (tap: rule and counter);
+  - then always 8 rows, one per season dungeon: best ("Best: Trial 7, in time") and next level; a row opens a dialog
+    with a − / + level picker up to best + 1, the par time, the Omens active at that level, and Queue (from anywhere);
+  - in the run, the run panel shows the active Omens as icons; tapping one repeats its counter.
+- **History:** one row per past season, newest first ("Season 7 · best Trial 12 · rating 940"); each season keeps its
+  own dungeon list, so rows stay right when content changes. About 26 rows a year; group by year if it gets long.
+- **Chat:** level-60 bots post real Trial groups ("lfm trial 9 caves need heals"), joinable when you have that level
+  open (`sim/chatcheck.js`), plus flavour about the period's Omens ("volatile week, go slow"), never phrased as a request.
+- **Content-proof:** a new dungeon changes only the next season's picks; a new Omen joins from the next period.
 
-Rules that apply: UI must scale ([[design-ui-to-scale]]); automatic systems must be content-proof.
+Rules that apply: UI must scale; automatic systems must be content-proof (both in memory).
