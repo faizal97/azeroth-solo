@@ -2919,6 +2919,21 @@
       setMusic: (m) => { ui.csMusic = m; G.paused = !!m || !!(window.CS && CS.playing); },
     }).then(() => { G.paused = false; P.story = P.story || {}; P.story[id] = true; G.save(); if (ch.then && CS.byId(ch.then) && !CS.unlocked().has(ch.then)) ui.pendingChapter = ch.then; });
   }
+  // a Legend's first cameo: about 5 seconds in the run's own first scene; they walk in and say one line
+  function playCameoScene(key) {
+    const L = D.LEGENDS[key], R = G.S.run, A = R && D.ACTIVITIES[R.act];
+    if (!window.CS || !A) return Promise.resolve();
+    const pull0 = A.dungeon && D.DUNGEONS[A.dungeon].pulls[0], place = D.PLACES[A.where] || D.PLACES[G.S.player.place];
+    const bg = 'scene:' + ((pull0 && pull0.scene) || (place && place.scene) || 'elwynn_forest');
+    const ch = { id: 'cameo_' + key, title: L.name, shots: [
+      { bg, dur: 8, cam: [[4, 0, 1.12], [0, 0, 1.04]], fx: ['fadein', 'fadeout'],
+        actors: [{ a: 'story:' + key, x: 42, y: 2, w: 32, anim: 'breathe', from: { x: 34, o: 0 }, dur: 1.4 }],
+        lines: [{ t: 0.4, text: L.cameo.first.say }, { t: 2.4, who: L.short, text: L.cameo.first.line }] },
+    ] };
+    G.paused = true;
+    return CS.play(ch, { art, heroUrl: art('hero', looks(G.S.player)), name: G.S.player.name, zone: place ? place.zone : '', setMusic: () => {} })
+      .then(() => { G.paused = false; });
+  }
   // ---------- first-hour tips: one short card at the moment it helps, once per device, always skippable
   const TIPS = {
     start: 'Welcome! Tap a creature in the Fight list to attack it. People with a yellow ! have quests for you.',
@@ -3324,13 +3339,17 @@
     G.on('change', renderAll);
     // a Legend's cameo: their name across the scene and a short sound, without stopping the game
     // (after a dungeon's first-entry intro, if one plays, so the banner is not hidden under it)
+    // The very first cameo of each Legend plays a short scene first (once, skippable).
     G.on('legendJoin', (d) => {
       const L = D.LEGENDS[d.key]; if (!L) return;
       let tries = 0;
       const show = () => {
         if (!G.S || !G.S.run) return;
         if (window.CS && CS.playing && tries++ < 240) return setTimeout(show, 500);
-        banner(`${L.name} joins your group`, L.title); if (window.SND) SND.play('quest_done', { vol: 0.7 });
+        const P = G.S.player, mem = (P.legendMem || {})[d.key] || {};
+        const bannerNow = () => { banner(`${L.name} joins your group`, L.title); if (window.SND) SND.play('quest_done', { vol: 0.7 }); };
+        if (!mem.intro && L.cameo && L.cameo.first) { P.legendMem = P.legendMem || {}; P.legendMem[d.key] = Object.assign(mem, { intro: true }); G.save(); playCameoScene(d.key).then(bannerNow); }
+        else bannerNow();
       };
       setTimeout(show, 1400);
     });

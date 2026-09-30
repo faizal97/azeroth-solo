@@ -14,6 +14,8 @@
     // the cameo (v10.2): what he says when he turns up in one of your runs, and when he leaves
     cameo: {
       hello: ['Heard you were headed in. I\'ll hold the front.', 'The Ledger\'s blades aren\'t the only ones out tonight. I\'ll walk with you.', 'Vyn says I need more company. So. Here I am.', 'Room for one more? I keep quiet and I keep watch.'],
+      // the first cameo only: a short scene as he walks in (ui.js playCameoScene)
+      first: { say: 'A knight in leaf-green steel falls in beside your group.', line: 'Heard you were headed in. The Ledger isn\'t done with either of us. I\'ll hold the front.' },
       bye: ['Good work. Ghosts keep watch; I\'ll keep watching.', 'Go well. If anyone asks, you never saw me.', 'That was a good fight. Until the next one.', 'I\'ve somewhere to be. The grove doesn\'t guard itself.'],
     },
     story: [
