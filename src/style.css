@@ -303,6 +303,8 @@ img { max-width: 100%; display: block; }
 .ab .cdt { position: absolute; inset: 0; display: grid; place-items: center; font: 800 16px var(--body); color: #fff; text-shadow: 0 1px 2px #000; pointer-events: none; }
 .ab.nores img { filter: saturate(.3) brightness(.55) sepia(1) hue-rotate(190deg); }
 .ab.off img { filter: grayscale(1) brightness(.45); }
+/* an ability that can only be used while a reaction lights it (Overpower): grey until it lights (v10.8) */
+.ab.unlit img { filter: grayscale(1) brightness(.45); }
 .ab.on { box-shadow: 0 0 0 2px #ffd84a; }
 /* a reaction lit this ability (v10.4): a gold pulse you cannot miss (a fill over the icon, since a glow gets clipped) */
 .ab.lit { outline: 3px solid #ffd84a; outline-offset: -1px; transform: scale(1.06); z-index: 2; }

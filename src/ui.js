@@ -1505,6 +1505,7 @@
         btn.classList.toggle('on', on);
         const u2 = C && G.pUnit, lit = !!u2 && (E.lit(u2, id) || (u2.cp >= 5 && ((D.PROCS || {})[u2.cls] || []).some((pr) => pr.on.includes('cp5') && pr.lights.includes(id))));
         btn.classList.toggle('lit', lit); // a reaction lit this ability (v10.4)
+        btn.classList.toggle('unlit', !lit && !!(D.ABILITIES[id] || {}).needAura); // usable only while lit (Overpower): grey until then (v10.8)
       }
     }
     // timers in panel & scene
