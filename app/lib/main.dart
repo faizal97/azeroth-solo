@@ -86,8 +86,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       ..addJavaScriptChannel('AzUpd', onMessageReceived: (m) => _bridge(_upd, 'AZUPD_REPLY', m))
       ..addJavaScriptChannel('AzFile', onMessageReceived: (m) => _bridge(_file, 'AZFILE_REPLY', m))
       ..addJavaScriptChannel('AzCloud', onMessageReceived: (m) => _bridge(_cloud, 'AZCLOUD_REPLY', m))
-      ..addJavaScriptChannel('AzAsset', onMessageReceived: _asset)
-      ..loadFlutterAsset('assets/game/index.html');
+      ..addJavaScriptChannel('AzAsset', onMessageReceived: _asset);
+    // music may start without a tap (v10.8), so the main menu has its theme from the first screen; set before the page loads
+    if (_controller.platform is AndroidWebViewController) (_controller.platform as AndroidWebViewController).setMediaPlaybackRequiresUserGesture(false);
+    _controller.loadFlutterAsset('assets/game/index.html');
     // debug builds only: the page can be inspected from Chrome (chrome://inspect), for testing on an emulator
     if (kDebugMode && _controller.platform is AndroidWebViewController) AndroidWebViewController.enableDebugging(true);
   }

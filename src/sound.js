@@ -20,6 +20,9 @@
     if (SND.want) SND.music(SND.want, true, SND.wantFallback);
   }
   root.addEventListener('pointerdown', init, { capture: true });
+  // v10.8: start at once too. The app lets audio play without a tap, so the menu theme plays from the start; a browser
+  // keeps the new context suspended until the first tap, which then resumes it (init above).
+  if (root.document) { if (root.document.readyState === 'loading') root.document.addEventListener('DOMContentLoaded', init); else setTimeout(init, 0); }
 
   const b64bytes = (b64) => { const bin = atob(b64); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u.buffer; };
   // a music file's bytes: from the app's assets (the Flutter bridge answers with base64) or fetched next to the page
