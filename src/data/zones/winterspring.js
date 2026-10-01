@@ -2,7 +2,7 @@
 // hippogryph from Nyrwen or wind rider from Vazhrak. Bearkins, frostsabers, yetis, and the blue dragons of Crystalhall.
 (function (root) {
   const D = root.D;
-  D.zone('winterspring', { name: 'Icewold', faction: 'contested', music: 'snow' });
+  D.zone('winterspring', { name: 'Icewold', faction: 'contested', music: 'snow', town: 'winterspring_town' });
   D.item('winterfall_beads', { name: 'Icebrow Spirit Beads', slot: 'quest', q: 1, icon: 'seed' });
   D.item('frostsaber_pelt', { name: 'Snowcat Pelt', slot: 'quest', q: 1, icon: 'pelt' });
   D.item('thick_yeti_fur', { name: 'Thick Yeti Fur', slot: 'quest', q: 1, icon: 'pelt' });

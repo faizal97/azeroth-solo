@@ -3,7 +3,7 @@
 // The goblin Deepgold Company is clear-cutting the forest; harpies hold the Screaming Vale; the Sourhorn turn on their own kind.
 (function (root) {
   const D = root.D;
-  D.zone('stonetalon', { name: 'Highcrag Mountains', faction: 'horde' });
+  D.zone('stonetalon', { name: 'Highcrag Mountains', faction: 'horde', music: 'stonetalon', town: 'stonetalon_town' });
   // items
   D.item('deepmoss_egg', { name: 'Deepvine Egg', slot: 'quest', q: 1, icon: 'seed' });
   D.item('deepmoss_venom', { name: 'Deepvine Venom Sac', slot: 'quest', q: 1, icon: 'venom' });

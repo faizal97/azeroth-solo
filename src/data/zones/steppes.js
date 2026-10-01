@@ -2,7 +2,7 @@
 // with the gate of Cinderpeak Depths looms over it. The Black Brood is close now.
 (function (root) {
   const D = root.D;
-  D.zone('steppes', { name: 'The Cinderfields', faction: 'contested', music: 'desert' });
+  D.zone('steppes', { name: 'The Cinderfields', faction: 'contested', music: 'steppes', town: 'steppes_town' });
   D.item('firegut_tusk', { name: 'Smokebelly Tusk', slot: 'quest', q: 1, icon: 'tusk' });
   D.item('blackrock_signet', { name: 'Cinderpeak Signet', slot: 'quest', q: 1, icon: 'ring' });
   D.item('flamecaller_tome', { name: "Flamecaller's Tome", slot: 'quest', q: 1, icon: 'journal' });

@@ -3,7 +3,7 @@
 // by road from Dustfort) watch the marsh while her brood spreads out of the south. The raid is in onyxia.js.
 (function (root) {
   const D = root.D;
-  D.zone('dustwallow', { name: 'Saltmarsh', faction: 'contested', music: 'swamp' });
+  D.zone('dustwallow', { name: 'Saltmarsh', faction: 'contested', music: 'dustwallow', town: 'dustwallow_town' });
   D.item('drakonid_claw', { name: 'Drakeborn Claw', slot: 'quest', q: 1, icon: 'claw' });
   D.item('brood_scale', { name: 'Black Brood Scale', slot: 'quest', q: 1, icon: 'chest_box' });
   D.item('scorchmaw_fang', { name: "Scorchmaw's Fang", slot: 'quest', q: 1, icon: 'tusk' });

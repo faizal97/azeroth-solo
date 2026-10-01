@@ -2076,7 +2076,7 @@
 
   // ============================================================ music (v10.8)
   // Which track plays: a run's (each raid has a theme, world bosses share one), the battleground's, an iconic place's
-  // (the capitals), else the zone's mood (desert, snow, swamp), with the tavern tune in other towns. `has(name)` says
+  // (the capitals), else the zone's own: `music` outdoors and on the road, `town` in its towns and camps. `has(name)` says
   // whether a track ships (music ships once approved: audio/approved.txt); until then the older choice plays.
   G.musicFor = function (has) {
     const S = G.S, P = S.player, pick = (...names) => names.find((n) => n && has(n)) || names[names.length - 1];
@@ -2084,7 +2084,7 @@
     const pl = D.PLACES[P.place], outdoor = pick((D.REGIONS[pl.region] || {}).music, 'elwynn');
     if (S.bg) return pick((D.ACTIVITIES[S.bg.act] || {}).music, outdoor);
     if (P.travel || !pl.safe) return outdoor;
-    return pick(pl.music, 'town');
+    return pick(pl.music, (D.REGIONS[pl.region] || {}).town, 'town'); // a capital's theme, else the zone's town track
   };
 
   // ============================================================ battlegrounds (v10.7, D.BG; design in zones/highmoor.js)

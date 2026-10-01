@@ -131,7 +131,7 @@ if (D.TRIALSWORN_MONTHS) {
 {
   const mj = require('path').join(__dirname, '..', 'audio', 'out', 'music.json'), tracks = require('fs').existsSync(mj) ? JSON.parse(require('fs').readFileSync(mj, 'utf8')) : null;
   if (tracks) for (const [kind, tab] of [['zone', D.REGIONS], ['place', D.PLACES], ['activity', D.ACTIVITIES], ['dungeon', D.DUNGEONS]]) for (const k in tab) {
-    const m = tab[k] && tab[k].music; if (m && !tracks[m]) err(`${kind} '${k}' plays music '${m}', which is not composed (audio/compose_themes.py)`);
+    for (const f of ['music', 'town']) { const m = tab[k] && tab[k][f]; if (m && !tracks[m]) err(`${kind} '${k}' plays ${f} '${m}', which is not composed (audio/compose_zones.py, compose_themes.py)`); }
   }
 }
 const n = (t) => Object.keys(D[t]).length;

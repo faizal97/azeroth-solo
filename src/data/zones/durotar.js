@@ -3,7 +3,7 @@
 // Links to other zones sit on the places themselves (place.links / place.via).
 (function (root) {
   const D = root.D;
-  D.zone('durotar', { name: 'Dunescar', faction: 'horde', music: 'desert' });
+  D.zone('durotar', { name: 'Dunescar', faction: 'horde', music: 'durotar', town: 'durotar_town' });
   // items
   D.item('cactus_apple', { name: 'Cactus Apple', slot: 'quest', q: 1, icon: 'cactus_apple' });
   D.item('scorpid_stinger', { name: 'Scorpion Worker Tail', slot: 'quest', q: 1, icon: 'scorpid_stinger' });

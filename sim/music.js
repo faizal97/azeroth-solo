@@ -17,14 +17,20 @@ for (const k in D.PLACES) {
   check(OLD.has(o), `${k} plays '${o}' before its track is approved`);
   check(o === (pl.safe ? 'town' : 'elwynn'), `${k}: before approval it should keep ${pl.safe ? 'town' : 'elwynn'}, got ${o}`);
 }
-const expect = { orgrimmar: 'vazhrak', stormwind: 'kingsmere', stormwind_gate: 'kingsmere', stormwind_bank: 'kingsmere', ironforge: 'keldrun', darnassus: 'nyrwen', thunder_bluff: 'hornwind', undercity: 'gravenhold', goldshire: 'town', razor_hill: 'town' };
+const expect = { orgrimmar: 'vazhrak', stormwind: 'kingsmere', stormwind_gate: 'kingsmere', stormwind_bank: 'kingsmere', ironforge: 'keldrun', darnassus: 'nyrwen', thunder_bluff: 'hornwind', undercity: 'gravenhold', goldshire: 'town', razor_hill: 'durotar_town', kharanos: 'dunmorogh_town', everlook: 'winterspring_town', gadgetzan: 'tanaris_town', darkshire: 'duskwood_town' };
 for (const [k, m] of Object.entries(expect)) { at(k); check(G.musicFor(all) === m, `${k} should play ${m}, plays ${G.musicFor(all)}`); }
 const outdoorOf = (zone) => Object.keys(D.PLACES).find((k) => D.PLACES[k].region === zone && !D.PLACES[k].safe);
-for (const [z, m] of [['tanaris', 'desert'], ['durotar', 'desert'], ['winterspring', 'snow'], ['dunmorogh', 'snow'], ['duskwood', 'swamp'], ['plaguelands', 'swamp'], ['elwynn', 'elwynn'], ['ashenvale', 'elwynn']]) {
+// every zone has its own outdoor track (Ambermoor keeps the first one) and every zone with a town its own town track
+for (const z in D.REGIONS) {
+  const R = D.REGIONS[z], hasTown = Object.values(D.PLACES).some((p) => p.region === z && p.safe && !p.music);
+  check(z === 'elwynn' || R.music, `zone ${z} has no outdoor track`);
+  check(z === 'elwynn' || !hasTown || R.town, `zone ${z} has towns but no town track`);
+}
+for (const [z, m] of [['tanaris', 'desert'], ['durotar', 'durotar'], ['winterspring', 'snow'], ['dunmorogh', 'dunmorogh'], ['duskwood', 'swamp'], ['plaguelands', 'plaguelands'], ['elwynn', 'elwynn'], ['ashenvale', 'ashenvale']]) {
   at(outdoorOf(z)); check(G.musicFor(all) === m, `outdoors in ${z} should play ${m}, plays ${G.musicFor(all)}`);
 }
 // on the road: the zone's mood, even leaving a capital
-at('orgrimmar'); P.travel = { to: 'razor_hill', start: 0, end: 1 }; check(G.musicFor(all) === 'desert', `travelling from Vazhrak plays the desert mood, plays ${G.musicFor(all)}`);
+at('orgrimmar'); P.travel = { to: 'razor_hill', start: 0, end: 1 }; check(G.musicFor(all) === 'durotar', `travelling from Vazhrak plays Dunescar's track, plays ${G.musicFor(all)}`);
 // runs: raids and world bosses have themes, dungeons keep the dungeon loop
 for (const [act, m] of [['onyxias_lair', 'veshmira'], ['molten_core', 'magma'], ['tidecrown_citadel', 'tidecrown'], ['wb_ashwing', 'worldboss'], ['deadmines', 'dungeon']]) {
   if (!D.ACTIVITIES[act]) { check(false, `no activity ${act}`); continue; }

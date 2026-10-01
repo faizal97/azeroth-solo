@@ -3,7 +3,7 @@
 // Gnolls raid the farms, the Cinderpeak orcs hold Watcher's Keep, and black dragon whelps circle Dunmore Valley.
 (function (root) {
   const D = root.D;
-  D.zone('redridge', { name: 'Stoneharrow Mountains', faction: 'alliance' });
+  D.zone('redridge', { name: 'Stoneharrow Mountains', faction: 'alliance', music: 'redridge', town: 'redridge_town' });
   // quest items
   D.item('goretusk_flank', { name: 'Great Razorhog Flank', slot: 'quest', q: 1, icon: 'meat' });
   D.item('tarantula_silk', { name: 'Tarantula Silk', slot: 'quest', q: 1, icon: 'venom' });

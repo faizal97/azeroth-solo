@@ -3,7 +3,7 @@
 // Links to other zones sit on the places themselves (place.links / place.via).
 (function (root) {
   const D = root.D;
-  D.zone('teldrassil', { name: 'Greatbough', faction: 'alliance' });
+  D.zone('teldrassil', { name: 'Greatbough', faction: 'alliance', music: 'teldrassil', town: 'teldrassil_town' });
   // items
   D.item('fel_moss', { name: 'Gloom Moss', slot: 'quest', q: 1, icon: 'moss' });
   D.item('venom_sac', { name: 'Webhollow Venom Sac', slot: 'quest', q: 1, icon: 'venom' });

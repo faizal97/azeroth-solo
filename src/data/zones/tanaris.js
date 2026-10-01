@@ -2,7 +2,7 @@
 // its quests are open to everyone. A goblin zeppelin joins it to Wexley's camp in Vinewild.
 (function (root) {
   const D = root.D;
-  D.zone('tanaris', { name: 'Sirocco', faction: 'contested', music: 'desert' });
+  D.zone('tanaris', { name: 'Sirocco', faction: 'contested', music: 'desert', town: 'tanaris_town' });
   D.item('bandit_bandana', { name: 'Dustcloak Bandana', slot: 'quest', q: 1, icon: 'bandana' });
   D.item('water_pouch', { name: 'Stolen Water Pouch', slot: 'quest', q: 1, icon: 'water' });
   D.item('pirate_hat', { name: 'Blackgull Tricorn', slot: 'quest', q: 1, icon: 'head' });

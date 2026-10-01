@@ -3,8 +3,8 @@
 // the isle. Also the Stormveil Reach (contested): the causeway out to the Tidecrown Citadel, where both sides meet.
 (function (root) {
   const D = root.D;
-  D.zone('skullreef', { name: 'Skullreef Isles', faction: 'horde' });
-  D.zone('stormveil', { name: 'The Stormveil Reach', faction: 'contested' });
+  D.zone('skullreef', { name: 'Skullreef Isles', faction: 'horde', music: 'skullreef', town: 'skullreef_town' });
+  D.zone('stormveil', { name: 'The Stormveil Reach', faction: 'contested', music: 'stormveil' });
   D.item('makrura_claw', { name: 'Makrura Claw', slot: 'quest', q: 1, icon: 'claw' });
   D.item('wavebreaker_fetish', { name: 'Wavebreaker Fetish', slot: 'quest', q: 1, icon: 'seed' });
   D.item('sailor_logbook', { name: 'Waterlogged Logbook', slot: 'quest', q: 1, icon: 'journal' });

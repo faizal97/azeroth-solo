@@ -3,7 +3,7 @@
 // Vaskar foothills, the only Accord road towards the Pyre Abbey.
 (function (root) {
   const D = root.D;
-  D.zone('arathi', { name: 'Kinloch Highlands', faction: 'contested' });
+  D.zone('arathi', { name: 'Kinloch Highlands', faction: 'contested', music: 'arathi', town: 'arathi_town' });
   // quest items
   D.item('thrasher_claw', { name: 'Highland Thrasher Claw', slot: 'quest', q: 1, icon: 'claw' });
   D.item('fleshstalker_hide', { name: 'Fleshstalker Hide', slot: 'quest', q: 1, icon: 'pelt' });

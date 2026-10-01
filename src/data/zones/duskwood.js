@@ -3,7 +3,7 @@
 // A forest in endless night: worgen in the woods, the dead rising on Harlow, and Patchwork on the road.
 (function (root) {
   const D = root.D;
-  D.zone('duskwood', { name: 'Wraithwood', faction: 'alliance', music: 'swamp' });
+  D.zone('duskwood', { name: 'Wraithwood', faction: 'alliance', music: 'swamp', town: 'duskwood_town' });
   // quest items
   D.item('worgen_fang', { name: 'Gloomfang Fang', slot: 'quest', q: 1, icon: 'claw' });
   D.item('shadow_weaver_charm', { name: 'Shadow Weaver Charm', slot: 'quest', q: 1, icon: 'voodoo_doll' });

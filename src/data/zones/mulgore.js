@@ -3,7 +3,7 @@
 // Links to other zones sit on the places themselves (place.links / place.via).
 (function (root) {
   const D = root.D;
-  D.zone('mulgore', { name: 'Greensward', faction: 'horde' });
+  D.zone('mulgore', { name: 'Greensward', faction: 'horde', music: 'mulgore', town: 'mulgore_town' });
   // items
   D.item('plainstrider_beak', { name: 'Longneck Beak', slot: 'quest', q: 1, icon: 'plainstrider_beak' });
   D.item('battleboar_flank', { name: 'Tuskhog Flank', slot: 'quest', q: 1, icon: 'meat' });

@@ -152,6 +152,9 @@ def song(spec):
                     v = L.get('voice', 'harp'); g = L.get('gain', 0.14) * (1 if i % 2 == 0 else 0.8)
                     sig = harp(n, L.get('len', 1.1), gain=g) if v == 'harp' else bell(n, L.get('len', 1.6), gain=g) if v == 'bell' else pluck(n, L.get('len', 0.22), bright=L.get('bright', 2400), gain=g)
                     T.put(sig, st, pan=(L.get('spread', 0.35) * (1 if i % 2 else -1)))
+            elif k == 'stab':   # the chord struck on given beats (a tavern's off-beat strum)
+                for beat in L['at']:
+                    for n in ch: T.put(pluck(n + L.get('oct', 12), L.get('len', 0.2), bright=L.get('bright', 2400), gain=L.get('gain', 0.1)), t0 + beat * BEAT, pan=L.get('pan', 0.25))
             elif k == 'drums':
                 pats = L['pat'] if isinstance(L['pat'], list) else [L['pat']]
                 pat = pats[b % len(pats)]; step = L.get('step', 0.25) * BEAT; g = L.get('gain', 1.0)

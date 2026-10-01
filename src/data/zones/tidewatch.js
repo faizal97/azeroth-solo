@@ -3,7 +3,7 @@
 // Landing; inland lie the drowned orchards and outskirts of Sael'anor, a Starborn city that sank in the Drowning.
 (function (root) {
   const D = root.D;
-  D.zone('tidewatch', { name: 'Tidewatch Coast', faction: 'alliance' });
+  D.zone('tidewatch', { name: 'Tidewatch Coast', faction: 'alliance', music: 'tidewatch', town: 'tidewatch_town' });
   D.item('reefclaw_meat', { name: 'Reefclaw Meat', slot: 'quest', q: 1, icon: 'meat' });
   D.item('sodden_relic', { name: 'Sodden Starborn Relic', slot: 'quest', q: 1, icon: 'coin' });
   D.item('living_kelp', { name: 'Living Kelp', slot: 'quest', q: 1, icon: 'moss' });
