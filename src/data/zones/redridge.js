@@ -191,7 +191,7 @@
 
   // group finder: Kingsmere Gaol and the open-world elite
   Object.assign(D.DUNGEONS, {
-    stockade: { name: 'Kingsmere Gaol', minLvl: 22, par: 480, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.8 }, pulls: [
+    stockade: { music: 'kingsmere_gaol', name: 'Kingsmere Gaol', minLvl: 22, par: 480, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.8 }, pulls: [
       { scene: 'the_stockade', label: 'Cell block', mobs: ['defias_convict', 'defias_inmate'] },
       { scene: 'the_stockade', label: 'Cell block', mobs: ['defias_insurgent', 'defias_convict'] },
       { scene: 'the_stockade', label: 'Ulgrak the Butcher', mobs: ['targorr'], boss: true },

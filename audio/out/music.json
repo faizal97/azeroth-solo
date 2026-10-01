@@ -76,23 +76,22 @@
   "loop_s": 40.0
  },
  "veshmira": {
-  "bpm": 120,
+  "bpm": 146,
   "bars": 16,
   "key": "D minor",
-  "loop_s": 32.0
+  "loop_s": 26.3014
  },
  "magma": {
-  "bpm": 116,
+  "bpm": 150,
   "bars": 16,
-  "key": "C Phrygian",
-  "loop_s": 33.1034
+  "key": "C phrygian",
+  "loop_s": 25.6
  },
  "tidecrown": {
-  "bpm": 168,
+  "bpm": 140,
   "bars": 16,
   "key": "G minor",
-  "meter": "6/8",
-  "loop_s": 34.2857
+  "loop_s": 27.4286
  },
  "worldboss": {
   "bpm": 126,
@@ -403,5 +402,113 @@
   "bars": 12,
   "key": "F minor",
   "loop_s": 32.7273
+ },
+ "smokepit": {
+  "bpm": 138,
+  "bars": 16,
+  "key": "E phrygian",
+  "loop_s": 27.8261
+ },
+ "smugglers_deep": {
+  "bpm": 144,
+  "bars": 16,
+  "key": "D minor",
+  "loop_s": 26.6667
+ },
+ "dreaming_caves": {
+  "bpm": 132,
+  "bars": 16,
+  "key": "F# minor",
+  "loop_s": 29.0909
+ },
+ "kingsmere_gaol": {
+  "bpm": 140,
+  "bars": 16,
+  "key": "C minor",
+  "loop_s": 27.4286
+ },
+ "greyhowl_keep": {
+  "bpm": 136,
+  "bars": 16,
+  "key": "G minor",
+  "loop_s": 28.2353
+ },
+ "tidehollow": {
+  "bpm": 132,
+  "bars": 16,
+  "key": "A minor",
+  "loop_s": 29.0909
+ },
+ "gearhollow": {
+  "bpm": 148,
+  "bars": 16,
+  "key": "B minor",
+  "loop_s": 25.9459
+ },
+ "thorn_warrens": {
+  "bpm": 140,
+  "bars": 16,
+  "key": "E dorian",
+  "loop_s": 27.4286
+ },
+ "pyre_library": {
+  "bpm": 132,
+  "bars": 16,
+  "key": "D harmonic",
+  "loop_s": 29.0909
+ },
+ "pyre_cathedral": {
+  "bpm": 144,
+  "bars": 16,
+  "key": "D minor",
+  "loop_s": 26.6667
+ },
+ "coinworks": {
+  "bpm": 140,
+  "bars": 16,
+  "key": "G minor",
+  "loop_s": 27.4286
+ },
+ "dune_temple": {
+  "bpm": 138,
+  "bars": 16,
+  "key": "D phrygdom",
+  "loop_s": 27.8261
+ },
+ "gemfall": {
+  "bpm": 134,
+  "bars": 16,
+  "key": "A minor",
+  "loop_s": 28.6567
+ },
+ "cinderpeak": {
+  "bpm": 144,
+  "bars": 16,
+  "key": "C minor",
+  "loop_s": 26.6667
+ },
+ "blackcloister": {
+  "bpm": 136,
+  "bars": 16,
+  "key": "B harmonic",
+  "loop_s": 28.2353
+ },
+ "graymouth": {
+  "bpm": 146,
+  "bars": 16,
+  "key": "F minor",
+  "loop_s": 26.3014
+ },
+ "sunken_archive": {
+  "bpm": 138,
+  "bars": 16,
+  "key": "E minor",
+  "loop_s": 27.8261
+ },
+ "shalzua": {
+  "bpm": 142,
+  "bars": 16,
+  "key": "C# minor",
+  "loop_s": 27.0422
  }
 }

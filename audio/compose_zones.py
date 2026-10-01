@@ -82,12 +82,17 @@ DRUMS = {
     'timp': {4: ['D.......D...D.D.', 'D.......D.D.D...'], 3: ['D.......D...'], 6: ['D..D..', 'D..DDD']},
     'tavern': {4: ['k...h...k...h...'], 3: ['k...h...h...'], 6: ['k.hk.h']},
     'heart': {4: ['D.....D.D.......'], 3: ['D...D.......'], 6: ['D.D...']},
+    # battle music (dungeons and raids): driving kit patterns, with a fill every other bar
+    'battle': {4: ['k.h.s.hkk.h.s.h.', 'k.h.s.hkk.hss.ss']},
+    'battleclank': {4: ['k.h.c.hkk.h.c.h.', 'k.h.s.hkk.hcs.ss']},
+    'battletribal': {4: ['D.hTs.DkD.hTs.DT', 'D.hTs.DkD.TTsTTT']},
+    'battlemarch': {4: ['k.s.s.s.k.s.s.ss', 'k.s.s.s.k.ssssss']},
 }
 STAB = {4: [1, 3], 3: [1, 2], 6: [1, 2, 4, 5]}
 LEAD_RANGE = {'flute': (64, 84), 'fiddle': (62, 81), 'horn': (55, 76), 'pluck': (57, 79), 'bell': (69, 88), 'harp': (60, 81)}
 
 
-def arrange(style, b, lead, mel, gain):
+def arrange(style, b, lead, mel, gain, kit=None):
     arp, astep = ARP[b]
     drums = lambda kind, g=0.8, **o: [{'type': 'drums', 'pat': DRUMS[kind][b], 'step': STEP[b], 'gain': g, **o}] if b in DRUMS[kind] else []
     L = {'type': 'lead', 'voice': lead, 'mel': mel, 'gain': gain}
@@ -104,6 +109,12 @@ def arrange(style, b, lead, mel, gain):
         'highland': [{'type': 'pad', 'drone': True, 'oct': 0, 'cut': 800, 'gain': 0.16}, {'type': 'bass', 'pat': BASS[b], 'gain': 0.2, 'square': 0.1}] + drums('light', 0.6),
         'tavern': [{'type': 'pad', 'cut': 1000, 'gain': 0.07, 'a': 0.6, 'r': 0.8}, {'type': 'bass', 'pat': [(0, 0, 1)] + ([(3, 7, 1)] if b == 6 else [(2, 7, 1)] if b == 4 else []), 'gain': 0.11, 'square': 0.08}, {'type': 'stab', 'at': STAB[b], 'gain': 0.07, 'len': 0.18, 'bright': 1800}] + drums('tavern', 0.22),
         'camp': [{'type': 'pad', 'cut': 1000, 'gain': 0.1, 'a': 0.8, 'r': 0.9}, {'type': 'bass', 'pat': BASS[b], 'gain': 0.18, 'square': 0.05}, {'type': 'arp', 'voice': 'harp', 'pat': arp[::2], 'step': astep * 2, 'gain': 0.12}] + drums('light', 0.45),
+        # battle: a driving bass in eighths, a sixteenth ostinato, a kit; raids add voices and timpani
+        'battle': [{'type': 'pad', 'cut': 1100, 'gain': 0.1}, {'type': 'bass', 'pat': [(i * 0.5, 0, 0.45) for i in range(8)], 'gain': 0.2, 'square': 0.45},
+                   {'type': 'arp', 'voice': 'pluck', 'step': 0.25, 'pat': [0, 1, 2, 1] * 4, 'gain': 0.05, 'len': 0.12, 'spread': 0.3}] + drums(kit or 'battle', 0.85, low=80, high=200),
+        'raidbattle': [{'type': 'choir', 'cut': 1000, 'gain': 0.13}, {'type': 'bass', 'pat': [(i * 0.5, 0, 0.45) for i in range(8)], 'gain': 0.21, 'square': 0.5},
+                       {'type': 'arp', 'voice': 'pluck', 'oct': 0, 'step': 0.25, 'pat': [0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 1, 0, 2, 0, 1, 2], 'gain': 0.07, 'len': 0.12, 'bright': 1800, 'spread': 0.2},
+                       {'type': 'drums', 'pat': ['D.......D.......', 'D.......D...D.D.'], 'step': 0.25, 'gain': 0.7, 'low': 58}] + drums(kit or 'battle', 0.75),
         'drumcamp': [{'type': 'pad', 'drone': True, 'oct': 0, 'cut': 800, 'gain': 0.12}, {'type': 'bass', 'pat': BASS[b], 'gain': 0.2, 'square': 0.1}, {'type': 'arp', 'voice': 'pluck', 'oct': 0, 'pat': arp[::2], 'step': astep * 2, 'gain': 0.07, 'bright': 1600}] + drums('heart', 0.8, low=70),
     }[style]
     return S + [L]
@@ -113,9 +124,9 @@ FX = {'wind': fx_wind(2, 250, 1100, 0.05), 'waves': fx_wind(4, 200, 800, 0.05), 
       'storm': fx_wind(2, 150, 1500, 0.08), 'ember': fx_wind(2, 120, 600, 0.04)}
 
 
-def Z(bpm, beats, tonic, mode, prog, style, lead, fx=(), feel='calm', motif=None, gain=0.14, room=0.35, rng=None):
+def Z(bpm, beats, tonic, mode, prog, style, lead, fx=(), feel='calm', motif=None, gain=0.14, room=0.35, rng=None, kit=None):
     return {'bpm': bpm, 'beats': beats, 'tonic': tonic, 'mode': mode, 'prog': prog, 'style': style, 'lead': lead, 'fx': list(fx),
-            'feel': feel, 'motif': motif, 'gain': gain, 'room': room, 'range': rng}
+            'feel': feel, 'motif': motif, 'gain': gain, 'room': room, 'range': rng, 'kit': kit}
 
 
 # zone -> (outdoors, town). None: the zone keeps an existing track (Ambermoor's, or a mood from compose_themes.py)
@@ -176,12 +187,41 @@ ZONES = {
 }
 
 
+# dungeon and raid battle music (v10.8): dungeon id -> (track name, spec). Fast, driving, a heroic lead; each place keeps a
+# colour of its own (its key and mode, the lead, an extra sound: embers, drips, waves, the anvil)
+B = lambda bpm, tonic, mode, prog, lead, fx=(), kit=None, style='battle', gain=0.14: Z(bpm, 4, tonic, mode, prog, style, lead, fx, feel='busy', gain=gain, kit=kit, room=0.3)
+BATTLE = {
+    'ragefire':          ('smokepit', B(138, 'E', 'phrygian', 'Em F Em D Em F G F Em F Em D C D Em Em', 'horn', ['ember'], 'battletribal')),
+    'deadmines':         ('smugglers_deep', B(144, 'D', 'minor', 'Dm C Bb A Dm C Bb A Gm Bb C A Dm Bb A A', 'fiddle', ['drips'], gain=0.12)),
+    'wailing_caverns':   ('dreaming_caves', B(132, 'F#', 'minor', 'F#m D E C#m F#m D E E D E F#m C#m D E C#m C#m', 'flute', ['drips'])),
+    'stockade':          ('kingsmere_gaol', B(140, 'C', 'minor', 'Cm Ab Bb G Cm Ab Fm G Ab Bb Cm Ab Fm G Cm G', 'horn', kit='battlemarch')),
+    'shadowfang':        ('greyhowl_keep', B(136, 'G', 'minor', 'Gm Eb F D Gm Eb Cm D Eb F Gm Eb Cm D Gm D', 'fiddle', ['wind'], gain=0.12)),
+    'blackfathom':       ('tidehollow', B(132, 'A', 'minor', 'Am F G E Am F Dm E F G Am F Dm E Am E', 'flute', ['waves'])),
+    'gnomeregan':        ('gearhollow', B(148, 'B', 'minor', 'Bm G A F# Bm G Em F# G A Bm G Em F# Bm F#', 'pluck', kit='battleclank', gain=0.2)),
+    'razorfen_kraul':    ('thorn_warrens', B(140, 'E', 'dorian', 'Em A Em D Em A C D C D Em A C D Em D', 'flute', kit='battletribal')),
+    'sm_library':        ('pyre_library', B(132, 'D', 'harmonic', 'Dm Bb Gm A Dm Bb Gm A Bb C Dm Bb Gm A Dm A', 'fiddle', style='raidbattle', gain=0.12)),
+    'sm_cathedral':      ('pyre_cathedral', B(144, 'D', 'minor', 'Dm Gm C F Bb Gm A A Dm Gm C F Bb Gm A Dm', 'horn', style='raidbattle')),
+    'coinworks':         ('coinworks', B(140, 'G', 'minor', 'Gm F Eb D Gm F Eb D Cm D Gm F Eb D Gm D', 'horn', kit='battleclank')),
+    'zul_farrak':        ('dune_temple', B(138, 'D', 'phrygdom', 'D Eb D C D Eb Cm D Gm Eb D C Cm Eb D D', 'pluck', ['wind'], 'battletribal', gain=0.2)),
+    'maraudon':          ('gemfall', B(134, 'A', 'minor', 'Am G F E Am G F E Dm F G E Am G F E', 'flute', ['drips'])),
+    'blackrock_depths':  ('cinderpeak', B(144, 'C', 'minor', 'Cm Bb Ab G Cm Bb Ab G Fm Ab Bb G Cm Bb Ab G', 'horn', ['ember'], 'battleclank')),
+    'scholomance':       ('blackcloister', B(136, 'B', 'harmonic', 'Bm G Em F# Bm G Em F# G A Bm G Em F# Bm F#', 'fiddle', ['drips'], style='raidbattle', gain=0.12)),
+    'stratholme':        ('graymouth', B(146, 'F', 'minor', 'Fm Db Eb C Fm Db Bbm C Db Eb Fm Db Bbm C Fm C', 'horn', ['wind'], style='raidbattle')),
+    'sunken_archive':    ('sunken_archive', B(138, 'E', 'minor', 'Em C D B Em C Am B C D Em C Am B Em B', 'flute', ['waves'])),
+    'shalzua_temple':    ('shalzua', B(142, 'C#', 'minor', 'C#m A B G# C#m A F#m G# A B C#m A F#m G# C#m G#', 'horn', ['waves'], 'battletribal')),
+    # the raids: the same battle style, bigger (voices and timpani)
+    'onyxias_lair':      ('veshmira', B(146, 'D', 'minor', 'Dm Bb C A Dm Bb Gm A Bb C Dm Bb Gm Bb A A', 'horn', ['ember'], style='raidbattle')),
+    'molten_core':       ('magma', B(150, 'C', 'phrygian', 'Cm Db Cm Bb Cm Ab Db Cm Fm Db Eb Cm Ab Db Cm Cm', 'horn', ['ember'], 'battleclank', style='raidbattle')),
+    'tidecrown_citadel': ('tidecrown', B(140, 'G', 'minor', 'Gm Eb F D Gm Eb Cm D Eb F Gm Eb Cm Eb D D', 'horn', ['waves'], style='raidbattle')),
+}
+
+
 def spec_of(name, z, motif=None):
     seed = zlib.crc32(name.encode()) & 0xffffffff
     lo, hi = z['range'] or LEAD_RANGE[z['lead']]
     mel = gen(z['prog'], z['tonic'], z['mode'], z['beats'], seed, lo, hi, z['feel'], motif)
     return {'bpm': z['bpm'], 'beats': z['beats'], 'meter': '6/8' if z['beats'] == 6 else None, 'key': f"{z['tonic']} {z['mode']}", 'prog': z['prog'],
-            'layers': arrange(z['style'], z['beats'], z['lead'], mel, z['gain']), 'fx': [FX[f] for f in z['fx']], 'room': z['room']}
+            'layers': arrange(z['style'], z['beats'], z['lead'], mel, z['gain'], z.get('kit')), 'fx': [FX[f] for f in z['fx']], 'room': z['room']}
 
 
 # the file name of a zone's tracks: its in-game name (the zone ids in the code are older names; seeds still use the id,
@@ -195,6 +235,7 @@ def all_specs():
         oseed = zlib.crc32(zone.encode()) & 0xffffffff
         if o: out[TRACK[zone]] = spec_of(zone, o)
         if t: out[TRACK[zone] + '_town'] = spec_of(zone + '_town', t, motif=oseed)   # the town shares the zone's opening motif
+    for dg, (track, z) in BATTLE.items(): out[track] = spec_of(dg, z)
     return out
 
 

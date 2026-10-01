@@ -1415,7 +1415,7 @@
     moneyTick(S);
     // low health in a fight: the screen edges glow red
     app.classList.toggle('lowhp', !!G.fight && v0hp(P));
-    if (window.SND) window.SND.music(musicNow());
+    if (window.SND) window.SND.music(musicNow(), false, ui.csMusic || G.musicFor((n) => SND.inlined(n))); // a track that will not load falls back to the inlined one
     const v = G.vitals();
     setBar(els.pHp, v.hp, v.maxHp);
     setBar(els.pRes, v.res, v.maxRes, v.resType === 'mana' ? null : `${Math.round(v.res)}`);

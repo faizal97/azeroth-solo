@@ -22,3 +22,6 @@ __pycache__/
 .DS_Store
 *.iml
 .idea/
+
+# music files the build copies next to the app page (from audio/out)
+app/assets/game/music/

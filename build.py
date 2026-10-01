@@ -42,18 +42,29 @@ DATA = ['src/data/' + f for f in json.load(open(os.path.join(R, 'src', 'data', '
 # music ships only once he has listened and approved the track
 APPROVED = set(open(os.path.join(R, 'audio', 'approved.txt')).read().split()) if os.path.exists(os.path.join(R, 'audio', 'approved.txt')) else set()
 PENDING_SFX = set(open(os.path.join(R, 'audio', 'pending_sfx.txt')).read().split()) if os.path.exists(os.path.join(R, 'audio', 'pending_sfx.txt')) else set()
+# v10.8: the first music (the three oldest tracks) stays inlined; every other approved track ships as a file next to the
+# page (dist/music/ and the app's assets/game/music/), loaded when it is first played (src/sound.js)
+INLINE_MUSIC = {'ambermoor', 'town', 'dungeon'}
+MUSIC_DIRS = [os.path.join(R, 'dist', 'music'), os.path.join(R, 'app', 'assets', 'game', 'music')]
+for d in MUSIC_DIRS:
+    os.makedirs(d, exist_ok=True)
+    for old in glob.glob(os.path.join(d, '*.m4a')): os.remove(old)
+files = []
 aud = {}
 for f in sorted(glob.glob(os.path.join(R, 'audio', 'out', '*.m4a'))):
     n = os.path.basename(f)[:-4]
     if n == 'sfx_reel': continue
     if n.startswith('music_') and n[6:] not in APPROVED: continue
     if n.startswith('sfx_') and n[4:] in PENDING_SFX: continue   # new effects wait for his ears too (v10.8)
+    if n.startswith('music_') and n[6:] not in INLINE_MUSIC:
+        for d in MUSIC_DIRS: shutil.copy(f, os.path.join(d, n[6:] + '.m4a'))
+        files.append(n[6:]); continue
     aud[n] = 'data:audio/mp4;base64,' + base64.b64encode(open(f, 'rb').read()).decode()
 meta = rd('audio/out/music.json') if os.path.exists(os.path.join(R, 'audio/out/music.json')) else '{}'
 # the app version, for the in-app updater (src/update.js compares it with the latest GitHub release)
 import re
 VERSION = re.search(r'^version:\s*([0-9.]+(?:-[0-9A-Za-z.]+)?)', rd('app/pubspec.yaml'), re.M).group(1)  # 9.9.0, or 9.10.0-beta.1
-audio_js = f'window.AZ_VERSION={json.dumps(VERSION)};' + 'window.AUDIO_DATA=' + json.dumps(aud) + ';window.AUDIO_META=' + meta + ';'
+audio_js = f'window.AZ_VERSION={json.dumps(VERSION)};' + 'window.AUDIO_DATA=' + json.dumps(aud) + ';window.AUDIO_FILES=' + json.dumps(files) + ';window.AUDIO_META=' + meta + ';'
 js = [f for f in ['src/report.js', 'src/art.js', 'src/art_durotar.js', 'src/art_mulgore.js', 'src/art_tirisfal.js', 'src/art_westfall.js', 'src/art_barrens.js', 'src/art_icons2.js', 'src/art_icons3.js', 'src/art_icons4.js', 'src/art_icons5.js', 'src/art_icons6.js', 'src/art_icons7.js', 'src/art_redridge.js', 'src/art_stonetalon.js', 'src/art_duskwood.js', 'src/art_hillsbrad.js', 'src/art_ashenvale.js', 'src/art_wetlands.js', 'src/art_stranglethorn.js', 'src/art_gnomeregan.js', 'src/art_razorfen.js', 'src/art_arathi.js', 'src/art_scarlet.js', 'src/art_mounts.js', 'src/art_icons8.js', 'src/art_tanaris.js', 'src/art_zulfarrak.js', 'src/art_coinworks.js', 'src/art_feralas.js', 'src/art_maraudon.js', 'src/art_icons9.js', 'src/art_icons10.js', 'src/art_ungoro.js', 'src/art_steppes.js', 'src/art_brd.js', 'src/art_plaguelands.js', 'src/art_winterspring.js', 'src/art_scholomance.js', 'src/art_stratholme.js', 'src/art_dustwallow.js', 'src/art_moltencore.js', 'src/art_tidewatch.js', 'src/art_skullreef.js', 'src/art_archive.js', 'src/art_shalzua.js', 'src/art_tidecrown.js', 'src/art_worldbosses.js', 'src/art_story.js', 'src/art_story2.js', 'src/art_legends.js', 'src/art_bromli.js'] + DATA + ['src/engine.js', 'src/bots.js', 'src/game.js', 'src/trials.js', 'src/social.js', 'src/sound.js', 'src/cutscene.js', 'src/update.js', 'src/cloud.js', 'src/friends.js', 'src/savefile.js', 'src/sym.js', 'src/ui.js'] if os.path.exists(os.path.join(R, f))]
 html = f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
@@ -75,4 +86,4 @@ dst = os.path.join(R, 'app', 'assets', 'game', 'index.html')
 if subprocess.run(['node', os.path.join(R, 'tools', 'ipcheck.js'), '--dist', out]).returncode != 0:
     sys.exit('build stopped: an old-world name is in the built page, maybe in a comment (listed above)')
 shutil.copy(out, dst)
-print('built', out, 'v' + VERSION, round(len(html) / 1024), 'KB;', 'art.js' if 'src/art.js' in js else 'NO ART (placeholders)', '; audio files:', len(aud))
+print('built', out, 'v' + VERSION, round(len(html) / 1024), 'KB;', 'art.js' if 'src/art.js' in js else 'NO ART (placeholders)', '; audio inlined:', len(aud), '; music files:', len(files))

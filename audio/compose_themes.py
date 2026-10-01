@@ -287,38 +287,8 @@ TRACKS = {
             'Eb5:1.5 D5:.5 C5:2 | B4:3 r:1 | F5:1.5 Eb5:.5 C5:1 Ab4:1 | G4:1 C5:1 Eb5:2 | Db5:1.5 C5:.5 Ab4:1 F4:1 | G4:1 B4:1 D5:1 F5:1'}],
         'fx': [fx_hits(lambda: clank(0.06), [0.13, 0.47, 0.79]), fx_hits(lambda: drip(0.07), [0.3, 0.62, 0.9])], 'room': 0.55},
 
-    # Veshmira's Lair: the dragon's den, D minor, voices, a pulsing ostinato and timpani
-    'veshmira': {'bpm': 120, 'beats': 4, 'key': 'D minor', 'prog': 'Dm Dm Bb C Dm Dm Gm A Bb C Dm Dm Gm Bb A A', 'layers': [
-        {'type': 'choir', 'cut': 1000, 'gain': 0.14},
-        {'type': 'bass', 'pat': [(0, 0, 1), (1, 0, 1), (2, 0, 1), (3, 0, 1)], 'gain': 0.24, 'square': 0.3},
-        {'type': 'arp', 'voice': 'pluck', 'oct': 0, 'pat': [0, 0, 1, 0, 2, 0, 1, 2], 'gain': 0.1, 'bright': 2000, 'spread': 0.2},
-        {'type': 'drums', 'pat': ['D...s...D...s.D.', 'D...s...D.D.s.DD'], 'gain': 0.95, 'low': 60},
-        {'type': 'lead', 'voice': 'horn', 'gain': 0.15, 'mel':
-            'D4:1.5 A4:.5 A4:2 | F4:.5 G4:.5 A4:1 C5:1 A4:1 | Bb4:1.5 A4:.5 F4:2 | G4:1 E4:1 C5:2 | D5:1.5 C5:.5 A4:2 | F5:1 E5:1 D5:1 A4:1 | Bb4:1.5 D5:.5 G5:2 | E5:1 C#5:1 A4:2 |'
-            'F5:1.5 E5:.5 D5:1 Bb4:1 | C5:1.5 D5:.5 E5:1 G5:1 | F5:2 A5:2 | D5:4 | G4:1 Bb4:1 D5:1.5 C5:.5 | Bb4:1 F5:1 D5:2 | C#5:1 E5:1 A5:2 | G5:1 E5:1 C#5:1 A4:1'}],
-        'room': 0.4},
 
-    # The Magma Throne: C Phrygian, a galloping low ostinato, heavy drums, horn stabs
-    'magma': {'bpm': 116, 'beats': 4, 'key': 'C Phrygian', 'prog': 'C5 C5 Db C5 C5 Ab Db C5 F5 F5 Db Eb Ab Db C5 C5', 'layers': [
-        {'type': 'pad', 'oct': 0, 'cut': 800, 'gain': 0.12},
-        {'type': 'bass', 'pat': [(i * 0.5, 0, 0.45) for i in range(8)], 'gain': 0.22, 'square': 0.7},
-        {'type': 'arp', 'voice': 'pluck', 'oct': 0, 'step': 0.25, 'pat': [0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 2, 0, 1, 0], 'gain': 0.08, 'len': 0.14, 'bright': 1600, 'spread': 0.15},
-        {'type': 'drums', 'pat': ['k.k.s.kkk.k.s...', 'k.k.s.kkk.k.s.ss'], 'gain': 0.9},
-        {'type': 'lead', 'voice': 'horn', 'gain': 0.14, 'mel':
-            'C5:1 r:.5 C5:.5 Db5:1 C5:1 | Bb4:1 Ab4:1 G4:2 | Ab4:1 Db5:1 F5:1 Eb5:1 | C5:3 r:1 | G5:1 r:.5 G5:.5 Ab5:1 G5:1 | Eb5:1 C5:1 Ab4:2 | F5:1.5 Eb5:.5 Db5:1 C5:1 | C5:4 |'
-            'F4:1 Ab4:1 C5:1 Db5:1 | C5:1 Ab4:1 F4:2 | Db5:1.5 Eb5:.5 F5:2 | G5:1.5 F5:.5 Eb5:2 | Eb5:1 C5:1 Ab4:1 C5:1 | Db5:1 F5:1 Ab5:2 | G5:1 F5:.5 Eb5:.5 Db5:1 C5:1 | C5:2 G4:2'}],
-        'fx': [fx_hits(lambda: windy(2.5, 2.5, 120, 600, 0.06), [0.0, 0.25, 0.5, 0.75])], 'room': 0.35},
 
-    # The Tidecrown Citadel: the drowned court, G minor in 6/8, harp waves, horns and voices
-    'tidecrown': {'bpm': 168, 'beats': 6, 'meter': '6/8', 'key': 'G minor', 'prog': 'Gm Gm Eb F Gm Gm Cm D Eb F Gm Eb Cm Eb D D', 'layers': [
-        {'type': 'choir', 'cut': 950, 'gain': 0.12},
-        {'type': 'bass', 'pat': [(0, 0, 3), (3, 0, 3)], 'gain': 0.24, 'square': 0.15},
-        {'type': 'arp', 'voice': 'harp', 'pat': [0, 1, 2, 3, 2, 1], 'step': 1, 'gain': 0.13},
-        {'type': 'drums', 'step': 1, 'pat': ['D..T..', 'D..T..', 'D..T..', 'D..TTT'], 'gain': 0.8, 'low': 70},
-        {'type': 'lead', 'voice': 'horn', 'gain': 0.14, 'mel':
-            'D5:3 G5:2 F5:1 | D5:2 Bb4:1 G4:3 | Eb5:2 D5:1 C5:2 Bb4:1 | C5:3 A4:3 | Bb4:2 C5:1 D5:2 G5:1 | F5:2 Eb5:1 D5:3 | Eb5:2 G5:1 C5:3 | F#5:3 D5:3 |'
-            'G5:3 Bb5:2 G5:1 | A5:2 F5:1 C5:3 | Bb4:2 D5:1 G5:3 | G5:2 F5:1 Eb5:3 | Eb5:2 D5:1 C5:2 G4:1 | Bb4:3 G4:3 | A4:2 D5:1 F#5:3 | D5:3 A4:3'}],
-        'fx': [fx_wind(4, 200, 800, 0.05)], 'room': 0.45},
 
     # World bosses: B minor, driving drums and bass, a horn call
     'worldboss': {'bpm': 126, 'beats': 4, 'key': 'B minor', 'prog': 'Bm Bm G A Bm Bm Em F# G A Bm Bm Em G F# F#', 'layers': [

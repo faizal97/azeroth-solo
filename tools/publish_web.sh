@@ -20,18 +20,20 @@ if "${GIT[@]}" ls-remote --exit-code --heads "$URL" gh-pages >/dev/null 2>&1; th
 else
   mkdir "$TMP/site" && git -C "$TMP/site" init --quiet -b gh-pages && git -C "$TMP/site" remote add origin "$URL"
 fi
+# the music files next to a page (v10.8): replaced together with that page, so a page and its tracks always match
+put_music() { rm -rf "$1/music"; if [ -d "$ROOT/dist/music" ] && [ -n "$(ls -A "$ROOT/dist/music" 2>/dev/null)" ]; then cp -R "$ROOT/dist/music" "$1/music"; fi; }
 ver_of() { [ -f "$1" ] && grep -o 'AZ_VERSION *= *"[^"]*"' "$1" | head -1 | sed 's/.*"\(.*\)"/\1/' || echo ""; }
 mkdir -p "$TMP/site/beta"
 if [ "$PAGES" = 1 ]; then
   WHERE="web pages"
 elif [ "$BETA" = 1 ]; then
-  cp "$SRC" "$TMP/site/beta/index.html"; WHERE="beta page"
+  cp "$SRC" "$TMP/site/beta/index.html"; put_music "$TMP/site/beta"; WHERE="beta page"
 else
-  cp "$SRC" "$TMP/site/index.html"; WHERE="main page"
+  cp "$SRC" "$TMP/site/index.html"; put_music "$TMP/site"; WHERE="main page"
   # the beta page follows a normal release, unless it already has a newer test build
   OLD="$(ver_of "$TMP/site/beta/index.html")"
   NEWER="$(node -e "global.window=global;global.localStorage={getItem(){return null},setItem(){}};require('$ROOT/src/update.js');console.log(process.argv[1]&&UPD.cmp(process.argv[1],process.argv[2])>0?1:0)" "$OLD" "$VER")"
-  if [ "$NEWER" = 1 ]; then echo "beta page kept at v$OLD (newer than v$VER)"; else cp "$SRC" "$TMP/site/beta/index.html"; WHERE="main and beta pages"; fi
+  if [ "$NEWER" = 1 ]; then echo "beta page kept at v$OLD (newer than v$VER)"; else cp "$SRC" "$TMP/site/beta/index.html"; put_music "$TMP/site/beta"; WHERE="main and beta pages"; fi
 fi
 # the site's other pages (privacy.html, …) from web/, in either mode
 for f in "$ROOT"/web/*.html; do [ -f "$f" ] && cp "$f" "$TMP/site/"; done

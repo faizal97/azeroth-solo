@@ -32,12 +32,18 @@ for (const [z, m] of [['tanaris', 'desert'], ['durotar', 'dunescar'], ['wintersp
 // on the road: the zone's mood, even leaving a capital
 at('orgrimmar'); P.travel = { to: 'razor_hill', start: 0, end: 1 }; check(G.musicFor(all) === 'dunescar', `travelling from Vazhrak plays Dunescar's track, plays ${G.musicFor(all)}`);
 // runs: raids and world bosses have themes, dungeons keep the dungeon loop
-for (const [act, m] of [['onyxias_lair', 'veshmira'], ['molten_core', 'magma'], ['tidecrown_citadel', 'tidecrown'], ['wb_ashwing', 'worldboss'], ['deadmines', 'dungeon']]) {
+for (const [act, m] of [['onyxias_lair', 'veshmira'], ['molten_core', 'magma'], ['tidecrown_citadel', 'tidecrown'], ['wb_ashwing', 'worldboss'], ['deadmines', 'smugglers_deep'], ['stratholme', 'graymouth']]) {
   if (!D.ACTIVITIES[act]) { check(false, `no activity ${act}`); continue; }
   at('stormwind'); S.run = { act }; check(G.musicFor(all) === m, `${act} should play ${m}, plays ${G.musicFor(all)}`); check(G.musicFor(old) === 'dungeon', `${act} before approval keeps the dungeon loop`);
 }
 // the battleground: its own theme, before approval the place's music as before
 at('stormwind'); S.bg = { act: 'bg_highmoor' }; check(G.musicFor(all) === 'highmoor', `the battleground plays highmoor, plays ${G.musicFor(all)}`); check(G.musicFor(old) === 'ambermoor', `the battleground before approval plays ${G.musicFor(old)}`);
 check(tracks.menu, 'the main menu theme is composed');
+// every dungeon and raid has its own battle track, and a run in it plays that track
+for (const [dg, Dg] of Object.entries(D.DUNGEONS)) {
+  check(Dg.music && tracks[Dg.music], `${Dg.name} has no composed track`);
+  const act = Object.keys(D.ACTIVITIES).find((a) => D.ACTIVITIES[a].dungeon === dg);
+  if (act) { at('stormwind'); S.run = { act }; check(G.musicFor(all) === Dg.music, `a run in ${Dg.name} plays ${G.musicFor(all)}`); check(G.musicFor(old) === 'dungeon', `${Dg.name} before approval keeps the dungeon loop`); }
+}
 console.log(`music: ${ok}/${ok + bad} checks pass`);
 process.exitCode = bad ? 1 : 0;
