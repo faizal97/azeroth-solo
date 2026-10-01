@@ -152,7 +152,7 @@
     u.pos0 = { x: u.pos.x - s * gap / 2, y: u.pos.y, z: u.pos.z }; // where it would stand in contact: the scene draws a fighter moved by how far it is from here
   }
   // movement for a tick: a fleeing fighter runs from the one who scared it; anyone else closes on its target when out
-  // of its reach. Moving cancels a cast. Roots stop it; snares slow it like they slow attacks.
+  // of its reach. A fighter casting stands still for it. Roots stop it; snares slow it like they slow attacks.
   function moveTick(C, u, dt) {
     if (!u.pos) return;
     if (u.closedAt == null) { const t0 = C.units[u.target]; if (t0 && t0.pos && E.dist(u, t0) <= DIST.melee + 0.5) u.closedAt = C.t; } // first time in melee reach (openers)
@@ -164,13 +164,13 @@
       stepAway(u, from, speed); return;
     }
     if (rooted || stunned(C, u)) return;
-    if (u.kiteUntil > C.t) { const f = C.units[u.target]; if (f && f.pos && !f.dead) { if (u.cast) { u.cast = null; ev(C, { type: 'castStop', src: u.uid, moved: true }); } stepAway(u, f, speed); return; } }
+    if (u.cast) return; // a fighter who chose to cast stands still for it (the run to close in or to kite waits)
+    if (u.kiteUntil > C.t) { const f = C.units[u.target]; if (f && f.pos && !f.dead) { stepAway(u, f, speed); return; } }
     const t = C.units[u.target]; if (!t || t.dead || t.side === u.side || !t.pos) return;
     const d = E.dist(u, t), want = reachOf(u);
     if (d <= want + 0.5) return;
     const hd = Math.hypot(t.pos.x - u.pos.x, t.pos.y - u.pos.y);
     if (hd <= want + 0.5) return; // right under (or over) it: running cannot close a height
-    if (u.cast) { u.cast = null; ev(C, { type: 'castStop', src: u.uid, moved: true }); }
     stepToward(u, t, Math.min(speed, hd - want));
   }
   // each move notes when and which way (the scene shows a run, and turns a fighter that runs away)
@@ -942,13 +942,15 @@
   // kiting: open the gap while a melee foe is held, up to `gap` metres, running at most `run` seconds (sim/brawl.js tunes them)
   const G_KITE = E.KITE = { gap: 16, run: 1.5, edge: 2, safeHeal: 0.7 }; // edge: how much faster (m/s) you must be for running to pay
   const runSpeed = (C, x) => (x.auras.some((a) => a.root) || x.stunUntil > C.t ? 0 : moveSpeed(x));
+  const SOLO_UP = { bard: ['marching_song', 'hearthsong', 'anthem_of_stone'], shaman: ['rockbiter_weapon', 'lightning_shield'] };
   const soloFoe = (en) => { const ch = en.filter((x) => x.kind !== 'pet'); return ch.length === 1 && ch[0].cls && !ch[0].boss ? ch[0] : null; }; // pets do not count
   const soloFight = (C, u, en) => !!soloFoe(en) && alive(friends(C, u)).filter((x) => x.kind !== 'pet').length === 1;
   function soloThink(C, u, f, b, has, try_) {
     const sk = b.skill || 0.5, hp = u.hp / u.maxHp, roll = () => Math.random() < 0.4 + 0.6 * sk, k = soloKit(u.cls);
-    // a bard keeps its 30-minute songs playing everywhere, so a one-on-one starts with them up (a player's carry in from
-    // outside the fight the same way): no opening seconds spent singing, Dirge and the Dissonant Note come first
-    if (u.cls === 'bard' && !u.soloSung) { u.soloSung = 1; for (const id of ['marching_song', 'hearthsong', 'anthem_of_stone']) if (has(id) && !auraOf(u, id)) { E.use(C, u, id); u.gcdUntil = 0; } }
+    // long upkeep a class keeps on everywhere is already up when a one-on-one starts (a player's carries in from outside
+    // the fight the same way): a bard's 30-minute songs, a shaman's weapon imbue and Lightning Shield. No opening
+    // seconds spent on them, and none mid-fight.
+    if (!u.soloUp && SOLO_UP[u.cls]) { u.soloUp = 1; for (const id of SOLO_UP[u.cls]) if (has(id) && !auraOf(u, D.ABILITIES[id].buff.id) && !(D.ABILITIES[id].buff.seal && u.auras.some((a) => a.seal))) { E.use(C, u, id); u.gcdUntil = 0; } }
     // distance: a heal is safe while the foe cannot reach you (held, or a melee foe still out of reach), so heal earlier then
     const safe = !!(u.pos && f.pos) && (holdLeft(C, f) > 1.5 || (reachOf(f) <= DIST.melee && E.dist(u, f) > DIST.melee + 6));
     if ((hp < 0.2 + 0.3 * sk || (safe && hp < G_KITE.safeHeal)) && roll()) for (const id of k.heals) {
