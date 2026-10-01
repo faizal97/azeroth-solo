@@ -1,21 +1,25 @@
 // Battlegrounds (v10.7): the Battle for Highmoor, played to the end by a bot-driven player with three ways to pick the
-// banner each round. The choice must be real: the smart pick (gain a banner for the fewest enemies) clearly beats
+// banner each round, reading only what the player sees (the scouts' ranges). The choice must be real: the smart pick (gain a banner for the fewest enemies) clearly beats
 // charging the biggest group, and a game takes a sensible time. node sim/battleground.js [runs per case, default 12]
 globalThis.localStorage = (() => { const m = new Map(); return { getItem: (k) => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: (k) => m.delete(k) }; })();
 require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js');
 const { G, D } = globalThis;
 let t = Date.now(); Date.now = () => t;
 const N = +process.argv[2] || 12;
+// tuning knobs for trying values without editing the game (BG_SPREAD=2 BG_RG=0.5 node sim/battleground.js 24)
+if (process.env.BG_SPREAD) G.BG_SCOUT_SPREAD = +process.env.BG_SPREAD;
+if (process.env.BG_RG) G.BG_REACT_GROUP = +process.env.BG_RG;
+if (process.env.BG_R) G.BG_REACT = +process.env.BG_R;
 // a pick is [where your group goes, where the pair goes]
 const names = () => D.BG.highmoor.banners.map((x) => x[0]);
 const PICK = {
   // smart: the pair takes an empty banner (or the weakest one); your group goes where it gains most for the fewest enemies
-  smart: (bg) => { const n = names(), k = (b) => bg.plan[b] || 0;
+  smart: (bg) => { const n = names(), k = (b) => G.bgScoutRange(bg, b)[1];
     const empty = n.filter((b) => !k(b) && bg.owner[b] !== 'us'), weak = n.slice().sort((a, b) => k(a) - k(b));
     const pair = empty[0] || weak.find((b) => k(b) <= 1) || weak[0];
     const grp = n.filter((b) => b !== pair).sort((a, b) => (k(a) - (bg.owner[a] === 'them' ? 0.5 : 0)) - (k(b) - (bg.owner[b] === 'them' ? 0.5 : 0)))[0] || pair;
     return [grp, pair]; },
-  naive: (bg) => { const b = Object.entries(bg.plan).sort((a, c) => c[1] - a[1])[0][0]; return [b, b]; },
+  naive: (bg) => { const b = names().sort((a, c) => G.bgScoutRange(bg, c)[1] - G.bgScoutRange(bg, a)[1])[0]; return [b, b]; },
   random: () => { const n = names(); return [n[Math.floor(Math.random() * 3)], n[Math.floor(Math.random() * 3)]]; },
 };
 function play(strat, cls, L) {

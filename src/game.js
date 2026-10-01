@@ -2078,7 +2078,9 @@
   // S.bg = { act, key, round, score, owner, plan, phase: choose|fight|done, team, foes, log }. Everyone is back to full
   // health each round; dying in a battleground costs nothing.
   const BG_ROLES = ['tank', 'healer', 'dps', 'dps', 'dps'];
-  G.BG_REACT = 0.65; // how often they send fighters after your pair (sim/battleground.js tunes it)
+  G.BG_REACT = 0.8; // how often they send fighters after your pair (sim/battleground.js tunes it)
+  G.BG_REACT_GROUP = 0.5; // how often they send one more fighter to your group's banner (v10.8)
+  G.BG_SCOUT_SPREAD = 2; // scouts report a range this wide; the true count is always inside it (v10.8)
   function bgSide(faction, lvl, roles, used) {
     const S = G.S, out = [];
     for (const role of roles) {
@@ -2099,12 +2101,20 @@
     const plan = {}; names.forEach((n) => { plan[n] = 0; }); order.forEach((n, i) => { plan[n] = split[i] || 0; });
     return plan;
   }
+  // what the scouts report (v10.8): a range per banner, honest (the true count is always inside it) but not exact
+  function bgScout(bg) {
+    const w = G.BG_SCOUT_SPREAD, max = D.BG[bg.key].team, out = {};
+    for (const [b, n] of Object.entries(bg.plan)) { let lo = n - rint(0, w); lo = clamp(lo, 0, Math.max(0, max - w)); out[b] = [lo, lo + w]; }
+    return out;
+  }
+  // the range for a banner (a save from v10.7 has no scout report: then the exact count)
+  G.bgScoutRange = function (bg, b) { return (bg.scout && bg.scout[b]) || [bg.plan[b] || 0, bg.plan[b] || 0]; };
   function startBg(act) {
     const S = G.S, P = S.player, A = D.ACTIVITIES[act], key = A.bg, C = D.BG[key];
     const myF = G.myFaction(), theirF = myF === 'alliance' ? 'horde' : 'alliance', used = new Set(), L = P.level;
     const mine = BG_ROLES.slice(); const i = mine.indexOf(G.role()); mine.splice(i >= 0 ? i : 2, 1);
     S.bg = { act, key, round: 1, score: { us: 0, them: 0 }, owner: {}, phase: 'choose', team: bgSide(myF, L, mine, used), foes: bgSide(theirF, L, BG_ROLES, used), log: [], started: now() };
-    S.bg.plan = bgPlan(S.bg);
+    S.bg.plan = bgPlan(S.bg); S.bg.scout = bgScout(S.bg);
     sys(`${C.name} begins: 5 against 5. Hold the banners: first to ${C.win} points, or the most after ${C.rounds} rounds.`);
     emit('instanceEnter', { act, bg: key }); emit('change'); G.save();
   }
@@ -2124,7 +2134,12 @@
     // they can still react: sometimes they spot the pair on the move and send fighters after it (said in the log)
     if (Math.random() < G.BG_REACT && pairAt !== groupAt) {
       const from = Object.keys(bg.plan).filter((x) => x !== pairAt && bg.plan[x] > 0).sort((x, y) => bg.plan[y] - bg.plan[x])[0];
-      if (from) { const n = Math.min(bg.plan[from], rint(1, 2)); bg.plan[from] -= n; bg.plan[pairAt] = (bg.plan[pairAt] || 0) + n; sys(`They spot the pair: ${n} of them run from ${bgName(bg, from)} to ${bgName(bg, pairAt)}!`); }
+      if (from) { const n = Math.min(bg.plan[from], rint(1, 2)); bg.plan[from] -= n; bg.plan[pairAt] = (bg.plan[pairAt] || 0) + n; sys(`They spot the pair: ${n === 1 ? '1 of them runs' : n + ' of them run'} from ${bgName(bg, from)} to ${bgName(bg, pairAt)}!`); }
+    }
+    // and sometimes one more runs to meet your group (v10.8), from a banner neither of yours is heading to
+    if (Math.random() < G.BG_REACT_GROUP) {
+      const from = Object.keys(bg.plan).filter((x) => x !== groupAt && x !== pairAt && bg.plan[x] > 0).sort((x, y) => bg.plan[y] - bg.plan[x])[0];
+      if (from) { bg.plan[from] -= 1; bg.plan[groupAt] = (bg.plan[groupAt] || 0) + 1; sys(`They spot your group: 1 of them runs from ${bgName(bg, from)} to ${bgName(bg, groupAt)}!`); }
     }
     const sp = G.bgSplit(), foes = bg.foes.slice().sort(() => Math.random() - 0.5); let fi = 0;
     const foesAt = {}; for (const [b] of D.BG[bg.key].banners) { foesAt[b] = foes.slice(fi, fi + (bg.plan[b] || 0)); fi += bg.plan[b] || 0; }
@@ -2167,7 +2182,7 @@
     bg.score.us += us; bg.score.them += them; bg.go = null;
     bg.log.unshift(`Round ${bg.round}: you hold ${us}, they hold ${them} (${bg.score.us} to ${bg.score.them})`);
     if (bg.score.us >= C.win || bg.score.them >= C.win || bg.round >= C.rounds) return bgFinish();
-    bg.round++; bg.plan = bgPlan(bg); bg.phase = 'choose';
+    bg.round++; bg.plan = bgPlan(bg); bg.scout = bgScout(bg); bg.phase = 'choose';
     emit('change'); G.save();
   }
   function bgFinish() {

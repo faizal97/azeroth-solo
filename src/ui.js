@@ -693,14 +693,15 @@
     }
     ui.bgPick = ui.bgPick && ui.bgPick.round === bg.round ? ui.bgPick : { round: bg.round, group: null, pair: null };
     const pk = ui.bgPick, own = (b) => (bg.owner[b] === 'us' ? 'Yours' : bg.owner[b] === 'them' ? 'Theirs' : 'Open');
+    const scoutText = ([lo, hi]) => (hi === 0 ? 'Scouts: none of them heading there' : lo === hi ? `Scouts: ${lo} of them heading there` : `Scouts: ${lo}–${hi} of them heading there`);
     const list = h('div', { class: 'list' });
     for (const [b, name] of C.banners) list.append(h('div', { class: 'row nav bg-banner ' + (bg.owner[b] || 'open') },
-      h('div', { class: 't' }, h('b', null, name.replace(/^the /, 'The '), h('span', { class: 'bg-own' }, own(b))), h('small', null, bg.plan[b] ? `Scouts: ${bg.plan[b]} of them heading there` : 'Scouts: none of them heading there'))));
+      h('div', { class: 't' }, h('b', null, name.replace(/^the /, 'The '), h('span', { class: 'bg-own' }, own(b))), h('small', null, scoutText(G.bgScoutRange(bg, b))))));
     p.append(list);
     const pickRow = (label, who, key) => h('div', { class: 'bg-pick' }, h('small', null, `${label} (${who})`), h('div', { class: 'chips' }, ...C.banners.map(([b, name]) => h('button', { class: 'chip' + (pk[key] === b ? ' gold' : ''), onclick: () => { pk[key] = b; renderPanel(); } }, name.replace(/^the /, '')))));
     p.append(pickRow('Your group', ['you'].concat(sp.group.map(nm)).join(', '), 'group'), pickRow('The pair', sp.pair.map(nm).join(', '), 'pair'));
     p.append(h('button', { class: 'btn wide', disabled: !pk.group || !pk.pair, onclick: () => { G.bgGo(pk.group, pk.pair); renderAll(); } }, pk.group && pk.pair ? 'Go' : 'Choose where both go'));
-    p.append(h('p', { class: 'ai-note' }, 'Where both teams meet, they fight; an empty banner is taken; they take the banners they reach alone. Every banner you hold scores each round. They can still move when they see you coming.'));
+    p.append(h('p', { class: 'ai-note' }, 'Where both teams meet, they fight; an empty banner is taken; they take the banners they reach alone. Every banner you hold scores each round. The scouts give a range and the true number is always inside it. They can still move when they see you coming, toward your pair or your group.'));
     if (bg.log.length) p.append(h('div', { class: 'ai-box' }, ...bg.log.slice(0, 3).map((l) => h('div', { class: 'ai-row' }, h('span', null, l)))));
   }
   function renderPanel() {

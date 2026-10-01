@@ -1,8 +1,8 @@
 // Battlegrounds (v10.7): the Battle for Highmoor, a banners battleground for simulated players (his call: bots only
 // until live co-op with friends exists). Highmoor is an old Long War battlefield in the Kinloch Highlands; under the
 // truce both factions still send fighters there to settle quarrels by the old rule: hold the banners.
-// 5 against 5 at your level, from level 10. Each round the scouts say how many enemies stand at each banner and your
-// group picks one: an empty banner is taken, an occupied one is fought over; enemies take the banners they reach alone.
+// 5 against 5 at your level, from level 10. Each round the scouts give a range for how many enemies head to each banner
+// (honest: the true count is inside it; v10.8) and your group picks one: an empty banner is taken, an occupied one is fought over; enemies take the banners they reach alone.
 // Every banner you hold scores each round; first to `win` points, or the most after `rounds`, wins.
 (function (root) {
   const D = root.D;
