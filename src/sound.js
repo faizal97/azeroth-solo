@@ -38,6 +38,8 @@
     const now = SND.ctx.currentTime;
     if (SND.last[name] && now - SND.last[name] < (o.gap || 0.06)) return;
     SND.last[name] = now;
+    // an effect still waiting for approval (audio/pending_sfx.txt) is not in the build: play the one it replaced, or nothing
+    if (!(root.AUDIO_DATA && root.AUDIO_DATA['sfx_' + name])) { name = { open: 'click', reaction: 'click' }[name]; if (!name) return; }
     load('sfx_' + name).then((b) => {
       if (!b) return;
       const s = SND.ctx.createBufferSource(); s.buffer = b;

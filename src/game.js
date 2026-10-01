@@ -385,6 +385,7 @@
     P.bags.splice(idx, 1);
     if (old) P.bags.push({ item: old, n: 1 });
     clampVitals();
+    emit('equipped', { item: it }); // a sound (v10.8)
     emit('change');
   };
   G.unequip = function (slot) {
@@ -845,7 +846,7 @@
     if (W.nodes.n <= 0) return toast('Nothing left to pick up. Wait for more to appear.');
     stopActions();
     P.casting = { what: 'gather', label: `Collecting ${pl.gather.label}`, start: now(), end: now() + 3000 };
-    emit('change');
+    emit('castBegin', { what: 'gather' }); emit('change');
   };
   function stopActions() { const P = G.S.player; P.eating = null; P.drinking = null; P.casting = null; }
   G.consume = function (kind) {
@@ -1515,7 +1516,7 @@
     if (G.bagsFull() && !P.bags.some((b) => b.item.id === N.item && b.n < 20)) return toast('Inventory is full.');
     stopActions();
     P.casting = { what: 'pgather', key, label: `${D.PROFESSIONS[N.prof].verb === 'Mine' ? 'Mining' : 'Picking'} ${N.name}`, start: now(), end: now() + 2500 };
-    emit('change');
+    emit('castBegin', { what: 'pgather' }); emit('change');
   };
   function finishGather(c) {
     const P = G.S.player, W = placeState(P.place), list = (W.pnodes || {}).list || [];
@@ -1558,7 +1559,7 @@
     if (G.bagsFull() && !(G.stackable(D.ITEMS[r.makes]) && P.bags.some((b) => b.item.id === r.makes && b.n < 20))) return toast('Inventory is full.');
     stopActions();
     P.casting = { what: 'craft', rid, left: Math.max(1, Math.min(count || 1, G.craftable(rid))), label: `${D.ITEMS[r.makes].name}`, start: now(), end: now() + 1500 };
-    emit('change');
+    emit('castBegin', { what: 'craft' }); emit('change');
   };
   function finishCraft(c) {
     const P = G.S.player, r = D.RECIPES[c.rid], p = G.profs()[r.prof];
@@ -1686,7 +1687,7 @@
     const l = lookOf(it); if (!l) return false;
     const a = G.account(), k = l[0] + ':' + l[1]; a.looks = a.looks || [];
     if (a.looks.includes(k)) return false;
-    a.looks.push(k); G.saveAccount(a); return true;
+    a.looks.push(k); G.saveAccount(a); emit('collected', { item: it }); return true;
   };
   // the first open collects every look already on this device's characters: worn, in bags, in the bank
   G.seedWardrobe = function () {
@@ -2186,13 +2187,14 @@
     bgResolve();
   }
   function bgResolve() {
-    const S = G.S, bg = S.bg, C = D.BG[bg.key], go = bg.go;
+    const S = G.S, bg = S.bg, C = D.BG[bg.key], go = bg.go, before = Object.assign({}, bg.owner);
     for (const [b] of C.banners) {
       if (go.outcome[b] != null) bg.owner[b] = go.outcome[b] ? 'us' : 'them';
       else if (go.foesAt[b].length) bg.owner[b] = 'them'; // they take what they reach unopposed
     }
     const us = C.banners.filter(([b]) => bg.owner[b] === 'us').length, them = C.banners.filter(([b]) => bg.owner[b] === 'them').length;
     bg.score.us += us; bg.score.them += them; bg.go = null;
+    emit('bgRound', { took: C.banners.filter(([b]) => bg.owner[b] === 'us' && before[b] !== 'us').length, lost: C.banners.filter(([b]) => bg.owner[b] === 'them' && before[b] === 'us').length }); // sounds (v10.8)
     bg.log.unshift(`Round ${bg.round}: you hold ${us}, they hold ${them} (${bg.score.us} to ${bg.score.them})`);
     if (bg.score.us >= C.win || bg.score.them >= C.win || bg.round >= C.rounds) return bgFinish();
     bg.round++; bg.plan = bgPlan(bg); bg.scout = bgScout(bg); bg.phase = 'choose';
@@ -2208,7 +2210,7 @@
     else G.addMarks(won ? C.marksAtCap.win : C.marksAtCap.loss, C.name);
     bg.phase = 'done'; bg.result = won ? 'win' : draw ? 'draw' : 'loss'; bg.reward = { honor, money };
     sys(`${C.name}: ${won ? 'victory' : draw ? 'a draw' : 'defeat'}, ${bg.score.us} to ${bg.score.them}. +${honor} Honor.`);
-    emit('change'); G.save();
+    emit('bgEnd', { result: bg.result }); emit('change'); G.save();
   }
   G.leaveBg = function () { const S = G.S; if (!S.bg) return; if (G.fight && G.fight.kind === 'bg') return toast('Finish the fight first.'); S.bg = null; emit('instanceLeave', {}); emit('change'); G.save(); };
   G.bgStart = startBg; // sims

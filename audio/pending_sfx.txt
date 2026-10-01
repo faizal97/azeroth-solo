@@ -1,0 +1,15 @@
+tap
+open
+close
+equip
+chime
+arrive
+roll
+begin
+collect
+reaction
+warn
+enrage
+victory
+defeat
+capture

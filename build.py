@@ -41,11 +41,13 @@ if subprocess.run(['node', os.path.join(R, 'sim', 'music.js')]).returncode != 0:
 DATA = ['src/data/' + f for f in json.load(open(os.path.join(R, 'src', 'data', 'files.json')))]
 # music ships only once he has listened and approved the track
 APPROVED = set(open(os.path.join(R, 'audio', 'approved.txt')).read().split()) if os.path.exists(os.path.join(R, 'audio', 'approved.txt')) else set()
+PENDING_SFX = set(open(os.path.join(R, 'audio', 'pending_sfx.txt')).read().split()) if os.path.exists(os.path.join(R, 'audio', 'pending_sfx.txt')) else set()
 aud = {}
 for f in sorted(glob.glob(os.path.join(R, 'audio', 'out', '*.m4a'))):
     n = os.path.basename(f)[:-4]
     if n == 'sfx_reel': continue
     if n.startswith('music_') and n[6:] not in APPROVED: continue
+    if n.startswith('sfx_') and n[4:] in PENDING_SFX: continue   # new effects wait for his ears too (v10.8)
     aud[n] = 'data:audio/mp4;base64,' + base64.b64encode(open(f, 'rb').read()).decode()
 meta = rd('audio/out/music.json') if os.path.exists(os.path.join(R, 'audio/out/music.json')) else '{}'
 # the app version, for the in-app updater (src/update.js compares it with the latest GitHub release)

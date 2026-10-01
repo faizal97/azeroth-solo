@@ -578,12 +578,14 @@
       if (S_ && meInvolved) {
         if (e.type === 'dmg') S_.play(e.school === 'nature' ? 'arcane' : e.school && e.school !== 'physical' ? e.school : e.crit ? 'crit' : 'hit', { vol: tgt && tgt.kind === 'player' ? 0.75 : 1 });
         else if (e.type === 'avoid') S_.play('miss', { vol: 0.7 });
-        else if (e.type === 'proc' && src && src.kind === 'player') S_.play('click', { vol: 0.9 });
+        else if (e.type === 'proc' && src && src.kind === 'player') S_.play('reaction', { vol: 0.75 });
         else if (e.type === 'heal' && e.amount > 0) S_.play('heal', { gap: 0.3, vol: 0.8 });
         else if (e.type === 'castStart' && src && src.kind === 'player') S_.play('cast', { vol: 0.5 });
         else if (e.type === 'die' && C.units[e.uid] && C.units[e.uid].kind === 'player') S_.play('death');
       }
-      if (S_ && e.type === 'die' && C.units[e.uid] && C.units[e.uid].kind === 'player') S_.play('death');
+      // bosses (v10.8): a low gong before a special or a call for help, a roar when they frenzy
+      if (S_ && e.type === 'emote' && C.units[e.uid] && C.units[e.uid].boss && C.units[e.uid].side === 'enemy') S_.play('warn', { gap: 1.2, vol: 0.7 });
+      if (S_ && e.type === 'fx' && e.kind === 'enrage') S_.play('enrage', { gap: 1, vol: 0.8 });
       if (e.type === 'dmg') {
         const school = e.school && e.school !== 'physical' ? e.school : '';
         const mine = src && src.kind === 'player';
@@ -1558,11 +1560,11 @@
     const stack = fromBack ? ui.sheetStack || [] : prev ? (ui.sheetStack || []).concat([prev]) : ui.sheet === name ? ui.sheetStack || [] : [];
     closeSheet();
     ui.sheetStack = stack;
-    if (window.SND) window.SND.play('click', { vol: 0.6 });
+    if (window.SND) window.SND.play('open', { vol: 0.5 });
     const body = h('div', { class: 'sheet-b' });
     const titleEl = h('h2', null, title, sub ? h('small', null, sub) : null);
     const backBtn = stack.length ? h('button', { class: 'sheet-backbtn', 'aria-label': 'Back', onclick: () => { const d = ui.sheetStack.pop(); openSheet(d.name, d.title, d.sub, d.fill, true); ui.sheetBody.scrollTop = d.scroll || 0; } }, '‹ Back') : null;
-    const sheet = h('div', { class: 'sheet sheet-' + name, onclick: (e) => e.stopPropagation() }, h('div', { class: 'sheet-h' }, backBtn, titleEl, h('button', { class: 'x', onclick: closeSheet, 'aria-label': 'Close' }, '×')), body);
+    const sheet = h('div', { class: 'sheet sheet-' + name, onclick: (e) => e.stopPropagation() }, h('div', { class: 'sheet-h' }, backBtn, titleEl, h('button', { class: 'x', onclick: () => { if (window.SND) SND.play('close', { vol: 0.45 }); closeSheet(); }, 'aria-label': 'Close' }, '×')), body);
     const back = h('div', { class: 'sheet-back', onclick: closeSheet }, sheet);
     app.append(back);
     ui.sheet = name; ui.sheetEl = back; ui.sheetBody = body; ui.sheetTitle = titleEl; ui.sheetDef = { name, title, sub, fill };
@@ -4019,6 +4021,28 @@
     G.on('bought', () => snd('coin', { vol: 0.7 }));
     G.on('pop', () => snd('pop'));
     G.on('error', () => snd('error', { gap: 0.4, vol: 0.6 }));
+    // v10.8: the rest of the game makes a sound too
+    G.on('equipped', () => snd('equip', { vol: 0.7 }));
+    G.on('collected', () => snd('collect', { gap: 0.5, vol: 0.6 }));
+    G.on('castBegin', () => snd('begin', { vol: 0.5 }));
+    G.on('arrive', () => snd('arrive', { vol: 0.45 }));
+    G.on('roll', () => snd('roll', { gap: 0.4, vol: 0.6 }));
+    G.on('invite', () => snd('chime', { gap: 0.5, vol: 0.6 }));
+    G.on('partyInvite', () => snd('chime', { gap: 0.5, vol: 0.6 }));
+    G.on('chat', () => { // a new whisper to you chimes (the newest one, compared with the last one heard)
+      const S = G.S; if (!S) return; let w = null; for (let i = S.chat.length - 1; i >= 0 && i >= S.chat.length - 6; i--) if (S.chat[i].ch === 'whisper' && !S.chat[i].me) { w = S.chat[i]; break; }
+      if (w && ui.whisperHeard != null && w.id > ui.whisperHeard) snd('chime', { gap: 0.8, vol: 0.5 });
+      if (w) ui.whisperHeard = Math.max(ui.whisperHeard || 0, w.id); else if (ui.whisperHeard == null) ui.whisperHeard = 0;
+    });
+    G.on('runComplete', () => snd('victory', { vol: 0.75 }));
+    G.on('bgRound', (r) => { if (r && r.took) snd('capture', { vol: 0.7 }); });
+    G.on('bgEnd', (r) => snd(r && r.result === 'win' ? 'victory' : 'defeat', { vol: 0.75 }));
+    // any other button: a soft tap (the action bar and the bottom tabs have their own sounds)
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest && e.target.closest('button'); if (!b || b.disabled) return;
+      if (b.classList.contains('ab') || b.closest('.nav') || b.classList.contains('x')) return;
+      snd('tap', { gap: 0.05, vol: 0.3 });
+    }, true);
     G.on('chat', renderChat);
     G.on('toast', (t) => toast(t));
     G.on('error', (t) => toast(t));
