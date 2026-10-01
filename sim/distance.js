@@ -12,12 +12,16 @@ const mob = (key, lvl) => E.mobUnit(key, lvl || L);
 const at = (u, x, y, z) => { u.pos = { x, y: y || 0, z: z || 0 }; };
 const run = (C, s) => { for (let k = 0; k < s / 0.1 && !C.over; k++) E.tick(C, 0.1); };
 
-// 1. fights start in contact: everyone in reach of everyone (stage 1 keeps outcomes as they were)
+// 1. where a fight starts: in contact, except a group's back line (stage 4)
 {
   const allies = ['warrior', 'priest', 'mage', 'rogue', 'hunter'].map((c, i) => ch(c, 'ally', ['tank', 'healer', 'dps', 'dps', 'dps'][i]));
   const C = E.fight(allies, [mob('defias_thug', 18), mob('defias_thug', 18), mob('defias_thug', 18)], {});
-  let far = 0; for (const a of C.allies) for (const e of C.enemies) far = Math.max(far, E.dist(a, e));
-  check(far <= DI.melee, `a fight starts in contact (farthest ${far.toFixed(1)} m)`);
+  // stage 4: the melee in contact; the casters, hunter and healer behind, still in reach of the monsters and the tank
+  const tank = C.allies[0], back = C.allies.slice(1).filter((a) => a.cls !== 'rogue');
+  check(C.enemies.every((e) => E.dist(tank, e) <= DI.melee) && C.enemies.every((e) => E.dist(C.allies[3], e) <= DI.melee), 'the tank and the rogue start in contact');
+  check(back.every((a) => C.enemies.every((e) => E.dist(a, e) > 15 && E.dist(a, e) < 25)), `the healer, mage and hunter start 15-25 m back (${back.map((a) => Math.min(...C.enemies.map((e) => E.dist(a, e))).toFixed(0)).join(', ')} m)`);
+  check(back.every((a) => E.dist(a, tank) <= DI.ally && C.enemies.every((e) => E.dist(a, e) <= E.rangeOf(D.ABILITIES.fireball))), 'from there they reach the monsters, and the healer reaches the tank');
+  const solo = ch('mage', 'ally'), C1 = E.fight([solo], [mob('defias_thug', 18)], {}); check(E.dist(solo, C1.enemies[0]) <= DI.melee, 'alone, a caster still starts in contact');
 }
 // 2. ranges from the data
 {
@@ -79,7 +83,7 @@ const run = (C, s) => { for (let k = 0; k < s / 0.1 && !C.over; k++) E.tick(C, 0
 }
 // 10. a caster stands still to cast; a target that runs out of range during the cast is missed
 {
-  const m = ch('mage', 'ally'), w = ch('warrior', 'enemy'); const C = E.fight([m], [w], {}); at(m, 0); at(w, 25); m.target = w.uid; m.res = m.maxRes; m.kind = 'player'; w.stunUntil = 99; w.kind = 'script'; w.auras.push({ id: 'r', until: 99, root: true }); // held where it is put (a racial could free it from the stun)
+  const m = ch('mage', 'ally'), w = ch('warrior', 'enemy'); const C = E.fight([m], [w], {}); at(m, 0); at(w, 25); m.target = w.uid; m.res = m.maxRes; m.kind = 'player'; m.auto = false; w.stunUntil = 99; w.kind = 'script'; w.auras.push({ id: 'r', until: 99, root: true }); // held where it is put (a racial could free it from the stun)
   E.use(C, m, 'fireball', w.uid); check(!!m.cast, 'a cast starts at 25 m');
   at(w, 45); const hp = w.hp, x = m.pos.x; let missed = false; for (let k = 0; k < 40; k++) { E.tick(C, 0.1); if (C.events.some((e) => e.type === 'castStop' && e.range)) missed = true; C.events.length = 0; }
   check(missed && w.hp === hp, 'the fireball misses a target that ran out of range');
@@ -98,7 +102,7 @@ const run = (C, s) => { for (let k = 0; k < s / 0.1 && !C.over; k++) E.tick(C, 0
   w.stunUntil = 99; m.target = w.uid; const hp = w.hp, x = m.pos.x; let bolt = false; for (let k = 0; k < 60; k++) { E.tick(C, 0.1); for (const e of C.events) if (e.type === 'dmg' && e.src === m.uid && e.school === 'frost') bolt = true; C.events.length = 0; }
   check(bolt && w.hp < hp, 'it hits from range with a frost bolt');
   check(Math.abs(m.pos.x - x) < 0.01, 'it stays where it is to cast, it does not walk in');
-  const h = mob('frostmane_headhunter', 9), w2 = ch('warrior', 'ally'); const C2 = E.fight([w2], [h], {}); w2.stunUntil = 99; h.target = w2.uid; let shot = false;
+  const h = mob('frostmane_headhunter', L), w2 = ch('warrior', 'ally'); const C2 = E.fight([w2], [h], {}); w2.stunUntil = 99; h.target = w2.uid; let shot = false;
   for (let k = 0; k < 60; k++) { E.tick(C2, 0.1); for (const e of C2.events) if (e.type === 'dmg' && e.src === h.uid && e.school === 'physical' && !e.melee) shot = true; C2.events.length = 0; }
   check(shot, 'a spear thrower throws from range (physical, not a melee swing)');
   const t = mob('frostmane_troll', 9), w3 = ch('warrior', 'ally'); const C3 = E.fight([w3], [t], {}); check(E.dist(w3, t) <= DI.melee, 'a melee monster still starts in contact');

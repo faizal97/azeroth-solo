@@ -469,7 +469,10 @@
     sc.append(h('div', { class: 'zone' }, title, h('small', null, sub)));
     const C = G.fight;
     if (C) {
-      C.allies.forEach((u, i) => {
+      // slots by where each stands (stage 4): the tank and melee at the front, a group's back line in the back slots
+      const slotOf = new Map(C.allies.map((u, i) => [u, i]).sort((a, b) => ((a[0].role === 'tank' ? 0 : a[0].backLine ? 2 : 1) - (b[0].role === 'tank' ? 0 : b[0].backLine ? 2 : 1)) || a[1] - b[1]).map(([u], k) => [u, k]));
+      C.allies.forEach((u) => {
+        const i = slotOf.get(u);
         const pos = C.allies.length > 7 ? (POS_RAID[i] || POS_RAID[POS_RAID.length - 1]) : (POS_ALLY[i] || POS_ALLY[4]);
         const np = C.allies.length > 1 ? h('div', { class: 'np' }, h('span', { class: 'cls-' + u.cls }, u.kind === 'player' ? '' : u.name.split('-')[0]), h('div', { class: 'hpb' }, h('i'))) : null;
         const src = u.kind === 'pet' ? petArt(u) : u.form === 'bear' ? art('pet', 'bear_form') : u.char && u.char.legend ? art('legend', u.char.legendArt || u.char.legend) : art('hero', looks(u.char));
@@ -668,6 +671,7 @@
         if (e.tick) { fxBurst(e.tgt, e.school, false); continue; }
         if (A && A.target === 'aoe') { fxRing(e.tgt, e.school); if (!seen.has(key)) { seen.add(key); fxShake(); } continue; }
         if (e.melee || (src && src.kind === 'mob' && e.school === 'physical' && !e.ab)) { fxSlash(e.src, e.tgt, e.crit); continue; }
+        if (e.ab === 'wand') { fxFly(e.src, e.tgt, 'bolt', 'arcane', e.crit); continue; } // a caster's wand shot (stage 4)
         if (e.school === 'physical') { fxFly(e.src, e.tgt, 'arrow', 'physical', e.crit, () => fxSlash(e.src, e.tgt, false)); continue; }
         fxFly(e.src, e.tgt, 'bolt', e.school, e.crit);
       } else if (e.type === 'heal' && e.amount > 0 && C.units[e.tgt]) {

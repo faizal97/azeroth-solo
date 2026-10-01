@@ -115,7 +115,7 @@
   // across the ground, z height (flyers). Distance is true 3D. Everyone runs at the same speed; snares slow movement as
   // well as attacks, roots stop it. Every ability has a range (data `range`, else a default from its kind). Stage 1:
   // fights start in contact (everyone within reach, as before), so outcomes do not change until something moves.
-  const DIST = { speed: 7, melee: 5, spell: 30, shot: 35, ally: 40, radius: 8, flyLow: 4, back: 18, boltMult: 0.8 }; // back: how far behind its line a ranged fighter starts (stage 4)
+  const DIST = { speed: 7, melee: 5, spell: 30, shot: 35, ally: 40, radius: 8, flyLow: 4, back: 18, backLine: 20, boltMult: 0.8 }; // backLine: where a group's casters, hunters and healers start // back: how far behind its line a ranged fighter starts (stage 4)
   E.DIST = DIST;
   const CASTERS = { mage: 1, warlock: 1, priest: 1, druid: 1, shaman: 1, bard: 1 };
   E.dist = (a, b) => { const p = a.pos || {}, q = b.pos || {}; return Math.hypot((p.x || 0) - (q.x || 0), (p.y || 0) - (q.y || 0), (p.z || 0) - (q.z || 0)); };
@@ -124,6 +124,7 @@
     if (ab.range != null) return ab.range;
     if (ab.target === 'self' || ab.target === 'party') return null;
     if (ab.target === 'ally') return DIST.ally;
+    if (ab.taunt) return DIST.spell; // a taunt reaches a monster that ran past the tank to the back line (stage 4)
     if (ab.target === 'aoe') return aoeAtTarget(ab) ? (ab.cls === 'hunter' ? DIST.shot : DIST.spell) : null;
     if (ab.dmg && ab.dmg.weapon) return DIST.melee;
     if (ab.cls === 'hunter') return DIST.shot;
@@ -145,12 +146,22 @@
   }
   E.reachOf = reachOf;
   // where a fighter stands when a fight begins: in contact (stage 1), or `apart` metres from the other side
+  // stage 4: in a group with a tank, its casters, hunters and healers start behind the line (the tank holds the front);
+  // alone, in a duel (which starts apart) or with no tank, everyone starts in contact as before
+  function backLine(C, u) {
+    if (u.kind === 'mob' || u.kind === 'pet' || u.role === 'tank' || (C.opts && C.opts.apart)) return false;
+    const side = u.side === 'ally' ? C.allies : C.enemies;
+    return side.some((a) => a !== u && a.role === 'tank' && a.kind !== 'pet') && (u.role === 'healer' || reachOf(u) > DIST.melee);
+  }
   function place(C, u, i) {
     const s = u.side === 'ally' ? -1 : 1, gap = (C.opts && C.opts.apart) || 0;
-    const M = u.kind === 'mob' ? D.MOBS[u.key] || {} : {}, fly = M.fly, back = M.ranged ? DIST.back : 0; // stage 4: an archer or caster starts behind its line
+    const M = u.kind === 'mob' ? D.MOBS[u.key] || {} : {}, fly = M.fly; u.backLine = !M.ranged && backLine(C, u);
+    const back = M.ranged ? DIST.back : u.backLine ? DIST.backLine : 0; // stage 4: archers, casters and healers start behind their line
     const contact = s * (0.5 + Math.random() * 1.2);
     u.pos = { x: contact + s * (gap / 2 + back), y: (Math.random() * 2 - 1), z: fly || 0 };
-    u.pos0 = { x: contact, y: u.pos.y, z: u.pos.z }; // where it would stand in contact: the scene draws a fighter moved by how far it is from here
+    // the scene draws a fighter moved by how far it is from here: where it would stand in contact, or for a group's back
+    // line its own start (the scene gives it a back slot, so the slot already shows the distance)
+    u.pos0 = { x: u.backLine ? u.pos.x - s * gap / 2 : contact, y: u.pos.y, z: u.pos.z };
   }
   // movement for a tick: a fleeing fighter runs from the one who scared it; anyone else closes on its target when out
   // of its reach. A fighter casting stands still for it. Roots stop it; snares slow it like they slow attacks.
@@ -474,7 +485,7 @@
       if (tgt.side === 'enemy') tgt.threat[src.uid] = (tgt.threat[src.uid] || 0) + 1;
       return 0;
     }
-    let dmg = o.ranged && !flat(src) ? rnd(src.st.rMin, src.st.rMax) + (src.st.rap / 14) * src.st.rSpeed : weaponDamage(src) + (o.bonus || 0);
+    let dmg = o.ranged && !flat(src) && !o.wand ? rnd(src.st.rMin, src.st.rMax) + (src.st.rap / 14) * src.st.rSpeed : weaponDamage(src) + (o.bonus || 0);
     if (src.kind === 'mob' && src.enrage) dmg *= src.enrage;
     if (res === 'crit') dmg *= 2;
     const done = dealDamage(C, src, tgt, dmg, { school: 'physical', crit: res === 'crit', ab: o.ab || (o.ranged ? 'auto_shot' : null), threat: o.threat, melee: !o.ranged });
@@ -1117,7 +1128,7 @@
       // grab loose mobs
       const loose = en.find((e) => e.target && e.target !== u.uid && C.units[e.target] && C.units[e.target].role !== 'tank');
       if (loose && has('taunt') && Math.random() < 0.4 + 0.6 * (b.skill || 0.5) && try_('taunt', loose)) return;
-      if (loose && Math.random() < 0.5) u.target = loose.uid;
+      if (loose && Math.random() < 0.5 && (!u.pos || !loose.pos || E.dist(u, loose) <= DIST.melee + 1)) u.target = loose.uid; // distance: hold the front; a taunted monster comes to you
       // with a kill order, the tank holds the skull so the group's damage lands where it has threat
       const skull = en.find((e) => e.mark === 'skull');
       if (skull && !loose) u.target = skull.uid;
@@ -1281,13 +1292,14 @@
       if (tgt && !tgt.dead && tgt.side !== u.side && (u.kind === 'mob' || u.auto)) {
         const shoot = u.cls === 'hunter' && u.st.rMin != null && !u.form;
         const bolt = u.kind === 'mob' && (D.MOBS[u.key] || {}).ranged; // stage 4: an archer's shot or a caster's bolt, from range
-        const reach = shoot ? DIST.shot : bolt ? DIST.spell : DIST.melee;
+        const wand = !flat(u) && !shoot && CASTERS[u.cls] && !u.form; // stage 4: a caster's auto attack is a wand shot, the same damage from range
+        const reach = shoot ? DIST.shot : bolt || wand ? DIST.spell : DIST.melee;
         const sp = flat(u) ? u.swingSpeed : shoot ? u.st.rswing : u.st.swing;
         u.swingT -= dt * (1 - slowPct(u) / 100);
         if (u.swingT <= 0 && u.pos && tgt.pos && E.dist(u, tgt) > reach + 0.01) u.swingT = 0; // out of reach: the swing waits
         else if (u.swingT <= 0) {
           u.swingT += sp;
-          if (u.noMelee) { /* casts instead */ } else if (bolt) mobBolt(C, u, tgt, bolt); else if (shoot) swing(C, u, tgt, { ranged: true }); else if (flat(u) || u.cls === 'warrior' || u.cls === 'rogue' || u.cls === 'paladin' || C.t - u.lastCastT > 1.6) swing(C, u, tgt);
+          if (u.noMelee) { /* casts instead */ } else if (bolt) mobBolt(C, u, tgt, bolt); else if (shoot) swing(C, u, tgt, { ranged: true }); else if (wand) { if (C.t - u.lastCastT > 1.6) swing(C, u, tgt, { ranged: true, wand: true, ab: 'wand' }); } else if (flat(u) || u.cls === 'warrior' || u.cls === 'rogue' || u.cls === 'paladin' || C.t - u.lastCastT > 1.6) swing(C, u, tgt);
           if (u.side === 'ally') { tgt.hitBy = tgt.hitBy || {}; tgt.hitBy[u.uid] = true; }
         }
       } else if (u.side === 'ally' && (!tgt || tgt.dead)) {
