@@ -432,7 +432,7 @@ def enc(src, dst, kbps):
 
 
 if __name__ == '__main__':
-    meta = {}
+    mp = os.path.join(OUT, 'music.json'); meta = json.load(open(mp)) if os.path.exists(mp) else {}   # keep the themes' entries (compose_themes.py)
     for name, fn in (('elwynn', elwynn), ('town', town), ('dungeon', dungeon)):
         x, info = fn()
         x, before = loudnorm(x, -18.0)          # game music sits under the sound effects

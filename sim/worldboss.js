@@ -37,12 +37,13 @@ for (const act of acts) {
     if (S.run && S.run.phase === 'rest' && S.run.restUntil <= t) { try { G.runPull(); } catch (e) {} }
     if (S.run && S.run.wipes > 8) break;
     G.update(0.1); t += 100; }
-    const r = { done: S.run && S.run.phase === 'done', wipes: S.run ? S.run.wipes : 99, rolls: (S.run && S.run.rolls || []).length }; S.run = null; S.group = null; return r; };
+    const r = { done: S.run && S.run.phase === 'done', wipes: S.run ? S.run.wipes : 99, rolls: (S.run && S.run.rolls || []).length, bossRolls: (S.run && S.run.rolls || []).filter((x) => (D.MOBS[A.boss].loot || []).includes(x.item && x.item.id)).length }; S.run = null; S.group = null; return r; };
   const m0 = G.account().marks, r1 = fight(), m1 = G.account().marks;
-  console.log(`${act}: first fight done ${r1.done}, wipes ${r1.wipes}, rolls ${r1.rolls}`);
+  console.log(`${act}: first fight done ${r1.done}, wipes ${r1.wipes}, rolls ${r1.rolls} (boss loot ${r1.bossRolls})`);
   check(r1.done && r1.wipes <= 2, `a level-60 group beats ${A.name} (${r1.wipes} wipes)`);
-  check(m1 - m0 === G.WB_MARKS && G.worldBossLooted(act) && r1.rolls >= 2, `the first kill this week drops loot and ${G.WB_MARKS} Marks`);
-  const r2 = fight(); check(r2.done && G.account().marks === m1 && r2.rolls === 0, `the second kill this week drops nothing (${r2.rolls} rolls)`);
+  check(m1 - m0 === G.WB_MARKS && G.worldBossLooted(act) && r1.bossRolls >= 2, `the first kill this week drops loot and ${G.WB_MARKS} Marks`);
+  // the second kill: none of the boss's loot and no Marks (a trash mob on the way may still drop something of its own)
+  const r2 = fight(); check(r2.done && G.account().marks === m1 && r2.bossRolls === 0, `the second kill this week drops none of the boss's loot (${r2.bossRolls} of its items rolled)`);
   t += 7 * 86400000; check(!G.worldBossLooted(act), 'loot is open again the next week');
 }
 console.log(`worldboss: ${ok}/${ok + bad} checks pass`);

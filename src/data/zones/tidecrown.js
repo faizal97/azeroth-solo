@@ -54,7 +54,7 @@
   H('tc_deepmother_h', { name: 'The Deepmother', lvl: 60, giver: 'hexxer_mazu', turnin: 'hexxer_mazu', dungeon: 'tidecrown_citadel', pre: ['tc_crown_h'], text: "Shal'zua's spirit is not free. The thing under the citadel ate her. Mazu wants its heart.",
     objs: [{ type: 'collect', item: 'deepmother_heart', n: 1 }], reward: { choice: ['fam_back_rare60'] } });
   Object.assign(D.DUNGEONS, {
-    tidecrown_citadel: { name: 'The Tidecrown Citadel', raid: true, minLvl: 60, par: 660, size: 10, trashMult: { hp: 4.4, dmg: 2.6 }, bossMult: { hp: 22, dmg: 7.4 }, pulls: [
+    tidecrown_citadel: { name: 'The Tidecrown Citadel', raid: true, music: 'tidecrown', minLvl: 60, par: 660, size: 10, trashMult: { hp: 4.4, dmg: 2.6 }, bossMult: { hp: 22, dmg: 7.4 }, pulls: [
       { scene: 'citadel_court', label: 'The drowned courtyard', mobs: ['tidecrown_guard', 'tidecrown_guard', 'tidecrown_tidecaller'] },
       { scene: 'citadel_court', label: 'Commander Serathis', mobs: ['commander_serathis'], boss: true },
       { scene: 'citadel_court', label: 'The Hall of Tides', mobs: ['tidecrown_tidecaller', 'tidecrown_guard', 'abyssal_spawn'] },

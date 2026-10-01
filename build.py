@@ -36,6 +36,8 @@ if subprocess.run(['node', os.path.join(R, 'sim', 'hard.js')]).returncode != 0:
     sys.exit('build stopped: a Hard raid rule is broken (node sim/hard.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'worldboss.js')]).returncode != 0:
     sys.exit('build stopped: a world boss rule is broken (node sim/worldboss.js lists which)')
+if subprocess.run(['node', os.path.join(R, 'sim', 'music.js')]).returncode != 0:
+    sys.exit('build stopped: a place plays the wrong music (node sim/music.js lists which)')
 DATA = ['src/data/' + f for f in json.load(open(os.path.join(R, 'src', 'data', 'files.json')))]
 # music ships only once he has listened and approved the track
 APPROVED = set(open(os.path.join(R, 'audio', 'approved.txt')).read().split()) if os.path.exists(os.path.join(R, 'audio', 'approved.txt')) else set()

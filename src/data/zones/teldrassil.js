@@ -46,7 +46,7 @@
     lake_alameth: { name: "Lake Seliwen", zone: 'Greatbough', region: 'teldrassil', scene: 'lake_alameth', lvl: [5, 8], mobs: [['nightsaber', 4], ['strigid_owl', 4], ['timberling', 4]], pool: 10, npcs: ['denalan'], links: { dolanaar: 14 } },
     banethil_barrow: { name: "Rootdeep Barrow", zone: 'Greatbough', region: 'teldrassil', scene: 'banethil_barrow', lvl: [6, 10], mobs: [['gnarlpine_ursa', 4], ['gnarlpine_warrior', 4], ['gnarlpine_shaman', 3]], named: { oakenscowl: 150 }, pool: 10, npcs: [], links: { dolanaar: 16 } },
     fel_rock: { name: 'Gloomrock', zone: 'Greatbough', region: 'teldrassil', scene: 'fel_rock', lvl: [7, 10], mobs: [['shadow_sprite', 5], ['vicious_grell', 5]], named: { lord_melenas: 150 }, pool: 9, npcs: [], links: { dolanaar: 18 } },
-    darnassus: { name: 'Nyrwen', zone: 'Nyrwen', region: 'teldrassil', scene: 'darnassus', lvl: [1, 60], safe: true, inn: true, city: true, mobs: [], pool: 0, npcs: ['saelienne', 'mydrannul', 'mentor_alliance', 'banker_alliance', 'auctioneer_alliance'], vendor: 'saelienne', gearVendor: 'mydrannul', links: { dolanaar: 25, goldshire: 60 }, via: { goldshire: "Boat from Rut'theran" } },
+    darnassus: { music: 'nyrwen', name: 'Nyrwen', zone: 'Nyrwen', region: 'teldrassil', scene: 'darnassus', lvl: [1, 60], safe: true, inn: true, city: true, mobs: [], pool: 0, npcs: ['saelienne', 'mydrannul', 'mentor_alliance', 'banker_alliance', 'auctioneer_alliance'], vendor: 'saelienne', gearVendor: 'mydrannul', links: { dolanaar: 25, goldshire: 60 }, via: { goldshire: "Boat from Rut'theran" } },
   });
 
   // people

@@ -1,0 +1,37 @@
+// Music (v10.8): every place plays the track meant for it, and a track that is not approved yet falls back to the
+// music it had before (so nothing changes until it ships). node sim/music.js
+globalThis.localStorage = (() => { const m = new Map(); return { getItem: (k) => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: (k) => m.delete(k) }; })();
+require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js');
+const { G, D } = globalThis;
+const fs = require('fs'), path = require('path');
+const tracks = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'audio', 'out', 'music.json'), 'utf8'));
+const OLD = new Set(['elwynn', 'town', 'dungeon']), all = () => true, old = (n) => OLD.has(n);
+let ok = 0, bad = 0;
+const check = (c, m) => { if (c) ok++; else { bad++; console.log('FAIL', m); } };
+G.newGame({ name: 'Tune', cls: 'warrior', race: 'human' }); const S = G.S, P = S.player;
+const at = (place) => { P.place = place; P.travel = null; S.run = null; S.bg = null; };
+// every zone and place: approved -> its own track (composed), not yet -> one of the three old ones, as before
+for (const k in D.PLACES) {
+  at(k); const pl = D.PLACES[k], a = G.musicFor(all), o = G.musicFor(old);
+  check(tracks[a], `${k} plays '${a}', which is not composed`);
+  check(OLD.has(o), `${k} plays '${o}' before its track is approved`);
+  check(o === (pl.safe ? 'town' : 'elwynn'), `${k}: before approval it should keep ${pl.safe ? 'town' : 'elwynn'}, got ${o}`);
+}
+const expect = { orgrimmar: 'vazhrak', stormwind: 'kingsmere', stormwind_gate: 'kingsmere', stormwind_bank: 'kingsmere', ironforge: 'keldrun', darnassus: 'nyrwen', thunder_bluff: 'hornwind', undercity: 'gravenhold', goldshire: 'town', razor_hill: 'town' };
+for (const [k, m] of Object.entries(expect)) { at(k); check(G.musicFor(all) === m, `${k} should play ${m}, plays ${G.musicFor(all)}`); }
+const outdoorOf = (zone) => Object.keys(D.PLACES).find((k) => D.PLACES[k].region === zone && !D.PLACES[k].safe);
+for (const [z, m] of [['tanaris', 'desert'], ['durotar', 'desert'], ['winterspring', 'snow'], ['dunmorogh', 'snow'], ['duskwood', 'swamp'], ['plaguelands', 'swamp'], ['elwynn', 'elwynn'], ['ashenvale', 'elwynn']]) {
+  at(outdoorOf(z)); check(G.musicFor(all) === m, `outdoors in ${z} should play ${m}, plays ${G.musicFor(all)}`);
+}
+// on the road: the zone's mood, even leaving a capital
+at('orgrimmar'); P.travel = { to: 'razor_hill', start: 0, end: 1 }; check(G.musicFor(all) === 'desert', `travelling from Vazhrak plays the desert mood, plays ${G.musicFor(all)}`);
+// runs: raids and world bosses have themes, dungeons keep the dungeon loop
+for (const [act, m] of [['onyxias_lair', 'veshmira'], ['molten_core', 'magma'], ['tidecrown_citadel', 'tidecrown'], ['wb_ashwing', 'worldboss'], ['deadmines', 'dungeon']]) {
+  if (!D.ACTIVITIES[act]) { check(false, `no activity ${act}`); continue; }
+  at('stormwind'); S.run = { act }; check(G.musicFor(all) === m, `${act} should play ${m}, plays ${G.musicFor(all)}`); check(G.musicFor(old) === 'dungeon', `${act} before approval keeps the dungeon loop`);
+}
+// the battleground: its own theme, before approval the place's music as before
+at('stormwind'); S.bg = { act: 'bg_highmoor' }; check(G.musicFor(all) === 'highmoor', `the battleground plays highmoor, plays ${G.musicFor(all)}`); check(G.musicFor(old) === 'elwynn', `the battleground before approval plays ${G.musicFor(old)}`);
+check(tracks.menu, 'the main menu theme is composed');
+console.log(`music: ${ok}/${ok + bad} checks pass`);
+process.exitCode = bad ? 1 : 0;

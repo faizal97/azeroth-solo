@@ -2,7 +2,8 @@ import numpy as np, wave, librosa, pyloudnorm as pyln
 SR=44100
 def load(p):
     with wave.open(p) as w: return np.frombuffer(w.readframes(w.getnframes()),'<i2').reshape(-1,2)/32767
-for name in ('elwynn','town','dungeon'):
+import json, sys
+for name in (sys.argv[1:] or json.load(open('out/music.json'))):
     x=load(f'wav/music_{name}.wav'); m=pyln.Meter(SR)
     lufs=m.integrated_loudness(x)
     win=int(0.4*SR); mm=pyln.Meter(SR,block_size=0.4); db=[mm.integrated_loudness(x[i:i+win]) for i in range(0,len(x)-win,win)]; db=[d if np.isfinite(d) else -70 for d in db]

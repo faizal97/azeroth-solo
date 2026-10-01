@@ -2074,6 +2074,19 @@
     G.save();
   }
 
+  // ============================================================ music (v10.8)
+  // Which track plays: a run's (each raid has a theme, world bosses share one), the battleground's, an iconic place's
+  // (the capitals), else the zone's mood (desert, snow, swamp), with the tavern tune in other towns. `has(name)` says
+  // whether a track ships (music ships once approved: audio/approved.txt); until then the older choice plays.
+  G.musicFor = function (has) {
+    const S = G.S, P = S.player, pick = (...names) => names.find((n) => n && has(n)) || names[names.length - 1];
+    if (S.run) { const A = D.ACTIVITIES[S.run.act] || {}; return pick(A.music || (D.DUNGEONS[A.dungeon] || {}).music, 'dungeon'); } // a raid's theme sits on its dungeon
+    const pl = D.PLACES[P.place], outdoor = pick((D.REGIONS[pl.region] || {}).music, 'elwynn');
+    if (S.bg) return pick((D.ACTIVITIES[S.bg.act] || {}).music, outdoor);
+    if (P.travel || !pl.safe) return outdoor;
+    return pick(pl.music, 'town');
+  };
+
   // ============================================================ battlegrounds (v10.7, D.BG; design in zones/highmoor.js)
   // S.bg = { act, key, round, score, owner, plan, phase: choose|fight|done, team, foes, log }. Everyone is back to full
   // health each round; dying in a battleground costs nothing.

@@ -47,6 +47,8 @@
     });
   };
 
+  // is this track in the game? (music ships only once approved: audio/approved.txt)
+  SND.has = (name) => !!(root.AUDIO_DATA && root.AUDIO_DATA['music_' + name]);
   // Background loop with a 1.5s crossfade. Loop points come from music.json so the seam is exact.
   SND.music = function (name, force) {
     SND.want = name;

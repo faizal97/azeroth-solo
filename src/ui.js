@@ -1413,7 +1413,7 @@
     moneyTick(S);
     // low health in a fight: the screen edges glow red
     app.classList.toggle('lowhp', !!G.fight && v0hp(P));
-    if (window.SND) window.SND.music(ui.csMusic ? ui.csMusic : S.run ? 'dungeon' : P.travel ? 'elwynn' : D.PLACES[P.place].safe ? 'town' : 'elwynn');
+    if (window.SND) window.SND.music(musicNow());
     const v = G.vitals();
     setBar(els.pHp, v.hp, v.maxHp);
     setBar(els.pRes, v.res, v.maxRes, v.resType === 'mana' ? null : `${Math.round(v.res)}`);
@@ -3847,10 +3847,15 @@
   const discordLink = () => window.UPD ? h('button', { class: 'discord-link', onclick: () => UPD.open(UPD.DISCORD) }, 'Join us on Discord') : null;
   const privacyLink = (label) => window.UPD ? h('button', { class: 'discord-link', onclick: () => UPD.open(UPD.PRIVACY) }, label || 'Privacy') : null;
   const footLinks = () => h('div', { class: 'foot-links' }, discordLink(), privacyLink());
+  // which music plays (v10.8): a cutscene's own, else G.musicFor (game.js) with the tracks this build ships
+  const musicNow = () => ui.csMusic || G.musicFor((n) => !!(window.SND && SND.has(n)));
+  // the main menu has its own theme once approved (before that, the menu stays as it was)
+  const menuMusic = () => { if (window.SND && SND.has('menu')) SND.music('menu'); };
   function showSelect() {
     closeDialog(); closeSheet();
     setTimeout(autoUpdateCheck, 1200);
     if (window.CLOUD && CLOUD.on()) CLOUD.prepare(); // Google's script ready before Enter World, so its window may open from that tap
+    menuMusic();
     const list = G.characters();
     if (!list.length) return showCreate();
     app.innerHTML = '';
@@ -3915,6 +3920,7 @@
         h('button', { class: 'btn alt', onclick: closeDialog }, 'Keep'))]);
   }
   function showCreate(fromSelect) {
+    menuMusic();
     app.innerHTML = '';
     const st = { name: B.makeName(new Set()), faction: 'alliance', race: 'human', cls: 'warrior', gender: 'm', skin: 1, hair: 0 };
     const root = h('div', { class: 'create' });

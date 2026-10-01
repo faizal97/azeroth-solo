@@ -17,5 +17,99 @@
   "bars": 12,
   "key": "D minor",
   "loop_s": 43.6363
+ },
+ "desert": {
+  "bpm": 96,
+  "bars": 16,
+  "key": "D Phrygian dominant",
+  "loop_s": 40.0
+ },
+ "snow": {
+  "bpm": 76,
+  "bars": 16,
+  "key": "E Dorian",
+  "meter": "3/4",
+  "loop_s": 37.8947
+ },
+ "swamp": {
+  "bpm": 150,
+  "bars": 16,
+  "key": "A minor",
+  "meter": "6/8",
+  "loop_s": 38.4
+ },
+ "kingsmere": {
+  "bpm": 96,
+  "bars": 16,
+  "key": "C major",
+  "loop_s": 40.0
+ },
+ "keldrun": {
+  "bpm": 92,
+  "bars": 16,
+  "key": "D Dorian",
+  "loop_s": 41.7391
+ },
+ "nyrwen": {
+  "bpm": 63,
+  "bars": 16,
+  "key": "E Lydian",
+  "meter": "3/4",
+  "loop_s": 45.7143
+ },
+ "vazhrak": {
+  "bpm": 108,
+  "bars": 16,
+  "key": "E minor",
+  "loop_s": 35.5556
+ },
+ "hornwind": {
+  "bpm": 76,
+  "bars": 12,
+  "key": "G Mixolydian",
+  "loop_s": 37.8947
+ },
+ "gravenhold": {
+  "bpm": 72,
+  "bars": 12,
+  "key": "C minor",
+  "loop_s": 40.0
+ },
+ "veshmira": {
+  "bpm": 120,
+  "bars": 16,
+  "key": "D minor",
+  "loop_s": 32.0
+ },
+ "magma": {
+  "bpm": 116,
+  "bars": 16,
+  "key": "C Phrygian",
+  "loop_s": 33.1034
+ },
+ "tidecrown": {
+  "bpm": 168,
+  "bars": 16,
+  "key": "G minor",
+  "meter": "6/8",
+  "loop_s": 34.2857
+ },
+ "worldboss": {
+  "bpm": 126,
+  "bars": 16,
+  "key": "B minor",
+  "loop_s": 30.4762
+ },
+ "highmoor": {
+  "bpm": 120,
+  "bars": 16,
+  "key": "D Mixolydian",
+  "loop_s": 32.0
+ },
+ "menu": {
+  "bpm": 80,
+  "bars": 16,
+  "key": "D major",
+  "loop_s": 48.0
  }
 }

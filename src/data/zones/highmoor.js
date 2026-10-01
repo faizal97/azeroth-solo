@@ -12,5 +12,5 @@
     // how the other team splits its 5 fighters (the AI picks one each round, weighted by what it holds)
     splits: [[5, 0, 0], [3, 2, 0], [3, 1, 1], [2, 2, 1], [4, 1, 0]],
     honor: { base: 12, perLvl: 1.2, win: 2 }, marksAtCap: { win: 5, loss: 2 } };
-  D.ACTIVITIES.bg_highmoor = { name: 'The Battle for Highmoor', bg: 'highmoor', size: 5, minLvl: 10, maxLvl: 60, desc: 'Battleground in the Kinloch Highlands. 5 against 5, at your level. Hold the banners.' };
+  D.ACTIVITIES.bg_highmoor = { name: 'The Battle for Highmoor', bg: 'highmoor', music: 'highmoor', size: 5, minLvl: 10, maxLvl: 60, desc: 'Battleground in the Kinloch Highlands. 5 against 5, at your level. Hold the banners.' };
 })(typeof window !== 'undefined' ? window : globalThis);

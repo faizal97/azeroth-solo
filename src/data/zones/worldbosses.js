@@ -22,7 +22,7 @@
     rimefather: { name: 'Old Rimefather', lvl: [60, 60], family: 'giant', boss: true, elite: true, named: true, hpMult: 36, dmgMult: 7, special: 'slam', specialText: 'Old Rimefather swings his club of ice!', loot: ['rimefather_club', 'rimefather_legs', 'rimefather_band'], aggro: 'Little warm things. Winter takes you all.' },
   });
 
-  const WB = (k, o) => { D.ACTIVITIES[k] = Object.assign({ size: 10, minLvl: 60, maxLvl: 60, worldBoss: true, since: '2026-10-05' }, o); };
+  const WB = (k, o) => { D.ACTIVITIES[k] = Object.assign({ size: 10, minLvl: 60, maxLvl: 60, worldBoss: true, music: 'worldboss', since: '2026-10-05' }, o); };
   WB('wb_ashwing', { name: 'World boss: Ashwing', where: 'scorched_fen', desc: 'World boss in Saltmarsh. 10 players. Both factions.', boss: 'ashwing',
     extra: { ashwing: [{ kind: 'adds', at: 0.5, mob: 'brood_whelp', n: 3, lvl: 0, hard: false, text: 'Ashwing roars, and whelps pour out of the reeds!' }, { kind: 'enrage', at: 0.2, mult: 1.3, hard: false, text: 'Ashwing burns hotter as it weakens!' }] },
     pulls: [{ scene: 'scorched_fen', label: 'The broodguard', mobs: ['brood_drakonid', 'brood_drakonid', 'brood_whelp'] }, { scene: 'scorched_fen', label: 'Ashwing', mobs: ['ashwing'], boss: true }] });

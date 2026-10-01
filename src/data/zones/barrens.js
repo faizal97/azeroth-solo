@@ -3,7 +3,7 @@
 // Links to other zones sit on the places themselves (place.links / place.via).
 (function (root) {
   const D = root.D;
-  D.zone('barrens', { name: 'The Scrublands', faction: 'horde' });
+  D.zone('barrens', { name: 'The Scrublands', faction: 'horde', music: 'desert' });
   // items
   D.item('zhevra_hoof', { name: 'Stripeback Hoof', slot: 'quest', q: 1, icon: 'claw' });
   D.item('lashtail_claw', { name: 'Lashtail Raptor Claw', slot: 'quest', q: 1, icon: 'claw' });

@@ -3,7 +3,7 @@
 // Links to other zones sit on the places themselves (place.links / place.via).
 (function (root) {
   const D = root.D;
-  D.zone('tirisfal', { name: 'Pallmoor', faction: 'horde' });
+  D.zone('tirisfal', { name: 'Pallmoor', faction: 'horde', music: 'swamp' });
   // items
   D.item('bat_wing', { name: 'Gravebat Wing', slot: 'quest', q: 1, icon: 'bat_wing' });
   D.item('rot_hide_ichor', { name: 'Mangecoat Ichor', slot: 'quest', q: 1, icon: 'venom' });
@@ -41,7 +41,7 @@
     agamand_mills: { name: 'Varden Mills', zone: 'Pallmoor', region: 'tirisfal', scene: 'agamand_mills', lvl: [6, 8], mobs: [['darkhound', 5], ['greater_duskbat', 4], ['rattlecage_skeleton', 2]], pool: 10, npcs: [], links: { brill: 14 } },
     garrens_haunt: { name: "Holt's Haunt", zone: 'Pallmoor', region: 'tirisfal', scene: 'garrens_haunt', lvl: [7, 11], mobs: [['rot_hide_gnoll', 5], ['rot_hide_mongrel', 4]], named: { maggot_eye: 180 }, pool: 9, npcs: [], links: { brill: 16 } },
     scarlet_watch_post: { name: 'Pyre Watch Post', zone: 'Pallmoor', region: 'tirisfal', scene: 'scarlet_watch_post', lvl: [8, 10], mobs: [['scarlet_convert', 5], ['scarlet_warrior', 5]], named: { captain_perrine: 150 }, pool: 10, npcs: [], links: { brill: 18 } },
-    undercity: { name: 'Gravenhold', zone: 'Gravenhold', region: 'tirisfal', scene: 'undercity', lvl: [1, 60], safe: true, inn: true, city: true, mobs: [], pool: 0, npcs: ['norman', 'abigail', 'mentor_horde', 'banker_horde', 'auctioneer_horde'], vendor: 'norman', gearVendor: 'abigail', links: { brill: 20, orgrimmar: 60 }, via: { orgrimmar: 'Zeppelin' } },
+    undercity: { music: 'gravenhold', name: 'Gravenhold', zone: 'Gravenhold', region: 'tirisfal', scene: 'undercity', lvl: [1, 60], safe: true, inn: true, city: true, mobs: [], pool: 0, npcs: ['norman', 'abigail', 'mentor_horde', 'banker_horde', 'auctioneer_horde'], vendor: 'norman', gearVendor: 'abigail', links: { brill: 20, orgrimmar: 60 }, via: { orgrimmar: 'Zeppelin' } },
   });
 
   // people
