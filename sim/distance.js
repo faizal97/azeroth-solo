@@ -52,9 +52,11 @@ const run = (C, s) => { for (let k = 0; k < s / 0.1 && !C.over; k++) E.tick(C, 0
 }
 {
   const m = ch('mage', 'ally'), w = ch('warrior', 'enemy'); const C = E.fight([m], [w], {}); at(m, 0); at(w, 3); m.res = m.maxRes;
-  E.use(C, m, 'frost_nova'); check(w.auras.some((a) => a.root), 'Frost Nova roots an enemy in its radius');
+  for (let i = 0; i < 6 && !w.auras.some((a) => a.root); i++) { m.cds = {}; m.gcdUntil = 0; m.res = m.maxRes; E.use(C, m, 'frost_nova'); }
+  check(w.auras.some((a) => a.root), 'Frost Nova roots an enemy in its radius');
   const m2 = ch('mage', 'ally'), w2 = ch('warrior', 'enemy'), w3 = ch('warrior', 'enemy'); const C2 = E.fight([m2], [w2, w3], {}); at(m2, 0); at(w2, 3); at(w3, 14); m2.res = m2.maxRes;
-  E.use(C2, m2, 'frost_nova'); check(w2.auras.some((a) => a.root) && !w3.auras.some((a) => a.root), 'an area attack has a radius (3 m hit, 14 m not)');
+  for (let i = 0; i < 6 && !w2.auras.some((a) => a.root); i++) { m2.cds = {}; m2.gcdUntil = 0; m2.res = m2.maxRes; E.use(C2, m2, 'frost_nova'); } // a spell can be resisted: cast again
+  check(w2.auras.some((a) => a.root) && !w3.auras.some((a) => a.root), 'an area attack has a radius (3 m hit, 14 m not)');
 }
 // 7. a charge closes the gap at once
 {
@@ -87,6 +89,7 @@ const run = (C, s) => { for (let k = 0; k < s / 0.1 && !C.over; k++) E.tick(C, 0
   const w = ch('warrior', 'ally'), m = ch('mage', 'ally'), f = mob('defias_thug', L); const C = E.fight([w, m], [f], {}); at(w, 0); at(m, -10); at(f, 1, 0, 10); w.target = f.uid;
   w.res = 100; check(E.canUse(C, w, 'heroic_strike', f) === 'Out of range', 'a sword cannot reach a flyer 10 m up');
   m.res = m.maxRes; check(E.canUse(C, m, 'fireball', f) === null, 'a spell reaches it');
+  const x0 = w.pos.x, t0 = w.pos.y; f.stunUntil = 99; f.auras.push({ id: 'r', until: 99, root: true }); run(C, 1); check(Math.abs(w.pos.x - x0) < 0.01 && Math.abs(w.pos.y - t0) < 0.01, 'a fighter right under a flyer stands still (no running back and forth)');
 }
 console.log(`distance: ${ok}/${ok + bad} checks pass`);
 process.exitCode = bad ? 1 : 0;

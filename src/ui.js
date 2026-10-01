@@ -275,6 +275,22 @@
     f.append(pf, els.tf);
     renderTarget();
   }
+  // the target frame's distance (v10.9): green when your main attacks reach, amber when only some of your abilities do
+  // (Charge, a shot), red when nothing does. Your own frame shows nothing.
+  function paintDist(el, me, t) {
+    const show = !!(t && me && t !== me && t.pos && me.pos && !t.dead);
+    el.hidden = !show; if (!show) return;
+    const d = E.dist(me, t);
+    let main, most;
+    if (t.side === me.side) { main = most = E.DIST.ally; }
+    else {
+      main = E.reachOf(me) + (E.reachOf(me) > E.DIST.melee ? 2 : 1); most = main;
+      for (const id of barSlots()) { const A = D.ABILITIES[id]; if (A && (A.target === 'enemy' || A.target === 'aoe')) { const r = E.rangeOf(A); if (r != null) most = Math.max(most, r); } }
+    }
+    const txt = Math.round(d) + ' m', c = d <= main + 0.01 ? 'near' : d <= most + 0.01 ? 'mid' : 'far';
+    if (el.textContent !== txt) el.textContent = txt;
+    if (el.dataset.c !== c) { el.dataset.c = c; el.className = 'dst tnum ' + c; }
+  }
   function renderTarget() {
     const tf = els.tf; if (!tf) return;
     tf.innerHTML = ''; tf.className = 'uf target';
@@ -299,7 +315,8 @@
     const isMob = u.kind === 'mob';
     const port = h('div', { class: 'portrait' + (isMob ? ' mob' : '') + (u.elite ? ' elite' : '') },
       h('div', { class: 'pclip' }, img(isMob ? mobArt(u.key) : u.kind === 'pet' ? petArt(u) : art('portrait', looks(u.char || u)))),
-      h('span', { class: 'lvl tnum', style: { color: isMob ? conColor(u.level) : '#fff' } }, u.boss ? '??' : u.level));
+      h('span', { class: 'lvl tnum', style: { color: isMob ? conColor(u.level) : '#fff' } }, u.boss ? '??' : u.level),
+      (els.tDist = h('span', { class: 'dst tnum', hidden: true })));
     tf.append(h('div', { class: 'uf-body' },
       h('div', { class: 'uf-name', style: { textAlign: 'right', color: isMob ? '#ff5b4b' : u.kind === 'pet' ? '#9fd6ff' : 'var(--c-' + u.cls + ')' } }, u.name, !isMob && u.kind !== 'pet' && u.char ? h('small', { class: 'rc' }, raceClass(u.char)) : null),
       (els.tHp = barEl('hp')),
@@ -353,6 +370,83 @@
       sc.append(el);
     });
   }
+  // ---------- distance on screen (v10.9): a sprite stands moved by how far its fighter is from where the fight began: x
+  // across, y into the scene (higher up and a little smaller), z up with a shadow left on the ground. Fighters in
+  // contact keep today's formation. If they spread wider than the scene shows, the scale eases out so nobody walks off.
+  const M_MAX = 0.025; // at most 2.5% of the scene's width a metre (40 m across)
+  // a camera for the scene. First the two sides close in on screen until their formations nearly touch (a lone fighter
+  // against one foe stands near the middle, so a gap has room to open; a full group already fills the scene and stays as
+  // it is). Fighters on opposite sides never cross: a charge that lands closer than where the fight began still shows
+  // them face to face. Then the largest scale (up to M_MAX) at which everyone fits, and a shift that centres them. The
+  // camera eases toward that (a hop or a dash is the fighter moving, not the whole scene jumping).
+  const CONTACT = 0.03; // the gap left between the sides in contact, a share of the scene's width
+  function sceneScale(C) {
+    const W = (els.scene && els.scene.clientWidth) || 360, pad = 4, gap = CONTACT * W, list = [];
+    let alR = -Infinity, enL = Infinity;
+    for (const u of C.allies.concat(C.enemies)) {
+      const el = ui.spriteEls[u.uid]; if (!el) continue;
+      if (u.side === 'ally') alR = Math.max(alR, el.offsetLeft + el.offsetWidth); else enL = Math.min(enL, el.offsetLeft);
+    }
+    const pull = isFinite(alR) && isFinite(enL) ? Math.max(0, (enL - alR - gap) / 2) : 0;
+    for (const u of C.allies.concat(C.enemies)) {
+      const el = ui.spriteEls[u.uid]; if (!el || !u.pos || !u.pos0) continue;
+      list.push({ uid: u.uid, ally: u.side === 'ally', dead: u.dead, o: el.offsetLeft, b: el.offsetLeft + (u.side === 'ally' ? pull : -pull), w: el.offsetWidth, d: (u.pos.x - u.pos0.x) * W });
+    }
+    const lay = (k) => {
+      const xs = list.map((x) => x.b + x.d * k);
+      for (let it = 0; it < 3; it++) for (let i = 0; i < list.length; i++) for (let j = 0; j < list.length; j++) {
+        const A = list[i], N = list[j]; if (!A.ally || N.ally || A.dead || N.dead) continue;
+        const ov = xs[i] + A.w + gap - xs[j]; if (ov > 0) { xs[i] -= ov / 2; xs[j] += ov / 2; }
+      }
+      return xs;
+    };
+    const span = (k) => { const xs = lay(k); let lo = Infinity, hi = -Infinity; list.forEach((x, i) => { if (x.dead) return; lo = Math.min(lo, xs[i]); hi = Math.max(hi, xs[i] + x.w); }); return { lo, hi }; };
+    let k = M_MAX, sp = span(k);
+    if (sp.hi - sp.lo > W - 2 * pad) { let a = 0, z = M_MAX; for (let i = 0; i < 12; i++) { const m = (a + z) / 2, q = span(m); if (q.hi - q.lo <= W - 2 * pad) a = m; else z = m; } k = a; sp = span(k); }
+    const shift = !isFinite(sp.lo) ? 0 : (W - sp.lo - sp.hi) / 2; // the camera follows the fighters, centred
+    // ease toward it; snap only if someone would be well off the screen
+    let cam = ui.cam;
+    if (!cam || cam.C !== C) cam = ui.cam = { C, k, shift, t: C.t };
+    const e = 1 - Math.exp(-Math.max(0, C.t - cam.t) / 0.4); cam.t = C.t;
+    cam.k += (k - cam.k) * e; cam.shift += (shift - cam.shift) * e;
+    const now = span(cam.k); if (now.lo + cam.shift < -0.15 * W || now.hi + cam.shift > 1.15 * W) { cam.k = k; cam.shift = shift; }
+    const xs = lay(cam.k), dx = {};
+    list.forEach((x, i) => { dx[x.uid] = xs[i] - x.o + cam.shift; });
+    // the background pans a little with the camera (a far wall moves less), so a camera move reads as one
+    const bg = els.scene && els.scene.querySelector('img.bg');
+    if (bg) { const m = 0.05 * W; bg.classList.add('cam'); bg.style.translate = `${Math.max(-m, Math.min(m, cam.shift * 0.5)).toFixed(1)}px 0`; }
+    return { dx, pull };
+  }
+  function placeSprite(C, u, el, cam) {
+    if (!u.pos || !u.pos0) return;
+    const W = els.scene.clientWidth || 360, H = els.scene.clientHeight || 220, t = C.t;
+    const dx = cam.dx[u.uid] != null ? cam.dx[u.uid] : (u.side === 'ally' ? cam.pull : -cam.pull), dy = u.pos.y - u.pos0.y, lift = (u.pos.z || 0) * M_MAX * W * 0.7, depth = dy * H * 0.035;
+    el.style.translate = `${dx.toFixed(1)}px ${(-depth - lift).toFixed(1)}px`;
+    el.style.scale = (1 - dy * 0.04).toFixed(3);
+    const running = !u.dead && u.movedAt != null && t - u.movedAt < 0.25, fleeing = !u.dead && u.fleeUntil > t;
+    el.classList.toggle('run', running);
+    el.classList.toggle('turn', fleeing || (running && (u.side === 'ally' ? u.moveX < 0 : u.moveX > 0))); // running away faces away
+    el.classList.toggle('slowed', !u.dead && u.auras.some((a) => a.slow));
+    const root = !u.dead && u.auras.find((a) => a.root);
+    syncFx(el, 'rootfx', root ? (/entangling/.test(root.id) ? 'vines' : 'ice') : null);
+    syncFx(el, 'fearfx', fleeing ? 'fear' : null);
+    const sh = syncFx(el, 'shadowfx', (u.pos.z || 0) > 0.5 && !u.dead ? 'shadow' : null); if (sh) sh.style.translate = `0 ${lift.toFixed(1)}px`; // the shadow stays on the ground
+  }
+  // a small effect that belongs to a sprite while a state lasts (a root, a fear, a flyer's shadow): kept in step each frame
+  function syncFx(el, cls, kind) {
+    let n = el.querySelector(':scope > .' + cls);
+    if (!kind) { if (n) n.remove(); return null; }
+    if (!n) { n = h('div', { class: cls }); el.append(n); }
+    if (n.dataset.k !== kind) { n.dataset.k = kind; n.innerHTML = MOTION_ART[kind] || ''; }
+    return n;
+  }
+  // the art for those states, drawn here (house style: dark outline, two tones)
+  const MOTION_ART = {
+    ice: '<svg viewBox="0 0 100 40"><g stroke="#1a1009" stroke-width="2.4" stroke-linejoin="round"><path d="M8 38 L16 12 L24 38Z" fill="#9fe3ff"/><path d="M22 38 L32 4 L42 38Z" fill="#c9f2ff"/><path d="M40 38 L50 16 L60 38Z" fill="#9fe3ff"/><path d="M56 38 L68 6 L78 38Z" fill="#c9f2ff"/><path d="M74 38 L84 14 L94 38Z" fill="#9fe3ff"/></g><g fill="#fff" opacity=".8"><path d="M30 12 L32 6 L33 14Z"/><path d="M66 14 L68 8 L69 16Z"/></g></svg>',
+    vines: '<svg viewBox="0 0 100 40"><g fill="none" stroke-linecap="round"><path d="M6 38 C 14 14, 30 14, 34 30 S 52 10, 60 26 S 82 8, 94 36" stroke="#1a1009" stroke-width="7"/><path d="M6 38 C 14 14, 30 14, 34 30 S 52 10, 60 26 S 82 8, 94 36" stroke="#4f9a2f" stroke-width="4"/></g><g fill="#7fcf45" stroke="#1a1009" stroke-width="1.6"><path d="M22 16 q6 -6 10 0 q-4 5 -10 0Z"/><path d="M56 12 q6 -6 10 0 q-4 5 -10 0Z"/><path d="M80 14 q6 -6 10 0 q-4 5 -10 0Z"/></g></svg>',
+    fear: '<svg viewBox="0 0 40 40"><g fill="none" stroke-linecap="round"><path d="M20 20 m-12 0 a12 12 0 1 1 12 12 a7 7 0 1 1 -7 -7" stroke="#1a1009" stroke-width="6"/><path d="M20 20 m-12 0 a12 12 0 1 1 12 12 a7 7 0 1 1 -7 -7" stroke="#b18cff" stroke-width="3"/></g></svg>',
+    shadow: '',
+  };
   function spriteEl(src, pos, cls, np) {
     const st = { width: pos.w + '%', bottom: pos.b + '%' };
     if (pos.l != null) st.left = pos.l + '%'; else st.right = pos.r + '%';
@@ -367,6 +461,7 @@
     const key = sceneKey();
     const bg = sc.querySelector('img.bg');
     if (!bg || sc.dataset.k !== key) { sc.innerHTML = ''; sc.append(img(art('scene', key), 'bg'), h('div', { class: 'shade' })); sc.dataset.k = key; }
+    if (!G.fight) { const b = sc.querySelector('img.bg'); if (b && b.classList.contains('cam')) { b.classList.remove('cam'); b.style.translate = ''; } ui.cam = null; }
     else for (const c of [...sc.children]) if (c !== bg && !c.classList.contains('shade')) c.remove();
     const place = D.PLACES[P.place];
     const title = S.bg ? D.BG[S.bg.key].name : S.run ? S.run.name : P.travel ? 'On the road' : place.name;
@@ -545,6 +640,12 @@
     const n = h('div', { class: 'fx-sweep', style: { left: x0 + 'px', top: (y - 30) + 'px', width: (x1 - x0) + 'px', height: '60px' } });
     fxAdd(n, 480, true);
   }
+  function fxDust(uid, how, dirX) {
+    const t = fxAt(uid, 0.97); if (!t) return;
+    if (how === 'dash') { const w = t.w * 1.6; fxAdd(fxDiv('fx-dash', dirX > 0 ? t.x - w : t.x, t.y - t.w * 0.12, w, { height: t.w * 0.22 + 'px', transform: dirX > 0 ? '' : 'scaleX(-1)' }), 420); fxShake(); }
+    else { const w = t.w * 0.7; fxAdd(fxDiv('fx-puff', t.x - w / 2, t.y - w * 0.45, w, { height: w * 0.6 + 'px' }), 420); }
+    if (ui.spriteEls[uid]) fxGlow(uid, how === 'dash' ? 'dashing' : 'hopping', how === 'dash' ? 260 : 360);
+  }
   function fxShake() { const sc = els.scene; if (!sc) return; sc.classList.remove('fx-shake'); void sc.offsetWidth; sc.classList.add('fx-shake'); setTimeout(() => sc.classList.remove('fx-shake'), 360); }
   function fxGlow(uid, cls, ms) { const el = ui.spriteEls[uid]; if (!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); setTimeout(() => el.classList.remove(cls), ms); }
   function combatFx(evs, C) {
@@ -573,6 +674,8 @@
         if (!seen.has('heal:' + e.tgt)) { seen.add('heal:' + e.tgt); fxSparkle(e.tgt); }
       } else if (e.type === 'fx' && e.kind === 'enrage') {
         fxGlow(e.uid, 'fx-enrage', 2400); fxShake();
+      } else if (e.type === 'move') { // distance: a dash leaves a dust streak, a hop a puff
+        const u = C.units[e.src]; if (u) fxDust(e.src, e.how, u.moveX || 0);
       }
     }
   }
@@ -1450,21 +1553,24 @@
       if (tid !== els.tUid) renderTarget();
       const t = C.units[tid];
       if (t && els.tHp) setBar(els.tHp, t.hp, t.maxHp, Math.round((t.hp / t.maxHp) * 100) + '%');
+      if (els.tDist) paintDist(els.tDist, G.pUnit, t);
       if (t && els.tBuffs) paintAuras(els.tBuffs, auraList(t), 8);
       document.querySelectorAll('[data-au]').forEach((d) => { const u = C.units[d.dataset.au]; if (u) paintAuras(d, u.dead ? [] : auraList(u), 6); });
       if (els.tCp) {
         const n = G.pUnit.cls === 'rogue' && G.pUnit.cpTarget === G.pUnit.target ? G.pUnit.cp : -1;
         if (els.tCp.dataset.n != n) { els.tCp.dataset.n = n; els.tCp.innerHTML = n < 0 ? '' : [0, 1, 2, 3, 4].map((i) => `<i class="${i < n ? 'on' : ''}"></i>`).join(''); }
       }
-      // nameplates & sprites
+      // nameplates & sprites (distance: one scale for the whole scene, eased out when fighters spread wide)
+      const scale = sceneScale(C);
       for (const uid in ui.spriteEls) {
         const u = C.units[uid]; if (!u) continue;
         const el = ui.spriteEls[uid];
         const hp = el.querySelector('.hpb i');
         if (hp) hp.style.width = Math.max(0, (u.hp / u.maxHp) * 100) + '%';
         el.classList.toggle('casting', !!u.cast);
-        const mk = el.querySelector('.np .mk'); if (mk) { const sym = MARK_SYM[u.mark] || ''; if (mk.textContent !== sym) mk.textContent = sym ? sym + ' ' : ''; }
+        const mk = el.querySelector('.np .mk'); if (mk) { const sym = MARK_SYM[u.mark] || ''; setSym(mk, sym ? sym + ' ' : ''); }
         if (u.dead && !el.classList.contains('dead')) el.classList.add('dead');
+        placeSprite(C, u, el, scale);
       }
       document.querySelectorAll('[data-clock]').forEach((d) => { if (G.S.run) d.textContent = G.fmtClock(G.runClock()); });
       document.querySelectorAll('[data-mk]').forEach((d) => { const u = C.units[d.dataset.mk]; if (u) { setSym(d, MARK_SYM[u.mark] || '◎'); } });
@@ -1533,6 +1639,12 @@
         const u2 = C && G.pUnit, lit = !!u2 && (E.lit(u2, id) || (u2.cp >= 5 && ((D.PROCS || {})[u2.cls] || []).some((pr) => pr.on.includes('cp5') && pr.lights.includes(id))));
         btn.classList.toggle('lit', lit); // a reaction lit this ability (v10.4)
         btn.classList.toggle('unlit', !lit && !!(D.ABILITIES[id] || {}).needAura); // usable only while lit (Overpower): grey until then (v10.8)
+        // distance (v10.9): too far from its target, the button greys and says how close it needs to be
+        let far = 0;
+        if (u2 && D.ABILITIES[id] && id !== 'attack') { const A = D.ABILITIES[id], tid = A.target === 'ally' ? (C.allyTarget != null && C.units[C.allyTarget] && !C.units[C.allyTarget].dead ? C.allyTarget : u2.uid) : u2.target; far = E.outOfRange(C, u2, id, C.units[tid]); }
+        btn.classList.toggle('far', !!far);
+        let rg = btn.querySelector(':scope > .rng'); if (far && !rg) { rg = h('span', { class: 'rng tnum' }); btn.append(rg); }
+        if (rg) { if (far) rg.textContent = far + ' m'; else rg.remove(); }
       }
     }
     // timers in panel & scene

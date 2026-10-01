@@ -77,14 +77,16 @@ img { max-width: 100%; display: block; }
 
 /* ---------- scene */
 .scene { position: relative; isolation: isolate; aspect-ratio: 5 / 3; width: 100%; overflow: hidden; background: #1d2a14; border-bottom: 1px solid var(--edge); max-height: 38vh; }
-.scene .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.scene .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: scale .6s ease-out, translate .3s linear; }
+/* in a fight the view closes in a touch, leaving room for the camera to pan (distance, v10.9) */
+.scene .bg.cam { scale: 1.1; }
 .scene .shade { position: absolute; inset: 0; background: linear-gradient(transparent 55%, rgba(0,0,0,.35)); pointer-events: none; }
 .scene .zone { position: absolute; z-index: 130; top: 6px; left: 8px; font: 15px/1 var(--display); color: var(--gold); text-shadow: 0 1px 2px #000, 0 0 6px #000; letter-spacing: .02em; }
 .scene .zone small { display: block; font: 600 12px/1.2 var(--body); color: #e8dcc2; letter-spacing: 0; margin-top: 2px; }
 .scene .online { position: absolute; z-index: 130; top: 6px; right: 8px; font: 700 12px var(--body); color: #e8dcc2; text-shadow: 0 1px 2px #000; }
 .scene .speed-chip { position: absolute; z-index: 130; top: 24px; right: 6px; min-width: 40px; min-height: 32px; padding: 2px 8px; border-radius: 16px; border: 1px solid #c9a24a; background: rgba(12,9,6,.72); color: #ffd98a; font: 800 14px var(--body); }
 .scene .speed-chip[hidden] { display: none; }
-.sprite { position: absolute; bottom: 6%; width: 30%; transform-origin: 50% 100%; transition: filter .15s, opacity .4s; }
+.sprite { position: absolute; bottom: 6%; width: 30%; transform-origin: 50% 100%; transition: filter .15s, opacity .4s, translate .12s linear, scale .12s linear; }
 .sprite img { width: 100%; }
 .sprite.flip img { transform: scaleX(-1); }
 .sprite.small { width: 15%; opacity: .92; }
@@ -305,6 +307,12 @@ img { max-width: 100%; display: block; }
 .ab.off img { filter: grayscale(1) brightness(.45); }
 /* an ability that can only be used while a reaction lights it (Overpower): grey until it lights (v10.8) */
 .ab.unlit img { filter: grayscale(1) brightness(.45); }
+/* distance (v10.9): too far from its target, an ability greys and shows the range it needs */
+.ab.far img { filter: grayscale(1) brightness(.4); }
+.ab .rng { position: absolute; left: 0; right: 0; bottom: 2px; text-align: center; font: 800 11px/1 var(--body); color: #ff9a86; text-shadow: 0 1px 2px #000, 0 0 3px #000; pointer-events: none; }
+/* the target's distance, on the portrait's corner across from its level */
+.dst { position: absolute; z-index: 2; bottom: -4px; right: -4px; height: 18px; padding: 0 4px; border-radius: 9px; background: #1a1209; border: 1px solid var(--edge-hi); box-shadow: 0 0 0 1px #000; font: 800 11px/16px var(--body); white-space: nowrap; }
+.dst.near { color: #7be36b; } .dst.mid { color: #ffc24a; } .dst.far { color: #ff6a5a; }
 .ab.on { box-shadow: 0 0 0 2px #ffd84a; }
 /* a reaction lit this ability (v10.4): a gold pulse you cannot miss (a fill over the icon, since a glow gets clipped) */
 .ab.lit { outline: 3px solid #ffd84a; outline-offset: -1px; transform: scale(1.06); z-index: 2; }
@@ -679,3 +687,25 @@ img.qm.main { height: 1.35em; }
 
 /* drawn symbols (src/sym.js, v10.8): sized and aligned like a letter, in the text's own colour */
 svg.sym { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: -.17em; overflow: visible; }
+
+/* distance on screen (v10.9): running, turning away, snared, rooted, feared, flying, dashing, hopping */
+.sprite.run img { animation: runbob .32s ease-in-out infinite; }
+@keyframes runbob { 0%, 100% { translate: 0 0; rotate: 0deg; } 50% { translate: 0 -5%; rotate: 2.5deg; } }
+.sprite.turn img { scale: -1 1; }
+.sprite.slowed img { filter: drop-shadow(0 0 2px rgba(127, 208, 255, .9)) drop-shadow(0 2px 0 rgba(127, 208, 255, .45)); }
+.sprite.slowed.run img { animation-duration: .6s; }
+.sprite > .rootfx { position: absolute; left: 4%; right: 4%; bottom: -3%; height: 24%; z-index: 2; pointer-events: none; animation: rootin .25s ease-out; }
+.sprite > .rootfx svg { width: 100%; height: 100%; display: block; }
+@keyframes rootin { from { transform: scaleY(0); transform-origin: 50% 100%; } }
+.sprite > .fearfx { position: absolute; left: 66%; bottom: 74%; width: 24%; aspect-ratio: 1; z-index: 3; pointer-events: none; animation: fearspin 1s linear infinite; }
+.sprite > .fearfx svg { width: 100%; height: 100%; display: block; }
+@keyframes fearspin { to { rotate: 360deg; } }
+.sprite > .shadowfx { position: absolute; left: 18%; right: 18%; bottom: -4%; height: 11%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.75), rgba(0,0,0,.25) 70%, rgba(0,0,0,0)); z-index: -1; pointer-events: none; }
+.sprite.dashing img { filter: blur(1.2px); }
+.sprite.hopping img { animation: hop .36s ease-out; }
+@keyframes hop { 40% { translate: 0 -18%; } }
+.fx-dash { position: absolute; pointer-events: none; border-radius: 50%; background: linear-gradient(90deg, rgba(196,170,120,0) 0%, rgba(196,170,120,.75) 70%, rgba(230,210,170,.9) 100%); filter: blur(1px); animation: dustfade .42s ease-out forwards; }
+.fx-puff { position: absolute; pointer-events: none; border-radius: 50%; background: radial-gradient(circle, rgba(230,210,170,.85) 0 30%, rgba(196,170,120,.5) 55%, rgba(196,170,120,0) 72%); animation: puff .42s ease-out forwards; }
+@keyframes dustfade { to { opacity: 0; transform-origin: right; } }
+@keyframes puff { from { transform: scale(.4); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .sprite.run img, .sprite.hopping img, .sprite > .fearfx { animation: none; } }

@@ -149,6 +149,7 @@
     const s = u.side === 'ally' ? -1 : 1, gap = (C.opts && C.opts.apart) || 0;
     const fly = u.kind === 'mob' && (D.MOBS[u.key] || {}).fly;
     u.pos = { x: s * (gap / 2 + 0.5 + Math.random() * 1.2), y: (Math.random() * 2 - 1), z: fly || 0 };
+    u.pos0 = { x: u.pos.x - s * gap / 2, y: u.pos.y, z: u.pos.z }; // where it would stand in contact: the scene draws a fighter moved by how far it is from here
   }
   // movement for a tick: a fleeing fighter runs from the one who scared it; anyone else closes on its target when out
   // of its reach. Moving cancels a cast. Roots stop it; snares slow it like they slow attacks.
@@ -165,11 +166,14 @@
     const t = C.units[u.target]; if (!t || t.dead || t.side === u.side || !t.pos) return;
     const d = E.dist(u, t), want = reachOf(u);
     if (d <= want + 0.5) return;
+    const hd = Math.hypot(t.pos.x - u.pos.x, t.pos.y - u.pos.y);
+    if (hd <= want + 0.5) return; // right under (or over) it: running cannot close a height
     if (u.cast) { u.cast = null; ev(C, { type: 'castStop', src: u.uid, moved: true }); }
-    stepToward(u, t, Math.min(speed, d - want));
+    stepToward(u, t, Math.min(speed, hd - want));
   }
-  function stepToward(u, t, m) { const dx = t.pos.x - u.pos.x, dy = t.pos.y - u.pos.y, h = Math.hypot(dx, dy) || 1; u.pos.x += dx / h * m; u.pos.y += dy / h * m; u.moved = true; }
-  function stepAway(u, t, m) { const dx = u.pos.x - t.pos.x, dy = u.pos.y - t.pos.y, h = Math.hypot(dx, dy) || 1; u.pos.x += (dx / h || (u.side === 'ally' ? -1 : 1)) * m; u.pos.y += dy / h * m; u.moved = true; }
+  // each move notes when and which way (the scene shows a run, and turns a fighter that runs away)
+  function stepToward(u, t, m) { const dx = t.pos.x - u.pos.x, dy = t.pos.y - u.pos.y, h = Math.hypot(dx, dy) || 1; u.pos.x += dx / h * m; u.pos.y += dy / h * m; u.moveX = dx / h * m; u.movedAt = u.clock; }
+  function stepAway(u, t, m) { const dx = u.pos.x - t.pos.x, dy = u.pos.y - t.pos.y, h = Math.hypot(dx, dy) || 1, ux = dx / h || (u.side === 'ally' ? -1 : 1); u.pos.x += ux * m; u.pos.y += dy / h * m; u.moveX = ux * m; u.movedAt = u.clock; }
   E.stepAway = stepAway;
 
   // Player or bot. char carries hp/res between fights; persistent auras use epoch ms (until).
@@ -484,6 +488,12 @@
   }
 
   // Returns null if usable, else a short reason string.
+  // the range an ability needs when its target is further than that, else 0 (the action bar greys it and shows the range)
+  E.outOfRange = function (C, u, abId, tgt) {
+    const ab = D.ABILITIES[abId]; if (!ab) return 0;
+    const rg = rangeOf(ab), at = ab.target === 'aoe' ? C.units[u.target] : tgt;
+    return rg != null && at && at !== u && at.pos && u.pos && E.dist(u, at) > rg + 0.01 ? rg : 0;
+  };
   E.canUse = function (C, u, abId, tgt) {
     const ab = D.ABILITIES[abId];
     if (!ab) return 'Unknown';
@@ -504,8 +514,7 @@
     if (ab.target === 'ally' && (!tgt || tgt.dead || tgt.side !== u.side)) return 'Invalid target';
     if (abId === 'pw_shield' && tgt && auraOf(tgt, 'weakened_soul')) return 'Weakened Soul';
     // distance (v10.9): the target must be within the ability's range (a targeted area attack: its centre)
-    const rg = rangeOf(ab), at = ab.target === 'aoe' ? C.units[u.target] : tgt;
-    if (rg != null && at && at !== u && at.pos && u.pos && E.dist(u, at) > rg + 0.01) return 'Out of range';
+    if (E.outOfRange(C, u, abId, tgt)) return 'Out of range';
     if (ab.stepBack && u.auras.some((a) => a.root)) return 'Rooted';
     return null;
   };
@@ -1150,6 +1159,7 @@
     }
     const all = C.allies.concat(C.enemies);
     for (const u of all) {
+      u.clock = C.t;
       if (u.dead) continue;
       // Omen Mending: a wounded enemy heals a little every second (v10.4)
       if (u.side === 'enemy' && C.opts.omens && C.opts.omens.includes('mending') && root.TRIALS) { const MO = root.TRIALS.OMENS.mending; if (u.hp < u.maxHp * MO.below) u.hp = Math.min(u.maxHp, u.hp + u.maxHp * MO.rate * dt); }
