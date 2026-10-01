@@ -379,6 +379,17 @@ TRACKS = {
             'Bb4:1 Eb5:1 G5:1 | A5:2 F5:1 | F#5:1.5 E5:.5 D5:1 | G5:3 | Eb5:1.5 D5:.5 C5:1 | Bb4:2 G4:1 | A4:1 D5:1 F#5:1 | D5:3'}],
         'fx': [fx_swell([9, 17]), fx_crash([9, 17]), fx_wind(4, 200, 800, 0.04)], 'room': 0.5, 'tail': 5},
 
+    # Rumhook Bay (v10.9): the goblin port's town theme, a harbour shanty in 6/8 with a squeeze-box strum and the fiddle
+    'rumhook': {'bpm': 168, 'beats': 6, 'meter': '6/8', 'key': 'G major', 'prog': 'G C G D G C D G Em C G D C G D G', 'layers': [
+        {'type': 'pad', 'cut': 1000, 'gain': 0.07},
+        {'type': 'bass', 'pat': [(0, 0, 3), (3, 7, 3)], 'gain': 0.18, 'square': 0.15, 'wrap': True},
+        {'type': 'stab', 'at': [1, 2, 4, 5], 'gain': 0.055, 'len': 0.16, 'bright': 1400},
+        {'type': 'drums', 'pat': ['k.hs.hk.hs.h', 'k.hs.hk.ss.s'], 'step': 0.5, 'gain': 0.55, 'from': 5},
+        {'type': 'lead', 'voice': 'fiddle', 'gain': 0.12, 'mel':
+            'D5:2 B4:1 G4:2 B4:1 | C5:2 E5:1 G5:2 E5:1 | D5:3 B4:3 | A4:2 B4:1 C5:2 A4:1 | B4:2 D5:1 G5:2 F#5:1 | E5:2 C5:1 E5:2 G5:1 | F#5:2 E5:1 D5:2 C5:1 | B4:3 G4:3 |'
+            'E5:2 F#5:1 G5:2 E5:1 | C5:2 E5:1 G5:3 | D5:2 B4:1 D5:2 G5:1 | F#5:3 D5:3 | E5:2 G5:1 E5:2 C5:1 | D5:2 B4:1 G4:2 B4:1 | A4:2 D5:1 F#5:2 E5:1 | G5:3 r:3'}],
+        'fx': [fx_wind(4, 200, 700, 0.03)], 'room': 0.35},
+
     # World bosses: B minor, driving drums and bass, a horn call
     'worldboss': {'bpm': 126, 'beats': 4, 'key': 'B minor', 'prog': 'Bm Bm G A Bm Bm Em F# G A Bm Bm Em G F# F#', 'layers': [
         {'type': 'pad', 'cut': 1000, 'gain': 0.11},

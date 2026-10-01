@@ -518,5 +518,12 @@
   "bars": 16,
   "key": "C# minor",
   "loop_s": 28.2353
+ },
+ "rumhook": {
+  "bpm": 168,
+  "bars": 16,
+  "key": "G major",
+  "meter": "6/8",
+  "loop_s": 34.2857
  }
 }

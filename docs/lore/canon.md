@@ -187,7 +187,10 @@ several sharing a line separated by " / ".
 - **Hiveborn** — insect swarms of the south
 - **Mistshore** — wood elf coast north of Elderglen
 - **Drakestone Hold / Drakestone** — the Wyrmchain fortress in Greenfen
-- **Rumhook Bay** — goblin port in the south of the Vinewild
+- **Rumhook Bay** — the neutral goblin port in the south of the Vinewild (35-40, v10.9); the Saltpenny trading house buys Longfield's seized grain there for the Ledger and pays in warm coin
+- **Saltpenny** — the goblin trading house of Rumhook Bay (Gorvo Saltpenny), deep in the Ledger's debt
+- **Merry Debtor** — a cargo ship sunk off Blackgull Cove
+- **Blackgull** — the pirates of the southern coasts (Rotten Plank Cove in Sirocco, Blackgull Cove in the Vinewild); they raid shipping and rob the Ledger's captains
 - **Windgorge** — canyon lands south of the Scrublands
 - **Harrow Span / Span** — the bridge between Greenfen and Kinloch
 - **Underrail** — the tunnel train between Kingsmere and Keldrun

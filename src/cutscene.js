@@ -440,6 +440,13 @@
       { bg: 'scene:stromgarde_keep', dur: 10, cam: [[0, 0, 1.06], [0, -2, 1.2]], fx: ['fadein', 'fadeout'],
         lines: [{ t: 0.5, text: 'The orders are dry and exact: who to rob, who to pay, who to bury.' }, { t: 5, text: 'Each one is signed with a single letter: M.' }] },
     ] },
+    // Rumhook Bay (v10.9): the factor's order shows where Longfield's grain goes
+    { id: 'ms_factor', scene: true, quest: 'rh_factor', on: 'done', level: 40, title: 'Food for the Diggers', music: 'dungeon', shots: [
+      { bg: 'scene:bonded_yard', dur: 9, cam: [[0, 0, 1.06], [0, -2, 1.2]], fx: ['fadein'],
+        lines: [{ t: 0.5, text: 'The factor\'s order is dry and exact: every sack from Longfield, by ship to Coppergulch, then over the sand.' }, { t: 5, text: 'At the end of the road is Cinderpeak, where the Slagborn dig to pay what they owe.' }] },
+      { bg: 'scene:bonded_yard', dur: 7, cam: [[0, -2, 1.2], [0, -3, 1.26]], fx: ['fadeout'],
+        lines: [{ t: 0.5, text: 'Diggers have to eat. The order is signed with the same single letter: M.' }] },
+    ] },
     { id: 'ms_deeds', beat: true, scene: true, level: 43, title: 'Deeds by the Stack', music: 'town', shots: [
       { bg: 'scene:gadgetzan', dur: 10, cam: [[-3, 0, 1.1], [0, 0, 1.04]], fx: ['fadein', 'fadeout'],
         lines: [{ t: 0.5, text: 'In Coppergulch, the Black Ledger has opened an office.' }, { t: 4.5, text: 'Farm deeds from Longfield sell by the stack. Nobody asks where the farmers went.' }] },

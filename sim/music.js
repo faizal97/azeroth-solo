@@ -17,7 +17,7 @@ for (const k in D.PLACES) {
   check(OLD.has(o), `${k} plays '${o}' before its track is approved`);
   check(o === (pl.safe ? 'town' : 'ambermoor'), `${k}: before approval it should keep ${pl.safe ? 'town' : 'ambermoor'}, got ${o}`);
 }
-const expect = { orgrimmar: 'vazhrak', stormwind: 'kingsmere', stormwind_gate: 'kingsmere', stormwind_bank: 'kingsmere', ironforge: 'keldrun', darnassus: 'nyrwen', thunder_bluff: 'hornwind', undercity: 'gravenhold', goldshire: 'town', razor_hill: 'dunescar_town', kharanos: 'kaldvik_town', everlook: 'icewold_town', gadgetzan: 'sirocco_town', darkshire: 'wraithwood_town' };
+const expect = { orgrimmar: 'vazhrak', stormwind: 'kingsmere', stormwind_gate: 'kingsmere', stormwind_bank: 'kingsmere', ironforge: 'keldrun', darnassus: 'nyrwen', thunder_bluff: 'hornwind', undercity: 'gravenhold', goldshire: 'town', razor_hill: 'dunescar_town', kharanos: 'kaldvik_town', everlook: 'icewold_town', gadgetzan: 'sirocco_town', darkshire: 'wraithwood_town', rumhook_bay: 'rumhook' };
 for (const [k, m] of Object.entries(expect)) { at(k); check(G.musicFor(all) === m, `${k} should play ${m}, plays ${G.musicFor(all)}`); }
 const outdoorOf = (zone) => Object.keys(D.PLACES).find((k) => D.PLACES[k].region === zone && !D.PLACES[k].safe);
 // every zone has its own outdoor track (Ambermoor keeps the first one) and every zone with a town its own town track

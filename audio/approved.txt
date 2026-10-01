@@ -80,3 +80,4 @@ blackcloister
 graymouth
 sunken_archive
 shalzua
+rumhook
