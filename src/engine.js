@@ -918,9 +918,10 @@
   const SOLO = {};
   function soloKit(cls) {
     if (SOLO[cls]) return SOLO[cls];
-    const k = { heals: [], stuns: [], fears: [], snares: [], buffs: [], roots: [], dashes: [], sprints: [] };
+    const k = { heals: [], stuns: [], fears: [], snares: [], buffs: [], roots: [], dashes: [], sprints: [], openers: [] };
     for (const id of (D.CLASSES[cls] || { abilities: [] }).abilities) {
       const A = D.ABILITIES[id]; if (A && A.dash && !A.form) k.dashes.push(id); // Charge (an opener) and Intercept leap in
+      if (A && A.opener && !A.dash && A.target === 'enemy') k.openers.push(id); // Cheap Shot, Ambush, Garrote
       if (!A || A.form || A.opener || A.taunt || A.needAura) continue;
       if (A.root && (A.target === 'enemy' || A.target === 'aoe')) k.roots.push(id);
       if (A.buff && A.buff.speed) k.sprints.push(id);
@@ -934,6 +935,7 @@
     // a shield first, then a heal over time, then the quickest cast
     const rank = (id) => { const A = D.ABILITIES[id]; return A.shield ? 0 : A.hot ? 1 : 2 + (A.cast || 0); };
     k.heals.sort((a, b) => rank(a) - rank(b));
+    k.openers.sort((a, b) => (D.ABILITIES[b].stun ? 1 : 0) - (D.ABILITIES[a].stun ? 1 : 0) || D.ABILITIES[b].lvl - D.ABILITIES[a].lvl); // a stun first (Cheap Shot), then the newest
     return (SOLO[cls] = k);
   }
   E.soloKit = soloKit;
@@ -963,6 +965,7 @@
     if (u.pos && f.pos) {
       const d = E.dist(u, f), mine = reachOf(u), theirs = reachOf(f), hold = holdLeft(C, f);
       if (mine <= DIST.melee && d > DIST.melee + 1) for (const id of k.dashes) if (has(id) && try_(id, f)) return true;
+      if (d <= DIST.melee + 0.5) for (const id of k.openers) if (has(id) && try_(id, f)) return true; // in reach at last: the opener
       if (mine <= DIST.melee && d > DIST.melee + 6 && roll()) for (const id of k.sprints) if (has(id) && !auraOf(u, D.ABILITIES[id].buff.id) && try_(id)) return true; // then run it down
       if (mine > DIST.melee && theirs <= DIST.melee) {
         const sb = () => !u.auras.some((a) => a.root) && E.use(C, u, 'step_back') === null;
