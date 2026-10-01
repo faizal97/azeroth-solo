@@ -155,6 +155,7 @@
   // of its reach. Moving cancels a cast. Roots stop it; snares slow it like they slow attacks.
   function moveTick(C, u, dt) {
     if (!u.pos) return;
+    if (u.closedAt == null) { const t0 = C.units[u.target]; if (t0 && t0.pos && E.dist(u, t0) <= DIST.melee + 0.5) u.closedAt = C.t; } // first time in melee reach (openers)
     const rooted = u.auras.some((a) => a.root);
     const speed = DIST.speed * (1 - slowPct(u) / 100) * dt;
     if (u.fleeUntil > C.t) {
@@ -163,6 +164,7 @@
       stepAway(u, from, speed); return;
     }
     if (rooted || stunned(C, u)) return;
+    if (u.kiteUntil > C.t) { const f = C.units[u.target]; if (f && f.pos && !f.dead) { if (u.cast) { u.cast = null; ev(C, { type: 'castStop', src: u.uid, moved: true }); } stepAway(u, f, speed); return; } }
     const t = C.units[u.target]; if (!t || t.dead || t.side === u.side || !t.pos) return;
     const d = E.dist(u, t), want = reachOf(u);
     if (d <= want + 0.5) return;
@@ -509,7 +511,7 @@
     if (u.form && !ab.form && !ab.shapeshift) return 'Not while in Bear Form';
     if (ab.needSeal && !auraOf(u, 'seal')) return 'No seal active';
     if (ab.lifetap && u.hp <= ab.lifetap.base + ab.lifetap.perLvl * u.level + 1) return 'Not enough health';
-    if (ab.opener && (C.t > 3 || (tgt && tgt.hitBy && tgt.hitBy[u.uid]))) return 'Already in combat';
+    if (ab.opener && (C.t - (u.closedAt != null ? u.closedAt : C.t) > 3 || C.t > 3 && u.closedAt == null && !C.opts.apart || (tgt && tgt.hitBy && tgt.hitBy[u.uid]))) return 'Already in combat'; // an opener: within 3 sec of first reaching melee (a fight that starts apart gives you the run in)
     if (ab.target === 'enemy' && (!tgt || tgt.dead || tgt.side === u.side)) return 'No target';
     if (ab.target === 'ally' && (!tgt || tgt.dead || tgt.side !== u.side)) return 'Invalid target';
     if (abId === 'pw_shield' && tgt && auraOf(tgt, 'weakened_soul')) return 'Weakened Soul';
@@ -910,9 +912,11 @@
   const SOLO = {};
   function soloKit(cls) {
     if (SOLO[cls]) return SOLO[cls];
-    const k = { heals: [], stuns: [], fears: [], snares: [], buffs: [] };
+    const k = { heals: [], stuns: [], fears: [], snares: [], buffs: [], roots: [], dashes: [] };
     for (const id of (D.CLASSES[cls] || { abilities: [] }).abilities) {
-      const A = D.ABILITIES[id]; if (!A || A.form || A.opener || A.taunt || A.needAura) continue;
+      const A = D.ABILITIES[id]; if (A && A.dash && !A.form) k.dashes.push(id); // Charge (an opener) and Intercept leap in
+      if (!A || A.form || A.opener || A.taunt || A.needAura) continue;
+      if (A.root && (A.target === 'enemy' || A.target === 'aoe')) k.roots.push(id);
       const st = (A.buff && A.buff.stats) || {};
       if ((A.target === 'self' || A.target === 'party') && A.buff && !A.cd && !A.shapeshift && !A.combatOnly && !A.seal && !(A.buff && A.buff.seal) && (st.armor || st.sta || st.sp || st.int)) k.buffs.push(id); // armour, stamina or spell power (not a seal or weapon imbue: the rotation keeps those)
       if ((A.heal || A.hot || A.shield) && (A.target === 'ally' || A.target === 'self')) k.heals.push(id);
@@ -926,15 +930,44 @@
     return (SOLO[cls] = k);
   }
   E.soloKit = soloKit;
+  // how long a fighter still cannot move toward you: rooted, stunned or running in fear
+  const holdLeft = (C, f) => Math.max(0, f.stunUntil - C.t || 0, f.fleeUntil - C.t || 0, ...f.auras.filter((a) => a.root).map((a) => a.until - C.t));
+  // kiting: open the gap while a melee foe is held, up to `gap` metres, running at most `run` seconds (sim/brawl.js tunes them)
+  const G_KITE = E.KITE = { gap: 16, run: 1.5, edge: 2, safeHeal: 0.7 }; // edge: how much faster (m/s) you must be for running to pay
+  const runSpeed = (C, x) => (x.auras.some((a) => a.root) || x.stunUntil > C.t ? 0 : DIST.speed * (1 - slowPct(x) / 100));
   const soloFoe = (en) => { const ch = en.filter((x) => x.kind !== 'pet'); return ch.length === 1 && ch[0].cls && !ch[0].boss ? ch[0] : null; }; // pets do not count
   const soloFight = (C, u, en) => !!soloFoe(en) && alive(friends(C, u)).filter((x) => x.kind !== 'pet').length === 1;
   function soloThink(C, u, f, b, has, try_) {
     const sk = b.skill || 0.5, hp = u.hp / u.maxHp, roll = () => Math.random() < 0.4 + 0.6 * sk, k = soloKit(u.cls);
-    if (hp < 0.2 + 0.3 * sk && roll()) for (const id of k.heals) {
+    // distance: a heal is safe while the foe cannot reach you (held, or a melee foe still out of reach), so heal earlier then
+    const safe = !!(u.pos && f.pos) && (holdLeft(C, f) > 1.5 || (reachOf(f) <= DIST.melee && E.dist(u, f) > DIST.melee + 6));
+    if ((hp < 0.2 + 0.3 * sk || (safe && hp < G_KITE.safeHeal)) && roll()) for (const id of k.heals) {
       const A = D.ABILITIES[id]; if (!has(id)) continue;
       if ((A.cd || 0) >= 60 && hp > 0.25) continue; // a big cooldown waits until you are nearly down
       if (A.shield && (auraOf(u, 'weakened_soul') || auraOf(u, id))) continue; if (A.hot && auraOf(u, id)) continue;
       if (try_(id, u)) return true;
+    }
+    // distance (v10.9): a melee fighter leaps in; a ranged one against melee holds it, opens the gap, casts while it cannot reach
+    if (u.pos && f.pos) {
+      const d = E.dist(u, f), mine = reachOf(u), theirs = reachOf(f), hold = holdLeft(C, f);
+      if (mine <= DIST.melee && d > DIST.melee + 1) for (const id of k.dashes) if (has(id) && try_(id, f)) return true;
+      if (mine > DIST.melee && theirs <= DIST.melee) {
+        const sb = () => !u.auras.some((a) => a.root) && E.use(C, u, 'step_back') === null;
+        if (d <= DIST.melee + 1.5 && hold < 0.5 && roll()) { // it is on you: freeze, stun or fear it, slow it, else hop away
+          for (const id of k.roots) if (has(id) && try_(id, D.ABILITIES[id].target === 'enemy' ? f : null)) return true;
+          for (const id of k.stuns) if (has(id) && try_(id, f)) return true;
+          for (const id of k.fears) if (has(id) && try_(id)) return true;
+          if (slowPct(f) < 40) for (const id of k.snares) if (has(id) && try_(id, f)) return true;
+          if (slowPct(f) >= 40 && sb()) return true; // a slowed foe cannot keep up after a hop
+        }
+        // faster than it (it is held, or slowed and you are not): open the gap, then cast. Run-and-cast keeps a slowed
+        // warrior off a mage, and the warrior's answers are its own (Hamstring slows you back, Intercept, a stun).
+        const fast = runSpeed(C, u) - (hold > 0.5 ? 0 : runSpeed(C, f));
+        if (d < G_KITE.gap && fast > G_KITE.edge && roll()) {
+          if (d < DIST.melee + 4 && sb()) return true;
+          u.kiteUntil = C.t + G_KITE.run; return true;
+        }
+      }
     }
     const free = !(f.stunUntil > C.t);
     if (free && (f.cast || hp < 0.5 || Math.random() < 0.12 * sk) && roll()) {
@@ -974,6 +1007,7 @@
     }
 
     if (!u.legend && soloFight(C, u, en) && soloThink(C, u, soloFoe(en), b, has, try_)) return;
+    if (u.kiteUntil > C.t) return; // running to open the gap: a cast would only stop it
     if (u.role === 'healer') {
       const allies = alive(friends(C, u));
       const low = allies.slice().sort((a, b2) => a.hp / a.maxHp - b2.hp / b2.maxHp)[0];

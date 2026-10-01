@@ -1273,7 +1273,7 @@
     const C = D.CLASSES[P.cls];
     // v2.0: no cap; past 8 buttons the bar wraps to two rows
     const pot = G.S.player.bags.some((b) => b.item.slot === 'potion') ? ['potion'] : [];
-    if (G.fight) { const r = G.racial(); return barArrange(known.concat(r && !(G.pUnit && G.pUnit.form) ? [r] : [], pot)); }
+    if (G.fight) { const r = G.racial(); return barArrange(known.concat(['step_back'], r && !(G.pUnit && G.pUnit.form) ? [r] : [], pot)); } // Step Back (every class) only in a fight
     const extras = ['eat'].concat(C.resource === 'mana' ? ['drink'] : [], pot);
     const ab = known.filter((a) => a !== 'taunt' && !D.ABILITIES[a].combatOnly);
     return barArrange(ab.concat(extras));
@@ -1282,7 +1282,7 @@
   // Anything not in the order yet (a newly learned ability) goes at the end, in the default order.
   function barPool() {
     const P = G.S.player, C = D.CLASSES[P.cls], r = G.racial();
-    return [...new Set(G.knownAbilities().concat(r ? [r] : [], ['eat'], C.resource === 'mana' ? ['drink'] : [], ['potion']))];
+    return [...new Set(G.knownAbilities().concat(['step_back'], r ? [r] : [], ['eat'], C.resource === 'mana' ? ['drink'] : [], ['potion']))];
   }
   function barArrange(list) {
     const P = G.S.player, o = P.barOrder || [], hide = P.barHide || [];

@@ -1989,6 +1989,7 @@
     startAmbush(true);
   };
   // A friendly duel from chat (v9.6): nobody dies. The loser ends at 1 health; the wager changes hands.
+  G.DUEL_APART = 25; // a duel (and each brawl round) starts this many metres apart (distance, v10.9)
   G.startDuel = function (botId, wager) {
     const S = G.S, P = S.player;
     if (G.fight || S.run || P.travel || P.ghostUntil) { toast("You can't duel right now."); return false; }
@@ -1999,7 +2000,7 @@
     stopActions();
     const pu = E.charUnit(P, 'ally', 'player', now()); G.pUnit = pu;
     const allies = [pu]; const pet = G.petUnitFor(pu); if (pet) allies.push(pet);
-    G.fight = E.fight(allies, [eu], { soloUid: pu.uid, puller: pu });
+    G.fight = E.fight(allies, [eu], { soloUid: pu.uid, puller: pu, apart: G.DUEL_APART });
     G.fight.kind = 'duel'; G.fight.duel = { bot: bot.id, name: bot.name, wager: wager || 0, hp0: P.hp };
     sys(`Duel with ${bot.name} begins! ${wager ? 'Wager: ' + G.moneyText(wager) + '.' : ''}`);
     emit('fightStart'); emit('change');
@@ -2047,7 +2048,7 @@
       const hb = pick(near); const hc = G.botChar(Object.assign({}, hb, { level: Math.min(hb.level, P.level + 2) }));
       const hu = E.charUnit(hc, 'ally', 'bot', now()); hu.bot = { skill: hb.skill, react: 0.9 - 0.6 * hb.skill }; hu.role = 'dps'; allies.push(hu); helpers.push(hb.name);
     }
-    G.fight = E.fight(allies, [eu], { soloUid: pu.uid, puller: pu });
+    G.fight = E.fight(allies, [eu], { soloUid: pu.uid, puller: pu, apart: G.DUEL_APART });
     G.fight.kind = 'pvp';
     G.fight.pvp = { bot: bot.id, name: bot.name, level: it.level, town: !!place.safe, helpers, youStarted };
     if (youStarted) eu.swingT = 1.2; // you swing first
@@ -2114,7 +2115,7 @@
   // one fighter each: pets wait outside the pit (a plain arena rule, said on the panel; they fight everywhere else)
   const brawlUnits = (m, side) => { m.hp = null; m.res = null; const u = E.charUnit(m, side, 'bot', now()); u.bot = { skill: m.bot.skill, react: 0.9 - 0.6 * m.bot.skill }; u.role = 'dps'; if (side === 'enemy') u.threat = u.threat || {}; return [u]; };
   function brawlAuto(a, b) { // two simulated fighters, settled at once
-    const ua = brawlUnits(a, 'ally'), ub = brawlUnits(b, 'enemy'), C = E.fight(ua, ub, {});
+    const ua = brawlUnits(a, 'ally'), ub = brawlUnits(b, 'enemy'), C = E.fight(ua, ub, { apart: G.DUEL_APART });
     for (let i = 0; i < 1500 && !C.over; i++) E.tick(C, 0.2);
     return C.over === 'win' ? a : b;
   }
@@ -2144,7 +2145,7 @@
     br.pending = brawlPairs(br).map(([a, b]) => (a.you || b.you ? null : { a: a.name, b: b.name, winner: brawlAuto(a, b) })); // one per pair, yours null
     stopActions(); P.hp = null; P.res = null;
     const pu = E.charUnit(P, 'ally', 'player', now()); G.pUnit = pu;
-    G.fight = E.fight([pu], brawlUnits(foe, 'enemy'), { soloUid: pu.uid, puller: pu }); // no pet: one fighter each
+    G.fight = E.fight([pu], brawlUnits(foe, 'enemy'), { soloUid: pu.uid, puller: pu, apart: G.DUEL_APART }); // no pet: one fighter each
     G.fight.kind = 'brawl'; G.fight.brawl = { foe: foe.name, round: br.round };
     br.phase = 'fight';
     sys(`Round ${br.round}: you against ${foe.name}, ${foe.level} ${D.CLASSES[foe.cls].name}.`);

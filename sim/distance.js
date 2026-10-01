@@ -79,7 +79,7 @@ const run = (C, s) => { for (let k = 0; k < s / 0.1 && !C.over; k++) E.tick(C, 0
 }
 // 10. a caster stands still to cast; a target that runs out of range during the cast is missed
 {
-  const m = ch('mage', 'ally'), w = ch('warrior', 'enemy'); const C = E.fight([m], [w], {}); at(m, 0); at(w, 25); m.target = w.uid; m.res = m.maxRes; m.kind = 'player'; w.stunUntil = 99;
+  const m = ch('mage', 'ally'), w = ch('warrior', 'enemy'); const C = E.fight([m], [w], {}); at(m, 0); at(w, 25); m.target = w.uid; m.res = m.maxRes; m.kind = 'player'; w.stunUntil = 99; w.kind = 'script'; w.auras.push({ id: 'r', until: 99, root: true }); // held where it is put (a racial could free it from the stun)
   E.use(C, m, 'fireball', w.uid); check(!!m.cast, 'a cast starts at 25 m');
   at(w, 45); const hp = w.hp, x = m.pos.x; let missed = false; for (let k = 0; k < 40; k++) { E.tick(C, 0.1); if (C.events.some((e) => e.type === 'castStop' && e.range)) missed = true; C.events.length = 0; }
   check(missed && w.hp === hp, 'the fireball misses a target that ran out of range');

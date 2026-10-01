@@ -446,7 +446,7 @@
   // docs/plans/2026-09-30-horizontal-progression-design.md
   // Step Back (v10.9, distance): every class can hop 8 m away from the nearest enemy; it is how you kite after a freeze.
   // No global cooldown, so it can follow a spell. It joins the action bar with the one-on-one AI (distance stage 3).
-  D.ABILITIES.step_back = { id: 'step_back', name: 'Step Back', cls: 'all', lvl: 1, cost: 0, cd: 12, gcd: false, target: 'self', stepBack: 8, icon: 'boots',
+  D.ABILITIES.step_back = { id: 'step_back', name: 'Step Back', cls: 'all', lvl: 1, cost: 0, cd: 12, gcd: false, target: 'self', combatOnly: true, stepBack: 8, icon: 'boots',
     desc: 'Hop 8 m back from the nearest enemy. Melee attacks cannot reach you until it closes in again. 12 sec cooldown.' };
   // Reactions (v10.4): an event can light an ability for a few seconds. `on`: hit (a spell or attack of `from` lands),
   // melee (a weapon hit), crit (a critical hit of `from`), autoshot, tick (a damage-over-time tick of `from`), avoided
