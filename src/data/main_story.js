@@ -8,6 +8,7 @@
     'report_gryan', 'peoples_militia', 'hidden_enemies', 'venture_contracts', 'quarry_ledgers', // Chapter 1
     'defias_brotherhood', 'galardell_scout', 'whelp_scales', 'whelp_hunt', 'durnholde_scout', 'syndicate_badges', 'angerfang_scout', 'whelp_collars', // Chapter 2
     'venture_ledgers_a', 'venture_ledgers_h', 'a_syndicate', 'a_documents', 'h_syndicate', 'h_documents', // Chapter 3
+    'cw_warm_coins', 'cw_press', 'cw_mintmaster', // Chapter 4: the warm coins in Coppergulch and the Coinworks (no scene of their own)
     'bsa_blackrock', 'bsh_blackrock', 'bsh_broodlings', 'brd_jail_break', 'st_ledger_a', 'st_ledger_h', // Chapter 5
   ];
   for (const q of D.MAIN_STORY) if (D.QUESTS[q]) D.QUESTS[q].main = true;
