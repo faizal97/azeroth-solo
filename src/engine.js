@@ -626,7 +626,7 @@
       addAura(C, tgt, { id: ab.dot.id, until: C.t + ab.dot.ticks * ab.dot.every, every: ab.dot.every, next: C.t + ab.dot.every, dot: per, school: ab.dot.school, src: u.uid, ab: abId });
     }
     // a "party" heal or heal over time (the bard's songs, v10.2) reaches every living party member
-    const healWho = ab.target === 'party' ? alive(friends(C, u)) : tgt ? [tgt] : [];
+    const healWho = ab.target === 'party' ? alive(friends(C, u)).filter((a) => !a.pos || !u.pos || E.dist(u, a) <= DIST.ally) : tgt ? [tgt] : []; // a group heal reaches 40 m, as a group buff
     if (ab.hot) {
       const per = (ab.hot.heal + ab.hot.perLvl * L + (ab.hot.coef || 0) * u.st.sp) * (1 + (tmOf(u).hot[abId] || 0) / 100);
       for (const w of healWho) addAura(C, w, { id: ab.hot.id, until: C.t + ab.hot.ticks * ab.hot.every, every: ab.hot.every, next: C.t + ab.hot.every, hot: per, src: u.uid, ab: abId });
@@ -670,7 +670,8 @@
     if (ab.needSeal) u.auras = u.auras.filter((a) => a.id !== 'seal');
     if (ab.freeOf) { u.stunUntil = 0; u.auras = u.auras.filter((a) => !a.slow); }
     if (ab.stunImmune) u.stunImmuneUntil = C.t + ab.stunImmune;
-    if (ab.stompAll) { for (const e of alive(foes(C, u))) if (!e.boss) { e.stunUntil = C.t + ab.stompAll; if (ab.fear) { e.fleeUntil = C.t + ab.stompAll; e.fleeFrom = u.uid; } ev(C, { type: 'stun', tgt: e.uid, dur: ab.stompAll, fear: !!ab.fear }); } ev(C, { type: 'emote', uid: u.uid, text: `${u.name} stomps the ground!` }); }
+    // a stomp or a scream reaches the foes within 8 m (stage 4)
+    if (ab.stompAll) { for (const e of alive(foes(C, u))) if (!e.boss && (!e.pos || !u.pos || E.dist(u, e) <= (ab.radius || DIST.radius))) { e.stunUntil = C.t + ab.stompAll; if (ab.fear) { e.fleeUntil = C.t + ab.stompAll; e.fleeFrom = u.uid; } ev(C, { type: 'stun', tgt: e.uid, dur: ab.stompAll, fear: !!ab.fear }); } ev(C, { type: 'emote', uid: u.uid, text: `${u.name} stomps the ground!` }); }
     if (ab.cleanse) u.auras = u.auras.filter((a) => !(a.dot != null && a.src !== u.uid));
     if (ab.dropThreat) {
       const others = alive(friends(C, u)).filter((a) => a !== u);

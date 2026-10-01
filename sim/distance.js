@@ -107,5 +107,14 @@ const run = (C, s) => { for (let k = 0; k < s / 0.1 && !C.over; k++) E.tick(C, 0
   check(shot, 'a spear thrower throws from range (physical, not a melee swing)');
   const t = mob('frostmane_troll', 9), w3 = ch('warrior', 'ally'); const C3 = E.fight([w3], [t], {}); check(E.dist(w3, t) <= DI.melee, 'a melee monster still starts in contact');
 }
+// 13. stomps and screams reach 8 m; a group heal reaches 40 m (stage 4)
+{
+  const p = ch('priest', 'ally'), a = mob('defias_thug', L), b = mob('defias_thug', L); const C = E.fight([p], [a, b], {}); at(p, 0); at(a, 3); at(b, 20); p.res = p.maxRes;
+  E.use(C, p, 'psychic_scream'); check(a.fleeUntil > C.t && !(b.fleeUntil > C.t), 'Psychic Scream scares a foe at 3 m, not one at 20 m');
+  const pr = ch('bard', 'ally', 'healer'), n = ch('warrior', 'ally', 'tank'), f = ch('mage', 'ally'), th = mob('defias_thug', L); const C2 = E.fight([pr, n, f], [th], {}); at(pr, 0); at(n, 10); at(f, -50); th.stunUntil = 99; th.kind = 'mob';
+  for (const u of [pr, n, f]) { u.hp = Math.round(u.maxHp / 2); u.kind = 'script'; } pr.res = pr.maxRes; const h0 = n.hp, f0 = f.hp;
+  const why = E.use(C2, pr, 'chorus_grove'); for (let k = 0; k < 30; k++) E.tick(C2, 0.1);
+  check(!why && n.hp > h0 && f.hp === f0, `a group heal (Chorus Grove) heals an ally at 10 m, not one at 50 m (${why || 'cast'})`);
+}
 console.log(`distance: ${ok}/${ok + bad} checks pass`);
 process.exitCode = bad ? 1 : 0;
