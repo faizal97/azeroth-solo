@@ -946,6 +946,9 @@
   const soloFight = (C, u, en) => !!soloFoe(en) && alive(friends(C, u)).filter((x) => x.kind !== 'pet').length === 1;
   function soloThink(C, u, f, b, has, try_) {
     const sk = b.skill || 0.5, hp = u.hp / u.maxHp, roll = () => Math.random() < 0.4 + 0.6 * sk, k = soloKit(u.cls);
+    // a bard keeps its 30-minute songs playing everywhere, so a one-on-one starts with them up (a player's carry in from
+    // outside the fight the same way): no opening seconds spent singing, Dirge and the Dissonant Note come first
+    if (u.cls === 'bard' && !u.soloSung) { u.soloSung = 1; for (const id of ['marching_song', 'hearthsong', 'anthem_of_stone']) if (has(id) && !auraOf(u, id)) { E.use(C, u, id); u.gcdUntil = 0; } }
     // distance: a heal is safe while the foe cannot reach you (held, or a melee foe still out of reach), so heal earlier then
     const safe = !!(u.pos && f.pos) && (holdLeft(C, f) > 1.5 || (reachOf(f) <= DIST.melee && E.dist(u, f) > DIST.melee + 6));
     if ((hp < 0.2 + 0.3 * sk || (safe && hp < G_KITE.safeHeal)) && roll()) for (const id of k.heals) {
@@ -977,10 +980,10 @@
         }
       }
     }
-    const free = !(f.stunUntil > C.t);
+    const free = !(f.stunUntil > C.t), near = !u.pos || !f.pos || E.dist(u, f) <= DIST.radius; // a stomp or a scream reaches 8 m
     if (free && (f.cast || hp < 0.5 || Math.random() < 0.12 * sk) && roll()) {
       for (const id of k.stuns) if (has(id) && try_(id, f)) return true;
-      for (const id of k.fears) if (has(id) && try_(id)) return true;
+      if (near) for (const id of k.fears) if (has(id) && try_(id)) return true;
     }
     const thrifty = (id) => D.CLASSES[u.cls].resource === 'mana' && u.res / u.maxRes < 0.4 && f.hp / f.maxHp > 0.25 && abCost(D.ABILITIES[id], u) > u.maxRes * 0.04; // save mana for the main attack
     if (free && Math.random() < 0.5 * sk) for (const id of k.snares) if (has(id) && !auraOf(f, id) && !thrifty(id) && try_(id, f)) return true;
