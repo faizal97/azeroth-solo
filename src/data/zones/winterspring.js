@@ -18,7 +18,7 @@
 
   Object.assign(D.MOBS, {
     winterfall_ursa: { name: 'Icebrow Ursa', lvl: [57, 58], family: 'humanoid', hpMult: 1.1, drops: [['thieves_coin', 0.45], ['linen_cloth', 0.3]], qdrops: [['winterfall_beads', 0.45]] },
-    winterfall_shaman: { name: 'Icebrow Shaman', lvl: [57, 58], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.35]], qdrops: [['winterfall_beads', 0.45]], aggro: 'Icebrow... not... share!' },
+    winterfall_shaman: { name: 'Icebrow Shaman', ranged: 'frost', lvl: [57, 58], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.35]], qdrops: [['winterfall_beads', 0.45]], aggro: 'Icebrow... not... share!' },
     frostsaber_stalker: { name: 'Snowcat Stalker', lvl: [57, 58], family: 'beast', drops: [['light_leather', 0.3]], qdrops: [['frostsaber_pelt', 0.55]] },
     ice_thistle_yeti: { name: 'Frostburr Yeti', lvl: [58, 59], family: 'beast', hpMult: 1.2, drops: [['light_leather', 0.35]], qdrops: [['thick_yeti_fur', 0.55]] },
     chillwind_chimaera: { name: 'Greyfrost Chimaera', lvl: [58, 59], family: 'beast', drops: [['light_leather', 0.3]], qdrops: [['chimaera_horn', 0.5]] },

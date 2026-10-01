@@ -53,7 +53,7 @@
     // boss adds
     firesworn: { name: 'Firesworn', lvl: [60, 60], family: 'elemental', hpMult: 0.55, dmgMult: 0.5, drops: [] },
     core_rager: { name: 'Core Rager', lvl: [60, 60], family: 'beast', hpMult: 0.6, dmgMult: 0.45, drops: [] },
-    flamewaker_priest: { name: 'Ashbound Priest', lvl: [60, 60], family: 'elemental', hpMult: 0.8, drops: [['gold_dust', 0.2]] },
+    flamewaker_priest: { name: 'Ashbound Priest', ranged: 'fire', lvl: [60, 60], family: 'elemental', hpMult: 0.8, drops: [['gold_dust', 0.2]] },
     flamewaker_elite: { name: 'Ashbound Elite', lvl: [60, 60], family: 'elemental', hpMult: 0.8, dmgMult: 0.6, drops: [['gold_dust', 0.3]] },
     flamewaker_healer: { name: 'Ashbound Healer', lvl: [60, 60], family: 'elemental', hpMult: 0.6, dmgMult: 0.5, special: 'cook', specialText: 'The Ashbound Healer knits its flames back together.', drops: [['gold_dust', 0.2]] },
     son_of_flame: { name: 'Son of Flame', lvl: [60, 60], family: 'elemental', hpMult: 0.9, drops: [] },

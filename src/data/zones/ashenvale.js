@@ -41,12 +41,12 @@
   // creatures
   Object.assign(D.MOBS, {
     wrathtail_myrmidon: { name: 'Scalelash Myrmidon', lvl: [22, 23], family: 'humanoid', drops: [['murloc_eye', 0.3], ['thieves_coin', 0.35]], qdrops: [['naga_scale', 0.55]], aggro: 'The sea will take you!' },
-    wrathtail_sea_witch: { name: 'Scalelash Sea Witch', lvl: [23, 24], family: 'humanoid', drops: [['murloc_eye', 0.3], ['thieves_coin', 0.4]], qdrops: [['sea_witch_pearl', 0.45], ['naga_scale', 0.3]], aggro: 'Drown, surface-dweller!' },
+    wrathtail_sea_witch: { name: 'Scalelash Sea Witch', ranged: 'frost', lvl: [23, 24], family: 'humanoid', drops: [['murloc_eye', 0.3], ['thieves_coin', 0.4]], qdrops: [['sea_witch_pearl', 0.45], ['naga_scale', 0.3]], aggro: 'Drown, surface-dweller!' },
     ashenvale_bear: { name: 'Elderglen Bear', lvl: [22, 23], family: 'beast', hpMult: 1.1, drops: [['ruined_pelt', 0.4]], qdrops: [['bear_claw_av', 0.55]] },
     ghostpaw_runner: { name: 'Mistpaw Runner', lvl: [23, 24], family: 'beast', drops: [['ruined_pelt', 0.4]], qdrops: [['ghostpaw_pelt', 0.55]] },
     ghostpaw_alpha: { name: 'Mistpaw Alpha', lvl: [25, 27], family: 'beast', hpMult: 1.15, drops: [['ruined_pelt', 0.4]], qdrops: [['alpha_fang', 0.5], ['ghostpaw_pelt', 0.3]] },
     thistlefur_ursa: { name: 'Briarpelt Ursa', lvl: [24, 25], family: 'humanoid', hpMult: 1.1, drops: [['furbolg_charm', 0.35], ['linen_cloth', 0.25]], qdrops: [['thistlefur_totem', 0.45]], aggro: 'Briarpelt territory!' },
-    thistlefur_shaman: { name: 'Briarpelt Shaman', lvl: [25, 26], family: 'humanoid', drops: [['furbolg_charm', 0.35], ['linen_cloth', 0.3]], qdrops: [['thistlefur_totem', 0.5]], aggro: 'The spirits reject you!' },
+    thistlefur_shaman: { name: 'Briarpelt Shaman', ranged: 'nature', lvl: [25, 26], family: 'humanoid', drops: [['furbolg_charm', 0.35], ['linen_cloth', 0.3]], qdrops: [['thistlefur_totem', 0.5]], aggro: 'The spirits reject you!' },
     bleakheart_satyr: { name: 'Sourheart Satyr', lvl: [26, 27], family: 'demon', drops: [['thieves_coin', 0.45], ['linen_cloth', 0.3]], qdrops: [['satyr_horn', 0.55]], aggro: 'Your soul will make a fine meal.' },
     bleakheart_hellcaller: { name: 'Sourheart Hellcaller', lvl: [27, 28], family: 'demon', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['fel_orb', 0.45], ['satyr_horn', 0.3]], aggro: 'Burn in gloom fire!' },
     mannoroc_lasher: { name: 'Pit Lasher', lvl: [28, 29], family: 'demon', hpMult: 1.15, drops: [['thieves_coin', 0.5]], qdrops: [['demon_heart', 0.5]] },
@@ -55,7 +55,7 @@
     sharptalon: { name: 'Skyrend', lvl: [30, 30], family: 'beast', elite: true, named: true, hpMult: 5.5, dmgMult: 2.6, special: 'hogger', drops: [['ruined_pelt', 1]], qdrops: [['sharptalon_claw', 1]], loot: ['sharptalon_cloak', 'sharptalon_bow', 'sharptalon_band'] },
     // The Tidehollow Deeps
     blackfathom_myrmidon: { name: 'Tidehollow Myrmidon', lvl: [24, 25], family: 'humanoid', drops: [['murloc_eye', 0.3], ['thieves_coin', 0.4]] },
-    twilight_acolyte: { name: 'Twilight Acolyte', lvl: [24, 25], family: 'humanoid', drops: [['linen_cloth', 0.35], ['thieves_coin', 0.4]] },
+    twilight_acolyte: { name: 'Twilight Acolyte', ranged: 'shadow', lvl: [24, 25], family: 'humanoid', drops: [['linen_cloth', 0.35], ['thieves_coin', 0.4]] },
     aku_mai_snapjaw: { name: "Old Coilmaw Snapjaw", lvl: [25, 26], family: 'beast', hpMult: 1.1, drops: [['ruined_pelt', 0.3]] },
     ghamoo_ra: { name: "Shellmaw", lvl: [25, 25], family: 'beast', boss: true, special: 'slam', loot: ['ghamoo_shell', 'ghamoo_band'] },
     lady_sarevess: { name: 'Lady Szira', lvl: [26, 26], family: 'humanoid', boss: true, special: 'molten', loot: ['sarevess_bow', 'sarevess_gloves'], qdrops: [['sarevess_crown', 1]], aggro: 'You will be food for the deep!' },

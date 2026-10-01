@@ -52,7 +52,7 @@
     redridge_mongrel: { name: 'Stoneharrow Mongrel', lvl: [18, 19], family: 'humanoid', drops: [['gnoll_mane', 0.35], ['linen_cloth', 0.3]], qdrops: [['gnoll_paw', 0.5]], aggro: 'Yip! Yip! Kill!' },
     redridge_poacher: { name: 'Stoneharrow Poacher', lvl: [19, 20], family: 'humanoid', drops: [['gnoll_mane', 0.35], ['linen_cloth', 0.3]], qdrops: [['poacher_bow', 0.5], ['gnoll_paw', 0.35]], aggro: 'More meat for the pot!' },
     redridge_brute: { name: 'Stoneharrow Brute', lvl: [20, 21], family: 'humanoid', hpMult: 1.15, drops: [['gnoll_mane', 0.4], ['linen_cloth', 0.3]], qdrops: [['gnoll_paw', 0.4]], aggro: 'Brute smash you!' },
-    redridge_mystic: { name: 'Stoneharrow Mystic', lvl: [20, 21], family: 'humanoid', drops: [['gnoll_mane', 0.35], ['linen_cloth', 0.3]], qdrops: [['mystic_totem', 0.5]], aggro: 'The bones say you die!' },
+    redridge_mystic: { name: 'Stoneharrow Mystic', ranged: 'nature', lvl: [20, 21], family: 'humanoid', drops: [['gnoll_mane', 0.35], ['linen_cloth', 0.3]], qdrops: [['mystic_totem', 0.5]], aggro: 'The bones say you die!' },
     shadowhide_warrior: { name: 'Tarfur Warrior', lvl: [22, 23], family: 'humanoid', hpMult: 1.1, drops: [['gnoll_mane', 0.4], ['linen_cloth', 0.3]], qdrops: [['shadowhide_pendant', 0.5]], aggro: 'Tarfur rule these hills!' },
     shadowhide_darkweaver: { name: 'Tarfur Darkweaver', lvl: [23, 24], family: 'humanoid', drops: [['gnoll_mane', 0.35], ['linen_cloth', 0.3]], qdrops: [['shadowhide_pendant', 0.5]], aggro: 'Darkness takes you!' },
     murloc_flesheater: { name: 'Mireling Flesheater', lvl: [19, 20], family: 'humanoid', drops: [['murloc_eye', 0.4]], qdrops: [['rr_murloc_fin', 0.55]], aggro: 'Mrglglglgl!' },

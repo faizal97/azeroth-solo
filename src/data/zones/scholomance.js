@@ -19,8 +19,8 @@
   gear('gandling_plate', 'Deathbone Chestplate', 'chest', { atype: 'mail', lvl: 60, armor: 520, stats: { str: 24, sta: 20 }, icon: 'chest_mail', sell: 13600 });
 
   Object.assign(D.MOBS, {
-    scholomance_acolyte: { name: 'Blackcloister Acolyte', lvl: [57, 58], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.35]] },
-    scholomance_necromancer: { name: 'Blackcloister Necromancer', lvl: [58, 59], family: 'humanoid', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.35]], aggro: 'Another body for the lessons!' },
+    scholomance_acolyte: { name: 'Blackcloister Acolyte', ranged: 'shadow', lvl: [57, 58], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.35]] },
+    scholomance_necromancer: { name: 'Blackcloister Necromancer', ranged: 'shadow', lvl: [58, 59], family: 'humanoid', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.35]], aggro: 'Another body for the lessons!' },
     risen_construct: { name: 'Risen Construct', lvl: [58, 59], family: 'undead', hpMult: 1.3, drops: [['rotting_flesh', 0.5]] },
     kirtonos_the_herald: { name: 'Skreel the Herald', lvl: [58, 58], family: 'demon', boss: true, special: 'kelris', summon: 'scholomance_acolyte', specialText: 'Skreel shrieks, and acolytes answer!', loot: ['kirtonos_cloak', 'jandice_gloves'], qdrops: [['kirtonos_blood', 1]] },
     jandice_barov: { name: 'Mirela Varga', lvl: [58, 58], family: 'undead', boss: true, special: 'whirl', specialText: 'Mirela splits into a dozen illusions!', loot: ['jandice_gloves', 'kirtonos_cloak'] },

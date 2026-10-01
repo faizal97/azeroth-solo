@@ -23,7 +23,7 @@
 
   Object.assign(D.MOBS, {
     sandfury_blood_drinker: { name: 'Duneskin Blood Drinker', lvl: [43, 44], family: 'humanoid', hpMult: 1.1, drops: [['troll_tusk', 0.45], ['linen_cloth', 0.3]], qdrops: [['sandfury_scalp', 0.5]], aggro: 'Your blood be ours!' },
-    sandfury_shadowcaster: { name: 'Duneskin Shadowcaster', lvl: [43, 44], family: 'humanoid', drops: [['troll_tusk', 0.4], ['linen_cloth', 0.35]], qdrops: [['sandfury_scalp', 0.4]], aggro: 'The sands swallow you!' },
+    sandfury_shadowcaster: { name: 'Duneskin Shadowcaster', ranged: 'shadow', lvl: [43, 44], family: 'humanoid', drops: [['troll_tusk', 0.4], ['linen_cloth', 0.35]], qdrops: [['sandfury_scalp', 0.4]], aggro: 'The sands swallow you!' },
     zul_farrak_zombie: { name: "Dune Temple Zombie", lvl: [44, 45], family: 'undead', drops: [['rotting_flesh', 0.4]] },
     antu_sul: { name: "Antuzz", lvl: [44, 44], family: 'humanoid', boss: true, special: 'kelris', summon: 'sandfury_blood_drinker', specialText: "Antuzz calls his servants!", loot: ['antusul_staff', 'antusul_boots'], aggro: "Lunch has arrived, my beautiful children!" },
     theka_the_martyr: { name: 'Vessa the Martyr', lvl: [45, 45], family: 'humanoid', boss: true, special: 'cook', specialText: 'Theka shifts into a scarab shell and heals!', loot: ['theka_robe', 'theka_bracers'] },

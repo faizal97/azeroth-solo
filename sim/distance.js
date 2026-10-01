@@ -91,5 +91,17 @@ const run = (C, s) => { for (let k = 0; k < s / 0.1 && !C.over; k++) E.tick(C, 0
   m.res = m.maxRes; check(E.canUse(C, m, 'fireball', f) === null, 'a spell reaches it');
   const x0 = w.pos.x, t0 = w.pos.y; f.stunUntil = 99; f.auras.push({ id: 'r', until: 99, root: true }); run(C, 1); check(Math.abs(w.pos.x - x0) < 0.01 && Math.abs(w.pos.y - t0) < 0.01, 'a fighter right under a flyer stands still (no running back and forth)');
 }
+// 12. ranged monsters (stage 4): start behind their line, attack from range with their school, stand their ground
+{
+  const w = ch('warrior', 'ally'), m = mob('frostmane_seer', 9); w.level = 9; const C = E.fight([w], [m], {});
+  check(E.dist(w, m) > 15, `a caster monster starts behind its line (${E.dist(w, m).toFixed(1)} m)`);
+  w.stunUntil = 99; m.target = w.uid; const hp = w.hp, x = m.pos.x; let bolt = false; for (let k = 0; k < 60; k++) { E.tick(C, 0.1); for (const e of C.events) if (e.type === 'dmg' && e.src === m.uid && e.school === 'frost') bolt = true; C.events.length = 0; }
+  check(bolt && w.hp < hp, 'it hits from range with a frost bolt');
+  check(Math.abs(m.pos.x - x) < 0.01, 'it stays where it is to cast, it does not walk in');
+  const h = mob('frostmane_headhunter', 9), w2 = ch('warrior', 'ally'); const C2 = E.fight([w2], [h], {}); w2.stunUntil = 99; h.target = w2.uid; let shot = false;
+  for (let k = 0; k < 60; k++) { E.tick(C2, 0.1); for (const e of C2.events) if (e.type === 'dmg' && e.src === h.uid && e.school === 'physical' && !e.melee) shot = true; C2.events.length = 0; }
+  check(shot, 'a spear thrower throws from range (physical, not a melee swing)');
+  const t = mob('frostmane_troll', 9), w3 = ch('warrior', 'ally'); const C3 = E.fight([w3], [t], {}); check(E.dist(w3, t) <= DI.melee, 'a melee monster still starts in contact');
+}
 console.log(`distance: ${ok}/${ok + bad} checks pass`);
 process.exitCode = bad ? 1 : 0;

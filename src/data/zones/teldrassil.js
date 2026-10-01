@@ -31,7 +31,7 @@
     timberling: { name: 'Rootling', lvl: [6, 7], family: 'elemental', drops: [['linen_cloth', 0.15]], qdrops: [['timberling_seed', 0.6]] },
     gnarlpine_ursa: { name: 'Mossback Ursa', lvl: [6, 7], family: 'humanoid', drops: [['furbolg_charm', 0.35], ['linen_cloth', 0.3]], aggro: 'You not welcome here!', qdrops: [['gnarlpine_totem', 0.55]] },
     gnarlpine_warrior: { name: 'Mossback Warrior', lvl: [8, 9], family: 'humanoid', drops: [['furbolg_charm', 0.4], ['linen_cloth', 0.3]], aggro: 'You not welcome here!' },
-    gnarlpine_shaman: { name: 'Mossback Shaman', lvl: [8, 9], family: 'humanoid', drops: [['furbolg_charm', 0.4], ['linen_cloth', 0.35]] },
+    gnarlpine_shaman: { name: 'Mossback Shaman', ranged: 'nature', lvl: [8, 9], family: 'humanoid', drops: [['furbolg_charm', 0.4], ['linen_cloth', 0.35]] },
     oakenscowl: { name: 'Old Barkjaw', lvl: [10, 10], family: 'humanoid', named: true, hpMult: 1.9, dmgMult: 1.25, drops: [['furbolg_charm', 1], ['oakenscowl_staff', 0.35]], aggro: 'The forest is ours!' },
     shadow_sprite: { name: 'Shadow Sprite', lvl: [7, 8], family: 'demon', drops: [['grell_earring', 0.35]] },
     vicious_grell: { name: 'Vicious Thornling', lvl: [8, 9], family: 'demon', drops: [['grell_earring', 0.4]], qdrops: [['grell_fang', 0.55]] },

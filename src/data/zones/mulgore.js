@@ -22,7 +22,7 @@
     prairie_wolf: { name: 'Prairie Wolf', lvl: [2, 3], family: 'beast', drops: [['ruined_pelt', 0.35], ['wolf_fang', 0.25]] },
     battleboar: { name: 'Tuskhog', lvl: [3, 4], family: 'beast', drops: [['boar_tusk', 0.4]], qdrops: [['battleboar_flank', 0.6]] },
     bristleback_quilboar: { name: 'Hollowtusk Spinehide', lvl: [3, 5], family: 'humanoid', drops: [['quilboar_tusk', 0.4], ['linen_cloth', 0.25]], aggro: 'Squeal! Intruder!' },
-    bristleback_shaman: { name: 'Hollowtusk Shaman', lvl: [4, 5], family: 'humanoid', drops: [['quilboar_tusk', 0.4], ['linen_cloth', 0.3]] },
+    bristleback_shaman: { name: 'Hollowtusk Shaman', ranged: 'nature', lvl: [4, 5], family: 'humanoid', drops: [['quilboar_tusk', 0.4], ['linen_cloth', 0.3]] },
     chief_sharptusk: { name: 'Chief Gorra Spinecrest', lvl: [6, 6], family: 'humanoid', named: true, hpMult: 1.7, dmgMult: 1.2, drops: [['quilboar_tusk', 1]], aggro: 'The thorns will drink your blood!' },
     adult_plainstrider: { name: 'Adult Longneck', lvl: [6, 7], family: 'beast', drops: [['ruined_pelt', 0.3]], qdrops: [['strider_meat', 0.6]] },
     swoop: { name: 'Swoop', lvl: [6, 7], family: 'beast', drops: [['wolf_fang', 0.2]], qdrops: [['swoop_quill', 0.6]] },

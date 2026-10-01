@@ -34,7 +34,7 @@
     green_recluse: { name: 'Green Recluse', lvl: [24, 25], family: 'beast', drops: [['ruined_pelt', 0.25]], qdrops: [['recluse_silk', 0.55]] },
     venom_web_spider: { name: 'Venom Web Spider', lvl: [25, 26], family: 'beast', drops: [['ruined_pelt', 0.25]], qdrops: [['venom_gland', 0.55]] },
     skeletal_warrior: { name: 'Skeletal Warrior', lvl: [26, 27], family: 'undead', drops: [['thieves_coin', 0.3]], qdrops: [['bone_fragment', 0.55]] },
-    skeletal_mage: { name: 'Skeletal Mage', lvl: [27, 28], family: 'undead', drops: [['thieves_coin', 0.3], ['linen_cloth', 0.2]], qdrops: [['bone_fragment', 0.4], ['grave_moss', 0.4]] },
+    skeletal_mage: { name: 'Skeletal Mage', ranged: 'frost', lvl: [27, 28], family: 'undead', drops: [['thieves_coin', 0.3], ['linen_cloth', 0.2]], qdrops: [['bone_fragment', 0.4], ['grave_moss', 0.4]] },
     plague_spreader: { name: 'Plague Spreader', lvl: [26, 27], family: 'undead', drops: [['rotting_flesh', 0.4]], qdrops: [['ghoul_rib', 0.55]] },
     rotted_one: { name: 'Rotted One', lvl: [27, 28], family: 'undead', hpMult: 1.15, drops: [['rotting_flesh', 0.5]], qdrops: [['rotting_heart', 0.5]] },
     splinter_fist_warrior: { name: 'Knotjaw Warrior', lvl: [27, 28], family: 'giant', hpMult: 1.15, drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['ogre_tooth', 0.55]], aggro: 'Me smash you flat!' },

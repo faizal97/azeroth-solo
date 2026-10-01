@@ -44,7 +44,7 @@
     kul_tiras_marine: { name: 'Brineholt Marine', lvl: [9, 10], family: 'humanoid', drops: [['thieves_coin', 0.45], ['linen_cloth', 0.35]], qdrops: [['kultiras_insignia', 0.6], ['kultiras_rum', 0.5]], aggro: 'Hold the line!' },
     lieutenant_benedict: { name: 'Lieutenant Harwick', lvl: [10, 10], family: 'humanoid', named: true, hpMult: 1.9, dmgMult: 1.25, drops: [['thieves_coin', 1], ['benedict_cutlass', 0.35]], aggro: 'You filthy orcs will never take this keep!' },
     ragefire_trogg: { name: 'Smokepit Cavekin', lvl: [10, 11], family: 'humanoid', drops: [['trogg_stone', 0.5], ['linen_cloth', 0.4]] },
-    searing_blade_cultist: { name: 'Hollow Eye Cultist', lvl: [10, 11], family: 'humanoid', drops: [['linen_cloth', 0.5], ['thieves_coin', 0.3]] },
+    searing_blade_cultist: { name: 'Hollow Eye Cultist', ranged: 'shadow', lvl: [10, 11], family: 'humanoid', drops: [['linen_cloth', 0.5], ['thieves_coin', 0.3]] },
     earthborer: { name: 'Earthborer', lvl: [10, 11], family: 'beast', drops: [['ruined_pelt', 0.3]] },
     oggleflint: { name: 'Skagg', lvl: [11, 11], family: 'humanoid', boss: true, special: 'slam', aggro: 'Grrrr! Skagg smash!', loot: ['oggleflint_mace', 'bazzalan_belt'] },
     taragaman: { name: 'Bazzak the Hungerer', lvl: [12, 12], family: 'demon', boss: true, special: 'whirl', aggro: 'They call me the Hungerer. Soon you will see why!', loot: ['cursed_felblade', 'subterranean_cape'], qdrops: [['taragaman_heart', 1]] },

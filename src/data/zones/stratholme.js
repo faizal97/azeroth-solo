@@ -20,7 +20,7 @@
 
   Object.assign(D.MOBS, {
     crimson_guardsman: { name: 'Crimson Guardsman', lvl: [58, 59], family: 'humanoid', hpMult: 1.1, drops: [['thieves_coin', 0.55], ['linen_cloth', 0.35]], aggro: 'Burn the plague out of this city!' },
-    crimson_conjuror: { name: 'Crimson Conjuror', lvl: [58, 59], family: 'humanoid', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.4]] },
+    crimson_conjuror: { name: 'Crimson Conjuror', ranged: 'fire', lvl: [58, 59], family: 'humanoid', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.4]] },
     skeletal_guardian: { name: 'Skeletal Guardian', lvl: [58, 59], family: 'undead', drops: [['thieves_coin', 0.4]] },
     bile_spewer: { name: 'Bile Spewer', lvl: [59, 60], family: 'undead', hpMult: 1.3, drops: [['rotting_flesh', 0.6]] },
     timmy_the_cruel: { name: 'Nibbles the Cruel', lvl: [58, 58], family: 'undead', boss: true, special: 'whirl', specialText: 'Nibbles the Cruel ravages everyone nearby!', loot: ['timmy_gloves', 'galford_boots'], aggro: 'TIMMY!' },

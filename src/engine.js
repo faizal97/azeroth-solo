@@ -115,7 +115,7 @@
   // across the ground, z height (flyers). Distance is true 3D. Everyone runs at the same speed; snares slow movement as
   // well as attacks, roots stop it. Every ability has a range (data `range`, else a default from its kind). Stage 1:
   // fights start in contact (everyone within reach, as before), so outcomes do not change until something moves.
-  const DIST = { speed: 7, melee: 5, spell: 30, shot: 35, ally: 40, radius: 8, flyLow: 4 };
+  const DIST = { speed: 7, melee: 5, spell: 30, shot: 35, ally: 40, radius: 8, flyLow: 4, back: 18, boltMult: 0.8 }; // back: how far behind its line a ranged fighter starts (stage 4)
   E.DIST = DIST;
   const CASTERS = { mage: 1, warlock: 1, priest: 1, druid: 1, shaman: 1, bard: 1 };
   E.dist = (a, b) => { const p = a.pos || {}, q = b.pos || {}; return Math.hypot((p.x || 0) - (q.x || 0), (p.y || 0) - (q.y || 0), (p.z || 0) - (q.z || 0)); };
@@ -147,9 +147,10 @@
   // where a fighter stands when a fight begins: in contact (stage 1), or `apart` metres from the other side
   function place(C, u, i) {
     const s = u.side === 'ally' ? -1 : 1, gap = (C.opts && C.opts.apart) || 0;
-    const fly = u.kind === 'mob' && (D.MOBS[u.key] || {}).fly;
-    u.pos = { x: s * (gap / 2 + 0.5 + Math.random() * 1.2), y: (Math.random() * 2 - 1), z: fly || 0 };
-    u.pos0 = { x: u.pos.x - s * gap / 2, y: u.pos.y, z: u.pos.z }; // where it would stand in contact: the scene draws a fighter moved by how far it is from here
+    const M = u.kind === 'mob' ? D.MOBS[u.key] || {} : {}, fly = M.fly, back = M.ranged ? DIST.back : 0; // stage 4: an archer or caster starts behind its line
+    const contact = s * (0.5 + Math.random() * 1.2);
+    u.pos = { x: contact + s * (gap / 2 + back), y: (Math.random() * 2 - 1), z: fly || 0 };
+    u.pos0 = { x: contact, y: u.pos.y, z: u.pos.z }; // where it would stand in contact: the scene draws a fighter moved by how far it is from here
   }
   // movement for a tick: a fleeing fighter runs from the one who scared it; anyone else closes on its target when out
   // of its reach. A fighter casting stands still for it. Roots stop it; snares slow it like they slow attacks.
@@ -454,6 +455,15 @@
     if (flat(u)) return rnd(u.dmg[0], u.dmg[1]);
     return rnd(u.st.wMin, u.st.wMax) + (u.st.apTotal / 14) * u.st.wSpeed;
   }
+  // a ranged monster's attack (stage 4): an archer's shot is a physical swing from range (it can be dodged, armour cuts
+  // it); a caster's bolt is its school's (it can be resisted, armour does not cut it). Same damage as its melee swing.
+  function mobBolt(C, u, tgt, school) {
+    if (school === 'physical') return swing(C, u, tgt, { ranged: true, ab: 'mob_shot' });
+    const r = Math.random() * 100, miss = 4 + Math.max(0, levelDiff(u, tgt)) * 1.5;
+    if (r < miss) { ev(C, { type: 'avoid', src: u.uid, tgt: tgt.uid, what: 'resist', ab: null }); return 0; }
+    let dmg = weaponDamage(u) * DIST.boltMult; if (u.enrage) dmg *= u.enrage; const crit = r < miss + 5; if (crit) dmg *= 1.5; // armour does not cut a bolt, so it hits a little lighter than the swing
+    return dealDamage(C, u, tgt, dmg, { school, crit });
+  }
 
   function swing(C, src, tgt, o) {
     o = o || {};
@@ -464,7 +474,7 @@
       if (tgt.side === 'enemy') tgt.threat[src.uid] = (tgt.threat[src.uid] || 0) + 1;
       return 0;
     }
-    let dmg = o.ranged ? rnd(src.st.rMin, src.st.rMax) + (src.st.rap / 14) * src.st.rSpeed : weaponDamage(src) + (o.bonus || 0);
+    let dmg = o.ranged && !flat(src) ? rnd(src.st.rMin, src.st.rMax) + (src.st.rap / 14) * src.st.rSpeed : weaponDamage(src) + (o.bonus || 0);
     if (src.kind === 'mob' && src.enrage) dmg *= src.enrage;
     if (res === 'crit') dmg *= 2;
     const done = dealDamage(C, src, tgt, dmg, { school: 'physical', crit: res === 'crit', ab: o.ab || (o.ranged ? 'auto_shot' : null), threat: o.threat, melee: !o.ranged });
@@ -1270,13 +1280,14 @@
       const tgt = C.units[u.target];
       if (tgt && !tgt.dead && tgt.side !== u.side && (u.kind === 'mob' || u.auto)) {
         const shoot = u.cls === 'hunter' && u.st.rMin != null && !u.form;
-        const reach = shoot ? DIST.shot : DIST.melee;
+        const bolt = u.kind === 'mob' && (D.MOBS[u.key] || {}).ranged; // stage 4: an archer's shot or a caster's bolt, from range
+        const reach = shoot ? DIST.shot : bolt ? DIST.spell : DIST.melee;
         const sp = flat(u) ? u.swingSpeed : shoot ? u.st.rswing : u.st.swing;
         u.swingT -= dt * (1 - slowPct(u) / 100);
         if (u.swingT <= 0 && u.pos && tgt.pos && E.dist(u, tgt) > reach + 0.01) u.swingT = 0; // out of reach: the swing waits
         else if (u.swingT <= 0) {
           u.swingT += sp;
-          if (u.noMelee) { /* casts instead */ } else if (shoot) swing(C, u, tgt, { ranged: true }); else if (flat(u) || u.cls === 'warrior' || u.cls === 'rogue' || u.cls === 'paladin' || C.t - u.lastCastT > 1.6) swing(C, u, tgt);
+          if (u.noMelee) { /* casts instead */ } else if (bolt) mobBolt(C, u, tgt, bolt); else if (shoot) swing(C, u, tgt, { ranged: true }); else if (flat(u) || u.cls === 'warrior' || u.cls === 'rogue' || u.cls === 'paladin' || C.t - u.lastCastT > 1.6) swing(C, u, tgt);
           if (u.side === 'ally') { tgt.hitBy = tgt.hitBy || {}; tgt.hitBy[u.uid] = true; }
         }
       } else if (u.side === 'ally' && (!tgt || tgt.dead)) {

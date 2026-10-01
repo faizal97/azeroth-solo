@@ -27,7 +27,7 @@
 
   Object.assign(D.MOBS, {
     wastewander_bandit: { name: 'Dustcloak Bandit', lvl: [40, 41], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['bandit_bandana', 0.5], ['water_pouch', 0.3]], aggro: 'This desert is ours!' },
-    wastewander_shadow_mage: { name: 'Dustcloak Shadow Mage', lvl: [41, 42], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.35]], qdrops: [['water_pouch', 0.45]], aggro: 'The sands will bury you!' },
+    wastewander_shadow_mage: { name: 'Dustcloak Shadow Mage', ranged: 'shadow', lvl: [41, 42], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.35]], qdrops: [['water_pouch', 0.45]], aggro: 'The sands will bury you!' },
     thistleshrub_rootshaper: { name: 'Spinebush Rootshaper', lvl: [40, 41], family: 'elemental', hpMult: 1.1, drops: [['trogg_stone', 0.3]], qdrops: [['rootshaper_dew', 0.55]] },
     southsea_pirate: { name: 'Blackgull Pirate', lvl: [42, 43], family: 'humanoid', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.3]], qdrops: [['pirate_hat', 0.5], ['pirate_gold', 0.3]], aggro: 'Arr, fresh meat for the sharks!' },
     southsea_cannoneer: { name: 'Blackgull Cannoneer', lvl: [43, 44], family: 'humanoid', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.3]], qdrops: [['pirate_gold', 0.45]], aggro: 'Fire in the hole!' },
@@ -35,7 +35,7 @@
     centipaar_stinger: { name: 'Hivecrawler Stinger', lvl: [43, 44], family: 'beast', drops: [['ruined_pelt', 0.2]], qdrops: [['stinger_venom', 0.55], ['silithid_carapace', 0.3]] },
     scorpid_dunestalker: { name: 'Scorpion Dunestalker', lvl: [43, 44], family: 'beast', hpMult: 1.1, drops: [['ruined_pelt', 0.3]], qdrops: [['scorpid_stinger_t', 0.55]] },
     dunemaul_brute: { name: 'Sandbrute Brute', lvl: [44, 45], family: 'giant', hpMult: 1.2, drops: [['thieves_coin', 0.55], ['linen_cloth', 0.3]], qdrops: [['dunemaul_tooth', 0.55]], aggro: 'Sandbrute smash!' },
-    dunemaul_ogre_mage: { name: 'Sandbrute Ogre Mage', lvl: [45, 46], family: 'giant', hpMult: 1.1, drops: [['thieves_coin', 0.55], ['linen_cloth', 0.35]], qdrops: [['dunemaul_tooth', 0.4]], aggro: 'Me burn you! No, me! Both!' },
+    dunemaul_ogre_mage: { name: 'Sandbrute Ogre Mage', ranged: 'arcane', lvl: [45, 46], family: 'giant', hpMult: 1.1, drops: [['thieves_coin', 0.55], ['linen_cloth', 0.35]], qdrops: [['dunemaul_tooth', 0.4]], aggro: 'Me burn you! No, me! Both!' },
     caliph_scorpidsting: { name: 'Caliph Stingtail', lvl: [44, 44], family: 'humanoid', named: true, hpMult: 2.2, dmgMult: 1.35, drops: [['caliph_blade', 0.35], ['thieves_coin', 1]], qdrops: [['caliph_helm', 1]], aggro: 'Nobody steals from the Caliph!' },
     ossa_drywell: { name: 'Ossa Drywell', sprite: 'wastewander_shadow_mage', lvl: [43, 43], family: 'humanoid', elite: true, named: true, hpMult: 5.5, dmgMult: 2.5, special: 'molten', specialText: 'Ossa Drywell opens a valve of scalding steam!', drops: [['thieves_coin', 1]], qdrops: [['drywell_key', 1]], loot: ['drywell_staff', 'drywell_shawl', 'drywell_treads'], aggro: 'Every drop in this desert is mine!' },
     kregg_keelhaul: { name: 'Captain Rusk Hookhand', lvl: [46, 46], family: 'humanoid', elite: true, named: true, hpMult: 5.5, dmgMult: 2.6, special: 'slam', specialText: 'Captain Rusk Hookhand swings his hook!', drops: [['thieves_coin', 1]], qdrops: [['keelhaul_hook', 1]], loot: ['keelhaul_coat', 'keelhaul_cutlass', 'keelhaul_ring'], aggro: 'Nobody boards my ship uninvited!' },
