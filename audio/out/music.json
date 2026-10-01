@@ -76,22 +76,23 @@
   "loop_s": 40.0
  },
  "veshmira": {
-  "bpm": 146,
-  "bars": 16,
+  "bpm": 104,
+  "bars": 24,
   "key": "D minor",
-  "loop_s": 26.3014
+  "loop_s": 55.3846
  },
  "magma": {
-  "bpm": 150,
-  "bars": 16,
-  "key": "C phrygian",
-  "loop_s": 25.6
+  "bpm": 100,
+  "bars": 24,
+  "key": "C Phrygian",
+  "loop_s": 57.6
  },
  "tidecrown": {
-  "bpm": 140,
-  "bars": 16,
+  "bpm": 92,
+  "bars": 24,
   "key": "G minor",
-  "loop_s": 27.4286
+  "meter": "3/4",
+  "loop_s": 46.9565
  },
  "worldboss": {
   "bpm": 126,

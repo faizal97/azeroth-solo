@@ -152,6 +152,12 @@ def song(spec):
                     v = L.get('voice', 'harp'); g = L.get('gain', 0.14) * (1 if i % 2 == 0 else 0.8)
                     sig = harp(n, L.get('len', 1.1), gain=g) if v == 'harp' else bell(n, L.get('len', 1.6), gain=g) if v == 'bell' else pluck(n, L.get('len', 0.22), bright=L.get('bright', 2400), gain=g)
                     T.put(sig, st, pan=(L.get('spread', 0.35) * (1 if i % 2 else -1)))
+            elif k == 'brass':  # the chord played by a brass section, on the given (beat, length) hits
+                for beat, d in L['pat']:
+                    for j, n in enumerate(ch):
+                        T.put(horn(n + L.get('oct', 12), d * BEAT * 0.95, gain=L.get('gain', 0.07)), t0 + beat * BEAT, pan=(-0.35, 0.0, 0.35, 0.15)[j % 4])
+            elif k == 'toll':   # a great bell on the root, on the given bars
+                if b + 1 in L['bars']: T.put(bell(ch[0] + L.get('oct', -12), 5.0, gain=L.get('gain', 0.3)), t0)
             elif k == 'stab':   # the chord struck on given beats (a tavern's off-beat strum)
                 for beat in L['at']:
                     for n in ch: T.put(pluck(n + L.get('oct', 12), L.get('len', 0.2), bright=L.get('bright', 2400), gain=L.get('gain', 0.1)), t0 + beat * BEAT, pan=L.get('pan', 0.25))
@@ -171,6 +177,25 @@ def song(spec):
     info = {'bpm': spec['bpm'], 'bars': BARS, 'key': spec['key']}
     if BB != 4: info['meter'] = spec.get('meter', f'{BB}/4')
     return T.finish(spec.get('room', 0.32)), info
+
+
+def cymbal(dur, gain):
+    n = noise(dur); return (n - lp(n, 4500)) * gain
+
+
+def fx_crash(bars, gain=0.06):
+    def f(T, BAR, BARS):
+        for b in bars:
+            x = cymbal(3.0, gain) * np.exp(-t_(3.0) * 1.4); T.put(x, (b - 1) * BAR)
+    return f
+
+
+def fx_swell(bars, gain=0.08):
+    """a cymbal rising over the bar before each given bar"""
+    def f(T, BAR, BARS):
+        for b in bars:
+            x = cymbal(BAR, gain) * np.linspace(0, 1, int(BAR * SR)) ** 2.5; T.put(x, (b - 2) * BAR)
+    return f
 
 
 def fx_wind(swells=2, lo=250, hi=1100, gain=0.05):
@@ -289,6 +314,69 @@ TRACKS = {
 
 
 
+
+    # ---- the raids (v10.8): grander than any dungeon, hand-written in three parts. Bars 1-8 a brass chorale over voices
+    # and a timpani heartbeat; bars 9-16 the battle; bars 17-24 the climax, the theme up high over brass stabs. Cymbal
+    # swells and crashes mark the parts, a great bell tolls at each.
+    # Veshmira's Lair: the brood mother's den, D minor, a broad horn theme with dragon-sized brass
+    'veshmira': {'bpm': 104, 'beats': 4, 'key': 'D minor', 'prog': 'Dm Bb Gm A Dm Bb C A Dm Dm Bb C Dm Dm Gm A Bb C Dm Bb Gm A Dm A', 'layers': [
+        {'type': 'choir', 'cut': 1000, 'gain': 0.15},
+        {'type': 'brass', 'pat': [(0, 4)], 'gain': 0.06, 'to': 8},
+        {'type': 'brass', 'pat': [(0, 1.5), (1.5, 0.5), (2, 2)], 'gain': 0.06, 'from': 17},
+        {'type': 'toll', 'bars': [1, 9], 'gain': 0.14},
+        {'type': 'bass', 'pat': [(0, 0, 4)], 'gain': 0.26, 'square': 0.2, 'to': 8},
+        {'type': 'bass', 'pat': [(i * 0.5, 0, 0.45) for i in range(8)], 'gain': 0.22, 'square': 0.5, 'from': 9},
+        {'type': 'arp', 'voice': 'pluck', 'oct': 0, 'step': 0.25, 'pat': [0, 0, 1, 0, 2, 0, 1, 0, 0, 0, 1, 0, 2, 0, 1, 2], 'gain': 0.07, 'len': 0.12, 'bright': 1800, 'spread': 0.2, 'from': 9},
+        {'type': 'drums', 'pat': ['D.......D.......'] * 7 + ['D.......D.D.DDDD'], 'gain': 0.8, 'low': 55, 'to': 8},
+        {'type': 'drums', 'pat': ['D..D..D.D...D.D.'] * 7 + ['D..D..D.D.D.DDDD'], 'gain': 0.75, 'low': 55, 'from': 9},
+        {'type': 'drums', 'pat': ['k...s...k.k.s...', 'k...s...k.k.s.ss'], 'gain': 0.7, 'from': 9},
+        {'type': 'lead', 'voice': 'horn', 'gain': 0.17, 'mel':
+            'D4:2 A4:2 | Bb4:1.5 A4:.5 F4:2 | G4:2 D5:2 | C#5:3 r:1 | D5:2 F5:2 | E5:1.5 D5:.5 Bb4:2 | C5:1.5 D5:.5 E5:2 | A4:4 |'
+            'D4:1 E4:.5 F4:.5 A4:2 | G4:1 F4:1 E4:1 D4:1 | D4:1 F4:1 Bb4:2 | A4:1.5 G4:.5 E4:2 | F4:1 A4:1 D5:2 | C5:1 A4:1 F4:1 D4:1 | Bb4:1.5 A4:.5 G4:2 | E4:1 G4:1 C#5:2 |'
+            'F5:2 D5:1 F5:1 | G5:2 E5:1 G5:1 | A5:3 F5:1 | D5:4 | G5:1.5 F5:.5 D5:1 Bb4:1 | C#5:1 E5:1 A5:2 | F5:1.5 E5:.5 D5:2 | E5:2 C#5:2'},
+        {'type': 'lead', 'voice': 'fiddle', 'gain': 0.08, 'oct': 12, 'from': 17, 'mel':
+            'r:4 | r:4 | r:4 | r:4 | r:4 | r:4 | r:4 | r:4 | r:4 | r:4 | r:4 | r:4 | r:4 | r:4 | r:4 | r:4 |'
+            'F5:2 D5:1 F5:1 | G5:2 E5:1 G5:1 | A5:3 F5:1 | D5:4 | G5:1.5 F5:.5 D5:1 Bb4:1 | C#5:1 E5:1 A5:2 | F5:1.5 E5:.5 D5:2 | E5:2 C#5:2'}],
+        'fx': [fx_swell([9, 17]), fx_crash([9, 17])], 'room': 0.45, 'tail': 5},
+
+    # The Magma Throne: the fire lord's hall, C Phrygian, a ritual chant over the anvil, then a heavy gallop
+    'magma': {'bpm': 100, 'beats': 4, 'key': 'C Phrygian', 'prog': 'C5 Db C5 C5 C5 Db Bbm C5 Cm Db Cm Bbm Ab Bbm Db C5 Fm Db Ab Eb Db Bbm C5 C5', 'layers': [
+        {'type': 'choir', 'cut': 700, 'gain': 0.18, 'oct': 0},
+        {'type': 'brass', 'pat': [(0, 4)], 'gain': 0.05, 'oct': 0, 'to': 8},
+        {'type': 'brass', 'pat': [(0, 0.5), (1.5, 0.5), (2, 0.5), (3.5, 0.5)], 'gain': 0.06, 'from': 9},
+        {'type': 'toll', 'bars': [1, 9, 17], 'gain': 0.16, 'oct': -24},
+        {'type': 'bass', 'pat': [(0, 0, 4)], 'gain': 0.3, 'square': 0.4, 'to': 8},
+        {'type': 'bass', 'pat': [(i * 0.5, 0, 0.45) for i in range(8)], 'gain': 0.23, 'square': 0.7, 'from': 9},
+        {'type': 'arp', 'voice': 'pluck', 'oct': 0, 'step': 0.25, 'pat': [0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 2, 0, 1, 0], 'gain': 0.08, 'len': 0.12, 'bright': 1500, 'spread': 0.15, 'from': 9},
+        {'type': 'drums', 'pat': ['D...c...D...c...'] * 7 + ['D...c...D.D.DDDD'], 'gain': 0.9, 'low': 55, 'to': 8},
+        {'type': 'drums', 'pat': ['k.k.s.kkk.k.s...', 'k.k.s.kkk.k.s.ss'], 'gain': 0.8, 'from': 9},
+        {'type': 'drums', 'pat': ['D.......D...D...'] * 7 + ['D.......D.D.DDDD'], 'gain': 0.7, 'low': 52, 'from': 9},
+        {'type': 'lead', 'voice': 'horn', 'gain': 0.17, 'mel':
+            'C4:2 Db4:2 | F4:2 Eb4:1 Db4:1 | C4:3 r:1 | G3:2 C4:2 | C4:1 Db4:1 Eb4:1 F4:1 | Ab4:2 F4:2 | Db5:1.5 C5:.5 Bb4:2 | C5:4 |'
+            'G4:1 Ab4:1 G4:1 Eb4:1 | F4:1.5 Ab4:.5 Db5:2 | C5:1 Bb4:1 G4:2 | F4:1 Db5:1 Bb4:2 | C5:1.5 Eb5:.5 Ab5:2 | F5:1 Db5:1 Bb4:2 | Ab4:1 Db5:1 F5:2 | G5:2 C5:2 |'
+            'C5:1.5 Ab4:.5 F4:2 | F5:1.5 Eb5:.5 Db5:2 | Eb5:1 C5:1 Ab4:2 | G4:1 Bb4:1 Eb5:2 | F5:2 Ab5:2 | Db5:1.5 C5:.5 Bb4:2 | C5:1 Db5:1 C5:1 G4:1 | C5:4'}],
+        'fx': [fx_swell([9, 17]), fx_crash([9, 17], 0.1), fx_hits(lambda: windy(3, 3, 100, 500, 0.06), [0.1, 0.45, 0.8])], 'room': 0.42, 'tail': 5},
+
+    # The Tidecrown Citadel: the drowned court, a majestic G minor in 3/4, harp waves, the court bell, brass
+    'tidecrown': {'bpm': 92, 'beats': 3, 'key': 'G minor', 'prog': 'Gm Eb Cm D Gm Eb F D Gm Gm Eb F Cm D Gm D Eb F D Gm Cm Eb D D', 'layers': [
+        {'type': 'choir', 'cut': 1000, 'gain': 0.14},
+        {'type': 'arp', 'voice': 'harp', 'pat': [0, 1, 2, 3, 4, 3], 'gain': 0.12},
+        {'type': 'brass', 'pat': [(0, 3)], 'gain': 0.055, 'to': 8},
+        {'type': 'brass', 'pat': [(0, 1), (2, 1)], 'gain': 0.06, 'from': 17},
+        {'type': 'toll', 'bars': [1, 9], 'gain': 0.14},
+        {'type': 'bass', 'pat': [(0, 0, 3)], 'gain': 0.26, 'square': 0.15, 'to': 8},
+        {'type': 'bass', 'pat': [(0, 0, 1), (1, 7, 1), (2, 0, 1)], 'gain': 0.23, 'square': 0.3, 'from': 9},
+        {'type': 'drums', 'pat': ['D.......D...'] * 7 + ['D.......DDDD'], 'gain': 0.8, 'low': 58, 'to': 8},
+        {'type': 'drums', 'pat': ['k.h.s.h.s.h.', 'k.h.s.h.s.ss'], 'gain': 0.7, 'from': 9},
+        {'type': 'drums', 'pat': ['D.......D...'] * 7 + ['D.......DDDD'], 'gain': 0.65, 'low': 55, 'from': 9},
+        {'type': 'lead', 'voice': 'horn', 'gain': 0.17, 'mel':
+            'D4:1.5 G4:.5 Bb4:1 | Bb4:2 G4:1 | Eb5:1.5 D5:.5 C5:1 | A4:3 | Bb4:1.5 C5:.5 D5:1 | G5:2 Eb5:1 | F5:1.5 Eb5:.5 C5:1 | D5:3 |'
+            'G4:1 Bb4:1 D5:1 | G5:2 F5:1 | Eb5:1.5 D5:.5 Bb4:1 | C5:2 A4:1 | C5:1 Eb5:1 G5:1 | F#5:2 D5:1 | D5:1.5 C5:.5 Bb4:1 | A4:3 |'
+            'Bb4:1 Eb5:1 G5:1 | A5:2 F5:1 | F#5:1.5 E5:.5 D5:1 | G5:3 | Eb5:1.5 D5:.5 C5:1 | Bb4:2 G4:1 | A4:1 D5:1 F#5:1 | D5:3'},
+        {'type': 'lead', 'voice': 'flute', 'gain': 0.08, 'oct': 12, 'from': 17, 'mel':
+            'r:3 | r:3 | r:3 | r:3 | r:3 | r:3 | r:3 | r:3 | r:3 | r:3 | r:3 | r:3 | r:3 | r:3 | r:3 | r:3 |'
+            'Bb4:1 Eb5:1 G5:1 | A5:2 F5:1 | F#5:1.5 E5:.5 D5:1 | G5:3 | Eb5:1.5 D5:.5 C5:1 | Bb4:2 G4:1 | A4:1 D5:1 F#5:1 | D5:3'}],
+        'fx': [fx_swell([9, 17]), fx_crash([9, 17]), fx_wind(4, 200, 800, 0.04)], 'room': 0.5, 'tail': 5},
 
     # World bosses: B minor, driving drums and bass, a horn call
     'worldboss': {'bpm': 126, 'beats': 4, 'key': 'B minor', 'prog': 'Bm Bm G A Bm Bm Em F# G A Bm Bm Em G F# F#', 'layers': [

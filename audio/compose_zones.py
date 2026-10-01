@@ -209,10 +209,6 @@ BATTLE = {
     'stratholme':        ('graymouth', B(146, 'F', 'minor', 'Fm Db Eb C Fm Db Bbm C Db Eb Fm Db Bbm C Fm C', 'horn', ['wind'], style='raidbattle')),
     'sunken_archive':    ('sunken_archive', B(138, 'E', 'minor', 'Em C D B Em C Am B C D Em C Am B Em B', 'flute', ['waves'])),
     'shalzua_temple':    ('shalzua', B(142, 'C#', 'minor', 'C#m A B G# C#m A F#m G# A B C#m A F#m G# C#m G#', 'horn', ['waves'], 'battletribal')),
-    # the raids: the same battle style, bigger (voices and timpani)
-    'onyxias_lair':      ('veshmira', B(146, 'D', 'minor', 'Dm Bb C A Dm Bb Gm A Bb C Dm Bb Gm Bb A A', 'horn', ['ember'], style='raidbattle')),
-    'molten_core':       ('magma', B(150, 'C', 'phrygian', 'Cm Db Cm Bb Cm Ab Db Cm Fm Db Eb Cm Ab Db Cm Cm', 'horn', ['ember'], 'battleclank', style='raidbattle')),
-    'tidecrown_citadel': ('tidecrown', B(140, 'G', 'minor', 'Gm Eb F D Gm Eb Cm D Eb F Gm Eb Cm Eb D D', 'horn', ['waves'], style='raidbattle')),
 }
 
 
