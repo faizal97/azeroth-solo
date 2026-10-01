@@ -199,7 +199,7 @@
     },
   };
   Object.assign(D.ABILITIES, {
-    beerhammer_charge: { name: 'Beerhammer Charge', cls: 'legend', lvl: 1, cost: 0, cd: 15, target: 'enemy', dmg: { base: [170, 210], perLvl: 5, coef: 0.4, school: 'physical' }, stun: 2, icon: 'beerhammer_charge', desc: 'Bromli charges in, greatsword first: {b} damage and the target is knocked down for 2 sec. 15 sec cooldown.' },
+    beerhammer_charge: { dash: true, range: 25, name: 'Beerhammer Charge', cls: 'legend', lvl: 1, cost: 0, cd: 15, target: 'enemy', dmg: { base: [170, 210], perLvl: 5, coef: 0.4, school: 'physical' }, stun: 2, icon: 'beerhammer_charge', desc: 'Bromli charges in, greatsword first: {b} damage and the target is knocked down for 2 sec. 15 sec cooldown.' },
     tavern_brawl: { name: 'Tavern Brawl', cls: 'legend', lvl: 1, cost: 0, cd: 12, target: 'aoe', dmg: { base: [120, 150], perLvl: 4, coef: 0.3, school: 'physical' }, icon: 'tavern_brawl', desc: 'Bromli spins as if it were closing time: {b} damage to every nearby enemy. 12 sec cooldown.' },
   });
   D.item('duneback_stone', { name: "A Chip of Old Duneback", slot: 'quest', q: 1, icon: 'stone' });

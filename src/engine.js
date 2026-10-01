@@ -110,6 +110,68 @@
     }, o);
   }
 
+  // ------------------------------------------------------------- distance (v10.9, docs/plans/2026-10-01-distance-design.md)
+  // Every fighter has a position in metres: x along the line between the sides (allies left, enemies right), y depth
+  // across the ground, z height (flyers). Distance is true 3D. Everyone runs at the same speed; snares slow movement as
+  // well as attacks, roots stop it. Every ability has a range (data `range`, else a default from its kind). Stage 1:
+  // fights start in contact (everyone within reach, as before), so outcomes do not change until something moves.
+  const DIST = { speed: 7, melee: 5, spell: 30, shot: 35, ally: 40, radius: 8, flyLow: 4 };
+  E.DIST = DIST;
+  const CASTERS = { mage: 1, warlock: 1, priest: 1, druid: 1, shaman: 1, bard: 1 };
+  E.dist = (a, b) => { const p = a.pos || {}, q = b.pos || {}; return Math.hypot((p.x || 0) - (q.x || 0), (p.y || 0) - (q.y || 0), (p.z || 0) - (q.z || 0)); };
+  // the range of an ability: its own, else from its kind (null: no target, nothing to reach)
+  function rangeOf(ab) {
+    if (ab.range != null) return ab.range;
+    if (ab.target === 'self' || ab.target === 'party') return null;
+    if (ab.target === 'ally') return DIST.ally;
+    if (ab.target === 'aoe') return aoeAtTarget(ab) ? (ab.cls === 'hunter' ? DIST.shot : DIST.spell) : null;
+    if (ab.dmg && ab.dmg.weapon) return DIST.melee;
+    if (ab.cls === 'hunter') return DIST.shot;
+    if (ab.dmg && (ab.dmg.school || 'physical') === 'physical') return DIST.melee;
+    if (!ab.dmg && (ab.cls === 'rogue' || ab.cls === 'warrior')) return DIST.melee;
+    return DIST.spell;
+  }
+  E.rangeOf = rangeOf;
+  // an area attack lands around its caster when instant (Frost Nova, Whirlwind), around the target when cast, channelled
+  // or shot (Frost Storm, Flamestrike, Multi-Shot); `aoeAt` in data overrides
+  const aoeAtTarget = (ab) => (ab.aoeAt ? ab.aoeAt === 'target' : !!(ab.cast || ab.channel || ab.cls === 'hunter'));
+  // how close a fighter wants to be to its target to fight: melee in reach, casters and hunters at range
+  function reachOf(u) {
+    if (u.kind === 'mob') return (D.MOBS[u.key] || {}).ranged ? DIST.spell - 2 : DIST.melee - 1;
+    if (u.kind === 'pet') return DIST.melee - 1;
+    if (u.form === 'bear') return DIST.melee - 1;
+    if (u.cls === 'hunter') return DIST.shot - 5;
+    return CASTERS[u.cls] ? DIST.spell - 2 : DIST.melee - 1;
+  }
+  E.reachOf = reachOf;
+  // where a fighter stands when a fight begins: in contact (stage 1), or `apart` metres from the other side
+  function place(C, u, i) {
+    const s = u.side === 'ally' ? -1 : 1, gap = (C.opts && C.opts.apart) || 0;
+    const fly = u.kind === 'mob' && (D.MOBS[u.key] || {}).fly;
+    u.pos = { x: s * (gap / 2 + 0.5 + Math.random() * 1.2), y: (Math.random() * 2 - 1), z: fly || 0 };
+  }
+  // movement for a tick: a fleeing fighter runs from the one who scared it; anyone else closes on its target when out
+  // of its reach. Moving cancels a cast. Roots stop it; snares slow it like they slow attacks.
+  function moveTick(C, u, dt) {
+    if (!u.pos) return;
+    const rooted = u.auras.some((a) => a.root);
+    const speed = DIST.speed * (1 - slowPct(u) / 100) * dt;
+    if (u.fleeUntil > C.t) {
+      if (rooted) return;
+      const from = C.units[u.fleeFrom]; if (!from || !from.pos) return;
+      stepAway(u, from, speed); return;
+    }
+    if (rooted || stunned(C, u)) return;
+    const t = C.units[u.target]; if (!t || t.dead || t.side === u.side || !t.pos) return;
+    const d = E.dist(u, t), want = reachOf(u);
+    if (d <= want + 0.5) return;
+    if (u.cast) { u.cast = null; ev(C, { type: 'castStop', src: u.uid, moved: true }); }
+    stepToward(u, t, Math.min(speed, d - want));
+  }
+  function stepToward(u, t, m) { const dx = t.pos.x - u.pos.x, dy = t.pos.y - u.pos.y, h = Math.hypot(dx, dy) || 1; u.pos.x += dx / h * m; u.pos.y += dy / h * m; u.moved = true; }
+  function stepAway(u, t, m) { const dx = u.pos.x - t.pos.x, dy = u.pos.y - t.pos.y, h = Math.hypot(dx, dy) || 1; u.pos.x += (dx / h || (u.side === 'ally' ? -1 : 1)) * m; u.pos.y += dy / h * m; u.moved = true; }
+  E.stepAway = stepAway;
+
   // Player or bot. char carries hp/res between fights; persistent auras use epoch ms (until).
   E.charUnit = function (char, side, kind, nowMs) {
     const C = D.CLASSES[char.cls];
@@ -203,6 +265,7 @@
   E.fight = function (allies, enemies, opts) {
     const C = { t: 0, allies: allies.slice(), enemies: enemies.slice(), units: {}, events: [], over: null, opts: opts || {}, allyTarget: null };
     for (const u of allies.concat(enemies)) C.units[u.uid] = u;
+    allies.concat(enemies).forEach((u, i) => place(C, u, i));
     for (const e of enemies) for (const a of allies) e.threat[a.uid] = 0;
     // mobs open on whoever pulled (first ally) unless told otherwise
     const puller = (opts && opts.puller) || allies[0];
@@ -221,7 +284,7 @@
   const friends = (C, u) => (u.side === 'ally' ? C.allies : C.enemies);
 
   E.addEnemy = function (C, e) {
-    C.enemies.push(e); C.units[e.uid] = e;
+    C.enemies.push(e); C.units[e.uid] = e; place(C, e);
     for (const a of C.allies) e.threat[a.uid] = 0;
     const aa = alive(C.allies);
     const pick = aa[rint(0, aa.length - 1)];
@@ -229,7 +292,7 @@
   };
 
   E.addAlly = function (C, a) {
-    C.allies.push(a); C.units[a.uid] = a;
+    C.allies.push(a); C.units[a.uid] = a; place(C, a);
     for (const e of C.enemies) if (e.threat[a.uid] == null) e.threat[a.uid] = 0;
   };
 
@@ -440,6 +503,10 @@
     if (ab.target === 'enemy' && (!tgt || tgt.dead || tgt.side === u.side)) return 'No target';
     if (ab.target === 'ally' && (!tgt || tgt.dead || tgt.side !== u.side)) return 'Invalid target';
     if (abId === 'pw_shield' && tgt && auraOf(tgt, 'weakened_soul')) return 'Weakened Soul';
+    // distance (v10.9): the target must be within the ability's range (a targeted area attack: its centre)
+    const rg = rangeOf(ab), at = ab.target === 'aoe' ? C.units[u.target] : tgt;
+    if (rg != null && at && at !== u && at.pos && u.pos && E.dist(u, at) > rg + 0.01) return 'Out of range';
+    if (ab.stepBack && u.auras.some((a) => a.root)) return 'Rooted';
     return null;
   };
 
@@ -483,7 +550,8 @@
     if (ab.rage) u.res = Math.min(100, u.res + ab.rage);
     if (ab.stun && tgt && !tgt.boss) { tgt.stunUntil = C.t + ab.stun; ev(C, { type: 'stun', tgt: tgt.uid, dur: ab.stun }); }
 
-    const targets = ab.target === 'aoe' ? alive(foes(C, u)) : tgt ? [tgt] : [];
+    const centre = ab.target === 'aoe' && aoeAtTarget(ab) ? (C.units[u.target] && !C.units[u.target].dead ? C.units[u.target] : u) : u;
+    const targets = ab.target === 'aoe' ? alive(foes(C, u)).filter((e) => !e.pos || !centre.pos || E.dist(centre, e) <= (ab.radius || DIST.radius)) : tgt ? [tgt] : []; // distance: an area attack has a radius
     if (ab.dmg) {
       for (const t of targets) {
         if (ab.dmg.weapon) {
@@ -503,10 +571,12 @@
           dealDamage(C, u, t, crit ? base * (phys ? 2 : 1.5) : base, { school: ab.dmg.school, crit, ab: abId, threat: ab.threat, melee: phys });
           proc(C, u, 'hit', abId); if (crit) proc(C, u, 'crit', abId);
           if (ab.slow && !t.dead) addAura(C, t, { id: abId + '_slow', until: C.t + ab.slow.dur, slow: ab.slow.pct });
+          if (ab.root && !t.dead && !t.boss) addAura(C, t, { id: abId + '_root', until: C.t + ab.root, root: true }); // distance: held in place
         }
       }
     }
     if (ab.slow && !ab.dmg && tgt && !tgt.dead) addAura(C, tgt, { id: abId + '_slow', until: C.t + ab.slow.dur, slow: ab.slow.pct });
+    if (ab.root && !ab.dmg && tgt && !tgt.dead && !tgt.boss) addAura(C, tgt, { id: abId + '_root', until: C.t + ab.root, root: true });
     if (ab.debuff && tgt && !tgt.dead) addAura(C, tgt, { id: ab.debuff.id, until: C.t + ab.debuff.dur });
     if (ab.shapeshift) { if (u.form) E.shiftOut(C, u); else E.shiftIn(C, u, ab.shapeshift); }
     if (ab.cp && tgt) {
@@ -547,7 +617,7 @@
       for (const k in (b.stats || {})) stats[k] = Math.round((b.stats[k] + ((b.perLvl && b.perLvl[k]) || 0) * L) * bp * 10) / 10;
       let dur = b.dur;
       if (ab.finisher) dur += (b.perCpDur || 0) * u.cp;
-      const who = ab.target === 'party' ? alive(friends(C, u)) : [u];
+      const who = ab.target === 'party' ? alive(friends(C, u)).filter((a) => !a.pos || !u.pos || E.dist(u, a) <= DIST.ally) : [u];
       const extra = {};
       if (b.seal) { extra.seal = (b.seal.base + b.seal.perLvl * L) * (u.st.wSpeed / 2.5) * bp; extra.sealSchool = b.seal.school || 'holy'; }
       if (b.thorns) extra.thorns = { dmg: Math.round((b.thorns.base + b.thorns.perLvl * L) * bp), charges: b.thorns.charges };
@@ -555,11 +625,14 @@
       for (const w of who) addAura(C, w, Object.assign({ id: b.id, until: C.t + dur, stats: Object.keys(stats).length ? stats : null, persistent: dur >= 60 }, extra));
       if (ab.threat) for (const e of alive(foes(C, u))) e.threat[u.uid] = (e.threat[u.uid] || 0) + ab.threat;
     }
+    // distance: a charge closes the gap at once; Step Back hops away from the nearest foe
+    if (ab.dash && tgt && tgt.pos && u.pos) { const d = E.dist(u, tgt); if (d > DIST.melee - 2) { stepToward(u, tgt, d - (DIST.melee - 2)); ev(C, { type: 'move', src: u.uid, how: 'dash' }); } }
+    if (ab.stepBack && u.pos) { const near = alive(foes(C, u)).filter((e) => e.pos).sort((a, b) => E.dist(u, a) - E.dist(u, b))[0]; if (near) { stepAway(u, near, ab.stepBack); ev(C, { type: 'move', src: u.uid, how: 'hop' }); } }
     if (ab.finisher) { u.cp = 0; u.cpTarget = null; }
     if (ab.needSeal) u.auras = u.auras.filter((a) => a.id !== 'seal');
     if (ab.freeOf) { u.stunUntil = 0; u.auras = u.auras.filter((a) => !a.slow); }
     if (ab.stunImmune) u.stunImmuneUntil = C.t + ab.stunImmune;
-    if (ab.stompAll) { for (const e of alive(foes(C, u))) if (!e.boss) { e.stunUntil = C.t + ab.stompAll; ev(C, { type: 'stun', tgt: e.uid, dur: ab.stompAll }); } ev(C, { type: 'emote', uid: u.uid, text: `${u.name} stomps the ground!` }); }
+    if (ab.stompAll) { for (const e of alive(foes(C, u))) if (!e.boss) { e.stunUntil = C.t + ab.stompAll; if (ab.fear) { e.fleeUntil = C.t + ab.stompAll; e.fleeFrom = u.uid; } ev(C, { type: 'stun', tgt: e.uid, dur: ab.stompAll, fear: !!ab.fear }); } ev(C, { type: 'emote', uid: u.uid, text: `${u.name} stomps the ground!` }); }
     if (ab.cleanse) u.auras = u.auras.filter((a) => !(a.dot != null && a.src !== u.uid));
     if (ab.dropThreat) {
       const others = alive(friends(C, u)).filter((a) => a !== u);
@@ -1120,23 +1193,28 @@
         if (C.t >= cast.end) {
           u.cast = null;
           if (abCost(ab, u) > u.res + 0.001) { ev(C, { type: 'castStop', src: u.uid }); continue; }
+          const crg = rangeOf(ab); // distance: a target that got out of range during the cast is missed
+          if (crg != null && tgt !== u && tgt.pos && u.pos && E.dist(u, tgt) > crg + 0.01) { ev(C, { type: 'castStop', src: u.uid, range: true }); continue; }
           ev(C, { type: 'castStop', src: u.uid, done: true });
           resolve(C, u, cast.ab, tgt);
         }
         continue;
       }
-      if (stunned(C, u)) { if (u.kind === 'bot') botThink(C, u); continue; }
+      if (stunned(C, u)) { if (u.fleeUntil > C.t) moveTick(C, u, dt); if (u.kind === 'bot') botThink(C, u); continue; }
       // AI
       if (u.kind === 'mob') { pickMobTarget(C, u); specials(C, u, dt); }
       else if (u.kind === 'bot') botThink(C, u);
       else if (u.kind === 'pet') petThink(C, u);
+      moveTick(C, u, dt); // distance: close on the target when out of reach
       // auto attack
       const tgt = C.units[u.target];
       if (tgt && !tgt.dead && tgt.side !== u.side && (u.kind === 'mob' || u.auto)) {
         const shoot = u.cls === 'hunter' && u.st.rMin != null && !u.form;
+        const reach = shoot ? DIST.shot : DIST.melee;
         const sp = flat(u) ? u.swingSpeed : shoot ? u.st.rswing : u.st.swing;
         u.swingT -= dt * (1 - slowPct(u) / 100);
-        if (u.swingT <= 0) {
+        if (u.swingT <= 0 && u.pos && tgt.pos && E.dist(u, tgt) > reach + 0.01) u.swingT = 0; // out of reach: the swing waits
+        else if (u.swingT <= 0) {
           u.swingT += sp;
           if (u.noMelee) { /* casts instead */ } else if (shoot) swing(C, u, tgt, { ranged: true }); else if (flat(u) || u.cls === 'warrior' || u.cls === 'rogue' || u.cls === 'paladin' || C.t - u.lastCastT > 1.6) swing(C, u, tgt);
           if (u.side === 'ally') { tgt.hitBy = tgt.hitBy || {}; tgt.hitBy[u.uid] = true; }
