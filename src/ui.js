@@ -461,11 +461,11 @@
     const key = sceneKey();
     const bg = sc.querySelector('img.bg');
     if (!bg || sc.dataset.k !== key) { sc.innerHTML = ''; sc.append(img(art('scene', key), 'bg'), h('div', { class: 'shade' })); sc.dataset.k = key; }
-    if (!G.fight) { const b = sc.querySelector('img.bg'); if (b && b.classList.contains('cam')) { b.classList.remove('cam'); b.style.translate = ''; } ui.cam = null; }
     else for (const c of [...sc.children]) if (c !== bg && !c.classList.contains('shade')) c.remove();
+    if (!G.fight) { const b = sc.querySelector('img.bg'); if (b && b.classList.contains('cam')) { b.classList.remove('cam'); b.style.translate = ''; } ui.cam = null; } // out of a fight the view is still
     const place = D.PLACES[P.place];
-    const title = S.bg ? D.BG[S.bg.key].name : S.run ? S.run.name : P.travel ? 'On the road' : place.name;
-    const sub = S.bg ? `Round ${S.bg.round} of ${D.BG[S.bg.key].rounds} · you ${S.bg.score.us}, them ${S.bg.score.them}` : S.run ? S.run.pulls[Math.min(S.run.idx, S.run.pulls.length - 1)].label : P.travel ? 'to ' + D.PLACES[P.travel.to].name + (P.route && P.route.length ? ` · then ${D.PLACES[P.route[P.route.length - 1]].name}` : '') : place.zone;
+    const title = S.brawl ? 'The Bloodsand Brawl' : S.bg ? D.BG[S.bg.key].name : S.run ? S.run.name : P.travel ? 'On the road' : place.name;
+    const sub = S.brawl ? (S.brawl.phase === 'done' ? (S.brawl.champion ? 'Champion' : 'Finished') : `Round ${S.brawl.round} of ${G.BRAWL.rounds}`) : S.bg ? `Round ${S.bg.round} of ${D.BG[S.bg.key].rounds} · you ${S.bg.score.us}, them ${S.bg.score.them}` : S.run ? S.run.pulls[Math.min(S.run.idx, S.run.pulls.length - 1)].label : P.travel ? 'to ' + D.PLACES[P.travel.to].name + (P.route && P.route.length ? ` · then ${D.PLACES[P.route[P.route.length - 1]].name}` : '') : place.zone;
     sc.append(h('div', { class: 'zone' }, title, h('small', null, sub)));
     const C = G.fight;
     if (C) {
@@ -834,12 +834,68 @@
     p.append(h('p', { class: 'ai-note' }, 'Where both teams meet, they fight; an empty banner is taken; they take the banners they reach alone. Every banner you hold scores each round. The scouts give a range and the true number is always inside it. They can still move when they see you coming, toward your pair or your group.'));
     if (bg.log.length) p.append(h('div', { class: 'ai-box' }, ...bg.log.slice(0, 3).map((l) => h('div', { class: 'ai-row' }, h('span', null, l)))));
   }
+  // ---------- the Bloodsand Brawl (v10.9): the arena card where you join, the bracket between rounds, then the result and
+  // the chest. Facts only: when it opens, who you fight next, what each round pays.
+  const brawlClock = (d) => d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const payText = (r) => { const y = G.brawlRoundPay(r); return moneyHtml(y.money) + (y.xp ? ` + ${y.xp.toLocaleString()} XP` : '') + (y.marks ? ` + ${y.marks} Marks` : ''); };
+  function brawlCard(p) {
+    const P = G.S.player, B = G.BRAWL, w = G.brawlWindow(), why = G.brawlBlock(), rec = P.brawl || {};
+    if (G.S.brawl) return; // the bracket panel takes over
+    p.append(h('div', { class: 'sec-h' }, 'The Bloodsand Brawl', h('small', null, w.open ? `open until ${brawlClock(w.closesAt)}` : `opens at ${brawlClock(w.opensAt)}`)));
+    const row = (k, v, html) => h('div', { class: 'ai-row' }, h('span', null, k), html ? h('b', { html: v }) : h('b', null, v));
+    p.append(h('div', { class: 'ai-box' },
+      row('Fighters', `${B.size} at your level · ${B.rounds} rounds, one on one`),
+      ...[1, 2, 3].map((r) => row(`Win round ${r}`, payText(r), true)),
+      row('Champion', G.brawlChestOpen() ? 'The Bloodsand chest: one of three blue items' : 'Chest taken today · open again tomorrow'),
+      rec.fought ? row('Your record', `${rec.fought} brawl${rec.fought === 1 ? '' : 's'} · ${rec.champs || 0} won`) : null));
+    p.append(h('button', { class: 'btn wide', disabled: !!why, onclick: () => { if (G.brawlJoin()) renderAll(); } }, why || 'Join the brawl'));
+    p.append(h('p', { class: 'ai-note' }, `It opens every ${B.every} hours on the hour for ${B.openMin} minutes. Full health before every round, and losing costs nothing. One fighter each: pets wait outside the pit.`));
+  }
+  function brawlPanel(p) {
+    const S = G.S, P = S.player, br = S.brawl, B = G.BRAWL, nm = (x) => (x.you ? 'You' : x.name.split('-')[0]);
+    const who = (x) => (x.you ? h('b', { style: { color: 'var(--gold)' } }, 'You') : h('b', { class: 'cls-' + x.cls }, nm(x)));
+    p.append(h('div', { class: 'sec-h' }, 'The Bloodsand Brawl', h('small', null, br.phase === 'done' ? (br.champion ? 'champion' : 'finished') : `round ${br.round} of ${B.rounds}`)));
+    const row = (k, v, html) => h('div', { class: 'ai-row' }, h('span', null, k), html ? h('b', { html: v }) : h('b', null, v));
+    if (br.phase === 'done') {
+      const out = br.results.length;
+      p.append(h('div', { class: 'ai-box' },
+        row('Result', br.champion ? 'Bloodsand Champion' : `Out in round ${out}`),
+        row('Rounds won', `${br.wins} of ${B.rounds}`),
+        br.reward.money ? row('Money', moneyHtml(br.reward.money), true) : null,
+        br.reward.xp ? row('Experience', br.reward.xp.toLocaleString() + ' XP') : null,
+        br.reward.marks ? row('Mentor Marks', '+' + br.reward.marks) : null));
+      if (br.chest) {
+        p.append(h('div', { class: 'sec-h' }, 'The Bloodsand chest', h('small', null, 'take one')));
+        const list = h('div', { class: 'list' });
+        br.chest.forEach((it, i) => list.append(h('button', { class: 'row', onclick: () => showDialog([itemTip(it), h('button', { class: 'btn wide', style: { marginTop: '8px' }, onclick: () => { closeDialog(); G.brawlTakeChest(i); renderAll(); } }, 'Take this one')], true) },
+          h('div', { class: 'ic' }, itemIcon(it)), h('div', { class: 't' }, h('b', { class: 'q' + it.q }, it.name), h('small', null, gearTag(it))))));
+        p.append(list, h('p', { class: 'ai-note' }, 'Tap one to see it. The other two stay in the chest.'));
+      } else if (br.champion && !G.brawlChestOpen()) p.append(h('p', { class: 'ai-note' }, 'The chest pays once a day: it opens for you again tomorrow.'));
+      p.append(h('button', { class: 'btn wide', disabled: !!br.chest, onclick: () => { G.leaveBrawl(); renderAll(); } }, br.chest ? 'Take something from the chest first' : 'Leave the pit'));
+    } else {
+      const foe = G.brawlOpponent();
+      if (foe) {
+        p.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('portrait', looks(foe)))),
+          h('div', { class: 't' }, h('b', null, 'Next: ', who(foe)), h('small', null, `${foe.level} ${D.RACES[foe.race] ? D.RACES[foe.race].name + ' ' : ''}${D.CLASSES[foe.cls].name}`))));
+        p.append(h('button', { class: 'btn wide', onclick: () => { G.brawlFight(); renderAll(); } }, `Fight round ${br.round}`));
+        p.append(h('div', { class: 'ai-box' }, row(`Win round ${br.round}`, payText(br.round), true)));
+      }
+      // this round's pairs, then what earlier rounds settled
+      const pairs = h('div', { class: 'brawl-pairs' });
+      const side = (x, cls) => h('div', { class: 'side' + (cls || '') }, who(x), h('small', null, `${x.you ? P.level : x.level} ${D.CLASSES[x.you ? P.cls : x.cls].name}`));
+      for (let i = 0; i < br.slots.length; i += 2) { const a = br.slots[i], b = br.slots[i + 1]; pairs.append(h('div', { class: 'brawl-pair' + (a.you || b.you ? ' you' : '') }, side(a), h('span', { class: 'vs' }, 'vs'), side(b, ' r'))); }
+      p.append(h('div', { class: 'sec-h' }, `Round ${br.round}`, h('small', null, `${br.slots.length} fighters left`)), pairs);
+      br.results.forEach((res, r) => p.append(h('div', { class: 'sec-h' }, `Round ${r + 1}`, h('small', null, 'settled')), h('div', { class: 'ai-box' }, ...res.map((x) => h('div', { class: 'ai-row' }, h('span', null, `${x.a === P.name ? 'You' : x.a.split('-')[0]} vs ${x.b === P.name ? 'You' : x.b.split('-')[0]}`), h('b', null, (x.w === P.name ? 'You' : x.w.split('-')[0]) + ' won'))))));
+      p.append(h('p', { class: 'ai-note' }, 'The other pairs fight at the same time; their results stand when yours ends. Full health before every round.'));
+    }
+  }
   function renderPanel() {
     const S = G.S, P = S.player, p = els.panel;
     const scroll = p.scrollTop;
     p.innerHTML = '';
     if (S.run) { runPanel(p); p.scrollTop = scroll; return; }
     if (S.bg && !G.fight) { bgPanel(p); p.scrollTop = scroll; return; }
+    if (S.brawl && !G.fight) { brawlPanel(p); p.scrollTop = scroll; return; }
     if (G.fight) { fightPanel(p); return; }
     if (P.ghostUntil) { p.append(h('div', { class: 'sec-h' }, 'Spirit')); p.append(h('p', null, 'Your spirit is returning to your body. You will come back with half health.')); return; }
     if (P.travel) {
@@ -857,6 +913,7 @@
     const mobs = G.placeMobs();
     // party strip, then tabs; only one short list shows at a time
     taskCards(p);
+    if (P.place === G.BRAWL.place) brawlCard(p);
     if (S.wparty) p.append(partyStrip());
     const TABS = [['fight', 'Fight'], ['people', 'People'], ['quests', 'Quests'], ['travel', 'Travel']];
     if (!ui.tab || (ui.tab === 'fight' && !mobs.length && ui.tabAuto !== P.place)) { ui.tab = mobs.length ? 'fight' : 'people'; ui.tabAuto = P.place; }
@@ -1169,7 +1226,7 @@
         h('div', { class: 'buffs rowbuffs', 'data-au': u.uid })));
     }
     p.append(h('div', { class: 'sec-h' }, 'In combat', h('small', null, 'tap an enemy to target it')), list);
-    p.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => G.flee() }, G.fight && G.fight.kind === 'duel' ? 'Yield' : 'Run away')));
+    p.append(h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: () => G.flee() }, G.fight && (G.fight.kind === 'duel' || G.fight.kind === 'brawl') ? 'Yield' : 'Run away')));
     tracker(p);
   }
   const MARK_SYM = { skull: '☠', cross: '✖' };
@@ -2446,6 +2503,9 @@
     if (G.rouletteOptions().length) add('hearthstone', G.rouletteReady() ? 'Dungeon Roulette: ready today' : 'Dungeon Roulette: done today', null, () => { closeSheet(); openSocial('groups'); });
     const bh = G.bountiesHeld(); if (bh) add('journal', `${bh} bount${bh === 1 ? 'y' : 'ies'} in progress`, null, null);
     { const wb = P.level >= cap && G.worldBoss(); if (wb) add('hearthstone', `World boss: ${D.MOBS[D.ACTIVITIES[wb].boss].name}`, `${D.PLACES[D.ACTIVITIES[wb].where].name}, ${D.PLACES[D.ACTIVITIES[wb].where].zone} · ${G.worldBossLooted(wb) ? 'looted this week' : 'loot open this week'}`, () => { ui.gfTab = 'raid'; closeSheet(); openSocial('groups'); }); }
+    if (P.level >= G.BRAWL.minLvl) { const w = G.brawlWindow(), fought = (P.brawl || {}).last === w.id;
+      add('sword', w.open && !fought ? `The Bloodsand Brawl: open until ${brawlClock(w.closesAt)}` : `The Bloodsand Brawl: opens at ${brawlClock(w.open ? new Date(w.opensAt.getTime() + G.BRAWL.every * 3600000) : w.opensAt)}`,
+        `${D.PLACES[G.BRAWL.place].name}, ${D.PLACES[G.BRAWL.place].zone} · ${G.brawlChestOpen() ? 'chest open today' : 'chest taken today'}`, () => { closeSheet(); if (P.place !== G.BRAWL.place) routeDialog(G.BRAWL.place); }); }
     { const fr = P.level >= cap && G.featuredRaid(); if (fr) add('hearthstone', `Featured raid: ${D.ACTIVITIES[fr].name}`, G.featuredClaimed() ? 'Bonus taken this week' : `First clear this week: +${G.FEATURED_MARKS} Mentor Marks`, () => { ui.gfTab = 'raid'; closeSheet(); openSocial('groups'); }); }
     if (P.level >= cap && window.TRIALS && TRIALS.open(TRIALS.season(new Date()))) { add('journal', `${TRIALS.name(TRIALS.season(new Date()))} Trials: rating ${G.trialRating()}`, `Realm rank #${G.trialBoard().rank} of ${G.trialBoard().of}`, () => { ui.gfTab = 'trials'; closeSheet(); openSocial('groups'); }); }
     // the next thing that opens with a level

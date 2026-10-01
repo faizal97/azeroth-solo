@@ -2138,6 +2138,12 @@
   // the pairs of a round: neighbours in the bracket
   const brawlPairs = (br) => { const out = []; for (let i = 0; i < br.slots.length; i += 2) out.push([br.slots[i], br.slots[i + 1]]); return out; };
   G.brawlOpponent = function () { const br = G.S.brawl; if (!br || br.phase !== 'choose') return null; const p = brawlPairs(br).find((x) => x[0].you || x[1].you); return p ? (p[0].you ? p[1] : p[0]) : null; };
+  // what winning round r pays at level L (the arena card shows the same numbers): more each round, Marks instead of XP at 60
+  G.brawlRoundPay = function (r, L) {
+    L = L || G.S.player.level;
+    return { money: L * 50 * r, xp: L < D.LEVEL_CAP ? Math.round((D.XP_TO_LEVEL[L] || 0) * [0.02, 0.03, 0.05][r - 1]) : 0, marks: L >= D.LEVEL_CAP ? [2, 3, 5][r - 1] : 0 };
+  };
+  G.brawlChestOpen = function () { return ((G.S.player.brawl || {}).chestDay) !== brawlDay(new Date(now())); }; // the chest pays once a day
   G.brawlFight = function () {
     const S = G.S, P = S.player, br = S.brawl; if (!br || br.phase !== 'choose' || G.fight) return;
     const foe = G.brawlOpponent(); if (!foe) return;
@@ -2162,7 +2168,7 @@
     br.results.push(results);
     if (won) {
       br.wins++;
-      const money = L * 50 * r, xp = L < D.LEVEL_CAP ? Math.round((D.XP_TO_LEVEL[L] || 0) * [0.02, 0.03, 0.05][r - 1]) : 0, marks = L >= D.LEVEL_CAP ? [2, 3, 5][r - 1] : 0;
+      const { money, xp, marks } = G.brawlRoundPay(r, L);
       P.money += money; br.reward.money += money;
       if (xp) { G.gainXp(xp); br.reward.xp += xp; }
       if (marks) { G.addMarks(marks, 'the Bloodsand Brawl'); br.reward.marks += marks; }

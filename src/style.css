@@ -709,3 +709,12 @@ svg.sym { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: 
 @keyframes dustfade { to { opacity: 0; transform-origin: right; } }
 @keyframes puff { from { transform: scale(.4); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .sprite.run img, .sprite.hopping img, .sprite > .fearfx { animation: none; } }
+
+/* the Bloodsand Brawl bracket (v10.9): one row a pair, a fighter each side */
+.brawl-pairs { display: grid; gap: 4px; }
+.brawl-pair { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 8px; padding: 7px 10px; border: 1px solid var(--edge); border-radius: 4px; background: rgba(0,0,0,.25); }
+.brawl-pair.you { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset; }
+.brawl-pair .side b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.brawl-pair .side small { display: block; opacity: .75; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brawl-pair .side.r { text-align: right; }
+.brawl-pair .vs { font: 700 11px var(--body); color: #a08a60; text-transform: uppercase; }
