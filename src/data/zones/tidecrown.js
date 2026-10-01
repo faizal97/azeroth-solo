@@ -34,7 +34,7 @@
   Object.assign(D.MOBS, {
     tidecrown_guard: { name: 'Tidecrown Royal Guard', lvl: [60, 60], family: 'humanoid', hpMult: 1.2, drops: [['thieves_coin', 0.6], ['linen_cloth', 0.3]], aggro: 'Kneel before the Prince!' },
     tidecrown_tidecaller: { name: 'Tidecrown Tidecaller', lvl: [60, 60], family: 'humanoid', drops: [['thieves_coin', 0.6], ['linen_cloth', 0.4]] },
-    abyssal_spawn: { name: 'Abyssal Spawn', lvl: [60, 60], family: 'elemental', hpMult: 1.3, drops: [['gold_dust', 0.3]] },
+    abyssal_spawn: { name: 'Abyssal Spawn', plural: 'Abyssal Spawn', lvl: [60, 60], family: 'elemental', hpMult: 1.3, drops: [['gold_dust', 0.3]] },
     commander_serathis: { name: 'Commander Serathis', lvl: [60, 60], family: 'humanoid', boss: true, special: 'slam', specialText: 'Serathis drives his trident into the ground!', loot: ['serathis_legs', 'serathis_gloves', 'colossus_bracers'], aggro: 'The Prince\'s gate does not open for thieves.' },
     tide_twin_myrel: { name: 'Myrel of the Rising Tide', lvl: [60, 60], family: 'humanoid', boss: true, hpMult: 0.6, dmgMult: 0.6, special: 'molten', specialText: 'Myrel calls a rising tide!', loot: ['twins_ring', 'twins_boots'], aggro: 'Sister, they are here.' },
     tide_twin_sorin: { name: 'Sorin of the Falling Tide', lvl: [60, 60], family: 'humanoid', boss: true, hpMult: 0.6, dmgMult: 0.6, special: 'whirl', specialText: 'Sorin spins through the falling tide!', loot: ['twins_boots', 'twins_ring'], aggro: 'Then we drown them together.' },

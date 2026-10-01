@@ -666,7 +666,15 @@
       for (const a of who) if (a) dealDamage(C, m, a, rnd(m.dmg[0], m.dmg[1]) * x.mult, { school: x.school || 'physical', ab: 'hard_' + (x.school || 'hit') });
     }
   }
-  const joinText = (n, key, lvl) => `${n > 1 ? `${n} ${D.MOBS[key].name}s join` : `${/^[AEIOU]/.test(D.MOBS[key].name) ? 'an' : 'a'} ${D.MOBS[key].name} joins`} the fight (level ${lvl}).`;
+  // a mob's name for more than one (v10.8): `plural` on the mob if set, else the head noun of "X of Y" takes the ending
+  // (Son of Flame → Sons of Flame), with the usual English endings (Wolf → Wolves, Spy → Spies, Watchman → Watchmen)
+  E.plural = function (key) {
+    const M = D.MOBS[key]; if (M.plural) return M.plural;
+    const m = M.name.match(/^(.*?)( of .*)?$/), head = m[1], tail = m[2] || '';
+    const one = (w) => /man$/i.test(w) ? w.replace(/man$/i, 'men') : /(lf|rf)$/i.test(w) ? w.replace(/f$/i, 'ves') : /(s|x|z|ch|sh)$/i.test(w) ? w + 'es' : /[^aeiou]y$/i.test(w) ? w.replace(/y$/i, 'ies') : w + 's';
+    return one(head) + tail;
+  };
+  const joinText = (n, key, lvl) => `${n > 1 ? `${n} ${E.plural(key)} join` : `${/^[AEIOU]/.test(D.MOBS[key].name) ? 'an' : 'a'} ${D.MOBS[key].name} joins`} the fight (level ${lvl}).`;
   function specials(C, m, dt) {
     if (m.hardX && !m.dead) hardExtra(C, m, dt);
     const sp = m.special;
