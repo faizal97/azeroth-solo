@@ -2333,7 +2333,9 @@
     if (A.where && !G.canReach(P.place, A.where)) return 'hidden';
     if (A.needQuest && !P.quests[A.needQuest]) return 'hidden'; // a legend's story fight shows only while you're on it
     if (P.level < A.minLvl) return `Requires level ${A.minLvl}`;
-    if (region && region !== (D.PLACES[P.place] || {}).region) return `Go to ${D.REGIONS[region].name} to join`;
+    // at the level cap, dungeons and raids queue from anywhere and the group summons you (v10.7: travel is for the world,
+    // not for the endgame); levelling characters and open-world Wanted targets still go there
+    if (region && region !== (D.PLACES[P.place] || {}).region && !(A.dungeon && P.level >= D.LEVEL_CAP)) return `Go to ${D.REGIONS[region].name} to join`;
     if ((S.flags.deserterUntil || 0) > now()) return `Deserter: ${Math.ceil((S.flags.deserterUntil - now()) / 60000)} min`;
     return null;
   };

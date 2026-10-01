@@ -148,5 +148,14 @@ for (const act of raids) {
   const a0 = G.account(); a0.looks = []; G.saveAccount(a0); const act = G.raidActs()[0], left = G.raidLooksLeft(act);
   check(left.length && G.canUseItem(D.ITEMS[left[0]], 'priest'), `the featured look is one this class can wear first (${left[0]})`);
 }
+// at the cap, dungeons and raids queue from anywhere (the group summons you); below it, and for Wanted, you go there
+{
+  G.newGame({ name: 'Q', cls: 'warrior', race: 'human' }); const S = G.S, P = S.player; S.flags.warModeAsked = true; P.place = 'stormwind';
+  P.level = 60; check(!G.activityBlock('molten_core') && !G.activityBlock('onyxias_lair') && !G.activityBlock('stratholme'), `at 60, raids and dungeons queue from Kingsmere (${G.activityBlock('molten_core')})`);
+  const w60 = Object.keys(D.ACTIVITIES).find((k) => !D.ACTIVITIES[k].dungeon && !D.ACTIVITIES[k].needQuest && D.ACTIVITIES[k].maxLvl >= 60 && D.PLACES[D.ACTIVITIES[k].where].region !== 'elwynn');
+  check(!w60 || /^Go to /.test(G.activityBlock(w60) || ''), `a level-60 Wanted still needs you in its zone (${w60}: ${G.activityBlock(w60)})`);
+  P.level = 52; check(/^Go to /.test(G.activityBlock('blackrock_depths') || ''), 'below the cap you still travel to the dungeon');
+  P.level = 60; G.queueFor('molten_core'); G.acceptPop(); check(S.run && S.run.returnTo === 'stormwind', 'after the run you are back where you queued');
+}
 console.log(`hard: ${ok}/${ok + bad} checks pass`);
 process.exitCode = bad ? 1 : 0;
