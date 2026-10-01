@@ -1260,7 +1260,7 @@
   G.toggleAuto = function () { if (G.pUnit) G.pUnit.auto = !G.pUnit.auto; };
   G.flee = function () {
     const C = G.fight;
-    if (C && C.kind === 'duel') { C.over = 'lose'; sys('You yield.'); return; } // yielding a duel counts as a loss
+    if (C && (C.kind === 'duel' || C.kind === 'brawl')) { C.over = 'lose'; sys('You yield.'); return; } // yielding a duel (or a brawl round) counts as a loss
     if (!C || (C.kind !== 'solo' && C.kind !== 'pvp')) return;
     if (Math.random() < (C.kind === 'pvp' ? 0.45 : 0.6)) {
       if (C.kind === 'pvp') { const f = G.S.flags; G.S.player.pvp = G.pvpStats(); G.S.player.pvp.escapes++; f.nextAmbush = now() + AMBUSH_GAP; }
@@ -1807,7 +1807,7 @@
     const P = G.S.player, cx = P.codex || {}; const pv = G.pvpStats();
     let flawless = 0, speed = 0; for (const k in cx) { flawless += cx[k].flawless || 0; speed += cx[k].speed || 0; }
     const craft = Math.max(0, ...Object.entries(P.prof || {}).filter(([k]) => D.PROFESSIONS[k] && D.PROFESSIONS[k].kind === 'craft').map(([, p]) => p.skill));
-    return { mentor: P.mentorRuns || 0, flawless, speed, honor: pv.honor, kills: pv.kills, clears: cx, craft, riding: P.riding ? 1 : 0 };
+    return { mentor: P.mentorRuns || 0, flawless, speed, honor: pv.honor, kills: pv.kills, clears: cx, craft, riding: P.riding ? 1 : 0, brawl: (P.brawl || {}).champs || 0 };
   };
   G.titleUnlocked = function (t) {
     const r = G.records(), n = t.need;
@@ -1935,7 +1935,7 @@
   // You can also attack them first, or walk away.
   function quietNow() {
     const S = G.S, P = S.player;
-    return !(G.fight || S.run || S.bg || S.queue || P.travel || P.ghostUntil || G.paused || (S.rolls && S.rolls.length));
+    return !(G.fight || S.run || S.bg || S.brawl || S.queue || P.travel || P.ghostUntil || G.paused || (S.rolls && S.rolls.length)); // no ambush between brawl rounds either
   }
   function ambushTick() {
     const S = G.S, P = S.player, f = S.flags;
@@ -2081,6 +2081,128 @@
     emit('fightEnd', { result: C.over, pvp: true });
     G.save();
   }
+
+  // ============================================================ the Bloodsand Brawl (v10.9, Rumhook Bay)
+  // A knockout of eight at your level in the Bloodsand Arena: you and 7 simulated players of both factions, three rounds
+  // of one-on-one duels, one fighter each (pets wait outside). Your duel is on screen; the others are settled at once. Everyone is back to
+  // full health each round and losing costs nothing. It opens every 3 hours on the hour (local time) for 20 minutes,
+  // from the clock alone (no stored timer). Each round won pays; the champion opens the Bloodsand chest (once a day: a
+  // choice of three blue items for your level) and earns a title the first time. sim/brawl.js tunes BRAWL_SKILL.
+  const BRAWL = { place: 'bloodsand_arena', every: 3, openMin: 20, minLvl: 35, rounds: 3, size: 8 };
+  G.BRAWL = BRAWL;
+  G.BRAWL_SKILL = [0.2, 0.55]; // the simulated fighters' skill range (sim/brawl.js)
+  const pad2 = (x) => String(x).padStart(2, '0');
+  const brawlDay = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; // local date
+  // the window for a moment: open now or not, when it opens next, when it closes; id names this window
+  G.brawlWindow = function (d) {
+    d = d ? new Date(d) : new Date(now());
+    const start = new Date(d); start.setMinutes(0, 0, 0); start.setHours(start.getHours() - (start.getHours() % BRAWL.every));
+    const closes = new Date(start.getTime() + BRAWL.openMin * 60000), open = d >= start && d < closes;
+    const next = new Date(start); next.setHours(next.getHours() + BRAWL.every);
+    return { open, opensAt: open ? start : next, closesAt: open ? closes : new Date(next.getTime() + BRAWL.openMin * 60000), id: brawlDay(start) + 'T' + pad2(start.getHours()) };
+  };
+  // why you cannot join right now, or null
+  G.brawlBlock = function () {
+    const S = G.S, P = S.player, w = G.brawlWindow();
+    if (P.level < BRAWL.minLvl) return `The Bloodsand Brawl takes fighters from level ${BRAWL.minLvl}.`;
+    if (P.place !== BRAWL.place) return 'Go to the Bloodsand Arena in Rumhook Bay.';
+    if (!w.open) return 'The arena is closed.';
+    if ((P.brawl || {}).last === w.id) return 'You have fought in this brawl. The next one opens later.';
+    if (G.fight || S.run || S.bg || P.travel || P.ghostUntil) return "You can't fight right now.";
+    return null;
+  };
+  // one fighter each: pets wait outside the pit (a plain arena rule, said on the panel; they fight everywhere else)
+  const brawlUnits = (m, side) => { m.hp = null; m.res = null; const u = E.charUnit(m, side, 'bot', now()); u.bot = { skill: m.bot.skill, react: 0.9 - 0.6 * m.bot.skill }; u.role = 'dps'; if (side === 'enemy') u.threat = u.threat || {}; return [u]; };
+  function brawlAuto(a, b) { // two simulated fighters, settled at once
+    const ua = brawlUnits(a, 'ally'), ub = brawlUnits(b, 'enemy'), C = E.fight(ua, ub, {});
+    for (let i = 0; i < 1500 && !C.over; i++) E.tick(C, 0.2);
+    return C.over === 'win' ? a : b;
+  }
+  G.brawlJoin = function () {
+    const S = G.S, P = S.player, why = G.brawlBlock(); if (why) { toast(why); return false; }
+    const used = new Set(), L = P.level, pool = S.bots.filter((b) => Math.abs((b.level || 1) - L) <= 8);
+    const fighters = [];
+    while (fighters.length < BRAWL.size - 1) {
+      const src = pool.filter((b) => !used.has(b.id)); let b = src.length ? JSON.parse(JSON.stringify(pick(src))) : B.makeBot(S.nextBotId++, new Set(S.bots.map((x) => x.name)), { level: L });
+      used.add(b.id); b.level = clamp(L + rint(-1, 1), 1, D.LEVEL_CAP); b.skill = rnd(G.BRAWL_SKILL[0], G.BRAWL_SKILL[1]); b.role = 'dps';
+      const c = G.botChar(b); c.role = 'dps'; fighters.push(c);
+    }
+    const slots = [{ you: true }].concat(fighters).sort(() => Math.random() - 0.5);
+    P.brawl = Object.assign(P.brawl || {}, { last: G.brawlWindow().id });
+    S.brawl = { id: P.brawl.last, round: 1, slots, phase: 'choose', results: [], wins: 0, reward: { money: 0, xp: 0, marks: 0 }, chest: null };
+    sys('The Bloodsand Brawl begins: 8 fighters, three rounds. Win all three and the chest is yours.');
+    emit('change'); G.save();
+    return true;
+  };
+  // the pairs of a round: neighbours in the bracket
+  const brawlPairs = (br) => { const out = []; for (let i = 0; i < br.slots.length; i += 2) out.push([br.slots[i], br.slots[i + 1]]); return out; };
+  G.brawlOpponent = function () { const br = G.S.brawl; if (!br || br.phase !== 'choose') return null; const p = brawlPairs(br).find((x) => x[0].you || x[1].you); return p ? (p[0].you ? p[1] : p[0]) : null; };
+  G.brawlFight = function () {
+    const S = G.S, P = S.player, br = S.brawl; if (!br || br.phase !== 'choose' || G.fight) return;
+    const foe = G.brawlOpponent(); if (!foe) return;
+    // the other duels of the round first, so their results stand when yours ends
+    br.pending = brawlPairs(br).map(([a, b]) => (a.you || b.you ? null : { a: a.name, b: b.name, winner: brawlAuto(a, b) })); // one per pair, yours null
+    stopActions(); P.hp = null; P.res = null;
+    const pu = E.charUnit(P, 'ally', 'player', now()); G.pUnit = pu;
+    G.fight = E.fight([pu], brawlUnits(foe, 'enemy'), { soloUid: pu.uid, puller: pu }); // no pet: one fighter each
+    G.fight.kind = 'brawl'; G.fight.brawl = { foe: foe.name, round: br.round };
+    br.phase = 'fight';
+    sys(`Round ${br.round}: you against ${foe.name}, ${foe.level} ${D.CLASSES[foe.cls].name}.`);
+    emit('fightStart', { fight: G.fight }); emit('change');
+  };
+  function endBrawlFight(C) {
+    const S = G.S, P = S.player, br = S.brawl, L = P.level;
+    G.fight = null; G.pUnit = null; P.hp = null; P.res = null; P.ghostUntil = 0; // nobody stays hurt in the arena
+    emit('fightEnd', { result: C.over, brawl: true });
+    if (!br) return;
+    const won = C.over === 'win', r = br.round, foe = C.brawl.foe;
+    const pend = br.pending || [], results = pend.filter(Boolean).map((x) => ({ a: x.a, b: x.b, w: x.winner.name }));
+    results.unshift({ a: P.name, b: foe, w: won ? P.name : foe, you: true });
+    br.results.push(results);
+    if (won) {
+      br.wins++;
+      const money = L * 50 * r, xp = L < D.LEVEL_CAP ? Math.round((D.XP_TO_LEVEL[L] || 0) * [0.02, 0.03, 0.05][r - 1]) : 0, marks = L >= D.LEVEL_CAP ? [2, 3, 5][r - 1] : 0;
+      P.money += money; br.reward.money += money;
+      if (xp) { G.gainXp(xp); br.reward.xp += xp; }
+      if (marks) { G.addMarks(marks, 'the Bloodsand Brawl'); br.reward.marks += marks; }
+      sys(`You win round ${r}! +${G.moneyText(money)}${xp ? `, +${xp} XP` : ''}${marks ? `, +${marks} Marks` : ''}.`);
+    } else sys(`${foe} wins round ${r}. You are out, with ${br.wins} round${br.wins === 1 ? '' : 's'} won.`);
+    // the winners go on: the bracket keeps its order
+    const winners = brawlPairs(br).map(([a, b], i) => (a.you || b.you ? (won ? (a.you ? a : b) : (a.you ? b : a)) : pend[i].winner));
+    if (!won || r >= BRAWL.rounds) { br.pending = null; return brawlFinish(won && r >= BRAWL.rounds); }
+    br.slots = winners; br.pending = null; br.round++; br.phase = 'choose';
+    emit('bgRound', { took: 1 }); emit('change'); G.save();
+  }
+  function brawlFinish(champion) {
+    const S = G.S, P = S.player, br = S.brawl;
+    br.phase = 'done'; br.champion = champion;
+    P.brawl = Object.assign(P.brawl || {}, { fought: ((P.brawl || {}).fought || 0) + 1 });
+    if (champion) {
+      P.brawl.champs = (P.brawl.champs || 0) + 1;
+      const today = brawlDay(new Date(now()));
+      if (P.brawl.chestDay !== today) { // the chest: once a day, a choice of three blues for your level
+        const C = D.CLASSES[P.cls], L = P.level, slots = ['weapon', pick(['chest', 'legs', 'hands', 'feet', 'waist', 'wrist']), pick(['back', 'finger'])];
+        br.chest = slots.map((sl) => G.genGear(sl, L, 3, sl === 'weapon' ? { wtype: C.weapons[0] } : { atype: C.armorType }));
+      }
+      sys(`You are the Bloodsand Champion!${br.chest ? ' Open the chest.' : ' The chest pays once a day; it is empty for you until tomorrow.'}`);
+    }
+    emit('bgEnd', { result: champion ? 'win' : 'loss' }); emit('change'); G.save();
+  }
+  G.brawlTakeChest = function (i) {
+    const S = G.S, P = S.player, br = S.brawl; if (!br || !br.chest || !br.chest[i]) return;
+    if (G.bagsFull()) return toast('Inventory is full.');
+    const it = br.chest[i]; G.addItem(it); P.brawl.chestDay = brawlDay(new Date(now())); br.chest = null;
+    sys(`From the Bloodsand chest: [${it.name}].`); emit('lootGain', { items: 1, got: [it] }); emit('change'); G.save();
+  };
+  G.leaveBrawl = function () { const S = G.S; if (!S.brawl) return; if (G.fight && G.fight.kind === 'brawl') return toast('Finish the fight first.'); if (S.brawl.chest) return toast('Take something from the chest first.'); S.brawl = null; emit('change'); G.save(); };
+  // the simulated players talk about it before it opens (once per window)
+  G.brawlTick = function () {
+    const S = G.S; if (!S || !S.bots) return; const w = G.brawlWindow(), t = now(), soon = !w.open && w.opensAt.getTime() - t < 5 * 60000;
+    if (!soon || S.brawlTold === w.id) return; S.brawlTold = w.id;
+    const b = S.bots.filter((x) => (x.level || 1) >= BRAWL.minLvl); if (!b.length) return;
+    B.post(S, 'general', pick(b), pick(['bloodsand brawl opens in 5, who is fighting', 'arena in rumhook opens at the top of the hour', 'brawl soon, last time i got knocked out round 1 lol', 'bloodsand pit opens in a few min, chest is mine']));
+    emit('chat');
+  };
 
   // ============================================================ music (v10.8)
   // Which track plays: a run's (each raid has a theme, world bosses share one), the battleground's, an iconic place's
@@ -3118,7 +3240,7 @@
     const fast = G.fight && G.speed > 1 ? G.speed : 1;
     if (fast > 1 && S.run && !S.run.finishedAt) S.run.fastSecs = (S.run.fastSecs || 0) + dt * (fast - 1);
     acc += dt * fast;
-    socAcc += dt; if (socAcc >= 1) { socAcc = 0; if (root.SOC) try { SOC.tick(); } catch (e) { console.error(e); } }
+    socAcc += dt; if (socAcc >= 1) { socAcc = 0; if (root.SOC) try { SOC.tick(); } catch (e) { console.error(e); } try { G.brawlTick(); } catch (e) { console.error(e); } }
     S.player.played = (S.player.played || 0) + dt;
     // combat at fixed 0.1s steps
     while (acc >= 0.1) {
@@ -3142,7 +3264,7 @@
           else B.post(S, 'party', null, 'extra pack!');
         }
         if (C.events.length) { emit('combat', C.events); C.events.length = 0; }
-        if (C.over) { if (C.kind === 'solo') endSolo(C); else if (C.kind === 'pvp') endPvp(C); else if (C.kind === 'duel') endDuel(C); else if (C.kind === 'bg') endBgFight(C); else endRunFight(C); }
+        if (C.over) { if (C.kind === 'solo') endSolo(C); else if (C.kind === 'pvp') endPvp(C); else if (C.kind === 'duel') endDuel(C); else if (C.kind === 'bg') endBgFight(C); else if (C.kind === 'brawl') endBrawlFight(C); else endRunFight(C); }
       }
     }
     worldAcc += dt;

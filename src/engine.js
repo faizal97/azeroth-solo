@@ -820,6 +820,51 @@
     return (KIT[cls] = k);
   }
   E.kitOf = kitOf;
+  // one on one (v10.9): a lone character against a lone character (a duel, the Bloodsand Brawl, a world ambush) plays
+  // like a player would: heal yourself when hurt if your class can, stop a cast or buy time with a stun or a fear, slow
+  // a melee attacker down. Read from each class's own kit (heals, stuns, fears, snares), so a new ability or class needs
+  // nothing here. Group fights never reach this, so dungeon and raid play is unchanged. sim/brawl.js checks no class is
+  // far behind; classes stay different (plate, pets, burst), none hopeless.
+  const SOLO = {};
+  function soloKit(cls) {
+    if (SOLO[cls]) return SOLO[cls];
+    const k = { heals: [], stuns: [], fears: [], snares: [], buffs: [] };
+    for (const id of (D.CLASSES[cls] || { abilities: [] }).abilities) {
+      const A = D.ABILITIES[id]; if (!A || A.form || A.opener || A.taunt || A.needAura) continue;
+      const st = (A.buff && A.buff.stats) || {};
+      if ((A.target === 'self' || A.target === 'party') && A.buff && !A.cd && !A.shapeshift && !A.combatOnly && !A.seal && !(A.buff && A.buff.seal) && (st.armor || st.sta || st.sp || st.int)) k.buffs.push(id); // armour, stamina or spell power (not a seal or weapon imbue: the rotation keeps those)
+      if ((A.heal || A.hot || A.shield) && (A.target === 'ally' || A.target === 'self')) k.heals.push(id);
+      else if (A.target === 'enemy' && A.stun) k.stuns.push(id);
+      else if (A.target === 'self' && A.stompAll) k.fears.push(id);
+      else if (A.target === 'enemy' && A.slow) k.snares.push(id);
+    }
+    // a shield first, then a heal over time, then the quickest cast
+    const rank = (id) => { const A = D.ABILITIES[id]; return A.shield ? 0 : A.hot ? 1 : 2 + (A.cast || 0); };
+    k.heals.sort((a, b) => rank(a) - rank(b));
+    return (SOLO[cls] = k);
+  }
+  E.soloKit = soloKit;
+  const soloFoe = (en) => { const ch = en.filter((x) => x.kind !== 'pet'); return ch.length === 1 && ch[0].cls && !ch[0].boss ? ch[0] : null; }; // pets do not count
+  const soloFight = (C, u, en) => !!soloFoe(en) && alive(friends(C, u)).filter((x) => x.kind !== 'pet').length === 1;
+  function soloThink(C, u, f, b, has, try_) {
+    const sk = b.skill || 0.5, hp = u.hp / u.maxHp, roll = () => Math.random() < 0.4 + 0.6 * sk, k = soloKit(u.cls);
+    if (hp < 0.2 + 0.3 * sk && roll()) for (const id of k.heals) {
+      const A = D.ABILITIES[id]; if (!has(id)) continue;
+      if ((A.cd || 0) >= 60 && hp > 0.25) continue; // a big cooldown waits until you are nearly down
+      if (A.shield && (auraOf(u, 'weakened_soul') || auraOf(u, id))) continue; if (A.hot && auraOf(u, id)) continue;
+      if (try_(id, u)) return true;
+    }
+    const free = !(f.stunUntil > C.t);
+    if (free && (f.cast || hp < 0.5 || Math.random() < 0.12 * sk) && roll()) {
+      for (const id of k.stuns) if (has(id) && try_(id, f)) return true;
+      for (const id of k.fears) if (has(id) && try_(id)) return true;
+    }
+    const thrifty = (id) => D.CLASSES[u.cls].resource === 'mana' && u.res / u.maxRes < 0.4 && f.hp / f.maxHp > 0.25 && abCost(D.ABILITIES[id], u) > u.maxRes * 0.04; // save mana for the main attack
+    if (free && Math.random() < 0.5 * sk) for (const id of k.snares) if (has(id) && !auraOf(f, id) && !thrifty(id) && try_(id, f)) return true;
+    u.soloBuffed = u.soloBuffed || {}; // each buff once a fight: some replace each other (songs, aspects), and a loop would never fight
+    if (hp > 0.5 && roll()) for (const id of k.buffs) if (has(id) && !u.soloBuffed[id] && !auraOf(u, id)) { u.soloBuffed[id] = 1; if (try_(id)) return true; }
+    return false;
+  }
   function botThink(C, u) {
     if (u.dead || u.cast) return;
     if (stunned(C, u)) { const rac = u.race && D.RACIALS[u.race] && D.RACIALS[u.race].active; if (rac && D.ABILITIES[rac].freeOf && Math.random() < 0.3) E.use(C, u, rac); return; }
@@ -846,6 +891,7 @@
       if (try_(l, focusTarget(C, u))) return;
     }
 
+    if (!u.legend && soloFight(C, u, en) && soloThink(C, u, soloFoe(en), b, has, try_)) return;
     if (u.role === 'healer') {
       const allies = alive(friends(C, u));
       const low = allies.slice().sort((a, b2) => a.hp / a.maxHp - b2.hp / b2.maxHp)[0];
@@ -922,7 +968,8 @@
       if (u.role !== 'healer' && en.some((e) => e.boss)) for (const id of kit.burst) if (has(id) && Math.random() < use * 0.5 && try_(id)) return; // big cooldowns on bosses
       const spread = C.opts.killOrder === 'spread'; // spread: area attacks from 2 enemies, and more often
       if ((en.length >= 3 || (spread && en.length >= 2)) && tk) for (const id of kit.aoe) if (has(id) && Math.random() < (spread ? Math.min(1, use * 1.6) : use) && try_(id, tk)) return;
-      if (u.role !== 'healer' && tk) for (const id of kit.hits) if (has(id) && Math.random() < use && try_(id, tk)) return;
+      const lowMana = soloFight(C, u, en) && D.CLASSES[u.cls].resource === 'mana' && u.res / u.maxRes < 0.4 && tk && tk.hp / tk.maxHp > 0.25; // one on one, mana runs out: keep it for the main attack
+      if (u.role !== 'healer' && tk) for (const id of kit.hits) if (has(id) && !(lowMana && abCost(D.ABILITIES[id], u) > u.maxRes * 0.04) && Math.random() < use && try_(id, tk)) return;
     }
     if (u.role === 'tank') {
       // grab loose mobs
@@ -982,7 +1029,7 @@
     } else if (u.cls === 'shaman') {
       if (!u.auras.some((a) => a.seal) && try_('rockbiter_weapon')) return;
       if (has('lightning_shield') && !auraOf(u, 'lightning_shield') && try_('lightning_shield')) return;
-      if (has('earth_shock') && try_('earth_shock', tgt)) return;
+      if (has('earth_shock') && (u.res / u.maxRes > 0.4 || tgt.hp < tgt.maxHp * 0.25) && try_('earth_shock', tgt)) return;
       if (has('searing_totem') && !auraOf(tgt, 'searing_totem') && tgt.hp > tgt.maxHp * 0.4 && try_('searing_totem', tgt)) return;
       try_('lightning_bolt', tgt);
     } else if (u.cls === 'hunter') {
@@ -1012,6 +1059,10 @@
     } else if (u.cls === 'priest') {
       if (has('sw_pain') && !auraOf(tgt, 'sw_pain') && try_('sw_pain', tgt)) return;
       try_('smite', tgt);
+    } else if (u.cls === 'bard') { // a bard dealing damage (v10.9): the dirge on the target, the marching song, the sour note
+      if (has('marching_song') && !auraOf(u, 'marching_song') && try_('marching_song')) return;
+      if (has('dirge') && !auraOf(tgt, 'dirge') && tgt.hp > tgt.maxHp * 0.3 && try_('dirge', tgt)) return;
+      try_('dissonant_note', tgt);
     }
   }
 

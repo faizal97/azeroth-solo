@@ -552,6 +552,7 @@
     { id: 'guild_champion', name: '%s, Champion of the Guild', need: { guildRank: 4 }, how: 'Reach Champion rank in a guild' },
     { id: 'oathkeeper', name: '%s the Oathkeeper', need: { quest: 'lg_lyv_oath' }, how: "Finish Lyveus Cloveus's story" },
     { id: 'balladworthy', name: '%s the Ballad-Worthy', need: { quest: 'lg_bro_ballad' }, how: "Finish Bromli Beerhammer's story" },
+    { id: 'bloodsand', name: '%s the Bloodsand Champion', need: { brawl: 1 }, how: 'Win the Bloodsand Brawl in Rumhook Bay' },
     { id: 'tidecrown', name: '%s of the Drowned Crown', need: { clear: 'tidecrown_citadel' }, how: 'Clear the Tidecrown Citadel' },
     { id: 'hard_vesh', name: 'Broodbreaker %s', need: { hard: 'onyxias_lair' }, how: "Clear Veshmira's Lair on Hard" },
     { id: 'hard_mc', name: '%s the Fireproof', need: { hard: 'molten_core' }, how: 'Clear the Magma Throne on Hard' },
