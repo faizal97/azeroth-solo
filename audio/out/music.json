@@ -1,5 +1,5 @@
 {
- "elwynn": {
+ "ambermoor": {
   "bpm": 88,
   "bars": 16,
   "key": "D major",
@@ -112,260 +112,260 @@
   "key": "D major",
   "loop_s": 48.0
  },
- "westfall": {
+ "longfield": {
   "bpm": 104,
   "bars": 16,
   "key": "G major",
   "loop_s": 36.9231
  },
- "westfall_town": {
+ "longfield_town": {
   "bpm": 96,
   "bars": 12,
   "key": "G major",
   "loop_s": 30.0
  },
- "dunmorogh": {
+ "kaldvik": {
   "bpm": 168,
   "bars": 16,
   "key": "A dorian",
   "meter": "6/8",
   "loop_s": 34.2857
  },
- "dunmorogh_town": {
+ "kaldvik_town": {
   "bpm": 90,
   "bars": 16,
   "key": "A major",
   "meter": "3/4",
   "loop_s": 32.0
  },
- "teldrassil": {
+ "greatbough": {
   "bpm": 66,
   "bars": 16,
   "key": "F# dorian",
   "meter": "3/4",
   "loop_s": 43.6363
  },
- "teldrassil_town": {
+ "greatbough_town": {
   "bpm": 60,
   "bars": 12,
   "key": "F# dorian",
   "meter": "3/4",
   "loop_s": 36.0
  },
- "durotar": {
+ "dunescar": {
   "bpm": 100,
   "bars": 16,
   "key": "E phrygian",
   "loop_s": 38.4
  },
- "durotar_town": {
+ "dunescar_town": {
   "bpm": 96,
   "bars": 16,
   "key": "E mpent",
   "loop_s": 40.0
  },
- "mulgore": {
+ "greensward": {
   "bpm": 84,
   "bars": 16,
   "key": "D pent",
   "loop_s": 45.7143
  },
- "mulgore_town": {
+ "greensward_town": {
   "bpm": 80,
   "bars": 12,
   "key": "D pent",
   "loop_s": 36.0
  },
- "tirisfal": {
+ "pallmoor": {
   "bpm": 70,
   "bars": 12,
   "key": "D minor",
   "loop_s": 41.1428
  },
- "tirisfal_town": {
+ "pallmoor_town": {
   "bpm": 84,
   "bars": 16,
   "key": "D harmonic",
   "meter": "3/4",
   "loop_s": 34.2857
  },
- "barrens": {
+ "scrublands": {
   "bpm": 88,
   "bars": 16,
   "key": "A mixolydian",
   "loop_s": 43.6363
  },
- "barrens_town": {
+ "scrublands_town": {
   "bpm": 90,
   "bars": 12,
   "key": "A dorian",
   "loop_s": 32.0
  },
- "redridge": {
+ "stoneharrow": {
   "bpm": 100,
   "bars": 16,
   "key": "D major",
   "loop_s": 38.4
  },
- "redridge_town": {
+ "stoneharrow_town": {
   "bpm": 88,
   "bars": 16,
   "key": "D major",
   "meter": "3/4",
   "loop_s": 32.7273
  },
- "stonetalon": {
+ "highcrag": {
   "bpm": 80,
   "bars": 12,
   "key": "C minor",
   "loop_s": 36.0
  },
- "stonetalon_town": {
+ "highcrag_town": {
   "bpm": 84,
   "bars": 12,
   "key": "C dorian",
   "loop_s": 34.2857
  },
- "ashenvale": {
+ "elderglen": {
   "bpm": 72,
   "bars": 16,
   "key": "B minor",
   "meter": "3/4",
   "loop_s": 40.0
  },
- "ashenvale_town": {
+ "elderglen_town": {
   "bpm": 66,
   "bars": 12,
   "key": "B minor",
   "meter": "3/4",
   "loop_s": 32.7273
  },
- "duskwood_town": {
+ "wraithwood_town": {
   "bpm": 84,
   "bars": 16,
   "key": "G harmonic",
   "meter": "3/4",
   "loop_s": 34.2857
  },
- "hillsbrad": {
+ "greymead": {
   "bpm": 92,
   "bars": 16,
   "key": "F major",
   "loop_s": 41.7391
  },
- "hillsbrad_town": {
+ "greymead_town": {
   "bpm": 88,
   "bars": 12,
   "key": "D minor",
   "loop_s": 32.7273
  },
- "wetlands": {
+ "greenfen": {
   "bpm": 72,
   "bars": 12,
   "key": "E minor",
   "loop_s": 40.0
  },
- "wetlands_town": {
+ "greenfen_town": {
   "bpm": 168,
   "bars": 16,
   "key": "G major",
   "meter": "6/8",
   "loop_s": 34.2857
  },
- "stranglethorn": {
+ "vinewild": {
   "bpm": 112,
   "bars": 16,
   "key": "E dorian",
   "loop_s": 34.2857
  },
- "stranglethorn_town": {
+ "vinewild_town": {
   "bpm": 90,
   "bars": 12,
   "key": "E dorian",
   "loop_s": 32.0
  },
- "arathi": {
+ "kinloch": {
   "bpm": 156,
   "bars": 16,
   "key": "A minor",
   "meter": "6/8",
   "loop_s": 36.9231
  },
- "arathi_town": {
+ "kinloch_town": {
   "bpm": 88,
   "bars": 12,
   "key": "A dorian",
   "loop_s": 32.7273
  },
- "tanaris_town": {
+ "sirocco_town": {
   "bpm": 116,
   "bars": 16,
   "key": "G major",
   "loop_s": 33.1034
  },
- "feralas": {
+ "ferndeep": {
   "bpm": 76,
   "bars": 12,
   "key": "G dorian",
   "loop_s": 37.8947
  },
- "feralas_town": {
+ "ferndeep_town": {
   "bpm": 72,
   "bars": 12,
   "key": "G dorian",
   "meter": "3/4",
   "loop_s": 30.0
  },
- "ungoro": {
+ "greenmaw": {
   "bpm": 96,
   "bars": 16,
   "key": "F lydian",
   "loop_s": 40.0
  },
- "ungoro_town": {
+ "greenmaw_town": {
   "bpm": 92,
   "bars": 12,
   "key": "F major",
   "loop_s": 31.3043
  },
- "steppes": {
+ "cinderfields": {
   "bpm": 92,
   "bars": 12,
   "key": "C# phrygian",
   "loop_s": 31.3043
  },
- "steppes_town": {
+ "cinderfields_town": {
   "bpm": 76,
   "bars": 12,
   "key": "C# minor",
   "loop_s": 37.8947
  },
- "plaguelands": {
+ "rotmoor": {
   "bpm": 66,
   "bars": 12,
   "key": "Bb minor",
   "loop_s": 43.6363
  },
- "plaguelands_town": {
+ "rotmoor_town": {
   "bpm": 84,
   "bars": 12,
   "key": "Bb minor",
   "loop_s": 34.2857
  },
- "winterspring_town": {
+ "icewold_town": {
   "bpm": 84,
   "bars": 16,
   "key": "E major",
   "meter": "3/4",
   "loop_s": 34.2857
  },
- "dustwallow": {
+ "saltmarsh": {
   "bpm": 78,
   "bars": 12,
   "key": "C minor",
   "loop_s": 36.9231
  },
- "dustwallow_town": {
+ "saltmarsh_town": {
   "bpm": 156,
   "bars": 16,
   "key": "C mixolydian",

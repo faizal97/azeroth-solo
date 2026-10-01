@@ -3,7 +3,7 @@
 // other faction (place.faction), so the roads meet in the wild and nowhere else. War Mode ambushes are more frequent here.
 (function (root) {
   const D = root.D;
-  D.zone('ashenvale', { name: 'Elderglen', faction: 'contested', music: 'ashenvale', town: 'ashenvale_town' });
+  D.zone('ashenvale', { name: 'Elderglen', faction: 'contested', music: 'elderglen', town: 'elderglen_town' });
   // quest items
   D.item('naga_scale', { name: 'Scalelash Scale', slot: 'quest', q: 1, icon: 'fin' });
   D.item('sea_witch_pearl', { name: "Sea Witch's Pearl", slot: 'quest', q: 1, icon: 'ring' });

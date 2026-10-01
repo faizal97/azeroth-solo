@@ -2,7 +2,7 @@
 // The road over the crater rim joins it to Coppergulch.
 (function (root) {
   const D = root.D;
-  D.zone('ungoro', { name: "Greenmaw Crater", faction: 'contested', music: 'ungoro', town: 'ungoro_town' });
+  D.zone('ungoro', { name: "Greenmaw Crater", faction: 'contested', music: 'greenmaw', town: 'greenmaw_town' });
   D.item('bloodpetal_sprout', { name: 'Redbloom Sprout', slot: 'quest', q: 1, icon: 'seed' });
   D.item('thunderer_horn', { name: 'Thunderer Horn', slot: 'quest', q: 1, icon: 'tusk' });
   D.item('stomper_hide', { name: 'Stomper Hide', slot: 'quest', q: 1, icon: 'pelt' });

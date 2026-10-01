@@ -3,7 +3,7 @@
 // Links to other zones sit on the places themselves (place.links / place.via).
 (function (root) {
   const D = root.D;
-  D.zone('dunmorogh', { name: 'Kaldvik', faction: 'alliance', music: 'dunmorogh', town: 'dunmorogh_town' });
+  D.zone('dunmorogh', { name: 'Kaldvik', faction: 'alliance', music: 'kaldvik', town: 'kaldvik_town' });
   // items
   D.item('felix_journal', { name: "Nib's Journal", slot: 'quest', q: 1, icon: 'journal' });
   D.item('crag_boar_rib', { name: 'Crag Boar Rib', slot: 'quest', q: 1, icon: 'rib' });

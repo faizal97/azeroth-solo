@@ -2081,7 +2081,7 @@
   G.musicFor = function (has) {
     const S = G.S, P = S.player, pick = (...names) => names.find((n) => n && has(n)) || names[names.length - 1];
     if (S.run) { const A = D.ACTIVITIES[S.run.act] || {}; return pick(A.music || (D.DUNGEONS[A.dungeon] || {}).music, 'dungeon'); } // a raid's theme sits on its dungeon
-    const pl = D.PLACES[P.place], outdoor = pick((D.REGIONS[pl.region] || {}).music, 'elwynn');
+    const pl = D.PLACES[P.place], outdoor = pick((D.REGIONS[pl.region] || {}).music, 'ambermoor');
     if (S.bg) return pick((D.ACTIVITIES[S.bg.act] || {}).music, outdoor);
     if (P.travel || !pl.safe) return outdoor;
     return pick(pl.music, (D.REGIONS[pl.region] || {}).town, 'town'); // a capital's theme, else the zone's town track

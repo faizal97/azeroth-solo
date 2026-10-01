@@ -3,7 +3,7 @@
 // Links to other zones sit on the places themselves (place.links / place.via).
 (function (root) {
   const D = root.D;
-  D.zone('westfall', { name: 'Longfield', faction: 'alliance', music: 'westfall', town: 'westfall_town' });
+  D.zone('westfall', { name: 'Longfield', faction: 'alliance', music: 'longfield', town: 'longfield_town' });
   // items
   D.item('cruel_barb', { name: 'Cruel Barb', slot: 'weapon', wtype: 'sword', q: 3, lvl: 21, dmg: [24, 42], speed: 2.4, stats: { str: 8 }, icon: 'sword', sell: 1980, look: ['weapon', 'cruel_barb'], source: 'Corvin Blackwell, The Smugglers\' Deep' });
   D.item('cape_brotherhood', { name: 'Cape of the Brotherhood', slot: 'back', q: 3, lvl: 21, armor: 34, stats: { agi: 6, sta: 3 }, icon: 'cloak', sell: 1320, look: ['back', 'cape_brotherhood'], source: 'Corvin Blackwell, The Smugglers\' Deep' });

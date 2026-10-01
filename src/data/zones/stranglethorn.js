@@ -3,7 +3,7 @@
 // hunting camp that both factions use. The south (Rumhook Bay, the Bloodsand Arena) comes later.
 (function (root) {
   const D = root.D;
-  D.zone('stranglethorn', { name: 'The Vinewild', faction: 'contested', music: 'stranglethorn', town: 'stranglethorn_town' });
+  D.zone('stranglethorn', { name: 'The Vinewild', faction: 'contested', music: 'vinewild', town: 'vinewild_town' });
   // quest items
   D.item('tiger_fang', { name: 'Vinewild Tiger Fang', slot: 'quest', q: 1, icon: 'claw' });
   D.item('panther_pelt', { name: 'Inkclaw Pelt', slot: 'quest', q: 1, icon: 'pelt' });

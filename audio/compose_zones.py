@@ -184,12 +184,17 @@ def spec_of(name, z, motif=None):
             'layers': arrange(z['style'], z['beats'], z['lead'], mel, z['gain']), 'fx': [FX[f] for f in z['fx']], 'room': z['room']}
 
 
+# the file name of a zone's tracks: its in-game name (the zone ids in the code are older names; seeds still use the id,
+# so the melodies do not change)
+TRACK = {"dunmorogh": "kaldvik", "teldrassil": "greatbough", "durotar": "dunescar", "mulgore": "greensward", "tirisfal": "pallmoor", "westfall": "longfield", "barrens": "scrublands", "redridge": "stoneharrow", "stonetalon": "highcrag", "ashenvale": "elderglen", "duskwood": "wraithwood", "hillsbrad": "greymead", "wetlands": "greenfen", "stranglethorn": "vinewild", "arathi": "kinloch", "tanaris": "sirocco", "feralas": "ferndeep", "ungoro": "greenmaw", "steppes": "cinderfields", "plaguelands": "rotmoor", "winterspring": "icewold", "dustwallow": "saltmarsh", "tidewatch": "tidewatch", "skullreef": "skullreef", "stormveil": "stormveil"}
+
+
 def all_specs():
     out = {}
     for zone, (o, t) in ZONES.items():
         oseed = zlib.crc32(zone.encode()) & 0xffffffff
-        if o: out[zone] = spec_of(zone, o)
-        if t: out[zone + '_town'] = spec_of(zone + '_town', t, motif=oseed)   # the town shares the zone's opening motif
+        if o: out[TRACK[zone]] = spec_of(zone, o)
+        if t: out[TRACK[zone] + '_town'] = spec_of(zone + '_town', t, motif=oseed)   # the town shares the zone's opening motif
     return out
 
 

@@ -3,7 +3,7 @@
 // The Reclaimed of Mourncross wage a quiet war on the human farms; the Black Ledger hold Blackhelm; Cairn's worgen haunt Needlewood.
 (function (root) {
   const D = root.D;
-  D.zone('hillsbrad', { name: 'Greymead Foothills', faction: 'horde', music: 'hillsbrad', town: 'hillsbrad_town' });
+  D.zone('hillsbrad', { name: 'Greymead Foothills', faction: 'horde', music: 'greymead', town: 'greymead_town' });
   // quest items
   D.item('farm_deed', { name: 'Greymead Farm Deed', slot: 'quest', q: 1, icon: 'journal' });
   D.item('peasant_scythe', { name: "Farmhand's Scythe", slot: 'quest', q: 1, icon: 'axe' });

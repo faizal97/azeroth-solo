@@ -7,7 +7,7 @@
   // ------------------------------------------------------------ chapters
   // lines: {t: seconds into the shot, who: speaker or '' for narrator, text}. {name}/{zone} fill in per player.
   CS.CHAPTERS = [
-    { id: 'intro', level: 1, title: 'The Borrowed Peace', music: 'elwynn', shots: [
+    { id: 'intro', level: 1, title: 'The Borrowed Peace', music: 'ambermoor', shots: [
       { bg: 'story:azeroth_dawn', dur: 9, cam: [[0, 0, 1.12], [0, -2, 1.0]], fx: ['fadein'],
         lines: [{ t: 0.6, text: 'Twelve years have passed since the Long War between the Accord and the Krugar.' }, { t: 4.8, text: 'Both sides rebuilt on borrowed gold, and a tired peace holds.' }] },
       { bg: 'story:stormwind_keep', dur: 10, cam: [[-3, 0, 1.08], [3, 0, 1.08]],
@@ -411,7 +411,7 @@
       { bg: 'scene:ragefire_chasm', dur: 10, cam: [[0, 2, 1.14], [0, 0, 1.04]], fx: ['fadein', 'embers', 'fadeout'],
         lines: [{ t: 0.5, text: 'Bazzak the Hungerer falls in the Smoke Pit beneath Vazhrak.' }, { t: 4.5, text: 'In the cult\'s offering bowl lies a coin, still warm, stamped with a claw.' }] },
     ] },
-    { id: 'ms_quarry', faction: 'alliance', scene: true, quest: 'quarry_ledgers', on: 'done', level: 16, title: 'Where the Ore Goes', music: 'elwynn', shots: [
+    { id: 'ms_quarry', faction: 'alliance', scene: true, quest: 'quarry_ledgers', on: 'done', level: 16, title: 'Where the Ore Goes', music: 'ambermoor', shots: [
       { bg: 'scene:gold_coast_quarry', dur: 10, cam: [[-3, 0, 1.1], [0, 0, 1.04]], fx: ['fadein', 'fadeout'],
         lines: [{ t: 0.5, text: 'The overseers keep neat books. Every cart of ore goes the same way: to a cove under Fenwick.' }, { t: 5, text: 'Paid in full, by a lender nobody in Longfield has met: the Black Ledger.' }] },
     ] },
@@ -458,7 +458,7 @@
         lines: [{ t: 0.5, text: 'On the Broodwing Path, the broodlings hatch by the dozen.' }, { t: 4.5, text: 'Someone has scattered gold among the eggs, the way a farmer scatters grain for hens.' }] },
     ] },
     // Main-story quest scenes (v10.2): a short moment when a key story quest is done (both factions where there are two)
-    { id: 'ms_watch', faction: 'alliance', scene: true, quest: 'peoples_militia', on: 'done', level: 11, title: 'The Watchfires of Warrick\'s Rise', music: 'elwynn', shots: [
+    { id: 'ms_watch', faction: 'alliance', scene: true, quest: 'peoples_militia', on: 'done', level: 11, title: 'The Watchfires of Warrick\'s Rise', music: 'ambermoor', shots: [
       { bg: 'scene:sentinel_hill', dur: 10, cam: [[0, 2, 1.14], [0, 0, 1.04]], fx: ['fadein', 'embers', 'fadeout'],
         actors: [{ a: 'hero', x: 40, y: 2, w: 30, anim: 'breathe', from: { o: 0 }, dur: 1.4 }],
         lines: [{ t: 0.5, text: 'The Grey Hood trappers are gone from the roads. At Warrick\'s Rise, the farmers light the watchfires again.' }, { t: 5.5, who: 'Bram Oakhollow', text: 'Let them count us now. The Farmers\' Watch still stands.' }] },

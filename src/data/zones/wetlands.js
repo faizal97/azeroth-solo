@@ -3,7 +3,7 @@
 // Mirelings in the marsh, raptors at the dig, the Slagborn in Kaldhelm, and the Wyrmchain below Drakestone Hold.
 (function (root) {
   const D = root.D;
-  D.zone('wetlands', { name: 'Greenfen', faction: 'alliance', music: 'wetlands', town: 'wetlands_town' });
+  D.zone('wetlands', { name: 'Greenfen', faction: 'alliance', music: 'greenfen', town: 'greenfen_town' });
   // quest items
   D.item('bluegill_fin', { name: 'Reedgill Fin', slot: 'quest', q: 1, icon: 'fin' });
   D.item('oracle_shell', { name: "Oracle's Shell", slot: 'quest', q: 1, icon: 'chest_box' });

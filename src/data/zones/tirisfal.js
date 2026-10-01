@@ -3,7 +3,7 @@
 // Links to other zones sit on the places themselves (place.links / place.via).
 (function (root) {
   const D = root.D;
-  D.zone('tirisfal', { name: 'Pallmoor', faction: 'horde', music: 'tirisfal', town: 'tirisfal_town' });
+  D.zone('tirisfal', { name: 'Pallmoor', faction: 'horde', music: 'pallmoor', town: 'pallmoor_town' });
   // items
   D.item('bat_wing', { name: 'Gravebat Wing', slot: 'quest', q: 1, icon: 'bat_wing' });
   D.item('rot_hide_ichor', { name: 'Mangecoat Ichor', slot: 'quest', q: 1, icon: 'venom' });

@@ -2,7 +2,7 @@
 // leads to the gate of The Gemfall Caves in Mournwaste. Windgorge joins it to Sirocco.
 (function (root) {
   const D = root.D;
-  D.zone('feralas', { name: 'Ferndeep', faction: 'contested', music: 'feralas', town: 'feralas_town' });
+  D.zone('feralas', { name: 'Ferndeep', faction: 'contested', music: 'ferndeep', town: 'ferndeep_town' });
   D.item('hippogryph_feather', { name: 'Tatterwing Plume', slot: 'quest', q: 1, icon: 'feather' });
   D.item('woodpaw_mane', { name: 'Mossgut Mane', slot: 'quest', q: 1, icon: 'pelt' });
   D.item('gordunni_scroll', { name: 'Stonegut Scroll', slot: 'quest', q: 1, icon: 'journal' });
