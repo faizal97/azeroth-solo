@@ -2,15 +2,18 @@
 // The design: a level-appropriate player wins the whole brawl about 1 time in 3; every class earns from it (wins at least
 // 0.8 rounds a brawl on average), while who ends up champion may lean by class (that is class identity). Pets wait
 // outside the pit. Rounds pay, the chest opens once a day, the schedule is right across midnight and time-zone changes.
-//   node sim/brawl.js [brawls per class, default 12]
+//   node sim/brawl.js [brawls per class, default 48, as the build runs it]
+// seeded (as sim/social.js): the same code gives the same brawls, so the balance gate passes or fails on the code, not on luck
+{ let s = 0x5eed1e55 >>> 0; Math.random = () => { s = (s + 0x6D2B79F5) >>> 0; let x = s; x = Math.imul(x ^ (x >>> 15), x | 1); x ^= x + Math.imul(x ^ (x >>> 7), x | 61); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; }
 globalThis.localStorage = (() => { const m = new Map(); return { getItem: (k) => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: (k) => m.delete(k) }; })();
 require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js');
 const { G, D } = globalThis;
 const { execFileSync } = require('child_process');
-const N = +process.argv[2] || 12;
+const N = +process.argv[2] || 48;
 let t = new Date('2026-10-01T15:01:00').getTime(); Date.now = () => t;
 let ok = 0, bad = 0; const check = (c, m) => { if (c) ok++; else { bad++; console.log('FAIL', m); } };
-// the balance numbers are a report, not a gate, until the reach rule (casters' answer to melee) is designed
+// balance (distance, v10.9): a gate with room for the wobble of a sample (every class at least 0.7 rounds, the champion
+// rate 20-45%); the design's targets (0.8 rounds, about 1 in 3) are reported when missed
 const report = (c, m) => { if (!c) console.log('REPORT', m); };
 const CLASSES = Object.keys(D.CLASSES);
 const OPEN = new Date('2026-10-01T15:01:00').getTime();
@@ -39,10 +42,11 @@ for (const L of [35, 45, 60]) {
   }
   const r = champs / n; rate[L] = r;
   console.log(`L${L}: champion ${Math.round(r * 100)}% · ${(rounds / n).toFixed(2)} rounds won a brawl · rounds by class ${CLASSES.map((k) => k.slice(0, 4) + ' ' + rate['r' + L + k].toFixed(1)).join(' ')} · champion by class ${CLASSES.map((k) => k.slice(0, 4) + ' ' + Math.round(rate[L + k] * 100)).join(' ')}`);
-  report(r >= 0.22 && r <= 0.45, `L${L}: a level-appropriate player should win about 1 in 3 (got ${Math.round(r * 100)}%)`);
+  check(r >= 0.2 && r <= 0.45, `L${L}: a level-appropriate player wins the brawl 20-45% of the time (got ${Math.round(r * 100)}%)`);
+  report(r >= 0.22, `L${L}: about 1 in 3 is the aim (got ${Math.round(r * 100)}%)`);
 }
 // no class far behind: across all three levels
-for (const cls of CLASSES) { const m = (rate['r35' + cls] + rate['r45' + cls] + rate['r60' + cls]) / 3; report(m >= 0.8, `${cls} wins only ${m.toFixed(2)} rounds a brawl`); }
+for (const cls of CLASSES) { const m = (rate['r35' + cls] + rate['r45' + cls] + rate['r60' + cls]) / 3; check(m >= 0.7, `${cls} wins only ${m.toFixed(2)} rounds a brawl (at least 0.7)`); report(m >= 0.8, `${cls} wins ${m.toFixed(2)} rounds a brawl (the aim is 0.8)`); }
 // rewards: rounds pay, the chest once a day, the title
 {
   let br = null; for (let i = 0; i < 40 && !(br && br.champion); i++) br = brawl('warrior', 40, 0.85);

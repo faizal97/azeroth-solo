@@ -38,7 +38,7 @@ if subprocess.run(['node', os.path.join(R, 'sim', 'worldboss.js')]).returncode !
     sys.exit('build stopped: a world boss rule is broken (node sim/worldboss.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'distance.js')]).returncode != 0:
     sys.exit('build stopped: a distance rule is broken (node sim/distance.js lists which)')
-if subprocess.run(['node', os.path.join(R, 'sim', 'brawl.js'), '3']).returncode != 0:
+if subprocess.run(['node', os.path.join(R, 'sim', 'brawl.js'), '48']).returncode != 0:
     sys.exit('build stopped: a Bloodsand Brawl rule is broken (node sim/brawl.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'music.js')]).returncode != 0:
     sys.exit('build stopped: a place plays the wrong music (node sim/music.js lists which)')
