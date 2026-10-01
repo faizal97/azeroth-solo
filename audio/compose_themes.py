@@ -141,8 +141,9 @@ def song(spec):
             elif k == 'choir':
                 T.put(choir([n + L.get('oct', 12) for n in ch[:3]], BAR + 0.6, cut=L.get('cut', 900), gain=L.get('gain', 0.16)), t0)
             elif k == 'bass':
+                root = ch[0] - 12 if L.get('wrap') and ch[0] > 50 else ch[0]   # wrap: keep the bass in one low octave
                 for beat, iv, d in L['pat']:
-                    T.put(bassnote(ch[0] + iv, d * BEAT * 0.95, gain=L.get('gain', 0.28), square=L.get('square', 0.2)), t0 + beat * BEAT)
+                    T.put(bassnote(root + iv, d * BEAT * 0.95, gain=L.get('gain', 0.28), square=L.get('square', 0.2)), t0 + beat * BEAT)
             elif k == 'arp':
                 tones = ch + [n + 12 for n in ch] + [n + 24 for n in ch]
                 step = L.get('step', 0.5)

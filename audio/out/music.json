@@ -405,22 +405,25 @@
   "loop_s": 32.7273
  },
  "smokepit": {
-  "bpm": 138,
+  "bpm": 176,
   "bars": 16,
   "key": "E phrygian",
-  "loop_s": 27.8261
+  "meter": "6/8",
+  "loop_s": 32.7273
  },
  "smugglers_deep": {
-  "bpm": 144,
+  "bpm": 180,
   "bars": 16,
   "key": "D minor",
-  "loop_s": 26.6667
+  "meter": "6/8",
+  "loop_s": 32.0
  },
  "dreaming_caves": {
   "bpm": 132,
-  "bars": 16,
-  "key": "F# minor",
-  "loop_s": 29.0909
+  "bars": 24,
+  "key": "F# dorian",
+  "meter": "3/4",
+  "loop_s": 32.7273
  },
  "kingsmere_gaol": {
   "bpm": 140,
@@ -429,87 +432,91 @@
   "loop_s": 27.4286
  },
  "greyhowl_keep": {
-  "bpm": 136,
-  "bars": 16,
-  "key": "G minor",
-  "loop_s": 28.2353
+  "bpm": 126,
+  "bars": 24,
+  "key": "G harmonic",
+  "meter": "3/4",
+  "loop_s": 34.2857
  },
  "tidehollow": {
   "bpm": 132,
   "bars": 16,
   "key": "A minor",
-  "loop_s": 29.0909
+  "meter": "6/8",
+  "loop_s": 43.6363
  },
  "gearhollow": {
-  "bpm": 148,
+  "bpm": 152,
   "bars": 16,
   "key": "B minor",
-  "loop_s": 25.9459
+  "loop_s": 25.2632
  },
  "thorn_warrens": {
-  "bpm": 140,
+  "bpm": 124,
   "bars": 16,
   "key": "E dorian",
-  "loop_s": 27.4286
+  "loop_s": 30.9677
  },
  "pyre_library": {
-  "bpm": 132,
+  "bpm": 116,
   "bars": 16,
   "key": "D harmonic",
-  "loop_s": 29.0909
+  "loop_s": 33.1034
  },
  "pyre_cathedral": {
-  "bpm": 144,
+  "bpm": 132,
   "bars": 16,
   "key": "D minor",
-  "loop_s": 26.6667
+  "loop_s": 29.0909
  },
  "coinworks": {
-  "bpm": 140,
-  "bars": 16,
-  "key": "G minor",
-  "loop_s": 27.4286
- },
- "dune_temple": {
-  "bpm": 138,
-  "bars": 16,
-  "key": "D phrygdom",
-  "loop_s": 27.8261
- },
- "gemfall": {
-  "bpm": 134,
-  "bars": 16,
-  "key": "A minor",
-  "loop_s": 28.6567
- },
- "cinderpeak": {
   "bpm": 144,
   "bars": 16,
-  "key": "C minor",
+  "key": "G minor",
   "loop_s": 26.6667
  },
- "blackcloister": {
+ "dune_temple": {
+  "bpm": 132,
+  "bars": 16,
+  "key": "D phrygdom",
+  "loop_s": 29.0909
+ },
+ "gemfall": {
+  "bpm": 120,
+  "bars": 24,
+  "key": "A lydian",
+  "meter": "3/4",
+  "loop_s": 36.0
+ },
+ "cinderpeak": {
   "bpm": 136,
   "bars": 16,
-  "key": "B harmonic",
+  "key": "C minor",
   "loop_s": 28.2353
  },
+ "blackcloister": {
+  "bpm": 168,
+  "bars": 16,
+  "key": "B harmonic",
+  "meter": "6/8",
+  "loop_s": 34.2857
+ },
  "graymouth": {
-  "bpm": 146,
+  "bpm": 148,
   "bars": 16,
   "key": "F minor",
-  "loop_s": 26.3014
+  "loop_s": 25.9459
  },
  "sunken_archive": {
-  "bpm": 138,
+  "bpm": 116,
   "bars": 16,
   "key": "E minor",
-  "loop_s": 27.8261
+  "loop_s": 33.1034
  },
  "shalzua": {
-  "bpm": 142,
+  "bpm": 136,
   "bars": 16,
   "key": "C# minor",
-  "loop_s": 27.0422
+  "loop_s": 28.2353
  }
 }

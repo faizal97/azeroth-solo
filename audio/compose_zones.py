@@ -187,29 +187,104 @@ ZONES = {
 }
 
 
-# dungeon and raid battle music (v10.8): dungeon id -> (track name, spec). Fast, driving, a heroic lead; each place keeps a
-# colour of its own (its key and mode, the lead, an extra sound: embers, drips, waves, the anvil)
-B = lambda bpm, tonic, mode, prog, lead, fx=(), kit=None, style='battle', gain=0.14: Z(bpm, 4, tonic, mode, prog, style, lead, fx, feel='busy', gain=gain, kit=kit, room=0.3)
-BATTLE = {
-    'ragefire':          ('smokepit', B(138, 'E', 'phrygian', 'Em F Em D Em F G F Em F Em D C D Em Em', 'horn', ['ember'], 'battletribal')),
-    'deadmines':         ('smugglers_deep', B(144, 'D', 'minor', 'Dm C Bb A Dm C Bb A Gm Bb C A Dm Bb A A', 'fiddle', ['drips'], gain=0.12)),
-    'wailing_caverns':   ('dreaming_caves', B(132, 'F#', 'minor', 'F#m D E C#m F#m D E E D E F#m C#m D E C#m C#m', 'flute', ['drips'])),
-    'stockade':          ('kingsmere_gaol', B(140, 'C', 'minor', 'Cm Ab Bb G Cm Ab Fm G Ab Bb Cm Ab Fm G Cm G', 'horn', kit='battlemarch')),
-    'shadowfang':        ('greyhowl_keep', B(136, 'G', 'minor', 'Gm Eb F D Gm Eb Cm D Eb F Gm Eb Cm D Gm D', 'fiddle', ['wind'], gain=0.12)),
-    'blackfathom':       ('tidehollow', B(132, 'A', 'minor', 'Am F G E Am F Dm E F G Am F Dm E Am E', 'flute', ['waves'])),
-    'gnomeregan':        ('gearhollow', B(148, 'B', 'minor', 'Bm G A F# Bm G Em F# G A Bm G Em F# Bm F#', 'pluck', kit='battleclank', gain=0.2)),
-    'razorfen_kraul':    ('thorn_warrens', B(140, 'E', 'dorian', 'Em A Em D Em A C D C D Em A C D Em D', 'flute', kit='battletribal')),
-    'sm_library':        ('pyre_library', B(132, 'D', 'harmonic', 'Dm Bb Gm A Dm Bb Gm A Bb C Dm Bb Gm A Dm A', 'fiddle', style='raidbattle', gain=0.12)),
-    'sm_cathedral':      ('pyre_cathedral', B(144, 'D', 'minor', 'Dm Gm C F Bb Gm A A Dm Gm C F Bb Gm A Dm', 'horn', style='raidbattle')),
-    'coinworks':         ('coinworks', B(140, 'G', 'minor', 'Gm F Eb D Gm F Eb D Cm D Gm F Eb D Gm D', 'horn', kit='battleclank')),
-    'zul_farrak':        ('dune_temple', B(138, 'D', 'phrygdom', 'D Eb D C D Eb Cm D Gm Eb D C Cm Eb D D', 'pluck', ['wind'], 'battletribal', gain=0.2)),
-    'maraudon':          ('gemfall', B(134, 'A', 'minor', 'Am G F E Am G F E Dm F G E Am G F E', 'flute', ['drips'])),
-    'blackrock_depths':  ('cinderpeak', B(144, 'C', 'minor', 'Cm Bb Ab G Cm Bb Ab G Fm Ab Bb G Cm Bb Ab G', 'horn', ['ember'], 'battleclank')),
-    'scholomance':       ('blackcloister', B(136, 'B', 'harmonic', 'Bm G Em F# Bm G Em F# G A Bm G Em F# Bm F#', 'fiddle', ['drips'], style='raidbattle', gain=0.12)),
-    'stratholme':        ('graymouth', B(146, 'F', 'minor', 'Fm Db Eb C Fm Db Bbm C Db Eb Fm Db Bbm C Fm C', 'horn', ['wind'], style='raidbattle')),
-    'sunken_archive':    ('sunken_archive', B(138, 'E', 'minor', 'Em C D B Em C Am B C D Em C Am B Em B', 'flute', ['waves'])),
-    'shalzua_temple':    ('shalzua', B(142, 'C#', 'minor', 'C#m A B G# C#m A F#m G# A B C#m A F#m G# C#m G#', 'horn', ['waves'], 'battletribal')),
+# dungeon battle music (v10.8): each dungeon has its own arrangement, not one battle recipe in different keys: its own
+# meter and tempo, drum groove, bass figure, ostinato, bed (voices, pad, drone or none), lead and signature sound.
+# Each opens lighter (no kit for the first bars) and the kit comes in, so the loop builds and breathes.
+def dng(track, bpm, beats, tonic, mode, prog, lead, kit, bass, arp=None, bed='pad', kstep=0.25, intro=4, fx=(), extra=(), gain=0.14, low=80, high=200, bassgain=0.21, kitgain=0.85):
+    return (track, {'bpm': bpm, 'beats': beats, 'tonic': tonic, 'mode': mode, 'prog': prog, 'lead': lead, 'kit': kit, 'bass': bass, 'arp': arp, 'bed': bed,
+                    'kstep': kstep, 'intro': intro, 'fx': list(fx), 'extra': list(extra), 'gain': gain, 'low': low, 'high': high, 'bassgain': bassgain, 'kitgain': kitgain})
+
+
+BED = {'pad': {'type': 'pad', 'cut': 1100, 'gain': 0.1}, 'choir': {'type': 'choir', 'cut': 950, 'gain': 0.13}, 'lowchoir': {'type': 'choir', 'cut': 700, 'gain': 0.16},
+       'drone': {'type': 'pad', 'drone': True, 'oct': 0, 'cut': 700, 'gain': 0.14}, 'organ': {'type': 'pad', 'cut': 2200, 'gain': 0.09}}
+E8 = lambda *iv: [(i * 0.5, iv[i % len(iv)], 0.45) for i in range(8)]     # bass in eighths over a figure of intervals
+DUNGEONS = {
+    # the Smoke Pit: a fire cave, a 6/8 war dance on heavy hand drums
+    'ragefire': dng('smokepit', 176, 6, 'E', 'phrygian', 'Em F Em D Em F G F Em F Em D C D Em Em', 'horn',
+                    ['D..T.TD.TT.T', 'D..T.TD.TTTT'], [(0, 0, 2), (2, 7, 1), (3, 0, 2), (5, 7, 1)], {'voice': 'pluck', 'oct': 0, 'pat': [0, 2, 0, 1, 0, 2], 'step': 1, 'gain': 0.08, 'bright': 1500},
+                    bed='drone', kstep=0.5, fx=['ember'], low=75, high=180),
+    # the Smugglers' Deep: a pirate brawl, a 6/8 shanty with an off-beat squeeze-box and the fiddle
+    'deadmines': dng('smugglers_deep', 180, 6, 'D', 'minor', 'Dm C Bb A Dm C Bb A Gm Bb C A Dm Bb A A', 'fiddle',
+                     ['k.hs.hk.hs.h', 'k.hs.hk.ss.s'], [(0, 0, 1), (3, 7, 1)], None, bed='pad', kstep=0.5, fx=['drips'],
+                     extra=[{'type': 'stab', 'at': [1, 2, 4, 5], 'gain': 0.055, 'len': 0.16, 'bright': 1400}], gain=0.12),
+    # the Dreaming Caves: a dream, a quick 3/4 with running bells and a flute
+    'wailing_caverns': dng('dreaming_caves', 132, 3, 'F#', 'dorian', 'F#m E D E F#m E D C#m D E F#m B F#m E D E F#m B D E C#m D E F#m', 'flute',
+                           ['k.h.s.h.s.h.', 'k.h.s.h.sss.'], [(0, 0, 2), (2, 7, 1)], {'voice': 'bell', 'oct': 12, 'pat': [0, 1, 2, 3, 2, 1], 'step': 0.5, 'gain': 0.05, 'len': 0.9},
+                           bed='choir', fx=['drips']),
+    # Kingsmere Gaol: a prison riot, a snare march with chains on the fourth beat and low brass on the off-beats
+    'stockade': dng('kingsmere_gaol', 140, 4, 'C', 'minor', 'Cm Ab Bb G Cm Ab Fm G Ab Bb Cm Ab Fm G Cm G', 'horn',
+                    ['k.s.s.s.k.s.c.ss', 'k.s.s.s.k.ssc.ss'], [(i, 0 if i % 2 == 0 else 7, 1) for i in range(4)], None, bed='pad',
+                    extra=[{'type': 'brass', 'pat': [(0.5, 0.4), (1.5, 0.4), (2.5, 0.4), (3.5, 0.4)], 'oct': 0, 'gain': 0.045}]),
+    # Greyhowl Keep: a haunted keep, a gothic 3/4 with voices, bells and the wind howling
+    'shadowfang': dng('greyhowl_keep', 126, 3, 'G', 'harmonic', 'Gm Eb Cm D Gm Eb F D Gm Cm D Gm Eb F Bb D Cm Gm Eb D Gm Cm D D', 'fiddle',
+                      ['D...s...s...', 'D...s...s.ss'], [(0, 0, 1), (1, 7, 1), (2, 12, 1)], {'voice': 'bell', 'oct': 12, 'pat': [0, None, 2, None, 1, None], 'step': 0.5, 'gain': 0.05, 'len': 1.4},
+                      bed='choir', fx=['wind'], gain=0.12, low=60),
+    # the Tidehollow Deeps: under the sea, a rolling half-time 6/8 with harp and deep toms
+    'blackfathom': dng('tidehollow', 132, 6, 'A', 'minor', 'Am F G E Am F Dm E F G Am F Dm E Am E', 'flute',
+                       ['D.....T.....', 'D.....T..TT.'], [(0, 0, 3), (3, 7, 3)], {'voice': 'harp', 'pat': [0, 1, 2, 3, 2, 1], 'step': 1, 'gain': 0.13},
+                       bed='choir', kstep=0.5, fx=['waves'], low=60),
+    # Gearhollow: the machine city, a fast clockwork of staccato plucks and gears, no pad at all
+    'gnomeregan': dng('gearhollow', 152, 4, 'B', 'minor', 'Bm G A F# Bm G Em F# G A Bm G Em F# Bm F#', 'pluck',
+                      ['k.c.s.ckk.c.s.cc', 'k.c.s.ckk.cs.scc'], E8(0, 12), {'voice': 'pluck', 'pat': [0, 2, 1, 2, 0, 2, 1, 2, 3, 2, 1, 2, 0, 2, 1, 2], 'step': 0.25, 'gain': 0.06, 'len': 0.08, 'bright': 3200},
+                      bed=None, gain=0.2),
+    # the Thorn Warrens: thorns and drums, a tribal groove with wooden bells over a drone
+    'razorfen_kraul': dng('thorn_warrens', 124, 4, 'E', 'dorian', 'Em A Em D Em A C D C D Em A C D Em D', 'flute',
+                          ['D.hTs.D.hTD.s.T.', 'D.hTs.DDhTD.sTTT'], [(0, 0, 1.5), (1.5, 0, 0.5), (2, 7, 1), (3, 10, 1)], {'voice': 'bell', 'oct': 0, 'pat': [0, 2, 1, 2, 0, 3, 1, 2], 'step': 0.5, 'gain': 0.07, 'len': 0.4},
+                          bed='drone', low=90, high=230),
+    # the Pyre Abbey library: zealots among the books, a half-time chant of low voices with tolling bells
+    'sm_library': dng('pyre_library', 116, 4, 'D', 'harmonic', 'Dm Bb Gm A Dm Bb Gm A Bb C Dm Bb Gm A Dm A', 'fiddle',
+                      ['D.......s.......', 'D.......s...D.D.'], [(0, 0, 2), (2, 0, 2)], {'voice': 'bell', 'oct': 12, 'pat': [0, None, None, None, 2, None, None, None], 'step': 0.5, 'gain': 0.07, 'len': 2.0},
+                      bed='lowchoir', gain=0.12, low=58),
+    # the Pyre Abbey cathedral: the high altar, an organ and voices over timpani, the horn up front
+    'sm_cathedral': dng('pyre_cathedral', 132, 4, 'D', 'minor', 'Dm Gm C F Bb Gm A A Dm Gm C F Bb Gm A Dm', 'horn',
+                        ['k...s...k.k.s...', 'k...s...k.k.s.ss'], E8(0, 0, 7, 0), None, bed='organ',
+                        extra=[{'type': 'choir', 'cut': 1000, 'gain': 0.11}, {'type': 'drums', 'pat': ['D.......D...D...', 'D.......D.D.DDDD'], 'step': 0.25, 'gain': 0.6, 'low': 55}]),
+    # the Coinworks: the mint, presses and hammers, a stomping forge groove with brass stabs
+    'coinworks': dng('coinworks', 144, 4, 'G', 'minor', 'Gm F Eb D Gm F Eb D Cm D Gm F Eb D Gm D', 'horn',
+                     ['k...c..kk...c...', 'k...c..kk.k.c.cc'], E8(0, 0, 0, 7), None, bed='pad',
+                     extra=[{'type': 'brass', 'pat': [(0, 0.3), (0.75, 0.3), (2.5, 0.3)], 'oct': 0, 'gain': 0.05}], kitgain=0.72),
+    # the Dune Temple: fast hand drums in Phrygian dominant, an oud-like lead and desert wind
+    'zul_farrak': dng('dune_temple', 132, 4, 'D', 'phrygdom', 'D Eb D C D Eb Cm D Gm Eb D C Cm Eb D D', 'pluck',
+                      ['D.TTD.T.D.TTD.T.', 'D.TTD.T.D.TTTTTT'], [(0, 0, 1.5), (1.5, 0, 0.5), (2, 0, 1), (3, 1, 1)], None, bed='drone', fx=['wind'], gain=0.2, low=85, high=240),
+    # the Gemfall Caves: crystal, a bright 3/4 of high bells and a flute
+    'maraudon': dng('gemfall', 120, 3, 'A', 'lydian', 'A B A F#m A B E E D E A F#m D E A A B C#m D E A B E E', 'flute',
+                    ['k.....h.h...', 'k.....h.hhh.'], [(0, 0, 3)], {'voice': 'bell', 'oct': 24, 'pat': [0, 1, 2, 3, 2, 1], 'step': 0.5, 'gain': 0.05, 'len': 1.2},
+                    bed='pad', fx=['drips']),
+    # Cinderpeak Depths: the fire-dwarves' city, deep war drums and the anvil, low voices, embers
+    'blackrock_depths': dng('cinderpeak', 136, 4, 'C', 'minor', 'Cm Bb Ab G Cm Bb Ab G Fm Ab Bb G Cm Bb Ab G', 'horn',
+                            ['D..cD..cD.DcD..c', 'D..cD..cD.DcDDDD'], [(0, 0, 1), (1, 0, 0.5), (1.5, 7, 0.5), (2, 0, 1), (3, 0, 0.5), (3.5, 7, 0.5)], None,
+                            bed='lowchoir', fx=['ember'], low=60),
+    # the Blackcloister: a school of the dead, a 6/8 music box over driving toms and voices
+    'scholomance': dng('blackcloister', 168, 6, 'B', 'harmonic', 'Bm G Em F# Bm G Em F# G A Bm G Em F# Bm F#', 'bell',
+                       ['D..T..D..T..', 'D..T..D.TTTT'], [(0, 0, 3), (3, 7, 3)], {'voice': 'pluck', 'oct': 0, 'pat': [0, 1, 2, 1, 0, 2], 'step': 1, 'gain': 0.07, 'len': 0.2, 'bright': 1300},
+                       bed='choir', kstep=0.5, fx=['drips'], gain=0.08),
+    # Graymouth: the dead city, relentless sixteenth snares, voices, the horn
+    'stratholme': dng('graymouth', 148, 4, 'F', 'minor', 'Fm Db Eb C Fm Db Bbm C Db Eb Fm Db Bbm C Fm C', 'horn',
+                      ['k.ssk.ssk.ssk.ss', 'k.ssk.ssk.ssssss'], E8(0), None, bed='choir', fx=['wind']),
+    # the Sunken Archive: a drowned library, a half-time groove with harp and waves
+    'sunken_archive': dng('sunken_archive', 116, 4, 'E', 'minor', 'Em C D B Em C Am B C D Em C Am B Em B', 'flute',
+                          ['D...h...T...h...', 'D...h...T..TT.h.'], [(0, 0, 3), (3, 7, 1)], {'voice': 'harp', 'pat': [0, 1, 2, 3, 4, 3, 2, 1], 'step': 0.5, 'gain': 0.12},
+                          bed='choir', fx=['waves'], low=62),
+    # the Temple of Shal'zua: a jungle temple, busy drums, wooden bells, the horn
+    'shalzua_temple': dng('shalzua', 136, 4, 'C#', 'minor', 'C#m A B G# C#m A F#m G# A B C#m A F#m G# C#m G#', 'horn',
+                          ['D.hTh.D.hTD.h.T.', 'D.hTh.DDhTD.hTTT'], E8(0, 0, 7, 0), {'voice': 'bell', 'oct': 0, 'pat': [0, 2, 1, 3, 0, 2, 1, 2], 'step': 0.5, 'gain': 0.06, 'len': 0.35},
+                          bed='pad', fx=['waves'], low=90, high=230),
 }
+
+
+def dspec(name, d):
+    seed = zlib.crc32(name.encode()) & 0xffffffff
+    lo, hi = LEAD_RANGE[d['lead']]
+    mel = gen(d['prog'], d['tonic'], d['mode'], d['beats'], seed, lo, hi, 'busy')
+    I = d['intro']
+    L = [BED[d['bed']]] if d['bed'] else []
+    L += [{'type': 'bass', 'pat': d['bass'], 'gain': d['bassgain'], 'square': 0.4, 'wrap': True}]
+    if d['arp']: L += [dict({'type': 'arp', 'spread': 0.3}, **d['arp'])]
+    L += [dict(x) for x in d['extra']]
+    L += [{'type': 'drums', 'pat': d['kit'], 'step': d['kstep'], 'gain': d['kitgain'], 'low': d['low'], 'high': d['high'], 'from': I + 1}]
+    L += [{'type': 'lead', 'voice': d['lead'], 'mel': mel, 'gain': d['gain']}]
+    return {'bpm': d['bpm'], 'beats': d['beats'], 'meter': '6/8' if d['beats'] == 6 else None, 'key': f"{d['tonic']} {d['mode']}", 'prog': d['prog'],
+            'layers': L, 'fx': [FX[f] for f in d['fx']], 'room': 0.32}
 
 
 def spec_of(name, z, motif=None):
@@ -231,7 +306,7 @@ def all_specs():
         oseed = zlib.crc32(zone.encode()) & 0xffffffff
         if o: out[TRACK[zone]] = spec_of(zone, o)
         if t: out[TRACK[zone] + '_town'] = spec_of(zone + '_town', t, motif=oseed)   # the town shares the zone's opening motif
-    for dg, (track, z) in BATTLE.items(): out[track] = spec_of(dg, z)
+    for dg, (track, d) in DUNGEONS.items(): out[track] = dspec(dg, d)
     return out
 
 
