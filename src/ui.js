@@ -25,9 +25,24 @@
       else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
       else el.setAttribute(k, v === true ? '' : v);
     }
-    for (const kid of kids.flat()) if (kid != null && kid !== false) el.append(kid.nodeType ? kid : document.createTextNode(kid));
+    for (const kid of kids.flat()) if (kid != null && kid !== false) { if (kid.nodeType) el.append(kid); else if (SYM_RE && SYM_RE.test(kid)) el.append(...symNodes(String(kid))); else el.append(document.createTextNode(kid)); }
     return el;
   }
+  // drawn symbols (src/sym.js, v10.8): a character the fonts cannot draw becomes an inline SVG in the text's colour.
+  // h() does it for every string it is given, richText and symHtml for HTML strings, setSym for a node updated in place.
+  const SYM_RE = window.SYM ? SYM.re : null, SYM_G = window.SYM ? new RegExp(SYM.re.source, 'gu') : null, symCache = {};
+  function symEl(ch) {
+    if (!symCache[ch]) { const t = document.createElement('template'); t.innerHTML = SYM.svg(ch); symCache[ch] = t.content.firstChild; }
+    return symCache[ch].cloneNode(true);
+  }
+  function symNodes(s) {
+    const out = []; let last = 0;
+    for (const m of s.matchAll(SYM_G)) { if (m.index > last) out.push(document.createTextNode(s.slice(last, m.index))); out.push(symEl(m[0])); last = m.index + m[0].length; }
+    if (last < s.length) out.push(document.createTextNode(s.slice(last)));
+    return out;
+  }
+  const symHtml = (s) => (SYM_G ? s.replace(SYM_G, (c) => SYM.svg(c)) : s);
+  const setSym = (el, s) => { if (el.dataset.sym === s) return; el.dataset.sym = s; el.replaceChildren(...(SYM_RE && SYM_RE.test(s) ? symNodes(s) : [document.createTextNode(s)])); };
 
   // ------------------------------------------------------------ art
   const cache = {};
@@ -177,7 +192,7 @@
     const body = h('div', { class: 'fold-body' }, kids);
     const arr = h('span', { class: 'fold-arr' });
     const head = h('button', { class: 'sec-h fold', onclick: () => { open = !open; setFold(key, open); paint(); } }, h('span', null, title), h('small', null, summary || ''), arr);
-    const paint = () => { body.hidden = !open; arr.textContent = open ? '▾' : '▸'; head.setAttribute('aria-expanded', String(open)); };
+    const paint = () => { body.hidden = !open; setSym(arr, open ? '▾' : '▸'); head.setAttribute('aria-expanded', String(open)); };
     paint();
     return [head, body];
   }
@@ -198,7 +213,7 @@
     if (hh < 48) return hh + 'h ' + (m % 60) + 'm';
     return Math.floor(hh / 24) + ' days';
   }
-  const richText = (t) => esc(t).replace(/\[\[(\d)\|([^\]]+)\]\]/g, '<span class="q$1">[$2]</span>');
+  const richText = (t) => symHtml(esc(t).replace(/\[\[(\d)\|([^\]]+)\]\]/g, '<span class="q$1">[$2]</span>'));
 
   function toast(text, info) {
     const t = h('div', { class: 'toast' + (info ? ' info' : '') }, text);
@@ -217,7 +232,7 @@
     els.chat = h('div', { class: 'chat', onclick: (e) => { const ln = e.target.closest('.ln.tap'); const m = ln && G.S.chat.find((x) => String(x.id) === ln.dataset.mid); if (m) { e.stopPropagation(); msgDialog(m); } else openSocial('chat'); } }, els.chatLines, els.chatOpen);
     // the chat strip folds to one line (a tab on its bottom edge); remembered on this device
     const chatFolded = () => { try { return localStorage.getItem('azsolo.chatFolded') === '1'; } catch (e) { return false; } };
-    const paintChatFold = () => { const f = chatFolded(); els.chat.classList.toggle('folded', f); els.chatFold.textContent = f ? '▾' : '▴'; els.chatFold.setAttribute('aria-label', f ? 'Show more chat' : 'Fold the chat to one line'); };
+    const paintChatFold = () => { const f = chatFolded(); els.chat.classList.toggle('folded', f); setSym(els.chatFold, f ? '▾' : '▴'); els.chatFold.setAttribute('aria-label', f ? 'Show more chat' : 'Fold the chat to one line'); };
     els.chatFold = h('button', { class: 'chat-fold', onclick: (e) => { e.stopPropagation(); try { localStorage.setItem('azsolo.chatFolded', chatFolded() ? '0' : '1'); } catch (x) { } paintChatFold(); } });
     els.chat.append(els.chatFold); paintChatFold();
     els.panel = h('div', { class: 'panel' });
@@ -618,7 +633,7 @@
     else if (m.from) pre = `${ch.label ? '[' + ch.label + '] ' : ''}${name}: `;
     const open = m.act && m.act.state === 'open';
     const tap = open || (m.from && !m.me && m.ch !== 'combat') || /\[\[\d\|/.test(m.text);
-    return `<div class="ln${tap ? ' tap' : ''}${open ? ' act' : ''}" data-mid="${m.id || ''}" style="color:${color}">${open ? '<span class="act-mark">▸</span>' : ''}${pre}${richText(m.text)}</div>`;
+    return `<div class="ln${tap ? ' tap' : ''}${open ? ' act' : ''}" data-mid="${m.id || ''}" style="color:${color}">${open ? `<span class="act-mark">${symHtml('▸')}</span>` : ''}${pre}${richText(m.text)}</div>`;
   }
   // ---------- chat tabs: your own named filters over the channels, kept on this phone for every character
   const CHAT_KEY = 'azsolo.chattabs';
@@ -1440,7 +1455,7 @@
         if (u.dead && !el.classList.contains('dead')) el.classList.add('dead');
       }
       document.querySelectorAll('[data-clock]').forEach((d) => { if (G.S.run) d.textContent = G.fmtClock(G.runClock()); });
-      document.querySelectorAll('[data-mk]').forEach((d) => { const u = C.units[d.dataset.mk]; if (u) { const sym = MARK_SYM[u.mark] || '◎'; if (d.textContent !== sym) d.textContent = sym; } });
+      document.querySelectorAll('[data-mk]').forEach((d) => { const u = C.units[d.dataset.mk]; if (u) { setSym(d, MARK_SYM[u.mark] || '◎'); } });
       document.querySelectorAll('[data-hp]').forEach((d) => { const u = C.units[d.dataset.hp]; if (u) d.textContent = u.dead ? '' : Math.round((u.hp / u.maxHp) * 100) + '%'; });
       document.querySelectorAll('[data-pf]').forEach((d) => { const u = C.units[d.dataset.pf]; if (u) setBar(d, u.hp, u.maxHp, Math.round(u.hp)); });
       // cast bar

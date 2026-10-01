@@ -671,3 +671,6 @@ img.qm.new, img.qm.ready { filter: drop-shadow(0 0 3px rgba(255, 209, 0, .6)); }
 .gf-queued { border-color: var(--gold); }
 .gf-tabs button { position: relative; }
 .gf-tabs button.dot::after { content: ''; position: absolute; top: 4px; right: 6px; width: 7px; height: 7px; border-radius: 50%; background: #ffd100; box-shadow: 0 0 6px #ffd100; }
+
+/* drawn symbols (src/sym.js, v10.8): sized and aligned like a letter, in the text's own colour */
+svg.sym { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: -.17em; overflow: visible; }
