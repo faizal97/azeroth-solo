@@ -28,7 +28,7 @@
 
   Object.assign(D.MOBS, {
     onyxian_warder: { name: 'Veshmiran Warder', lvl: [60, 60], family: 'dragonkin', hpMult: 1.2, drops: [['thieves_coin', 0.6]], aggro: 'The mother sleeps. You will not wake her.' },
-    onyxian_whelp: { name: 'Veshmiran Whelp', lvl: [60, 60], family: 'dragonkin', hpMult: 0.6, dmgMult: 0.7, drops: [['ruined_pelt', 0.2]] },
+    onyxian_whelp: { name: 'Veshmiran Whelp', fly: 7, lvl: [60, 60], family: 'dragonkin', hpMult: 0.6, dmgMult: 0.7, drops: [['ruined_pelt', 0.2]] },
     onyxia: { name: 'Veshmira', lvl: [60, 60], family: 'dragonkin', boss: true, special: 'kelris', summon: 'onyxian_whelp', specialText: 'Veshmira roars, and whelps pour out of the nests!',
       loot: ['onyx_mantle', 'onyx_robe', 'onyx_tunic', 'onyx_legs', 'onyx_belt', 'onyx_gloves', 'onyx_boots', 'onyx_ring', 'onyx_sword', 'onyx_dagger', 'onyx_staff'], qdrops: [['onyxia_head', 1]],
       aggro: 'You chased me across the sea for this? Little kingdoms send little heroes.' },

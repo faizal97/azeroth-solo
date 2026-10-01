@@ -1,6 +1,8 @@
 // World bosses (v10.7, fast, in the build): one a week from the date (none, one, many new handled like the featured
 // raid), only that one is out, loot and Marks once a week, its mechanics shown untagged; and a fight a level-60 group
 // can win. node sim/worldboss.js
+// seeded (as sim/brawl.js): the fight check judges one fight, so it passes or fails on the code, not on luck
+{ let s = 0x5eed1e55 >>> 0; Math.random = () => { s = (s + 0x6D2B79F5) >>> 0; let x = s; x = Math.imul(x ^ (x >>> 15), x | 1); x ^= x + Math.imul(x ^ (x >>> 7), x | 61); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; }
 globalThis.localStorage = (() => { const m = new Map(); return { getItem: (k) => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: (k) => m.delete(k) }; })();
 require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js'); require('../src/trials.js');
 const { G, D, E } = globalThis;

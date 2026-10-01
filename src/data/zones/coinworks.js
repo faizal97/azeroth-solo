@@ -21,7 +21,7 @@
   Object.assign(D.MOBS, {
     cw_coinguard: { name: 'Deepgold Coinguard', sprite: 'venture_enforcer', lvl: [40, 41], family: 'humanoid', hpMult: 1.1, drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], aggro: 'No visitors on the floor!' },
     cw_smelter: { name: 'Deepgold Smelter', sprite: 'venture_mechanic', lvl: [40, 42], family: 'humanoid', drops: [['thieves_coin', 0.45], ['linen_cloth', 0.3]], aggro: 'Mind the pour!' },
-    cw_whelp: { name: 'Vault Whelp', sprite: 'black_dragon_whelp', lvl: [41, 42], family: 'dragonkin', drops: [['thieves_coin', 0.4]] },
+    cw_whelp: { name: 'Vault Whelp', fly: 7, sprite: 'black_dragon_whelp', lvl: [41, 42], family: 'dragonkin', drops: [['thieves_coin', 0.4]] },
     cw_sentry: { name: 'Brass Sentry', sprite: 'mechano_tank', lvl: [42, 43], family: 'mechanical', hpMult: 1.15 },
     foreman_nettlecog: { name: 'Foreman Nettlecog', lvl: [41, 41], family: 'humanoid', boss: true, special: 'molten', specialText: 'Foreman Nettlecog flings a ladle of molten gold!', loot: ['nettlecog_ladle', 'nettlecog_apron'], aggro: 'Who let you onto my floor?' },
     the_great_press: { name: 'The Great Press', lvl: [42, 42], family: 'mechanical', boss: true, special: 'slam', specialText: 'The Great Press stamps down!', loot: ['press_gauntlets', 'press_ring'], qdrops: [['press_die_plate', 1]] },

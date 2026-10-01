@@ -431,6 +431,7 @@
     syncFx(el, 'rootfx', root ? (/entangling/.test(root.id) ? 'vines' : 'ice') : null);
     syncFx(el, 'fearfx', fleeing ? 'fear' : null);
     const sh = syncFx(el, 'shadowfx', (u.pos.z || 0) > 0.5 && !u.dead ? 'shadow' : null); if (sh) sh.style.translate = `0 ${lift.toFixed(1)}px`; // the shadow stays on the ground
+    el.style.setProperty('--lift', `${lift.toFixed(1)}px`); // and so does the target ring
   }
   // a small effect that belongs to a sprite while a state lasts (a root, a fear, a flyer's shadow): kept in step each frame
   function syncFx(el, cls, kind) {

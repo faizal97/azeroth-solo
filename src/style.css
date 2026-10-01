@@ -96,7 +96,7 @@ img { max-width: 100%; display: block; }
 .sprite .np .hpb { width: 64px; height: 5px; margin: 2px auto 0; background: #000; border: 1px solid #000; }
 .sprite .np .hpb i { display: block; height: 100%; background: #d42a20; }
 .sprite.friend .np .hpb i { background: var(--hp); }
-.sprite.targeted::after { content: ''; position: absolute; left: 12%; right: 12%; bottom: -2px; height: 12%; border: 2px solid #ffd84a; border-radius: 50%; box-shadow: 0 0 8px #ffd84a; }
+.sprite.targeted::after { content: ''; position: absolute; left: 12%; right: 12%; bottom: -2px; height: 12%; border: 2px solid #ffd84a; border-radius: 50%; box-shadow: 0 0 8px #ffd84a; translate: 0 var(--lift, 0px); } /* a flyer's ring stays on the ground, with its shadow */
 .sprite.ally-sel::after { content: ''; position: absolute; left: 12%; right: 12%; bottom: -2px; height: 12%; border: 2px solid #5fe36f; border-radius: 50%; box-shadow: 0 0 8px #5fe36f; }
 .sprite.dead { filter: grayscale(1) brightness(.5); opacity: .55; }
 .sprite.hit { filter: brightness(2.2) saturate(.3); }

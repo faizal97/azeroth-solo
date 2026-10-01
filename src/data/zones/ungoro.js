@@ -24,7 +24,7 @@
     ungoro_thunderer: { name: "Greenmaw Thunderer", lvl: [49, 50], family: 'beast', hpMult: 1.15, drops: [['ruined_pelt', 0.4]], qdrops: [['thunderer_horn', 0.55]] },
     ungoro_stomper: { name: "Greenmaw Stomper", lvl: [50, 51], family: 'beast', hpMult: 1.15, drops: [['ruined_pelt', 0.4]], qdrops: [['stomper_hide', 0.55]] },
     frenzied_pterrordax: { name: 'Frenzied Skyjaw', lvl: [50, 51], family: 'beast', drops: [['ruined_pelt', 0.35]], qdrops: [['pterrordax_egg', 0.5]] },
-    gorishi_wasp: { name: 'Krizzik Wasp', lvl: [50, 51], family: 'beast', drops: [['ruined_pelt', 0.2]], qdrops: [['gorishi_scent_gland', 0.5]] },
+    gorishi_wasp: { name: 'Krizzik Wasp', fly: 7, lvl: [50, 51], family: 'beast', drops: [['ruined_pelt', 0.2]], qdrops: [['gorishi_scent_gland', 0.5]] },
     gorishi_reaver: { name: 'Krizzik Reaver', lvl: [51, 52], family: 'beast', hpMult: 1.1, drops: [['ruined_pelt', 0.2]], qdrops: [['gorishi_scent_gland', 0.5]] },
     fire_plume_elemental: { name: 'Fire Plume Elemental', lvl: [51, 52], family: 'elemental', drops: [['trogg_stone', 0.3]], qdrops: [['fire_plume_ember', 0.55]] },
     lava_surger: { name: 'Lava Surger', lvl: [52, 53], family: 'elemental', hpMult: 1.15, drops: [['trogg_stone', 0.3]], qdrops: [['fire_plume_ember', 0.4], ['power_crystal', 0.25]] },

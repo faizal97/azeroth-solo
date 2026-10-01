@@ -36,7 +36,7 @@
     dark_iron_saboteur: { name: 'Slagborn Saboteur', lvl: [28, 29], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['blasting_powder', 0.5]], aggro: 'Boom goes the Bronzebeard!' },
     dragonmaw_grunt: { name: 'Wyrmchain Grunt', lvl: [28, 29], family: 'humanoid', hpMult: 1.15, drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['dragonmaw_insignia', 0.5]], aggro: 'The Wyrmchain take no prisoners!' },
     dragonmaw_shadowcaster: { name: 'Wyrmchain Shadowcaster', ranged: 'shadow', lvl: [29, 30], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.35]], qdrops: [['shadowcaster_orders', 0.4], ['dragonmaw_insignia', 0.3]], aggro: 'Darkness take you!' },
-    crimson_whelp: { name: 'Crimson Whelp', lvl: [28, 29], family: 'dragonkin', drops: [['ruined_pelt', 0.2]], qdrops: [['whelp_collar', 0.5]] },
+    crimson_whelp: { name: 'Crimson Whelp', fly: 7, lvl: [28, 29], family: 'dragonkin', drops: [['ruined_pelt', 0.2]], qdrops: [['whelp_collar', 0.5]] },
     garneg_charskull: { name: 'Gorlag Ashskull', lvl: [29, 29], family: 'humanoid', named: true, hpMult: 2.2, dmgMult: 1.35, drops: [['charskull_axe', 0.35], ['thieves_coin', 1]], qdrops: [['charskull_helm', 1]], aggro: 'Burn, dwarf-friend!' },
     razormaw_matriarch: { name: 'Scalehide Matriarch', lvl: [30, 30], family: 'beast', elite: true, named: true, hpMult: 5.5, dmgMult: 2.6, special: 'hogger', drops: [['ruined_pelt', 1]], qdrops: [['matriarch_claw', 1]], loot: ['razormaw_hide', 'razormaw_tooth', 'razormaw_mail'] },
   });

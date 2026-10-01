@@ -27,7 +27,7 @@
     webwood_spider: { name: 'Webhollow Spider', lvl: [3, 4], family: 'beast', drops: [['ruined_pelt', 0.2]], qdrops: [['venom_sac', 0.6]] },
     githyiss: { name: 'Skitterfang the Vile', lvl: [5, 5], family: 'beast', named: true, hpMult: 1.7, dmgMult: 1.2, drops: [['venom_sac', 1], ['githyiss_shroud', 0.35]] },
     nightsaber: { name: 'Shadowcat', lvl: [5, 6], family: 'beast', drops: [['ruined_pelt', 0.4]], qdrops: [['nightsaber_pelt', 0.55]] },
-    strigid_owl: { name: 'Strigid Owl', lvl: [5, 6], family: 'beast', drops: [['wolf_fang', 0.2]], qdrops: [['owl_feather', 0.55]] },
+    strigid_owl: { name: 'Strigid Owl', fly: 7, lvl: [5, 6], family: 'beast', drops: [['wolf_fang', 0.2]], qdrops: [['owl_feather', 0.55]] },
     timberling: { name: 'Rootling', lvl: [6, 7], family: 'elemental', drops: [['linen_cloth', 0.15]], qdrops: [['timberling_seed', 0.6]] },
     gnarlpine_ursa: { name: 'Mossback Ursa', lvl: [6, 7], family: 'humanoid', drops: [['furbolg_charm', 0.35], ['linen_cloth', 0.3]], aggro: 'You not welcome here!', qdrops: [['gnarlpine_totem', 0.55]] },
     gnarlpine_warrior: { name: 'Mossback Warrior', lvl: [8, 9], family: 'humanoid', drops: [['furbolg_charm', 0.4], ['linen_cloth', 0.3]], aggro: 'You not welcome here!' },

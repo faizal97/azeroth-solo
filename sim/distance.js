@@ -116,5 +116,14 @@ const run = (C, s) => { for (let k = 0; k < s / 0.1 && !C.over; k++) E.tick(C, 0
   const why = E.use(C2, pr, 'chorus_grove'); for (let k = 0; k < 30; k++) E.tick(C2, 0.1);
   check(!why && n.hp > h0 && f.hp === f0, `a group heal (Chorus Grove) heals an ally at 10 m, not one at 50 m (${why || 'cast'})`);
 }
+// 14. flyers (stage 4): start up out of melee reach, dive to attack, climb again; a stun brings one down
+{
+  const w = ch('warrior', 'ally'), b = mob('black_dragon_whelp', L); const C = E.fight([w], [b], {}); w.res = 100; w.kind = 'script';
+  check(b.pos.z >= DI.flyLow && E.canUse(C, w, 'heroic_strike', b) === 'Out of range', `a whelp starts on the wing, out of sword reach (${b.pos.z} m up)`);
+  run(C, E.FLY.up + 1.5); w.res = 100; check(b.pos.z < DI.flyLow && E.canUse(C, w, 'heroic_strike', b) === null, `it dives to attack, and the sword reaches it (${b.pos.z.toFixed(1)} m)`);
+  run(C, E.FLY.low); check(b.pos.z >= DI.flyLow, 'then it climbs again for a moment');
+  b.stunUntil = C.t + 3; run(C, 1.2); check(b.pos.z < DI.flyLow, 'a stunned flyer cannot stay up');
+  const m = ch('mage', 'ally'), b2 = mob('black_dragon_whelp', L); const C2 = E.fight([m], [b2], {}); m.res = m.maxRes; check(E.canUse(C2, m, 'fireball', b2) === null, 'a spell reaches a flyer up high');
+}
 console.log(`distance: ${ok}/${ok + bad} checks pass`);
 process.exitCode = bad ? 1 : 0;

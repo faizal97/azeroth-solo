@@ -115,7 +115,10 @@
   // across the ground, z height (flyers). Distance is true 3D. Everyone runs at the same speed; snares slow movement as
   // well as attacks, roots stop it. Every ability has a range (data `range`, else a default from its kind). Stage 1:
   // fights start in contact (everyone within reach, as before), so outcomes do not change until something moves.
-  const DIST = { speed: 7, melee: 5, spell: 30, shot: 35, ally: 40, radius: 8, flyLow: 4, back: 18, backLine: 20, boltMult: 0.8 }; // backLine: where a group's casters, hunters and healers start // back: how far behind its line a ranged fighter starts (stage 4)
+  const DIST = { speed: 7, melee: 5, spell: 30, shot: 35, ally: 40, radius: 8, flyLow: 4, back: 18, backLine: 20, boltMult: 0.8 };
+  // flyers (stage 4): low for `low` seconds (they attack and melee reaches them), then up for `up` seconds (out of melee
+  // reach, and they cannot attack either); a stunned or rooted flyer cannot stay up. Heights in metres, climb in m/s.
+  const FLY = E.FLY = { low: 8, up: 2, dive: 1.5, climb: 8 }; // backLine: where a group's casters, hunters and healers start // back: how far behind its line a ranged fighter starts (stage 4)
   E.DIST = DIST;
   const CASTERS = { mage: 1, warlock: 1, priest: 1, druid: 1, shaman: 1, bard: 1 };
   E.dist = (a, b) => { const p = a.pos || {}, q = b.pos || {}; return Math.hypot((p.x || 0) - (q.x || 0), (p.y || 0) - (q.y || 0), (p.z || 0) - (q.z || 0)); };
@@ -162,6 +165,15 @@
     // the scene draws a fighter moved by how far it is from here: where it would stand in contact, or for a group's back
     // line its own start (the scene gives it a back slot, so the slot already shows the distance)
     u.pos0 = { x: u.backLine ? u.pos.x - s * gap / 2 : contact, y: u.pos.y, z: u.pos.z };
+  }
+  // a flyer's height for a tick: it starts up and comes down, then goes up again for a moment every so often
+  function flyTick(C, u, dt) {
+    const hi = (D.MOBS[u.key] || {}).fly; if (!hi || !u.pos || u.dead) return;
+    if (u.flyT == null) { u.flyT = 0; u.flyUp = true; u.flyNext = C.t + FLY.up; } // it arrives on the wing
+    if (C.t >= u.flyNext) { u.flyUp = !u.flyUp; u.flyNext = C.t + (u.flyUp ? FLY.up : FLY.low); }
+    const grounded = stunned(C, u) || u.auras.some((a) => a.root);
+    const want = u.flyUp && !grounded ? hi : FLY.dive, z = u.pos.z || 0, step = FLY.climb * dt;
+    u.pos.z = Math.abs(want - z) <= step ? want : z + Math.sign(want - z) * step;
   }
   // movement for a tick: a fleeing fighter runs from the one who scared it; anyone else closes on its target when out
   // of its reach. A fighter casting stands still for it. Roots stop it; snares slow it like they slow attacks.
@@ -1233,6 +1245,7 @@
     for (const u of all) {
       u.clock = C.t;
       if (u.dead) continue;
+      if (u.kind === 'mob') flyTick(C, u, dt); // stage 4: a flyer's height
       // Omen Mending: a wounded enemy heals a little every second (v10.4)
       if (u.side === 'enemy' && C.opts.omens && C.opts.omens.includes('mending') && root.TRIALS) { const MO = root.TRIALS.OMENS.mending; if (u.hp < u.maxHp * MO.below) u.hp = Math.min(u.maxHp, u.hp + u.maxHp * MO.rate * dt); }
       // auras

@@ -63,7 +63,7 @@
     blackrock_renegade: { name: 'Cinderpeak Renegade', lvl: [22, 23], family: 'humanoid', hpMult: 1.1, drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['blackrock_medallion', 0.5], ['blackrock_orders', 0.2]], aggro: 'Your kingdom will burn!' },
     blackrock_champion: { name: 'Cinderpeak Champion', lvl: [23, 24], family: 'humanoid', hpMult: 1.2, drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['blackrock_medallion', 0.5], ['blackrock_orders', 0.3]], aggro: 'Blood and dust!' },
     blackrock_summoner: { name: 'Cinderpeak Summoner', lvl: [24, 25], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.35]], qdrops: [['summoner_tome', 0.45]], aggro: 'The fire answers me!' },
-    black_dragon_whelp: { name: 'Black Dragon Whelp', lvl: [22, 23], family: 'dragonkin', drops: [['ruined_pelt', 0.2]], qdrops: [['whelp_scale', 0.55]] },
+    black_dragon_whelp: { name: 'Black Dragon Whelp', fly: 7, lvl: [22, 23], family: 'dragonkin', drops: [['ruined_pelt', 0.2]], qdrops: [['whelp_scale', 0.55]] },
     gathilzogg: { name: "Uzbrak", lvl: [25, 25], family: 'humanoid', named: true, hpMult: 2.2, dmgMult: 1.35, drops: [['thieves_coin', 1]], qdrops: [['gathilzogg_head', 1]], aggro: 'Watcher\'s Keep is ours! Stoneharrow will follow!' },
     ribchaser: { name: 'Bonegnaw', lvl: [21, 21], family: 'humanoid', named: true, hpMult: 2, dmgMult: 1.3, drops: [['ribchaser_cleaver', 0.35], ['gnoll_mane', 1]], qdrops: [['ribchaser_necklace', 1]], aggro: 'Bonegnaw gnaws your bones!' },
     squiddic: { name: 'Gulpfin', lvl: [21, 21], family: 'humanoid', named: true, hpMult: 2, dmgMult: 1.3, drops: [['squiddic_staff', 0.35], ['murloc_eye', 1]], qdrops: [['squiddic_tentacle', 1]], aggro: 'Mrrrrgl! MRRRGLE!' },

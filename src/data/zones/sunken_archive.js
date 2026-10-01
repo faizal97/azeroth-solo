@@ -18,7 +18,7 @@
 
   Object.assign(D.MOBS, {
     archive_wardkeeper: { name: 'Archive Wardkeeper', lvl: [60, 60], family: 'humanoid', hpMult: 1.1, drops: [['thieves_coin', 0.55], ['linen_cloth', 0.3]], aggro: 'The stacks are closed.' },
-    inkbound_wisp: { name: 'Inkbound Wisp', lvl: [60, 60], family: 'elemental', drops: [['gold_dust', 0.3]] },
+    inkbound_wisp: { name: 'Inkbound Wisp', fly: 7, lvl: [60, 60], family: 'elemental', drops: [['gold_dust', 0.3]] },
     drowned_scholar: { name: 'Drowned Scholar', lvl: [60, 60], family: 'undead', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.4]] },
     curator_ellaris: { name: 'Curator Ellaris', lvl: [60, 60], family: 'undead', boss: true, special: 'kelris', summon: 'inkbound_wisp', specialText: 'Curator Ellaris calls ink from the pages!', loot: ['ellaris_cloak', 'ellaris_bracers'], aggro: 'Silence in the archive!' },
     the_inkbound_horror: { name: 'The Inkbound Horror', lvl: [60, 60], family: 'elemental', boss: true, special: 'whirl', specialText: 'The Inkbound Horror lashes out with tendrils of ink!', loot: ['inkbound_gloves', 'inkbound_boots'] },
