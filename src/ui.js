@@ -290,6 +290,7 @@
   function sceneKey() {
     const S = G.S;
     if (S.run) return S.run.pulls[Math.min(S.run.idx, S.run.pulls.length - 1)].scene;
+    if (S.bg) return D.BG[S.bg.key].scene;
     const P = S.player;
     if (P.travel) return D.PLACES[P.travel.to].scene;
     return D.PLACES[P.place].scene;
@@ -343,8 +344,8 @@
     if (!bg || sc.dataset.k !== key) { sc.innerHTML = ''; sc.append(img(art('scene', key), 'bg'), h('div', { class: 'shade' })); sc.dataset.k = key; }
     else for (const c of [...sc.children]) if (c !== bg && !c.classList.contains('shade')) c.remove();
     const place = D.PLACES[P.place];
-    const title = S.run ? S.run.name : P.travel ? 'On the road' : place.name;
-    const sub = S.run ? S.run.pulls[Math.min(S.run.idx, S.run.pulls.length - 1)].label : P.travel ? 'to ' + D.PLACES[P.travel.to].name + (P.route && P.route.length ? ` · then ${D.PLACES[P.route[P.route.length - 1]].name}` : '') : place.zone;
+    const title = S.bg ? D.BG[S.bg.key].name : S.run ? S.run.name : P.travel ? 'On the road' : place.name;
+    const sub = S.bg ? `Round ${S.bg.round} of ${D.BG[S.bg.key].rounds} · you ${S.bg.score.us}, them ${S.bg.score.them}` : S.run ? S.run.pulls[Math.min(S.run.idx, S.run.pulls.length - 1)].label : P.travel ? 'to ' + D.PLACES[P.travel.to].name + (P.route && P.route.length ? ` · then ${D.PLACES[P.route[P.route.length - 1]].name}` : '') : place.zone;
     sc.append(h('div', { class: 'zone' }, title, h('small', null, sub)));
     const C = G.fight;
     if (C) {
@@ -358,7 +359,7 @@
       });
       C.enemies.forEach((u, i) => {
         const pos = Object.assign({}, POS_EN[i] || POS_EN[4]);
-        if (u.boss && i === 0) pos.w = 36;
+        if (u.boss && i === 0) pos.w = S.run && (D.ACTIVITIES[S.run.act] || {}).worldBoss ? 46 : 36; // a world boss towers over the raid
         const np = h('div', { class: 'np' }, h('span', { class: 'mk' }, ''), h('span', { style: { color: conColor(u.level) } }, u.boss ? '' : u.level + ' '), h('span', { style: { color: '#ff6a5a' } }, u.name), h('div', { class: 'hpb' }, h('i')));
         const isChar = u.kind !== 'mob';
         const el = spriteEl(isChar ? art('hero', looks(u.char)) : mobArt(u.key), isChar ? Object.assign(pos, { w: Math.min(pos.w, 26) }) : pos, 'idle' + (isChar ? ' flip' : '') + (u.dead ? ' dead' : ''), np);
@@ -369,8 +370,12 @@
     } else if (!P.travel) {
       const me = spriteEl(art('hero', looks(P)), { l: 4, b: 5, w: 26 }, 'idle');
       ui.spriteEls.me = me; sc.append(me);
-      if (P.pet && P.pet.hp !== 0 && !S.run) sc.append(spriteEl(petArt(P.pet), P.pet.type === 'imp' ? { l: 24, b: 8, w: 13 } : { l: 22, b: 10, w: 20 }, 'idle' + (P.pet.type === 'beast' ? ' flip' : ''), h('div', { class: 'np', style: { fontSize: '10px' } }, h('span', { style: { color: '#9fd6ff' } }, P.pet.name))));
-      if (!S.run) {
+      if (S.bg) { // the battleground: your team stands with you, nobody else from the place you queued in
+        G.S.bg.team.forEach((m, i) => { const pos = [{ l: 20, b: 14, w: 21 }, { l: 33, b: 22, w: 18 }, { l: 44, b: 10, w: 20 }, { l: 55, b: 20, w: 17 }][i];
+          if (pos) sc.append(spriteEl(art('hero', looks(m)), pos, 'idle friend', h('div', { class: 'np' }, h('span', { class: 'cls-' + m.cls }, m.name.split('-')[0])))); });
+      }
+      if (P.pet && P.pet.hp !== 0 && !S.run && !S.bg) sc.append(spriteEl(petArt(P.pet), P.pet.type === 'imp' ? { l: 24, b: 8, w: 13 } : { l: 22, b: 10, w: 20 }, 'idle' + (P.pet.type === 'beast' ? ' flip' : ''), h('div', { class: 'np', style: { fontSize: '10px' } }, h('span', { style: { color: '#9fd6ff' } }, P.pet.name))));
+      if (!S.run && !S.bg) {
         // other players wandering about
         const inParty = new Set(((S.wparty && S.wparty.members) || []).map((m) => m.bot.id));
         ((S.wparty && S.wparty.members) || []).forEach((m, i) => {
@@ -675,11 +680,35 @@
   }
 
   // ============================================================ panel
+  // the battleground panel (v10.7): the banners, what the scouts saw, where your group and the pair go (facts only)
+  function bgPanel(p) {
+    const S = G.S, bg = S.bg, C = D.BG[bg.key], sp = G.bgSplit(), nm = (m) => m.name.split('-')[0];
+    p.append(h('div', { class: 'sec-h' }, C.name, h('small', null, bg.phase === 'done' ? 'finished' : `round ${bg.round} of ${C.rounds} · first to ${C.win}`)));
+    p.append(h('div', { class: 'bg-score' }, h('div', { class: 'us' }, h('small', null, 'You'), h('b', { class: 'tnum' }, String(bg.score.us))), h('div', { class: 'them' }, h('small', null, 'Them'), h('b', { class: 'tnum' }, String(bg.score.them)))));
+    if (bg.phase === 'done') {
+      p.append(h('div', { class: 'ai-box' }, h('div', { class: 'ai-row' }, h('span', null, 'Result'), h('b', null, bg.result === 'win' ? 'Victory' : bg.result === 'draw' ? 'A draw' : 'Defeat')),
+        h('div', { class: 'ai-row' }, h('span', null, 'Honor'), h('b', { class: 'tnum' }, '+' + bg.reward.honor)), h('div', { class: 'ai-row' }, h('span', null, 'Money'), h('b', { html: moneyHtml(bg.reward.money) }))),
+        h('button', { class: 'btn wide', onclick: () => { G.leaveBg(); renderAll(); } }, 'Leave the battleground'));
+      return;
+    }
+    ui.bgPick = ui.bgPick && ui.bgPick.round === bg.round ? ui.bgPick : { round: bg.round, group: null, pair: null };
+    const pk = ui.bgPick, own = (b) => (bg.owner[b] === 'us' ? 'Yours' : bg.owner[b] === 'them' ? 'Theirs' : 'Open');
+    const list = h('div', { class: 'list' });
+    for (const [b, name] of C.banners) list.append(h('div', { class: 'row nav bg-banner ' + (bg.owner[b] || 'open') },
+      h('div', { class: 't' }, h('b', null, name.replace(/^the /, 'The '), h('span', { class: 'bg-own' }, own(b))), h('small', null, bg.plan[b] ? `Scouts: ${bg.plan[b]} of them heading there` : 'Scouts: none of them heading there'))));
+    p.append(list);
+    const pickRow = (label, who, key) => h('div', { class: 'bg-pick' }, h('small', null, `${label} (${who})`), h('div', { class: 'chips' }, ...C.banners.map(([b, name]) => h('button', { class: 'chip' + (pk[key] === b ? ' gold' : ''), onclick: () => { pk[key] = b; renderPanel(); } }, name.replace(/^the /, '')))));
+    p.append(pickRow('Your group', ['you'].concat(sp.group.map(nm)).join(', '), 'group'), pickRow('The pair', sp.pair.map(nm).join(', '), 'pair'));
+    p.append(h('button', { class: 'btn wide', disabled: !pk.group || !pk.pair, onclick: () => { G.bgGo(pk.group, pk.pair); renderAll(); } }, pk.group && pk.pair ? 'Go' : 'Choose where both go'));
+    p.append(h('p', { class: 'ai-note' }, 'Where both teams meet, they fight; an empty banner is taken; they take the banners they reach alone. Every banner you hold scores each round. They can still move when they see you coming.'));
+    if (bg.log.length) p.append(h('div', { class: 'ai-box' }, ...bg.log.slice(0, 3).map((l) => h('div', { class: 'ai-row' }, h('span', null, l)))));
+  }
   function renderPanel() {
     const S = G.S, P = S.player, p = els.panel;
     const scroll = p.scrollTop;
     p.innerHTML = '';
     if (S.run) { runPanel(p); p.scrollTop = scroll; return; }
+    if (S.bg && !G.fight) { bgPanel(p); p.scrollTop = scroll; return; }
     if (G.fight) { fightPanel(p); return; }
     if (P.ghostUntil) { p.append(h('div', { class: 'sec-h' }, 'Spirit')); p.append(h('p', null, 'Your spirit is returning to your body. You will come back with half health.')); return; }
     if (P.travel) {
@@ -2274,6 +2303,7 @@
     if (dg.length || rd.length || wa.length) add('hearthstone', [dg.length ? `${dg.length} dungeon${dg.length > 1 ? 's' : ''}` : '', rd.length ? `${rd.length} raid${rd.length > 1 ? 's' : ''}` : '', wa.length ? `${wa.length} Wanted` : ''].filter(Boolean).join(', ') + ' at your level', dg.concat(rd, wa).slice(0, 3).map((k) => D.ACTIVITIES[k].name).join(', ') + (dg.length + rd.length + wa.length > 3 ? ', ...' : ''), () => { closeSheet(); openSocial('groups'); });
     if (G.rouletteOptions().length) add('hearthstone', G.rouletteReady() ? 'Dungeon Roulette: ready today' : 'Dungeon Roulette: done today', null, () => { closeSheet(); openSocial('groups'); });
     const bh = G.bountiesHeld(); if (bh) add('journal', `${bh} bount${bh === 1 ? 'y' : 'ies'} in progress`, null, null);
+    { const wb = P.level >= cap && G.worldBoss(); if (wb) add('hearthstone', `World boss: ${D.MOBS[D.ACTIVITIES[wb].boss].name}`, `${D.PLACES[D.ACTIVITIES[wb].where].name}, ${D.PLACES[D.ACTIVITIES[wb].where].zone} · ${G.worldBossLooted(wb) ? 'looted this week' : 'loot open this week'}`, () => { ui.gfTab = 'raid'; closeSheet(); openSocial('groups'); }); }
     { const fr = P.level >= cap && G.featuredRaid(); if (fr) add('hearthstone', `Featured raid: ${D.ACTIVITIES[fr].name}`, G.featuredClaimed() ? 'Bonus taken this week' : `First clear this week: +${G.FEATURED_MARKS} Mentor Marks`, () => { ui.gfTab = 'raid'; closeSheet(); openSocial('groups'); }); }
     if (P.level >= cap && window.TRIALS && TRIALS.open(TRIALS.season(new Date()))) { add('journal', `${TRIALS.name(TRIALS.season(new Date()))} Trials: rating ${G.trialRating()}`, `Realm rank #${G.trialBoard().rank} of ${G.trialBoard().of}`, () => { ui.gfTab = 'trials'; closeSheet(); openSocial('groups'); }); }
     // the next thing that opens with a level
@@ -2966,8 +2996,8 @@
   }
   // ---- the Group Finder (v10): role and queue first, then For You and one tab per kind (Dungeons, Raids, Wanted).
   // For You holds only what you can do now; each kind tab folds what is still to come and what you have outlevelled.
-  const actKind = (A) => ((A.size || 5) > 5 ? 'raid' : A.dungeon ? 'dungeon' : 'wanted');
-  const KIND_LABEL = { dungeon: 'Dungeon', raid: 'Raid', wanted: 'Wanted' };
+  const actKind = (A) => (A.bg ? 'pvp' : (A.size || 5) > 5 ? 'raid' : A.dungeon ? 'dungeon' : 'wanted');
+  const KIND_LABEL = { dungeon: 'Dungeon', raid: 'Raid', wanted: 'Wanted', pvp: 'Battleground' };
   // an Omen as a chip: tap it for its rule (v10.4; never how to beat it)
   function omenChip(k, lvl) {
     const O = window.TRIALS.OMENS[k];
@@ -2997,8 +3027,9 @@
       const mc = k >= 0 ? G.monthCloak(k) : null, mHave = mc && (G.account().looks || []).includes(mc.look.join(':')), mPaid = ((got.monthPaid || []).includes(k));
       const month = k < 0 ? 'The Preseason has no monthly cloak.' : mc ? `This month: the ${mc.name} for Trial 10 in time${mHave ? ' ✓' : ''}.` : `No cloak this month: Trial 10 in time pays ${G.MONTH_FALLBACK_MARKS} Mentor Marks${mPaid ? ' ✓' : ''}.`;
       b.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', 'trialsworn_hourglass'))),
-        h('div', { class: 't' }, h('b', null, `Trialsworn set · ${n} of ${Object.keys(TS).length}`), h('small', { style: { whiteSpace: 'normal' } }, [part('cloak', 'Cloak'), part('weapons', 'weapon looks'), part('mount', 'Charger'), part('t15', 'glowing set'), part('t20', 'radiant set')].join(' · ') + ' (in time, for all your characters).'),
-          h('small', { style: { whiteSpace: 'normal', color: 'var(--gold)' } }, month))));
+        h('div', { class: 't' }, h('b', null, `Trialsworn set · ${Object.keys(TS).filter((x) => TS[x].lvl != null && got[x]).length} of ${Object.keys(TS).filter((x) => TS[x].lvl != null).length}`), h('small', { style: { whiteSpace: 'normal' } }, [part('cloak', 'Cloak'), part('weapons', 'weapon looks'), part('mount', 'Charger'), part('t15', 'glowing set'), part('t20', 'radiant set')].join(' · ') + ' (in time, for all your characters).'),
+          h('small', { style: { whiteSpace: 'normal', color: 'var(--gold)' } }, month),
+          (() => { const ids = G.yearCloaks('year1'), have = new Set(G.account().looks || []), n1 = ids.filter((i) => have.has(D.ITEMS[i].look.join(':'))).length; return h('small', { style: { whiteSpace: 'normal' } }, got.year1 ? `The first year: all 12 cloaks · the ${D.MOUNTS.trialsworn_year1.name} ✓` : `The first year: ${n1} of ${ids.length} cloaks · all ${ids.length} give the ${D.MOUNTS.trialsworn_year1.name}`); })())));
     }
     b.append(h('div', { class: 'sec-h' }, k === -1 ? 'The Preseason' : 'This month', h('small', null, 'tap a Trial to pick its level')));
     for (const act of picks) {
@@ -3020,7 +3051,7 @@
     const A = D.ACTIVITIES[act], Dg = A.dungeon ? D.DUNGEONS[A.dungeon] : null, T = window.TRIALS, kind = actKind(A);
     const max = trial ? G.trialMax(act) : 1;
     ui.trialLvl = trial ? Math.max(1, Math.min(max, lvlIn || max)) : 0;
-    const sub = trial ? `Trial briefing · ${T.name(T.season(new Date()))}` : `${KIND_LABEL[kind]} briefing · ${A.size || 5} players`;
+    const sub = trial ? `Trial briefing · ${T.name(T.season(new Date()))}` : `${A.worldBoss ? 'World boss' : KIND_LABEL[kind]} briefing · ${A.size || 5} players`;
     if (!trial && !(Dg && Dg.hard && G.hardOpen(act))) ui.briefHard = false;
     openSheet('brief', A.name, sub, (b) => {
       const lvl = ui.trialLvl, P = G.S.player, om = trial ? T.active(lvl, new Date()) : [], f = trial ? T.factor(lvl) : 1;
@@ -3047,9 +3078,16 @@
       } else {
         const cx = (P.codex || {})[act];
         row('Level', A.minLvl === A.maxLvl ? String(A.minLvl) : `${A.minLvl}–${A.maxLvl}${P.level > A.maxLvl ? ` (you are synced to ${A.maxLvl})` : ''}`);
+        if (A.bg) { const C = D.BG[A.bg], L = P.level;
+          row('Teams', `${C.team} against ${C.team}, all at your level (${L})`); row('Banners', C.banners.map((x) => x[1]).join(', '));
+          row('How it works', `each round your group (you and two) and the pair (two more) each go to a banner: where both teams meet they fight, an empty banner is taken, and they take the banners they reach alone`);
+          row('Score', `every banner you hold scores each round; first to ${C.win}, or the most after ${C.rounds} rounds`);
+          row('Reward', `${Math.round((C.honor.base + C.honor.perLvl * L) * C.honor.win)} Honor for a win, ${Math.round(C.honor.base + C.honor.perLvl * L)} otherwise${L >= D.LEVEL_CAP ? `; ${C.marksAtCap.win} or ${C.marksAtCap.loss} Mentor Marks` : ''}`);
+          const pv = G.pvpStats(); if (pv.bgPlayed) row('Your record', `${pv.bgWins || 0} wins in ${pv.bgPlayed}`); }
         if (Dg && G.par(Dg)) row('Par time', `${clockText(G.par(Dg))} (beating it gives a speed chest)`);
         if (Dg) row('Flawless', 'a clear without a wipe gives a bonus');
         if (cx && cx.clears) row('Your record', `${cx.clears} clear${cx.clears > 1 ? 's' : ''}${cx.hard ? ` (${cx.hard} on Hard)` : ''}${cx.best ? ', best ' + clockText(cx.best) : ''}`);
+        if (A.worldBoss) row('This week', G.worldBossLooted(act) ? 'looted: its loot drops again on Monday' : `its first kill this week drops its loot and ${G.WB_MARKS} Mentor Marks; after that, nothing until Monday. Next Monday another world boss comes out`);
         if (Dg && Dg.raid && act === G.featuredRaid()) {
           const looks = G.raidLooksLeft(act).length;
           row('Featured this week', G.featuredClaimed() ? 'bonus taken this week (a new raid is featured on Monday)' : `the first clear this week (Normal or Hard) gives +${G.FEATURED_MARKS} Mentor Marks${looks ? ' and a look from its set' : ''}`);
@@ -3079,7 +3117,7 @@
         const drops = bm && bm.loot && !trial ? bm.loot.filter((id) => D.ITEMS[id]) : [];
         // a boss row stays short: its numbers and one line of what the card holds; the card has the rest (v10.7)
         const bkeys = [...new Set(p.mobs.filter((m) => D.MOBS[m].boss || m === A.boss))];
-        const unitOf = (key) => { const M = D.MOBS[key], u = E.mobUnit(key, mobLvl || (M.lvl ? M.lvl[1] : A.maxLvl), M.boss ? boss : trash); if (hard) u.hardX = G.hardExtra(act, key); return u; };
+        const unitOf = (key) => { const M = D.MOBS[key], u = E.mobUnit(key, mobLvl || (M.lvl ? M.lvl[1] : A.maxLvl), M.boss ? boss : trash); if (hard) u.hardX = G.hardExtra(act, key); else if (A.extra && A.extra[key]) u.hardX = A.extra[key]; return u; };
         const abil = bkeys.flatMap((key) => E.specialRows(unitOf(key))), nHard = abil.filter((r) => r.hard).length;
         const summary = bkeys.length ? [abil.length ? `${abil.length} ${abil.length === 1 ? 'ability' : 'abilities'}` : 'no special abilities', nHard ? `${nHard} Hard` : '', drops.length ? `${drops.length} drops` : '', 'tap for details'].filter(Boolean).join(' · ') : null;
         list.append(h(bkeys.length ? 'button' : 'div', { class: 'row', onclick: bkeys.length ? () => openBossCard({ act, label: p.label || bm.name, keys: bkeys, unitOf, hard, drops }) : null }, h('div', { class: 'ic mob' }, img(mobArt(bk || p.mobs[0]))),
@@ -3177,10 +3215,10 @@
     const doable = (x) => !x.why || travel(x) || /^Deserter/.test(x.why);
     const atLevel = (x) => doable(x) && P.level <= x.A.maxLvl;
     const hw = (S.helpWanted || []).filter((r) => r.expires > Date.now());
-    const kinds = ['dungeon', 'raid', 'wanted'];
+    const kinds = ['dungeon', 'raid', 'wanted', 'pvp'];
     const tab = ui.gfTab || 'you';
     const tabs = h('div', { class: 'tabs gf-tabs tabs-fit' });
-    for (const [k, label] of [['you', 'For You'], ['dungeon', 'Dungeons'], ['raid', 'Raids'], ['wanted', 'Wanted'], ['trials', 'Trials']]) {
+    for (const [k, label] of [['you', 'For You'], ['dungeon', 'Dungeons'], ['raid', 'Raids'], ['wanted', 'Wanted'], ['pvp', 'PvP'], ['trials', 'Trials']]) {
       const n = k === 'you' ? hw.length : 0;
       tabs.append(h('button', { class: (tab === k ? 'on' : '') + (n ? ' dot' : ''), onclick: () => { ui.gfTab = k; ui.sheetFn(); } }, label));
     }
@@ -3195,7 +3233,7 @@
       return h('div', { class: 'row gf-row tap' + (!doable(x) ? ' gf-locked' : '') + (queued ? ' gf-queued' : ''), onclick: (e) => { if (e.target.closest('button')) return; openBriefing(x.k, false); } }, // tap the row for its briefing (v10.4)
         h('div', { class: 'ic mob' }, img(mobArt(A.boss || finalBoss(A) || 'vancleef'))),
         h('div', { class: 't' }, h('b', null, A.name, h('span', { class: 'gf-lvl tnum' }, A.minLvl === A.maxLvl ? String(A.minLvl) : `${A.minLvl}–${A.maxLvl}`)),
-          h('small', null, showKind ? h('span', { class: 'gf-kind k-' + kind }, KIND_LABEL[kind]) : null, x.k === G.featuredRaid() ? h('span', { class: 'gf-kind k-featured' }, 'Featured this week') : null, note)),
+          h('small', null, showKind ? h('span', { class: 'gf-kind k-' + kind }, KIND_LABEL[kind]) : null, x.k === G.featuredRaid() ? h('span', { class: 'gf-kind k-featured' }, 'Featured this week') : null, A.worldBoss ? h('span', { class: 'gf-kind k-featured' }, G.worldBossLooted(x.k) ? 'World boss · looted this week' : 'World boss this week') : null, note)),
         btn);
     };
     const byLevel = (a, c) => a.A.minLvl - c.A.minLvl || kinds.indexOf(actKind(a.A)) - kinds.indexOf(actKind(c.A));

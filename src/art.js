@@ -3098,6 +3098,261 @@
   rsChest('tc_leather', tcLeather, TC, TC_H);
   rsChest('tc_mail', tcMail, TC, TC_H);
   rsLegs('tc_legs', tcLegs, TC, TC_H);
+
+  /* ---- raid weapon looks: like the armour, each weapon is ONE drawing that takes its raid's palette, registered as
+     <key> (Normal) and <key>_hard (Hard). The weapon palettes are the armour palettes plus a few weapon-only colours.
+     Drawn grip at the origin, blade up (-y), the same frame as the other weapon looks. ---- */
+  function rsW(base, x) { var o = {}, k; for (k in base) o[k] = base[k]; for (k in x) o[k] = x[k]; return o; }
+  function rsWeapon(key, fn, kind, N, H) {
+    [[key, N], [key + '_hard', H]].forEach(function (v) { var f = function (c) { return fn(c, v[1]); }; GW[v[0]] = f; WP[v[0]] = f; GKIND[v[0]] = kind; });
+  }
+  /* a grip of colour col with a spiral wrap, half-width w, from y0 (top) to y1 */
+  function rsGrip(c, w, y0, y1, col, wrap) {
+    var d = '';
+    for (var y = y0 + 2; y < y1; y += 3) d += D`M${-w},${y + 1.4} L${w},${y - 1}`;
+    return P(D`M${-w},${y0} L${w},${y0} L${w},${y1} L${-w},${y1} Z`, c.cel(col), 1.8) + S(d, wrap, 1.2);
+  }
+  function rsHalo(c, x, y, rx, ry, col, a) { return E(x, y, rx, ry, c.rg([[0, col, a], [0.5, col, a * 0.4], [1, col, 0]]), 0); }
+  function rsGem(c, x, y, r, p) {
+    return (p.glow ? C(x, y, r * 2.4, c.rg([[0, p.glow, 0.7], [1, p.glow, 0]]), 0) : '') +
+      C(x, y, r, c.rg([[0, p.gem[0]], [0.5, p.gem[1]], [1, p.gem[2]]], 0.4, 0.35, 0.7), 1.1) + C(x - r * 0.35, y - r * 0.35, r * 0.3, '#ffffff', 0, 0.8);
+  }
+  /* shortens a blade path: every point above the guard (y < -11) is pulled toward it by k, so long blades stay in frame */
+  function rsLen(d, k) { return d.replace(/(-?\d*\.?\d+),(-?\d*\.?\d+)/g, function (m, x, y) { y = +y; return x + ',' + (y < -11 ? r1(-11 + (y + 11) * k) : y); }); }
+  var BLK = 0.88;
+  function rsOrbD(x, y, r) { return D`M${x - r},${y} A${r},${r} 0 1 0 ${x + r},${y} A${r},${r} 0 1 0 ${x - r},${y} Z`; }
+  /* Veshmira's Lair: black dragon steel and gold (Hard: violet steel, storm-violet glowing edges) */
+  var VESH_W = rsW(VESH, { blade: [[0, '#5a5468'], [0.5, '#262230'], [1, '#0e0c12']], gem: ['#ffc0b0', '#c8202a', '#4a0810'], wood: '#2a2228',
+    orb: ['#ffffff', '#e0c8ff', '#9a5aff', '#3a1a7a'], orbGlow: '#a46aff', bolt: '#f4ecff' });
+  var VESH_WH = rsW(VESH_H, { blade: [[0, '#4a3e66'], [0.5, '#1a1622'], [1, '#07060a']], gem: ['#ffffff', '#b07aff', '#3a1a6a'], wood: '#17131e',
+    orb: ['#ffffff', '#f0e4ff', '#b07aff', '#4a1ab8'], orbGlow: '#9a5aff', bolt: '#ffffff' });
+  /* Wyrmfang Greatblade: a two-handed fang, its back edge bowed, scale-chased near the hilt, a gold cutting edge and
+     fuller, gold wing-swept guard with a ruby, a claw pommel */
+  function veshSword(c, p) {
+    var bd = rsLen('M-5.2,-11 C-6.8,-30 -5.8,-54 1.6,-82 C5.8,-60 6.8,-34 5.4,-11 Z', BLK), cl = c.clip(bd);
+    var fu = rsLen('M-0.4,-15 C-0.8,-34 -0.2,-52 1.4,-66', BLK);
+    var gd = 'M-4.6,-8.5 C-9.5,-8.5 -15,-11.5 -17.5,-19 C-13.5,-16 -9,-15 -5,-14.5 Z M4.6,-8.5 C9.5,-8.5 15,-11.5 17.5,-19 C13.5,-16 9,-15 5,-14.5 Z';
+    return (p.glow ? rsHalo(c, 1, -42, 12, 32, p.glow, 0.32) : '') +
+      P(bd, c.lg(p.blade, 0, 0, 1, 0), 2) +
+      CG(rsScaleG(c, cl, -8, 8, -27, -10, 3.8, 2.8, p.line, p.sheen) + S(fu, OL, 3) + S(fu, p.glow || p.trim, 1.2) + (p.glow ? S(fu, p.core, 0.5) : '') +
+        S(rsLen('M-3.8,-14 C-4.8,-32 -3.8,-54 0.6,-76', BLK), '#ffffff', 0.7, 0.3), cl) +
+      rsEdge(rsLen('M5.4,-12 C6.8,-34 5.8,-60 1.6,-82', BLK), 1.2, p) +
+      rsGrip(c, 2.6, -8, 13, p.dark, p.trim) +
+      (p.glow ? S(gd, p.glow, 3.2, 0.35) : '') + P(gd, c.cel(p.trim), 1.6) + S('M-6,-11 C-10,-11.5 -13,-13 -15,-16 M6,-11 C10,-11.5 13,-13 15,-16', p.trimDk, 0.8) +
+      P('M-5.6,-15 L5.6,-15 L4.4,-7.5 L-4.4,-7.5 Z', c.cel(p.base), 1.6) + rsGem(c, 0, -11.2, 2.2, p) +
+      P('M-3.4,13 L3.4,13 L2.2,17.5 L0,22 L-2.2,17.5 Z', c.cel(p.trim), 1.5) + C(0, 15.6, 1, p.gem[1], 0);
+  }
+  /* Meriel's Kiss: a slim black stiletto with a gold edge, a small back barb, recurved gold quillons, a heart-cut ruby */
+  function veshDagger(c, p) {
+    var bd = 'M-2.4,-9 C-2.8,-19 -1.8,-29 0,-39 C1.8,-29 2.8,-19 2.4,-9 Z', q = 'M-8.4,-12.4 C-9,-8.6 -5,-7.6 0,-8.8 C5,-7.6 9,-8.6 8.4,-12.4';
+    var ht = 'M0,-5.2 C-3.6,-7.6 -3.6,-11.2 0,-9.8 C3.6,-11.2 3.6,-7.6 0,-5.2 Z';
+    return (p.glow ? rsHalo(c, 0, -22, 7, 20, p.glow, 0.32) : '') +
+      P('M-2.4,-15 L-6.2,-20 L-2.2,-20.6 Z', c.cel(p.trim), 1.2) +
+      P(bd, c.lg(p.blade, 0, 0, 1, 0), 1.8) + CG(S('M0,-11 L0,-34', p.glow || p.trim, 0.9) + S('M-1.4,-11 C-1.8,-20 -1.2,-28 -0.2,-35', '#ffffff', 0.6, 0.35), c.clip(bd)) +
+      rsEdge('M2.4,-10 C2.8,-19 1.8,-29 0,-39', 0.8, p) +
+      rsGrip(c, 1.9, -7, 8, p.dark, p.trim) +
+      (p.glow ? S(q, p.glow, 4.8, 0.35) : '') + S(q, OL, 4) + S(q, p.trim, 2.2) + C(-8.4, -12.6, 1.5, c.cel(p.trim), 1) + C(8.4, -12.6, 1.5, c.cel(p.trim), 1) +
+      (p.glow ? C(0, -8, 5, c.rg([[0, p.glow, 0.7], [1, p.glow, 0]]), 0) : '') + P(ht, c.rg([[0, p.gem[0]], [0.5, p.gem[1]], [1, p.gem[2]]], 0.4, 0.3, 0.75), 1.1) +
+      P('M0,8 C3.2,9 3.2,13 0,15.5 C-3.2,13 -3.2,9 0,8 Z', c.cel(p.trim), 1.4) + C(0, 11.8, 1.1, p.gem[1], 0);
+  }
+  /* Stormcaller's Staff: black wood, gold bands, gold talons clutching a storm-violet orb with lightning in it */
+  function veshStaff(c, p) {
+    var wd = p.wood, tl = 'M-4.6,-51 C-11.5,-55 -11.8,-66 -4.2,-71.5 C-7.6,-65 -8,-57.5 -1.6,-51.5 Z', tr = 'M4.6,-51 C11.5,-55 11.8,-66 4.2,-71.5 C7.6,-65 8,-57.5 1.6,-51.5 Z';
+    var tb = 'M-1.8,-55 C-3.4,-65 0,-73 2.6,-77 C3.2,-71 2.2,-63 1.8,-55 Z', o = p.orb;
+    var sp = 'M9.5,-72 L12,-69 L10.5,-68 L13.5,-64 M-10,-58 L-12.5,-55 L-11,-54.4 L-13.6,-51 M-7,-76 L-9.6,-78.4 L-8.4,-79.4 L-10.8,-82';
+    return rsHalo(c, 0, -63, p.glow ? 20 : 15, p.glow ? 20 : 15, p.orbGlow, p.glow ? 0.62 : 0.42) +
+      P('M-2.2,38 C-2.8,10 -2,-20 -2.8,-48 L2.8,-48 C2,-20 2.8,10 2.2,38 Z', c.lg([[0, lt(wd, 0.25)], [0.5, wd], [1, dk(wd, 0.4)]], 0, 0, 1, 0), 2) +
+      S('M-0.8,30 C-1.3,6 -0.8,-20 -1.3,-44', lt(wd, 0.3), 0.7, 0.6) +
+      rsGrip(c, 3, -10, 12, p.dark, p.trim) + R(-3.4, -27, 6.8, 3, c.cel(p.trim), 1.3) + R(-3.2, 22, 6.4, 3, c.cel(p.trim), 1.3) +
+      P('M-3,34 L3,34 L1.4,42 L-1.4,42 Z', c.cel(p.trim), 1.5) +
+      (p.glow ? S(tl + ' ' + tr + ' ' + tb, p.glow, 3.4, 0.35) : '') + P(tb, c.cel(p.trim), 1.4) +
+      C(0, -63, 7.2, c.rg([[0, o[0]], [0.3, o[1]], [0.7, o[2]], [1, o[3]]], 0.38, 0.35, 0.72), 1.8) +
+      CG(S('M-4.4,-68 L-1,-65 L-2.6,-62.6 L1.8,-59 L0.4,-57.4', p.bolt, 1, 0.9) + S('M2,-69.4 L4.4,-66 L3,-64.6 L5,-62', p.bolt, 0.7, 0.8), c.clip(rsOrbD(0, -63, 7.2))) +
+      C(-2.4, -65.8, 1.6, '#ffffff', 0, 0.75) +
+      P(tl, c.cel(p.trim), 1.4) + P(tr, c.cel(p.trim), 1.4) +
+      P('M-5,-52.5 L5,-52.5 L3.4,-46.5 L-3.4,-46.5 Z', c.cel(p.trim), 1.5) +
+      S(sp, p.orbGlow, 2.6, 0.4) + S(sp, p.bolt, 0.9, 0.9);
+  }
+  rsWeapon('vesh_sword', veshSword, 'big', VESH_W, VESH_WH);
+  rsWeapon('vesh_dagger', veshDagger, 'dagger', VESH_W, VESH_WH);
+  rsWeapon('vesh_staff', veshStaff, 'staff', VESH_W, VESH_WH);
+
+  /* The Magma Throne: rock and dark iron with molten cracks (Hard: obsidian and dark steel, white-hot pale blue) */
+  var MC_W = rsW(MC, { iron: '#3e3836', ironLt: '#6e655e', obs: [[0, '#6a5a62'], [0.5, '#2a2026'], [1, '#0c0809']] });
+  var MC_WH = rsW(MC_H, { iron: '#24222e', ironLt: '#4e4a64', obs: [[0, '#8a84b0'], [0.5, '#1c1a28'], [1, '#050407']] });
+  var mcRock = function (c, p, x1, y1) { return c.lg([[0, p.rockLt], [0.5, p.rock], [1, p.rockDk]], 0, 0, x1 == null ? 1 : x1, y1 || 0); };
+  var mcIron = function (c, p) { return c.lg([[0, p.ironLt], [0.5, p.iron], [1, dk(p.iron, 0.5)]], 0, 0, 1, 0); };
+  /* Magmaheart Greatblade: a broad hewn-rock blade, faceted and chipped, split up the middle by a molten core */
+  function mcSword(c, p) {
+    var bd = rsLen('M-6.4,-11 L-7.4,-30 L-5.8,-36 L-7.2,-54 L-4.6,-70 L0.6,-82 L5,-71 L7.2,-56 L5.8,-42 L7.4,-30 L6.4,-11 Z', BLK), cl = c.clip(bd);
+    var gd = 'M-13.5,-13 L-9.5,-17.5 L9.5,-17.5 L13.5,-13 L11,-7.5 L-11,-7.5 Z';
+    return rsHalo(c, 0, -42, 13, 34, p.glow, 0.3) +
+      P(bd, mcRock(c, p), 2.2) +
+      CG(F(rsLen('M-7.4,-30 L-2,-33 L-3.6,-52 L-7.2,-54 L-5.8,-36 Z M7.2,-56 L2.6,-60 L0.6,-82 L5,-71 Z M-6.4,-11 L-2,-14 L-2,-24 L-7,-28 Z', BLK), p.rockLt, 0.4) +
+        F(rsLen('M-3,-12 L3,-12 L2.4,-70 L0.4,-79 L-1.8,-70 Z', BLK), c.lg([[0, p.glow, 0.1], [0.5, p.glow, 0.5], [1, p.glow, 0.1]], 0, 0, 1, 0)) +
+        (p.sheen ? F(rsLen('M-6,-14 L-4,-14 L-4.6,-62 L-6.4,-56 Z', BLK), p.sheen, 0.35) : '') +
+        rsSeam(rsLen('M-1.2,-26 L-4.8,-31 M0.8,-38 L4.8,-44 M-0.6,-52 L-4.4,-58.5 M1,-64 L3.6,-69 M0.2,-20 L4,-22', BLK), 0.7, p) +
+        rsSeam(rsLen('M0,-12 L-1.2,-26 L0.8,-38 L-0.6,-52 L1,-64 L0.4,-75', BLK), 1.3, p), cl) + P(bd, 'none', 2.2) +
+      rsGrip(c, 2.7, -8, 13, p.leatherDk, p.rockLt) +
+      P(gd, c.cel(p.rockDk), 2) + CG(rsSeam('M-11,-12 L-5,-13.8 L0,-11.6 L5,-13.8 L11,-12', 0.8, p), c.clip(gd)) + rsDot(c, 0, -12.4, 1.6, p) +
+      P('M-4,13 L4,13 L4.8,17.4 L0,21.6 L-4.8,17.4 Z', c.cel(p.rock), 1.6) + rsDot(c, 0, 17, 1.1, p);
+  }
+  /* Harbinger's Fang: a jagged shard of obsidian, a molten glow rising from the hilt into it, a spiked rock guard */
+  function mcDagger(c, p) {
+    var bd = 'M-3.4,-8 L-4.4,-14 L-2.8,-16.4 L-4.2,-22 L-2.2,-25 L-3,-31 L2,-41 L2.8,-33 L4.2,-29.4 L3,-25 L4.4,-19.6 L3.2,-15.6 L4.2,-10.6 L3.4,-8 Z', cl = c.clip(bd);
+    var gd = 'M-9.4,-13 L-4.4,-8 L4.4,-8 L9.4,-13 L6.6,-4.6 L-6.6,-4.6 Z';
+    return rsHalo(c, 0, -14, 8, 10, p.glow, 0.4) +
+      P(bd, c.lg(p.obs, 0, 0, 1, 0), 1.8) +
+      CG(F('M-2.2,-25 L0.4,-28 L2,-41 L-3,-31 Z', p.obs[0][1], 0.5) + F('M-2.8,-16.4 L0,-18 L-0.2,-24 L-4.2,-22 Z', p.obs[0][1], 0.35) + F('M3,-25 L0.6,-21 L3.2,-15.6 L4.4,-19.6 Z', p.obs[0][1], 0.3) +
+        F('M-6,-6 L6,-6 L6,-26 L-6,-26 Z', c.lg([[0, p.mid, 0.9], [0.45, p.glow, 0.4], [1, p.glow, 0]], 0, 1, 0, 0)) +
+        rsSeam('M0.2,-8 L-0.8,-14 L0.8,-19 L-0.2,-23', 0.7, p) + S('M-2.2,-25 L2,-41', '#ffffff', 0.6, 0.5), cl) + P(bd, 'none', 1.8) +
+      rsGrip(c, 2.2, -5, 8, p.leatherDk, p.rockLt) +
+      P(gd, c.cel(p.rockDk), 1.6) + rsDot(c, 0, -7.6, 1.2, p) +
+      P('M-2.9,8 L2.9,8 L0,13.6 Z', c.cel(p.rock), 1.4) + rsDot(c, 0, 9.8, 0.8, p);
+  }
+  /* Staff of the Steward: a dark iron staff topped by an iron crown full of fire */
+  function mcStaff(c, p) {
+    var cr = 'M-8.2,-47 L8.2,-47 L8.6,-52 L10.6,-60.4 L6,-55.4 L3.8,-61.8 L0,-55.8 L-3.8,-61.8 L-6,-55.4 L-10.6,-60.4 L-8.6,-52 Z';
+    return rsHalo(c, 0, -64, 17, 20, p.glow, 0.42) +
+      P('M-2.4,38 L-2.8,-46 L2.8,-46 L2.4,38 Z', mcIron(c, p), 2) +
+      rsSeam('M-2.6,-20 L2.6,-18.6 M-2.6,24 L2.6,25.4', 0.6, p) +
+      rsGrip(c, 3.1, -10, 12, p.leatherDk, p.ironLt) + R(-3.6, -32, 7.2, 3.2, c.cel(p.rockDk), 1.3) + R(-3.4, 18, 6.8, 3, c.cel(p.rockDk), 1.3) +
+      P('M-3,34 L3,34 L0,44 Z', c.cel(p.iron), 1.5) +
+      E(0, -52, 8.4, 2.6, dk(p.iron, 0.5), 1.4) + mcFlames(c, -8.6, 8.6, -50, 3, 21, 29, 31, p) +
+      C(0, -55, 4.4, c.rg([[0, p.core, 0.95], [0.5, p.mid, 0.6], [1, p.glow, 0]]), 0) +
+      P(cr, mcIron(c, p), 1.8) + S('M-8.2,-50 L8.2,-50', p.ironLt, 0.8, 0.7) +
+      rsDot(c, -4.6, -50.2, 1, p) + rsDot(c, 0, -50.4, 1.2, p) + rsDot(c, 4.6, -50.2, 1, p) +
+      P('M-4.6,-47 L4.6,-47 L3.2,-43 L-3.2,-43 Z', c.cel(p.rockDk), 1.4) +
+      rsDot(c, -7, -82, 0.8, p) + rsDot(c, 5, -85, 0.7, p) + rsDot(c, 10, -76, 0.6, p);
+  }
+  /* Ashbound Scepter: a ceremonial iron rod, a rock cage of flame-tongued ribs around a molten heart, a stone flame on top */
+  function mcMace(c, p) {
+    var rib = 'M-3,-28 C-11.5,-31 -11.5,-46 -2,-50.5 M3,-28 C11.5,-31 11.5,-46 2,-50.5';
+    return rsHalo(c, 0, -40, 14, 16, p.glow, 0.45) +
+      P('M-2.1,11 L-2.3,-27 L2.3,-27 L2.1,11 Z', mcIron(c, p), 2) + rsSeam('M-2.3,-18 L2.3,-16.8 M-2.3,-22.4 L2.3,-21.2', 0.6, p) +
+      rsGrip(c, 2.4, -1, 10, p.leatherDk, p.ironLt) + P('M-2.8,10 L2.8,10 L0,15.5 Z', c.cel(p.rock), 1.4) + rsDot(c, 0, 11.6, 0.8, p) +
+      S('M-1,-29 C-5.6,-33 -5.6,-45 -1,-50 M1,-29 C5.6,-33 5.6,-45 1,-50', OL, 3.4) + S('M-1,-29 C-5.6,-33 -5.6,-45 -1,-50 M1,-29 C5.6,-33 5.6,-45 1,-50', p.rockDk, 1.6) +
+      C(0, -39, 5.6, c.rg([[0, p.core], [0.45, p.mid], [1, p.glow]], 0.4, 0.4, 0.7), 1.4) +
+      P('M-10.4,-37 L-15,-40.6 L-10.6,-42.6 Z M10.4,-37 L15,-40.6 L10.6,-42.6 Z M-9.6,-31 L-13,-30.4 L-10.6,-34 Z M9.6,-31 L13,-30.4 L10.6,-34 Z', c.cel(p.rock), 1.3) +
+      S(rib, OL, 5) + S(rib, p.rock, 3) + S('M-3.6,-29.6 C-9.6,-33 -10,-43 -4,-48.6', p.rockLt, 0.8, 0.7) +
+      R(-4.4, -29.5, 8.8, 3.6, c.cel(p.rockDk), 1.4) +
+      P('M0,-61 C3,-57 3.8,-53.5 2.4,-50 L-2.4,-50 C-3.8,-53.5 -1.4,-56.5 0,-61 Z', c.cel(p.rockDk), 1.4) +
+      F('M0,-58 C1.6,-55.5 2,-53 1.2,-51 L-1.2,-51 C-2,-53 -0.6,-55 0,-58 Z', p.mid) + F('M0,-55.4 C0.8,-54 1,-52.6 0.5,-51.4 L-0.5,-51.4 C-1,-52.6 -0.3,-53.8 0,-55.4 Z', p.core);
+  }
+  /* Emberfall: a huge two-handed hammer whose head is three hewn basalt columns bound with an iron band, lava in the
+     joints and dripping from the base, a stone haft with molten cracks */
+  function mcHammer(c, p) {
+    var hf = 'M-3.2,36 L-3.6,-42 L3.6,-42 L3.2,36 Z';
+    var A = 'M-19.5,-42 L-20,-66 L-17,-69.5 L-9.4,-69.5 L-7,-66 L-7,-43.5 Z', B = 'M-7,-38.5 L-7,-73 L-4,-77 L4,-77 L7,-73 L7,-38.5 Z', Cc = 'M7,-43.5 L7,-68 L9.4,-71.5 L17,-71.5 L20,-68 L19.5,-41 Z';
+    var tops = 'M-20,-66 L-17,-69.5 L-9.4,-69.5 L-7,-66 Z M-7,-73 L-4,-77 L4,-77 L7,-73 Z M7,-68 L9.4,-71.5 L17,-71.5 L20,-68 Z';
+    var drip = 'M-3,-38.6 C-3,-35 -1.6,-33 -1.2,-30.6 C-0.6,-33 0.4,-35.5 1,-38.6 Z M-15.6,-42.4 C-15.4,-40 -14.6,-38.6 -14.4,-37 C-13.8,-38.6 -13.4,-40.2 -13.2,-42.6 Z M12.4,-42 C12.6,-39.4 13.2,-38 13.4,-36.2 C14,-38 14.4,-39.6 14.6,-41.8 Z';
+    var band = 'M-20.4,-60.5 L20.4,-61.5 L20.4,-55 L-20.4,-54 Z';
+    return rsHalo(c, 0, -48, 26, 22, p.glow, 0.32) +
+      P(hf, mcRock(c, p), 2.2) + CG(rsSeam('M0.6,-38 L-0.8,-30 L0.8,-22 M-0.6,22 L0.8,28', 0.6, p), c.clip(hf)) +
+      rsGrip(c, 3.4, -10, 14, p.leatherDk, p.rockLt) + R(-4.4, -24, 8.8, 3.4, c.cel(p.iron), 1.4) + R(-4.2, 16, 8.4, 3, c.cel(p.iron), 1.3) +
+      P('M-5,35 L5,35 L5.6,39.6 L0,43 L-5.6,39.6 Z', c.cel(p.rock), 1.8) + rsDot(c, 0, 39, 1, p) +
+      G(S(drip, p.glow, 3, 0.4) + F(drip, p.mid) + F('M-1.6,-38 C-1.4,-35 -1.2,-34 -1.1,-32.6 C-0.8,-34 -0.4,-35.6 -0.2,-38 Z', p.core) +
+      P(A, mcRock(c, p, 1, 0.3), 2.2) + P(Cc, mcRock(c, p, 1, 0.3), 2.2) + P(B, mcRock(c, p, 1, 0.3), 2.2) +
+      F(tops, p.rockLt, 0.55) + S('M-7,-73 L7,-73 M-20,-66 L-7,-66 M7,-68 L20,-68', OL, 1.1, 0.8) +
+      (p.sheen ? F('M-5,-71 L-2.6,-71 L-3.4,-40 L-5.4,-40 Z M9,-66 L11,-66 L10.6,-44 L8.8,-44 Z', p.sheen, 0.3) : '') +
+      S('M-17.6,-50 L-14.6,-51 M-11,-64 L-8.6,-65 M3,-46 L5.4,-47 M14.4,-64.6 L17,-65.6 M10,-48 L13,-48.6', p.rockLt, 1.1, 0.7) +
+      rsSeam('M-7,-66 L-7,-43.5 M7,-68 L7,-43.5 M-13,-53 L-14.6,-48 L-12.6,-44 M2,-73 L0.4,-66 M0,-53 L2,-47 L0.4,-41 M14,-52 L12.4,-47 M-14,-66 L-12.6,-62.4', 0.9, p) +
+      P(band, c.cel(p.iron), 1.8) + S('M-20.4,-57.4 L20.4,-58.4', dk(p.iron, 0.4), 0.8, 0.8) +
+      C(-14, -57.6, 1.2, c.cel(p.ironLt), 0.8) + C(0, -58, 1.2, c.cel(p.ironLt), 0.8) + C(14, -58.4, 1.2, c.cel(p.ironLt), 0.8) +
+      rsDot(c, -12, -77, 0.8, p) + rsDot(c, 10, -80, 0.7, p) + rsDot(c, 2, -85, 0.6, p), 'translate(0,9)');
+  }
+  rsWeapon('mc_sword', mcSword, 'big', MC_W, MC_WH);
+  rsWeapon('mc_dagger', mcDagger, 'dagger', MC_W, MC_WH);
+  rsWeapon('mc_staff', mcStaff, 'staff', MC_W, MC_WH);
+  rsWeapon('mc_mace', mcMace, 'hammer', MC_W, MC_WH);
+  rsWeapon('mc_hammer', mcHammer, 'big', MC_W, MC_WH);
+
+  /* The Tidecrown Citadel: pearl-white elven steel, teal and coral (Hard: abyssal indigo steel, everything lit cyan) */
+  var TC_W = rsW(TC, { blade: [[0, '#ffffff'], [0.5, '#e2eae6'], [1, '#94aaac']], steel: [[0, '#f4f7fa'], [0.5, '#b4c6ca'], [1, '#5a6e74']], shaft: '#5a2a30',
+    orb: ['#ffffff', '#c8fff6', '#3ad6cc', '#0a5a66'], orbGlow: '#4ae8dc' });
+  var TC_WH = rsW(TC_H, { blade: [[0, '#7a82e0'], [0.5, '#2e2c7a'], [1, '#0e0e2e']], steel: [[0, '#7a80d0'], [0.5, '#30306e'], [1, '#10102e']], shaft: '#1e1c52',
+    orb: ['#ffffff', '#eaffff', '#22e4ff', '#1a2a8a'], orbGlow: '#22e4ff' });
+  /* a fine line: col on Normal, a lit cyan line on Hard */
+  function tcLine(d, w, p, col) { return p.glow ? S(d, p.glow, w * 3, 0.3) + S(d, p.mid, w) + S(d, p.core, w * 0.4) : S(d, col, w); }
+  /* Tidecrown, Blade of the Prince: a long slender pearl-steel blade, its back edge breaking in three wave crests, a teal
+     fuller with a wave etched in it, a crescent guard curling like surf with a small crown and a pearl */
+  function tcSword(c, p) {
+    var bd = rsLen('M-3.8,-11 L-4,-30 C-6.6,-33 -7.6,-37 -6.4,-41.4 C-5.8,-38.6 -4.8,-37.6 -4,-38 L-3.9,-48 C-6.3,-51 -7.1,-55 -5.9,-59 C-5.3,-56.2 -4.4,-55.2 -3.7,-55.6 L-3.3,-63.4 C-5.1,-66.4 -5.5,-69.4 -4.5,-72.4 C-3.6,-70.2 -2.6,-69.4 -1.9,-69.8 C-1,-74 0,-77 1,-81 C3.4,-66 4.6,-46 4.4,-30 L4,-11 Z', BLK), cl = c.clip(bd);
+    var gd = 'M-14.5,-18.5 C-12.5,-11.5 -6.5,-8 0,-8.5 C6.5,-8 12.5,-11.5 14.5,-18.5 C11.5,-14.5 6.5,-13 0,-13.5 C-6.5,-13 -11.5,-14.5 -14.5,-18.5 Z';
+    var wv = rsLen('M0,-16 C-1.3,-22 1.3,-27 0,-33 C-1.3,-39 1.3,-44 0,-50 C-1.3,-56 1.1,-60 0,-64', BLK);
+    return (p.glow ? rsHalo(c, 0, -42, 12, 32, p.glow, 0.3) : '') +
+      P(bd, c.lg(p.blade, 0, 0, 1, 0), 1.9) +
+      CG(F(rsLen('M-1.4,-13 L1.4,-13 L1.4,-62 L0,-67 L-1.4,-62 Z', BLK), p.base, 0.9) + tcLine(wv, 0.8, p, p.light) +
+        S(rsLen('M2.6,-13 L2.8,-30 C3,-46 2.2,-62 0.6,-74', BLK), '#ffffff', 0.8, p.glow ? 0.25 : 0.7), cl) +
+      tcLine(rsLen('M4,-12 L4.4,-30 C4.6,-46 3.4,-66 1,-81', BLK), 0.9, p, '#ffffff') +
+      tcLine(rsLen('M-6.4,-41.4 C-5.8,-38.6 -4.8,-37.6 -4,-38 M-5.9,-59 C-5.3,-56.2 -4.4,-55.2 -3.7,-55.6 M-4.5,-72.4 C-3.6,-70.2 -2.6,-69.4 -1.9,-69.8', BLK), 0.7, p, p.light) +
+      rsGrip(c, 2.5, -8, 13, p.dark, p.pearl) +
+      (p.glow ? S(gd, p.glow, 3.2, 0.35) : '') + P(gd, c.cel(p.base), 1.6) +
+      tcTrim('M-13.4,-16 C-10.5,-12.4 -6,-11.2 0,-11.4 C6,-11.2 10.5,-12.4 13.4,-16', 0.8, p) +
+      tcTrim('M-14.5,-18.5 C-16.8,-16 -15.8,-13 -13,-13.6 M14.5,-18.5 C16.8,-16 15.8,-13 13,-13.6', 0.9, p) +
+      P('M-4.2,-13.2 L-3.2,-17.6 L-1.6,-13.8 L0,-19.4 L1.6,-13.8 L3.2,-17.6 L4.2,-13.2 Z', c.cel(p.pearl), 1.2) +
+      tcPearl(c, 0, -10.8, 2.1, p) +
+      P('M-3.4,13 L3.4,13 L2.4,16 L-2.4,16 Z', c.cel(p.coral), 1.3) + tcPearl(c, 0, 18.6, 2.8, p);
+  }
+  /* Fang of the Drowned Court: a curved fang of nacre with an iridescent sheen, a guard of branching coral, a pearl pommel */
+  function tcDagger(c, p) {
+    var bd = 'M-3,-8 C-4.6,-18 -3,-29 3.6,-39 C3.8,-28 3.8,-18 3,-8 Z';
+    var co = 'M-2,-8.4 C-5,-9 -7.4,-11.6 -8.6,-15.4 M-6,-10.2 C-7.4,-9.4 -8.6,-9.8 -9.6,-11 M2,-8.4 C5,-8.6 7.6,-10.6 9,-13.8 M6.2,-9.6 C7.4,-8.2 8.4,-7.6 9.6,-7.8';
+    return (p.glow ? rsHalo(c, 1, -22, 8, 20, p.glow, 0.3) : '') +
+      P(bd, c.lg(p.blade, 0, 0, 1, 0), 1.8) +
+      CG(S('M-1.2,-11 C-1.8,-19 -0.2,-28 2.8,-35', p.glow ? p.glow : p.coral, 1.3, p.glow ? 0.5 : 0.35) + S('M1,-10 C1,-18 1.6,-26 3.2,-33', p.glow ? p.mid : p.light, 1.2, 0.55) +
+        S('M-2.4,-11 C-3.2,-19 -1.8,-28 2.6,-36.4', '#ffffff', 0.7, p.glow ? 0.3 : 0.8), c.clip(bd)) +
+      tcLine('M3,-9 C3.8,-18 3.8,-28 3.6,-39', 0.8, p, '#ffffff') +
+      rsGrip(c, 2.1, -6, 8.5, p.coralDk, p.pearl) +
+      tcCoral(c, co, 1.5, p) + P('M-4,-9.8 L4,-9.8 L3.4,-6 L-3.4,-6 Z', c.cel(p.coralDk), 1.3) +
+      (p.glow ? rsDot(c, -8.6, -15.4, 0.7, p) + rsDot(c, 9, -13.8, 0.7, p) + rsDot(c, -9.6, -11, 0.5, p) + rsDot(c, 9.6, -7.8, 0.5, p) : '') +
+      tcPearl(c, 0, 11, 2.6, p);
+  }
+  /* Nal'veshra's Abyssal Staff: a twisting shaft of dark coral, branches spreading round a glowing deep-sea orb, bubbles */
+  function tcStaff(c, p) {
+    var sd = 'M-2.2,38 C-4.2,26 0.6,16 -2,4 C-4.4,-8 0.4,-20 -2.2,-32 C-3.4,-38 -2.6,-43 -2.8,-47 L2.8,-47 C2.8,-42 3.8,-36 2.6,-30 C0.2,-18 4.8,-6 2.4,6 C0,18 4.4,26 2.4,38 Z';
+    var br = 'M-1.6,-46 C-6,-50 -9.6,-55 -9.4,-62 C-9.2,-67 -7,-70 -5,-73 M-8.8,-58 C-11.6,-58 -13,-60 -13.6,-63 M1.6,-46 C6,-50 9.6,-56 9,-63 C8.6,-68 6.4,-71 4,-74 M8.8,-60 C11.4,-61 12.6,-64 12.8,-67';
+    var fr = 'M-7,-56.4 C-3,-54 2,-54.6 6.6,-58.6', o = p.orb, sc = lt(p.shaft, 0.2);
+    var tips = [[-5, -73], [-13.6, -63], [4, -74], [12.8, -67]], tp = '';
+    tips.forEach(function (t) { tp += p.glow ? rsDot(c, t[0], t[1], 0.8, p) : C(t[0], t[1], 1.5, c.cel(p.coral), 1); });
+    var bub = function (x, y, r) { return C(x, y, r, p.orbGlow, 0, 0.45) + C(x - r * 0.3, y - r * 0.3, r * 0.35, '#ffffff', 0, 0.85); };
+    return rsHalo(c, 0, -62, p.glow ? 21 : 16, p.glow ? 21 : 16, p.orbGlow, p.glow ? 0.62 : 0.45) +
+      P(sd, c.lg([[0, lt(p.shaft, 0.25)], [0.5, p.shaft], [1, dk(p.shaft, 0.45)]], 0, 0, 1, 0), 2) +
+      CG(S('M-4,30 L4,25 M-4,18 L4,13 M-4,6 L4,1 M-4,-6 L4,-11 M-4,-18 L4,-23 M-4,-30 L4,-35 M-4,-40 L4,-45', dk(p.shaft, 0.5), 1.3) +
+        S('M-3,28 L4,24 M-3,16 L4,12 M-3,4 L4,0 M-3,-8 L4,-12 M-3,-20 L4,-24 M-3,-32 L4,-36', lt(p.shaft, 0.35), 0.6, 0.7), c.clip(sd)) +
+      (p.glow ? rsDot(c, 1.6, 20, 0.6, p) + rsDot(c, -1.2, -2, 0.6, p) + rsDot(c, 1.2, -26, 0.6, p) : '') +
+      rsGrip(c, 3, -8, 10, p.dark, p.pearl) +
+      P('M-2.8,34 L2.8,34 L1.4,41 L-1.4,41 Z', c.cel(p.pearl), 1.4) +
+      S(br, OL, 4.6) + S(br, sc, 2.6) + S(br, p.coral, 0.9, 0.6) + tp +
+      C(0, -62, 6.8, c.rg([[0, o[0]], [0.3, o[1]], [0.7, o[2]], [1, o[3]]], 0.38, 0.35, 0.72), 1.6) +
+      S('M-3.6,-63 C-2.6,-66 1.4,-67 3.4,-64', '#ffffff', 0.7, 0.6) + C(-2.2, -64.8, 1.4, '#ffffff', 0, 0.8) +
+      S(fr, OL, 4.2) + S(fr, sc, 2.4) + S(fr, p.coral, 0.8, 0.6) +
+      P('M-3.8,-47 L3.8,-47 L2.8,-43.4 L-2.8,-43.4 Z', c.cel(p.dark), 1.3) +
+      bub(8.6, -76, 1.4) + bub(-6.4, -80, 1.1) + bub(2.6, -85, 0.9);
+  }
+  /* Undertow: a steel mace whose head is a short trident above anchor flukes, crusted with coral, a scallop shell on its face */
+  function tcMace(c, p) {
+    var hd = 'M-7,-27 C-10.4,-31.5 -10.4,-40.5 -7,-45 L7,-45 C10.4,-40.5 10.4,-31.5 7,-27 Z';
+    var fl = 'M-8,-30 C-14,-30.4 -17.4,-35.4 -17.4,-42.8 L-20,-36.8 L-15.8,-37.6 C-14.4,-35.2 -11.8,-34.4 -8.6,-35 Z M8,-30 C14,-30.4 17.4,-35.4 17.4,-42.8 L20,-36.8 L15.8,-37.6 C14.4,-35.2 11.8,-34.4 8.6,-35 Z';
+    var pr = 'M-1.7,-44 L-1.7,-56 L0,-63 L1.7,-56 L1.7,-44 Z M-6.6,-44 L-7,-52 L-8.6,-57.4 L-4.6,-53.2 L-4.4,-44 Z M6.6,-44 L7,-52 L8.6,-57.4 L4.6,-53.2 L4.4,-44 Z';
+    var st = c.lg(p.steel, 0, 0, 1, 0);
+    return (p.glow ? rsHalo(c, 0, -42, 16, 20, p.glow, 0.35) : '') +
+      P('M-2.2,11 L-2.4,-27 L2.4,-27 L2.2,11 Z', st, 2) +
+      rsGrip(c, 2.5, -1, 10, p.coralDk, p.pearl) + tcPearl(c, 0, 12.6, 2.4, p) +
+      (p.glow ? S(pr + ' ' + fl, p.glow, 3.2, 0.35) : '') +
+      P(pr, st, 1.6) + tcLine('M0,-62 L0,-46', 0.6, p, '#ffffff') +
+      P(fl, st, 1.6) +
+      P(hd, c.lg([[0, p.light], [0.45, p.base], [1, p.dark]], 0.2, 0, 0.8, 1), 2) + S('M-5.6,-43 C-8,-39 -8,-33 -5.6,-29', '#ffffff', 0.9, p.glow ? 0.3 : 0.6) +
+      tcTrim('M-7.4,-43.6 L7.4,-43.6 M-7.4,-28.4 L7.4,-28.4', 1, p) +
+      P(blob(-6.6, -29.6, 2.6, 1.8, 5, rnd(1301), 0.6), c.cel(p.coral), 1) + P(blob(-3, -27.8, 2, 1.4, 5, rnd(1303), 0.6), c.cel(p.coral), 0.9) +
+      P(blob(7.4, -43.4, 1.8, 1.3, 5, rnd(1302), 0.6), c.cel(p.coral), 0.9) +
+      tcShell(c, 0, -39.4, 4.6, p) +
+      R(-4, -28.6, 8, 3.2, c.cel(p.pearlDk), 1.3);
+  }
+  rsWeapon('tc_sword', tcSword, 'big', TC_W, TC_WH);
+  rsWeapon('tc_dagger', tcDagger, 'dagger', TC_W, TC_WH);
+  rsWeapon('tc_staff', tcStaff, 'staff', TC_W, TC_WH);
+  rsWeapon('tc_mace', tcMace, 'hammer', TC_W, TC_WH);
   /* ================= the Trialsworn looks (v10.8): rewards for timed Trials at 60 =================
      Polished silver steel, midnight-blue cloth and grips, gold fittings and an hourglass with pale-gold sand.
      Every piece is ONE drawing that takes a tier t: 0 = the plain key, 1 = <key>_t15 (the sand glows, a faint light runs

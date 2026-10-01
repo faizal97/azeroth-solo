@@ -22,6 +22,9 @@
   D.ITEMS.onyx_robe.look = ['chest', 'vesh_robe'];
   D.ITEMS.onyx_tunic.look = ['chest', 'vesh_tunic'];
   D.ITEMS.onyx_legs.look = ['legs', 'vesh_legs'];
+  D.ITEMS.onyx_sword.look = ['weapon', 'vesh_sword'];
+  D.ITEMS.onyx_dagger.look = ['weapon', 'vesh_dagger'];
+  D.ITEMS.onyx_staff.look = ['weapon', 'vesh_staff'];
 
   Object.assign(D.MOBS, {
     onyxian_warder: { name: 'Veshmiran Warder', lvl: [60, 60], family: 'dragonkin', hpMult: 1.2, drops: [['thieves_coin', 0.6]], aggro: 'The mother sleeps. You will not wake her.' },

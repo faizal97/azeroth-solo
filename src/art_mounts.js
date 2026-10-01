@@ -291,6 +291,121 @@
     return s;
   }
 
+  /* the first year of Trials, October 2026 to September 2027: each month's cloak colours, copied from TW_MONTHS in
+     art.js (cloth light, cloth, cloth dark, edge), in calendar order */
+  var TW_YEAR1 = [
+    ['#e0683a', '#c03c18', '#5e1a0a', '#2e2622'], ['#8e5a3a', '#6a3a22', '#381c10', '#c47a3e'], ['#d6e8f6', '#a8c6de', '#6e8eae', '#ffffff'],
+    ['#7e8ea2', '#56687e', '#2e3a4a', '#e8f0f8'], ['#b02a3a', '#861424', '#480810', '#e6b54a'], ['#8ad06e', '#56a044', '#2a6224', '#f4e6a4'],
+    ['#a6d8a0', '#74b87a', '#3e7a4c', '#f2a6c0'], ['#3a9a68', '#1e6a44', '#0e3a24', '#e6c25a'], ['#f6d466', '#e2ac28', '#9a6a10', '#2f7ad8'],
+    ['#5aa6f0', '#2a78d0', '#123e80', '#f0c448'], ['#fffaf0', '#eee2c6', '#b8a680', '#e0b040'], ['#f2c060', '#d8961e', '#8a5608', '#5a3414']
+  ];
+  // an hourglass whose glass holds the whole year: twelve bands of sand, October at the top, September at the bottom
+  function hglass12(c, x, y, s, yr) {
+    var w = s * 0.6, nk = s * 0.12, cap = Math.max(1.3, s * 0.2), gold = '#e0b040', out = '', i;
+    var q = function (u, v) { return pt([x + u, y + v]); };
+    var gd = 'M' + q(-w, -s) + 'L' + q(w, -s) + 'C' + q(w, -s * 0.4) + ' ' + q(nk, -s * 0.24) + ' ' + q(nk, 0) + 'C' + q(nk, s * 0.24) + ' ' + q(w, s * 0.4) + ' ' + q(w, s) +
+      'L' + q(-w, s) + 'C' + q(-w, s * 0.4) + ' ' + q(-nk, s * 0.24) + ' ' + q(-nk, 0) + 'C' + q(-nk, -s * 0.24) + ' ' + q(-w, -s * 0.4) + ' ' + q(-w, -s) + 'Z';
+    var b = '', h = s * 2 / yr.length;
+    for (i = 0; i < yr.length; i++) b += R(x - w, y - s + i * h, w * 2, h + (i < yr.length - 1 ? 0.3 : 0), yr[i][0]);
+    out += F(gd, '#141d42') + '<g clip-path="url(#' + c.clip(gd) + ')">' + b +
+      L('M' + q(-w * 0.55, -s * 0.86) + 'L' + q(-w * 0.55, -s * 0.5), '#ffffff', s * 0.12, 0.75) + '</g>' + P(gd, 'none', 1.5);
+    var px = w + cap * 0.35, pdd = 'M' + q(-px, -s) + 'L' + q(-px, s) + 'M' + q(px, -s) + 'L' + q(px, s);
+    out += L(pdd, OL, cap * 0.55 + 2.4) + L(pdd, gold, cap * 0.55);
+    var cw = w + cap * 0.9;
+    return out + R(x - cw, y - s - cap, cw * 2, cap, c.cel(gold), 1.5) + R(x - cw, y + s, cw * 2, cap, c.cel(gold), 1.5);
+  }
+  /* the Twelvefold Charger (trialsworn_year1, for all twelve cloaks of the first year): the charger's rig, so riders sit
+     the same, but a pearl-white coat, gold barding, a caparison of twelve hanging banners (one per month, each tipped in
+     that month's edge colour), a gold chest plate with a twelve-band hourglass, a gold crown on the poll, and a mane of
+     twelve locks and a banded tail that run through the year's colours. */
+  function twYear(c, o) {
+    var yr = TW_YEAR1, col = '#e8e2d6', dc = dk(col, 0.26), gold = '#e0b040', mid = '#22326a', s = o.icon ? '' : shadow(c, 80, 56), i;
+    var goldS = function () { return c.lg([[0, '#fff2b8'], [0.42, '#eec65a'], [1, '#a87a20']], 0.2, 0, 0.8, 1); };
+    var hoofG = function (x, y) { var d = 'M' + pt([x - 4.4, y - 7]) + 'L' + pt([x + 4.6, y - 7]); return hoof(x, y, 8.5, '#5a4630') + L(d, OL, 4.2) + L(d, gold, 2.2) + L(d, '#fff4c8', 0.8, 0.9); };
+    var gem = function (x, y, r, g) { return C(x, y, r, c.cel(g), 1.1) + C(x - r * 0.3, y - r * 0.32, r * 0.34, '#ffffff', 0, 0.85); };
+    // far legs
+    s += leg([[52, 82], [58, 98, 13], [50, 108, 8], [51, 117, 6]], dc) + hoofG(51, 121);
+    s += leg([[104, 84], [106, 100, 12], [106, 110, 8], [107, 117, 6]], dc) + hoofG(107, 121);
+    // the long tail, banded through the year from the root (October) to the tip (September), a gold cuff at the root
+    var T = taper([[40, 62], [30, 64], [21, 76], [17, 92], [19, 106], [27, 116]], 16, 4.5, 8), m = T.s.length, tb = '';
+    s += L(T.d, '#fff4c8', 6, 0.22);
+    for (i = 0; i < 12; i++) {
+      var i0 = Math.round(i * (m - 1) / 12), i1 = Math.min(m - 1, Math.round((i + 1) * (m - 1) / 12) + (i < 11 ? 1 : 0));
+      tb += F(pd(T.a.slice(i0, i1 + 1).concat(T.b.slice(i0, i1 + 1).reverse()), true), yr[i][0]);
+    }
+    s += P(T.d, yr[0][0], 2.2) + '<g clip-path="url(#' + c.clip(T.d) + ')">' + tb + F(ribbonBand(T, 0.62, 1), '#000', 0.16) +
+      L(along(T, 0.26, 2) + along(T, 0.48, 6, 36), '#ffffff', 1, 0.6) + L(along(T, 0.38, 3, 38) + along(T, 0.62, 2, 30) + along(T, 0.8, 4), '#000', 0.8, 0.25) + '</g>' + P(T.d, 'none', 2.2);
+    var cuff = 'M' + pt(T.a[3]) + 'L' + pt(T.b[3]);
+    s += L(cuff, OL, 5) + L(cuff, gold, 2.8);
+    // body
+    var bd = 'M36,72 C33,60 42,54 54,56 C64,58 76,61 90,57 C98,55 104,52 110,54 C122,58 125,76 119,88 C113,96 101,96 90,94 C76,97 60,97 48,94 C38,90 37,82 36,72 Z';
+    s += body(c, bd, col, F('M30,86 C50,98 96,100 124,84 L126,104 L30,104 Z', dk(col, 0.16), 0.8) + F('M42,58 C54,56 66,60 80,62 L80,66 C66,64 52,62 42,64 Z', '#ffffff', 0.55));
+    // gold crupper plate with a gem
+    var cr = 'M37,64 C40,57 48,55 56,57 L57,79 C49,82 42,81 38,77 C36,73 36,68 37,64 Z';
+    s += body(c, cr, gold, F('M36,74 C44,80 52,81 58,78 L58,84 L36,84 Z', '#a87a20', 0.6) + L('M40,62 C44,58 50,57 55,58', '#fff8dc', 1.1, 0.9) + L('M38.5,76 C44,80.5 51,81 56.6,78.4', mid, 1.4), 2.2) + gem(46.5, 68, 2.4, yr[4][0]);
+    // neck: midnight crinet edged in gold, then the mane of twelve locks (October at the poll, September at the withers)
+    var N = taper([[104, 78], [112, 60], [122, 46], [131, 36]], 30, 18, 5);
+    s += F(fringe(N, 1, 15, 12, 'b'), glow(c, '#fff4c8', 0.6));
+    s += body(c, N.d, col, F(ribbonBand(N, 0, 0.3), dk(col, 0.14), 0.8), 2.4);
+    var cn = ribbonBand(N, 0.36, 0.9);
+    s += body(c, cn, mid, L(bands(N, 3, 1), gold, 1.1) + L(along(N, 0.86, 1), '#5a72c0', 1, 0.8), 1.8) + L(along(N, 0.38, 1), gold, 1.4);
+    var ns = N.s.length, lk = '';
+    for (i = 11; i >= 0; i--) {
+      var f = 1 + i * (ns - 3) / 11, j0 = Math.floor(f), j1 = Math.min(ns - 1, j0 + 1), t = f - j0;
+      var Bp = lerp2(lerp2(N.a[j0], N.a[j1], t), lerp2(N.b[j0], N.b[j1], t), 0.8), Bo = lerp2(N.b[j0], N.b[j1], t), Ao = lerp2(N.a[j0], N.a[j1], t);
+      var ux = Bo[0] - Ao[0], uy = Bo[1] - Ao[1], ud = Math.sqrt(ux * ux + uy * uy) || 1; ux /= ud; uy /= ud;
+      var p0 = N.s[Math.max(0, j0 - 1)], p1 = N.s[Math.min(ns - 1, j1 + 1)], vx = p0[0] - p1[0], vy = p0[1] - p1[1], vd = Math.sqrt(vx * vx + vy * vy) || 1; vx /= vd; vy /= vd;
+      var len = 8 + i * 0.32 + (i % 2 ? 0 : 2.6) + Math.sin(PI * i / 11) * 2, hw = 2.8;
+      var Q = function (a, b) { return [Bp[0] + ux * a + vx * b, Bp[1] + uy * a + vy * b]; };
+      var ld = 'M' + pt(Q(0, -hw)) + 'Q' + pt(Q(len * 0.9, -hw * 0.4)) + ' ' + pt(Q(len, len * 0.62)) + 'Q' + pt(Q(len * 0.36, hw * 1.7)) + ' ' + pt(Q(0, hw)) + 'Z';
+      lk += P(ld, c.cel(yr[11 - i][0]), 1.5) + L('M' + pt(Q(1.5, -hw * 0.2)) + 'Q' + pt(Q(len * 0.7, 0)) + ' ' + pt(Q(len * 0.9, len * 0.48)), '#ffffff', 0.9, 0.55);
+    }
+    s += lk;
+    // head, ears, gold chanfron with a gem, and a gold crown on the poll
+    var hd = 'M124,28 C128,20 138,20 143,27 L155,47 C158,52 155,58 149,58 C143,58 139,56 135,52 C129,46 121,38 124,28 Z';
+    s += P('M130,24 L133,11 L138,22 Z', c.cel(dc), 1.6);
+    s += body(c, hd, col, F('M140,22 L160,22 L160,60 L150,60 C156,50 150,40 140,22 Z', dk(col, 0.16), 0.8) + L('M126,36 C130,44 136,46 138,44', dk(col, 0.3), 1.4), 2.3);
+    s += P('M125,26 L125,12 L132,22 Z', c.cel(col), 1.6) + F('M126.6,23 L126.8,16 L130,21.6 Z', '#c8a8a0');
+    s += P('M133,26 L141,26 L152,43 L148,48 L137,37 C134.6,34 133.4,30 133,26 Z', goldS(), 1.7) + L('M135,28.4 L140.2,28.2 L149.4,42.6', mid, 1.3) +
+      P('M145.2,36.4 L147.4,39.8 L145.2,43.2 L143,39.8 Z', c.cel(yr[4][0]), 1.1) + C(144.6, 38.6, 0.5, '#ffffff', 0, 0.85);
+    // the crown sits on the brow in front of the ears: a gold band and three points standing up off the forehead
+    var cb = 'M129.6,22.2 L143.4,26.4 L141.8,30 L130.2,26.6 Z', ca = -1.27;
+    var spike = function (tx, ty, h, g) { var qq = dirQ([tx, ty], ca), tp = qq(h, 0); return P(pd([qq(0, -2.3), qq(h * 0.72, -1.1), tp, qq(h * 0.72, 1.1), qq(0, 2.3)], true), goldS(), 1.3) + gem(tp[0], tp[1], 1.35, g); };
+    s += spike(132.4, 23.4, 7, '#fff4c8') + spike(136.6, 24.6, 10, yr[9][0]) + spike(140.8, 25.9, 7, '#fff4c8');
+    s += P(cb, goldS(), 1.5) + gem(133, 25.4, 1.05, yr[0][0]) + gem(136.6, 26.5, 1.25, yr[7][0]) + gem(140.2, 27.6, 1.05, yr[10][3]);
+    // bridle
+    s += L('M126,31 L133,42.4 L147,55 M133,42.4 L143,47', OL, 3.2) + L('M126,31 L133,42.4 L147,55 M133,42.4 L143,47', gold, 1.6) + C(146.6, 55, 1.8, gold, 1);
+    s += E(134, 34.6, 2.4, 2, '#1a0e08', 1) + C(133.4, 34, 0.7, '#ffffff') + E(151, 51, 1.4, 1, OL) + L('M146,56.6 L152,56', OL, 1.2);
+    // the caparison: twelve banners hanging from a gold band, each dag tipped in its month's edge colour
+    var x0 = 48, x1 = 99, pw = (x1 - x0) / 12, hemY = function (x) { return 90 + 3.5 * Math.sin(PI * (x - x0) / (x1 - x0)); };
+    var hemP = [], panels = '', tails = '', seams = '';
+    for (i = 0; i < 12; i++) {
+      var a = x0 + i * pw, b2 = a + pw, xc = a + pw / 2, ya = hemY(a), yb = hemY(b2), drop = 7 + (i % 2 ? 0 : 1.6), ty = (ya + yb) / 2 + drop;
+      if (!i) hemP.push([a, ya]);
+      hemP.push([b2, yb]);
+      panels += R(a - 0.15, 50, pw + 0.3, 60, c.cel(yr[i][0]));
+      if (i) seams += 'M' + pt([a, 62]) + 'L' + pt([a, ya]);
+      // the banner's tail: a pennant below the hem, in its month's cloth, its point in the month's edge colour
+      var tl = pd([[a + 0.3, ya - 2], [b2 - 0.3, yb - 2], [b2 - 0.3, yb + drop * 0.45], [xc, ty], [a + 0.3, ya + drop * 0.45]], true);
+      var tip = pd([[b2 - 0.3, yb + drop * 0.45], [xc, ty], [a + 0.3, ya + drop * 0.45], lerp2([a + 0.3, ya + drop * 0.45], [xc, ty], 0.4), lerp2([b2 - 0.3, yb + drop * 0.45], [xc, ty], 0.4)], true);
+      tails += P(tl, yr[i][1], 1.2) + F(tip, yr[i][3]) + P(tl, 'none', 1.2);
+    }
+    var cap = 'M49,56 L97,56 C99,66 100,78 ' + pt(hemP[hemP.length - 1]) + hemP.slice().reverse().map(function (p) { return 'L' + pt(p); }).join('') + ' C47,78 47,66 49,56 Z';
+    s += tails;
+    s += saddle(c, { leather: '#1e2440', blanket: mid, blanketD: cap, trim: null, metal: '#f0d890', rim: gold,
+      pattern: panels + L(seams, OL, 0.9, 0.85) + F('M76,50 L104,50 L104,104 L80,104 C86,84 84,66 76,50 Z', '#000', 0.14) + F('M40,84 L104,84 L104,104 L40,104 Z', '#000', 0.1) +
+        L(pd(hemP), OL, 3.4) + L(pd(hemP), gold, 1.6) + L('M49,60 L97,60', OL, 4.6) + L('M49,60 L97,60', gold, 2.6) + L('M49,59.2 L97,59.2', '#fff4c8', 0.8, 0.9) + P(cap, 'none', 2.2) });
+    // near legs
+    s += leg([[44, 80], [50, 97, 16], [40, 108, 9], [41, 117, 6.5]], col) + hoofG(41, 121);
+    s += leg([[112, 82], [115, 100, 13], [116, 110, 8.5], [118, 117, 6.5]], col) + hoofG(118, 121);
+    // gold chest plate with a midnight medallion holding the twelve-band hourglass
+    var cp = 'M103,63 C112,64 121,69 125,77 C127,86 124,94 116,98 C110,95 103,89 100,82 C98,76 99,68 103,63 Z';
+    s += body(c, cp, gold, F('M98,86 C106,92 114,96 118,99 L128,99 L128,86 Z', '#a87a20', 0.55) + L('M104,66 C112,67 118,71 122,76.5', '#fff8dc', 1.1, 0.85), 2.2);
+    s += E(113.4, 80.6, 7.6, 11.4, mid, 1.6) + L(ellD(113.4, 80.6, 6.2, 10), '#5a72c0', 0.8, 0.8) + hglass12(c, 113.4, 80.6, 7.6, yr);
+    s += reins([147, 55], [89, 57], gold, 7);
+    return s;
+  }
+
   /* ================= the mounts (all face RIGHT; seat at 72,60; hooves on y 121) ================= */
   var MOUNTS = {
     /* human: a brown Kingsmere horse in blue-and-gold barding, steel chanfron and a blue plume */
@@ -651,7 +766,9 @@
     /* the Trialsworn charger and its Trial 15 and Trial 20 tiers (drawn by twCharger) */
     trialsworn_charger: function (c, o) { return twCharger(c, o, 0); },
     trialsworn_charger_t15: function (c, o) { return twCharger(c, o, 1); },
-    trialsworn_charger_t20: function (c, o) { return twCharger(c, o, 2); }
+    trialsworn_charger_t20: function (c, o) { return twCharger(c, o, 2); },
+    /* the Twelvefold Charger, the first year's mount (drawn by twYear) */
+    trialsworn_year1: function (c, o) { return twYear(c, o); }
   };
   // neutral placeholder: a plain grey saddled beast
   function phMount(c) {
@@ -699,6 +816,16 @@
       return iconWrap(c, f[3], G(MOUNTS[k](c, { icon: true }), 'matrix(' + z + ',0,0,' + z + ',' + n(32 - f[0] * z) + ',' + n(32 - f[1] * z) + ')'));
     };
   });
+  /* the Twelvefold Charger: its crowned head and the hourglass in front of a ring of the twelve month colours */
+  ICONS.mount_trialsworn_year1 = function (c) {
+    var ring = '', z = 0.7, fx = 128, fy = 45;
+    for (var i = 0; i < 12; i++) {
+      var a0 = -PI / 2 + i * PI / 6 + 0.03, a1 = a0 + PI / 6 - 0.06, r0 = 23, r1 = 29;
+      ring += P('M' + pt([32 + Math.cos(a0) * r1, 32 + Math.sin(a0) * r1]) + 'A' + r1 + ',' + r1 + ' 0 0,1 ' + pt([32 + Math.cos(a1) * r1, 32 + Math.sin(a1) * r1]) +
+        'L' + pt([32 + Math.cos(a1) * r0, 32 + Math.sin(a1) * r0]) + 'A' + r0 + ',' + r0 + ' 0 0,0 ' + pt([32 + Math.cos(a0) * r0, 32 + Math.sin(a0) * r0]) + 'Z', TW_YEAR1[i][0], 0, 0.9);
+    }
+    return iconWrap(c, ['#5a4a9a', '#0c0a24'], G(ring, '', 0.85) + G(twYear(c, { icon: true }), 'matrix(' + z + ',0,0,' + z + ',' + n(32 - fx * z) + ',' + n(32 - fy * z) + ')'));
+  };
   /* riding skill: a leather saddle with a stirrup, a steel horseshoe in front */
   ICONS.riding = function (c) {
     var lea = '#8a5028', steel = '#c8ccd4';

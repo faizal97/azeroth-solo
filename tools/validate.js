@@ -59,7 +59,8 @@ for (const [c, C] of Object.entries(D.CLASSES)) for (const a of C.abilities) {
 }
 for (const [k, A] of Object.entries(D.ACTIVITIES)) {
   if (A.where && !has('PLACES', A.where)) err(`activity ${k}: unknown place '${A.where}'`);
-  if (!A.where) err(`activity ${k}: needs where (the place you queue from)`);
+  if (!A.where && !A.bg) err(`activity ${k}: needs where (the place you queue from)`); // battlegrounds queue from anywhere
+  if (A.bg && !(D.BG && D.BG[A.bg] && D.BG[A.bg].banners && D.PLACES && Object.values(D.PLACES).some((p) => p.scene === D.BG[A.bg].scene))) err(`activity ${k}: battleground '${A.bg}' needs banners and a scene`);
   if (!(A.maxLvl >= A.minLvl)) err(`activity ${k}: needs maxLvl >= minLvl (the level everyone is synced to)`);
   if (A.dungeon && !has('DUNGEONS', A.dungeon)) err(`activity ${k}: unknown dungeon '${A.dungeon}'`);
   for (const pl of A.pulls || []) for (const m of pl.mobs) if (!has('MOBS', m)) err(`activity ${k}: unknown mob '${m}'`);

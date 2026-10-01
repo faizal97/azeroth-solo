@@ -629,10 +629,11 @@
     if (S.enrageAt) out.push({ name: 'Frenzy', when: `Below ${Math.round(S.enrageAt * 100)}% health`, what: `hits ${Math.round((S.enrage - 1) * 100)}% harder.`, hard: false });
     for (const x of u.hardX || []) {
       const kind = x.kind || 'adds';
-      if (kind === 'adds') out.push({ name: 'Calls help', when: `At ${Math.round(x.at * 100)}% health`, what: joinText(x.n, x.mob, addLvl(u, x.lvl)), hard: true });
-      else if (kind === 'enrage') out.push({ name: 'Frenzy', when: `Below ${Math.round(x.at * 100)}% health`, what: `hits ${Math.round((x.mult - 1) * 100)}% harder.`, hard: true });
-      else if (kind === 'heal') healRow(x.every, x.every / 2, x.heal, true);
-      else hitRow(x.every, x.every / 2, x.mult, x.who, x.school, true);
+      const hd = x.hard !== false; // world bosses use the same mechanics without the Hard tag
+      if (kind === 'adds') out.push({ name: 'Calls help', when: `At ${Math.round(x.at * 100)}% health`, what: joinText(x.n, x.mob, addLvl(u, x.lvl)), hard: hd });
+      else if (kind === 'enrage') out.push({ name: 'Frenzy', when: `Below ${Math.round(x.at * 100)}% health`, what: `hits ${Math.round((x.mult - 1) * 100)}% harder.`, hard: hd });
+      else if (kind === 'heal') healRow(x.every, x.every / 2, x.heal, hd);
+      else hitRow(x.every, x.every / 2, x.mult, x.who, x.school, hd);
     }
     return out;
   };

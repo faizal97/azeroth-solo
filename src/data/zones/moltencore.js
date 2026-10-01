@@ -37,6 +37,11 @@
   D.ITEMS.ragnaros_leather.look = ['chest', 'mc_leather'];
   D.ITEMS.ragnaros_mail.look = ['chest', 'mc_mail'];
   D.ITEMS.magmadar_legs.look = ['legs', 'mc_legs'];
+  D.ITEMS.golemagg_sword.look = ['weapon', 'mc_sword'];
+  D.ITEMS.sulfuron_dagger.look = ['weapon', 'mc_dagger'];
+  D.ITEMS.executus_staff.look = ['weapon', 'mc_staff'];
+  D.ITEMS.executus_mace.look = ['weapon', 'mc_mace'];
+  D.ITEMS.ragnaros_hammer.look = ['weapon', 'mc_hammer'];
 
   Object.assign(D.MOBS, {
     // trash

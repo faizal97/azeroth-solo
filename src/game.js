@@ -808,7 +808,7 @@
   G.travelTo = function (dest, keepRoute) {
     const S = G.S, P = S.player;
     if (!keepRoute) P.route = null;
-    if (G.fight || S.run) return toast('You can\'t travel right now.');
+    if (G.fight || S.run || S.bg) return toast('You can\'t travel right now.');
     if (P.ghostUntil) return;
     const from = D.PLACES[P.place];
     const secs = G.travelSecs(P.place, dest);
@@ -1205,7 +1205,7 @@
   // ============================================================ solo combat
   G.engage = function (mobId, useAbility) {
     const S = G.S, P = S.player;
-    if (G.fight || P.travel || P.ghostUntil || S.run) return;
+    if (G.fight || P.travel || P.ghostUntil || S.run || S.bg) return;
     const list = G.placeMobs();
     const m = list.find((x) => x.id === mobId);
     if (!m) return;
@@ -1927,7 +1927,7 @@
   // You can also attack them first, or walk away.
   function quietNow() {
     const S = G.S, P = S.player;
-    return !(G.fight || S.run || S.queue || P.travel || P.ghostUntil || G.paused || (S.rolls && S.rolls.length));
+    return !(G.fight || S.run || S.bg || S.queue || P.travel || P.ghostUntil || G.paused || (S.rolls && S.rolls.length));
   }
   function ambushTick() {
     const S = G.S, P = S.player, f = S.flags;
@@ -2073,6 +2073,117 @@
     emit('fightEnd', { result: C.over, pvp: true });
     G.save();
   }
+
+  // ============================================================ battlegrounds (v10.7, D.BG; design in zones/highmoor.js)
+  // S.bg = { act, key, round, score, owner, plan, phase: choose|fight|done, team, foes, log }. Everyone is back to full
+  // health each round; dying in a battleground costs nothing.
+  const BG_ROLES = ['tank', 'healer', 'dps', 'dps', 'dps'];
+  G.BG_REACT = 0.65; // how often they send fighters after your pair (sim/battleground.js tunes it)
+  function bgSide(faction, lvl, roles, used) {
+    const S = G.S, out = [];
+    for (const role of roles) {
+      const pool = S.bots.filter((b) => B.factionOf(b) === faction && !used.has(b.id) && (role === 'tank' ? ['warrior', 'paladin', 'druid'].includes(b.cls) : role === 'healer' ? ['priest', 'paladin', 'druid', 'shaman'].includes(b.cls) : true));
+      let b = pool.length ? JSON.parse(JSON.stringify(pick(pool))) : null;
+      if (!b) { b = B.makeBot(S.nextBotId++, new Set(S.bots.map((x) => x.name)), { level: lvl }); b.cls = role === 'tank' ? 'warrior' : role === 'healer' ? 'priest' : pick(['mage', 'rogue', 'hunter', 'warlock']); b.race = faction === 'horde' ? pick(['orc', 'troll', 'tauren', 'undead']) : pick(['human', 'dwarf', 'gnome', 'nightelf']); }
+      used.add(b.id); b.role = role; b.level = clamp(lvl + rint(-1, 1), 1, D.LEVEL_CAP); b.skill = clamp((b.skill || 0.5), 0.35, 0.85);
+      out.push(G.botChar(b));
+    }
+    return out;
+  }
+  // the other team's plan for a round: one of the splits, its biggest group sent where it hurts you most (a banner you
+  // hold first), with some randomness so it can be read but not counted on
+  function bgPlan(bg) {
+    const C = D.BG[bg.key], names = C.banners.map((x) => x[0]), split = pick(C.splits).slice().sort((a, b) => b - a);
+    const order = names.slice().sort((a, b) => (bg.owner[a] === 'us' ? 0 : bg.owner[a] ? 2 : 1) - (bg.owner[b] === 'us' ? 0 : bg.owner[b] ? 2 : 1));
+    if (Math.random() < 0.3) order.sort(() => Math.random() - 0.5);
+    const plan = {}; names.forEach((n) => { plan[n] = 0; }); order.forEach((n, i) => { plan[n] = split[i] || 0; });
+    return plan;
+  }
+  function startBg(act) {
+    const S = G.S, P = S.player, A = D.ACTIVITIES[act], key = A.bg, C = D.BG[key];
+    const myF = G.myFaction(), theirF = myF === 'alliance' ? 'horde' : 'alliance', used = new Set(), L = P.level;
+    const mine = BG_ROLES.slice(); const i = mine.indexOf(G.role()); mine.splice(i >= 0 ? i : 2, 1);
+    S.bg = { act, key, round: 1, score: { us: 0, them: 0 }, owner: {}, phase: 'choose', team: bgSide(myF, L, mine, used), foes: bgSide(theirF, L, BG_ROLES, used), log: [], started: now() };
+    S.bg.plan = bgPlan(S.bg);
+    sys(`${C.name} begins: 5 against 5. Hold the banners: first to ${C.win} points, or the most after ${C.rounds} rounds.`);
+    emit('instanceEnter', { act, bg: key }); emit('change'); G.save();
+  }
+  // your team splits like theirs (v10.7): your group (you and two) and the pair (two more) each go to a banner. Where both
+  // teams meet they fight: yours is played on screen, the pair's is settled at once. Empty banners are taken.
+  const bgName = (bg, b) => (D.BG[bg.key].banners.find((x) => x[0] === b) || [])[1];
+  function bgUnits(chars, side) { return chars.map((m) => { m.hp = null; m.res = null; const u = E.charUnit(m, side, 'bot', now()); u.bot = { skill: m.bot.skill, react: 0.9 - 0.6 * m.bot.skill }; u.role = side === 'enemy' && m.role === 'tank' ? 'dps' : m.role; if (side === 'enemy') u.threat = u.threat || {}; return u; }); }
+  function bgAutoFight(ours, theirs) { // settled at once, by the same engine
+    const C = E.fight(bgUnits(ours, 'ally'), bgUnits(theirs, 'enemy'), {});
+    for (let i = 0; i < 1500 && !C.over; i++) E.tick(C, 0.2);
+    return C.over === 'win';
+  }
+  G.bgSplit = function () { const bg = G.S.bg; if (!bg) return null; const t = bg.team, h = t.filter((m) => m.role === 'tank' || m.role === 'healer'), d = t.filter((m) => !h.includes(m)); const grp = h.concat(d).slice(0, 2); return { group: grp, pair: t.filter((m) => !grp.includes(m)) }; };
+  G.bgGo = function (groupAt, pairAt) {
+    const S = G.S, bg = S.bg; if (!bg || bg.phase !== 'choose' || G.fight) return;
+    if (!bgName(bg, groupAt) || !bgName(bg, pairAt)) return;
+    // they can still react: sometimes they spot the pair on the move and send fighters after it (said in the log)
+    if (Math.random() < G.BG_REACT && pairAt !== groupAt) {
+      const from = Object.keys(bg.plan).filter((x) => x !== pairAt && bg.plan[x] > 0).sort((x, y) => bg.plan[y] - bg.plan[x])[0];
+      if (from) { const n = Math.min(bg.plan[from], rint(1, 2)); bg.plan[from] -= n; bg.plan[pairAt] = (bg.plan[pairAt] || 0) + n; sys(`They spot the pair: ${n} of them run from ${bgName(bg, from)} to ${bgName(bg, pairAt)}!`); }
+    }
+    const sp = G.bgSplit(), foes = bg.foes.slice().sort(() => Math.random() - 0.5); let fi = 0;
+    const foesAt = {}; for (const [b] of D.BG[bg.key].banners) { foesAt[b] = foes.slice(fi, fi + (bg.plan[b] || 0)); fi += bg.plan[b] || 0; }
+    bg.go = { group: groupAt, pair: pairAt, foesAt, outcome: {} };
+    // the pair's banner first (unless it is with you): settled at once
+    if (pairAt !== groupAt) {
+      const e = foesAt[pairAt];
+      bg.go.outcome[pairAt] = e.length ? bgAutoFight(sp.pair, e) : true;
+      sys(e.length ? `The pair ${bg.go.outcome[pairAt] ? 'takes' : 'is beaten at'} ${bgName(bg, pairAt)} (2 against ${e.length}).` : `The pair takes ${bgName(bg, pairAt)} unopposed.`);
+    }
+    const e = foesAt[groupAt], withPair = pairAt === groupAt;
+    if (!e.length) { bg.go.outcome[groupAt] = true; sys(`Your group takes ${bgName(bg, groupAt)} unopposed.`); return bgResolve(); }
+    stopActions();
+    const P = S.player, pu = E.charUnit(P, 'ally', 'player', now()); G.pUnit = pu;
+    const allies = [pu].concat(bgUnits(withPair ? sp.group.concat(sp.pair) : sp.group, 'ally'));
+    const pet = G.petUnitFor(pu); if (pet) allies.push(pet);
+    G.fight = E.fight(allies, bgUnits(e, 'enemy'), { puller: pu }); G.fight.kind = 'bg'; G.fight.bg = { banner: groupAt, name: bgName(bg, groupAt) };
+    bg.phase = 'fight';
+    sys(`Your group charges ${bgName(bg, groupAt)}: ${e.length} of them hold it.`);
+    emit('fightStart', { fight: G.fight }); emit('change');
+  };
+  function endBgFight(C) {
+    const S = G.S, P = S.player, bg = S.bg, info = C.bg;
+    G.fight = null; G.pUnit = null; P.hp = null; P.res = null; P.ghostUntil = 0; // nobody stays dead in a battleground
+    emit('fightEnd', { result: C.over, bg: true });
+    if (!bg || !bg.go) return;
+    const won = C.over === 'win';
+    sys(won ? `You take ${info.name}!` : `They hold ${info.name}.`);
+    if (won) { P.pvp = G.pvpStats(); P.pvp.kills += C.enemies.filter((u) => u.dead).length; }
+    bg.go.outcome[info.banner] = won;
+    bgResolve();
+  }
+  function bgResolve() {
+    const S = G.S, bg = S.bg, C = D.BG[bg.key], go = bg.go;
+    for (const [b] of C.banners) {
+      if (go.outcome[b] != null) bg.owner[b] = go.outcome[b] ? 'us' : 'them';
+      else if (go.foesAt[b].length) bg.owner[b] = 'them'; // they take what they reach unopposed
+    }
+    const us = C.banners.filter(([b]) => bg.owner[b] === 'us').length, them = C.banners.filter(([b]) => bg.owner[b] === 'them').length;
+    bg.score.us += us; bg.score.them += them; bg.go = null;
+    bg.log.unshift(`Round ${bg.round}: you hold ${us}, they hold ${them} (${bg.score.us} to ${bg.score.them})`);
+    if (bg.score.us >= C.win || bg.score.them >= C.win || bg.round >= C.rounds) return bgFinish();
+    bg.round++; bg.plan = bgPlan(bg); bg.phase = 'choose';
+    emit('change'); G.save();
+  }
+  function bgFinish() {
+    const S = G.S, P = S.player, bg = S.bg, C = D.BG[bg.key], L = P.level;
+    const won = bg.score.us > bg.score.them, draw = bg.score.us === bg.score.them;
+    const honor = Math.round((C.honor.base + C.honor.perLvl * L) * (won ? C.honor.win : 1));
+    P.pvp = G.pvpStats(); P.pvp.honor += honor; P.pvp.bgPlayed = (P.pvp.bgPlayed || 0) + 1; if (won) P.pvp.bgWins = (P.pvp.bgWins || 0) + 1;
+    const money = L * (won ? 120 : 50); P.money += money;
+    if (L < D.LEVEL_CAP) G.gainXp(Math.round((D.XP_TO_LEVEL[L] || 0) * (won ? 0.07 : 0.03)));
+    else G.addMarks(won ? C.marksAtCap.win : C.marksAtCap.loss, C.name);
+    bg.phase = 'done'; bg.result = won ? 'win' : draw ? 'draw' : 'loss'; bg.reward = { honor, money };
+    sys(`${C.name}: ${won ? 'victory' : draw ? 'a draw' : 'defeat'}, ${bg.score.us} to ${bg.score.them}. +${honor} Honor.`);
+    emit('change'); G.save();
+  }
+  G.leaveBg = function () { const S = G.S; if (!S.bg) return; if (G.fight && G.fight.kind === 'bg') return toast('Finish the fight first.'); S.bg = null; emit('instanceLeave', {}); emit('change'); G.save(); };
+  G.bgStart = startBg; // sims
 
   // ============================================================ world party (grouping with nearby players)
   // Balance (sim/party.js): XP is split with a 1.3x group bonus and pulls get bigger, so a party averages ~1.1x solo XP/hour.
@@ -2269,7 +2380,7 @@
   G.trialswornCheck = function (lvl) {
     const a = G.account(), got = a.trialsworn = a.trialsworn || {}, won = [];
     for (const [k, R] of Object.entries(D.TRIALSWORN)) {
-      if (got[k] || lvl < R.lvl) continue;
+      if (got[k] || R.lvl == null || lvl < R.lvl) continue; // (the yearly mount has no level: G.yearMountCheck)
       got[k] = true; won.push(k);
     }
     if (!won.length) return;
@@ -2288,7 +2399,7 @@
   G.monthCloakCheck = function (lvl, season) {
     if (lvl < 10 || season < 0) return; // not in the Preseason
     const it = G.monthCloak(season);
-    if (it) { if (G.collectLook(it)) { const a = G.account(), tw = a.trialsworn = a.trialsworn || {}; (tw.earned = tw.earned || []).push(season); G.saveAccount(a); loot(`Trialsworn: this month's cloak, the ${B.link(it.name, 4)}, joins your wardrobe.`); } return; }
+    if (it) { if (G.collectLook(it)) { const a = G.account(), tw = a.trialsworn = a.trialsworn || {}; (tw.earned = tw.earned || []).push(season); G.saveAccount(a); loot(`Trialsworn: this month's cloak, the ${B.link(it.name, 4)}, joins your wardrobe.`); G.yearMountCheck(); } return; }
     // a month without a planned cloak (validate warns months ahead): Marks instead, once per month per account
     const a = G.account(), tw = a.trialsworn = a.trialsworn || {}, paid = tw.monthPaid = tw.monthPaid || [];
     if (paid.includes(season)) return;
@@ -2304,7 +2415,18 @@
     if ((a.looks || []).includes(it.look.join(':'))) return toast('You have that cloak already.');
     if (a.marks < G.MONTH_CLOAK_COST) return toast(`You need ${G.MONTH_CLOAK_COST} Mentor Marks.`);
     a.marks -= G.MONTH_CLOAK_COST; const tw = a.trialsworn = a.trialsworn || {}; (tw.bought = tw.bought || []).push(it.month); G.saveAccount(a);
-    G.collectLook(it); loot(`You bought the ${B.link(it.name, 4)} for ${G.MONTH_CLOAK_COST} Mentor Marks. It joins your wardrobe.`); emit('change');
+    G.collectLook(it); loot(`You bought the ${B.link(it.name, 4)} for ${G.MONTH_CLOAK_COST} Mentor Marks. It joins your wardrobe.`); G.yearMountCheck(); emit('change');
+  };
+  // the yearly mount: every cloak of that year's 12 months in the wardrobe (earned or bought) gives it to every character
+  G.yearCloaks = (yr) => { const [a, b] = D.TRIALSWORN[yr].year; return Object.keys(D.ITEMS).filter((i) => D.ITEMS[i].lookOnly && D.ITEMS[i].month != null && D.ITEMS[i].month >= a && D.ITEMS[i].month <= b); };
+  G.yearMountCheck = function () {
+    const a = G.account(), got = a.trialsworn = a.trialsworn || {}, have = new Set(a.looks || []);
+    for (const [k, R] of Object.entries(D.TRIALSWORN)) {
+      if (!R.year || got[k]) continue;
+      const ids = G.yearCloaks(k); if (!ids.length || !ids.every((i) => have.has(D.ITEMS[i].look.join(':')))) continue;
+      got[k] = true; G.saveAccount(a); G.giveTrialswornMount(R.mount);
+      loot(`Trialsworn: all twelve cloaks of the year! The ${D.MOUNTS[R.mount].name} is yours, on every character.`);
+    }
   };
   G.giveTrialswornMount = function (k) {
     const P = G.S && G.S.player; if (!P) return;
@@ -2332,6 +2454,7 @@
     if (A.where && G.stormBlocks(A.where) && P.level >= 60) return 'Requires Veshmira\'s defeat: her storm hides the isle'; // listed, but no group or summon can take you there
     if (A.where && !G.canReach(P.place, A.where)) return 'hidden';
     if (A.needQuest && !P.quests[A.needQuest]) return 'hidden'; // a legend's story fight shows only while you're on it
+    if (A.worldBoss && G.worldBoss() !== act) return 'hidden'; // only this week's world boss is out
     if (P.level < A.minLvl) return `Requires level ${A.minLvl}`;
     // at the level cap, dungeons and raids queue from anywhere and the group summons you (v10.7: travel is for the world,
     // not for the endgame); levelling characters and open-world Wanted targets still go there
@@ -2368,6 +2491,18 @@
     return open[Math.floor((ws - sinceDay(G.RAID_START)) / 7) % open.length];
   };
   G.featuredClaimed = () => !!G.raidWeek().featured;
+  // world bosses (v10.7): one a week, the same rule as the featured raid (from the date and each one's `since`)
+  G.WB_START = '2026-10-05'; G.WB_MARKS = 20;
+  G.worldBossActs = () => Object.keys(D.ACTIVITIES).filter((k) => D.ACTIVITIES[k].worldBoss);
+  G.worldBoss = function (date) {
+    const ws = dayNum(mondayOf(date || new Date(now()))), since = (k) => sinceDay(D.ACTIVITIES[k].since || G.WB_START);
+    const open = G.worldBossActs().filter((k) => since(k) <= ws).sort((a, b) => since(a) - since(b) || (a < b ? -1 : 1));
+    if (!open.length) return null;
+    const fresh = open.filter((k) => since(k) > ws - 7 && since(k) > sinceDay(G.WB_START));
+    if (fresh.length) return fresh[fresh.length - 1];
+    return open[Math.floor((ws - sinceDay(G.WB_START)) / 7) % open.length];
+  };
+  G.worldBossLooted = (act) => !!(G.raidWeek().wb || {})[act];
   // the looks in a raid's set that this account does not have yet, those this class can wear first
   G.raidLooksLeft = function (act) {
     const Dg = D.DUNGEONS[D.ACTIVITIES[act].dungeon], have = new Set(G.account().looks || []), ids = new Set();
@@ -2396,7 +2531,7 @@
     if (why) return toast(why === 'hidden' ? 'Only for the other faction.' : why + '.');
     if (hard && !G.hardOpen(act)) return toast('Hard opens after a Normal clear at level ' + D.LEVEL_CAP + '.');
     if (S.wparty) disbandParty('You left your party to use the group finder.');
-    if (S.run || S.group) return toast('Leave your current group first.');
+    if (S.run || S.group || S.bg) return toast('Leave your current group first.');
     const role = G.role();
     const wait = role === 'tank' ? rnd(4, 12) : role === 'healer' ? rnd(8, 20) : rnd(25, 70);
     S.queue = { act, since: now(), popAt: now() + wait * 1000, hard: hard || undefined };
@@ -2538,6 +2673,7 @@
     if (!S.queue) return;
     const act = S.queue.act, trial = S.queue.trial || 0, hard = !!S.queue.hard; S.queue = null;
     stopActions();
+    if (D.ACTIVITIES[act].bg) return startBg(act); // a battleground forms its own two teams
     const grp = formGroup(act, trial ? { trial } : hard ? { hard } : undefined);
     sys(`You have joined a group for ${D.ACTIVITIES[act].name}.`);
     grp.members.forEach((m, i) => { if (m.cameo || Math.random() < 0.7) S.pending.push({ at: now() + 800 + i * 1400 + Math.random() * 1500, bot: m.bot.id, ch: 'party', text: m.cameo ? G.legendLine(m.legend, 'hello') : B.partyLine(m.bot, 'hello'), fromName: m.name }); });
@@ -2595,6 +2731,7 @@
       const u = E.mobUnit(k, R.mobLevel || null, M.boss ? mult : (R.mult || { hp: 1, dmg: 1 }));
       if (marks[i]) u.mark = marks[i];
       const hx = R.hard && G.hardExtra(R.act, k); if (hx) u.hardX = hx; // Hard: the boss's extra mechanic
+      const wx = D.ACTIVITIES[R.act].extra && D.ACTIVITIES[R.act].extra[k]; if (wx) u.hardX = wx.map((e) => Object.assign({}, e)); // a world boss's mechanics
       return u;
     });
     if ((R.omens || []).some((k) => k === 'warded' || k === 'vengeful' || k === 'sheltered') && enemies.length >= 2) enemies[pull.mobs.length - 1].focus = true; // Tier 3: the last enemy listed
@@ -2658,11 +2795,14 @@
         const table = (M.loot || []).slice().sort(() => Math.random() - 0.5);
         // Hard: the first kill of each boss in a week drops its loot two upgrade steps up; after that, the Normal items
         const bonus = R.hard && G.hardBonusLeft(R.act, pull.mobs[0]);
-        const drops = table.slice(0, 2).map(bonus ? G.hardCopy : G.copyItem);
+        // a world boss drops its loot once a week (and pays Mentor Marks that time); after that, nothing until Monday
+        const wbA = D.ACTIVITIES[R.act].worldBoss, wbFirst = wbA && !G.worldBossLooted(R.act);
+        if (wbA) { if (wbFirst) { const w = G.raidWeek(); (w.wb = w.wb || {})[R.act] = true; G.addMarks(G.WB_MARKS, 'this week\'s world boss'); } else sys(`${M.name}'s loot is taken this week: it drops again on Monday.`); }
+        const drops = wbA && !wbFirst ? [] : table.slice(0, 2).map(bonus ? G.hardCopy : G.copyItem);
         if (R.hard) { if (bonus) { G.raidWeek().got[R.act + ':' + pull.mobs[0]] = true; sys(`Hard bonus: ${M.name} drops loot ${G.HARD_STEPS} upgrade steps up (once a week).`); } else sys(`${M.name}'s Hard bonus is taken this week: Normal loot until Monday.`); }
         for (const it of drops) addRoll(it);
         const rr = G.rareRecipeDrop(); if (rr) addRoll(rr);
-        if (!D.ACTIVITIES[R.act].dungeon || Math.random() < 0.25) addRoll(G.genGear(pick(D.GEAR_SLOTS), G.syncLevel(R.act), !D.ACTIVITIES[R.act].dungeon ? 2 : 3));
+        if (!(wbA && !wbFirst) && (!D.ACTIVITIES[R.act].dungeon || Math.random() < 0.25)) addRoll(G.genGear(pick(D.GEAR_SLOTS), G.syncLevel(R.act), !D.ACTIVITIES[R.act].dungeon ? 2 : 3));
         if (pull.mobs[0] === 'vancleef' && G.S.player.quests.defias_brotherhood) { G.addItem(G.copyItem('vancleef_head'), 1); loot(`You receive loot: ${B.link("Head of Blackwell")}.`); questCheck(); }
         const talker = pick(S.group.members.filter((m) => !m.gone));
         if (talker) partySay(talker, B.partyLine(talker.bot, 'win'));
@@ -2965,7 +3105,7 @@
           else B.post(S, 'party', null, 'extra pack!');
         }
         if (C.events.length) { emit('combat', C.events); C.events.length = 0; }
-        if (C.over) { if (C.kind === 'solo') endSolo(C); else if (C.kind === 'pvp') endPvp(C); else if (C.kind === 'duel') endDuel(C); else endRunFight(C); }
+        if (C.over) { if (C.kind === 'solo') endSolo(C); else if (C.kind === 'pvp') endPvp(C); else if (C.kind === 'duel') endDuel(C); else if (C.kind === 'bg') endBgFight(C); else endRunFight(C); }
       }
     }
     worldAcc += dt;

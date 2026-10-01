@@ -387,6 +387,8 @@ img { max-width: 100%; display: block; }
 .tabs button.on { color: var(--gold); border-color: var(--gold); }
 .tabs button { position: relative; }
 .tabs-fit { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.gf-tabs.tabs-fit { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.gf-tabs.tabs-fit button { font-size: 12px; }
 .tabs-fit button { padding: 8px 2px; text-align: center; overflow: hidden; text-overflow: ellipsis; }
 .tabs button.dot::after { content: ''; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; background: #ffd100; box-shadow: 0 0 5px #ffd100; }
 /* Friends */
@@ -655,6 +657,14 @@ img.qm.new, img.qm.ready { filter: drop-shadow(0 0 3px rgba(255, 209, 0, .6)); }
 .gf-kind { display: inline-block; margin-right: 6px; padding: 0 6px; border-radius: 3px; font: 800 11px/16px var(--body); text-transform: uppercase; letter-spacing: .06em; vertical-align: 1px; }
 .gf-kind.k-dungeon { background: #1e3350; color: #bcd6ff; } .gf-kind.k-raid { background: #4e1a26; color: #ffc4cc; } .gf-kind.k-wanted { background: #44340f; color: #ffe0a0; }
 .gf-kind.k-featured { background: #5a4410; color: #ffd76a; }
+.gf-kind.k-pvp { background: #3a1a4e; color: #e2c4ff; }
+.bg-score { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 4px 0 8px; }
+.bg-score > div { border: 1px solid #3b2d18; border-radius: 3px; padding: 4px 8px; display: flex; justify-content: space-between; align-items: baseline; }
+.bg-score .us { background: rgba(40, 80, 140, .35); } .bg-score .them { background: rgba(140, 40, 40, .35); }
+.bg-score b { font: 700 22px/1 var(--display); }
+.bg-own { margin-left: 6px; padding: 0 5px; border-radius: 3px; font: 700 10px/16px var(--body); vertical-align: 1px; background: #333; color: #ddd; }
+.bg-banner.us .bg-own { background: #1e3a66; color: #bcd6ff; } .bg-banner.them .bg-own { background: #5a1e1e; color: #ffc4c4; }
+.bg-pick { margin: 6px 0; } .bg-pick small { display: block; color: var(--muted); margin-bottom: 2px; }
 .gf-locked { opacity: .55; }
 .gf-queued { border-color: var(--gold); }
 .gf-tabs button { position: relative; }

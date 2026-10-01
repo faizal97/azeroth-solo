@@ -26,6 +26,10 @@
   D.ITEMS.deepmother_leather.look = ['chest', 'tc_leather'];
   D.ITEMS.deepmother_plate.look = ['chest', 'tc_mail'];
   D.ITEMS.serathis_legs.look = ['legs', 'tc_legs'];
+  D.ITEMS.aeldran_blade.look = ['weapon', 'tc_sword'];
+  D.ITEMS.aeldran_dagger.look = ['weapon', 'tc_dagger'];
+  D.ITEMS.deepmother_staff.look = ['weapon', 'tc_staff'];
+  D.ITEMS.deepmother_maul.look = ['weapon', 'tc_mace'];
 
   Object.assign(D.MOBS, {
     tidecrown_guard: { name: 'Tidecrown Royal Guard', lvl: [60, 60], family: 'humanoid', hpMult: 1.2, drops: [['thieves_coin', 0.6], ['linen_cloth', 0.3]], aggro: 'Kneel before the Prince!' },

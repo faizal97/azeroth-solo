@@ -1,4 +1,4 @@
-// Verifies src/art_mounts.js (ART.mount: 8 racial mounts + the Trialsworn charger and its tiers; ART.icon: mount_<key>, riding, trialsworn_hourglass) and renders contact sheets
+// Verifies src/art_mounts.js (ART.mount: 8 racial mounts + the Trialsworn charger and its tiers + the Twelvefold Charger (trialsworn_year1); ART.icon: mount_<key>, riding, trialsworn_hourglass) and renders contact sheets
 // into art/mounts/out/: mounts at full and half size, icons at 64 and 40, and a "ridden" sheet that draws the hero
 // first and the mount on top, on a scene, using the rider offset below.
 // Usage: node art/mounts/render.js
@@ -14,7 +14,7 @@ fs.mkdirSync(OUT, { recursive: true });
 const read = f => fs.readFileSync(path.join(ROOT, 'src', f), 'utf8');
 const SRC = read('art_mounts.js');
 
-const MOUNTS = ['horse', 'ram', 'mechanostrider', 'nightsaber', 'wolf', 'raptor', 'kodo', 'skeletal_horse', 'trialsworn_charger', 'trialsworn_charger_t15', 'trialsworn_charger_t20'];
+const MOUNTS = ['horse', 'ram', 'mechanostrider', 'nightsaber', 'wolf', 'raptor', 'kodo', 'skeletal_horse', 'trialsworn_charger', 'trialsworn_charger_t15', 'trialsworn_charger_t20', 'trialsworn_year1'];
 const ICONS = MOUNTS.map(k => 'mount_' + k).concat(['riding', 'trialsworn_hourglass']);
 // rider placement in mount units (160x128 box): hero SVG (128x128) drawn at (X, Y), scaled by S
 const RIDER = { x: 27.2, y: 4.6, scale: 0.7 };
@@ -25,7 +25,8 @@ const raceDy = r => Math.round((82 - (HIP[r] || 82)) * RIDER.scale * 10) / 10;
 // each mount's own race rides it in the second cell
 const OWN = { horse: { cls: 'paladin', race: 'human' }, ram: { cls: 'hunter', race: 'dwarf' }, mechanostrider: { cls: 'mage', race: 'gnome' }, nightsaber: { cls: 'druid', race: 'nightelf' },
   wolf: { cls: 'shaman', race: 'orc' }, raptor: { cls: 'rogue', race: 'troll' }, kodo: { cls: 'warrior', race: 'tauren' }, skeletal_horse: { cls: 'warlock', race: 'undead' },
-  trialsworn_charger: { cls: 'priest', race: 'nightelf' }, trialsworn_charger_t15: { cls: 'rogue', race: 'orc' }, trialsworn_charger_t20: { cls: 'mage', race: 'gnome' } };
+  trialsworn_charger: { cls: 'priest', race: 'nightelf' }, trialsworn_charger_t15: { cls: 'rogue', race: 'orc' }, trialsworn_charger_t20: { cls: 'mage', race: 'gnome' },
+  trialsworn_year1: { cls: 'hunter', race: 'tauren' } };
 const problems = [];
 const notes = [];
 

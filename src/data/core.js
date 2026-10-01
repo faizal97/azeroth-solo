@@ -582,7 +582,9 @@
   }
   const tswSet = (t) => ['trialsworn_cloak'].concat(TSW_W.map((w) => 'trialsworn_' + w), ['trialsworn_bow']).map((id) => (t ? id + '_' + t : id));
   D.TRIALSWORN = { cloak: { lvl: 5, looks: ['trialsworn_cloak'] }, weapons: { lvl: 10, looks: tswSet('').slice(1) }, mount: { lvl: 10, mount: 'trialsworn_charger' },
-    t15: { lvl: 15, looks: tswSet('t15'), mount: 'trialsworn_charger_t15' }, t20: { lvl: 20, looks: tswSet('t20'), mount: 'trialsworn_charger_t20' } };
+    t15: { lvl: 15, looks: tswSet('t15'), mount: 'trialsworn_charger_t15' }, t20: { lvl: 20, looks: tswSet('t20'), mount: 'trialsworn_charger_t20' },
+    // the yearly mount: all 12 cloaks of the first year (October 2026 to September 2027), earned or bought
+    year1: { year: [0, 11], mount: 'trialsworn_year1' } };
   // a cloak for each month (season index from October 2026), earned by beating Trial 10 in time during that month.
   // Hand-picked palettes, planned a year ahead (art.js, the Trialsworn month table); a month without one has no cloak.
   D.TRIALSWORN_MONTHS = ['Emberwane', 'Bronzeleaf', 'Hoarfrost', 'Rimewind', 'Heartsblood', 'Thawbloom', 'Blossomrain', 'Greenhaven', 'Highsun', 'Azure Tide', 'Sunlit Sail', 'Harvest Moon']; // the palette names in art.js (TW_MONTHS)
@@ -592,6 +594,7 @@
     trialsworn_charger: { name: 'Trialsworn Charger', reward: 'Beat Trial 10 in time' }, // no faction: never sold
     trialsworn_charger_t15: { name: 'Glowing Trialsworn Charger', reward: 'Beat Trial 15 in time' },
     trialsworn_charger_t20: { name: 'Radiant Trialsworn Charger', reward: 'Beat Trial 20 in time' },
+    trialsworn_year1: { name: 'Twelvefold Charger', reward: 'Collect all 12 Trialsworn Cloaks of the first year' },
     horse: { name: 'Brown Horse', race: 'human', faction: 'alliance', cost: 100000 },
     ram: { name: 'Grey Ram', race: 'dwarf', faction: 'alliance', cost: 100000 },
     mechanostrider: { name: 'Red Clockwork Trike', race: 'gnome', faction: 'alliance', cost: 100000 },

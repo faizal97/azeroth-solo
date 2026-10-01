@@ -251,5 +251,18 @@ ok(Rec.history[0].picks.length === 8 && Rec.history[0].rank >= 1, 'the history k
     ok(G.wardrobeAll('back').find((o) => o.key === D.ITEMS[pastIds[0]].look[1]).source === 'Bought with Mentor Marks', 'the wardrobe says Bought');
   }
 }
+// the yearly mount: all 12 cloaks of the first year, earned or bought (11 is not enough), for every character
+{
+  const a5 = G.account(); a5.looks = (a5.looks || []).filter((x) => !/trialsworn_cloak_m/.test(x)); delete a5.trialsworn.year1; G.saveAccount(a5);
+  G.newGame({ name: 'Yr', cls: 'warrior', race: 'human' }); G.S.player.level = 60;
+  const ids = G.yearCloaks('year1'); ok(ids.length === 12, 'the first year has 12 cloaks');
+  for (const id of ids.slice(0, 11)) G.collectLook(D.ITEMS[id]); G.yearMountCheck();
+  ok(!(G.account().trialsworn || {}).year1 && !(G.S.player.mounts || []).includes('trialsworn_year1'), '11 cloaks: no yearly mount yet');
+  const a6 = G.account(); a6.marks = 500; G.saveAccount(a6);
+  const last = ids[11]; if (G.pastMonthCloaks().includes(last)) G.buyMonthCloak(last); else { G.collectLook(D.ITEMS[last]); G.yearMountCheck(); }
+  ok(G.account().trialsworn.year1 && G.S.player.mounts.includes('trialsworn_year1'), 'the 12th cloak gives the Twelvefold Charger');
+  G.newGame({ name: 'Yr2', cls: 'mage', race: 'human' }); const id2 = G.S.id; G.save(); G.load(id2);
+  ok((G.S.player.mounts || []).includes('trialsworn_year1'), 'another character has it when it loads');
+}
 console.log(`trials: ${n - bad}/${n} checks pass`);
 process.exit(bad ? 1 : 0);
