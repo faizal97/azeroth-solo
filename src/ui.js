@@ -458,9 +458,98 @@
     el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
     setTimeout(() => el.classList.remove(cls), ms || 160);
   }
+  // ---------- combat effects (v10.7): drawn over the sprites, never inside them (sprites are single pictures).
+  // Melee hits slash, spells and shots fly, area spells ring, heals sparkle, boss specials each have their own.
+  // At most FX_MAX at once; Settings → Combat effects turns them off.
+  const FX_MAX = 14, FX_COLOR = { fire: '#ff8a2a', frost: '#8fd8ff', shadow: '#b06cff', holy: '#ffe27a', nature: '#7dff5a', arcane: '#ff8ce6', physical: '#f2f2f2' };
+  const fxOn = () => { try { return localStorage.getItem('azsolo.fx') !== 'off'; } catch (e) { return true; } };
+  const BOSS_FX = { slam: 'crack', hogger: 'crack', whirl: 'sweep', molten: 'splash', shadow_bolt: 'splash', firebolt: 'bolt' };
+  function fxAt(uid, yf) {
+    const el = ui.spriteEls[uid], sc = els.scene; if (!el || !sc) return null;
+    const r = el.getBoundingClientRect(), s0 = sc.getBoundingClientRect();
+    return { x: r.left - s0.left + r.width / 2, y: r.top - s0.top + r.height * (yf == null ? 0.55 : yf), w: r.width };
+  }
+  function fxAdd(node, ms, important) {
+    const sc = els.scene; if (!sc) return null;
+    if (!important && sc.querySelectorAll('.fx').length >= FX_MAX) return null;
+    node.classList.add('fx'); sc.append(node); setTimeout(() => node.remove(), ms || 600); return node;
+  }
+  const fxDiv = (cls, x, y, w, extra) => h('div', { class: cls, style: Object.assign({ left: x + 'px', top: y + 'px', width: w + 'px', height: w + 'px' }, extra || {}) });
+  function fxSlash(src, tgt, crit) {
+    const t = fxAt(tgt), s0 = fxAt(src); if (!t) return;
+    const w = t.w * (crit ? 0.95 : 0.75), flip = s0 && s0.x > t.x;
+    const n = fxDiv('fx-slash' + (crit ? ' crit' : ''), t.x - w / 2, t.y - w / 2, w, { transform: flip ? 'scaleX(-1)' : '' });
+    n.innerHTML = '<svg viewBox="0 0 100 100"><path d="M18 14 C 52 26, 74 52, 84 88" /><path class="in" d="M18 14 C 52 26, 74 52, 84 88" /></svg>';
+    fxAdd(n, 360);
+  }
+  function fxFly(src, tgt, kind, school, crit, then) {
+    const a = fxAt(src, 0.45), b = fxAt(tgt); if (!a || !b) { if (then) then(); return; }
+    const col = FX_COLOR[school] || FX_COLOR.physical, ang = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
+    const n = kind === 'arrow' ? h('div', { class: 'fx-arrow', style: { left: '0px', top: '0px' } }) : h('div', { class: 'fx-bolt' + (crit ? ' crit' : ''), style: { left: '0px', top: '0px', background: `radial-gradient(circle, #fff 0 22%, ${col} 45%, transparent 72%)`, boxShadow: `0 0 12px 4px ${col}` } });
+    if (!fxAdd(n, 400)) return;
+    const d = Math.min(320, 140 + Math.hypot(b.x - a.x, b.y - a.y) * 0.45), rot = kind === 'arrow' ? ` rotate(${ang}deg)` : '';
+    try { n.animate([{ transform: `translate(${a.x}px, ${a.y}px)${rot}` }, { transform: `translate(${b.x}px, ${b.y}px)${rot}` }], { duration: d, easing: 'ease-in', fill: 'forwards' }); } catch (e) { }
+    setTimeout(() => { if (kind !== 'arrow') fxBurst(tgt, school, crit); if (then) then(); }, d);
+  }
+  function fxBurst(tgt, school, big) {
+    const t = fxAt(tgt); if (!t) return; const w = t.w * (big ? 0.8 : 0.55), col = FX_COLOR[school] || FX_COLOR.physical;
+    fxAdd(fxDiv('fx-burst', t.x - w / 2, t.y - w / 2, w, { background: `radial-gradient(circle, #fff 0 12%, ${col} 35%, transparent 70%)` }), 380);
+  }
+  function fxRing(tgt, school) {
+    const t = fxAt(tgt, 0.85); if (!t) return; const w = t.w * 1.1, col = FX_COLOR[school] || FX_COLOR.physical;
+    fxAdd(fxDiv('fx-ring', t.x - w / 2, t.y - w * 0.2, w, { height: w * 0.4 + 'px', borderColor: col, boxShadow: `0 0 10px ${col}, inset 0 0 8px ${col}` }), 520);
+  }
+  function fxSparkle(tgt) {
+    const t = fxAt(tgt, 0.5); if (!t) return;
+    for (let i = 0; i < 3; i++) fxAdd(h('div', { class: 'fx-spark', style: { left: (t.x + (i - 1) * t.w * 0.22) + 'px', top: (t.y + (i % 2) * 10) + 'px', animationDelay: (i * 90) + 'ms' } }, '✦'), 900);
+  }
+  function fxCrack(tgt) {
+    const t = fxAt(tgt, 0.95); if (!t) return; const w = t.w * 1.4;
+    const n = fxDiv('fx-crack', t.x - w / 2, t.y - w * 0.15, w, { height: w * 0.3 + 'px' });
+    n.innerHTML = '<svg viewBox="0 0 140 40"><path d="M70 20 L50 10 L34 18 L14 8 M70 20 L92 6 L108 16 L130 10 M70 20 L60 34 M70 20 L84 36 L100 30" /></svg>';
+    fxAdd(n, 700, true); fxShake();
+  }
+  function fxSweep(boss) {
+    const C = G.fight; if (!C) return; const pts = C.allies.filter((u) => !u.dead).map((u) => fxAt(u.uid)).filter(Boolean); if (!pts.length) return;
+    const x0 = Math.min(...pts.map((p) => p.x)) - 30, x1 = Math.max(...pts.map((p) => p.x)) + 30, y = pts.reduce((a, p) => a + p.y, 0) / pts.length;
+    const n = h('div', { class: 'fx-sweep', style: { left: x0 + 'px', top: (y - 30) + 'px', width: (x1 - x0) + 'px', height: '60px' } });
+    fxAdd(n, 480, true);
+  }
+  function fxShake() { const sc = els.scene; if (!sc) return; sc.classList.remove('fx-shake'); void sc.offsetWidth; sc.classList.add('fx-shake'); setTimeout(() => sc.classList.remove('fx-shake'), 360); }
+  function fxGlow(uid, cls, ms) { const el = ui.spriteEls[uid]; if (!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); setTimeout(() => el.classList.remove(cls), ms); }
+  function combatFx(evs, C) {
+    if (!fxOn()) return;
+    const seen = new Set();
+    for (const e of evs) {
+      if (e.type === 'dmg') {
+        const src = C.units[e.src], tgt = C.units[e.tgt]; if (!tgt) continue;
+        const key = e.src + ':' + (e.ab || 'auto'), A = e.ab && D.ABILITIES[e.ab], boss = BOSS_FX[e.ab] || (e.ab && /^hard_/.test(e.ab) ? 'hard' : null);
+        if (e.fx === 'blast') { if (!seen.has('blast')) { seen.add('blast'); fxShake(); } fxBurst(e.tgt, 'fire', true); continue; }
+        if (boss) {
+          const many = evs.filter((x) => x.type === 'dmg' && x.src === e.src && x.ab === e.ab).length > 1;
+          if (seen.has(key)) continue; seen.add(key);
+          if (boss === 'crack') fxCrack(e.tgt);
+          else if (boss === 'sweep' || (boss === 'hard' && many)) { fxSweep(e.src); fxShake(); }
+          else if (boss === 'bolt') fxFly(e.src, e.tgt, 'bolt', e.school);
+          else fxFly(e.src, e.tgt, 'bolt', e.school, true);
+          continue;
+        }
+        if (e.tick) { fxBurst(e.tgt, e.school, false); continue; }
+        if (A && A.target === 'aoe') { fxRing(e.tgt, e.school); if (!seen.has(key)) { seen.add(key); fxShake(); } continue; }
+        if (e.melee || (src && src.kind === 'mob' && e.school === 'physical' && !e.ab)) { fxSlash(e.src, e.tgt, e.crit); continue; }
+        if (e.school === 'physical') { fxFly(e.src, e.tgt, 'arrow', 'physical', e.crit, () => fxSlash(e.src, e.tgt, false)); continue; }
+        fxFly(e.src, e.tgt, 'bolt', e.school, e.crit);
+      } else if (e.type === 'heal' && e.amount > 0 && C.units[e.tgt]) {
+        if (!seen.has('heal:' + e.tgt)) { seen.add('heal:' + e.tgt); fxSparkle(e.tgt); }
+      } else if (e.type === 'fx' && e.kind === 'enrage') {
+        fxGlow(e.uid, 'fx-enrage', 2400); fxShake();
+      }
+    }
+  }
   function onCombat(evs) {
     const C = G.fight; if (!C) return;
     let redraw = false;
+    try { combatFx(evs, C); } catch (e) { /* effects never break a fight */ }
     const S_ = window.SND;
     for (const e of evs) {
       const tgt = C.units[e.tgt], src = C.units[e.src];
@@ -2351,6 +2440,9 @@
           h('p', { class: 'ai-note', style: { margin: 0 } }, 'Realm of Loner is free and stays free, with nothing to buy in the game. If you enjoy it and want to leave a tip, it helps pay for the time that goes into it.')], false));
         b.append(...foldSec('set.invites', 'Party invites', G.S.flags.noInvites ? 'Off' : 'On', [h('div', { class: 'btn-row' },
           h('button', { class: 'btn alt', onclick: () => { G.setInvites(!!G.S.flags.noInvites); ui.sheetFn(); } }, 'Invites from nearby players: ' + (G.S.flags.noInvites ? 'Off' : 'On')))]));
+        { const on = fxOn(); b.append(...foldSec('set.fx', 'Combat effects', on ? 'On' : 'Off', [h('div', { class: 'btn-row' },
+          h('button', { class: 'btn alt', onclick: () => { try { localStorage.setItem('azsolo.fx', on ? 'off' : 'on'); } catch (e) { } ui.sheetFn(); } }, 'Combat effects: ' + (on ? 'On' : 'Off'))),
+          h('p', { class: 'ai-note', style: { margin: 0 } }, 'Slashes, spells in flight, heals and boss attacks drawn over the fight. Damage numbers stay either way.')])); }
         if (window.SND) {
           const pr = window.SND.prefs;
           b.append(...foldSec('set.sound', 'Sound', `Music ${pr.music ? 'on' : 'off'} · effects ${pr.sfx ? 'on' : 'off'}`, [h('div', { class: 'btn-row' },

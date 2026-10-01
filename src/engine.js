@@ -325,7 +325,7 @@
     }
     // cast pushback
     if (tgt.cast && !tgt.cast.channel && dmg > 0 && tgt.cast.pushed < 2) { tgt.cast.end += 0.35; tgt.cast.pushed++; }
-    ev(C, { type: 'dmg', src: src.uid, tgt: tgt.uid, amount: dmg, absorbed, crit: !!o.crit, school: o.school || 'physical', ab: o.ab || null });
+    ev(C, { type: 'dmg', src: src.uid, tgt: tgt.uid, amount: dmg, absorbed, crit: !!o.crit, school: o.school || 'physical', ab: o.ab || null, melee: !!o.melee, tick: !!o.tick, fx: o.fx || null }); // melee/tick/fx: hints for the combat effects (ui.js)
     if (tgt.hp <= 0) kill(C, tgt, src);
     return dmg;
   }
@@ -649,7 +649,7 @@
       if (kind === 'adds' || kind === 'enrage') {
         if (x.done || pct >= x.at) continue;
         x.done = true; emote(x);
-        if (kind === 'enrage') m.enrage = (m.enrage || 1) * x.mult;
+        if (kind === 'enrage') { m.enrage = (m.enrage || 1) * x.mult; ev(C, { type: 'fx', uid: m.uid, kind: 'enrage' }); }
         else for (let i = 0; i < x.n; i++) E.addEnemy(C, E.mobUnit(x.mob, addLvl(m, x.lvl), (C.opts.dungeonMult || { hp: 1, dmg: 1 })));
         continue;
       }
@@ -677,7 +677,7 @@
     if (sp.kind === 'smite') {
       const Sm = SPECIALS.smite;
       if (sp.phase === 0 && pct < Sm.stunAt[0]) { sp.phase = 1; stomp(C, m, 'Mr. Clobber stomps the deck!'); say(C, m, 'You landlubbers are tougher than I thought! I\'ll have to improvise!', 'monster'); }
-      if (sp.phase === 1 && pct < Sm.enrageAt) { sp.phase = 2; m.enrage = Sm.enrage; ev(C, { type: 'emote', uid: m.uid, text: 'Mr. Clobber draws his hammer.' }); }
+      if (sp.phase === 1 && pct < Sm.enrageAt) { sp.phase = 2; m.enrage = Sm.enrage; ev(C, { type: 'fx', uid: m.uid, kind: 'enrage' }); ev(C, { type: 'emote', uid: m.uid, text: 'Mr. Clobber draws his hammer.' }); }
       if (sp.phase === 2 && pct < Sm.stunAt[1]) { sp.phase = 3; stomp(C, m, 'Mr. Clobber stomps the deck!'); say(C, m, 'D\'ah! Now you\'re making me angry!', 'monster'); }
       return;
     }
@@ -1012,7 +1012,7 @@
     C.t += dt;
     if (C.blasts && C.blasts.length) { // Omen Volatile: the dead explode (v10.4)
       const VO = root.TRIALS.OMENS.volatile;
-      for (const bl of C.blasts.filter((x) => x.t <= C.t)) { for (const a of alive(C.allies)) dealDamage(C, { uid: -1, side: 'enemy', name: bl.name, auras: [], kind: 'mob' }, a, a.maxHp * VO.blast, { school: 'fire', ab: 'volatile' }); ev(C, { type: 'emote', uid: -1, text: `${bl.name} explodes!` }); }
+      for (const bl of C.blasts.filter((x) => x.t <= C.t)) { for (const a of alive(C.allies)) dealDamage(C, { uid: -1, side: 'enemy', name: bl.name, auras: [], kind: 'mob' }, a, a.maxHp * VO.blast, { fx: 'blast', school: 'fire', ab: 'volatile' }); ev(C, { type: 'emote', uid: -1, text: `${bl.name} explodes!` }); }
       C.blasts = C.blasts.filter((x) => x.t > C.t);
     }
     const all = C.allies.concat(C.enemies);
@@ -1026,7 +1026,7 @@
         if (a.dot != null && a.next <= C.t + 1e-6) {
           a.next += a.every;
           const src = C.units[a.src] || u;
-          dealDamage(C, src, u, a.dot, { school: a.school, ab: a.ab });
+          dealDamage(C, src, u, a.dot, { school: a.school, ab: a.ab, tick: true });
           proc(C, src, 'tick', a.ab);
           if (u.dead) break;
         }
