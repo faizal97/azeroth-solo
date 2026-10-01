@@ -157,7 +157,7 @@
     if (!u.pos) return;
     if (u.closedAt == null) { const t0 = C.units[u.target]; if (t0 && t0.pos && E.dist(u, t0) <= DIST.melee + 0.5) u.closedAt = C.t; } // first time in melee reach (openers)
     const rooted = u.auras.some((a) => a.root);
-    const speed = DIST.speed * (1 - slowPct(u) / 100) * dt;
+    const speed = moveSpeed(u) * dt;
     if (u.fleeUntil > C.t) {
       if (rooted) return;
       const from = C.units[u.fleeFrom]; if (!from || !from.pos) return;
@@ -334,6 +334,11 @@
     let p = 0;
     for (const a of u.auras) if (a.slow) p = Math.max(p, a.slow);
     return p;
+  }
+  // how fast a fighter runs: 7 m/s, cut by its strongest snare, raised by its strongest speed buff (Sprint)
+  function moveSpeed(u) {
+    let up = 0; for (const a of u.auras) if (a.speed) up = Math.max(up, a.speed);
+    return DIST.speed * (1 - slowPct(u) / 100) * (1 + up / 100);
   }
 
   // ------------------------------------------------------------- damage / heal
@@ -633,6 +638,7 @@
       if (b.seal) { extra.seal = (b.seal.base + b.seal.perLvl * L) * (u.st.wSpeed / 2.5) * bp; extra.sealSchool = b.seal.school || 'holy'; }
       if (b.thorns) extra.thorns = { dmg: Math.round((b.thorns.base + b.thorns.perLvl * L) * bp), charges: b.thorns.charges };
       if (b.immune) extra.immune = true;
+      if (b.speed) extra.speed = b.speed; // distance: run faster (Sprint)
       for (const w of who) addAura(C, w, Object.assign({ id: b.id, until: C.t + dur, stats: Object.keys(stats).length ? stats : null, persistent: dur >= 60 }, extra));
       if (ab.threat) for (const e of alive(foes(C, u))) e.threat[u.uid] = (e.threat[u.uid] || 0) + ab.threat;
     }
@@ -912,11 +918,12 @@
   const SOLO = {};
   function soloKit(cls) {
     if (SOLO[cls]) return SOLO[cls];
-    const k = { heals: [], stuns: [], fears: [], snares: [], buffs: [], roots: [], dashes: [] };
+    const k = { heals: [], stuns: [], fears: [], snares: [], buffs: [], roots: [], dashes: [], sprints: [] };
     for (const id of (D.CLASSES[cls] || { abilities: [] }).abilities) {
       const A = D.ABILITIES[id]; if (A && A.dash && !A.form) k.dashes.push(id); // Charge (an opener) and Intercept leap in
       if (!A || A.form || A.opener || A.taunt || A.needAura) continue;
       if (A.root && (A.target === 'enemy' || A.target === 'aoe')) k.roots.push(id);
+      if (A.buff && A.buff.speed) k.sprints.push(id);
       const st = (A.buff && A.buff.stats) || {};
       if ((A.target === 'self' || A.target === 'party') && A.buff && !A.cd && !A.shapeshift && !A.combatOnly && !A.seal && !(A.buff && A.buff.seal) && (st.armor || st.sta || st.sp || st.int)) k.buffs.push(id); // armour, stamina or spell power (not a seal or weapon imbue: the rotation keeps those)
       if ((A.heal || A.hot || A.shield) && (A.target === 'ally' || A.target === 'self')) k.heals.push(id);
@@ -934,7 +941,7 @@
   const holdLeft = (C, f) => Math.max(0, f.stunUntil - C.t || 0, f.fleeUntil - C.t || 0, ...f.auras.filter((a) => a.root).map((a) => a.until - C.t));
   // kiting: open the gap while a melee foe is held, up to `gap` metres, running at most `run` seconds (sim/brawl.js tunes them)
   const G_KITE = E.KITE = { gap: 16, run: 1.5, edge: 2, safeHeal: 0.7 }; // edge: how much faster (m/s) you must be for running to pay
-  const runSpeed = (C, x) => (x.auras.some((a) => a.root) || x.stunUntil > C.t ? 0 : DIST.speed * (1 - slowPct(x) / 100));
+  const runSpeed = (C, x) => (x.auras.some((a) => a.root) || x.stunUntil > C.t ? 0 : moveSpeed(x));
   const soloFoe = (en) => { const ch = en.filter((x) => x.kind !== 'pet'); return ch.length === 1 && ch[0].cls && !ch[0].boss ? ch[0] : null; }; // pets do not count
   const soloFight = (C, u, en) => !!soloFoe(en) && alive(friends(C, u)).filter((x) => x.kind !== 'pet').length === 1;
   function soloThink(C, u, f, b, has, try_) {
@@ -951,6 +958,7 @@
     if (u.pos && f.pos) {
       const d = E.dist(u, f), mine = reachOf(u), theirs = reachOf(f), hold = holdLeft(C, f);
       if (mine <= DIST.melee && d > DIST.melee + 1) for (const id of k.dashes) if (has(id) && try_(id, f)) return true;
+      if (mine <= DIST.melee && d > DIST.melee + 6 && roll()) for (const id of k.sprints) if (has(id) && !auraOf(u, D.ABILITIES[id].buff.id) && try_(id)) return true; // then run it down
       if (mine > DIST.melee && theirs <= DIST.melee) {
         const sb = () => !u.auras.some((a) => a.root) && E.use(C, u, 'step_back') === null;
         if (d <= DIST.melee + 1.5 && hold < 0.5 && roll()) { // it is on you: freeze, stun or fear it, slow it, else hop away

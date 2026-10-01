@@ -20,7 +20,7 @@ const SRC = read('art_icons10.js');
 
 const NEW = ['bladestorm', 'rallying_cry', 'arcane_blast', 'mirror_image', 'penance', 'divine_hymn',
   'killing_spree', 'shadow_dance', 'divine_storm', 'aura_mastery', 'haunt', 'metamorphosis', 'chimera_shot',
-  'rapid_killing', 'typhoon', 'lifebloom', 'thunderstorm', 'bloodlust'];
+  'rapid_killing', 'typhoon', 'lifebloom', 'thunderstorm', 'bloodlust', 'sprint'];
 // each new icon next to the 3 existing icons it is most likely to be confused with
 const COMPARE = [
   ['bladestorm', 'whirlwind', 'hurricane', 'blade_flurry'], ['rallying_cry', 'battle_shout', 'retaliation', 'blessing_might'],
@@ -31,7 +31,7 @@ const COMPARE = [
   ['haunt', 'death_coil', 'soul_fire', 'siphon_life'], ['metamorphosis', 'demon_armor', 'summon_voidwalker', 'shadowfury'],
   ['chimera_shot', 'serpent_sting', 'wyvern_sting', 'aimed_shot'], ['rapid_killing', 'rapid_fire', 'multi_shot', 'volley'],
   ['typhoon', 'hurricane', 'mana_tide_totem', 'frost_nova'], ['lifebloom', 'rejuvenation', 'regrowth', 'gift_of_the_wild'],
-  ['thunderstorm', 'lightning_bolt', 'chain_lightning', 'elemental_mastery'], ['bloodlust', 'berserker_rage', 'bloodrage', 'adrenaline_rush']];
+  ['thunderstorm', 'lightning_bolt', 'chain_lightning', 'elemental_mastery'], ['bloodlust', 'berserker_rage', 'bloodrage', 'adrenaline_rush'], ['sprint', 'boots', 'evasion', 'shadowmeld']];
 // ids differ per call (counters), so compare icons with ids blanked
 const norm = s => String(s).replace(/ id="[^"]+"/g, ' id=""').replace(/url\(#[^)]+\)/g, 'url(#)');
 const problems = [];

@@ -1,4 +1,4 @@
-/* art_icons10.js - more spell icons for Realm of Loner (18 keys: two more class abilities for every class).
+/* art_icons10.js - more spell icons for Realm of Loner (19 keys: two more class abilities for every class, plus Sprint).
  * Loads AFTER art.js, art_icons2.js .. art_icons9.js and art_mounts.js and EXTENDS window.ART: ART.icon handles the keys
  * below and falls through to the previous ART.icon for every other key (prototype keys included). Keys are appended to
  * ART.keys.icons. Self-contained: art.js helpers are private, so the few needed here are re-implemented (same maths,
@@ -605,6 +605,24 @@
         cloud(c, [[12, 14, 8], [22, 9, 9], [34, 8, 10], [46, 10, 9], [54, 16, 7], [30, 17, 8], [42, 18, 7], [18, 19, 6]], '#4a5470') +
         S('M14,10 C18,6 24,4 30,5', '#a8b8d8', 1.4, 0.7) +
         sparkle(6, 34, 2.4, '#e8f8ff') + sparkle(58, 32, 2.4, '#e8f8ff'));
+    },
+    /* rogue: a hooded rogue in full stride, leaning into the run, yellow speed streaks and a dust kick behind */
+    sprint: function (c) {
+      var cloak = '#3a3046', skin = '#e0b48a', limb = function (d, col) { return S(d, OL, 7.4) + S(d, col, 4.6); };
+      return iconWrap(c, ['#b8941a', '#1a1202'],
+        glow(c, 38, 30, 30, '#ffe680', 0.75) +
+        OS('M3,18 L20,18 M1,28 L17,28 M4,38 L16,38 M8,48 L18,48', '#fff2a0', 2.2) +
+        E(14, 54, 8, 3.6, '#c8a878', 1.4, 0.85) + E(8, 51, 4, 2.4, '#d8c098', 1.2, 0.7) +
+        limb('M31,37 L23,45 L13,46', '#2a2230') +
+        limb('M36,24 L28,29 L23,26', cloak) +
+        P('M33,19 C38,16 44,18 45,23 L39,38 L28,38 Z', c.cel(cloak), 2.2) +
+        S('M41,22 L33,36', dk(cloak, 0.4), 1.4, 0.8) +
+        limb('M32,37 L41,43 L44,53 L50,53', '#2a2230') +
+        limb('M40,24 L47,30 L53,27', cloak) + C(53.6, 26.6, 2.6, skin, 1.6) +
+        P('M38,8 C44,6 50,10 50,16 C50,21 46,23 42,22 C38,21 35,17 36,12 Z', c.cel('#4a3c58'), 2.2) +
+        P('M43,13 C46,13 48,15 48,17 C46,19 44,19 42.6,17.4 Z', skin, 1.4) + S('M44.6,15.6 L47.4,15.6', OL, 1.4) +
+        P('M38,9 C33,9 29,12 27,16 C31,15 34,15 36,16 Z', '#4a3c58', 1.6) +
+        sparkle(58, 10, 2.6, '#fffbe0') + sparkle(56, 46, 2.2, '#fffbe0'));
     },
     /* shaman: a red-skinned face in profile roaring forward, a heartbeat line and red speed streaks tearing past */
     bloodlust: function (c) {
