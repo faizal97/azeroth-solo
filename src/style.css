@@ -599,6 +599,11 @@ img { max-width: 100%; display: block; }
 /* quest marks (qmark in ui.js): drawn glyphs sized by height; the gold ones glow */
 img.qm { display: inline-block; width: auto; height: 1.3em; vertical-align: -.3em; }
 img.qm.new, img.qm.ready { filter: drop-shadow(0 0 3px rgba(255, 209, 0, .6)); }
+/* a main-story quest's mark sits on a crest (v10.8): a little wider; the quest page and the tracker say so too */
+img.qm.main { height: 1.35em; }
+.q-main { display: flex; align-items: center; gap: 4px; margin: -2px 0 6px; font: 700 13px var(--body); color: #8a1a10; }
+.q-main img.qm { height: 18px; }
+.tracker img.qm.tq { height: 13px; vertical-align: -2px; margin-right: 3px; }
 .row .ic img.qm, .mcard .ic img.qm { width: auto; height: 26px; object-fit: contain; margin: auto; }
 .mcard .ic { display: grid; place-items: center; }
 .sprite .np img.qm { width: auto; height: 18px; margin-right: 2px; transform: none; animation: none; }

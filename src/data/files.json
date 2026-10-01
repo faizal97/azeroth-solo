@@ -49,5 +49,6 @@
   "lore_places.js",
   "lore_books.js",
   "lore_quests.js",
+  "main_story.js",
   "finalize.js"
 ]

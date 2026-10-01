@@ -127,6 +127,14 @@ if (D.TRIALSWORN_MONTHS) {
   if (left < 1) err(`Trialsworn: no monthly cloak planned for next month: add a palette in art.js and a name in D.TRIALSWORN_MONTHS`);
   else if (left < 3) { warn.push(`Trialsworn: monthly cloaks planned for only ${left} more month(s)`); console.log(`  NOTE: Trialsworn monthly cloaks are planned for only ${left} more month(s); add the next ones (art.js palette + D.TRIALSWORN_MONTHS)`); }
 }
+// main-story marks (v10.8): every quest that plays a main-story scene (not a Legend's) carries main: true
+{
+  let CSX = null; try { globalThis.window = globalThis.window || globalThis; require('../src/cutscene.js'); CSX = globalThis.CS; } catch (e) { warn.push('cutscenes not loaded for the main-story check: ' + e.message); }
+  if (CSX) for (const c of CSX.CHAPTERS) {
+    if (!c.quest || c.legend) continue;
+    for (const q of [].concat(c.quest)) if (D.QUESTS[q] && !D.QUESTS[q].main) err(`main-story scene '${c.id}' plays after '${q}', which is not marked main: true (src/data/main_story.js)`);
+  }
+}
 // music (v10.8): every track a zone, place or activity names must be composed (audio/out/music.json)
 {
   const mj = require('path').join(__dirname, '..', 'audio', 'out', 'music.json'), tracks = require('fs').existsSync(mj) ? JSON.parse(require('fs').readFileSync(mj, 'utf8')) : null;

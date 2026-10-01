@@ -972,6 +972,13 @@
     if (qs.some((q) => q.st === 'active')) return '…';
     return '';
   };
+  // is the quest behind this person's mark main story (v10.8)? decided in the mark's own order: a hand-in, a new quest,
+  // then one in progress
+  G.npcMarkMain = function (npc) {
+    const qs = G.npcQuests(npc);
+    for (const st of ['complete', 'available', 'active']) { const m = qs.filter((q) => q.st === st); if (m.length) return m.some((q) => D.QUESTS[q.qid] && D.QUESTS[q.qid].main); }
+    return false;
+  };
   G.accept = function (qid) {
     const P = G.S.player;
     if (Object.keys(P.quests).length >= 20) return toast('Your quest log is full.');
