@@ -710,17 +710,7 @@
       emit('invite', { guild: g, guildName: B.GUILDS[g], from: inviter.name });
     }
   }
-  function questKeys() {
-    const P = G.S.player, out = new Set();
-    for (const qid in P.quests) {
-      if (G.questComplete(qid)) continue;
-      for (const o of D.QUESTS[qid].objs) {
-        if (o.type === 'kill') out.add(o.mob);
-        if (o.type === 'collect') for (const k in D.MOBS) if ((D.MOBS[k].qdrops || []).some((d) => d[0] === o.item)) out.add(k);
-      }
-    }
-    return out;
-  }
+  const questKeys = () => G.questMobs();
   G.joinGuild = function (g) {
     const S = G.S;
     S.player.guild = g;
@@ -960,6 +950,10 @@
     });
   };
   G.questComplete = function (qid) { return G.questProgress(qid).every((p) => p.have >= p.n); };
+  // the objectives still to do in your quests: a kill or collect you have finished is no longer one (v10.9)
+  G.openObjectives = function () { const P = G.S.player, out = []; for (const qid in P.quests) for (const p of G.questProgress(qid)) if (p.have < p.n) out.push({ qid, o: p.o }); return out; };
+  // the monsters those objectives need: what you still have to kill, or kill for a drop
+  G.questMobs = function () { const out = new Set(); for (const { o } of G.openObjectives()) { if (o.type === 'kill') out.add(o.mob); if (o.type === 'collect') for (const k in D.MOBS) if ((D.MOBS[k].qdrops || []).some((d) => d[0] === o.item)) out.add(k); } return out; };
   G.npcQuests = function (npc) {
     const out = [];
     for (const qid in D.QUESTS) {

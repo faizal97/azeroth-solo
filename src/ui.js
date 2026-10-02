@@ -1144,17 +1144,8 @@
     const r = { alive: 0, fight: 1, tapped: 2, dead: 3 }[m.state] || 4;
     return r * 10 + (questMobKeys().has(m.key) ? 0 : 1);
   }
-  function questMobKeys() {
-    const P = G.S.player, out = new Set(window.SOC ? SOC.taskMobs() : []);
-    for (const qid in P.quests) {
-      if (G.questState(qid) === 'complete') continue;
-      for (const o of D.QUESTS[qid].objs) {
-        if (o.type === 'kill') out.add(o.mob);
-        if (o.type === 'collect') for (const k in D.MOBS) if ((D.MOBS[k].qdrops || []).some((d) => d[0] === o.item)) out.add(k);
-      }
-    }
-    return out;
-  }
+  // the monsters your quests still need (an objective you have finished no longer marks its monster) and your accepted tasks
+  function questMobKeys() { const out = G.questMobs(); for (const k of (window.SOC ? SOC.taskMobs() : [])) out.add(k); return out; }
   // finished quests first (the ones to hand in), the rest in the order you took them
   const readyFirst = (qs) => qs.filter((q) => G.questState(q) === 'complete').concat(qs.filter((q) => G.questState(q) !== 'complete'));
   function tracker(p, all) {

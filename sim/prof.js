@@ -195,6 +195,15 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
   console.log(`Expert pace, ${g} + ${c}: level 45 with ${g} ${gs}, ${c} ${cs}`);
   ok(gs >= 200 && cs >= 195, `${g} + ${c} reach Expert's top by level 45 (${gs}, ${cs})`);
 }
+// quest marks (v10.9 fix): once a kill objective is done, its monster is no longer one your quests need
+{
+  G.newGame({ name: 'Q', cls: 'warrior', race: 'human' }); const P = G.S.player;
+  const [qid, Q] = Object.entries(D.QUESTS).find(([, X]) => X.objs.filter((o) => o.type === 'kill').length >= 2 && !X.group);
+  const ks = Q.objs.map((o, i) => [o, i]).filter(([o]) => o.type === 'kill');
+  P.quests[qid] = { prog: Q.objs.map(() => 0) }; P.quests[qid].prog[ks[0][1]] = ks[0][0].n;
+  const m = G.questMobs();
+  ok(!m.has(ks[0][0].mob) && m.has(ks[1][0].mob), `a finished kill objective no longer marks its monster (${qid}: ${ks[0][0].mob} done, ${ks[1][0].mob} still needed)`);
+}
 // ---- Fishing and Cooking (v10.9, docs/plans/2026-10-02-fishing-cooking.md)
 // secondary skills: on top of two professions
 {

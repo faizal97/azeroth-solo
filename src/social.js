@@ -182,10 +182,9 @@
   function questTarget() {
     const P = G.S.player;
     const opts = [];
-    for (const qid in P.quests) {
-      if (G.questComplete(qid)) continue;
+    for (const { qid, o } of G.openObjectives()) { // only what you still have to kill (v10.9)
       const Q = D.QUESTS[qid]; if (Q.group || Q.dungeon) continue;
-      for (const o of Q.objs) if (o.type === 'kill') { const pl = Object.keys(D.PLACES).find((k) => (D.PLACES[k].mobs || []).some((m) => m[0] === o.mob)); if (pl && G.canReach(P.place, pl)) opts.push({ qid, mob: o.mob, place: pl }); }
+      if (o.type === 'kill') { const pl = Object.keys(D.PLACES).find((k) => (D.PLACES[k].mobs || []).some((m) => m[0] === o.mob)); if (pl && G.canReach(P.place, pl)) opts.push({ qid, mob: o.mob, place: pl }); }
     }
     return opts.length ? pick(opts) : null;
   }
