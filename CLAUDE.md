@@ -61,6 +61,7 @@ Smoke-test on the emulator (AVD `Medium_Phone_API_36.0`). Its software renderer 
   - Status: `status: discussion` (still being decided by Faizal or the game designer) → `status: ready` (decided, the developer can take it) → `status: in progress` → `status: in beta` (built, QA checks it on the beta) → closed (released, or decided against with a comment).
   - Move the status label as the issue moves; `thread` stays on parked dev work as well.
   - **Whose turn:** exactly one `needs:` label. `needs: game designer` (a design decision is waiting), `needs: developer` (build, fix or check), `needs: qa` (test it). Whoever finishes their part moves it to the next one: the game designer decides → `needs: developer`; developer ships a beta → `needs: qa`; QA finds it broken → `needs: developer`, or it works → close it. Each session starts with `gh issue list --label "needs: <its role>"`.
+- **Which beta:** the game designer puts each decided issue in a milestone named after its beta (`v10.9.0-beta.6`, `v10.9.0-beta.7` …); an issue with no milestone is not planned for a beta yet. The developer works on the lowest open beta milestone first and ships that beta when every issue in it is fixed on main (`gh api repos/faizal97/realm-of-loner/milestones --jq '.[] | "\(.title): \(.open_issues) open"'`), then closes the milestone. Shipping still waits for Faizal's go.
 - The repo is public: nothing private in an issue.
 
 **Roles (since 2026-10-02):** Faizal runs separate sessions, and they talk through these issues, not through each other's chat.
