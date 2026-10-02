@@ -479,6 +479,9 @@ img { max-width: 100%; display: block; }
 .cs-who { font: 15px var(--display); color: var(--gold); letter-spacing: .03em; }
 .cs-tap { font: 600 12px var(--body); color: #6f6553; font-style: normal; margin-top: 6px; }
 .cs-skip { position: absolute; top: 10px; right: 12px; z-index: 2; min-height: 36px; padding: 0 14px; border: 1px solid #5c4526; border-radius: 3px; color: #cdbf9f; background: rgba(0,0,0,.5); font: 700 13px var(--body); }
+.cs-skip { transition: opacity .3s, color .2s, border-color .2s; }
+.cs-skip.wait { opacity: .35; }
+.cs-skip.armed { color: #f3d27a; border-color: #b8913c; background: rgba(40,28,8,.85); }
 .cs-p { position: absolute; bottom: -8px; width: 4px; height: 4px; border-radius: 50%; animation: csRise 4s linear infinite; }
 .cs-p.embers { background: #ffb24a; box-shadow: 0 0 6px #ff7a1a; }
 .cs-p.snow { background: #fff; top: -8px; bottom: auto; animation-name: csFall; opacity: .85; }

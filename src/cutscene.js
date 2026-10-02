@@ -641,9 +641,28 @@
       let shotIdx = -1, timers = [], anims = [], skipShot = null, done = false;
       const fill = (t) => t.replace('{name}', env.name).replace('{zone}', env.zone);
       const clear = () => { timers.forEach(clearTimeout); timers = []; anims.forEach((a) => { try { a.finish(); } catch (e) { } }); anims = []; };
-      const finish = () => { if (done) return; done = true; clear(); wrap.classList.add('cs-out'); setTimeout(() => wrap.remove(), 450); CS.playing = null; CS.music = null; if (env.setMusic) env.setMusic(null); resolve(); };
-      $('.cs-skip').addEventListener('click', (e) => { e.stopPropagation(); finish(); });
-      wrap.addEventListener('click', () => { if (skipShot) skipShot(); });
+      const finish = () => { if (done) return; done = true; clear(); clearTimeout(armTimer); wrap.classList.add('cs-out'); setTimeout(() => wrap.remove(), 450); CS.playing = null; CS.music = null; if (env.setMusic) env.setMusic(null); resolve(); };
+      // guard against stray taps: a cutscene often starts right after a tap on a dialog (whose close button sits where
+      // Skip is), so taps are ignored at first, Skip asks for a second tap, and a shot needs a moment before a tap moves on
+      const t0 = performance.now(), GRACE = 1500, SHOT_GRACE = 600, ARM = 3000;
+      let shotAt = t0, armed = 0, armTimer = null;
+      const skipBtn = $('.cs-skip'); skipBtn.classList.add('wait');
+      setTimeout(() => skipBtn.classList.remove('wait'), GRACE);
+      const disarm = () => { armed = 0; clearTimeout(armTimer); skipBtn.classList.remove('armed'); skipBtn.textContent = 'Skip'; };
+      skipBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const now = performance.now();
+        if (now - t0 < GRACE) return;
+        if (armed && now - armed < ARM) { clearTimeout(armTimer); return finish(); }
+        armed = now; skipBtn.classList.add('armed'); skipBtn.textContent = 'Tap again to skip';
+        clearTimeout(armTimer); armTimer = setTimeout(disarm, ARM);
+      });
+      wrap.addEventListener('click', () => {
+        const now = performance.now();
+        if (now - t0 < GRACE || now - shotAt < SHOT_GRACE) return;
+        if (armed) disarm();
+        if (skipShot) skipShot();
+      });
       const titleEl = $('.cs-title'); titleEl.textContent = ch.title; titleEl.classList.add('show');
       setTimeout(() => titleEl.classList.remove('show'), 2600);
 
@@ -670,7 +689,7 @@
       }
       function next() {
         clear();
-        shotIdx++;
+        shotIdx++; shotAt = performance.now();
         if (shotIdx >= ch.shots.length) return finish();
         const shot = ch.shots[shotIdx];
         // swap backdrop and actors
