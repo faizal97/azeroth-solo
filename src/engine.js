@@ -68,6 +68,7 @@
     if (RP.intPct) s.int = Math.round(s.int * (1 + RP.intPct / 100));
     if (RP.dodge) s.dodge += RP.dodge;
     if (s.bear) { s.sta = Math.round(s.sta * 1.25); s.armor = Math.round(s.armor * 2.8); }
+    if (s.bonusArmor) { s.armor += s.bonusArmor; delete s.bonusArmor; }
     s.maxHp = Math.max(20, C.baseHp + s.sta * 10 + (L - 1) * C.hpPerLvl);
     if (RP.hpPct) s.maxHp = Math.round(s.maxHp * (1 + RP.hpPct / 100));
     if (TM.pct.hp) s.maxHp = Math.round(s.maxHp * (1 + TM.pct.hp / 100));
@@ -225,7 +226,8 @@
   E.recalc = function (u, first) {
     if (flat(u)) return;
     const extra = {};
-    for (const a of u.auras) { if (a.stats) for (const k in a.stats) extra[k] = (extra[k] || 0) + a.stats[k]; if (a.bear) extra.bear = 1; }
+    // an elixir's armour is bonus armour: bear form does not multiply it (v10.9, the modest edge)
+    for (const a of u.auras) { if (a.stats) for (const k in a.stats) { const kk = k === 'armor' && a.id === 'elixir' ? 'bonusArmor' : k; extra[kk] = (extra[kk] || 0) + a.stats[k]; } if (a.bear) extra.bear = 1; }
     const oldMax = u.maxHp;
     u.st = E.statsFor(u.char, extra);
     u.maxHp = u.st.maxHp;

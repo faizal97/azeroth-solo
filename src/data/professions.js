@@ -191,8 +191,8 @@
   D.item('elixir_minor_fortitude', { name: 'Elixir of Minor Fortitude', slot: 'elixir', q: 1, lvl: 2, icon: 'elixir_gold', buff: { sta: 3 }, sell: 20 });
   D.item('elixir_wisdom', { name: 'Elixir of Wisdom', slot: 'elixir', q: 1, lvl: 10, icon: 'elixir_green', buff: { int: 6 }, sell: 40 });
   D.item('elixir_fortitude', { name: 'Elixir of Fortitude', slot: 'elixir', q: 2, lvl: 18, icon: 'elixir_gold', buff: { sta: 8 }, sell: 80 });
-  D.item('rough_sharpening_stone', { name: 'Rough Sharpening Stone', slot: 'stone', q: 1, lvl: 1, icon: 'sharpening_stone', wdmg: 2, sell: 3 });
-  D.item('coarse_sharpening_stone', { name: 'Coarse Sharpening Stone', slot: 'stone', q: 1, lvl: 15, icon: 'weightstone', wdmg: 4, sell: 10 });
+  D.item('rough_sharpening_stone', { name: 'Rough Sharpening Stone', slot: 'stone', q: 1, lvl: 1, icon: 'sharpening_stone', wdmg: 1, sell: 3 });
+  D.item('coarse_sharpening_stone', { name: 'Coarse Sharpening Stone', slot: 'stone', q: 1, lvl: 15, icon: 'weightstone', wdmg: 2, sell: 10 });
   D.item('light_armor_kit', { name: 'Light Armor Kit', slot: 'kit', q: 1, lvl: 1, icon: 'armor_kit', kit: 8, sell: 10 });
   D.item('medium_armor_kit', { name: 'Medium Armor Kit', slot: 'kit', q: 1, lvl: 15, icon: 'armor_kit', kit: 16, sell: 30 });
   // bags: equip up to four; each adds its slots to your 16-slot backpack
@@ -205,25 +205,25 @@
   D.item('greater_mana_potion', { name: 'Greater Mana Potion', slot: 'potion', q: 1, lvl: 40, icon: 'potion_blue', mana: [700, 900], sell: 160 });
   D.item('superior_healing_potion', { name: 'Superior Healing Potion', slot: 'potion', q: 1, lvl: 44, icon: 'potion_red', heal: [700, 900], sell: 170 });
   D.item('elixir_agility', { name: 'Elixir of Agility', slot: 'elixir', q: 1, lvl: 32, icon: 'elixir_green', buff: { agi: 12 }, sell: 110 });
-  D.item('elixir_greater_defense', { name: 'Elixir of Greater Defense', slot: 'elixir', q: 1, lvl: 34, icon: 'elixir_green', buff: { armor: 200 }, sell: 120 });
+  D.item('elixir_greater_defense', { name: 'Elixir of Greater Defense', slot: 'elixir', q: 1, lvl: 34, icon: 'elixir_green', buff: { armor: 60 }, sell: 120 });
   D.item('elixir_intellect', { name: 'Elixir of Intellect', slot: 'elixir', q: 1, lvl: 38, icon: 'elixir_gold', buff: { int: 12 }, sell: 140 });
-  D.item('elixir_ironhide', { name: 'Elixir of the Ironhide', slot: 'elixir', q: 2, lvl: 44, icon: 'elixir_gold', buff: { sta: 15, armor: 100 }, sell: 260 });
-  D.item('heavy_sharpening_stone', { name: 'Heavy Sharpening Stone', slot: 'stone', q: 1, lvl: 25, icon: 'sharpening_stone', wdmg: 6, sell: 25 });
-  D.item('embersilver_weightstone', { name: 'Embersilver Weightstone', slot: 'stone', q: 1, lvl: 35, icon: 'weightstone', wdmg: 7, sell: 45 });
+  D.item('elixir_ironhide', { name: 'Elixir of the Ironhide', slot: 'elixir', q: 2, lvl: 44, icon: 'elixir_gold', buff: { sta: 8, armor: 30 }, sell: 260 });
+  D.item('heavy_sharpening_stone', { name: 'Heavy Sharpening Stone', slot: 'stone', q: 1, lvl: 25, icon: 'sharpening_stone', wdmg: 3, sell: 25 });
+  D.item('embersilver_weightstone', { name: 'Embersilver Weightstone', slot: 'stone', q: 1, lvl: 35, icon: 'weightstone', wdmg: 3, sell: 45 });
   D.item('heavy_armor_kit', { name: 'Heavy Armor Kit', slot: 'kit', q: 1, lvl: 25, icon: 'armor_kit', kit: 24, sell: 70 });
   D.item('thick_armor_kit', { name: 'Thick Armor Kit', slot: 'kit', q: 1, lvl: 38, icon: 'armor_kit', kit: 32, sell: 120 });
   D.item('silk_bag', { name: 'Silk Bag', slot: 'bag', q: 1, lvl: 1, icon: 'bag_wool', bag: 10, sell: 400 });
   // Artisan (v10.9) consumables and bags (flasks: elixirs that last 2 hours and stay when you die)
   D.item('grand_healing_potion', { name: 'Grand Healing Potion', slot: 'potion', q: 1, lvl: 50, icon: 'potion_red', heal: [1000, 1300], sell: 220 });
   D.item('grand_mana_potion', { name: 'Grand Mana Potion', slot: 'potion', q: 1, lvl: 52, icon: 'potion_blue', mana: [1000, 1300], sell: 240 });
-  D.item('elixir_might', { name: 'Elixir of Might', slot: 'elixir', q: 1, lvl: 52, icon: 'elixir_gold', buff: { str: 18 }, sell: 200 });
-  D.item('elixir_swiftness', { name: 'Elixir of Swiftness', slot: 'elixir', q: 1, lvl: 53, icon: 'elixir_green', buff: { agi: 18 }, sell: 210 });
-  D.item('elixir_clarity', { name: 'Elixir of Clarity', slot: 'elixir', q: 1, lvl: 54, icon: 'elixir_gold', buff: { int: 18 }, sell: 220 });
-  D.item('flask_iron_wall', { name: 'Flask of the Iron Wall', slot: 'elixir', flask: true, q: 2, lvl: 60, icon: 'flask_iron_wall', buff: { sta: 30 }, sell: 600 });
-  D.item('flask_warpath', { name: 'Flask of the Warpath', slot: 'elixir', flask: true, q: 2, lvl: 60, icon: 'flask_warpath', buff: { str: 20, agi: 20 }, sell: 600 });
-  D.item('flask_stillmind', { name: 'Flask of the Stillmind', slot: 'elixir', flask: true, q: 3, lvl: 60, icon: 'flask_stillmind', buff: { int: 25, spi: 10 }, sell: 900 });
-  D.item('deepstone_whetstone', { name: 'Deepstone Whetstone', slot: 'stone', q: 1, lvl: 50, icon: 'deepstone_whetstone', wdmg: 9, sell: 70 });
-  D.item('hardhide_armor_kit', { name: 'Hardhide Armor Kit', slot: 'kit', q: 1, lvl: 50, icon: 'hardhide_armor_kit', kit: 40, sell: 180 });
+  D.item('elixir_might', { name: 'Elixir of Might', slot: 'elixir', q: 1, lvl: 52, icon: 'elixir_gold', buff: { str: 14 }, sell: 200 });
+  D.item('elixir_swiftness', { name: 'Elixir of Swiftness', slot: 'elixir', q: 1, lvl: 53, icon: 'elixir_green', buff: { agi: 14 }, sell: 210 });
+  D.item('elixir_clarity', { name: 'Elixir of Clarity', slot: 'elixir', q: 1, lvl: 54, icon: 'elixir_gold', buff: { int: 14 }, sell: 220 });
+  D.item('flask_iron_wall', { name: 'Flask of the Iron Wall', slot: 'elixir', flask: true, q: 2, lvl: 60, icon: 'flask_iron_wall', buff: { sta: 10 }, sell: 600 });
+  D.item('flask_warpath', { name: 'Flask of the Warpath', slot: 'elixir', flask: true, q: 2, lvl: 60, icon: 'flask_warpath', buff: { str: 8, agi: 8 }, sell: 600 });
+  D.item('flask_stillmind', { name: 'Flask of the Stillmind', slot: 'elixir', flask: true, q: 3, lvl: 60, icon: 'flask_stillmind', buff: { int: 16, spi: 8 }, sell: 900 });
+  D.item('deepstone_whetstone', { name: 'Deepstone Whetstone', slot: 'stone', q: 1, lvl: 50, icon: 'deepstone_whetstone', wdmg: 4, sell: 70 });
+  D.item('hardhide_armor_kit', { name: 'Hardhide Armor Kit', slot: 'kit', q: 1, lvl: 50, icon: 'hardhide_armor_kit', kit: 34, sell: 180 });
   D.item('duskweave_bag', { name: 'Duskweave Bag', slot: 'bag', q: 1, lvl: 1, icon: 'bag_duskweave', bag: 12, sell: 900 });
   D.item('starweave_bag', { name: 'Starweave Bag', slot: 'bag', q: 2, lvl: 1, icon: 'bag_starweave', bag: 14, sell: 2000 });
   D.BAG_SLOTS = 4;
@@ -248,18 +248,18 @@
   dish('peppered_steak', 'Peppered Steak', 32, { str: 8, sta: 6 }, 40);
   dish('smoked_cod', 'Smoked Cod', 37, null, 25);
   dish('seafarers_stew', "Seafarer's Stew", 38, { agi: 8, sta: 6 }, 50);
-  dish('stormback_tuna_steak', 'Stormback Tuna Steak', 40, { sta: 8, spi: 8 }, 60);
+  dish('stormback_tuna_steak', 'Stormback Tuna Steak', 40, { sta: 6, spi: 7 }, 60);
   dish('duskglass_feast', 'Duskglass Feast', 43, { int: 10, sta: 6 }, 150);
   // Artisan (v10.9): skill 225-300
   dish('ashgill_fillet', 'Ashgill Bass Fillet', 46, null, 30);
   dish('roast_haunch', 'Roast Marbled Haunch', 48, null, 32);
   dish('herring_pie', 'Frostscale Herring Pie', 52, null, 40);
-  dish('smokehouse_stew', 'Smokehouse Stew', 53, { str: 10, sta: 8 }, 70);
-  dish('spiced_haunch', 'Spiced Haunch Roast', 55, { agi: 10, sta: 8 }, 75);
+  dish('smokehouse_stew', 'Smokehouse Stew', 53, { str: 8, sta: 5 }, 70);
+  dish('spiced_haunch', 'Spiced Haunch Roast', 55, { agi: 9, sta: 5 }, 75);
   dish('trail_skewer', "Trailmaster's Skewer", 56, null, 45);
-  dish('marlin_steak', 'Thunderhead Marlin Steak', 57, { sta: 10, spi: 10 }, 90);
-  dish('koi_banquet', 'Starlit Koi Banquet', 59, { int: 12, sta: 8 }, 220);
-  dish('long_table_feast', 'Feast of the Long Table', 60, { str: 12, agi: 12, sta: 8 }, 260);
+  dish('marlin_steak', 'Thunderhead Marlin Steak', 57, { sta: 6, spi: 7 }, 90);
+  dish('koi_banquet', 'Starlit Koi Banquet', 59, { int: 11, sta: 6 }, 220);
+  dish('long_table_feast', 'Feast of the Long Table', 60, { str: 8, agi: 8, sta: 5 }, 260);
 
   // ---- crafted gear, on the same curve as random drops (G.genGear), with fixed stats
   const QM = [0.8, 1, 1.1, 1.22, 1.35];
