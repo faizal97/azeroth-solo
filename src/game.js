@@ -194,6 +194,12 @@
     const t = now();
     const away = Math.max(0, t - S.lastSeen);
     const report = { away, rested: 0, news: [], dings: 0, online: 0 };
+    // a battleground (issue #30): a finished one closes on a reload or after time away; one still going ends after
+    // 10 minutes away, with no Deserter and no Honor for the unfinished round (the same rule as a dungeon run)
+    if (S.bg && !(G.fight && G.fight.kind === 'bg') && (S.bg.phase === 'done' || away > 600000)) {
+      const A = D.ACTIVITIES[S.bg.act] || {}; S.bg = null; emit('instanceLeave', {});
+      sys(`You left ${(A.name || 'the battleground').replace(/^The /, 'the ')}.`);
+    }
     if (away > 120000) {
       const P = S.player;
       const need = D.XP_TO_LEVEL[P.level] || 1;
@@ -724,7 +730,7 @@
     nodesTick(id, W, t);
     // guild offer
     // it waits for a calm moment, like a party invite (issue #12: it opened mid-fight and a run went on without you)
-    if (S.flags.guildOfferAt && t >= S.flags.guildOfferAt && !S.flags.guildOffer && !G.fight && !S.run && !S.queue && !S.bg && !S.player.travel && !S.player.ghostUntil) {
+    if (S.flags.guildOfferAt && t >= S.flags.guildOfferAt && !S.flags.guildOffer && !G.fight && !S.run && !S.queue && !G.bgBusy() && !S.player.travel && !S.player.ghostUntil) {
       S.flags.guildOffer = true;
       const myF = (D.RACES[S.player.race] || {}).faction || 'alliance';
       const opts = B.GUILDS.map((x, i) => i).filter((i) => B.GUILD_FACTION[i] === myF);
@@ -2534,6 +2540,7 @@
     sys(`${C.name}: ${won ? 'victory' : draw ? 'a draw' : 'defeat'}, ${bg.score.us} to ${bg.score.them}. +${honor} Honor.`);
     emit('bgEnd', { result: bg.result }); emit('change'); G.save();
   }
+  G.bgBusy = () => !!(G.S.bg && G.S.bg.phase !== 'done'); // a finished battleground (the result screen) never blocks invites or groups (#30)
   G.leaveBg = function () { const S = G.S; if (!S.bg) return; if (G.fight && G.fight.kind === 'bg') return toast('Finish the fight first.'); S.bg = null; emit('instanceLeave', {}); emit('change'); G.save(); };
   G.bgStart = startBg; // sims
 
@@ -2562,7 +2569,8 @@
   // A group from chat (LFG post or guild request) summons you, like Help Wanted. opts: { leader, guild, soc }
   G.joinChatGroup = function (act, role, opts) {
     const S = G.S; opts = opts || {};
-    if (S.run || S.queue || S.bg || G.fight) { toast('Leave your current group first.'); return false; }
+    if (S.run || S.queue || G.bgBusy() || G.fight) { toast('Leave your current group first.'); return false; }
+    if (S.bg) G.leaveBg(); // the result screen of a finished battleground closes as you go
     if ((S.flags.deserterUntil || 0) > now()) { toast('You are a Deserter for a few more minutes.'); return false; }
     if (S.wparty) disbandParty('You left your party to join another group.');
     if (role && G.roles().includes(role)) S.player.role = role;
@@ -2885,7 +2893,8 @@
     if (why) return toast(why === 'hidden' ? 'Only for the other faction.' : why + '.');
     if (hard && !G.hardOpen(act)) return toast('Hard opens after a Normal clear at level ' + D.LEVEL_CAP + '.');
     if (S.wparty) disbandParty('You left your party to use the group finder.');
-    if (S.run || S.group || S.bg) return toast('Leave your current group first.');
+    if (S.run || S.group || G.bgBusy()) return toast('Leave your current group first.');
+    if (S.bg) G.leaveBg(); // a finished battleground's result closes as you queue
     const role = G.role();
     const wait = role === 'tank' ? rnd(4, 12) : role === 'healer' ? rnd(8, 20) : rnd(25, 70);
     S.queue = { act, since: now(), popAt: now() + wait * 1000, hard: hard || undefined };
