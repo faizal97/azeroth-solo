@@ -3554,6 +3554,487 @@
     var cl = m[1], e = m[2], h = m[3];
     GBACK['trialsworn_cloak_m' + m[0]] = twCloak({ lt: cl[0], cloth: cl[1], dk: cl[2], edge: e[0], hi: e[1], trim: e[2], frame: h[0], glass: [h[1], h[2], h[3]], sand: h[4] }, 0);
   });
+  /* ================= crafted looks (v10.9): the level-60 crafted sets, the Moonforged weapons and the profession keepsakes =================
+     Moonforged (blacksmithing, mail): pale moonsilver plates over dark duskiron mail, cool silver-blue glints, a crescent moon.
+     Wildrunner (leatherworking, leather): hard dark-brown hide, fur trim, moss-green ranger tones, stitched straps, a leaf.
+     Starweave (tailoring, cloth): a deep violet-blue robe and trousers with gold star embroidery.
+     The keepsakes are back looks like the Legend keepsakes (no stats): slung on the back, gold accents, a strap across the chest. */
+  var MF = { iron: '#373c50', ironDk: '#23273a', ring: '#151822', plate: '#e6ecf4', plateMd: '#b2bed2', plateDk: '#6f7c96', inlay: '#26305a', glow: '#86c4ff', pants: '#2e3346' };
+  function mfPlate(c) { return c.lg([[0, '#ffffff'], [0.35, MF.plate], [0.75, MF.plateMd], [1, MF.plateDk]], 0.2, 0, 0.8, 1); }
+  /* a crescent: outer radius r, opening toward angle rot (degrees, 0 = +x, -90 = up) */
+  function mfMoonD(x, y, r, rot) {
+    var a = (rot || 0) * Math.PI / 180, a1 = a - 0.96, a2 = a + 0.96, ri = r * 0.84;
+    var h1 = [x + Math.cos(a1) * r, y + Math.sin(a1) * r], h2 = [x + Math.cos(a2) * r, y + Math.sin(a2) * r];
+    return D`M${h1[0]},${h1[1]} A${r},${r} 0 1 0 ${h2[0]},${h2[1]} A${ri},${ri} 0 1 1 ${h1[0]},${h1[1]} Z`;
+  }
+  /* a four-point glint */
+  function mfGlint(x, y, s, col) {
+    var q = s * 0.2;
+    return F(D`M${x},${y - s} Q${x + q},${y - q} ${x + s},${y} Q${x + q},${y + q} ${x},${y + s} Q${x - q},${y + q} ${x - s},${y} Q${x - q},${y - q} ${x},${y - s} Z`, col || '#ffffff', 0.95);
+  }
+  /* a dark-blue inlaid disc with a glowing pale crescent in it */
+  function mfMoon(c, x, y, r, rot) {
+    return C(x, y, r * 1.9, c.rg([[0, MF.glow, 0.42], [1, MF.glow, 0]]), 0) +
+      C(x, y, r, c.rg([[0, '#41528e'], [1, '#1a2244']], 0.4, 0.35, 0.7), 1.2) +
+      P(mfMoonD(x + Math.cos(rot * Math.PI / 180) * r * 0.12, y + Math.sin(rot * Math.PI / 180) * r * 0.12, r * 0.74, rot), c.lg([[0, '#ffffff'], [0.6, '#dcefff'], [1, '#9ccaf4']], 0, 0, 1, 1), 0.7);
+  }
+  /* layered moonsilver pauldron: a lower lame under the main plate, rivets, a glint */
+  function mfPad(c, x, y, rx, front) {
+    var d = rsPadD(x, y, rx), d1 = rsPadD(x, y + 3.4, rx * 0.86);
+    return P(d1, c.cel(MF.plateMd), 1.5) + P(d, mfPlate(c), front ? 2 : 1.8) + S(rsPadRim(x, y, rx), MF.plateDk, 1.2, 0.9) +
+      S(D`M${x - rx * 0.6},${y - rx * 0.3} Q${x - rx * 0.15},${y - rx * 0.74} ${x + rx * 0.45},${y - rx * 0.55}`, '#ffffff', 1.1, 0.85) +
+      C(x - rx * 0.55, y + 1.6, 0.9, MF.inlay, 0) + C(x, y + 2.6, 0.9, MF.inlay, 0) + C(x + rx * 0.55, y + 1.6, 0.9, MF.inlay, 0) +
+      mfGlint(x + rx * 0.38, y - rx * 0.36, front ? 2.4 : 1.9);
+  }
+  /* Moonforged hauberk: duskiron mail, a moonsilver breastplate with a crescent-moon inlay, a moonsilver fauld band, a gorget */
+  function mfChest(o) {
+    o.torsoC = MF.iron; o.sleeve = MF.ironDk;
+    o.belt = MF.ironDk; o.buckle = MF.plateMd;
+    o.pads = function (c, g) { return mfPad(c, g.bSh[0] - 1, g.sy + 2, 8.5, 0) + mfPad(c, g.fSh[0] + 1, g.sy + 3, 10, 1); };
+    o.torsoFx = function (c, g) {
+      var cl = c.clip(g.torsoD), k = g.b.shW / 16;
+      var a = tq(g, -1.4, -0.3), b = tq(g, 1.4, -0.3), b1 = tq(g, 1.4, 0.5), m = tq(g, 0.3, 0.64), a1 = tq(g, -1.4, 0.52);
+      var edge = D`M${b1[0]},${b1[1]} Q${m[0] + 9},${m[1] + 1} ${m[0]},${m[1]} Q${m[0] - 10},${m[1] + 1} ${a1[0]},${a1[1]}`;
+      var bp = D`M${a[0]},${a[1]} L${b[0]},${b[1]} L${b1[0]},${b1[1]} Q${m[0] + 9},${m[1] + 1} ${m[0]},${m[1]} Q${m[0] - 10},${m[1] + 1} ${a1[0]},${a1[1]} Z`;
+      var f0 = tq(g, -1.4, 0.76), f1 = tq(g, 1.4, 0.74), f2 = tq(g, 1.4, 0.88), f3 = tq(g, -1.4, 0.9);
+      var kl = tq(g, 0.32, 0.04), kl2 = tq(g, 0.3, 0.58), mo = tq(g, -0.12, 0.3), g1 = tq(g, -0.72, 0.14), g2 = tq(g, 0.5, 0.46);
+      return mailFx(c, g, MF.ring) + CG(
+        F(D`M${f0[0]},${f0[1]} L${f1[0]},${f1[1]} L${f2[0]},${f2[1]} L${f3[0]},${f3[1]} Z`, mfPlate(c)) +
+        S(D`M${f0[0]},${f0[1]} L${f1[0]},${f1[1]} M${f3[0]},${f3[1]} L${f2[0]},${f2[1]}`, OL, 1.2) +
+        F(bp, mfPlate(c)) + S(edge, OL, 1.8) + S(edge, MF.plateDk, 0.7, 0.8) +
+        S(D`M${kl[0]},${kl[1]} L${kl2[0]},${kl2[1]}`, MF.plateDk, 1, 0.6) +
+        mfMoon(c, mo[0], mo[1], 5.6 * k, -40) + mfGlint(g1[0], g1[1], 2.4) + mfGlint(g2[0], g2[1], 1.8), cl);
+    };
+    o.gTorso = function (c, g) {
+      var d = collarD(g, 1);
+      return P(d, mfPlate(c), 1.7) + mfGlint(g.scx + 6, g.sy - 1.5, 1.6, MF.glow);
+    };
+  }
+  /* Moonforged legguards: duskiron mail rings, a moonsilver thigh plate, a crescent knee cop, a shin greave */
+  function mfLegs(c, g, L, front) {
+    var w = g.b.legW, ml = '', K = L[1], F2 = L[2];
+    var l0 = Math.sqrt(Math.pow(L[1][0] - L[0][0], 2) + Math.pow(L[1][1] - L[0][1], 2)), l1 = Math.sqrt(Math.pow(F2[0] - K[0], 2) + Math.pow(F2[1] - K[1], 2));
+    [[L[0], L[1]], [L[1], L[2]]].forEach(function (s) {
+      [0.22, 0.4, 0.58, 0.76, 0.92].forEach(function (u) {
+        var a = lpt(s[0], s[1], u, -w * 0.42), m = lpt(s[0], s[1], u + 0.07, 0), b = lpt(s[0], s[1], u, w * 0.42);
+        ml += D`M${a[0]},${a[1]} Q${m[0]},${m[1]} ${b[0]},${b[1]}`;
+      });
+    });
+    var pc = front ? c.lg([[0, MF.plate], [0.55, MF.plateMd], [1, MF.plateDk]], 0, 0, 1, 0) : c.cel(dk(MF.plateMd, 0.12));
+    var th = quadOn(L[0], L[1], 3, l0 - 4, -w * 0.56, w * 0.12), gr = quadOn(K, F2, 5, l1 - 3, -w * 0.56, w * 0.14);
+    var kc = lptA(K, F2, 0.5, -w * 0.12), ang = Math.atan2(F2[1] - K[1], F2[0] - K[0]) * 180 / Math.PI;
+    var kd = mfMoonD(kc[0], kc[1], w * 0.52, ang - 90 - 25);
+    return S(ml, MF.ring, 0.9, 0.85) + P(th, pc, 1.3) + P(gr, pc, 1.3) +
+      S(pl([lptA(L[0], L[1], 4, -w * 0.3), lptA(L[0], L[1], l0 - 5, -w * 0.3)]) + pl([lptA(K, F2, 6, -w * 0.3), lptA(K, F2, l1 - 4, -w * 0.3)]), '#ffffff', 0.8, front ? 0.55 : 0.25) +
+      P(kd, front ? mfPlate(c) : pc, 1.3) + (front ? mfGlint(kc[0] - w * 0.2, kc[1] - 1, 1.8, '#ffffff') : '');
+  }
+  GCHEST.moonforged_chest = mfChest;
+  GLEGS.moonforged_legs = { pants: MF.pants, fx: mfLegs };
+
+  /* ---- Wildrunner ---- */
+  var WR = { hide: '#4a3324', hideDk: '#2e2016', hideLt: '#6e4e34', moss: '#5a6a32', mossDk: '#38441e', mossLt: '#8a9c52', fur: '#c4a47a', furDk: '#8a6a46', strap: '#2a1c12', stitch: '#dccaa0', bone: '#ece0c4', pants: '#3a2a1e' };
+  /* a band of fur along the curve A -> M -> B: a smooth edge on one side, tufts hanging on the other (the left of travel) */
+  function wrFurD(A, M, B, h, n) {
+    var top = [], bot = [], i;
+    for (i = 0; i <= n * 2; i++) {
+      var t = i / (n * 2), u = 1 - t;
+      var x = u * u * A[0] + 2 * u * t * M[0] + t * t * B[0], y = u * u * A[1] + 2 * u * t * M[1] + t * t * B[1];
+      var dx = 2 * u * (M[0] - A[0]) + 2 * t * (B[0] - M[0]), dy = 2 * u * (M[1] - A[1]) + 2 * t * (B[1] - M[1]), l = Math.sqrt(dx * dx + dy * dy) || 1;
+      var nx = -dy / l, ny = dx / l, kk = i % 2 ? 1 : 0.3;
+      top.push([x - nx * h * 0.4, y - ny * h * 0.4]); bot.push([x + nx * h * kk, y + ny * h * kk]);
+    }
+    return pl(top) + pl(bot.reverse()).replace(/^M/, 'L') + 'Z';
+  }
+  function wrFur(c, A, M, B, h, n) { var d = wrFurD(A, M, B, h, n); return P(d, c.lg([[0, lt(WR.fur, 0.3)], [0.6, WR.fur], [1, WR.furDk]], 0, 0, 0, 1), 1.3); }
+  /* a leaf: base (x,y), length s, pointing along angle a (degrees) */
+  function wrLeafD(x, y, s, a) {
+    var r = a * Math.PI / 180, ux = Math.cos(r), uy = Math.sin(r), vx = -uy, vy = ux, w = s * 0.36;
+    var tip = [x + ux * s, y + uy * s], c1 = [x + ux * s * 0.3 + vx * w, y + uy * s * 0.3 + vy * w], c2 = [x + ux * s * 0.3 - vx * w, y + uy * s * 0.3 - vy * w];
+    return { d: D`M${x},${y} Q${c1[0]},${c1[1]} ${tip[0]},${tip[1]} Q${c2[0]},${c2[1]} ${x},${y} Z`, vein: D`M${x},${y} L${x + ux * s * 0.85},${y + uy * s * 0.85}` };
+  }
+  function wrPad(c, x, y, rx, front) {
+    var d = rsPadD(x, y, rx);
+    return P(d, c.cel(WR.hide), front ? 1.9 : 1.7) + CG(S(stitchLine(x - rx * 0.6, y - rx * 0.4, x + rx * 0.6, y - rx * 0.4, 2.6), WR.stitch, 0.8, 0.9), c.clip(d)) +
+      wrFur(c, [x - rx - 0.5, y + 2.4], [x, y + 6.4], [x + rx + 0.5, y + 2.4], front ? 4.4 : 3.6, front ? 5 : 4);
+  }
+  /* Wildrunner jerkin: dark hide, a moss-green yoke over the shoulders cut into leaf points and stitched along the edge,
+     bone lacing up the front, a pale leaf sprig tooled on the chest, a fur collar, fur-trimmed pauldrons */
+  function wrChest(o) {
+    o.torsoC = WR.hide; o.sleeve = WR.hideDk;
+    o.belt = WR.strap; o.buckle = WR.bone;
+    o.pads = function (c, g) { return wrPad(c, g.bSh[0] - 1, g.sy + 2, 7.5, 0) + wrPad(c, g.fSh[0] + 1, g.sy + 3, 9, 1); };
+    o.torsoFx = function (c, g) {
+      var cl = c.clip(g.torsoD), k = g.b.shW / 16, n = 5, i;
+      var yk = tpl(g, [[1.5, -0.4], [-1.5, -0.4], [-1.5, 0.36]]), ed = [], lc = '';
+      for (i = 0; i < n; i++) {
+        var u0 = -1.5 + 3 * i / n, u1 = -1.5 + 3 * (i + 1) / n, um = (u0 + u1) / 2, tp = tq(g, um, 0.54), c1 = tq(g, u0 + 0.12, 0.47), c2 = tq(g, u1 - 0.12, 0.47), e = tq(g, u1, 0.36);
+        yk += D` Q${c1[0]},${c1[1]} ${tp[0]},${tp[1]} Q${c2[0]},${c2[1]} ${e[0]},${e[1]}`;
+        ed.push([tp, e]);
+      }
+      var yd = yk + 'Z', st = yk.slice(yk.indexOf(' Q'));
+      st = D`M${tq(g, -1.5, 0.36)[0]},${tq(g, -1.5, 0.36)[1]}` + st;
+      for (i = 0; i < 3; i++) {
+        var p0 = tq(g, 0.1, 0.56 + i * 0.13), p1 = tq(g, 0.34, 0.62 + i * 0.13), q0 = tq(g, 0.34, 0.56 + i * 0.13), q1 = tq(g, 0.1, 0.62 + i * 0.13);
+        lc += D`M${p0[0]},${p0[1]} L${p1[0]},${p1[1]} M${q0[0]},${q0[1]} L${q1[0]},${q1[1]} `;
+      }
+      var sl = tq(g, 0.22, 0.4), sl1 = tq(g, 0.24, 1);
+      var lp = tq(g, -0.5, 0.88), lf = wrLeafD(lp[0], lp[1], 12 * k, -70), lf2 = wrLeafD(lp[0], lp[1], 8 * k, -120), lf3 = wrLeafD(lp[0], lp[1], 7 * k, -30);
+      var sm = tq(g, -0.8, 0.3), sm1 = tq(g, -0.86, 1);
+      return CG(S(stitchLine(sm[0], sm[1], sm1[0], sm1[1], 3), WR.stitch, 0.7, 0.6) +
+        S(D`M${sl[0]},${sl[1]} L${sl1[0]},${sl1[1]}`, OL, 1.6) + S(lc, OL, 2.2) + S(lc, WR.bone, 1) +
+        P(lf2.d, c.cel(WR.mossLt), 1) + P(lf3.d, c.cel(WR.mossLt), 1) + P(lf.d, c.cel('#d0dc92'), 1.1) + S(lf.vein, WR.mossDk, 0.7) +
+        P(yd, c.cel('#647834'), 1.6) + G(S(st, WR.mossLt, 0.9, 0.9), 'translate(0,-2.2)'), cl);
+    };
+    o.gTorso = function (c, g) {
+      var x = g.scx, y = g.sy;
+      return wrFur(c, [x - 13, y + 3], [x - 2, y - 8], [x + 13, y - 1], 5.4, 6);
+    };
+  }
+  /* Wildrunner leggings: dark hide, moss cross-lacing up the shin, a stitched knee pad, a thigh strap, a fur cuff */
+  function wrLegs(c, g, L, front) {
+    var w = g.b.legW, K = L[1], F2 = L[2], lc = '';
+    for (var i = 0; i < 4; i++) {
+      var u0 = 0.22 + i * 0.17, u1 = u0 + 0.17;
+      var p = lpt(K, F2, u0, -w * 0.46), q = lpt(K, F2, u1, w * 0.46), p2 = lpt(K, F2, u0, w * 0.46), q2 = lpt(K, F2, u1, -w * 0.46);
+      lc += pl([p, q]) + pl([p2, q2]);
+    }
+    var kp = quadOn(K, F2, -4, 4.5, -w * 0.56, w * 0.28), ts = pl([lpt(L[0], L[1], 0.5, -w * 0.52), lpt(L[0], L[1], 0.58, w * 0.52)]);
+    var bk = lpt(L[0], L[1], 0.53, -w * 0.18), cf = lpt(K, F2, 0.86, 0);
+    var col = front ? WR.moss : WR.mossDk;
+    return S(lc, OL, 2.6) + S(lc, col, 1.4) +
+      S(ts, OL, 3.6) + S(ts, WR.strap, 2.2) + R(bk[0] - 1.6, bk[1] - 1.6, 3.2, 3.2, front ? '#b08a4a' : '#7a5e34', 0.9) +
+      P(kp, c.cel(front ? WR.hideLt : WR.hide), 1.3) + CG(S(stitchLine.apply(null, lptA(K, F2, -3, -w * 0.3).concat(lptA(K, F2, 3.5, -w * 0.3), [2.2])), WR.stitch, 0.7, 0.9), c.clip(kp)) +
+      wrFur(c, lptA(K, F2, (Math.sqrt(Math.pow(F2[0] - K[0], 2) + Math.pow(F2[1] - K[1], 2))) * 0.82, -w * 0.62), cf, lptA(K, F2, (Math.sqrt(Math.pow(F2[0] - K[0], 2) + Math.pow(F2[1] - K[1], 2))) * 0.84, w * 0.62), front ? 3.6 : 3, 3);
+  }
+  GCHEST.wildrunner_chest = wrChest;
+  GLEGS.wildrunner_legs = { pants: WR.pants, fx: wrLegs };
+  /* the Wildrunner cloak: a moss-green ranger's cloak, the hem cut into leaves, the pointed hood down on the back,
+     a fur strip over the shoulder, an antler toggle at the throat */
+  GBACK.wildrunner_cloak = {
+    back: function (c, g) {
+      var K = rsCape(g, function (H0, H1, at) {
+        var s = '', n = 6;
+        for (var i = 0; i < n; i++) {
+          var t0 = i / n, t1 = (i + 1) / n, tip = at((t0 + t1) / 2, 7), c1 = at(t0 + 0.1 / n, 6), c2 = at(t1 - 0.1 / n, 6);
+          s += D` Q${c1[0]},${c1[1]} ${tip[0]},${tip[1]} Q${c2[0]},${c2[1]} ${at(t1)[0]},${at(t1)[1]}`;
+        }
+        return s;
+      }), d = K.d, cl = c.clip(d), vn = '';
+      for (var i = 0; i < 6; i++) { var p = K.at((i + 0.5) / 6, -2), q = K.at((i + 0.5) / 6, 5); vn += D`M${p[0]},${p[1]} L${q[0]},${q[1]} `; }
+      var sl = stitchLine(K.at(0.02, -5)[0], K.at(0.02, -5)[1], K.at(0.5, -5)[0], K.at(0.5, -5)[1], 3.2) + stitchLine(K.at(0.5, -5)[0], K.at(0.5, -5)[1], K.at(0.98, -5)[0], K.at(0.98, -5)[1], 3.2);
+      return P(d, c.lg([[0, WR.mossLt], [0.35, WR.moss], [1, WR.mossDk]], 0.2, 0, 0.8, 1)) +
+        CG(capeFolds(g, WR.mossDk) + S(K.hem, WR.mossDk, 3.2, 0.8) + S(vn, WR.mossDk, 1, 0.8) + S(sl, WR.stitch, 0.8, 0.7), cl) + P(d, 'none', 2.5);
+    },
+    torso: function (c, g) {
+      var x = g.scx, y = g.sy, col = WR.moss;
+      /* the hood down: a bunched fold on the upper back, its point falling down the back */
+      var hd = D`M${x + 1},${y - 2} C${x - 4},${y - 12} ${x - 19},${y - 13} ${x - 23},${y - 4} C${x - 25},${y + 3} ${x - 24},${y + 12} ${x - 27},${y + 20} C${x - 19},${y + 15} ${x - 12},${y + 10} ${x - 8},${y + 8} C${x - 4},${y + 6} ${x},${y + 4} ${x + 1},${y - 2} Z`;
+      return P(hd, c.cel(col), 2.2) +
+        P(D`M${x - 4},${y - 3} C${x - 8},${y - 8} ${x - 16},${y - 8} ${x - 18},${y - 2} C${x - 16},${y + 3} ${x - 10},${y + 3} ${x - 4},${y - 3} Z`, WR.mossDk, 1.4) +
+        S(D`M${x - 22},${y + 2} C${x - 21},${y + 8} ${x - 23},${y + 13} ${x - 25},${y + 17}`, WR.mossDk, 1.1, 0.8) +
+        P(collarD(g), c.cel(col), 1.8);
+    },
+    front: function (c, g) {
+      var x = g.scx + 7.5, y = g.sy + 1;
+      return drape(c, g, WR.moss, WR.mossDk, function (c, g) { var bx = g.bSh[0]; return S(stitchLine(bx - 9, g.sy + 11, bx + 4, g.sy - 3, 2.8), WR.stitch, 0.8, 0.8); }) +
+        S(D`M${x - 3},${y + 1} L${x + 3.2},${y - 0.6} M${x - 0.6},${y + 0.4} L${x - 1.6},${y - 2.6} M${x + 1.6},${y - 0.2} L${x + 1.4},${y - 3}`, OL, 2.8) +
+        S(D`M${x - 3},${y + 1} L${x + 3.2},${y - 0.6} M${x - 0.6},${y + 0.4} L${x - 1.6},${y - 2.6} M${x + 1.6},${y - 0.2} L${x + 1.4},${y - 3}`, WR.bone, 1.5);
+    }
+  };
+
+  /* ---- Starweave ---- */
+  var SW = { robe: '#2c2a74', robeDk: '#18164a', robeLt: '#4c48a8', line: '#100e34', gold: '#ecc458', goldDk: '#9a7420', lining: '#8a7ad8', pants: '#25235e' };
+  function swStar(x, y, r) { return star(x, y, 5, r, r * 0.45, 0); }
+  function swSpark(x, y, r) { return star(x, y, 4, r, r * 0.3, 0); }
+  /* gold stars scattered in the clip area: pts are [x, y, r, kind (0 star, 1 sparkle)] */
+  function swStars(pts, col) {
+    var d = '', e = '';
+    pts.forEach(function (p) { if (p[3]) e += swSpark(p[0], p[1], p[2]); else d += swStar(p[0], p[1], p[2]); });
+    return (d ? P(d, col || SW.gold, 0.7) : '') + (e ? F(e, '#fff2c0', 0.95) : '');
+  }
+  function swPads(c, g) {
+    var out = '';
+    [[g.bSh[0] - 1, g.sy + 2, 8, 0], [g.fSh[0] + 1, g.sy + 3, 9.5, 1]].forEach(function (p) {
+      var x = p[0], y = p[1], rx = p[2], d = rsPadD(x, y, rx);
+      out += P(d, c.cel(SW.robeLt)) + S(rsPadRim(x, y, rx), OL, 3) + S(rsPadRim(x, y, rx), SW.gold, 1.5) +
+        (p[3] ? P(swStar(x + 0.5, y - 1.4, 3), SW.gold, 0.8) : C(x, y - 1, 1.2, SW.gold, 0));
+    });
+    return out;
+  }
+  /* Starweave robe: deep violet-blue, gold star embroidery scattered thickest at the hem, a gold constellation across the
+     skirt, a gold-edged V yoke with a large star, a hem band lined with small stars */
+  function swChest(o) {
+    o.torsoC = SW.robe; o.sleeve = '#29276c'; o.bell = SW.robeDk;
+    o.robe = SW.robe;
+    o.belt = SW.robeDk; o.buckle = SW.gold;
+    o.pads = swPads;
+    o.robeFx = function (c, g) {
+      var fy = g.fy, hy = g.hy, x0 = g.wl - 12, x1 = g.wr + 14, R_ = rnd(181), pts = [], i;
+      for (i = 0; i < 9; i++) pts.push([x0 + 4 + R_() * (x1 - x0 - 8), hy + 8 + Math.pow(R_(), 0.6) * (fy - hy - 22), 1.6 + R_() * 1.2, i % 3 === 2 ? 1 : 0]);
+      var hem = D`M${g.wl - 14},${fy - 7} Q${g.sx},${fy - 2.5} ${g.wr + 14},${fy - 7}`, band = D`M${g.wl - 16},${fy - 12} Q${g.sx},${fy - 7.5} ${g.wr + 16},${fy - 12} L${g.wr + 16},${fy + 4} L${g.wl - 16},${fy + 4} Z`;
+      var hs = [];
+      for (i = 0; i < 6; i++) { var t = (i + 0.5) / 6, hx = g.wl - 10 + (g.wr - g.wl + 22) * t; hs.push([hx, fy - 9.5 + Math.sin(Math.PI * t) * 3.2 - 1.6, 1.4, 1]); }
+      var cs = [[g.sx - 6, hy + 10], [g.sx + 3, hy + 16], [g.sx - 1, hy + 24], [g.sx + 8, hy + 27]], cl = pl(cs);
+      return CG(F(g.robeD, c.lg([[0, SW.robeDk, 0], [0.55, SW.robeDk, 0], [1, SW.robeDk, 0.85]])) + F(band, SW.line, 0.85) +
+        S(hem, OL, 3) + S(hem, SW.gold, 1.6) + S(D`M${g.wl - 15},${fy - 12.5} Q${g.sx},${fy - 8} ${g.wr + 15},${fy - 12.5}`, SW.gold, 0.9, 0.9) +
+        S(cl, SW.gold, 0.6, 0.75) + swStars(pts) + swStars(hs) + swStars(cs.map(function (p, j) { return [p[0], p[1], j === 2 ? 2.2 : 1.6, j % 2]; })), c.clip(g.robeD));
+    };
+    o.torsoFx = function (c, g) {
+      var cl = c.clip(g.torsoD), k = g.b.shW / 16, st = tq(g, 0.36, 0.4), s1 = tq(g, -0.5, 0.3), s2 = tq(g, -0.2, 0.72), s3 = tq(g, 0.85, 0.75);
+      var v = D`M${g.scx - 8},${g.sy + 0.5} L${g.scx + 4},${g.sy + 10} L${g.scx + 13},${g.sy + 1}`;
+      return CG(F(g.torsoD, c.lg([[0, SW.robeDk, 0.65], [0.55, SW.robeDk, 0], [1, SW.robeDk, 0]])) +
+        F(v + D` L${g.scx + 13},${g.sy - 6} L${g.scx - 8},${g.sy - 6} Z`, SW.lining, 0.9) + S(v, OL, 3.2) + S(v, SW.gold, 1.6) +
+        S(pl([s1, st, s2]), SW.gold, 0.6, 0.7) +
+        C(st[0], st[1], 7 * k, c.rg([[0, '#fff2c0', 0.5], [1, SW.gold, 0]]), 0) + P(star(st[0], st[1], 8, 5 * k, 2 * k, 0), c.rg([[0, '#fffbe6'], [0.6, SW.gold], [1, SW.goldDk]]), 0.9) +
+        swStars([[s1[0], s1[1], 1.8, 0], [s2[0], s2[1], 1.5, 1], [s3[0], s3[1], 1.7, 0]]), cl);
+    };
+  }
+  /* Starweave trousers: deep violet-blue, a gold star at the knee, gold embroidered cuffs, small stars down the shin */
+  function swLegs(c, g, L, front) {
+    var w = g.b.legW, K = L[1], F2 = L[2], l1 = Math.sqrt(Math.pow(F2[0] - K[0], 2) + Math.pow(F2[1] - K[1], 2));
+    var kc = lptA(K, F2, 0.5, -w * 0.08), c0 = pl([lptA(K, F2, l1 - 3.4, -w * 0.52), lptA(K, F2, l1 - 3.4, w * 0.52)]), c1 = pl([lptA(K, F2, l1 - 6, -w * 0.52), lptA(K, F2, l1 - 6, w * 0.52)]);
+    var s1 = lptA(L[0], L[1], 7, -w * 0.1), s2 = lptA(K, F2, l1 * 0.55, -w * 0.12);
+    return S(c0, SW.gold, 1.5, front ? 1 : 0.7) + S(c1, SW.gold, 0.8, front ? 0.9 : 0.6) +
+      (front ? P(swStar(kc[0], kc[1], 3.2), SW.gold, 0.8) + F(swSpark(s1[0], s1[1], 1.6) + swSpark(s2[0], s2[1], 1.4), '#fff2c0', 0.95) : F(swStar(kc[0], kc[1], 2.4), SW.goldDk, 0.9));
+  }
+  GCHEST.starweave_chest = swChest;
+  GLEGS.starweave_legs = { pants: SW.pants, fx: swLegs };
+
+  /* ---- Moonforged weapons: grip at the origin, blade up (-y), the same frame as the other weapon looks ---- */
+  /* Moonforged Blade: a moonsilver blade with a faint moonlight fuller, a crescent guard with its horns raised, a duskiron
+     grip and a full-moon pommel */
+  function mfBlade(c) {
+    var bd = 'M-3.6,-9 C-4.6,-24 -4.4,-38 -3.2,-47 L0.2,-56 L3.4,-47 C4.6,-38 4.6,-24 3.6,-9 Z';
+    return rsHalo(c, 0, -32, 9, 26, MF.glow, 0.28) +
+      P(bd, c.lg([[0, '#ffffff'], [0.5, MF.plate], [1, MF.plateDk]], 0, 0, 1, 0), 2) +
+      CG(S('M0,-12 L0,-46', '#5a7ac0', 2.2, 0.7) + S('M0,-12 L0,-46', '#e4f4ff', 0.8) + S('M-2.6,-11 C-3.4,-24 -3.2,-38 -2.2,-46', '#ffffff', 0.8, 0.8), c.clip(bd)) +
+      rsGrip(c, 2.4, -4, 10, MF.ironDk, MF.plateMd) +
+      P(mfMoonD(0, -11, 9, -90), c.lg([[0, '#ffffff'], [0.45, MF.plate], [1, MF.plateDk]], 0, 0, 0, 1), 1.6) +
+      C(0, -5.6, 1.9, c.rg([[0, '#ffffff'], [0.5, '#9ad0ff'], [1, '#3a5aa8']], 0.4, 0.35, 0.7), 1) +
+      C(0, 12.6, 4.4, c.rg([[0, MF.glow, 0.5], [1, MF.glow, 0]]), 0) + C(0, 12.6, 2.8, c.rg([[0, '#ffffff'], [0.6, '#dcefff'], [1, '#8aa8d0']], 0.4, 0.35, 0.7), 1.4) +
+      mfGlint(-1.6, -40, 2.2) + mfGlint(7, -18.5, 1.6);
+  }
+  /* Moonforged Warhammer: a moonsilver head with a flat striking face, a crescent beak behind, a top spike, the moon inlay
+     on its socket; duskiron haft with moonsilver langets */
+  function mfHammer(c) {
+    var fc = 'M3,-47 L11,-48.5 L12.5,-46.5 L12.5,-31.5 L11,-29.5 L3,-31 Z';
+    var bk = 'M-3,-44.5 C-9,-44.5 -15.5,-41 -18.5,-31.5 C-14.5,-35 -9.5,-37 -3,-35 Z';
+    return rsHalo(c, 0, -38, 15, 15, MF.glow, 0.3) +
+      P('M-2.2,11 L-2.4,-30 L2.4,-30 L2.2,11 Z', c.lg([[0, '#5a6280'], [0.5, MF.iron], [1, MF.ironDk]], 0, 0, 1, 0), 2) +
+      P('M-3,-31 L-2.4,-20 L2.4,-20 L3,-31 Z', c.cel(MF.plateMd), 1.3) +
+      rsGrip(c, 2.5, -1, 10, MF.ironDk, MF.plateMd) + P('M-3,10 L3,10 L2.2,13.6 L0,16 L-2.2,13.6 Z', c.cel(MF.plateMd), 1.4) +
+      P('M-2.4,-48 L0,-56.5 L2.4,-48 Z', mfPlate(c), 1.4) +
+      P(bk, c.lg([[0, '#ffffff'], [0.5, MF.plate], [1, MF.plateDk]], 0, 0, 0.6, 1), 1.7) +
+      P(fc, mfPlate(c), 1.8) + S('M11,-47.4 L11,-30.6', MF.plateDk, 0.9, 0.8) + S('M4.4,-45.6 L4.4,-32.4', '#ffffff', 0.9, 0.8) +
+      P('M-4.4,-48 L4.4,-48 L4.4,-30 L-4.4,-30 Z', c.cel(MF.iron), 1.8) +
+      mfMoon(c, 0, -39, 3.3, -40) + mfGlint(9, -50, 2) + mfGlint(-14, -40, 1.6);
+  }
+  var GWCR = { moonforged_blade: mfBlade, moonforged_hammer: mfHammer };
+  var CRKIND = { moonforged_blade: 'blade', moonforged_hammer: 'hammer' };
+  Object.keys(GWCR).forEach(function (k) { GW[k] = GWCR[k]; WP[k] = GWCR[k]; GKIND[k] = CRKIND[k]; });
+
+  /* ---- profession keepsakes: back looks with no stats. Each item is drawn in its own frame and slung on the back;
+     the torso part is the carrying strap across the chest (front shoulder to back hip) with a gold buckle ---- */
+  var KG = '#e2b648', KGD = '#9a7420';
+  function ksStrapD(g) { return D`M${g.scx + 9},${g.sy - 1} Q${g.scx - 1},${(g.sy + g.hy) / 2 - 2} ${g.scx - 12},${g.hy - 3}`; }
+  function ksStrapAt(g, t) {
+    var a = [g.scx + 9, g.sy - 1], m = [g.scx - 1, (g.sy + g.hy) / 2 - 2], b = [g.scx - 12, g.hy - 3], u = 1 - t;
+    return [u * u * a[0] + 2 * u * t * m[0] + t * t * b[0], u * u * a[1] + 2 * u * t * m[1] + t * t * b[1]];
+  }
+  function ksStrap(c, g, col, buckle) {
+    var d = ksStrapD(g), m = ksStrapAt(g, 0.5);
+    return S(d, OL, 4.4) + S(d, col, 2.6) + (buckle === false ? '' : R(m[0] - 2.3, m[1] - 2.3, 4.6, 4.6, c.cel(KG), 1.1) + R(m[0] - 0.9, m[1] - 0.9, 1.8, 1.8, col, 0));
+  }
+  function ksOn(g, dx, dy, rot, s) { return 'translate(' + r1(g.bSh[0] + dx) + ',' + r1(g.sy + dy) + ') rotate(' + rot + ')' + (s && s !== 1 ? ' scale(' + s + ')' : ''); }
+  function ksWood(c, col) { return c.lg([[0, lt(col, 0.28)], [0.5, col], [1, dk(col, 0.4)]], 0, 0, 1, 0); }
+  /* Deepdelver's Pick: a master's pickaxe, a mithril-blue double-pointed head with a gold socket and a ruby, gold-banded haft */
+  function ksPick(c) {
+    var hd = 'M-23,-30 C-15,-42 -7,-46.5 0,-46.5 C7,-46.5 15,-42 23,-30 C15,-36 7,-38.4 0,-38.4 C-7,-38.4 -15,-36 -23,-30 Z';
+    return P('M-2.3,28 L-2.7,-40 L2.7,-40 L2.3,28 Z', ksWood(c, '#7a5230'), 1.9) +
+      P('M-2.6,14 L2.6,14 L2.4,26 L-2.4,26 Z', c.cel('#4a2e1a'), 1.4) + S('M-2.5,16 L2.5,17.6 M-2.5,19.4 L2.5,21 M-2.5,22.8 L2.5,24.4', '#2a1a0e', 0.9) +
+      R(-3.2, 11, 6.4, 3, c.cel(KG), 1.2) + R(-3, -22, 6, 2.8, c.cel(KG), 1.2) + P('M-2.6,28 L2.6,28 L0,32.5 Z', c.cel(KG), 1.2) +
+      P(hd, c.lg([[0, '#eef6ff'], [0.4, '#8eaad0'], [1, '#34486c']], 0, 0, 0, 1), 2) +
+      S('M-17,-35.4 C-11,-40.4 -5,-42.2 0,-42.2 C5,-42.2 11,-40.4 17,-35.4', KG, 0.8, 0.9) + S('M-20,-32.6 C-13,-40.6 -6,-44.6 0,-44.8', '#ffffff', 0.8, 0.7) +
+      P('M-4.4,-47.5 L4.4,-47.5 L4,-36 L-4,-36 Z', c.cel(KG), 1.5) + S('M-4.2,-44.5 L4.2,-44.5 M-4,-39 L4,-39', KGD, 0.7) +
+      C(0, -41.8, 1.9, c.rg([[0, '#ffc0b0'], [0.5, '#c8202a'], [1, '#4a0810']], 0.4, 0.35, 0.7), 1);
+  }
+  GBACK.deepdelvers_pick = {
+    back: function (c, g) { return G(ksPick(c), ksOn(g, -6, 20, -30, 1.05)); },
+    torso: function (c, g) { return ksStrap(c, g, '#6a4428'); }
+  };
+  /* Herbwise Satchel: a tooled leather satchel, its flap thrown open and herbs spilling out (leaves, a lavender sprig,
+     a yellow bloom, red berries), gold clasp and gold-stitched trim */
+  function ksSatchel(c) {
+    var bag = 'M-12,-6 C-12,-9 12,-9 12,-6 L12.6,9 C12.6,12.6 -12.6,12.6 -12.6,9 Z', out = '';
+    var lv = [[-6, -6, 13, -112, '#4e9a34'], [1, -7, 15, -84, '#3e7e2a'], [6, -6, 12, -58, '#5aa83c'], [-9, -5, 10, -140, '#3e7e2a'], [9, -5, 10, -30, '#4e9a34']];
+    lv.forEach(function (l) { var f = wrLeafD(l[0], l[1], l[2], l[3]); out += P(f.d, c.cel(l[4]), 1.2) + S(f.vein, dk(l[4], 0.4), 0.7); });
+    /* lavender sprig */
+    out += S('M-2,-6 C-3,-12 -4,-17 -5,-22', '#3e6a2a', 1.4);
+    [[-3.4, -12], [-4.2, -15.5], [-4.8, -19], [-5.2, -22.4]].forEach(function (p) { out += E(p[0], p[1], 1.6, 2.2, c.cel('#9a6ad8'), 0.8, null, -12); });
+    /* yellow bloom and red berries */
+    out += S('M4,-6 C5,-11 6.6,-14 8.4,-16', '#3e6a2a', 1.3);
+    [0, 72, 144, 216, 288].forEach(function (a) { var r = a * Math.PI / 180; out += C(8.4 + Math.cos(r) * 2.2, -16 + Math.sin(r) * 2.2, 1.7, c.cel('#f2d24a'), 0.8); });
+    out += C(8.4, -16, 1.2, '#c86a1a', 0.6) + C(-10.4, -9.8, 1.6, c.cel('#d0302a'), 0.8) + C(-12.4, -7.8, 1.4, c.cel('#d0302a'), 0.8);
+    out += P(bag, c.cel('#8a5a30'), 2) + CG(S('M-10.4,-3.6 L-10.4,9 C-10.4,10.6 10.4,10.6 10.4,9 L10.4,-3.6', KG, 0.7, 0.9) + F('M-12,2 L12,2 L12,12 L-12,12 Z', '#000000', 0.12), c.clip(bag));
+    /* open flap hanging down the front, a drooping leaf over its edge, the gold clasp */
+    out += P('M-12,-6.4 L12,-6.4 L10.6,1.6 C6,4 -6,4 -10.6,1.6 Z', c.cel('#a06a3a'), 1.6) + S('M-10,-4.6 L10,-4.6', KG, 0.7, 0.85);
+    var dl = wrLeafD(5, -5, 10, 70);
+    out += P(dl.d, c.cel('#5aa83c'), 1.1) + S(dl.vein, '#2e5a1e', 0.7);
+    return out + P('M-2.4,1 L2.4,1 L2.4,4.8 L0,6.6 L-2.4,4.8 Z', c.cel(KG), 1.1) + C(0, 3, 0.9, '#3e7e2a', 0);
+  }
+  GBACK.herbwise_satchel = {
+    back: function (c, g) { return G(ksSatchel(c), ksOn(g, -10, 10, -14, 1.1)); },
+    torso: function (c, g) { return ksStrap(c, g, '#7a5030'); }
+  };
+  /* Hide-Hunter's Pelt: a dire wolf's pelt over the shoulders, short at the back with a shaggy hem and the hind paws
+     hanging, the wolf's head lying on the upper back, a forepaw over the front shoulder, a gold chain and clasps */
+  var KPELT = '#8e7a62', KPELTD = '#4a3a2c', KPELTL = '#d2c2a6';
+  GBACK.hide_hunters_pelt = {
+    back: function (c, g) {
+      var b = g.b, scx = g.scx, sy = g.sy, hy = g.hy, A = [scx - b.shW - 2, sy + 6], H0 = [scx + b.shW - 3, sy + 8], H1 = [scx - b.shW - 12, hy + 4];
+      var d = D`M${A[0]},${A[1]} Q${scx - b.shW},${sy - 5} ${scx - 3},${sy - 4} L${scx + b.shW - 3},${sy - 1} L${H0[0]},${H0[1]}`, n = 8, i;
+      for (i = 0; i < n; i++) {
+        var t0 = i / n, t1 = (i + 1) / n, tm = (t0 + t1) / 2;
+        var pm = [H0[0] + (H1[0] - H0[0]) * tm, H0[1] + (H1[1] - H0[1]) * tm + 4], p1 = [H0[0] + (H1[0] - H0[0]) * t1, H0[1] + (H1[1] - H0[1]) * t1];
+        d += D` L${pm[0]},${pm[1]} L${p1[0]},${p1[1]}`;
+      }
+      d += D` C${scx - b.shW - 14},${hy - 10} ${scx - b.shW - 8},${sy + 18} ${A[0]},${A[1]} Z`;
+      var paw = function (x, y) { return P(D`M${x - 2.6},${y - 6} C${x - 3.4},${y} ${x - 3},${y + 4} ${x},${y + 4.6} C${x + 3},${y + 4} ${x + 3.4},${y} ${x + 2.6},${y - 6} Z`, c.cel(KPELT), 1.6) + S(D`M${x - 1.8},${y + 4.4} l-0.4,2 M${x},${y + 4.8} l0,2.2 M${x + 1.8},${y + 4.4} l0.4,2`, KG, 1.2); };
+      return paw(H1[0] + 6, H1[1] + 4) + paw(H1[0] + 14, H1[1] + 1) +
+        P(d, c.cel(KPELT)) + CG(S(D`M${scx - 4},${sy - 3} Q${scx - b.shW - 6},${sy + 10} ${H1[0] + 3},${H1[1] - 2}`, KPELTD, 5, 0.6) +
+          S(D`M${H0[0] - 8},${H0[1] + 2} L${H1[0] + 2},${H1[1] + 2}`, KPELTL, 2.4, 0.5), c.clip(d)) + P(d, 'none', 2.4);
+    },
+    torso: function (c, g) {
+      var x = g.scx - 3, y = g.sy - 3, col = KPELT;
+      /* the wolf's head on the upper back, long muzzle pointing down the back, ears up, eyes shut */
+      var hd = D`M${x + 3},${y - 1} C${x + 1},${y - 10} ${x - 13},${y - 12} ${x - 17},${y - 4} L${x - 25},${y + 7} C${x - 26},${y + 10} ${x - 23},${y + 12} ${x - 20},${y + 10} L${x - 10},${y + 9} C${x - 3},${y + 8} ${x + 3},${y + 5} ${x + 3},${y - 1} Z`;
+      return P(D`M${x - 13},${y - 7} L${x - 16},${y - 17} L${x - 8},${y - 9} Z M${x - 4},${y - 8} L${x - 3},${y - 18} L${x + 2},${y - 8} Z`, c.cel(KPELTD), 1.6) +
+        P(hd, c.cel(col), 2.2) +
+        CG(F(D`M${x - 26},${y + 6} L${x - 12},${y + 3} L${x + 4},${y + 6} L${x + 4},${y + 14} L${x - 26},${y + 14} Z`, KPELTL, 0.85) + S(D`M${x - 14},${y - 4} q2,2 4,0`, '#241c14', 1.2), c.clip(hd)) +
+        E(x - 24.4, y + 8.6, 1.8, 1.4, '#1e1610', 0) + C(x - 9, y + 1, 1.6, c.cel(KG), 1) +
+        P(collarD(g), c.cel(col), 1.8);
+    },
+    front: function (c, g) {
+      var bx = g.bSh[0] - 1, by = g.sy + 2, cx = g.scx + 8, cy = g.sy + 2;
+      return drape(c, g, KPELT, KPELTL) +
+        P(D`M${bx - 8},${by + 12} C${bx - 10},${by + 18} ${bx - 9},${by + 22} ${bx - 5},${by + 23} C${bx - 1},${by + 23} ${bx},${by + 18} ${bx - 2},${by + 12} Z`, c.cel(KPELT), 1.8) +
+        S(D`M${bx - 7.5},${by + 23} l-0.6,2.4 M${bx - 5},${by + 23.5} l0,2.6 M${bx - 2.6},${by + 23} l0.6,2.4`, KG, 1.3) +
+        S(D`M${bx + 3},${by - 1} Q${(bx + cx) / 2 + 2},${cy + 5} ${cx},${cy}`, OL, 2.4) + S(D`M${bx + 3},${by - 1} Q${(bx + cx) / 2 + 2},${cy + 5} ${cx},${cy}`, KG, 1.2) +
+        C(cx, cy, 2.6, c.cel(KG), 1.2) + C(cx, cy, 1, '#c8202a', 0);
+    }
+  };
+  /* Master Smith's Hammer: a big sledge with a dark steel head, gold-banded faces and a gold anvil mark, a leather-wrapped
+     haft with gold rings */
+  function ksHammer(c) {
+    var hd = 'M-14,-51 L14,-51 L15,-49 L15,-34 L14,-32 L-14,-32 L-15,-34 L-15,-49 Z';
+    return P('M-2.6,28 L-3,-34 L3,-34 L2.6,28 Z', ksWood(c, '#6e4a2c'), 1.9) +
+      P('M-3,10 L3,10 L2.8,26 L-2.8,26 Z', c.cel('#4a2e1a'), 1.4) + S('M-2.9,12 L2.9,13.8 M-2.9,15.8 L2.9,17.6 M-2.9,19.6 L2.9,21.4 M-2.9,23.4 L2.9,25', '#2a1a0e', 0.9) +
+      R(-3.6, 7.4, 7.2, 3, c.cel(KG), 1.2) + R(-3.6, -26, 7.2, 3, c.cel(KG), 1.2) + C(0, 29, 2.8, c.cel(KG), 1.2) +
+      P(hd, c.lg([[0, '#9aa4b0'], [0.45, '#5a6270'], [1, '#2a2e36']], 0, 0, 0, 1), 2) +
+      F('M-14,-50 L-9,-50 L-9,-33 L-14,-33 Z M9,-50 L14,-50 L14,-33 L9,-33 Z', '#c8d0da', 0.55) +
+      P('M-10.4,-51.6 L-7,-51.6 L-7,-31.4 L-10.4,-31.4 Z M7,-51.6 L10.4,-51.6 L10.4,-31.4 L7,-31.4 Z', c.cel(KG), 1.2) +
+      P('M0,-46.6 L4.6,-41.5 L0,-36.4 L-4.6,-41.5 Z', c.cel(KG), 1.1) + C(0, -41.5, 1.4, c.rg([[0, '#ffc0b0'], [0.5, '#c8202a'], [1, '#4a0810']], 0.4, 0.35, 0.7), 0.7) +
+      S('M-13,-49 L-13,-34', '#ffffff', 0.8, 0.6);
+  }
+  GBACK.master_smiths_hammer = {
+    back: function (c, g) { return G(ksHammer(c), ksOn(g, -5, 22, -26, 1)); },
+    torso: function (c, g) { return ksStrap(c, g, '#5a3a22'); }
+  };
+  /* Tanner's Rolled Hides: a thick bedroll of rolled leather hides (dark hide wrapped round tan), the spiral showing at the
+     top end, two straps with gold buckles, a fur edge peeking out */
+  function ksHides(c) {
+    var body = 'M-9,-16 L9,-16 L9,16 C9,20.4 -9,20.4 -9,16 Z', sp = '', i, n = 34;
+    for (i = 0; i <= n; i++) { var t = i / n, a = t * Math.PI * 5.4, r = 0.8 + t * 7.8; sp += (i ? 'L' : 'M') + r1(Math.cos(a) * r) + ',' + r1(-16 + Math.sin(a) * r * 0.5); }
+    var strap = function (y) { return P(D`M-9.4,${y - 2} Q0,${y + 2.6} 9.4,${y - 2} L9.4,${y + 1.6} Q0,${y + 6.2} -9.4,${y + 1.6} Z`, c.cel('#3a2414'), 1.3) + R(-2.4, y - 0.4, 4.8, 4.4, c.cel(KG), 1) + R(-0.9, y + 0.9, 1.8, 1.8, '#3a2414', 0); };
+    return P('M-8,18 L-11.4,24.6 L-7,22.4 L-6,27 L-3,21.6 L0,26 L2,20.6 Z', c.cel('#cfae80'), 1.2) +
+      P(body, c.lg([[0, '#c47e50'], [0.45, '#94522e'], [1, '#4e2814']], 0, 0, 1, 0), 2) +
+      P('M8.6,-13 C12.6,-7 12.8,2 10.4,9.6 L8.8,9.4 Z', c.cel('#b0683c'), 1.3) + S(stitchLine(10.2, -8, 10.6, 6, 2.6), '#f0d8a8', 0.6, 0.8) +
+      E(0, -16, 9, 4.6, c.cel('#e6c290'), 1.8) + S(sp, '#6a3418', 1.5) + S(sp, '#fff0d0', 0.5, 0.5) +
+      strap(-8) + strap(7);
+  }
+  GBACK.tanners_rolled_hides = {
+    back: function (c, g) { return G(ksHides(c), ksOn(g, -9, 18, -24, 1.05)); },
+    torso: function (c, g) { return ksStrap(c, g, '#4a2e18'); }
+  };
+  /* Weaver's Spindle: a tall carved spindle, a fat cop of crimson thread wound on it, a gold-rimmed whorl, a gold hook at
+     the top with a loose thread trailing */
+  function ksSpindle(c) {
+    var cop = 'M0,-24 C9.6,-18 11.2,1 1,12 L-1,12 C-11.2,1 -9.6,-18 0,-24 Z', wd = '', wd2 = '';
+    for (var y = -20; y < 12; y += 3.2) { wd += D`M-11,${y + 4} L11,${y - 2} `; wd2 += D`M-11,${y + 5.4} L11,${y - 0.6} `; }
+    return P('M-1.6,30 L-1.9,-40 L1.9,-40 L1.6,30 Z', ksWood(c, '#8a5a30'), 1.6) +
+      P(cop, c.lg([[0, '#f06a7a'], [0.5, '#c02a44'], [1, '#6a0e22']], 0, 0, 1, 0), 2) + CG(S(wd, '#ff9aa8', 0.8, 0.7) + S(wd2, '#5a0a1a', 0.6, 0.6), c.clip(cop)) +
+      R(-2.2, 18, 4.4, 2.4, c.cel(KG), 1) + C(0, 31, 2, c.cel(KG), 1.1) +
+      E(0, -31, 10, 3.6, c.cel('#7a4a28'), 1.8) + S('M-9,-30.4 C-4.6,-27.8 4.6,-27.8 9,-30.4', KG, 1.3) + C(0, -32.4, 1.6, c.cel(KG), 0.9) +
+      S('M0,-40 L0,-44 C0,-47.4 4,-47.4 4,-44.4', OL, 2.6) + S('M0,-40 L0,-44 C0,-47.4 4,-47.4 4,-44.4', KG, 1.3) +
+      S('M4,-44.4 C6,-40 3.6,-36 6.6,-31.6 C9.6,-27 8,-21 11,-16', '#c02a44', 1.1, 0.95);
+  }
+  GBACK.weavers_spindle = {
+    back: function (c, g) { return G(ksSpindle(c), ksOn(g, -9, 18, -22, 1)); },
+    torso: function (c, g) { return ksStrap(c, g, '#6a4a6a'); }
+  };
+  /* Alchemist's Bandolier: a gold-studded strap across the chest with glowing vials in its loops, and a holster on the back
+     with three tall flasks */
+  var KVIAL = [['#7aff6a', '#2a9a2a'], ['#6ad8ff', '#1a6ab0'], ['#ff7a8a', '#b01a3a'], ['#d8a0ff', '#6a2aa8']];
+  function ksVial(c, x, y, s, v, tall) {
+    var h = tall ? 1.6 : 1, b = D`M${x - 1.2 * s},${y - 3.4 * s * h} L${x + 1.2 * s},${y - 3.4 * s * h} L${x + 1.2 * s},${y - 1.4 * s} C${x + 2.8 * s},${y - 0.6 * s} ${x + 2.8 * s},${y + 3 * s} ${x},${y + 3 * s} C${x - 2.8 * s},${y + 3 * s} ${x - 2.8 * s},${y - 0.6 * s} ${x - 1.2 * s},${y - 1.4 * s} Z`;
+    return C(x, y + 0.6 * s, 4.6 * s, c.rg([[0, v[0], 0.6], [1, v[0], 0]]), 0) +
+      P(b, c.lg([[0, '#ffffff'], [0.3, v[0]], [1, v[1]]], 0.2, 0, 0.8, 1), 1.1) + S(D`M${x - 1.2 * s},${y + 0.6 * s} L${x - 0.9 * s},${y + 2 * s}`, '#ffffff', 0.6 * s, 0.8) +
+      R(x - 1.6 * s, y - 4.6 * s * h, 3.2 * s, 1.4 * s, c.cel(KG), 0.8);
+  }
+  GBACK.alchemists_bandolier = {
+    back: function (c, g) {
+      var x = g.bSh[0] - 6, y = g.sy + 14, out = '';
+      out += ksVial(c, x - 5, y - 8, 1.8, KVIAL[3], 1) + ksVial(c, x + 1, y - 12, 1.9, KVIAL[0], 1) + ksVial(c, x + 7, y - 7, 1.7, KVIAL[1], 1);
+      return out + P(D`M${x - 9},${y - 6} L${x + 10},${y - 6} L${x + 9},${y + 6} C${x + 4},${y + 8} ${x - 4},${y + 8} ${x - 9},${y + 6} Z`, c.cel('#5a3a22'), 1.6) +
+        S(D`M${x - 8},${y - 3.4} L${x + 9},${y - 3.4}`, KG, 0.9) + C(x, y + 1.8, 1.4, c.cel(KG), 0.8);
+    },
+    torso: function (c, g) {
+      var out = ksStrap(c, g, '#4a2e1a', false), k = g.b.shW / 16;
+      [0.22, 0.42, 0.62, 0.82].forEach(function (t, i) { var p = ksStrapAt(g, t); out += C(p[0], p[1], 1.1, KG, 0) + ksVial(c, p[0], p[1] - 2, 1.4 * k, KVIAL[i]); });
+      return out;
+    }
+  };
+  /* Chef's Stewpot: a fat iron stewpot with a brass rim and ears, its lid knocked askew by a carrot, a ladle sticking out,
+     steam curling up; roped on with a gold buckle */
+  function ksPot(c) {
+    var pot = 'M-12,-6 L12,-6 C13.5,4 9,12.6 0,12.6 C-9,12.6 -13.5,4 -12,-6 Z';
+    return S('M-5,-22 C-3,-26 -7,-29 -4.6,-33 M2,-21 C4.4,-25 0.6,-28 3.4,-32 M8,-17 C10,-20 7.6,-23 9.6,-26', '#ffffff', 1.6, 0.55) +
+      S('M3,-4 L-9,-25', OL, 3.4) + S('M3,-4 L-9,-25', '#c8ccd2', 1.8) + S(rsOrbD(-9.4, -25.6, 2), OL, 2.6) + S(rsOrbD(-9.4, -25.6, 2), KG, 1.2) +
+      P('M-3,-7 L-1,-15 L1.6,-15.4 L1.6,-7 Z', c.cel('#ee7a22'), 1.2) + S('M-1,-15 L-3.4,-19.6 M0.4,-15.2 L0.6,-20.6 M1.4,-15.2 L4,-19', '#3e8a2a', 1.4) +
+      S(rsOrbD(-13.4, -3, 2.4), OL, 3) + S(rsOrbD(-13.4, -3, 2.4), KG, 1.4) +
+      S(rsOrbD(13.4, -3, 2.4), OL, 3) + S(rsOrbD(13.4, -3, 2.4), KG, 1.4) +
+      P(pot, c.lg([[0, '#f4a874'], [0.4, '#c8642e'], [1, '#5e2a12']], 0.2, 0, 0.8, 1), 2.2) +
+      S('M-8,0 C-7,5 -4,8.6 0,9.4', '#ffd0a8', 1.1, 0.8) +
+      P('M-6,11.6 L-7,15 L-4.4,15 L-3.6,12.4 Z M6,11.6 L7,15 L4.4,15 L3.6,12.4 Z', c.cel('#2a2b30'), 1.1) +
+      R(-13, -8, 26, 3.4, c.cel(KG), 1.4) +
+      G(P('M-12,-1 C-8,-6 8,-6 12,-1 Z', c.lg([[0, '#f0b080'], [1, '#8a4220']], 0, 0, 0, 1), 1.6) + C(0, -5.4, 1.8, c.cel(KG), 1), 'translate(1,-8.6) rotate(-14)');
+  }
+  GBACK.chefs_stewpot = {
+    back: function (c, g) { return G(ksPot(c), ksOn(g, -11, 9, -10, 1.1)); },
+    torso: function (c, g) { return ksStrap(c, g, '#b8a070'); }
+  };
+  /* Angler's Rod: a long rod slung on the back, a cork grip and a gold reel, gold ferrules; from the tip the line hangs
+     down to a red-and-white float and a hook */
+  function ksRod(c) {
+    return P('M-1.5,0 C-1.4,-28 -0.6,-56 2.6,-82 L3.4,-81.8 C1,-56 1.5,-28 1.5,0 Z', ksWood(c, '#6a4a2a'), 1.3) +
+      R(-1.8, -28, 3.6, 2, c.cel(KG), 0.8) + R(-1.4, -54, 2.8, 1.8, c.cel(KG), 0.8) +
+      P('M-2.6,0 L2.6,0 L2.4,15 L-2.4,15 Z', c.cel('#d8b07a'), 1.4) + S('M-2.4,4 L2.4,4 M-2.4,8 L2.4,8 M-2.4,12 L2.4,12', '#a07a48', 0.7) +
+      P('M-2.8,15 L2.8,15 L2.2,18.4 L-2.2,18.4 Z', c.cel(KG), 1.2) +
+      C(4.6, 4, 3.8, c.cel(KG), 1.3) + C(4.6, 4, 1.4, '#5a3a14', 0) + S('M4.6,4 L8.4,1.6', OL, 2) + C(8.6, 1.4, 1.2, c.cel('#2a1a10'), 0.8);
+  }
+  GBACK.anglers_rod = {
+    back: function (c, g) {
+      var tx = g.bSh[0] - 2, ty = g.hy - 4, a = -24 * Math.PI / 180, s = 0.95;
+      var tip = [tx + s * (3 * Math.cos(a) + 82 * Math.sin(a)), ty + s * (3 * Math.sin(a) - 82 * Math.cos(a))];
+      var fl = [tip[0] - 3, tip[1] + 30], ln = D`M${tip[0]},${tip[1]} Q${tip[0] - 4},${tip[1] + 14} ${fl[0]},${fl[1] - 3}`;
+      var fd = D`M${fl[0]},${fl[1] - 4} C${fl[0] + 3},${fl[1] - 4} ${fl[0] + 3.4},${fl[1] + 4} ${fl[0]},${fl[1] + 5} C${fl[0] - 3.4},${fl[1] + 4} ${fl[0] - 3},${fl[1] - 4} ${fl[0]},${fl[1] - 4} Z`;
+      return G(ksRod(c), 'translate(' + r1(tx) + ',' + r1(ty) + ') rotate(-24) scale(' + s + ')') +
+        S(ln, '#f4f0e6', 0.8, 0.9) + S(D`M${fl[0]},${fl[1] + 5} L${fl[0]},${fl[1] + 10} C${fl[0]},${fl[1] + 12.6} ${fl[0] + 2.6},${fl[1] + 12.6} ${fl[0] + 2.6},${fl[1] + 10}`, '#f4f0e6', 0.8, 0.9) +
+        P(fd, '#f6f2ea', 1.2) + CG(F(D`M${fl[0] - 4},${fl[1] - 5} L${fl[0] + 4},${fl[1] - 5} L${fl[0] + 4},${fl[1] + 0.6} L${fl[0] - 4},${fl[1] + 0.6} Z`, '#d02a2a'), c.clip(fd)) + P(fd, 'none', 1.2) +
+        S(D`M${fl[0]},${fl[1] - 4} L${fl[0]},${fl[1] - 6.4}`, OL, 1.2) + C(fl[0], fl[1] - 6.6, 0.9, KG, 0.6);
+    },
+    torso: function (c, g) { return ksStrap(c, g, '#5a3a22'); }
+  };
   var GEARKEYS = {
     weapon: Object.keys(GKIND), ranged: Object.keys(GRANGED), back: Object.keys(GBACK), chest: Object.keys(GCHEST),
     legs: Object.keys(GLEGS), mask: Object.keys(GMASK)
