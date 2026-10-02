@@ -763,3 +763,7 @@ svg.sym { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: 
 .cook-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--dim, #b8a88a); margin-bottom: 10px; }
 .cook-labels .gold { color: #ffd84a; } .cook-labels .red { color: #ff6a5a; }
 @media (prefers-reduced-motion: reduce) { .fishfx .bobber, .fishfx .bobber.dip, .fishfx .ripple { animation: none; } }
+/* the version on the main menu (issue #29): tap it for What's new */
+.ver-tag { position: absolute; right: 10px; bottom: 8px; padding: 6px 8px; border: 0; background: none; color: #8a7d64; font: 600 12px var(--body); }
+.create { position: relative; }
+.dialog .notes { text-align: left; }

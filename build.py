@@ -78,7 +78,13 @@ meta = rd('audio/out/music.json') if os.path.exists(os.path.join(R, 'audio/out/m
 # the app version, for the in-app updater (src/update.js compares it with the latest GitHub release)
 import re
 VERSION = re.search(r'^version:\s*([0-9.]+(?:-[0-9A-Za-z.]+)?)', rd('app/pubspec.yaml'), re.M).group(1)  # 9.9.0, or 9.10.0-beta.1
-audio_js = f'window.AZ_VERSION={json.dumps(VERSION)};' + 'window.AUDIO_DATA=' + json.dumps(aud) + ';window.AUDIO_FILES=' + json.dumps(files) + ';window.AUDIO_META=' + meta + ';'
+# the release notes for this version (issue #29): one file per release in notes/, the same text the GitHub release, the
+# in-app updater and the Discord post use; shown once as "What's new" on the first open of a new version
+NOTES_FILE = os.path.join(R, 'notes', f'v{VERSION}.md')
+if not os.path.exists(NOTES_FILE):
+    sys.exit(f'build stopped: no release notes for v{VERSION} (write notes/v{VERSION}.md first)')
+NOTES = open(NOTES_FILE).read()
+audio_js = f'window.AZ_VERSION={json.dumps(VERSION)};window.AZ_NOTES={json.dumps(NOTES)};' + 'window.AUDIO_DATA=' + json.dumps(aud) + ';window.AUDIO_FILES=' + json.dumps(files) + ';window.AUDIO_META=' + meta + ';'
 js = [f for f in ['src/report.js', 'src/art.js', 'src/art_durotar.js', 'src/art_mulgore.js', 'src/art_tirisfal.js', 'src/art_westfall.js', 'src/art_barrens.js', 'src/art_icons2.js', 'src/art_icons3.js', 'src/art_icons4.js', 'src/art_icons5.js', 'src/art_icons6.js', 'src/art_icons7.js', 'src/art_redridge.js', 'src/art_stonetalon.js', 'src/art_duskwood.js', 'src/art_hillsbrad.js', 'src/art_ashenvale.js', 'src/art_wetlands.js', 'src/art_stranglethorn.js', 'src/art_gnomeregan.js', 'src/art_razorfen.js', 'src/art_arathi.js', 'src/art_scarlet.js', 'src/art_mounts.js', 'src/art_icons8.js', 'src/art_tanaris.js', 'src/art_zulfarrak.js', 'src/art_coinworks.js', 'src/art_rumhook.js', 'src/art_feralas.js', 'src/art_maraudon.js', 'src/art_icons9.js', 'src/art_icons10.js', 'src/art_icons11.js', 'src/art_icons12.js', 'src/art_icons13.js', 'src/art_ungoro.js', 'src/art_steppes.js', 'src/art_brd.js', 'src/art_plaguelands.js', 'src/art_winterspring.js', 'src/art_scholomance.js', 'src/art_stratholme.js', 'src/art_dustwallow.js', 'src/art_moltencore.js', 'src/art_tidewatch.js', 'src/art_skullreef.js', 'src/art_archive.js', 'src/art_shalzua.js', 'src/art_tidecrown.js', 'src/art_worldbosses.js', 'src/art_story.js', 'src/art_story2.js', 'src/art_legends.js', 'src/art_bromli.js'] + DATA + ['src/engine.js', 'src/bots.js', 'src/game.js', 'src/trials.js', 'src/social.js', 'src/sound.js', 'src/cutscene.js', 'src/update.js', 'src/cloud.js', 'src/friends.js', 'src/savefile.js', 'src/sym.js', 'src/ui.js'] if os.path.exists(os.path.join(R, f))]
 html = f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8">

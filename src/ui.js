@@ -4205,12 +4205,29 @@
   const musicNow = () => ui.csMusic || G.musicFor((n) => !!(window.SND && SND.has(n)));
   // the main menu has its own theme once approved (before that, the menu stays as it was)
   const menuMusic = () => { if (window.SND && SND.has('menu')) SND.music('menu'); };
+  // What's new (issue #29): the notes bundled with this build (window.AZ_NOTES), shown once per device on the first open of
+  // a new version, and any time from the version tag on the main menu. A brand-new device is marked seen silently.
+  const SEEN_KEY = 'azsolo.seenVersion', verNow = () => (window.UPD ? UPD.current() : String(window.AZ_VERSION || ''));
+  const verLabel = () => { const v = verNow(); return /-beta\./.test(v) ? `v${v} · Beta` : `v${v}`; };
+  function showWhatsNew() {
+    const md = String(window.AZ_NOTES || ''), html = md && window.UPD && UPD.notesHtml ? UPD.notesHtml(md) : '';
+    try { localStorage.setItem(SEEN_KEY, verNow()); } catch (e) { }
+    showDialog([h('h3', null, `What's new in v${verNow()}`), h('div', { class: 'notes', html: html || '<p>No notes were written for this version.</p>' }), h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: closeDialog }, 'Got it'))], true);
+  }
+  function whatsNewCheck(hasChars) {
+    let seen = null; try { seen = localStorage.getItem(SEEN_KEY); } catch (e) { return; }
+    if (seen === verNow()) return;
+    if (!seen && !hasChars) { try { localStorage.setItem(SEEN_KEY, verNow()); } catch (e) { } return; } // a new player gets the intro, not a changelog
+    const calm = () => { if (G.S) return; if (ui.dialog || (window.CS && CS.playing)) return setTimeout(calm, 1500); showWhatsNew(); }; // never over a dialog or a cutscene (#24's rule)
+    setTimeout(calm, 900);
+  }
   function showSelect() {
     closeDialog(); closeSheet();
     setTimeout(autoUpdateCheck, 1200);
     if (window.CLOUD && CLOUD.on()) CLOUD.prepare(); // Google's script ready before Enter World, so its window may open from that tap
     menuMusic();
     const list = G.characters();
+    whatsNewCheck(list.length > 0);
     if (!list.length) return showCreate();
     app.innerHTML = '';
     let sel = list[0].id;
@@ -4236,7 +4253,7 @@
           h('button', { class: 'btn alt', onclick: () => { if (!G.S) { const r = G.load(sel); if (!r) return; } openTheater(); } }, 'Theater'),
           h('button', { class: 'btn alt', style: { color: '#ff6a5a' }, onclick: () => confirmDeleteChar(cur, () => showSelect()) }, 'Delete')),
         h('div', { class: 'btn-row' }, h('button', { class: 'btn alt', onclick: importSave }, 'Load save code'), restoreButton(() => showSelect())),
-        footLinks());
+        footLinks(), h('button', { class: 'ver-tag', onclick: showWhatsNew, 'aria-label': "What's new" }, verLabel()));
     };
     draw();
   }

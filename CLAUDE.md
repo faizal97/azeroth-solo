@@ -37,7 +37,7 @@ python3 build.py      # inlines fonts, CSS, JS, audio → dist/index.html and ap
 cd app && JAVA_HOME=/opt/homebrew/opt/openjdk@17 flutter build apk --release
 ```
 
-1. Bump `version:` in `app/pubspec.yaml` for every release.
+1. Bump `version:` in `app/pubspec.yaml` for every release, and write its notes **first** in `notes/vX.Y.Z.md` (a beta: `notes/vX.Y.Z-beta.N.md`). `build.py` inlines that file as the in-game "What's new" and stops if it is missing; the GitHub release uses the same file: `gh release create vX.Y.Z --notes-file notes/vX.Y.Z.md`, so the updater and the Discord post read the same text.
 2. Copy the APK to `~/Library/Mobile Documents/com~apple~CloudDocs/Azeroth Solo/RealmOfLoner-vX.apk`, remove the previous APK there, and confirm `ubiquitousItemIsUploaded` is true.
 3. Faizal installs it from icloud.com → Recents on his phone.
 4. Publish the browser version: `tools/publish_web.sh` (puts `dist/index.html` on the `gh-pages` branch, served at https://faizal97.github.io/realm-of-loner/). Every GitHub release also needs the APK attached, or the in-app updater won't see it.
@@ -45,7 +45,7 @@ cd app && JAVA_HOME=/opt/homebrew/opt/openjdk@17 flutter build apk --release
 6. Announce on Discord, last (after the GitHub release, web and itch.io are live): `node tools/announce_discord.js vX.Y.Z` posts the notes to #patch-notes and pings the Patch Notes role. A beta: `node tools/announce_discord.js vX.Y.Z-beta.N --beta` posts to #beta-builds (only Beta Testers see it). A normal release links players to itch.io, never GitHub. A beta post gives both ways in: Android (Settings → Beta updates) and the browser `/beta/` page on GitHub Pages, the only GitHub link a post may carry (never the repo, its releases or its issues). `--dry` previews; each tag posts once. The webhook URLs are in `~/.config/realm-of-loner/`, never in the repo.
 
 **Release cadence (since v9.9):** people play this now, so batch public releases (about one a week, not several a day); only a real bug fix goes out on its own.
-- **Beta:** a test build is a GitHub **pre-release** tagged `vX.Y.Z-beta.N` (`gh release create ... --prerelease`), with its APK attached, and pubspec `version: X.Y.Z-beta.N+code`. Publish it to the web with `tools/publish_web.sh --beta` (only the `/beta/` page). Only players with Settings → Beta updates on get it: the app then reads all releases, and in a browser beta is the `/beta/` page (same site, so it shares characters). Not pushed to itch.io; announced with `--beta`.
+- **Beta:** a test build is a GitHub **pre-release** tagged `vX.Y.Z-beta.N` (`gh release create ... --prerelease --notes-file notes/vX.Y.Z-beta.N.md`), with its APK attached, and pubspec `version: X.Y.Z-beta.N+code`. Publish it to the web with `tools/publish_web.sh --beta` (only the `/beta/` page). Only players with Settings → Beta updates on get it: the app then reads all releases, and in a browser beta is the `/beta/` page (same site, so it shares characters). Not pushed to itch.io; announced with `--beta`.
 - **Normal release:** a regular release; `tools/publish_web.sh` updates the main page and also `/beta/` (unless `/beta/` holds a newer test build), so beta is never behind. Then itch.io (step 5) and the Discord post (step 6).
 
 **Cutscene video (MP4):** `art/promo/export_cutscene.sh <chapterId> <out.mp4> [endcard.png]` records any cutscene from `dist/` (run `build.py` first) at 1080 px, 30 fps, with its music. It uses `art/promo/record_cutscene.js` (headless Chrome on virtual time, so frames are exact). Port 8777 only; never touch 8765.
