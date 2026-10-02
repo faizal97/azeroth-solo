@@ -7,7 +7,7 @@
 (function (root) {
   const D = root.D;
   const n = (x) => Math.round(x);
-  D.EFFECT_RENAMED = { lifeline: 'lavish_mend' }; // an effect that was replaced: saves move to its successor on load (#40)
+  D.EFFECT_RENAMED = { lifeline: 'lavish_mend', wellspring: 'tethered_mend' }; // an effect that was replaced: saves move to its successor on load (#40)
   D.EFFECT_COST = 0.3; // the share of an item's stats an effect costs by default; an effect may set its own `cost` (sim/effects.js tunes them)
   D.effectCd = (k) => (D.EFFECTS[k] && D.EFFECTS[k].icd) || 0; // an effect's own cooldown: 8 sec or more gets a callout when it fires (#23), shorter ones only coloured numbers
   D.FX_GROW = 0.25; // an upgrade grows an effect by its scale to this power (#37): x1.26 at the ceiling -> x1.06; linear growth (1) or 0.5 made upgraded effects outgrow their price (sim/effects.js checks both stages)
@@ -55,9 +55,9 @@
       name: 'Lavish Mend', role: 'healing', icon: 'greater_heal', heal: 0.1, mana: 0.25, cost: 0,
       desc: (L, f) => `Your heals are ${Math.round(D.EFFECTS.lavish_mend.heal * (f || 1) * 1000) / 10}% stronger, and cost ${n(D.EFFECTS.lavish_mend.mana * 100)}% more mana.`, // an upgrade grows the heal, never the mana cost
     },
-    wellspring: {
-      name: 'Wellspring', role: 'healing', icon: 'innervate', refund: 1.0, cost: 0.45, /* a starting pair for #40 (capacity): refund 0.9 -> 1.0, cost 0.35 -> 0.45 */
-      desc: (L, f) => `Your critical heals refund ${n(D.EFFECTS.wellspring.refund * (f || 1) * 100)}% of their mana cost.`,
+    tethered_mend: { // replaced Wellspring (#40): Echoing Mend's mirror, who you heal is the trade; no stat cost, the reset is the price
+      name: 'Tethered Mend', role: 'healing', icon: 'renew', step: 0.06, max: 3, swap: 0.1, cost: 0,
+      desc: (L, f) => { const F = D.EFFECTS.tethered_mend, st = Math.round(F.step * (f || 1) * 1000) / 10; return `Each direct heal on the same ally in a row heals ${st}% more, up to ${Math.round(st * F.max * 10) / 10}%. A heal on a different ally heals ${n(F.swap * 100)}% less and starts over.`; }, // an upgrade grows the bonus, not the penalty
     },
     // tanking
     spiteful_hide: {
@@ -123,13 +123,13 @@
   fx('wolfshade_handwraps', 'arugal', 'Wolfshade Handwraps', 'hands', 'cloth', 'steady_fuse', ['int', 'sta']);
   fx('cogspun_sash', 'mekgineer_thermaplugg', 'Cogspun Sash', 'waist', 'cloth', 'tithe_of_battle', ['int', 'sta']);
   fx('thornhide_belt', 'charlga_razorflank', 'Thornhide Belt', 'waist', 'leather', 'spiteful_hide', ['sta', 'agi']);
-  fx('quiet_page_bracers', 'arcanist_doan', 'Bracers of the Quiet Page', 'wrist', 'cloth', 'wellspring', ['int', 'spi']);
+  fx('quiet_page_bracers', 'arcanist_doan', 'Bracers of the Quiet Page', 'wrist', 'cloth', 'tethered_mend', ['int', 'spi']);
   fx('gamblers_last_coin', 'mintmaster_coinwhistle', "Gambler's Last Coin", 'finger', undefined, 'glass_heart', ['agi', 'str']);
   fx('rootfire_treads', 'princess_theradras', 'Rootfire Treads', 'feet', 'leather', 'kindled_edge', ['agi', 'sta']);
   fx('forgeheart_gauntlets', 'emperor_dagran_thaurissan', 'Forgeheart Gauntlets', 'hands', 'mail', 'spiteful_hide', ['sta', 'str']);
   fx('gravecutter_bracers', 'baron_rivendare', 'Gravecutter Bracers', 'wrist', 'leather', 'opening_cut', ['agi', 'str']);
   // the level-60 dungeons (blue)
-  fx('archivists_tidering', 'lady_vessaria', "Archivist's Tidering", 'finger', undefined, 'wellspring', ['int', 'spi']);
+  fx('archivists_tidering', 'lady_vessaria', "Archivist's Tidering", 'finger', undefined, 'tethered_mend', ['int', 'spi']);
   fx('sunfire_legguards', 'avatar_of_shalzua', 'Sunfire Legguards', 'legs', 'mail', 'kindled_edge', ['agi', 'str']);
   // raid bosses (epic): the Magma Throne, the Tidecrown Citadel, the Broodmother's lair
   fx('houndrunner_boots', 'magmadar', 'Houndrunner Boots', 'feet', 'leather', 'chase_the_next', ['agi', 'str'], 4);

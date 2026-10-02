@@ -449,6 +449,9 @@
 
   function heal(C, src, tgt, amount, o) {
     if (src && o && o.ab && !o.effect) { const lm = fxOf(src, 'lavish_mend'); if (lm) amount *= 1 + D.EFFECTS.lavish_mend.heal * lm.f; } // Lavish Mend: a healing ability heals more (#40)
+    let tmExtra = 0; // Tethered Mend (#40): a direct heal on the same ally in a row heals more; one on a different ally less, and starts over
+    if (src && o && o.ab && !o.effect && !o.tick) { const tm = fxOf(src, 'tethered_mend'), TM = D.EFFECTS.tethered_mend;
+      if (tm) { if (src.tetherTgt === tgt.uid) { src.tetherN = Math.min(TM.max, (src.tetherN || 0) + 1); tmExtra = TM.step * tm.f * src.tetherN; amount *= 1 + tmExtra; } else { if (src.tetherTgt != null) amount *= 1 - TM.swap; src.tetherTgt = tgt.uid; src.tetherN = 0; } } }
     if (tgt.dead) return 0;
     if (src && o && o.ab && amount > 0) proc(C, src, 'heal', o.ab); // talent reactions (v10.4)
     if (src && src.char) { const hm = tmOf(src); amount *= 1 + (hm.heal + (o && o.ab ? hm.abilHeal[o.ab] || 0 : 0)) / 100; }
@@ -463,9 +466,8 @@
     }
     ev(C, { type: 'heal', src: src.uid, tgt: tgt.uid, amount: done, over: Math.round(amount) - done, crit: !!(o && o.crit), ab: o && o.ab, fx: o && o.effect ? 'effect' : null });
     tally(C, src, 'heal', done);
+    if (tmExtra > 0) fxDone(C, src, 'tethered_mend', done * tmExtra / (1 + tmExtra), 'heal'); // its share of this heal, for the last-run line
     if (o && o.effect) fxDone(C, src, o.effect, done, 'heal');
-    const ws = o && o.crit && o.ab && !o.tick && src && src.resType === 'mana' && fxOf(src, 'wellspring'), A0 = ws && D.ABILITIES[o.ab]; // a heal crit refunds mana (v10.10)
-    if (A0) { const back = Math.min(src.maxRes - src.res, abCost(A0, src) * D.EFFECTS.wellspring.refund * ws.f); if (back > 0) { src.res += back; fxDone(C, src, 'wellspring', back, 'mana'); } }
     if (o && o.effect) { /* an effect's own heal does not echo */ }
     else if (src && o && o.ab && !o.tick) { // Echoing Mend: a direct heal can also land on the most hurt other ally (v10.10)
       const em = fxOf(src, 'echoing_mend'), EM = em && D.EFFECTS.echoing_mend;

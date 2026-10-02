@@ -21,7 +21,7 @@ const SHAPE = {
   opening_cut: { slot: 'hands', atype: 'leather', st: ['agi', 'str'] }, kindled_edge: { slot: 'hands', atype: 'leather', st: ['agi', 'str'] },
   chase_the_next: { slot: 'feet', atype: 'leather', st: ['agi', 'str'] }, steady_fuse: { slot: 'wrist', atype: 'leather', st: 'main' },
   glass_heart: { slot: 'finger', st: 'main' },
-  echoing_mend: { slot: 'chest', atype: 'cloth', st: ['int', 'spi'] }, lavish_mend: { slot: 'legs', atype: 'cloth', st: ['sp', 'int'] }, wellspring: { slot: 'hands', atype: 'cloth', st: ['sp', 'int'] },
+  echoing_mend: { slot: 'chest', atype: 'cloth', st: ['int', 'spi'] }, lavish_mend: { slot: 'legs', atype: 'cloth', st: ['sp', 'int'] }, tethered_mend: { slot: 'hands', atype: 'cloth', st: ['sp', 'int'] },
   turning_guard: { slot: 'waist', atype: 'mail', st: ['sta', 'str'] }, spiteful_hide: { slot: 'chest', atype: 'mail', st: ['sta', 'str'] },
   stubborn_blood: { slot: 'finger', st: ['agi', 'str'] }, tithe_of_battle: { slot: 'back', st: 'main' },
 };
@@ -98,7 +98,7 @@ const PLAN = [
   { effect: 'steady_fuse', classes: ['mage', 'warrior'], wins: ['boss'], loses: ['highcrit'] },
   { effect: 'glass_heart', classes: ['rogue', 'warrior'], wins: ['healed'], loses: ['solo'] },
   { effect: 'lavish_mend', classes: ['priest', 'druid'], wins: ['groupwide'], loses: ['tankonly'], provisional: '#40, judged on sim/capacity.js' }, // wins: survival, +5 to +15 points (game designer, #22),
-  { effect: 'wellspring', classes: ['priest', 'druid'], wins: ['groupwide'], loses: ['shortheal'], provisional: '#40, judged on sim/capacity.js' },
+  { effect: 'tethered_mend', classes: ['priest', 'druid'], wins: ['tankonly'], loses: ['groupwide'], provisional: '#40, judged on sim/capacity.js' },
   { effect: 'spiteful_hide', classes: ['warrior', 'paladin'], wins: ['tankpack'], loses: ['casterboss'] },
   { effect: 'tithe_of_battle', classes: ['warlock'], wins: ['boss'], loses: ['boss'], losesClasses: ['mage'] },
 ];
@@ -151,7 +151,7 @@ const all = [];
     { name: 'Opening Cut + Stubborn Blood', cs: 'solo', cls: 'rogue', fx: ['opening_cut', 'stubborn_blood'] },
     { name: 'Opening Cut + Chase the Next + Glass Heart', cs: 'trash', cls: 'rogue', fx: ['opening_cut', 'chase_the_next', 'glass_heart'] },
     { name: 'Kindled Edge + Steady Fuse + Glass Heart', cs: 'boss', cls: 'warrior', fx: ['kindled_edge', 'steady_fuse', 'glass_heart'] },
-    { name: 'Echoing Mend + Lavish Mend + Wellspring', cs: 'groupwide', cls: 'priest', fx: ['echoing_mend', 'lavish_mend', 'wellspring'] },
+    { name: 'Echoing Mend + Lavish Mend + Tethered Mend', cs: 'groupwide', cls: 'priest', fx: ['echoing_mend', 'lavish_mend', 'tethered_mend'] },
   ];
   for (const M of MIXES) {
     if (ONLY && !M.fx.some((k) => ONLY.includes(k))) continue;
