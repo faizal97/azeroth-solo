@@ -2502,11 +2502,13 @@
   // A group from chat (LFG post or guild request) summons you, like Help Wanted. opts: { leader, guild, soc }
   G.joinChatGroup = function (act, role, opts) {
     const S = G.S; opts = opts || {};
-    if (S.run || S.queue || G.fight) { toast('Leave your current group first.'); return false; }
+    if (S.run || S.queue || S.bg || G.fight) { toast('Leave your current group first.'); return false; }
     if ((S.flags.deserterUntil || 0) > now()) { toast('You are a Deserter for a few more minutes.'); return false; }
     if (S.wparty) disbandParty('You left your party to join another group.');
     if (role && G.roles().includes(role)) S.player.role = role;
     stopActions();
+    // a battleground forms its own two teams, as from the queue (issue #15: it started as a dungeon run with no pulls)
+    if (D.ACTIVITIES[act].bg) { const bl = opts.leader && S.bots.find((b) => b.id === opts.leader); sys(`${bl ? bl.name + "'s" : 'The'} team summons you to ${D.ACTIVITIES[act].name}.`); startBg(act); emit('change'); return true; }
     const grp = formGroup(act, { guild: opts.guild });
     const lead = opts.leader && S.bots.find((b) => b.id === opts.leader);
     if (lead) { const i = grp.members.findIndex((m) => m.role === 'dps' && !m.legend); if (i >= 0) { const lc = G.botChar(Object.assign({}, lead, { level: grp.members[i].level, role: 'dps' })); lc.syncLevel = grp.members[i].syncLevel; grp.members[i] = lc; } }
