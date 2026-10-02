@@ -772,3 +772,6 @@ svg.sym { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: 
 .ver-tag { position: absolute; right: 10px; bottom: 8px; padding: 6px 8px; border: 0; background: none; color: #8a7d64; font: 600 12px var(--body); }
 .create { position: relative; }
 .dialog .notes { text-align: left; }
+.dialog .card .stick-head { position: sticky; top: -16px; z-index: 1; margin: -16px -16px 0; padding: 16px 48px 8px; background: var(--panel); border-bottom: 1px solid var(--edge); }
+.dialog .card .stick-head h3 { margin: 0; }
+.dialog .card .x-close { position: absolute; top: 8px; right: 8px; width: 40px; height: 40px; border: 0; background: none; color: var(--muted, #b8a98a); font: 600 26px/1 var(--body); }

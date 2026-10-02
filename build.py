@@ -28,6 +28,8 @@ if subprocess.run(['node', os.path.join(R, 'sim', 'wardrobe.js')]).returncode !=
     sys.exit('build stopped: a wardrobe rule is broken (node sim/wardrobe.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'sellspeed.js')]).returncode != 0:
     sys.exit('build stopped: selling several or battle speed is broken (node sim/sellspeed.js lists which)')
+if subprocess.run(['node', os.path.join(R, 'sim', 'news.js')]).returncode != 0:
+    sys.exit('build stopped: the news names a place or secret beyond the player\'s level (node sim/news.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'trials.js')]).returncode != 0:
     sys.exit('build stopped: a Trials rule is broken (node sim/trials.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'reactions.js')], stdout=subprocess.DEVNULL).returncode != 0:

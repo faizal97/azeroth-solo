@@ -4235,7 +4235,10 @@
   function showWhatsNew() {
     const md = String(window.AZ_NOTES || ''), html = md && window.UPD && UPD.notesHtml ? UPD.notesHtml(md) : '';
     try { localStorage.setItem(SEEN_KEY, verNow()); } catch (e) { }
-    showDialog([h('h3', null, `What's new in v${verNow()}`), h('div', { class: 'notes', html: html || '<p>No notes were written for this version.</p>' }), h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: closeDialog }, 'Got it'))], true);
+    // long notes scroll (v10.9.0 is about 3 phone screens): an × at the top and Got it at the bottom stay in view (#29)
+    showDialog([h('div', { class: 'stick-head' }, h('h3', null, `What's new in v${verNow()}`), h('button', { class: 'x-close', onclick: closeDialog, 'aria-label': 'Close' }, '×')),
+      h('div', { class: 'notes', html: html || '<p>No notes were written for this version.</p>' }),
+      h('div', { class: 'stick-foot' }, h('button', { class: 'btn wide', onclick: closeDialog }, 'Got it'))], true);
   }
   function whatsNewCheck(hasChars) {
     let seen = null; try { seen = localStorage.getItem(SEEN_KEY); } catch (e) { return; }
@@ -4523,6 +4526,7 @@
     // a friend's share link (…#friend=K7QM-P2XD): kept for the Friends tab, and taken out of the address
     try { const m = String(location.hash || '').match(/friend=([0-9A-Za-z-]+)/); if (m && window.FRIENDS && FRIENDS.cleanCode(m[1])) { ui.friendCode = m[1]; history.replaceState(null, '', location.pathname + location.search); } } catch (e) { }
     try { G.setSpeed(+localStorage.getItem('azsolo.speed') || 1); } catch (e) { } // battle speed, saved on this device
+    if (!G.characters().length) { try { localStorage.setItem(SEEN_KEY, verNow()); } catch (e) { } } // a brand-new player never gets the changelog, on this visit or a later one (#29)
     if (G.hasSave()) showSelect(); else showCreate();
     requestAnimationFrame(loop);
   }

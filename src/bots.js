@@ -134,7 +134,7 @@
 
   // Advance the server by ms. Returns news items.
   B.advance = function (S, ms) {
-    const news = [], clears = {};
+    const news = [], clears = {}; let beyond = 0; // beyond: clears the news can't name at your level (issue #18)
     const steps = Math.min(48, Math.max(1, Math.ceil(ms / 1800000)));
     const stepMs = ms / steps;
     for (let s = 0; s < steps; s++) {
@@ -161,15 +161,17 @@
         if (fits.length) {
           const act = pick(fits), g = pick(GUILDS), F = S.server.firsts = S.server.firsts || {};
           if (S.server.firstVC && !F.deadmines) F.deadmines = S.server.firstVC; // the one first older saves recorded
-          const first = !F[act]; if (first) F[act] = g;
-          const bosses = D.DUNGEONS[D.ACTIVITIES[act].dungeon].pulls.filter((p) => p.boss), last = bosses.length && D.MOBS[bosses[bosses.length - 1].mobs[0]];
-          if (first && last) news.push({ t: when.getTime(), text: `<${g}> is the first guild on ${D.REALM} to defeat ${last.name}!`, big: true });
+          const first = !F[act]; if (first) F[act] = g; // recorded even when it can't be told yet, so it's right when you get there
+          const last = lastBoss(act);
+          if (!B.newsNames(S, act)) beyond++;
+          else if (first && last) news.push({ t: when.getTime(), text: `<${g}> is the first guild on ${D.REALM} to defeat ${last.name}!`, big: true });
           else clears[g + '|' + act] = (clears[g + '|' + act] || 0) + 1;
         }
       }
     }
     // repeated clears read as one line each ("cleared The Smugglers' Deep ×3"), so a long absence isn't one sentence 40 times
     for (const [k, n] of Object.entries(clears)) { const [g, act] = k.split('|'); news.push({ t: S.lastSim + ms, text: `<${g}> cleared ${D.ACTIVITIES[act].name}${n > 1 ? ` ×${n}` : ''}.` }); }
+    if (beyond) news.push({ t: S.lastSim + ms, text: `Veteran groups cleared ${beyond} more ${beyond === 1 ? 'place' : 'places'} beyond your level.` });
     // new players keep rolling alts, so the starting zone never empties
     const newbies = Math.floor((ms / 3600000) * 3);
     const used = new Set(S.bots.map((b) => b.name));
@@ -182,6 +184,23 @@
     if (S.bots.length > 420) S.bots.splice(0, S.bots.length - 420);
     S.lastSim += ms;
     return news;
+  };
+
+  // the news follows the player's level, not the server's (issue #18, the lore bible's Reveals): a dungeon or raid is named
+  // only if it starts at or below your level + 10, and raids and level-60 places only once you are 60. Content-proof:
+  // a new dungeon or raid needs nothing here, its level decides.
+  const lastBoss = (act) => { const A = D.ACTIVITIES[act], Dg = A && D.DUNGEONS[A.dungeon]; const bs = Dg ? Dg.pulls.filter((p) => p.boss) : []; return bs.length ? D.MOBS[bs[bs.length - 1].mobs[0]] : null; };
+  B.newsNames = function (S, act) {
+    const A = D.ACTIVITIES[act]; if (!A) return false;
+    const L = (S.player && S.player.level) || D.LEVEL_CAP;
+    if ((A.minLvl || 1) >= D.LEVEL_CAP || (A.size || 5) > 5) return L >= D.LEVEL_CAP;
+    return (A.minLvl || 1) <= L + 10;
+  };
+  // news an older build already stored (beta.8 named endgame places at any level): drop the lines this level can't be told
+  B.cleanNews = function (S) {
+    if (!S.news || !S.news.length) return;
+    const bad = []; for (const k in D.ACTIVITIES) { const A = D.ACTIVITIES[k]; if (!A.dungeon || A.worldBoss || !D.DUNGEONS[A.dungeon] || B.newsNames(S, k)) continue; bad.push(A.name); const b = lastBoss(k); if (b) bad.push(b.name); }
+    if (bad.length) S.news = S.news.filter((n) => !bad.some((w) => String(n.text || '').includes(w)));
   };
 
   B.onlineIn = function (S, place, date) {
