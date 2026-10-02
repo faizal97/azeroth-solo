@@ -213,6 +213,19 @@
   D.item('heavy_armor_kit', { name: 'Heavy Armor Kit', slot: 'kit', q: 1, lvl: 25, icon: 'armor_kit', kit: 24, sell: 70 });
   D.item('thick_armor_kit', { name: 'Thick Armor Kit', slot: 'kit', q: 1, lvl: 38, icon: 'armor_kit', kit: 32, sell: 120 });
   D.item('silk_bag', { name: 'Silk Bag', slot: 'bag', q: 1, lvl: 1, icon: 'bag_wool', bag: 10, sell: 400 });
+  // Artisan (v10.9) consumables and bags (flasks: elixirs that last 2 hours and stay when you die)
+  D.item('grand_healing_potion', { name: 'Grand Healing Potion', slot: 'potion', q: 1, lvl: 50, icon: 'potion_red', heal: [1000, 1300], sell: 220 });
+  D.item('grand_mana_potion', { name: 'Grand Mana Potion', slot: 'potion', q: 1, lvl: 52, icon: 'potion_blue', mana: [1000, 1300], sell: 240 });
+  D.item('elixir_might', { name: 'Elixir of Might', slot: 'elixir', q: 1, lvl: 52, icon: 'elixir_gold', buff: { str: 18 }, sell: 200 });
+  D.item('elixir_swiftness', { name: 'Elixir of Swiftness', slot: 'elixir', q: 1, lvl: 53, icon: 'elixir_green', buff: { agi: 18 }, sell: 210 });
+  D.item('elixir_clarity', { name: 'Elixir of Clarity', slot: 'elixir', q: 1, lvl: 54, icon: 'elixir_gold', buff: { int: 18 }, sell: 220 });
+  D.item('flask_iron_wall', { name: 'Flask of the Iron Wall', slot: 'elixir', flask: true, q: 2, lvl: 60, icon: 'flask_iron_wall', buff: { sta: 30 }, sell: 600 });
+  D.item('flask_warpath', { name: 'Flask of the Warpath', slot: 'elixir', flask: true, q: 2, lvl: 60, icon: 'flask_warpath', buff: { str: 20, agi: 20 }, sell: 600 });
+  D.item('flask_stillmind', { name: 'Flask of the Stillmind', slot: 'elixir', flask: true, q: 3, lvl: 60, icon: 'flask_stillmind', buff: { int: 25, spi: 10 }, sell: 900 });
+  D.item('deepstone_whetstone', { name: 'Deepstone Whetstone', slot: 'stone', q: 1, lvl: 50, icon: 'deepstone_whetstone', wdmg: 9, sell: 70 });
+  D.item('hardhide_armor_kit', { name: 'Hardhide Armor Kit', slot: 'kit', q: 1, lvl: 50, icon: 'hardhide_armor_kit', kit: 40, sell: 180 });
+  D.item('duskweave_bag', { name: 'Duskweave Bag', slot: 'bag', q: 1, lvl: 1, icon: 'bag_duskweave', bag: 12, sell: 900 });
+  D.item('starweave_bag', { name: 'Starweave Bag', slot: 'bag', q: 2, lvl: 1, icon: 'bag_starweave', bag: 14, sell: 2000 });
   D.BAG_SLOTS = 4;
   // ---- Cooking (v10.9): food restores 10% more than shop food of its level; a Well Fed meal also gives a small buff for
   // 30 min (one at a time, beside an elixir)
@@ -325,6 +338,26 @@
   gear('silk_sash', { name: 'Silk Sash', slot: 'waist', atype: 'cloth', lvl: 38, st: ['int', 'sta'] });
   gear('silk_leggings', { name: 'Silk Leggings', slot: 'legs', atype: 'cloth', lvl: 40, st: ['int', 'sta'] });
   gear('embersilver_threaded_robe', { name: 'Embersilver-Threaded Robe', slot: 'chest', atype: 'cloth', q: 3, lvl: 44, st: ['int', 'spi'], sp: 14 });
+  // Artisan (v10.9), levels 48-60. The level-60 blues are the catch-up pieces and carry a crafted look (only from crafting)
+  const crafted = (prof, sk) => `Crafted: ${D.PROFESSIONS[prof].name} ${sk}`;
+  gear('duskiron_sabatons', { name: 'Duskiron Sabatons', slot: 'feet', atype: 'mail', lvl: 48, st: ['str', 'sta'] });
+  gear('duskiron_hauberk', { name: 'Duskiron Hauberk', slot: 'chest', atype: 'mail', lvl: 52, st: ['sta', 'str'] });
+  gear('duskiron_greatsword', { name: 'Duskiron Greatsword', slot: 'weapon', wtype: 'sword', lvl: 54, st: ['str', 'sta'] });
+  gear('moonforged_breastplate', { name: 'Moonforged Breastplate', slot: 'chest', atype: 'mail', q: 3, lvl: 60, st: ['str', 'sta'], look: ['chest', 'moonforged_chest'], source: crafted('blacksmithing', 280) });
+  gear('moonforged_legplates', { name: 'Moonforged Legplates', slot: 'legs', atype: 'mail', q: 3, lvl: 60, st: ['sta', 'str'], look: ['legs', 'moonforged_legs'], source: crafted('blacksmithing', 285) });
+  gear('moonforged_blade', { name: 'Moonforged Blade', slot: 'weapon', wtype: 'sword', q: 3, lvl: 60, st: ['str', 'agi'], look: ['weapon', 'moonforged_blade'], source: crafted('blacksmithing', 290) + ' (a rare recipe)' });
+  gear('moonforged_warhammer', { name: 'Moonforged Warhammer', slot: 'weapon', wtype: 'mace', q: 3, lvl: 60, st: ['str', 'sta'], look: ['weapon', 'moonforged_hammer'], source: crafted('blacksmithing', 295) + ' (a rare recipe)' });
+  gear('hardhide_boots', { name: 'Hardhide Boots', slot: 'feet', atype: 'leather', lvl: 50, st: ['agi', 'sta'] });
+  gear('hardhide_gloves', { name: 'Hardhide Gloves', slot: 'hands', atype: 'leather', lvl: 52, st: ['agi', 'sta'] });
+  gear('hardhide_belt', { name: 'Hardhide Belt', slot: 'waist', atype: 'leather', lvl: 55, st: ['sta', 'agi'] });
+  gear('wildrunner_tunic', { name: 'Wildrunner Tunic', slot: 'chest', atype: 'leather', q: 3, lvl: 60, st: ['agi', 'sta'], look: ['chest', 'wildrunner_chest'], source: crafted('leatherworking', 280) });
+  gear('wildrunner_leggings', { name: 'Wildrunner Leggings', slot: 'legs', atype: 'leather', q: 3, lvl: 60, st: ['agi', 'sta'], look: ['legs', 'wildrunner_legs'], source: crafted('leatherworking', 285) });
+  gear('wildrunner_cloak', { name: 'Wildrunner Cloak', slot: 'back', q: 3, lvl: 60, st: ['agi', 'sta'], look: ['back', 'wildrunner_cloak'], source: crafted('leatherworking', 290) + ' (a rare recipe)' });
+  gear('duskweave_gloves', { name: 'Duskweave Gloves', slot: 'hands', atype: 'cloth', lvl: 49, st: ['int', 'sta'] });
+  gear('duskweave_robe', { name: 'Duskweave Robe', slot: 'chest', atype: 'cloth', lvl: 52, st: ['int', 'spi'] });
+  gear('duskweave_leggings', { name: 'Duskweave Leggings', slot: 'legs', atype: 'cloth', lvl: 55, st: ['int', 'sta'] });
+  gear('starweave_robe', { name: 'Starweave Robe', slot: 'chest', atype: 'cloth', q: 3, lvl: 60, st: ['int', 'spi'], look: ['chest', 'starweave_chest'], source: crafted('tailoring', 280) });
+  gear('starweave_trousers', { name: 'Starweave Trousers', slot: 'legs', atype: 'cloth', q: 3, lvl: 60, st: ['int', 'sta'], look: ['legs', 'starweave_legs'], source: crafted('tailoring', 285) });
 
   // ---- recipes. sk = [learn, yellow, green, grey]; default [s, s+25, s+37, s+50].
   // rare: taught by a recipe item that drops in dungeons, not by the trainer.
@@ -426,6 +459,40 @@
   rec('tl_silk_sash', 'tailoring', 185, 'silk_sash', { silk_bolt: 2, fine_thread: 1 });
   rec('tl_silk_leggings', 'tailoring', 195, 'silk_leggings', { silk_bolt: 4, fine_thread: 2 });
   rec('tl_ember_robe', 'tailoring', 215, 'embersilver_threaded_robe', { silk_bolt: 8, embersilver_bar: 2, fine_thread: 3 }, { rare: true });
+  // ---- Artisan (v10.9): skill 225-295, levels 45-60
+  rec('smelt_duskiron', 'mining', 225, 'duskiron_bar', { duskiron_ore: 1 });
+  rec('smelt_moonsilver', 'mining', 260, 'moonsilver_bar', { moonsilver_ore: 1 }, { sk: [260, 275, 280, 285] });
+  rec('bs_deepstone_whetstone', 'blacksmithing', 225, 'deepstone_whetstone', { deepstone: 2 }, { sk: [225, 240, 252, 265] });
+  rec('bs_duskiron_sabatons', 'blacksmithing', 230, 'duskiron_sabatons', { duskiron_bar: 8, deepstone: 1 });
+  rec('bs_duskiron_hauberk', 'blacksmithing', 250, 'duskiron_hauberk', { duskiron_bar: 12 });
+  rec('bs_duskiron_greatsword', 'blacksmithing', 260, 'duskiron_greatsword', { duskiron_bar: 10, deepstone: 2 });
+  rec('bs_moonforged_breastplate', 'blacksmithing', 280, 'moonforged_breastplate', { duskiron_bar: 16, moonsilver_bar: 2 });
+  rec('bs_moonforged_legplates', 'blacksmithing', 285, 'moonforged_legplates', { duskiron_bar: 14, moonsilver_bar: 2 });
+  rec('bs_moonforged_blade', 'blacksmithing', 290, 'moonforged_blade', { moonsilver_bar: 4, duskiron_bar: 8 }, { rare: true });
+  rec('bs_moonforged_hammer', 'blacksmithing', 295, 'moonforged_warhammer', { moonsilver_bar: 4, duskiron_bar: 8 }, { rare: true });
+  rec('lw_hardhide_kit', 'leatherworking', 225, 'hardhide_armor_kit', { hardhide_leather: 4, fine_thread: 1 });
+  rec('lw_hardhide_boots', 'leatherworking', 235, 'hardhide_boots', { hardhide_leather: 6, fine_thread: 2 });
+  rec('lw_hardhide_gloves', 'leatherworking', 250, 'hardhide_gloves', { hardhide_leather: 6, fine_thread: 2 });
+  rec('lw_hardhide_belt', 'leatherworking', 260, 'hardhide_belt', { hardhide_leather: 8, fine_thread: 2 });
+  rec('lw_wildrunner_tunic', 'leatherworking', 280, 'wildrunner_tunic', { hardhide_leather: 14, moonsilver_bar: 1 });
+  rec('lw_wildrunner_leggings', 'leatherworking', 285, 'wildrunner_leggings', { hardhide_leather: 12, moonsilver_bar: 1 });
+  rec('lw_wildrunner_cloak', 'leatherworking', 290, 'wildrunner_cloak', { hardhide_leather: 10, frostpetal: 2 }, { rare: true });
+  rec('tl_duskweave_bolt', 'tailoring', 225, 'duskweave_bolt', { duskweave_cloth: 3 }, { sk: [225, 250, 262, 275] });
+  rec('tl_duskweave_gloves', 'tailoring', 235, 'duskweave_gloves', { duskweave_bolt: 2, fine_thread: 1 });
+  rec('tl_duskweave_bag', 'tailoring', 240, 'duskweave_bag', { duskweave_bolt: 4, fine_thread: 2 });
+  rec('tl_duskweave_robe', 'tailoring', 250, 'duskweave_robe', { duskweave_bolt: 5, fine_thread: 2 });
+  rec('tl_duskweave_leggings', 'tailoring', 260, 'duskweave_leggings', { duskweave_bolt: 5, fine_thread: 2 });
+  rec('tl_starweave_robe', 'tailoring', 280, 'starweave_robe', { duskweave_bolt: 8, moonsilver_bar: 1 });
+  rec('tl_starweave_trousers', 'tailoring', 285, 'starweave_trousers', { duskweave_bolt: 7, moonsilver_bar: 1 });
+  rec('tl_starweave_bag', 'tailoring', 295, 'starweave_bag', { duskweave_bolt: 8, moonsilver_bar: 1 }, { rare: true });
+  rec('al_grand_healing', 'alchemy', 225, 'grand_healing_potion', { cinderbloom: 1, gloomcap: 1, sturdy_vial: 1 }); // the first Artisan recipe, so an alchemist at 225 has one
+  rec('al_grand_mana', 'alchemy', 240, 'grand_mana_potion', { gloomcap: 1, sunveil: 1, sturdy_vial: 1 });
+  rec('al_might', 'alchemy', 245, 'elixir_might', { cinderbloom: 2, sturdy_vial: 1 });
+  rec('al_swiftness', 'alchemy', 250, 'elixir_swiftness', { sunveil: 2, sturdy_vial: 1 });
+  rec('al_clarity', 'alchemy', 255, 'elixir_clarity', { frostpetal: 1, gloomcap: 1, sturdy_vial: 1 });
+  rec('al_flask_iron_wall', 'alchemy', 275, 'flask_iron_wall', { frostpetal: 2, gloomcap: 2, moonsilver_bar: 1 });
+  rec('al_flask_warpath', 'alchemy', 285, 'flask_warpath', { cinderbloom: 3, sunveil: 2, moonsilver_bar: 1 });
+  rec('al_flask_stillmind', 'alchemy', 290, 'flask_stillmind', { frostpetal: 3, sunveil: 2, moonsilver_bar: 1 }, { rare: true });
   // cooking (v10.9): fish and meat, by tier
   rec('ck_grilled_minnow', 'cooking', 1, 'grilled_minnow', { silverfin_minnow: 1 });
   rec('ck_roast_lean_meat', 'cooking', 10, 'roast_lean_meat', { lean_meat: 1 });

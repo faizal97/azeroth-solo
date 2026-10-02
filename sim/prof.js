@@ -117,7 +117,7 @@ G.newGame({ name: 'T', cls: 'warrior', race: 'human' });
 {
   const R = Object.values(D.RECIPES).filter((r) => r.sk[0] >= 125);
   ok(R.length >= 40 && R.every((r) => D.ITEMS[r.makes] && Object.keys(r.mats).every((m) => D.ITEMS[m])), `${R.length} Expert recipes, every item and material exists`);
-  ok(['blacksmithing', 'alchemy', 'leatherworking', 'tailoring'].every((p) => R.filter((r) => r.prof === p && r.rare && r.sk[0] >= 150).length === 1), 'one rare Expert recipe per craft');
+  ok(['blacksmithing', 'alchemy', 'leatherworking', 'tailoring'].every((p) => R.filter((r) => r.prof === p && r.rare && r.sk[0] >= 150 && r.sk[0] < 225).length === 1), 'one rare Expert recipe per craft');
   G.newGame({ name: 'S', cls: 'warrior', race: 'human' }); const P = G.S.player; P.level = 34; P.money = 1e7; G.S.flags.warModeAsked = true;
   for (const pr of ['mining', 'blacksmithing']) { G.trainProf(pr); G.profs()[pr].skill = 50; G.trainProf(pr); G.profs()[pr].skill = 150; G.trainProf(pr); G.profs()[pr].skill = 175; }
   G.addItem(G.copyItem('iron_ore'), 6); G.addItem(G.copyItem('smithing_coal'), 6); G.addItem(G.copyItem('heavy_stone'), 2);
@@ -348,6 +348,22 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
   ok(G.countItem('marlin_steak') === 3, 'a cook at 280 makes Thunderhead Marlin Steaks');
   const beast = Object.keys(D.MOBS).find((k) => D.MOBS[k].family === 'beast' && !D.MOBS[k].boss); let meat = 0; for (let i = 0; i < 200; i++) meat += G.rollLoot(beast, 55).items.filter((it) => it.id === 'marbled_haunch').length;
   ok(meat > 40, `level-55 beasts give marbled haunch (${meat}/200)`);
+}
+// Artisan recipes (v10.9 beta 5): everything they make and use exists, each craft has a recipe at 225, and ore becomes a Moonforged Breastplate
+{
+  const art = Object.values(D.RECIPES).filter((r) => r.sk[0] >= 225);
+  ok(art.every((r) => D.ITEMS[r.makes] && Object.keys(r.mats).every((m) => D.ITEMS[m])), 'every Artisan recipe makes and uses real items');
+  ok(['mining', 'blacksmithing', 'leatherworking', 'tailoring', 'alchemy', 'cooking'].every((p) => art.some((r) => r.prof === p && r.sk[0] === 225)), 'each craft has a recipe right at 225');
+  ok(art.filter((r) => r.rare).length >= 6, 'at least six Artisan recipes are rare drops');
+  G.newGame({ name: 'S', cls: 'warrior', race: 'human' }); const P = G.S.player; P.level = 60; P.money = 1e7; P.place = 'stormwind';
+  P.bagsEq = [0, 1, 2, 3].map(() => G.copyItem('woolen_bag'));
+  P.prof = { mining: { skill: 285, max: 300, known: [] }, blacksmithing: { skill: 280, max: 300, known: ['bs_moonforged_breastplate'] } };
+  G.addItem(G.copyItem('duskiron_ore'), 16); G.addItem(G.copyItem('moonsilver_ore'), 2);
+  G.craft('smelt_duskiron', 16); tick(80); G.craft('smelt_moonsilver', 2); tick(15);
+  G.craft('bs_moonforged_breastplate', 1); tick(15);
+  ok(G.countItem('moonforged_breastplate') === 1, 'a level-60 smith turns 16 duskiron and 2 moonsilver ore into a Moonforged Breastplate');
+  const it = D.ITEMS.moonforged_breastplate, sum = Object.values(it.stats).reduce((a, b) => a + b, 0);
+  ok(sum >= 33 && sum <= 37 && it.look && it.source, `the catch-up breastplate sits below level-60 dungeon blues (${sum} points) and carries its look and source`);
 }
 console.log(fails ? `${fails} failures` : 'professions sim OK');
 process.exit(fails ? 1 : 0);
