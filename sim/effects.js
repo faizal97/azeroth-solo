@@ -39,7 +39,7 @@ function piece(effect, L, withFx) {
 function unit(cls, role, L, pieces, i) {
   seed(7000 + i); const c = G.botChar({ name: cls + i, cls, race: 'human', level: L, skill: 0.8, role }); c.role = role;
   for (const it of pieces) c.equip[it.slot] = it; c.hp = null; c.res = null;
-  const u = E.charUnit(c, 'ally', 'bot', 0); u.bot = { skill: 0.8, react: 0.4, healOnly: role === 'healer' }; u.role = role; return u; // healers here only heal (game designer, #37): the cases measure healing, not spare-mana damage
+  const u = E.charUnit(c, 'ally', 'bot', 0); u.bot = { skill: 0.8, react: 0.4, healOnly: role === 'healer' && pieces.length > 0 }; u.role = role; return u; // the healer wearing the item being measured only heals (game designer, #37: the healer test cases measure healing, not spare-mana damage); a support healer in another case plays as usual
 }
 const mob = (key, L, mult) => E.mobUnit(key, L, mult);
 let lastC = null; const run = (C, secs) => { lastC = C; while (!C.over && C.t < secs) { E.tick(C, 0.1); C.events.length = 0; } return C; };
