@@ -1,5 +1,5 @@
 // Professions (v3): three gathering skills and four crafts, skill 1–225 (Apprentice 75, Journeyman 150, Expert 225 since
-// v10.10; design docs/plans/2026-10-02-professions-design.md).
+// v10.9; design docs/plans/2026-10-02-professions-design.md).
 // Loads after the zones: it adds trainers to the cities and hubs, and reads place levels to decide what grows where.
 // Rules live in game.js (G.prof*); this file is only data.
 (function (root) {
@@ -20,7 +20,7 @@
   D.PROF_RANKS = [
     { name: 'Apprentice', max: 75, lvl: 5, skill: 0, cost: 100 },
     { name: 'Journeyman', max: 150, lvl: 10, skill: 50, cost: 5000 },
-    { name: 'Expert', max: 225, lvl: 30, skill: 125, cost: 25000 }, // v10.10: levels 25-45
+    { name: 'Expert', max: 225, lvl: 30, skill: 125, cost: 25000 }, // v10.9: levels 25-45
   ];
   // Gathering: what each node needs, and the colour bands above that (orange, yellow, green, then grey).
   D.NODES = {
@@ -33,7 +33,7 @@
     mageroyal: { name: 'Sageflower', prof: 'herbalism', skill: 50, item: 'mageroyal', n: [1, 3] },
     briarthorn: { name: 'Hookthorn', prof: 'herbalism', skill: 70, item: 'briarthorn', n: [1, 3] },
     bruiseweed: { name: 'Bramblewort', prof: 'herbalism', skill: 100, item: 'bruiseweed', n: [1, 3] },
-    // Expert (v10.10)
+    // Expert (v10.9)
     iron: { name: 'Iron Deposit', prof: 'mining', skill: 125, item: 'iron_ore', n: [1, 2], extra: ['heavy_stone', 0.5] },
     gold: { name: 'Gold Vein', prof: 'mining', skill: 155, item: 'gold_ore', n: [1, 1] },
     embersilver: { name: 'Embersilver Vein', prof: 'mining', skill: 175, item: 'embersilver_ore', n: [1, 2], extra: ['heavy_stone', 0.4] },
@@ -51,7 +51,7 @@
     if (L <= 9) return { ore: [['copper', 1]], herb: [['peacebloom', 3], ['silverleaf', 3], ['earthroot', L >= 5 ? 2 : 0], ['mageroyal', L >= 8 ? 1 : 0]] };
     if (L <= 15) return { ore: [['copper', 4], ['tin', 5], ['silver', L >= 13 ? 1 : 0]], herb: [['silverleaf', 1], ['earthroot', 3], ['mageroyal', 3], ['briarthorn', L >= 12 ? 2 : 0]] };
     if (L <= 21) return { ore: [['copper', 1], ['tin', 7], ['silver', 2]], herb: [['mageroyal', 2], ['briarthorn', 4], ['bruiseweed', L >= 18 ? 4 : 1]] };
-    // Expert (v10.10): iron from 26, gold from 30, embersilver from 35; the herbs by their skill
+    // Expert (v10.9): iron from 26, gold from 30, embersilver from 35; the herbs by their skill
     if (L <= 30) return { ore: [['tin', 2], ['silver', 2], ['iron', L >= 26 ? 6 : 1]], herb: [['bruiseweed', 3], ['ironthistle', L >= 25 ? 4 : 0], ['redmantle', L >= 28 ? 3 : 0]] };
     if (L <= 38) return { ore: [['iron', 6], ['silver', 1], ['gold', L >= 30 ? 1 : 0], ['embersilver', L >= 35 ? 3 : 0]], herb: [['redmantle', 2], ['stoutroot', 4], ['dimleaf', L >= 32 ? 3 : 0], ['goldspur', L >= 35 ? 2 : 0]] };
     return { ore: [['iron', 3], ['embersilver', 6], ['gold', 1]], herb: [['goldspur', 3], ['hermits_beard', 4], ['rimeleaf', L >= 40 ? 3 : 0], ['dimleaf', 1]] };
@@ -84,7 +84,7 @@
   mat('wool_bolt', 'Bolt of Woolen Cloth', 'wool_bolt', 35);
   mat('empty_vial', 'Empty Vial', 'vial', 1, { cost: 4 });
   mat('coarse_thread', 'Coarse Thread', 'coarse_thread', 3, { cost: 10 });
-  // Expert (v10.10): levels 25-45
+  // Expert (v10.9): levels 25-45
   mat('iron_ore', 'Iron Ore', 'iron_ore', 40);
   mat('gold_ore', 'Gold Ore', 'gold_ore', 150, { q: 2 });
   mat('embersilver_ore', 'Embersilver Ore', 'embersilver_ore', 90);
@@ -131,7 +131,7 @@
   D.item('small_pouch', { name: 'Small Brown Pouch', slot: 'bag', q: 1, lvl: 1, icon: 'bag_linen', bag: 4, sell: 25, cost: 2500 });
   D.item('linen_bag', { name: 'Linen Bag', slot: 'bag', q: 1, lvl: 1, icon: 'bag_linen', bag: 6, sell: 60 });
   D.item('woolen_bag', { name: 'Woolen Bag', slot: 'bag', q: 1, lvl: 1, icon: 'bag_wool', bag: 8, sell: 150 });
-  // Expert (v10.10) consumables and the silk bag
+  // Expert (v10.9) consumables and the silk bag
   D.item('greater_healing_potion', { name: 'Greater Healing Potion', slot: 'potion', q: 1, lvl: 28, icon: 'potion_red', heal: [455, 585], sell: 90 });
   D.item('mana_potion', { name: 'Mana Potion', slot: 'potion', q: 1, lvl: 30, icon: 'potion_blue', mana: [455, 585], sell: 100 });
   D.item('greater_mana_potion', { name: 'Greater Mana Potion', slot: 'potion', q: 1, lvl: 40, icon: 'potion_blue', mana: [700, 900], sell: 160 });
@@ -203,7 +203,7 @@
   gear('gray_woolen_robe', { name: 'Gray Woolen Robe', slot: 'chest', atype: 'cloth', lvl: 19, st: ['int', 'spi'] });
   gear('heavy_woolen_pants', { name: 'Heavy Woolen Pants', slot: 'legs', atype: 'cloth', lvl: 21, st: ['int', 'sta'] });
   gear('sorcerers_woolen_robe', { name: "Sorcerer's Woolen Robe", slot: 'chest', atype: 'cloth', q: 3, lvl: 25, st: ['int', 'spi'], sp: 8 });
-  // Expert (v10.10), levels 28-44
+  // Expert (v10.9), levels 28-44
   gear('iron_chain_boots', { name: 'Iron Chain Boots', slot: 'feet', atype: 'mail', lvl: 28, st: ['str', 'sta'] });
   gear('iron_hauberk', { name: 'Iron Hauberk', slot: 'chest', atype: 'mail', lvl: 30, st: ['sta', 'str'] });
   gear('steel_warhammer', { name: 'Steel Warhammer', slot: 'weapon', wtype: 'mace', lvl: 33, st: ['str', 'sta'] });
@@ -286,7 +286,7 @@
   rec('tl_gray_robe', 'tailoring', 105, 'gray_woolen_robe', { wool_bolt: 3, coarse_thread: 2 });
   rec('tl_heavy_woolen_pants', 'tailoring', 115, 'heavy_woolen_pants', { wool_bolt: 3, coarse_thread: 2 });
   rec('tl_sorcerers_robe', 'tailoring', 140, 'sorcerers_woolen_robe', { wool_bolt: 6, silver_bar: 1, coarse_thread: 2 }, { rare: true });
-  // ---- Expert (v10.10): skill 125-215, levels 25-44
+  // ---- Expert (v10.9): skill 125-215, levels 25-44
   rec('smelt_iron', 'mining', 125, 'iron_bar', { iron_ore: 1 });
   rec('smelt_gold', 'mining', 155, 'gold_bar', { gold_ore: 1 }, { sk: [155, 170, 175, 180] });
   rec('smelt_steel', 'mining', 165, 'steel_bar', { iron_bar: 1, smithing_coal: 1 });

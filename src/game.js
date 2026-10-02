@@ -434,7 +434,7 @@
   G.vendorStock = function (npc) {
     const base = vendorBase(npc);
     const pl = D.PLACES[G.S.player.place];
-    if (pl && pl.vendor === npc) return base.concat(['empty_vial', 'coarse_thread', 'small_pouch', 'smithing_coal', 'fine_thread', 'sturdy_vial'].map(G.copyItem)); // Expert supplies (v10.10)
+    if (pl && pl.vendor === npc) return base.concat(['empty_vial', 'coarse_thread', 'small_pouch', 'smithing_coal', 'fine_thread', 'sturdy_vial'].map(G.copyItem)); // Expert supplies (v10.9)
     return base;
   };
   function vendorBase(npc) {
@@ -1393,7 +1393,7 @@
     const myF = (D.RACES[P.race] || {}).faction || 'alliance';
     const sellers = S.bots.filter((b) => B.factionOf(b) === myF);
     // trade goods from gatherers around your level
-    const L0 = P.level, goods = ['copper_ore', 'copper_bar', 'rough_stone', 'peacebloom', 'silverleaf', 'light_leather', 'linen_cloth', 'linen_bolt'].concat(L0 >= 8 ? ['earthroot', 'mageroyal', 'minor_healing_potion'] : [], L0 >= 12 ? ['tin_ore', 'bronze_bar', 'briarthorn', 'wool_cloth', 'coarse_stone', 'lesser_healing_potion'] : [], L0 >= 16 ? ['silver_ore', 'bruiseweed', 'medium_leather', 'wool_bolt', 'healing_potion', 'linen_bag'] : [], L0 >= 26 ? ['iron_ore', 'iron_bar', 'ironthistle', 'redmantle', 'heavy_leather', 'silk_cloth', 'greater_healing_potion'] : [], L0 >= 36 ? ['embersilver_ore', 'stoutroot', 'dimleaf', 'goldspur', 'thick_leather', 'silk_bolt', 'mana_potion'] : []); // Expert goods from 26 (v10.10)
+    const L0 = P.level, goods = ['copper_ore', 'copper_bar', 'rough_stone', 'peacebloom', 'silverleaf', 'light_leather', 'linen_cloth', 'linen_bolt'].concat(L0 >= 8 ? ['earthroot', 'mageroyal', 'minor_healing_potion'] : [], L0 >= 12 ? ['tin_ore', 'bronze_bar', 'briarthorn', 'wool_cloth', 'coarse_stone', 'lesser_healing_potion'] : [], L0 >= 16 ? ['silver_ore', 'bruiseweed', 'medium_leather', 'wool_bolt', 'healing_potion', 'linen_bag'] : [], L0 >= 26 ? ['iron_ore', 'iron_bar', 'ironthistle', 'redmantle', 'heavy_leather', 'silk_cloth', 'greater_healing_potion'] : [], L0 >= 36 ? ['embersilver_ore', 'stoutroot', 'dimleaf', 'goldspur', 'thick_leather', 'silk_bolt', 'mana_potion'] : []); // Expert goods from 26 (v10.9)
     while (S.ah.listings.filter((l) => !D.GEAR_SLOTS.includes(l.item.slot)).length < 8) {
       const it = G.copyItem(pick(goods)), n = G.stackable(it) ? rint(1, 4) * 5 : 1;
       const price = Math.round(G.ahValue(it) * n * (0.8 + Math.random() * 0.6));
@@ -1551,7 +1551,7 @@
     if (M.family === 'humanoid' && level >= 14 && Math.random() < (level >= 28 ? 0.4 : level >= 18 ? 0.3 : 0.2)) out.items.push(G.copyItem(level >= 28 ? 'silk_cloth' : 'wool_cloth')); // silk from 28 (Expert)
     if (M.named && Math.random() < 0.2) out.items.push(G.copyItem(pickRare(level)));
   }
-  // a rare recipe for the level it drops at (v10.10): one whose item is within 8 levels, else the nearest ones
+  // a rare recipe for the level it drops at (v10.9): one whose item is within 8 levels, else the nearest ones
   function pickRare(level) {
     const lv = (id) => D.ITEMS[D.RECIPES[D.ITEMS[id].teaches].makes].lvl || 1;
     let near = D.RARE_RECIPES.filter((id) => Math.abs(lv(id) - level) <= 8);

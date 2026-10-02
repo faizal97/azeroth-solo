@@ -91,7 +91,7 @@ G.newGame({ name: 'T', cls: 'warrior', race: 'human' });
   console.log(`skinning: 30 beast fights → ${G.countItem('light_leather')} light leather, skill ${G.profs().skinning.skill}`);
   ok(G.countItem('light_leather') > 5, 'skinning yields leather');
 }
-// ---- Expert (v10.10, docs/plans/2026-10-02-professions-expert.md)
+// ---- Expert (v10.9, docs/plans/2026-10-02-professions-expert.md)
 // the rank: from level 30 with 125 skill, up to 225
 {
   G.newGame({ name: 'E', cls: 'warrior', race: 'human' }); const P = G.S.player; P.money = 1e7; P.level = 30;
