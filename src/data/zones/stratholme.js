@@ -46,7 +46,7 @@
   H('st_ledger_h', { name: 'The Archive', lvl: 58, giver: 'apothecary_dithers', turnin: 'apothecary_dithers', dungeon: 'stratholme', text: "The archivist's ledger names who shipped the plagued grain. The Guild wants it.",
     objs: [{ type: 'collect', item: 'stratholme_ledger', n: 1 }], reward: { choice: ['fam_ring_rare60'] } });
   Object.assign(D.DUNGEONS, {
-    stratholme: { music: 'graymouth', name: 'Graymouth', minLvl: 58, par: 570, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.3 }, pulls: [
+    stratholme: { music: 'graymouth', name: 'Graymouth', minLvl: 58, par: 425, trialPar: 570, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.3 }, pulls: [
       { scene: 'strat_city', label: 'King\'s Square', mobs: ['crimson_guardsman', 'crimson_conjuror'] },
       { scene: 'strat_city', label: 'Nibbles the Cruel', mobs: ['timmy_the_cruel'], boss: true },
       { scene: 'strat_city', label: 'Archivist Penrose', mobs: ['archivist_galford'], boss: true },

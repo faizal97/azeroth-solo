@@ -45,7 +45,7 @@
   });
 
   Object.assign(D.DUNGEONS, {
-    gnomeregan: { music: 'gearhollow', name: 'Gearhollow', minLvl: 29, par: 420, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.8 }, pulls: [
+    gnomeregan: { music: 'gearhollow', name: 'Gearhollow', minLvl: 29, par: 385, trialPar: 420, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.8 }, pulls: [
       { scene: 'gnomeregan_halls', label: 'The outer halls', mobs: ['irradiated_pillager', 'gnomeregan_leper'] },
       { scene: 'gnomeregan_halls', label: 'Gruzz', mobs: ['grubbis'], boss: true },
       { scene: 'gnomeregan_halls', label: 'The dormitory', mobs: ['gnomeregan_leper', 'gnomeregan_leper', 'dark_iron_agent'] },

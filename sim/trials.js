@@ -159,7 +159,7 @@ const drop = (keys) => { for (const k of keys) { delete D.DUNGEONS[k]; delete D.
     me.auto = true; me.bot = { skill: 0.8, react: 0.3 }; me.target = w.uid; let died = null; for (let i = 0; i < 100; i++) { E.tick(F, 0.1); if (w.dead && died == null) { died = F.t; me.auto = false; me.bot = { skill: 0, react: 99, afkUntil: 999 }; } }
     ok(died != null && me.hp <= 100000 - 100000 * T.OMENS.volatile.blast + 1, `Volatile: the group takes the blast (${Math.round((100000 - me.hp) / 1000)}% of health)`); }
   // Hasty: the Trial's par is shorter
-  ok(T.par(D.DUNGEONS.stratholme, ['hasty']) === Math.round(D.DUNGEONS.stratholme.par * T.PAR * T.OMENS.hasty.par), 'Hasty: a shorter par');
+  ok(T.par(D.DUNGEONS.stratholme, ['hasty']) === Math.round((D.DUNGEONS.stratholme.trialPar || D.DUNGEONS.stratholme.par) * T.PAR * T.OMENS.hasty.par), 'Hasty: a shorter par');
   // Warded: while the focus lives, the others take half damage
   const hitOn = (om, killFocus) => { let s2 = 0, n2 = 0; for (let r = 0; r < 20; r++) { const me = bag(); me.auto = true; me.bot = { skill: 0.8, react: 0.3 };
     const a = E.mobUnit('mangy_wolf', 60, { hp: 50, dmg: 0 }), f = E.mobUnit('mangy_wolf', 60, { hp: 50, dmg: 0 }); f.focus = true; if (killFocus) f.dead = true;

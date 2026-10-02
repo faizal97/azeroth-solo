@@ -65,7 +65,7 @@
   });
 
   Object.assign(D.DUNGEONS, {
-    sm_library: { music: 'pyre_library', name: 'The Pyre Abbey: Library', minLvl: 33, par: 270, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.8 }, pulls: [
+    sm_library: { music: 'pyre_library', name: 'The Pyre Abbey: Library', minLvl: 33, par: 245, trialPar: 270, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.8 }, pulls: [
       { scene: 'sm_library', label: 'The entrance hall', mobs: ['scarlet_monk', 'scarlet_chaplain'] },
       { scene: 'sm_library', label: 'Interrogator Crell', mobs: ['interrogator_vishas'], boss: true },
       { scene: 'sm_library', label: 'The reading room', mobs: ['scarlet_wizard', 'scarlet_monk', 'scarlet_chaplain'] },
@@ -73,7 +73,7 @@
       { scene: 'sm_library', label: 'The stacks', mobs: ['scarlet_wizard', 'scarlet_wizard'] },
       { scene: 'sm_library', label: 'Arcanist Veyne', mobs: ['arcanist_doan'], boss: true },
     ] },
-    sm_cathedral: { music: 'pyre_cathedral', name: 'The Pyre Abbey: Cathedral', minLvl: 36, par: 390, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.8 }, pulls: [
+    sm_cathedral: { music: 'pyre_cathedral', name: 'The Pyre Abbey: Cathedral', minLvl: 36, par: 305, trialPar: 390, size: 5, trashMult: { hp: 2.2, dmg: 2.2 }, bossMult: { hp: 10, dmg: 4.8 }, pulls: [
       { scene: 'sm_cathedral', label: 'The armory', mobs: ['scarlet_myrmidon', 'scarlet_champion'] },
       { scene: 'sm_cathedral', label: 'Sir Barrow', mobs: ['herod'], boss: true },
       { scene: 'sm_cathedral', label: 'The courtyard', mobs: ['scarlet_abbot', 'scarlet_myrmidon', 'scarlet_champion'] },

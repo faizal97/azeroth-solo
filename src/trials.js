@@ -8,7 +8,7 @@
   T.SIZE = 8; // dungeons per season
   T.NEW_PER = 4; // dungeons never in a season that are guaranteed a place, per season
   T.PAR = 1; // a Trial's par is the dungeon's own data par (normal runs use G.par, 15% shorter)
-  T.par = (Dg, omens) => (Dg && Dg.par ? Math.round(Dg.par * T.PAR * (omens && omens.includes('hasty') ? T.OMENS.hasty.par : 1)) : 0); // Hasty: shorter par
+  T.par = (Dg, omens) => { const p = Dg && (Dg.trialPar || Dg.par); return p ? Math.round(p * T.PAR * (omens && omens.includes('hasty') ? T.OMENS.hasty.par : 1)) : 0; }; // Hasty: shorter par. trialPar: a dungeon's par for Trials when its normal par was retuned (v10.10, issue #28 kept Trials as tuned)
   T.BASE = 0.9; T.STEP = 1.05; // enemy health and damage: BASE at Trial 1, then STEP per level, compounding (tuned by sim/trialpace.js)
   T.LAUNCH = '2026-10-01'; // the `since` date of every dungeon that existed when Trials began
   const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
