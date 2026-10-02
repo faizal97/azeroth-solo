@@ -35,8 +35,8 @@
 
   // places
   Object.assign(D.PLACES, {
-    deathknell: { name: 'Last Bell', zone: 'Pallmoor', region: 'tirisfal', scene: 'deathknell', lvl: [1, 4], mobs: [['mindless_zombie', 4], ['wretched_zombie', 3], ['duskbat', 3], ['rattlecage_skeleton', 3]], named: { samuel_fipps: 90 }, pool: 12, npcs: ['sarvis', 'arren', 'saltain', 'kien'], vendor: 'kien', links: { night_web_hollow: 12, brill: 30 } },
-    night_web_hollow: { name: "Spinner's Hollow", zone: 'Pallmoor', region: 'tirisfal', scene: 'night_web_hollow', lvl: [3, 5], mobs: [['young_night_web_spider', 5], ['night_web_spider', 5]], pool: 9, npcs: [], links: { deathknell: 12 } },
+    deathknell: { name: 'Last Bell', zone: 'Pallmoor', region: 'tirisfal', scene: 'deathknell', lvl: [1, 4], mobs: [['mindless_zombie', 4], ['wretched_zombie', 3], ['duskbat', 3], ['rattlecage_skeleton', 3]], pool: 12, npcs: ['sarvis', 'arren', 'saltain', 'kien'], vendor: 'kien', links: { night_web_hollow: 12, brill: 30 } },
+    night_web_hollow: { name: "Spinner's Hollow", zone: 'Pallmoor', region: 'tirisfal', scene: 'night_web_hollow', lvl: [3, 5], mobs: [['young_night_web_spider', 5], ['night_web_spider', 5]], named: { samuel_fipps: 90 }, pool: 9, npcs: [], links: { deathknell: 12 } }, // Edric Fane moved here from Last Bell (v10.9, issue #10: a starting place has no rare)
     brill: { name: 'Mossgate', zone: 'Pallmoor', region: 'tirisfal', scene: 'brill', lvl: [5, 10], safe: true, inn: true, mobs: [], pool: 0, npcs: ['sevren', 'renee', 'dillinger', 'johaan', 'gerard'], vendor: 'renee', gearVendor: 'gerard', links: { deathknell: 30, agamand_mills: 14, garrens_haunt: 16, scarlet_watch_post: 18, undercity: 20 } },
     agamand_mills: { name: 'Varden Mills', zone: 'Pallmoor', region: 'tirisfal', scene: 'agamand_mills', lvl: [6, 8], mobs: [['darkhound', 5], ['greater_duskbat', 4], ['rattlecage_skeleton', 2]], pool: 10, npcs: [], links: { brill: 14 } },
     garrens_haunt: { name: "Holt's Haunt", zone: 'Pallmoor', region: 'tirisfal', scene: 'garrens_haunt', lvl: [7, 11], mobs: [['rot_hide_gnoll', 5], ['rot_hide_mongrel', 4]], named: { maggot_eye: 180 }, pool: 9, npcs: [], links: { brill: 16 } },
@@ -69,7 +69,7 @@
       objs: [{ type: 'collect', item: 'bat_wing', n: 8 }], reward: { choice: ['fam_feet'] } },
     night_web: { name: "Spinner's Hollow", lvl: 4, giver: 'arren', turnin: 'arren', pre: ['rattling_cages'], text: 'Spiders infest the old mine. Kill 8 young and 6 grown Spinner spiders.',
       objs: [{ type: 'kill', mob: 'young_night_web_spider', n: 8 }, { type: 'kill', mob: 'night_web_spider', n: 6 }], reward: { choice: ['fam_hands'] } },
-    samuel_fipps_q: { name: 'Edric Fane', lvl: 5, giver: 'sarvis', turnin: 'sarvis', pre: ['mindless_ones'], text: 'Edric Fane rose without his mind and stalks the graveyard. Lay him to rest.',
+    samuel_fipps_q: { name: 'Edric Fane', lvl: 5, giver: 'sarvis', turnin: 'sarvis', pre: ['mindless_ones'], text: 'Edric Fane rose without his mind and wandered off to Spinner\'s Hollow, among the spiders. Lay him to rest.',
       objs: [{ type: 'kill', mob: 'samuel_fipps', n: 1 }], reward: { choice: ['fam_weapon5'] } },
     report_brill: { name: 'The Road to Mossgate', lvl: 5, giver: 'sarvis', turnin: 'sevren', text: 'Take the road east to Mossgate and report to Magistrate Caulder.',
       objs: [{ type: 'visit', place: 'brill' }], reward: {} },

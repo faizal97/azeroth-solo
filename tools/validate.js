@@ -27,6 +27,8 @@ for (const [k, p] of Object.entries(D.PLACES)) {
   }
   for (const [m] of p.mobs || []) if (!has('MOBS', m)) err(`place ${k}: unknown mob '${m}'`);
   for (const m in p.named || {}) if (!has('MOBS', m)) err(`place ${k}: unknown named mob '${m}'`);
+  // a starting place has no rare: a new player taps the first card (v10.9, issue #10)
+  if (Object.keys(p.named || {}).length && Object.values(D.RACES).some((R) => R.start === k)) err(`place ${k}: a starting place has a named mob (${Object.keys(p.named).join(', ')})`);
   for (const n of p.npcs || []) if (!has('NPCS', n)) err(`place ${k}: unknown npc '${n}'`);
   for (const r of ['vendor', 'gearVendor']) if (p[r] && !(p.npcs || []).includes(p[r])) err(`place ${k}: ${r} '${p[r]}' is not in its npcs`);
 }

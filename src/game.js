@@ -643,6 +643,11 @@
       for (const key of plan) W.mobs.push(spawnMob(P, key));
       for (const k in (P.named || {})) W.named[k] = { state: 'alive', until: 0, id: 'n_' + k, key: k, level: D.MOBS[k].lvl[0] };
     }
+    // the place's rares follow the data: one that moved away is gone, a new one appears (v10.9, issue #10: old saves
+    // kept Edric Fane at Last Bell)
+    W.named = W.named || {};
+    for (const k in W.named) if (!(P.named || {})[k] && W.named[k].state !== 'fight') delete W.named[k];
+    for (const k in (P.named || {})) if (!W.named[k] && D.MOBS[k]) W.named[k] = { state: 'alive', until: 0, id: 'n_' + k, key: k, level: D.MOBS[k].lvl[0] };
     return W;
   }
   // chat "rare spotted" posts (v9.6): the named creature really is up
@@ -661,7 +666,10 @@
     if (!P || !P.pool && !P.named) return [];
     const W = placeState(G.S.player.place);
     const list = W.mobs.slice();
-    for (const k in W.named) list.unshift(W.named[k]);
+    // a rare goes first only if it is at most 2 levels above you; a stronger one waits after the normal creatures, its
+    // level still red on the card (v10.9, issue #10: a level-4 rare was the first thing a level-1 player tapped)
+    const L = G.S.player.level;
+    for (const k in W.named) { const n = W.named[k]; if ((n.level || 1) <= L + 2) list.unshift(n); else list.push(n); }
     return list;
   };
 

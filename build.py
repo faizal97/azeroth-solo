@@ -42,6 +42,8 @@ if subprocess.run(['node', os.path.join(R, 'sim', 'brawl.js'), '48']).returncode
     sys.exit('build stopped: a Bloodsand Brawl rule is broken (node sim/brawl.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'prof.js')], stdout=subprocess.DEVNULL).returncode != 0:
     sys.exit('build stopped: a profession rule or the Expert or Artisan pace is broken (node sim/prof.js lists which)')
+if subprocess.run(['node', os.path.join(R, 'sim', 'rares.js')], stdout=subprocess.DEVNULL).returncode != 0:
+    sys.exit('build stopped: a rare is in a starting place or first in a Fight list it outlevels (node sim/rares.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'consumables.js')], stdout=subprocess.DEVNULL).returncode != 0:
     sys.exit('build stopped: level-60 consumables give more than the modest edge (node sim/consumables.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'music.js')]).returncode != 0:
