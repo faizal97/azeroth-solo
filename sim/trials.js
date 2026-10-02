@@ -129,12 +129,15 @@ const drop = (keys) => { for (const k of keys) { delete D.DUNGEONS[k]; delete D.
 
 // ---- Guarded and Enraging
 {
+  // seeded: a Mage's spell mix varies run to run, and an unlucky mix once failed the build (beta.8); each case gets the same rolls
+  const R0 = Math.random, seed = () => { let s = 0x6a4d >>> 0; Math.random = () => { s = (s + 0x6D2B79F5) >>> 0; let x = s; x = Math.imul(x ^ (x >>> 15), x | 1); x ^= x + Math.imul(x ^ (x >>> 7), x | 61); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; };
   G.newGame({ name: 'Gu', cls: 'mage', race: 'human' }); G.S.player.level = 60;
   const bossKey = 'onyxia'; // a boss; its special is switched off below so only the Omen changes the numbers
-  const dmgOnBoss = (om, withAdd) => { let sum = 0, n = 0; for (let t2 = 0; t2 < 25; t2++) { const me = E.charUnit(G.S.player, 'ally', 'bot', Date.now()); me.bot = { skill: 0.8, react: 0.3 };
+  const dmgOnBoss = (om, withAdd) => { seed(); let sum = 0, n = 0; for (let t2 = 0; t2 < 25; t2++) { const me = E.charUnit(G.S.player, 'ally', 'bot', Date.now()); me.bot = { skill: 0.8, react: 0.3 };
     const bu = E.mobUnit(bossKey, 60, { hp: 50, dmg: 0.01 }); bu.special = null; const en = withAdd ? [bu, E.mobUnit('mangy_wolf', 60, { hp: 50, dmg: 0.01 })] : [bu];
     const F = E.fight([me], en, { omens: om }); me.target = bu.uid; for (let i = 0; i < 60; i++) { E.tick(F, 0.1); for (const e of F.events) if (e.type === 'dmg' && e.tgt === bu.uid && !e.crit) { sum += e.amount; n++; } F.events.length = 0; } } return sum / Math.max(1, n); };
   const g1 = dmgOnBoss(['guarded'], true), g0 = dmgOnBoss([], true), g2 = dmgOnBoss(['guarded'], false);
+  Math.random = R0;
   ok(g1 < g0 * 0.65 && g2 > g0 * 0.8, `Guarded: a boss takes about half damage while another enemy lives (${Math.round(g1)} vs ${Math.round(g0)}; alone ${Math.round(g2)})`);
   const bossHits = (om, from) => { let sum = 0, n = 0; for (let t2 = 0; t2 < 20; t2++) { const me = E.charUnit(G.S.player, 'ally', 'bot', Date.now()); me.maxHp = me.hp = 1e9; me.auto = false; me.bot = { skill: 0, react: 99, afkUntil: 999 };
     const bu = E.mobUnit(bossKey, 60); bu.special = null; const F = E.fight([me], [bu], { omens: om }); for (let i = 0; i < 400; i++) { E.tick(F, 0.1); for (const e of F.events) if (e.type === 'dmg' && e.src === bu.uid && !e.crit && F.t >= from && F.t < from + 10) { sum += e.amount; n++; } F.events.length = 0; } } return sum / Math.max(1, n); };
