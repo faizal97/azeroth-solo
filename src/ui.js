@@ -993,8 +993,10 @@
       const row = h('div', { class: 'chips' });
       if (P.cls === 'hunter') {
         if (P.pet) row.append(h('button', { class: 'chip' + (P.pet.hp === 0 ? ' gold' : ''), onclick: () => { if (P.pet.hp === 0) G.summon('beast'); } }, h('span', { style: { color: '#9fd6ff' } }, P.pet.name), h('small', null, P.pet.hp === 0 ? 'Dead · tap to revive' : 'Pet')));
-        if (P.level >= D.PETS.beast.lvl) for (const m of mobs.filter((x) => G.tamable(x)).slice(0, 3)) row.append(h('button', { class: 'chip', onclick: () => G.tame(m.id) }, 'Tame ' + D.MOBS[m.key].name, h('small', null, String(m.level))));
-        else if (!P.pet) row.append(h('div', { class: 'people' }, 'At level 10 you can tame a beast.'));
+        const tames = P.level >= D.PETS.beast.lvl ? mobs.filter((x) => G.tamable(x)).slice(0, 3) : [];
+        for (const m of tames) row.append(h('button', { class: 'chip', onclick: () => G.tame(m.id) }, 'Tame ' + D.MOBS[m.key].name, h('small', null, String(m.level))));
+        if (tames.length && P.pet) row.append(h('div', { class: 'people' }, `Taming another replaces ${P.pet.name}.`)); // #38
+        if (P.level < D.PETS.beast.lvl && !P.pet) row.append(h('div', { class: 'people' }, 'At level 10 you can tame a beast.'));
       } else for (const type of Cl.pets) {
         const Pd = D.PETS[type]; const have = P.pet && P.pet.type === type && P.pet.hp !== 0; const can = G.canSummon(type);
         row.append(h('button', { class: 'chip' + (have ? ' gold' : ''), disabled: !can && !have, onclick: () => { if (!have) G.summon(type); } }, have ? `${P.pet.name}` : 'Summon ' + Pd.name, h('small', null, have ? Pd.name : can ? Math.round(Pd.cost * 100) + '% mana' : 'Level ' + Pd.lvl)));
@@ -1267,8 +1269,12 @@
     const pace = R.pace || 'normal';
     const chip = (label, on, fn, sub) => h('button', { class: 'chip' + (on ? ' gold' : ''), onclick: () => { fn(); renderPanel(); } }, label, sub ? h('small', null, sub) : null);
     // set once, read often: Tactics and Boss plan fold to one line (closed by default) so the pull and the party stay on screen
-    p.append(...foldSec('run.tactics', 'Tactics', ({ careful: 'Careful', normal: 'Normal', fast: 'Fast' })[pace] + ' · ' + (pace === 'careful' ? 'safest, best for Flawless' : pace === 'fast' ? 'builds Momentum, more wipes' : 'standard rests'),
-      [h('div', { class: 'chips' }, chip('Careful', pace === 'careful', () => G.setPace('careful')), chip('Normal', pace === 'normal', () => G.setPace('normal')), chip('Fast', pace === 'fast', () => G.setPace('fast')))]));
+    // the three paces side by side as facts, read from G.PACE (#38, design mindset §1: every fact, never the answer)
+    const PN = { careful: 'Careful', normal: 'Normal', fast: 'Fast' }, pct = (x) => Math.round(x * 100) + '%';
+    const paceFact = (k) => { const Q = G.PACE[k]; return `rests at least ${(6.5 * Q.rest).toFixed(1)} sec, then pulls once everyone has ${pct(Q.hp)} health and ${pct(Q.mana)} mana (${pct(Math.max(Q.hp, Q.bossHp))} of both before a boss) · ${Q.chain != null ? `pulls the next group too about 1 time in ${Math.round(1 / Q.chain)}` : Q.extra ? 'sometimes pulls the next group too, less with a skilled tank' : 'never pulls the next group too'}`; };
+    p.append(...foldSec('run.tactics', 'Tactics', `Pace: ${PN[pace]}`,
+      [h('div', { class: 'chips' }, chip('Careful', pace === 'careful', () => G.setPace('careful')), chip('Normal', pace === 'normal', () => G.setPace('normal')), chip('Fast', pace === 'fast', () => G.setPace('fast'))),
+        h('div', { class: 'list' }, ...['careful', 'normal', 'fast'].map((k) => h('div', { class: 'row' + (k === pace ? ' gold' : '') }, h('div', { class: 't' }, h('b', null, PN[k]), h('small', { style: { whiteSpace: 'normal' } }, paceFact(k))))))]));
     const ko = R.killOrder || 'focus';
     if (false) p.append(...foldSec('run.killorder', 'Kill order', // hidden (v10.4): in the sims it changed almost nothing, and a choice that does not matter is not a choice ko === 'spread' ? 'Spread · each on a different enemy, more area attacks' : 'One at a time · everyone on the marked target',
       [h('div', { class: 'chips' }, chip('One at a time', ko === 'focus', () => G.setKillOrder('focus')), chip('Spread', ko === 'spread', () => G.setKillOrder('spread')))]));
@@ -3263,7 +3269,7 @@
   }
   function cloudKids() {
     if (!CLOUD.available()) return [cloudNote(CLOUD.why === 'play' ? 'Cloud save needs Google Play services, which this phone does not have. Save codes (below) work everywhere.'
-      : UPD.inApp() ? 'Cloud save needs the newest version of the app. Save codes (below) work in the meantime.' : `Cloud save works on the game's own page, ${UPD.WEB}. Save codes (below) work everywhere.`)];
+      : UPD.inApp() ? 'Cloud save needs the newest version of the app. Save codes (below) work in the meantime.' : `Cloud save works on the game's own page, ${UPD.WEB}. Save codes (below) work everywhere. Characters on itch.io and on the game's own page are separate; a save code moves one.`)];
     CLOUD.prepare(); // load Google's script now, so a tap can open its window straight away
     const testing = CLOUD.TESTING ? cloudNote('Testing: only invited Google accounts can sign in for now.') : null;
     const refresh = () => { if (ui.sheetFn) ui.sheetFn(); };
@@ -3988,12 +3994,19 @@
   // dialog or cutscene, so it never takes a tap meant for something else. A new popup uses whenCalm and gets the rule.
   const isCalm = () => !!G.S && !G.fight && !G.S.run && !G.paused && !ui.sheet && !ui.dialog && !(window.CS && CS.playing);
   function whenCalm(fn) { if (!G.S) return; if (!isCalm()) return setTimeout(() => whenCalm(fn), 2000); fn(); }
+  // tips wait only for no sheet, dialog or cutscene (#35): a tip about the fight or the run shows during it; invites keep
+  // whenCalm's full calm (#12, #24)
+  const tipCalm = () => !!G.S && !G.paused && !ui.sheet && !ui.dialog && !(window.CS && CS.playing);
   function nextTip() {
     clearTimeout(ui.tipWait);
-    if ((ui.tipQueue || []).length && !isCalm()) { ui.tipWait = setTimeout(nextTip, 1500); return; } // a tip waits too (issues #8, #24)
+    if ((ui.tipQueue || []).length && !tipCalm()) { ui.tipWait = setTimeout(nextTip, 1500); return; } // a tip waits for an open screen to close (issues #8, #35)
     const id = (ui.tipQueue || []).shift(); if (!id) { ui.tipEl = null; return; }
-    const close = () => { el.remove(); ui.tipEl = null; setTimeout(nextTip, 400); };
-    const el = h('div', { class: 'tip-card' }, h('div', { class: 'tip-t' }, TIPS[id]),
+    let gone = false, el = null; const close = () => { if (gone) return; gone = true; el.remove(); ui.tipEl = null; setTimeout(nextTip, 400); };
+    if (G.fight) { // in a fight: a banner that taps pass through (it never swallows an ability press), its × or a few seconds close it
+      el = h('div', { class: 'tip-card banner' }, h('div', { class: 'tip-t' }, TIPS[id]), h('button', { class: 'tip-x', onclick: close, 'aria-label': 'Close' }, '×'));
+      ui.tipEl = el; (document.getElementById('app') || document.body).append(el); setTimeout(close, 7000); return;
+    }
+    el = h('div', { class: 'tip-card' }, h('div', { class: 'tip-t' }, TIPS[id]),
       h('div', { class: 'tip-b' }, h('button', { class: 'chip gold', onclick: close }, 'Got it'),
         h('button', { class: 'chip', onclick: () => { const s = tipState(); s.off = true; saveTips(s); ui.tipQueue = []; el.remove(); ui.tipEl = null; toast('Tips off. Hero → Settings can turn them back on.', true); } }, 'Skip all tips')));
     ui.tipEl = el; (document.getElementById('app') || document.body).append(el);

@@ -235,6 +235,8 @@ img { max-width: 100%; display: block; }
 .tip-t { font: 600 15px/1.4 var(--body); color: var(--text); }
 .tip-b { display: flex; gap: 8px; justify-content: flex-end; }
 .tip-b .chip { min-height: 40px; }
+.tip-card.banner { pointer-events: none; padding-right: 44px; opacity: .96; } /* in a fight (#35): taps go through to the scene and the bar */
+.tip-card .tip-x { pointer-events: auto; position: absolute; top: 2px; right: 2px; width: 40px; height: 40px; border: 0; background: none; color: var(--muted); font: 600 24px/1 var(--body); }
 .tab-dot { display: inline-block; width: 7px; height: 7px; margin-left: 6px; border-radius: 50%; background: var(--gold); vertical-align: middle; }
 .sheet-stick { position: sticky; top: -12px; z-index: 3; display: grid; gap: 6px; background: var(--panel); margin: -12px -16px 0; padding: 12px 16px 8px; border-bottom: 1px solid #3b2d18; }
 .chat .ln { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
