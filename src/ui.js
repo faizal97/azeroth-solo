@@ -2938,7 +2938,7 @@
         return;
       }
       const list = h('div', { class: 'list' });
-      for (const r of recipes) {
+      const recipeRow = (r) => {
         const mk = D.ITEMS[r.makes], col = G.skillColor(p.skill, r.sk), can = G.craftable(r.id);
         const mats = Object.entries(r.mats).map(([m, n]) => `${D.ITEMS[m].name} ${G.countItem(m)}/${n}`).join(' · ');
         list.append(h('button', { class: 'row', onclick: () => showDialog([itemTip(G.copyItem(r.makes)), h('p', { class: 'ai-note' }, `Needs: ${mats}`),
@@ -2946,6 +2946,19 @@
           h('div', { class: 'ic' }, itemIcon(mk)),
           h('div', { class: 't' }, h('b', { style: { color: SKILL_COL[col + 1] } }, mk.name + (r.n > 1 ? ` ×${r.n}` : '')), h('small', { style: { whiteSpace: 'normal' } }, col < 0 ? `Needs skill ${r.sk[0]}` : mats)),
           h('div', { class: 'r' }, can ? String(can) : '')));
+      };
+      // what still raises your skill first (the hardest you can make on top), then what needs more skill (the next one
+      // first); grey recipes fold away below with their count (v10.9: at 300 they were some 30 rows above the new ones)
+      const colOf = (r) => G.skillColor(p.skill, r.sk), grey = recipes.filter((r) => colOf(r) === 3);
+      ui.profGrey = ui.profGrey || {};
+      recipes.filter((r) => colOf(r) >= 0 && colOf(r) < 3).sort((a, c) => c.sk[0] - a.sk[0]).forEach(recipeRow);
+      recipes.filter((r) => colOf(r) < 0).forEach(recipeRow);
+      if (grey.length) {
+        list.append(h('button', { class: 'row', onclick: () => { ui.profGrey[k] = !ui.profGrey[k]; ui.sheetFn(); } },
+          h('div', { class: 'ic' }, img(art('icon', Pd.icon))),
+          h('div', { class: 't' }, h('b', { style: { color: SKILL_COL[4] } }, `${ui.profGrey[k] ? 'Hide' : 'Show'} ${grey.length} grey recipe${grey.length === 1 ? '' : 's'}`), h('small', { style: { whiteSpace: 'normal' } }, 'You can still make them; they no longer raise your skill.')),
+          h('div', { class: 'r' }, ui.profGrey[k] ? '▴' : '▾')));
+        if (ui.profGrey[k]) grey.forEach(recipeRow);
       }
       b.append(h('div', { class: 'sec-h' }, k === 'mining' ? 'Smelting' : 'Recipes', h('small', null, 'orange always raises your skill, yellow often, green rarely, grey never')), list);
       if (k === 'mining') b.append(h('p', { class: 'ai-note' }, 'Ore veins appear in the wild: look in the Fight tab. Copper in the starting zones, tin from about level 10, silver is rare.'));
