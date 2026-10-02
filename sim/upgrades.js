@@ -73,5 +73,16 @@ ok(Math.ceil(15 / G.clearMarks('stratholme')) <= 5, 'a step takes at most 5 dung
   ok(p > 0.85 && p < 1.15, `a random level-60 purple is about as strong as a named one (${(p * 100).toFixed(0)}%)`);
   ok(rand(3) < named(4), 'a random blue stays below raid purples');
 }
+// the Bags dot (v10.9, issue #11): an upgrade landing in your bags lights it, opening Bags clears it, and so does
+// wearing or selling the upgrade first; a plain item never lights it
+{
+  G.newGame({ name: 'B', cls: 'mage', race: 'undead' }); const P = G.S.player;
+  const robe = Object.keys(D.ITEMS).find((id) => { const it = D.ITEMS[id]; return it.slot === 'chest' && G.isUpgrade(G.copyItem(id)); });
+  G.addItem(G.copyItem('linen_cloth'), 3); ok(!G.bagDot(), 'a plain item does not light the Bags dot');
+  G.addItem(G.copyItem(robe), 1); ok(G.bagDot(), `an upgrade (${robe}) lights the Bags dot`);
+  P.bagUpgrade = false; ok(!G.bagDot(), 'opening Bags clears it');
+  G.addItem(G.copyItem(robe), 1); G.equip(P.bags.findIndex((b) => b.item.id === robe)); P.bags = P.bags.filter((b) => b.item.id !== robe);
+  ok(!G.bagDot(), 'wearing the upgrade before opening Bags clears it');
+}
 console.log(`upgrades: ${n - bad}/${n} checks pass`);
 process.exit(bad ? 1 : 0);

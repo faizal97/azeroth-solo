@@ -292,6 +292,8 @@
     return Object.keys(g).length ? g : null;
   };
 
+  // the Bags dot (issue #11): an upgrade landed since you last opened Bags, and one is still there (selling or wearing it clears it)
+  G.bagDot = () => { const P = G.S.player; return !!P.bagUpgrade && P.bags.some((b) => G.isUpgrade(b.item)); };
   G.isUpgrade = function (it) {
     const P = G.S.player;
     if (!D.GEAR_SLOTS.includes(it.slot) || !G.canUseItem(it)) return false;
@@ -349,6 +351,7 @@
     if (G.bagsFull()) { toast('Inventory is full.'); return false; }
     P.bags.push({ item: it, n });
     if (G.collectLook) G.collectLook(it); // the wardrobe (v10.3)
+    if (G.isUpgrade(it)) P.bagUpgrade = true; // the Bags button's dot until Bags is opened (v10.9, issue #11)
     return true;
   };
   G.countItem = function (id) { let n = 0; for (const b of G.S.player.bags) if (b.item.id === id) n += b.n; return n; };

@@ -1743,6 +1743,7 @@
     const b = els.nav.querySelector('[data-nav="quests"]'); if (b) b.classList.toggle('dot', q);
     const s = els.nav.querySelector('[data-nav="social"]'); if (s) s.classList.toggle('dot', !!(G.S.queue && G.S.queue.popped) || friendsWaiting());
     const hb = els.nav.querySelector('[data-nav="hero"]'); if (hb) hb.classList.toggle('dot', G.talentPoints(G.S.player).free > 0 || loreUnread() > 0);
+    const bb = els.nav.querySelector('[data-nav="bags"]'); if (bb) bb.classList.toggle('dot', G.bagDot());
     loreNotice();
   }
 
@@ -2410,7 +2411,7 @@
       h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); go(); } }, 'Throw away'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Keep'))], true);
   }
   function openBags() {
-    ui.bagSel = null; ui.sellPick = null;
+    ui.bagSel = null; ui.sellPick = null; G.S.player.bagUpgrade = false; renderNavDots(); // seen: the dot clears (issue #11)
     openSheet('bags', 'Backpack', null, (b, t) => {
       const P = G.S.player;
       t.innerHTML = ''; t.append('Bags', h('small', { html: `${P.bags.length}/${G.bagCap()} · ` + moneyHtml(P.money) }));
