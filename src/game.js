@@ -434,7 +434,7 @@
   G.vendorStock = function (npc) {
     const base = vendorBase(npc);
     const pl = D.PLACES[G.S.player.place];
-    if (pl && pl.vendor === npc) return base.concat(['empty_vial', 'coarse_thread', 'small_pouch'].map(G.copyItem));
+    if (pl && pl.vendor === npc) return base.concat(['empty_vial', 'coarse_thread', 'small_pouch', 'smithing_coal', 'fine_thread', 'sturdy_vial'].map(G.copyItem)); // Expert supplies (v10.10)
     return base;
   };
   function vendorBase(npc) {
@@ -1138,6 +1138,7 @@
   }
 
   // Loot for one kill. Returns list of {item,n} and copper.
+  G.rollLoot = (mobKey, level, share) => rollLoot(mobKey, level, share); // for sims (sim/prof.js)
   function rollLoot(mobKey, level, share) {
     const M = D.MOBS[mobKey];
     const out = { items: [], money: 0 };
@@ -1392,7 +1393,7 @@
     const myF = (D.RACES[P.race] || {}).faction || 'alliance';
     const sellers = S.bots.filter((b) => B.factionOf(b) === myF);
     // trade goods from gatherers around your level
-    const L0 = P.level, goods = ['copper_ore', 'copper_bar', 'rough_stone', 'peacebloom', 'silverleaf', 'light_leather', 'linen_cloth', 'linen_bolt'].concat(L0 >= 8 ? ['earthroot', 'mageroyal', 'minor_healing_potion'] : [], L0 >= 12 ? ['tin_ore', 'bronze_bar', 'briarthorn', 'wool_cloth', 'coarse_stone', 'lesser_healing_potion'] : [], L0 >= 16 ? ['silver_ore', 'bruiseweed', 'medium_leather', 'wool_bolt', 'healing_potion', 'linen_bag'] : []);
+    const L0 = P.level, goods = ['copper_ore', 'copper_bar', 'rough_stone', 'peacebloom', 'silverleaf', 'light_leather', 'linen_cloth', 'linen_bolt'].concat(L0 >= 8 ? ['earthroot', 'mageroyal', 'minor_healing_potion'] : [], L0 >= 12 ? ['tin_ore', 'bronze_bar', 'briarthorn', 'wool_cloth', 'coarse_stone', 'lesser_healing_potion'] : [], L0 >= 16 ? ['silver_ore', 'bruiseweed', 'medium_leather', 'wool_bolt', 'healing_potion', 'linen_bag'] : [], L0 >= 26 ? ['iron_ore', 'iron_bar', 'ironthistle', 'redmantle', 'heavy_leather', 'silk_cloth', 'greater_healing_potion'] : [], L0 >= 36 ? ['embersilver_ore', 'stoutroot', 'dimleaf', 'goldspur', 'thick_leather', 'silk_bolt', 'mana_potion'] : []); // Expert goods from 26 (v10.10)
     while (S.ah.listings.filter((l) => !D.GEAR_SLOTS.includes(l.item.slot)).length < 8) {
       const it = G.copyItem(pick(goods)), n = G.stackable(it) ? rint(1, 4) * 5 : 1;
       const price = Math.round(G.ahValue(it) * n * (0.8 + Math.random() * 0.6));
@@ -1547,10 +1548,18 @@
         skillUp('skinning', G.skillColor(p.skill, [need, need + 25, need + 50, need + 100]));
       } else if (!G.S.flags.skinWarn || now() - G.S.flags.skinWarn > 60000) { G.S.flags.skinWarn = now(); sys(`Requires Skinning ${need} to skin this.`); }
     }
-    if (M.family === 'humanoid' && level >= 14 && Math.random() < (level >= 18 ? 0.3 : 0.2)) out.items.push(G.copyItem('wool_cloth'));
-    if (M.named && Math.random() < 0.2) out.items.push(G.copyItem(pick(D.RARE_RECIPES)));
+    if (M.family === 'humanoid' && level >= 14 && Math.random() < (level >= 28 ? 0.4 : level >= 18 ? 0.3 : 0.2)) out.items.push(G.copyItem(level >= 28 ? 'silk_cloth' : 'wool_cloth')); // silk from 28 (Expert)
+    if (M.named && Math.random() < 0.2) out.items.push(G.copyItem(pickRare(level)));
   }
-  G.rareRecipeDrop = () => (Math.random() < 0.1 ? G.copyItem(pick(D.RARE_RECIPES)) : null);
+  // a rare recipe for the level it drops at (v10.10): one whose item is within 8 levels, else the nearest ones
+  function pickRare(level) {
+    const lv = (id) => D.ITEMS[D.RECIPES[D.ITEMS[id].teaches].makes].lvl || 1;
+    let near = D.RARE_RECIPES.filter((id) => Math.abs(lv(id) - level) <= 8);
+    if (!near.length) { const best = Math.min(...D.RARE_RECIPES.map((id) => Math.abs(lv(id) - level))); near = D.RARE_RECIPES.filter((id) => Math.abs(lv(id) - level) === best); }
+    return pick(near);
+  }
+  G.pickRare = pickRare;
+  G.rareRecipeDrop = (level) => (Math.random() < 0.1 ? G.copyItem(pickRare(level || G.S.player.level)) : null);
   // --- crafting: 1.5 s per item, repeats for a batch
   G.recipesFor = function (prof) {
     const p = G.profs()[prof]; if (!p) return [];
@@ -2967,7 +2976,7 @@
         const drops = wbA && !wbFirst ? [] : table.slice(0, 2).map(bonus ? G.hardCopy : G.copyItem);
         if (R.hard) { if (bonus) { G.raidWeek().got[R.act + ':' + pull.mobs[0]] = true; sys(`Hard bonus: ${M.name} drops loot ${G.HARD_STEPS} upgrade steps up (once a week).`); } else sys(`${M.name}'s Hard bonus is taken this week: Normal loot until Monday.`); }
         for (const it of drops) addRoll(it);
-        const rr = G.rareRecipeDrop(); if (rr) addRoll(rr);
+        const rr = G.rareRecipeDrop(G.syncLevel(R.act)); if (rr) addRoll(rr);
         if (!(wbA && !wbFirst) && (!D.ACTIVITIES[R.act].dungeon || Math.random() < 0.25)) addRoll(G.genGear(pick(D.GEAR_SLOTS), G.syncLevel(R.act), !D.ACTIVITIES[R.act].dungeon ? 2 : 3));
         if (pull.mobs[0] === 'vancleef' && G.S.player.quests.defias_brotherhood) { G.addItem(G.copyItem('vancleef_head'), 1); loot(`You receive loot: ${B.link("Head of Blackwell")}.`); questCheck(); }
         const talker = pick(S.group.members.filter((m) => !m.gone));

@@ -33,17 +33,32 @@
     mageroyal: { name: 'Sageflower', prof: 'herbalism', skill: 50, item: 'mageroyal', n: [1, 3] },
     briarthorn: { name: 'Hookthorn', prof: 'herbalism', skill: 70, item: 'briarthorn', n: [1, 3] },
     bruiseweed: { name: 'Bramblewort', prof: 'herbalism', skill: 100, item: 'bruiseweed', n: [1, 3] },
+    // Expert (v10.10)
+    iron: { name: 'Iron Deposit', prof: 'mining', skill: 125, item: 'iron_ore', n: [1, 2], extra: ['heavy_stone', 0.5] },
+    gold: { name: 'Gold Vein', prof: 'mining', skill: 155, item: 'gold_ore', n: [1, 1] },
+    embersilver: { name: 'Embersilver Vein', prof: 'mining', skill: 175, item: 'embersilver_ore', n: [1, 2], extra: ['heavy_stone', 0.4] },
+    ironthistle: { name: 'Ironthistle', prof: 'herbalism', skill: 115, item: 'ironthistle', n: [1, 3] },
+    redmantle: { name: 'Redmantle', prof: 'herbalism', skill: 125, item: 'redmantle', n: [1, 3] },
+    stoutroot: { name: 'Stoutroot', prof: 'herbalism', skill: 150, item: 'stoutroot', n: [1, 3] },
+    dimleaf: { name: 'Dimleaf', prof: 'herbalism', skill: 160, item: 'dimleaf', n: [1, 3] },
+    goldspur: { name: 'Goldspur', prof: 'herbalism', skill: 170, item: 'goldspur', n: [1, 3] },
+    hermits_beard: { name: "Hermit's Beard", prof: 'herbalism', skill: 185, item: 'hermits_beard', n: [1, 3] },
+    rimeleaf: { name: 'Rimeleaf', prof: 'herbalism', skill: 195, item: 'rimeleaf', n: [1, 3] },
   };
   D.GATHER_BANDS = [25, 50, 100]; // skill below req+25 always gains, below +50 half the time, below +100 a quarter
   // Which nodes grow at a place, by the place's level. Weights; the game rolls one per spawn.
   D.nodeTable = function (L) {
     if (L <= 9) return { ore: [['copper', 1]], herb: [['peacebloom', 3], ['silverleaf', 3], ['earthroot', L >= 5 ? 2 : 0], ['mageroyal', L >= 8 ? 1 : 0]] };
     if (L <= 15) return { ore: [['copper', 4], ['tin', 5], ['silver', L >= 13 ? 1 : 0]], herb: [['silverleaf', 1], ['earthroot', 3], ['mageroyal', 3], ['briarthorn', L >= 12 ? 2 : 0]] };
-    return { ore: [['copper', 1], ['tin', 7], ['silver', 2]], herb: [['mageroyal', 2], ['briarthorn', 4], ['bruiseweed', L >= 18 ? 4 : 1]] };
+    if (L <= 21) return { ore: [['copper', 1], ['tin', 7], ['silver', 2]], herb: [['mageroyal', 2], ['briarthorn', 4], ['bruiseweed', L >= 18 ? 4 : 1]] };
+    // Expert (v10.10): iron from 26, gold from 30, embersilver from 35; the herbs by their skill
+    if (L <= 30) return { ore: [['tin', 2], ['silver', 2], ['iron', L >= 26 ? 6 : 1]], herb: [['bruiseweed', 3], ['ironthistle', L >= 25 ? 4 : 0], ['redmantle', L >= 28 ? 3 : 0]] };
+    if (L <= 38) return { ore: [['iron', 6], ['silver', 1], ['gold', L >= 30 ? 1 : 0], ['embersilver', L >= 35 ? 3 : 0]], herb: [['redmantle', 2], ['stoutroot', 4], ['dimleaf', L >= 32 ? 3 : 0], ['goldspur', L >= 35 ? 2 : 0]] };
+    return { ore: [['iron', 3], ['embersilver', 6], ['gold', 1]], herb: [['goldspur', 3], ['hermits_beard', 4], ['rimeleaf', L >= 40 ? 3 : 0], ['dimleaf', 1]] };
   };
   // Skinning needs skill by the beast's level, like the original game.
   D.skinSkill = (lvl) => (lvl <= 10 ? 1 : lvl <= 20 ? (lvl - 10) * 10 : lvl * 5);
-  D.skinLeather = (lvl) => (lvl >= 20 ? 'medium_leather' : 'light_leather');
+  D.skinLeather = (lvl) => (lvl >= 40 ? 'thick_leather' : lvl >= 28 ? 'heavy_leather' : lvl >= 20 ? 'medium_leather' : 'light_leather');
 
   // ---- materials (stack to 20; slot 'mat')
   const mat = (id, name, icon, sell, o) => D.item(id, Object.assign({ name, slot: 'mat', q: 1, icon, sell }, o));
@@ -69,6 +84,29 @@
   mat('wool_bolt', 'Bolt of Woolen Cloth', 'wool_bolt', 35);
   mat('empty_vial', 'Empty Vial', 'vial', 1, { cost: 4 });
   mat('coarse_thread', 'Coarse Thread', 'coarse_thread', 3, { cost: 10 });
+  // Expert (v10.10): levels 25-45
+  mat('iron_ore', 'Iron Ore', 'iron_ore', 40);
+  mat('gold_ore', 'Gold Ore', 'gold_ore', 150, { q: 2 });
+  mat('embersilver_ore', 'Embersilver Ore', 'embersilver_ore', 90);
+  mat('heavy_stone', 'Heavy Stone', 'heavy_stone', 15);
+  mat('iron_bar', 'Iron Bar', 'iron_bar', 60);
+  mat('steel_bar', 'Steel Bar', 'steel_bar', 90);
+  mat('gold_bar', 'Gold Bar', 'gold_bar', 200, { q: 2 });
+  mat('embersilver_bar', 'Embersilver Bar', 'embersilver_bar', 130);
+  mat('ironthistle', 'Ironthistle', 'ironthistle', 30);
+  mat('redmantle', 'Redmantle', 'redmantle', 35);
+  mat('stoutroot', 'Stoutroot', 'stoutroot', 45);
+  mat('dimleaf', 'Dimleaf', 'dimleaf', 50);
+  mat('goldspur', 'Goldspur', 'goldspur', 60);
+  mat('hermits_beard', "Hermit's Beard", 'hermits_beard', 70);
+  mat('rimeleaf', 'Rimeleaf', 'rimeleaf', 80);
+  mat('heavy_leather', 'Heavy Leather', 'heavy_leather', 45);
+  mat('thick_leather', 'Thick Leather', 'thick_leather', 70);
+  mat('silk_cloth', 'Silk Cloth', 'silk_cloth', 25);
+  mat('silk_bolt', 'Bolt of Silk Cloth', 'silk_bolt', 80);
+  mat('smithing_coal', 'Smithing Coal', 'smithing_coal', 5, { cost: 25 });
+  mat('fine_thread', 'Fine Thread', 'fine_thread', 8, { cost: 30 });
+  mat('sturdy_vial', 'Sturdy Vial', 'sturdy_vial', 5, { cost: 20 });
   // Linen was vendor trash before v3. It is a tailoring material now (existing stacks keep working).
   D.ITEMS.linen_cloth.slot = 'mat'; D.ITEMS.linen_cloth.icon = 'linen_bolt';
 
@@ -93,6 +131,20 @@
   D.item('small_pouch', { name: 'Small Brown Pouch', slot: 'bag', q: 1, lvl: 1, icon: 'bag_linen', bag: 4, sell: 25, cost: 2500 });
   D.item('linen_bag', { name: 'Linen Bag', slot: 'bag', q: 1, lvl: 1, icon: 'bag_linen', bag: 6, sell: 60 });
   D.item('woolen_bag', { name: 'Woolen Bag', slot: 'bag', q: 1, lvl: 1, icon: 'bag_wool', bag: 8, sell: 150 });
+  // Expert (v10.10) consumables and the silk bag
+  D.item('greater_healing_potion', { name: 'Greater Healing Potion', slot: 'potion', q: 1, lvl: 28, icon: 'potion_red', heal: [455, 585], sell: 90 });
+  D.item('mana_potion', { name: 'Mana Potion', slot: 'potion', q: 1, lvl: 30, icon: 'potion_blue', mana: [455, 585], sell: 100 });
+  D.item('greater_mana_potion', { name: 'Greater Mana Potion', slot: 'potion', q: 1, lvl: 40, icon: 'potion_blue', mana: [700, 900], sell: 160 });
+  D.item('superior_healing_potion', { name: 'Superior Healing Potion', slot: 'potion', q: 1, lvl: 44, icon: 'potion_red', heal: [700, 900], sell: 170 });
+  D.item('elixir_agility', { name: 'Elixir of Agility', slot: 'elixir', q: 1, lvl: 32, icon: 'elixir_green', buff: { agi: 12 }, sell: 110 });
+  D.item('elixir_greater_defense', { name: 'Elixir of Greater Defense', slot: 'elixir', q: 1, lvl: 34, icon: 'elixir_green', buff: { armor: 200 }, sell: 120 });
+  D.item('elixir_intellect', { name: 'Elixir of Intellect', slot: 'elixir', q: 1, lvl: 38, icon: 'elixir_gold', buff: { int: 12 }, sell: 140 });
+  D.item('elixir_ironhide', { name: 'Elixir of the Ironhide', slot: 'elixir', q: 2, lvl: 44, icon: 'elixir_gold', buff: { sta: 15, armor: 100 }, sell: 260 });
+  D.item('heavy_sharpening_stone', { name: 'Heavy Sharpening Stone', slot: 'stone', q: 1, lvl: 25, icon: 'sharpening_stone', wdmg: 6, sell: 25 });
+  D.item('embersilver_weightstone', { name: 'Embersilver Weightstone', slot: 'stone', q: 1, lvl: 35, icon: 'weightstone', wdmg: 7, sell: 45 });
+  D.item('heavy_armor_kit', { name: 'Heavy Armor Kit', slot: 'kit', q: 1, lvl: 25, icon: 'armor_kit', kit: 24, sell: 70 });
+  D.item('thick_armor_kit', { name: 'Thick Armor Kit', slot: 'kit', q: 1, lvl: 38, icon: 'armor_kit', kit: 32, sell: 120 });
+  D.item('silk_bag', { name: 'Silk Bag', slot: 'bag', q: 1, lvl: 1, icon: 'bag_wool', bag: 10, sell: 400 });
   D.BAG_SLOTS = 4;
 
   // ---- crafted gear, on the same curve as random drops (G.genGear), with fixed stats
@@ -151,6 +203,27 @@
   gear('gray_woolen_robe', { name: 'Gray Woolen Robe', slot: 'chest', atype: 'cloth', lvl: 19, st: ['int', 'spi'] });
   gear('heavy_woolen_pants', { name: 'Heavy Woolen Pants', slot: 'legs', atype: 'cloth', lvl: 21, st: ['int', 'sta'] });
   gear('sorcerers_woolen_robe', { name: "Sorcerer's Woolen Robe", slot: 'chest', atype: 'cloth', q: 3, lvl: 25, st: ['int', 'spi'], sp: 8 });
+  // Expert (v10.10), levels 28-44
+  gear('iron_chain_boots', { name: 'Iron Chain Boots', slot: 'feet', atype: 'mail', lvl: 28, st: ['str', 'sta'] });
+  gear('iron_hauberk', { name: 'Iron Hauberk', slot: 'chest', atype: 'mail', lvl: 30, st: ['sta', 'str'] });
+  gear('steel_warhammer', { name: 'Steel Warhammer', slot: 'weapon', wtype: 'mace', lvl: 33, st: ['str', 'sta'] });
+  gear('steel_longsword', { name: 'Steel Longsword', slot: 'weapon', wtype: 'sword', lvl: 34, st: ['str', 'agi'] });
+  gear('steel_banded_belt', { name: 'Steel-Banded Belt', slot: 'waist', atype: 'mail', lvl: 36, st: ['str', 'sta'] });
+  gear('embersilver_gauntlets', { name: 'Embersilver Gauntlets', slot: 'hands', atype: 'mail', lvl: 38, st: ['str', 'sta'] });
+  gear('embersilver_greaves', { name: 'Embersilver Greaves', slot: 'legs', atype: 'mail', lvl: 41, st: ['sta', 'str'] });
+  gear('embersilver_breastplate', { name: 'Embersilver Breastplate', slot: 'chest', atype: 'mail', q: 3, lvl: 44, st: ['str', 'sta'] });
+  gear('heavy_leather_boots', { name: 'Heavy Leather Boots', slot: 'feet', atype: 'leather', lvl: 28, st: ['agi', 'sta'] });
+  gear('heavy_leather_gloves', { name: 'Heavy Leather Gloves', slot: 'hands', atype: 'leather', lvl: 30, st: ['agi', 'sta'] });
+  gear('guardian_leather_tunic', { name: 'Guardian Leather Tunic', slot: 'chest', atype: 'leather', lvl: 34, st: ['sta', 'agi'] });
+  gear('thick_leather_belt', { name: 'Thick Leather Belt', slot: 'waist', atype: 'leather', lvl: 39, st: ['agi', 'sta'] });
+  gear('thick_leather_pants', { name: 'Thick Leather Pants', slot: 'legs', atype: 'leather', lvl: 41, st: ['agi', 'sta'] });
+  gear('thick_leather_jerkin', { name: 'Thick Leather Jerkin', slot: 'chest', atype: 'leather', q: 3, lvl: 44, st: ['agi', 'sta'] });
+  gear('silk_gloves', { name: 'Silk Gloves', slot: 'hands', atype: 'cloth', lvl: 29, st: ['int', 'sta'] });
+  gear('silk_cloak', { name: 'Silk Cloak', slot: 'back', lvl: 32, st: ['int', 'spi'] });
+  gear('crimson_silk_robe', { name: 'Crimson Silk Robe', slot: 'chest', atype: 'cloth', lvl: 36, st: ['int', 'spi'] });
+  gear('silk_sash', { name: 'Silk Sash', slot: 'waist', atype: 'cloth', lvl: 38, st: ['int', 'sta'] });
+  gear('silk_leggings', { name: 'Silk Leggings', slot: 'legs', atype: 'cloth', lvl: 40, st: ['int', 'sta'] });
+  gear('embersilver_threaded_robe', { name: 'Embersilver-Threaded Robe', slot: 'chest', atype: 'cloth', q: 3, lvl: 44, st: ['int', 'spi'], sp: 14 });
 
   // ---- recipes. sk = [learn, yellow, green, grey]; default [s, s+25, s+37, s+50].
   // rare: taught by a recipe item that drops in dungeons, not by the trainer.
@@ -213,6 +286,45 @@
   rec('tl_gray_robe', 'tailoring', 105, 'gray_woolen_robe', { wool_bolt: 3, coarse_thread: 2 });
   rec('tl_heavy_woolen_pants', 'tailoring', 115, 'heavy_woolen_pants', { wool_bolt: 3, coarse_thread: 2 });
   rec('tl_sorcerers_robe', 'tailoring', 140, 'sorcerers_woolen_robe', { wool_bolt: 6, silver_bar: 1, coarse_thread: 2 }, { rare: true });
+  // ---- Expert (v10.10): skill 125-215, levels 25-44
+  rec('smelt_iron', 'mining', 125, 'iron_bar', { iron_ore: 1 });
+  rec('smelt_gold', 'mining', 155, 'gold_bar', { gold_ore: 1 }, { sk: [155, 170, 175, 180] });
+  rec('smelt_steel', 'mining', 165, 'steel_bar', { iron_bar: 1, smithing_coal: 1 });
+  rec('smelt_embersilver', 'mining', 175, 'embersilver_bar', { embersilver_ore: 1 }, { sk: [175, 200, 212, 225] });
+  rec('bs_heavy_stone', 'blacksmithing', 150, 'heavy_sharpening_stone', { heavy_stone: 2 }, { sk: [150, 165, 177, 190] });
+  rec('bs_iron_boots', 'blacksmithing', 150, 'iron_chain_boots', { iron_bar: 6, heavy_stone: 1 });
+  rec('bs_iron_hauberk', 'blacksmithing', 160, 'iron_hauberk', { iron_bar: 10 });
+  rec('bs_steel_warhammer', 'blacksmithing', 170, 'steel_warhammer', { steel_bar: 6, heavy_stone: 2 });
+  rec('bs_steel_longsword', 'blacksmithing', 175, 'steel_longsword', { steel_bar: 6, heavy_stone: 2 });
+  rec('bs_steel_belt', 'blacksmithing', 180, 'steel_banded_belt', { steel_bar: 5, heavy_stone: 2 });
+  rec('bs_ember_weightstone', 'blacksmithing', 180, 'embersilver_weightstone', { embersilver_bar: 1, heavy_stone: 1 }, { sk: [180, 200, 212, 225] });
+  rec('bs_ember_gauntlets', 'blacksmithing', 190, 'embersilver_gauntlets', { embersilver_bar: 6, steel_bar: 2 });
+  rec('bs_ember_greaves', 'blacksmithing', 205, 'embersilver_greaves', { embersilver_bar: 10, gold_bar: 1 });
+  rec('bs_ember_breastplate', 'blacksmithing', 215, 'embersilver_breastplate', { embersilver_bar: 14, gold_bar: 2 }, { rare: true });
+  rec('al_greater_healing', 'alchemy', 150, 'greater_healing_potion', { ironthistle: 1, redmantle: 1, sturdy_vial: 1 }); // the first Expert recipe, so an alchemist at 150 has one
+  rec('al_mana', 'alchemy', 160, 'mana_potion', { redmantle: 1, stoutroot: 1, sturdy_vial: 1 });
+  rec('al_agility', 'alchemy', 165, 'elixir_agility', { dimleaf: 1, ironthistle: 1, sturdy_vial: 1 });
+  rec('al_greater_defense', 'alchemy', 175, 'elixir_greater_defense', { dimleaf: 1, goldspur: 1, sturdy_vial: 1 });
+  rec('al_intellect', 'alchemy', 185, 'elixir_intellect', { goldspur: 1, hermits_beard: 1, sturdy_vial: 1 });
+  rec('al_greater_mana', 'alchemy', 195, 'greater_mana_potion', { hermits_beard: 1, rimeleaf: 1, sturdy_vial: 1 });
+  rec('al_superior_healing', 'alchemy', 210, 'superior_healing_potion', { rimeleaf: 1, goldspur: 1, sturdy_vial: 1 });
+  rec('al_ironhide', 'alchemy', 215, 'elixir_ironhide', { rimeleaf: 2, hermits_beard: 1, gold_bar: 1, sturdy_vial: 1 }, { rare: true });
+  rec('lw_heavy_kit', 'leatherworking', 150, 'heavy_armor_kit', { heavy_leather: 4, fine_thread: 1 });
+  rec('lw_heavy_boots', 'leatherworking', 150, 'heavy_leather_boots', { heavy_leather: 6, fine_thread: 2 });
+  rec('lw_heavy_gloves', 'leatherworking', 160, 'heavy_leather_gloves', { heavy_leather: 6, fine_thread: 2 });
+  rec('lw_guardian_tunic', 'leatherworking', 175, 'guardian_leather_tunic', { heavy_leather: 10, fine_thread: 3 });
+  rec('lw_thick_belt', 'leatherworking', 190, 'thick_leather_belt', { thick_leather: 6, fine_thread: 2 });
+  rec('lw_thick_kit', 'leatherworking', 200, 'thick_armor_kit', { thick_leather: 4, fine_thread: 1 });
+  rec('lw_thick_pants', 'leatherworking', 205, 'thick_leather_pants', { thick_leather: 10, fine_thread: 3 });
+  rec('lw_thick_jerkin', 'leatherworking', 215, 'thick_leather_jerkin', { thick_leather: 14, gold_bar: 1 }, { rare: true });
+  rec('tl_silk_bolt', 'tailoring', 150, 'silk_bolt', { silk_cloth: 3 }, { sk: [150, 175, 187, 200] });
+  rec('tl_silk_gloves', 'tailoring', 155, 'silk_gloves', { silk_bolt: 2, fine_thread: 1 });
+  rec('tl_silk_bag', 'tailoring', 160, 'silk_bag', { silk_bolt: 4, fine_thread: 2 });
+  rec('tl_silk_cloak', 'tailoring', 165, 'silk_cloak', { silk_bolt: 2, fine_thread: 1 });
+  rec('tl_crimson_robe', 'tailoring', 180, 'crimson_silk_robe', { silk_bolt: 4, fine_thread: 3 });
+  rec('tl_silk_sash', 'tailoring', 185, 'silk_sash', { silk_bolt: 2, fine_thread: 1 });
+  rec('tl_silk_leggings', 'tailoring', 195, 'silk_leggings', { silk_bolt: 4, fine_thread: 2 });
+  rec('tl_ember_robe', 'tailoring', 215, 'embersilver_threaded_robe', { silk_bolt: 8, embersilver_bar: 2, fine_thread: 3 }, { rare: true });
   // recipe items for the rare ones (dungeon bosses and named rares drop them)
   const rname = { blacksmithing: 'Plans', alchemy: 'Recipe', leatherworking: 'Pattern', tailoring: 'Pattern' };
   D.RARE_RECIPES = [];
