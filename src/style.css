@@ -767,3 +767,8 @@ svg.sym { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: 
 /* item effects (v10.10): one colour for the Effect line, the ◆ mark and effect auras */
 .eff { color: #d39cff; }
 .slot .up.eff { color: #d39cff; }
+
+/* the version on the main menu (issue #29): tap it for What's new */
+.ver-tag { position: absolute; right: 10px; bottom: 8px; padding: 6px 8px; border: 0; background: none; color: #8a7d64; font: 600 12px var(--body); }
+.create { position: relative; }
+.dialog .notes { text-align: left; }
