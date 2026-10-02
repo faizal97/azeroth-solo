@@ -2796,6 +2796,20 @@
     const P = G.S && G.S.player; if (!P) return;
     P.mounts = P.mounts || []; if (!P.mounts.includes(k)) P.mounts.push(k);
   };
+  // the Trial find for this dungeon (#31): its own effect item if your class can use it and you don't own it, else the
+  // first such item from this season's other Trial dungeons (in the season's order, so the briefing and the roll agree),
+  // else null (every find you can use this season is yours). Content-proof: the season's list decides.
+  G.trialFindFor = function (act) {
+    const ok = (id) => id && D.ITEMS[id] && G.canUseItem(D.ITEMS[id]) && !G.ownsItem(id);
+    const own = D.TRIAL_FIND && D.TRIAL_FIND[act]; if (!own) return null;
+    if (ok(own)) return own;
+    // another of the season's finds, the one that suits you best: an effect for your role (healing, tank, damage) first,
+    // then your class's stats (its affix, as #13's fitted gear); ties in the season's order
+    const aff = G.classAffix(G.S.player.cls), role = { healer: 'healing', tank: 'tank', dps: 'damage' }[G.role()];
+    const score = (id) => { const it = D.ITEMS[id], F = D.EFFECTS[it.effect] || {}; return (F.role === role ? 2 : 0) + (aff && Object.keys(it.stats || {}).some((k) => aff.stats[k]) ? 1 : 0); };
+    const rest = G.trialPicks().filter((a) => a !== act && ok(D.TRIAL_FIND[a])).map((a) => D.TRIAL_FIND[a]);
+    return rest.map((id, i) => ({ id, i, s: score(id) })).sort((x, y) => y.s - x.s || x.i - y.i).map((x) => x.id)[0] || null;
+  };
   G.trialDone = function (R, secs, par) {
     const T = TR(), Rec = G.trials(), lvl = R.trial.lvl, act = R.act;
     if (R.trial.season !== Rec.season) { sys('The month turned during your run: it counts for the old Trials.'); return null; }
@@ -2808,9 +2822,13 @@
     if (lvl >= R.trial.bestHere) Rec.week.n++;
     if (Rec.week.n >= 4 && !Rec.week.paid) { Rec.week.paid = true; G.addMarks(25, 'this week\'s Trials goal'); }
     if (timed) { G.trialswornCheck(lvl); G.monthCloakCheck(lvl, R.trial.season); }
-    // a Trial find (#22): 1 in 5 on a timed clear, that dungeon's level-60 effect item, never one you already own
-    const fid = timed && D.TRIAL_FIND && D.TRIAL_FIND[act];
-    if (fid && D.ITEMS[fid] && !G.ownsItem(fid) && Math.random() < D.TRIAL_FIND_CHANCE) { const it = G.copyItem(fid); G.giveReward(it, 'Trial find'); loot(`Trial find: ${B.link(it.name, it.q)}, beaten in time.`); R.trialFind = fid; }
+    // a Trial find (#22, #31): 1 in 5 on a timed clear, the find G.trialFindFor names (one you can use and don't own);
+    // with nothing left to find this season, the roll pays the Trial's Marks again
+    if (timed && D.TRIAL_FIND && D.TRIAL_FIND[act] && Math.random() < D.TRIAL_FIND_CHANCE) {
+      const fid = G.trialFindFor(act);
+      if (fid) { const it = G.copyItem(fid); G.giveReward(it, 'Trial find'); loot(`Trial find: ${B.link(it.name, it.q)}, beaten in time.`); R.trialFind = fid; }
+      else { G.addMarks(5 + lvl, 'a Trial find, with every find you can use this season already yours'); R.trialFindMarks = 5 + lvl; }
+    }
     const res = { lvl, timed, great, open: Rec.open[act] || 1, rating: G.trialRating() };
     sys(timed ? `Trial ${lvl} beaten in time${great ? ' by a wide margin' : ''}! Trial ${res.open} is open here. Rating ${res.rating}.` : `Trial ${lvl} cleared, but over par: your level here stays. Rating ${res.rating}.`);
     return (R.trialResult = res);

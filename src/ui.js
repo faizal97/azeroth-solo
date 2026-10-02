@@ -3462,11 +3462,17 @@
         row('Enemies', `Level ${D.LEVEL_CAP}, ${trialStrength(lvl)}`); row('Par time', clockText(T.par(Dg, om)) + (om.includes('hasty') ? ' (Hasty)' : ''));
         row('Beat par', `opens Trial ${lvl + 1} (Trial ${lvl + 2} if 20% faster)`); row('Pays', `${5 + lvl} Mentor Marks`);
         row('Your best here', best ? `Trial ${best.lvl}, ${best.timed ? 'in time' : 'over par'}` : 'Not tried yet');
-        const fid = D.TRIAL_FIND && D.TRIAL_FIND[act], fit = fid && D.ITEMS[fid] && G.copyItem(fid), F = fit && G.effectOf(fit);
-        if (fit) { const have = G.ownsItem(fid); // the Trial find (#22): the chance, the item and its Effect line, tappable
-          rows.push(h('button', { class: 'ai-row', style: { textAlign: 'left', width: '100%' }, onclick: () => showDialog(itemTip(fit), true) }, h('span', null, 'Beat it in time'),
-            h('b', null, have ? `You have the ${fit.name}: no Trial find here` : `1 in ${Math.round(1 / D.TRIAL_FIND_CHANCE)} chance of `, have ? null : h('span', { class: 'q' + fit.q }, fit.name))));
-          if (F && !have) rows.push(h('div', { class: 'eff', style: { fontSize: '13px' } }, `Effect: ${F.name}. ${F.desc(fit.lvl || 1, fit.fxScale || 1)}`)); }
+        // the Trial find (#22, #31): what you would actually get, with its Effect line and where it is from, tappable
+        if (D.TRIAL_FIND && D.TRIAL_FIND[act]) { const fid = G.trialFindFor(act), fit = fid && G.copyItem(fid), F = fit && G.effectOf(fit), odds = `1 in ${Math.round(1 / D.TRIAL_FIND_CHANCE)}`;
+          if (!fit) row('Beat it in time', `${odds} chance of ${5 + lvl} more Mentor Marks: you have every Trial find you can use this season`);
+          else {
+            rows.push(h('button', { class: 'ai-row', style: { textAlign: 'left', width: '100%' }, onclick: () => showDialog(itemTip(fit), true) }, h('span', null, 'Beat it in time'),
+              h('b', null, `${odds} chance of `, h('span', { class: 'q' + fit.q }, fit.name))));
+            if (F) rows.push(h('div', { class: 'eff', style: { fontSize: '13px' } }, `Effect: ${F.name}. ${F.desc(fit.lvl || 1, fit.fxScale || 1)}`));
+            const own = D.ITEMS[D.TRIAL_FIND[act]], fromAct = Object.keys(D.TRIAL_FIND).find((a) => D.TRIAL_FIND[a] === fid), from = fromAct ? D.ACTIVITIES[fromAct].name : fit.name;
+            const why = fid === D.TRIAL_FIND[act] ? null : !G.canUseItem(own) ? `Your class can't use this dungeon's own find (${own.name}), so a timed run here can bring this one instead` : `You have this dungeon's own find (${own.name}), so a timed run here can bring this one instead`;
+            rows.push(h('div', { class: 'ai-note', style: { fontSize: '12px', margin: 0 } }, why ? `${why}: the find of ${from}.` : `This dungeon's own find.`));
+          } }
       } else {
         const cx = (P.codex || {})[act];
         row('Level', A.minLvl === A.maxLvl ? String(A.minLvl) : `${A.minLvl}–${A.maxLvl}${P.level > A.maxLvl ? ` (you are synced to ${A.maxLvl})` : ''}`);

@@ -267,24 +267,38 @@ ok(Rec.history[0].picks.length === 8 && Rec.history[0].rank >= 1, 'the history k
   G.newGame({ name: 'Yr2', cls: 'mage', race: 'human' }); const id2 = G.S.id; G.save(); G.load(id2);
   ok((G.S.player.mounts || []).includes('trialsworn_year1'), 'another character has it when it loads');
 }
-// Trial finds (#22): every dungeon in the Trials has its effect item at level 60 as a blue; 1 in 5 on a timed clear,
-// never over par, never one you own (worn, in bags or in the bank)
+// Trial finds (#22, #31): every dungeon in the Trials has its effect item at level 60 as a blue; 1 in 5 on a timed clear,
+// never over par; the find fits you (one your class can use and you don't own: the dungeon's own, else another from
+// this season's Trials), the briefing's G.trialFindFor is what drops, and with nothing left the roll pays Marks
 {
   const elig = new Set([...T.eligible('alliance'), ...T.eligible('horde')]);
   for (const a of elig) { const id = D.TRIAL_FIND[a], it = id && D.ITEMS[id]; ok(it && it.lvl === D.LEVEL_CAP && it.q === 3 && D.EFFECTS[it.effect], `${a} has a Trial find at level 60 (${id})`); }
-  G.newGame({ name: 'Tf', cls: 'rogue', race: 'human' }); G.S.player.level = 60;
-  const act = [...elig][0], fid = D.TRIAL_FIND[act], run = () => ({ act, trial: { lvl: 2, season: G.trials().season, bestHere: 0 } });
-  const R0 = Math.random, roll = (v, secs) => { Math.random = () => v; const R = run(); G.trialDone(R, secs, 200); Math.random = R0; return R; };
-  ok(!roll(0.5, 100).trialFind && !G.ownsItem(fid), 'no find on a roll above 1 in 5');
-  ok(!roll(0.1, 300).trialFind && !G.ownsItem(fid), 'no find over par');
-  ok(roll(0.1, 100).trialFind === fid && G.ownsItem(fid), 'a timed clear on a 1-in-5 roll gives the find');
-  ok(!roll(0.1, 100).trialFind && G.S.player.bags.filter((b) => b.item.id === fid).length === 1, 'never a duplicate while you have it in your bags');
-  const P = G.S.player, bi = P.bags.findIndex((b) => b.item.id === fid); P.bank = [P.bags.splice(bi, 1)[0]];
-  ok(!roll(0.1, 100).trialFind, 'never a duplicate while it is in your bank');
-  P.equip[D.ITEMS[fid].slot] = P.bank.pop().item;
-  ok(!roll(0.1, 100).trialFind, 'never a duplicate while you wear it');
-  let got = 0; for (let i = 0; i < 2000; i++) { delete P.equip[D.ITEMS[fid].slot]; P.bags = P.bags.filter((b) => b.item.id !== fid); P.bank = []; if (G.trialDone(run(), 100, 200) && G.ownsItem(fid)) got++; }
-  ok(got > 330 && got < 470, `about 1 in 5 timed clears gives the find (${got} of 2000)`);
+  const setup = (cls) => { G.newGame({ name: 'Tf', cls, race: 'human' }); G.S.player.level = 60; const P = G.S.player; P.bags = []; P.bank = []; return P; };
+  const R0 = Math.random, roll = (act, v, secs) => { Math.random = () => v; const R = { act, trial: { lvl: 2, season: G.trials().season, bestHere: 0 } }; G.trialDone(R, secs, 200); Math.random = R0; return R; };
+  let P = setup('rogue'); const picks = G.trialPicks(), mine = picks.find((a) => D.TRIAL_FIND[a] && G.canUseItem(D.ITEMS[D.TRIAL_FIND[a]]));
+  ok(!!mine, `a rogue can use some find this season (${mine})`);
+  const fid = D.TRIAL_FIND[mine];
+  ok(G.trialFindFor(mine) === fid, 'a find your class can use is the dungeon\'s own');
+  ok(!roll(mine, 0.5, 100).trialFind && !G.ownsItem(fid), 'no find on a roll above 1 in 5');
+  ok(!roll(mine, 0.1, 300).trialFind && !G.ownsItem(fid), 'no find over par');
+  ok(roll(mine, 0.1, 100).trialFind === fid && G.ownsItem(fid), 'a timed clear on a 1-in-5 roll gives the find');
+  const next = G.trialFindFor(mine);
+  ok(next !== fid && (!next || (G.canUseItem(D.ITEMS[next]) && !G.ownsItem(next))), `once you own it, the find is another you can use (${next})`);
+  ok(!next || roll(mine, 0.1, 100).trialFind === next, 'the briefing\'s find is the one that drops');
+  for (const k of ['bags', 'bank']) { P = setup('rogue'); if (k === 'bags') G.giveReward(G.copyItem(fid), 't'); else P.bank.push({ item: G.copyItem(fid), n: 1 }); ok(G.trialFindFor(mine) !== fid, `never a duplicate while it is in your ${k}`); }
+  P = setup('rogue'); P.equip[D.ITEMS[fid].slot] = G.copyItem(fid); ok(G.trialFindFor(mine) !== fid, 'never a duplicate while you wear it');
+  // a class that can't use the dungeon's item gets one it can use, from another of this season's Trial dungeons
+  const theirs = picks.find((a) => D.TRIAL_FIND[a] && !G.canUseItem(D.ITEMS[D.TRIAL_FIND[a]], 'priest'));
+  if (theirs) { P = setup('priest'); const f2 = G.trialFindFor(theirs); ok(f2 && f2 !== D.TRIAL_FIND[theirs] && G.canUseItem(D.ITEMS[f2]) && picks.some((a) => D.TRIAL_FIND[a] === f2), `a priest's find at ${theirs} is a usable one from this season (${f2})`);
+    const heals = picks.map((a) => D.TRIAL_FIND[a]).filter((id) => id && G.canUseItem(D.ITEMS[id]) && D.EFFECTS[D.ITEMS[id].effect].role === 'healing');
+    ok(!heals.length || D.EFFECTS[D.ITEMS[f2].effect].role === 'healing', `a healer's other find is a healing effect when the season has one (${f2})`); }
+  else ok(true, 'every find this season suits a priest');
+  // nothing left: every usable find of the season owned, the roll pays the Trial's Marks
+  P = setup('rogue'); for (const a of picks) { const id = D.TRIAL_FIND[a]; if (id && G.canUseItem(D.ITEMS[id]) && !G.ownsItem(id)) P.bank.push({ item: G.copyItem(id), n: 1 }); }
+  const m0 = G.account().marks, R = roll(mine, 0.1, 100);
+  ok(G.trialFindFor(mine) === null && !R.trialFind && R.trialFindMarks === 7 && G.account().marks >= m0 + 7 + 7, `with nothing left, a winning roll pays the Trial's Marks again (${R.trialFindMarks})`);
+  P = setup('rogue'); let got = 0; for (let i = 0; i < 2000; i++) { P.bags = []; P.bank = []; for (const s2 in P.equip) if (P.equip[s2] && P.equip[s2].id === fid) delete P.equip[s2]; const R2 = { act: mine, trial: { lvl: 2, season: G.trials().season, bestHere: 0 } }; G.trialDone(R2, 100, 200); if (R2.trialFind) got++; }
+  ok(got > 330 && got < 470, `about 1 in 5 timed clears gives a find (${got} of 2000)`);
 }
 console.log(`trials: ${n - bad}/${n} checks pass`);
 process.exit(bad ? 1 : 0);
