@@ -153,8 +153,14 @@
   mat('lean_meat', 'Lean Meat', 'lean_meat', 4);
   mat('tough_meat', 'Tough Meat', 'tough_meat', 12);
   mat('thick_steak', 'Thick Steak', 'thick_steak', 30);
+  // Artisan (v10.9): 45-60 water and beasts
+  mat('ashgill_bass', 'Ashgill Bass', 'ashgill_bass', 45);
+  mat('frostscale_herring', 'Frostscale Herring', 'frostscale_herring', 55);
+  mat('thunderhead_marlin', 'Thunderhead Marlin', 'thunderhead_marlin', 130);
+  mat('starlit_koi', 'Starlit Koi', 'starlit_koi', 450, { q: 2 });
+  mat('marbled_haunch', 'Marbled Haunch', 'marbled_haunch', 45);
   mat('cooking_spices', 'Cooking Spices', 'cooking_spices', 2, { cost: 15 });
-  // where you can fish: places with water, fishing at the place's level (tier 1: up to 15, 2: up to 28, 3: above)
+  // where you can fish: places with water, fishing at the place's level (tier 1: up to 15, 2: up to 28, 3: up to 45, 4: above)
   D.WATERS = ['goldshire', 'crystal_lake', 'lake_alameth', 'echo_isles', 'the_longshore', 'gold_coast_quarry', 'moonbrook', 'forgotten_pools', 'stagnant_oasis',
     'sludge_fen', 'lushwater_oasis', 'lakeshire', 'lake_everstill', 'cragpool_lake', 'mirkfallon_lake', 'the_hushed_bank', 'mystral_lake', 'menethil_harbor',
     'bluegill_marsh', 'saltspray_glen', 'lake_nazferiti', 'waterspring_field', 'lost_rigger_cove', 'rumhook_bay', 'saltpenny_wharf', 'blackgull_cove',
@@ -165,11 +171,12 @@
     1: { common: [['silverfin_minnow', 1], ['mudbelly_carp', 25]], big: ['whiskered_pike', 50], rare: ['glimmerscale', 60] },
     2: { common: [['speckled_trout', 75], ['reedback_perch', 100]], big: ['ironjaw_catfish', 125], rare: ['lantern_eel', 135] },
     3: { common: [['saltfin_snapper', 150], ['greyscale_cod', 175]], big: ['stormback_tuna', 200], rare: ['duskglass_ray', 210] },
+    4: { common: [['ashgill_bass', 225], ['frostscale_herring', 250]], big: ['thunderhead_marlin', 275], rare: ['starlit_koi', 285] }, // Artisan (v10.9)
   };
-  D.waterTier = (place) => { const P = D.PLACES[place]; if (!P || !D.WATERS.includes(place)) return 0; const L = Math.round(((P.lvl || [1, 1])[0] + (P.lvl || [1, 1])[1]) / 2); return L <= 15 ? 1 : L <= 28 ? 2 : 3; };
+  D.waterTier = (place) => { const P = D.PLACES[place]; if (!P || !D.WATERS.includes(place)) return 0; const L = Math.round(((P.lvl || [1, 1])[0] + (P.lvl || [1, 1])[1]) / 2); return L <= 15 ? 1 : L <= 28 ? 2 : L <= 45 ? 3 : 4; };
   D.FISH_CHANCE = { big: 0.15, rare: 0.05 }; // once your skill is up to them
   // meat from beasts you loot when you know Cooking (35%)
-  D.beastMeat = (lvl) => (lvl >= 28 ? 'thick_steak' : lvl >= 15 ? 'tough_meat' : 'lean_meat');
+  D.beastMeat = (lvl) => (lvl > 45 ? 'marbled_haunch' : lvl >= 28 ? 'thick_steak' : lvl >= 15 ? 'tough_meat' : 'lean_meat');
 
   // ---- consumables
   // potion: instant, usable in combat, shared 2 min cooldown. elixir: 1 hour, one at a time. stone: weapon damage for 30 min.
@@ -230,6 +237,16 @@
   dish('seafarers_stew', "Seafarer's Stew", 38, { agi: 8, sta: 6 }, 50);
   dish('stormback_tuna_steak', 'Stormback Tuna Steak', 40, { sta: 8, spi: 8 }, 60);
   dish('duskglass_feast', 'Duskglass Feast', 43, { int: 10, sta: 6 }, 150);
+  // Artisan (v10.9): skill 225-300
+  dish('ashgill_fillet', 'Ashgill Bass Fillet', 46, null, 30);
+  dish('roast_haunch', 'Roast Marbled Haunch', 48, null, 32);
+  dish('herring_pie', 'Frostscale Herring Pie', 52, null, 40);
+  dish('smokehouse_stew', 'Smokehouse Stew', 53, { str: 10, sta: 8 }, 70);
+  dish('spiced_haunch', 'Spiced Haunch Roast', 55, { agi: 10, sta: 8 }, 75);
+  dish('trail_skewer', "Trailmaster's Skewer", 56, null, 45);
+  dish('marlin_steak', 'Thunderhead Marlin Steak', 57, { sta: 10, spi: 10 }, 90);
+  dish('koi_banquet', 'Starlit Koi Banquet', 59, { int: 12, sta: 8 }, 220);
+  dish('long_table_feast', 'Feast of the Long Table', 60, { str: 12, agi: 12, sta: 8 }, 260);
 
   // ---- crafted gear, on the same curve as random drops (G.genGear), with fixed stats
   const QM = [0.8, 1, 1.1, 1.22, 1.35];
@@ -427,6 +444,16 @@
   rec('ck_seafarers_stew', 'cooking', 185, 'seafarers_stew', { greyscale_cod: 1, thick_steak: 1, cooking_spices: 1 });
   rec('ck_tuna_steak', 'cooking', 200, 'stormback_tuna_steak', { stormback_tuna: 1, cooking_spices: 1 });
   rec('ck_duskglass_feast', 'cooking', 210, 'duskglass_feast', { duskglass_ray: 1, thick_steak: 1 });
+  // Artisan (v10.9)
+  rec('ck_ashgill_fillet', 'cooking', 225, 'ashgill_fillet', { ashgill_bass: 1 });
+  rec('ck_roast_haunch', 'cooking', 235, 'roast_haunch', { marbled_haunch: 1 });
+  rec('ck_herring_pie', 'cooking', 250, 'herring_pie', { frostscale_herring: 1, cooking_spices: 1 });
+  rec('ck_smokehouse_stew', 'cooking', 255, 'smokehouse_stew', { marbled_haunch: 2, cooking_spices: 1 });
+  rec('ck_spiced_haunch', 'cooking', 265, 'spiced_haunch', { marbled_haunch: 2, cooking_spices: 1 });
+  rec('ck_trail_skewer', 'cooking', 270, 'trail_skewer', { marbled_haunch: 1, ashgill_bass: 1 });
+  rec('ck_marlin_steak', 'cooking', 275, 'marlin_steak', { thunderhead_marlin: 1 });
+  rec('ck_koi_banquet', 'cooking', 285, 'koi_banquet', { starlit_koi: 1, cooking_spices: 1 });
+  rec('ck_long_table', 'cooking', 290, 'long_table_feast', { marbled_haunch: 2, thunderhead_marlin: 1 }, { rare: true });
   // recipe items for the rare ones (dungeon bosses and named rares drop them)
   const rname = { blacksmithing: 'Plans', alchemy: 'Recipe', leatherworking: 'Pattern', tailoring: 'Pattern', cooking: 'Recipe' };
   D.RARE_RECIPES = [];

@@ -216,7 +216,7 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
 {
   const bad = D.WATERS.filter((w) => !D.PLACES[w] || !D.waterTier(w)); ok(!bad.length, `every water is a place with a tier (${bad.join(',')})`);
   const fish = Object.values(D.FISH).flatMap((T) => T.common.map((c) => c[0]).concat(T.big[0], T.rare[0])); ok(fish.every((f) => D.ITEMS[f]), 'every fish is an item');
-  ok([1, 2, 3].every((t) => D.WATERS.some((w) => D.waterTier(w) === t)), 'there is water to fish in every tier');
+  ok([1, 2, 3, 4].every((t) => D.WATERS.some((w) => D.waterTier(w) === t)), 'there is water to fish in every tier');
 }
 // the fishing loop: wait, bite, tap; the reel for big and rare fish; auto
 {
@@ -329,6 +329,25 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
   ok(!has(D.nodeTable(45).ore, 'duskiron') && has(D.nodeTable(57).herb, 'frostpetal'), 'duskiron starts above 45, frostpetal grows at 57');
   ok(D.skinLeather(55) === 'hardhide_leather' && D.skinLeather(45) === 'thick_leather', 'a level-55 beast skins into hardhide');
   ok(Object.values(D.NODES).every((N) => D.ITEMS[N.item] && (!N.extra || D.ITEMS[N.extra[0]])), 'every node gives a real item');
+}
+// Artisan fishing and cooking (v10.9 beta 5): 45-60 water bites tier-4 fish, the deep-water reel can still be won, the dishes cook
+{
+  G.newGame({ name: 'F4', cls: 'warrior', race: 'human' }); const P = G.S.player; P.level = 58; P.money = 1e7; G.S.flags.warModeAsked = true; P.place = 'lake_keltheril';
+  P.bagsEq = [0, 1, 2, 3].map(() => G.copyItem('woolen_bag')); P.prof = { fishing: { skill: 290, max: 300, known: [] }, cooking: { skill: 280, max: 300, known: [] } };
+  ok(D.waterTier('lake_keltheril') === 4, 'a level-58 lake is tier 4');
+  const t4 = new Set([].concat(D.FISH[4].common.map((c) => c[0]), D.FISH[4].big[0], D.FISH[4].rare[0])); const got = {}; let other = 0;
+  for (let i = 0; i < 200; i++) {
+    if (!G.fishStart(false)) { tick(5); continue; } let g = 0;
+    while (P.fishing && P.fishing.phase !== 'done' && g++ < 600) { if (P.fishing.phase === 'bite') G.fishTap(); if (P.fishing && P.fishing.phase === 'reel') { const r = P.fishing.reel; G.fishReel(r.fish > r.zone, 0.05); t += 50; continue; } tick(0.1, 0.1); }
+    const f = P.fishing; if (f && f.caught) { if (t4.has(f.fish.id)) got[f.fish.kind] = (got[f.fish.kind] || 0) + 1; else other++; }
+    P.bags = P.bags.filter((b) => b.item.slot !== 'mat');
+  }
+  console.log(`tier-4 fishing at 290: ${JSON.stringify(got)}`);
+  ok(!other && got.common > 100 && got.big > 5 && got.rare >= 1, 'tier-4 water bites only tier-4 fish, and a following reel still lands big and rare ones');
+  G.addItem(G.copyItem('thunderhead_marlin'), 3); G.cook('ck_marlin_steak', 3, 'normal'); tick(15);
+  ok(G.countItem('marlin_steak') === 3, 'a cook at 280 makes Thunderhead Marlin Steaks');
+  const beast = Object.keys(D.MOBS).find((k) => D.MOBS[k].family === 'beast' && !D.MOBS[k].boss); let meat = 0; for (let i = 0; i < 200; i++) meat += G.rollLoot(beast, 55).items.filter((it) => it.id === 'marbled_haunch').length;
+  ok(meat > 40, `level-55 beasts give marbled haunch (${meat}/200)`);
 }
 console.log(fails ? `${fails} failures` : 'professions sim OK');
 process.exit(fails ? 1 : 0);
