@@ -210,6 +210,8 @@
       const left = (a.until - nowMs) / 1000;
       if (left > 0) u.auras.push({ id: a.id, until: left, stats: a.stats, src: null, persistent: true, seal: a.seal, sealSchool: a.sealSchool, thorns: a.thorns, name: a.name, icon: a.icon });
     }
+    // cooldowns run on in real time between fights (epoch ms in char.cds; a fight's clock starts at 0)
+    for (const id in (char.cds || {})) { const left = (char.cds[id] - nowMs) / 1000; if (left > 0) u.cds[id] = left; }
     u.legend = char.legend || null;
     E.recalc(u, true);
     u.hp = char.hp == null ? u.maxHp : clamp(char.hp, 1, u.maxHp);
@@ -1334,6 +1336,9 @@
     const ch = u.char;
     ch.hp = u.dead ? 0 : Math.round(u.hp);
     ch.res = u.resType === 'energy' ? 100 : Math.round(u.res);
+    const cds = {};
+    for (const id in u.cds) if (u.cds[id] > C.t) cds[id] = Math.round(nowMs + (u.cds[id] - C.t) * 1000);
+    if (Object.keys(cds).length) ch.cds = cds; else delete ch.cds;
     ch.auras = u.auras.filter((a) => a.persistent && a.until > C.t).map((a) => ({ id: a.id, stats: a.stats, until: nowMs + (a.until - C.t) * 1000, seal: a.seal, sealSchool: a.sealSchool, thorns: a.thorns, name: a.name, icon: a.icon }));
   };
 

@@ -1280,6 +1280,7 @@
     const P = G.S.player, ab = D.ABILITIES[abId];
     if (G.fight) return G.useAbility(abId);
     if (ab.combatOnly) return 'Use it in combat';
+    if (ab.cd && ((P.cds || {})[abId] || 0) > now()) return 'Not ready yet';
     if (ab.lifetap) {
       const amt = Math.round(ab.lifetap.base + ab.lifetap.perLvl * P.level);
       const v0 = G.vitals();
@@ -1311,6 +1312,7 @@
       P.hp = Math.min(v.maxHp, P.hp + amt);
       emit('selfheal', Math.round(amt));
     }
+    if (ab.cd) { P.cds = P.cds || {}; P.cds[abId] = now() + Math.max(1, ab.cd - (E.talentMods(P).abilCd[abId] || 0)) * 1000; }
     emit('change');
     return null;
   };
@@ -2262,7 +2264,7 @@
     const foe = G.brawlOpponent(); if (!foe) return;
     // the other duels of the round first, so their results stand when yours ends
     br.pending = brawlPairs(br).map(([a, b]) => (a.you || b.you ? null : { a: a.name, b: b.name, winner: brawlAuto(a, b) })); // one per pair, yours null
-    stopActions(); P.hp = null; P.res = null;
+    stopActions(); P.hp = null; P.res = null; P.cds = null; // a fresh round: full health, cooldowns ready (like the foe)
     const pu = E.charUnit(P, 'ally', 'player', now()); G.pUnit = pu;
     G.fight = E.fight([pu], brawlUnits(foe, 'enemy'), { soloUid: pu.uid, puller: pu, apart: G.DUEL_APART }); // no pet: one fighter each
     G.fight.kind = 'brawl'; G.fight.brawl = { foe: foe.name, round: br.round };

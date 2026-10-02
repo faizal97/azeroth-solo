@@ -1699,6 +1699,8 @@
           }
         } else if (id !== 'eat' && id !== 'drink' && id !== 'attack' && id !== 'potion') {
           nores = E.abCost(D.ABILITIES[id], P) > v.res + 0.01 && D.ABILITIES[id].target !== 'enemy';
+          const lc = (((P.cds || {})[id] || 0) - now()) / 1000; // a cooldown keeps running between fights
+          if (lc > 0) { p = 1 - lc / D.ABILITIES[id].cd; left = lc; }
         }
         // a shine sweeps the button the moment a real cooldown (not the global one) ends
         if (left > 0) btn._cd = true; else if (btn._cd) { btn._cd = false; btn.classList.remove('ready'); void btn.offsetWidth; btn.classList.add('ready'); setTimeout(() => btn.classList.remove('ready'), 700); }
