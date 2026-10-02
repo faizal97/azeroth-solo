@@ -51,7 +51,7 @@ G.newGame({ name: 'T', cls: 'warrior', race: 'human' });
   ok(bp && bp.item.q === 3 && bp.item.crafter === 'T', 'breastplate crafted');
   // sharpening stone raises weapon damage
   const w0 = G.stats().wMin; G.addItem(G.copyItem('rough_sharpening_stone'), 1); G.useItem(P.bags.findIndex((b) => b.item.id === 'rough_sharpening_stone'));
-  ok(G.stats().wMin === w0 + 2, 'stone +2 weapon dmg');
+  ok(G.stats().wMin === w0 + D.ITEMS.rough_sharpening_stone.wdmg, 'a sharpening stone adds its weapon damage');
   // elixir
   const s0 = G.stats().str; G.addItem(G.copyItem('elixir_lions_strength'), 1); G.useItem(P.bags.findIndex((b) => b.item.id === 'elixir_lions_strength'));
   ok(G.stats().str === s0 + 4, 'elixir +4 str');
