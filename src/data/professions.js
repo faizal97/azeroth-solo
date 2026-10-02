@@ -224,7 +224,7 @@
       it.icon = it.icon || (it.slot === 'chest' ? 'chest_' + (it.atype || 'cloth') : D.SLOT_ICON[it.slot]);
     }
     if (it.q >= 2 && it.st) {
-      const budget = Math.max(1, Math.round(L * (it.q === 2 ? 0.55 : 0.9) + (it.q === 3 ? 2 : 1)));
+      const budget = Math.max(1, Math.round(it.q === 2 ? L * 0.55 + 1 : it.q === 3 ? L * 0.55 + 2 : L * 0.64 + 2)); // the drop curve (G.genGear)
       const ks = it.st; it.stats = {}; let left = budget;
       ks.forEach((k, i) => { const v = i === ks.length - 1 ? Math.max(1, left) : Math.max(1, Math.round(budget / ks.length)); it.stats[k] = v; left -= v; });
     }

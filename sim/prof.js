@@ -304,5 +304,13 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
   const w = (rid) => { const z = G.cookZone(rid); return z.gold[1] - z.gold[0]; };
   ok(w('ck_glimmerscale_supper') < w('ck_spiced_pike') * 0.8, 'a dish of a rare fish has a narrower gold zone than a Well Fed meal');
 }
+// crafted gear on the drop curve (v10.9 beta 5): the same stat budget as a random drop of that level and quality
+{
+  const budget = (L, q) => Math.max(1, Math.round(q === 2 ? L * 0.55 + 1 : q === 3 ? L * 0.55 + 2 : L * 0.64 + 2));
+  const sum = (it) => Object.values(it.stats || {}).reduce((a, b) => a + b, 0);
+  const off = Object.entries(D.ITEMS).filter(([, it]) => it.crafted && it.q >= 2 && it.stats && !it.fixedStats && Math.abs(sum(it) - budget(it.lvl, it.q)) > 3);
+  ok(!off.length, 'crafted gear has the drop curve\'s stat budget: ' + off.slice(0, 4).map(([k, it]) => `${k} ${sum(it)} vs ${budget(it.lvl, it.q)}`).join(', '));
+  ok(sum(D.ITEMS.embersilver_breastplate) <= 28, 'the level-44 Expert rare is a level-44 blue, not a level-60 one (' + sum(D.ITEMS.embersilver_breastplate) + ')');
+}
 console.log(fails ? `${fails} failures` : 'professions sim OK');
 process.exit(fails ? 1 : 0);
