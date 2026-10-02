@@ -35,12 +35,12 @@ function play(strat, cls, L) {
 }
 let bad = 0;
 const res = {};
-for (const L of [20, 40, 60]) for (const strat of Object.keys(PICK)) {
+for (const L of [10, 20, 40, 60]) for (const strat of Object.keys(PICK)) { // 10: where the battleground opens (issue #19)
   let w = 0, secs = 0, f = 0;
   for (let i = 0; i < N; i++) { const r = play(strat, ['warrior', 'mage', 'priest', 'rogue'][i % 4], L); w += r.win ? 1 : 0; secs += r.secs; f += r.fights; }
   res[L + strat] = w / N;
   console.log(`L${L} ${strat.padEnd(6)}: wins ${Math.round((w / N) * 100)}% · ${Math.round(secs / N)}s a game · ${(f / N).toFixed(1)} fights`);
 }
-for (const L of [20, 40, 60]) if (res[L + 'smart'] - res[L + 'naive'] < 0.2) { bad++; console.log(`FAIL L${L}: the smart pick is not clearly better`); }
+for (const L of [10, 20, 40, 60]) if (res[L + 'smart'] - res[L + 'naive'] < 0.2) { bad++; console.log(`FAIL L${L}: the smart pick is not clearly better`); }
 console.log(bad ? `${bad} problem(s)` : 'battleground: the choice is real');
 process.exitCode = bad ? 1 : 0;
