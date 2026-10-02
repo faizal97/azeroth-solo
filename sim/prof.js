@@ -5,7 +5,8 @@
 globalThis.localStorage = { getItem() { return null; }, setItem() {}, removeItem() {} };
 require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js');
 const { G, D } = globalThis;
-let t = Date.now(); Date.now = () => t;
+const RealDate = Date; let t = new RealDate(2026, 9, 1, 12).getTime(); // a fixed clock: bots online and other time-of-day rules would make the pace vary run to run
+globalThis.Date = class extends RealDate { constructor(...a) { if (a.length) super(...a); else super(t); } static now() { return t; } };
 const tick = (secs, step = 1) => { for (let i = 0; i < secs / step; i++) { G.update(step); t += step * 1000; } };
 let fails = 0; const ok = (c, msg) => { if (!c) { fails++; console.log('FAIL', msg); } };
 
