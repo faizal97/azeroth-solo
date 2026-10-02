@@ -50,10 +50,12 @@ function hardDmg(cls, L) {
   const k = cls + L; if (HARD[k] != null) return HARD[k]; // searched once, as dropped: at full upgrade it's the same fight with better gear (#37)
   const U0 = UPG; UPG = 1;
   let lo = 0.2, hi = 4; HARD[k] = 1;
-  for (let step = 0; step < 9; step++) { const m = (lo + hi) / 2; HARD[k] = m; let held = 0; curCls = cls;
-    for (let i = 0; i < 40; i++) held += CASES.hardheal({ cls, pieces: [piece('lifeline', L, false)] }, L, 50000 + i);
-    if (held / 40 > HOLD) lo = m; else hi = m; }
-  UPG = U0; return (HARD[k] = (lo + hi) / 2);
+  // on the same fights the bars measure (40 other seeds steered it to 7 in 10 there and 8 in 10 here: survival flips
+  // sharply with damage), so "the plain item holds 7 in 10" is true of the fights that count (#37)
+  for (let step = 0; step < 10; step++) { const m = (lo + hi) / 2; HARD[k] = m; let held = 0; curCls = cls;
+    for (let i = 0; i < N; i++) held += CASES.hardheal({ cls, pieces: [piece('lifeline', L, false)] }, L, i);
+    if (held / N > HOLD) lo = m; else hi = m; }
+  UPG = U0; HARD[k] = (lo + hi) / 2; if (process.env.DBG) console.log('hardDmg', k, HARD[k].toFixed(2)); return HARD[k];
 }
 // cases scored in points of a rate (1 won / 0 lost), not in % of the plain item; and cases where dying is what they measure
 const POINTS = { hardheal: true }, DEATH_IS_THE_MEASURE = { meleeboss: true, casterboss: true, solo: true, hardheal: true };
