@@ -36,8 +36,12 @@ const posted = fs.existsSync(LOG_FILE) ? fs.readFileSync(LOG_FILE, 'utf8').split
 if (posted.includes(rel.tagName) && !flag('--again') && !flag('--dry')) die(`${rel.tagName} was already posted; add --again to post it again`);
 
 const apk = rel.assets.find((a) => a.name.endsWith('.apk'));
-// betas are not on itch.io (they reach players through Settings → Beta updates), so a beta post links the game's page
-const links = rel.isPrerelease ? `[Realm of Loner on itch.io](${ITCH})` : `[Play on itch.io](${ITCH}): in your browser or on Android`;
+// betas are not on itch.io. A beta post gives both ways in (issue #27): the Android switch, and the browser /beta/ page on
+// GitHub Pages, the one GitHub link a post may carry (never the repo, its releases or its issues)
+const BETA_PAGE = 'https://faizal97.github.io/realm-of-loner/beta/';
+const links = rel.isPrerelease
+  ? `**Android:** turn on Settings → Beta updates.\n**Browser:** [play the beta](${BETA_PAGE}). Characters from the itch.io browser version don't carry over to this page.`
+  : `[Play on itch.io](${ITCH}): in your browser or on Android`;
 if (!apk) console.warn(`warning: ${rel.tagName} has no APK attached (the in-app updater will not see it either)`);
 
 // the notes, cut at a line break when they would not fit next to the links
@@ -57,10 +61,10 @@ const payload = {
   allowed_mentions: { parse: [], roles: role ? [role] : [] }, // only that one role, never a mention from the notes
   embeds: [{
     title: (rel.isPrerelease ? 'Beta: ' : '') + (rel.name || rel.tagName).slice(0, 256),
-    url: ITCH,
+    url: rel.isPrerelease ? BETA_PAGE : ITCH,
     description: notes + foot,
     color: rel.isPrerelease ? 0x6c8ebf : 0xc9a44c,
-    footer: { text: rel.isPrerelease ? 'Beta builds arrive in game: turn on Settings → Beta updates' : 'Update in game from Settings, or get it on itch.io' },
+    footer: { text: rel.isPrerelease ? 'Beta builds: Settings → Beta updates on Android, or the /beta/ page in a browser' : 'Update in game from Settings, or get it on itch.io' },
   }],
 };
 
