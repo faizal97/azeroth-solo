@@ -22,7 +22,7 @@ if (process.env.TUNE) { const T = JSON.parse(process.env.TUNE); for (const k in 
 const N = +process.argv[2] || 40;
 
 // the test piece, as sim/effects.js builds it: a dungeon blue's stat budget, the effect item paying its effect's cost
-const SHAPE = { echoing_mend: { slot: 'chest', atype: 'cloth', st: ['int', 'spi'] }, lifeline: { slot: 'legs', atype: 'cloth', st: ['sp', 'int'] }, wellspring: { slot: 'hands', atype: 'cloth', st: ['sp', 'int'] } };
+const SHAPE = { echoing_mend: { slot: 'chest', atype: 'cloth', st: ['int', 'spi'] }, lifeline: { slot: 'legs', atype: 'cloth', st: ['sp', 'int'] }, lavish_mend: { slot: 'legs', atype: 'cloth', st: ['sp', 'int'] }, wellspring: { slot: 'hands', atype: 'cloth', st: ['sp', 'int'] } };
 const UPG = +(process.env.UPG || 1); // 1 as dropped; the full-upgrade scale to test the ceiling (#37)
 function piece(effect, L, withFx) {
   const P = SHAPE[effect], full = Math.round(L * 0.55 + 2) + 4, budget = withFx ? Math.round(full * (1 - D.effectCost(effect))) : full;
