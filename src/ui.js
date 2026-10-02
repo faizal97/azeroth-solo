@@ -2804,7 +2804,7 @@
         h('button', { class: 'chip' + (ui.fishAuto ? ' gold' : ''), onclick: (e) => { e.stopPropagation(); ui.fishAuto = !ui.fishAuto; try { localStorage.setItem('azsolo.fishAuto', ui.fishAuto ? '1' : '0'); } catch (x) {} ui.fishShown = null; if (ui.fishAuto && G.S.player.fishing && G.S.player.fishing.phase === 'done') G.fishStart(true); } }, ui.fishAuto ? 'Auto: on' : 'Auto: off'),
         h('button', { class: 'chip', onclick: (e) => { e.stopPropagation(); stopFishing(); } }, 'Reel in'));
       bar.addEventListener('pointerdown', (e) => e.stopPropagation());
-      put(bar, h('div', { class: 'fish-note' }, 'Auto catches common fish only. Big and rare fish need you on the reel.'));
+      put(bar, h('div', { class: 'fish-note' }, 'Auto catches common fish only. Big and rare fish need you on the reel; rare ones, and fish in deeper water, fight harder.'));
     }
     if (F.phase === 'reel') {
       const r = F.reel, z = el.querySelector('.reel-zone'), f = el.querySelector('.reel-fish'), l = el.querySelector('.reel-line i');
@@ -2827,7 +2827,7 @@
     const go = h('button', { class: 'btn wide', onclick: () => { if (start == null) { start = performance.now(); go.textContent = 'Take it off the heat!'; const step = () => { const pos = (performance.now() - start) / 1000 / sweep; shown = Math.min(1, pos); needle.style.left = (shown * 100).toFixed(1) + '%'; if (pos >= 1) return finish('burnt'); raf = requestAnimationFrame(step); }; raf = requestAnimationFrame(step); } else stop(); } }, 'Start cooking');
     bar.addEventListener('pointerdown', () => { if (start != null) stop(); });
     showDialog([h('h3', null, `${it.name}${count > 1 ? ' ×' + count : ''}`),
-      h('p', { class: 'ai-note' }, 'The needle sweeps from cold to burnt. Stop it in the gold for a Perfect batch (one extra serving per five, at least one); past the red end the first set burns. One round cooks the whole batch.'),
+      h('p', { class: 'ai-note' }, 'The needle sweeps from cold to burnt. Stop it in the gold for a Perfect batch (one extra serving per five, at least one); past the red end the first set burns. One round cooks the whole batch.' + (Object.keys(r.mats).some((m) => (D.ITEMS[m].q || 1) >= 2) ? ' A dish of a rare fish: the gold is narrow.' : it.wellFed ? ' A Well Fed meal: the gold is a little narrower.' : '') + ' The gold widens as your skill grows past the recipe.'),
       bar, h('div', { class: 'cook-labels' }, h('span', null, 'cold'), h('span', { class: 'gold' }, 'Perfect'), h('span', { class: 'red' }, 'burnt')),
       go, h('div', { class: 'btn-row', style: { marginTop: '8px' } }, h('button', { class: 'btn alt', onclick: () => finish('normal') }, 'Auto (Normal)'), h('button', { class: 'btn alt', onclick: () => { done = true; cancelAnimationFrame(raf); closeDialog(); } }, 'Close'))], true);
   }

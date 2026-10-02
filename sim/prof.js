@@ -295,5 +295,14 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
   console.log(`Fishing and Cooking pace: level 45 with fishing ${fs}, cooking ${cs}`);
   ok(fs >= 200 && cs >= 195, `fishing and cooking reach Expert's top by level 45 (${fs}, ${cs})`);
 }
+// harder for rarer: deeper water fights harder, rare harder than big; a Well Fed meal and a rare-fish dish are harder to get Perfect
+{
+  const f1 = G.fishFeel('big', 1), f3 = G.fishFeel('big', 3), r3 = G.fishFeel('rare', 3);
+  ok(f3.zone < f1.zone && f3.speed > f1.speed && f3.drain > f1.drain && f3.window < f1.window, 'a big fish in deep water fights harder than in shallow water');
+  ok(r3.zone < f3.zone && r3.speed > f3.speed && r3.window < f3.window, 'a rare fish fights harder than a big one in the same water');
+  G.newGame({ name: 'H', cls: 'warrior', race: 'human' }); G.S.player.prof = { cooking: { skill: 70, max: 75, known: [] } };
+  const w = (rid) => { const z = G.cookZone(rid); return z.gold[1] - z.gold[0]; };
+  ok(w('ck_glimmerscale_supper') < w('ck_spiced_pike') * 0.8, 'a dish of a rare fish has a narrower gold zone than a Well Fed meal');
+}
 console.log(fails ? `${fails} failures` : 'professions sim OK');
 process.exit(fails ? 1 : 0);

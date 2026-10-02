@@ -1602,9 +1602,12 @@
   // the gold zone is Perfect, the rest Normal, the burnt end (and never stopping) Burnt. The gold zone is wider the
   // further your skill is above the recipe's. Auto cooks Normal.
   G.COOK_BAR = { sweep: 1.6, gold: 0.62, burnt: 0.86, width: [0.06, 0.15] };
+  G.COOK_HARD = { wellFed: 0.85, rare: 0.6 };
   G.cookZone = function (rid) {
     const r = D.RECIPES[rid], p = G.profs().cooking, B_ = G.COOK_BAR, over = Math.max(0, (p ? p.skill : 0) - r.sk[0]);
-    const w = Math.min(B_.width[1], B_.width[0] + over / 600);
+    // a Well Fed meal is a little harder to get Perfect, a dish of a rare fish clearly harder (G.COOK_HARD)
+    const it = D.ITEMS[r.makes], rare = Object.keys(r.mats).some((m) => (D.ITEMS[m].q || 1) >= 2);
+    const w = Math.min(B_.width[1], B_.width[0] + over / 600) * (rare ? G.COOK_HARD.rare : it.wellFed ? G.COOK_HARD.wellFed : 1);
     return { gold: [B_.gold - w / 2, B_.gold + w / 2], burnt: B_.burnt };
   };
   G.cookResult = (rid, pos) => { const z = G.cookZone(rid); return pos == null || pos >= z.burnt ? 'burnt' : pos >= z.gold[0] && pos <= z.gold[1] ? 'perfect' : 'normal'; };
@@ -1617,7 +1620,14 @@
   G.FISH_TIME = { wait: [2, 8], window: { common: 0.9, big: 0.7, rare: 0.55 }, autoLand: 0.85 };
   // the reel, in bar units (0..1) a second: your zone rises while you hold and falls when you let go; the line fills
   // while the fish is in your zone and drains while it is out
-  G.FISH_REEL = { zone: { big: 0.3, rare: 0.22 }, rise: 1.5, fall: 1.3, fill: 0.42, drain: 0.32, speed: { big: 0.45, rare: 0.7 } };
+  G.FISH_REEL = { zone: { big: 0.24, rare: 0.2 }, rise: 1.5, fall: 1.3, fill: 0.42, drain: 0.32, speed: { big: 0.6, rare: 0.75 } };
+  // deeper water fights harder: each tier above the first narrows the zone, speeds the fish, drains the line faster and
+  // shortens the bite (rare stays the hardest of its tier)
+  G.FISH_TIER = { zone: 0.02, speed: 0.15, drain: 0.12, window: 0.08 };
+  G.fishFeel = function (kind, tier) {
+    const R = G.FISH_REEL, T = G.FISH_TIER, up = Math.max(0, (tier || 1) - 1);
+    return { window: G.FISH_TIME.window[kind] * (1 - T.window * up), zone: kind === 'common' ? 0 : R.zone[kind] - T.zone * up, speed: kind === 'common' ? 0 : R.speed[kind] * (1 + T.speed * up), drain: R.drain * (1 + T.drain * up) };
+  };
   G.fishWhy = function () {
     const S = G.S, P = S.player, p = G.profs().fishing;
     if (!p) return 'Learn Fishing from a profession trainer first.';
@@ -1638,7 +1648,7 @@
     if (G.bagsFull()) { toast('Inventory is full.'); return false; }
     stopActions();
     const P = G.S.player, f = rollFish(D.waterTier(P.place), G.profs().fishing.skill), t = now();
-    P.fishing = { phase: 'wait', start: t, biteAt: t + rnd(G.FISH_TIME.wait[0], G.FISH_TIME.wait[1]) * 1000, fish: f, auto: !!auto };
+    P.fishing = { phase: 'wait', start: t, biteAt: t + rnd(G.FISH_TIME.wait[0], G.FISH_TIME.wait[1]) * 1000, fish: f, auto: !!auto, tier: D.waterTier(P.place) };
     emit('fish', { phase: 'wait' }); return true;
   };
   function fishDone(result, id) {
@@ -1658,7 +1668,7 @@
         const T = D.FISH[D.waterTier(P.place)], c = F.fish.kind === 'common' ? F.fish : (() => { const cc = pick(T.common.filter((x) => x[1] <= G.profs().fishing.skill)); return { id: cc[0], kind: 'common', need: cc[1] }; })();
         P.fishing.fish = c; const land = Math.random() < G.FISH_TIME.autoLand; return fishDone(land ? 'caught' : 'lost', land ? c.id : null);
       }
-      F.phase = 'bite'; F.biteEnd = t + G.FISH_TIME.window[F.fish.kind] * 1000; emit('fish', { phase: 'bite' });
+      F.phase = 'bite'; F.biteEnd = t + G.fishFeel(F.fish.kind, F.tier).window * 1000; emit('fish', { phase: 'bite' });
     } else if (F.phase === 'bite' && t > F.biteEnd) fishDone('lost');
   }
   G.fishTick = fishTick;
@@ -1667,17 +1677,17 @@
     if (F.phase === 'wait') return fishDone('early');
     if (F.phase !== 'bite') return;
     if (F.fish.kind === 'common') return fishDone('caught', F.fish.id);
-    const R = G.FISH_REEL; F.phase = 'reel'; F.reel = { zone: 0.5, w: R.zone[F.fish.kind], fish: 0.5, target: Math.random(), line: 0.3 };
+    const fe = G.fishFeel(F.fish.kind, F.tier); F.phase = 'reel'; F.reel = { zone: 0.5, w: fe.zone, speed: fe.speed, drain: fe.drain, fish: 0.5, target: Math.random(), line: 0.3 };
     emit('fish', { phase: 'reel' });
   };
   G.fishReel = function (hold, dt) {
     const F = G.S.player.fishing; if (!F || F.phase !== 'reel') return null;
-    const R = G.FISH_REEL, r = F.reel, sp = R.speed[F.fish.kind];
+    const R = G.FISH_REEL, r = F.reel, sp = r.speed;
     r.zone = Math.max(r.w / 2, Math.min(1 - r.w / 2, r.zone + (hold ? R.rise : -R.fall) * dt));
     if (Math.abs(r.fish - r.target) < 0.03) r.target = Math.random(); // the fish darts somewhere new
     r.fish += Math.sign(r.target - r.fish) * Math.min(Math.abs(r.target - r.fish), sp * dt);
     const inside = Math.abs(r.fish - r.zone) <= r.w / 2;
-    r.line = Math.max(0, Math.min(1, r.line + (inside ? R.fill : -R.drain) * dt));
+    r.line = Math.max(0, Math.min(1, r.line + (inside ? R.fill : -r.drain) * dt));
     if (r.line >= 1) fishDone('caught', F.fish.id); else if (r.line <= 0) fishDone('lost');
     return inside;
   };
