@@ -4384,7 +4384,8 @@
     G.on('toast', (t) => toast(t));
     G.on('error', (t) => toast(t));
     G.on('pop', (q) => { renderNavDots(); showPop(q); });
-    G.on('invite', showInvite);
+    const inviteWhenCalm = (d) => { if (!G.S) return; if (G.fight || G.S.run || G.paused || ui.dialog || (window.CS && CS.playing)) return setTimeout(() => inviteWhenCalm(d), 3000); showInvite(d); }; // never over a fight, a run, a dialog or a cutscene (issue #12)
+    G.on('invite', inviteWhenCalm);
     G.on('helpWanted', (r) => toast(`Help Wanted: a group in ${D.ACTIVITIES[r.act].name} needs a ${r.role === 'dps' ? 'damage dealer' : r.role}. See Social → Groups.`, true));
     // wait for a calm moment: no fight, no run, no other dialog, no cutscene
     const introWhenCalm = () => { if (!G.S) return; if (G.fight || G.S.run || G.paused || document.querySelector('.dialog')) return setTimeout(introWhenCalm, 3000); showWarModeIntro(); };

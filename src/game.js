@@ -700,7 +700,8 @@
     if (P.gather && W.nodes.n < 4 && t >= W.nodes.next) { W.nodes.n++; W.nodes.next = t + 20000; }
     nodesTick(id, W, t);
     // guild offer
-    if (S.flags.guildOfferAt && t >= S.flags.guildOfferAt && !S.flags.guildOffer) {
+    // it waits for a calm moment, like a party invite (issue #12: it opened mid-fight and a run went on without you)
+    if (S.flags.guildOfferAt && t >= S.flags.guildOfferAt && !S.flags.guildOffer && !G.fight && !S.run && !S.queue && !S.bg && !S.player.travel && !S.player.ghostUntil) {
       S.flags.guildOffer = true;
       const myF = (D.RACES[S.player.race] || {}).faction || 'alliance';
       const opts = B.GUILDS.map((x, i) => i).filter((i) => B.GUILD_FACTION[i] === myF);

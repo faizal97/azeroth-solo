@@ -85,6 +85,12 @@ SOC.leaveGuild(); if (P.guild !== -1) fail('leave guild');
   if (S2.chat.filter((m) => m.ch === 'whisper' && /join our guild|want an invite/.test(m.text)).length) fail('the guild offer also whispers its pitch');
   if (inv) { G.declineGuild(inv.guild); const gs = SOC.myGuilds().filter((x) => !(S2.flags.declinedGuilds || []).includes(x.g)); if (gs.some((x) => x.g === inv.guild)) fail('a declined guild is skipped by recruiting whispers'); }
   if (typeof off === 'function') off();
+  // issue #12: not while busy (a fight, a run, a queue, a battleground, travel): it waits and comes once calm
+  let inv2 = null; G.on('invite', (d) => { inv2 = d; }); S2.flags.guildOffer = false; S2.flags.guildOfferAt = t - 1; S2.run = { act: 'deadmines', pulls: [], idx: 0, phase: 'rest', restUntil: t + 1e9, rolls: [] };
+  for (let i = 0; i < 5; i++) { t += 1000; try { G.update(1); } catch (e) {} }
+  if (inv2) fail('the guild offer opened during a dungeon run');
+  S2.run = null; for (let i = 0; i < 5 && !inv2; i++) { t += 1000; G.update(1); }
+  if (!inv2) fail('the guild offer comes once the run is over');
 }
 console.log(bad ? `${bad} problem(s)` : 'social sim OK');
 process.exitCode = bad ? 1 : 0;
