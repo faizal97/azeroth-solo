@@ -84,5 +84,26 @@ ok(Math.ceil(15 / G.clearMarks('stratholme')) <= 5, 'a step takes at most 5 dung
   G.addItem(G.copyItem(robe), 1); G.equip(P.bags.findIndex((b) => b.item.id === robe)); P.bags = P.bags.filter((b) => b.item.id !== robe);
   ok(!G.bagDot(), 'wearing the upgrade before opening Bags clears it');
 }
+// dungeon bonus gear fits the class (v10.9, issue #13): 2,000 rolls per class for each bonus are all wearable, the made
+// pieces carry the class's affix; a reward with full bags goes to the bank with a chat line
+{
+  const dg = D.DUNGEONS[D.ACTIVITIES.deadmines.dungeon];
+  for (const cls of Object.keys(D.CLASSES)) {
+    G.newGame({ name: 'F', cls, race: 'human' }); G.S.player.level = 20;
+    const aff = G.classAffix(cls), keys = Object.keys(aff.stats);
+    let wear = 0, affix = 0, made = 0, blue = 0; const N = 2000;
+    for (let i = 0; i < N; i++) {
+      const g = G.fittedGear(20, 2, cls); if (G.canUseItem(g, cls)) wear++; if (g.stats) { made++; if (Object.keys(g.stats).every((k) => keys.includes(k))) affix++; }
+      if (G.canUseItem(G.fittedBossBlue(dg, 20, cls), cls)) blue++;
+    }
+    ok(wear === N && blue === N, `${cls}: every Flawless/Speed piece and boss blue can be worn (${wear}/${N}, ${blue}/${N})`);
+    ok(affix === made, `${cls}: every made piece carries ${aff.name} (${affix}/${made})`);
+  }
+  G.newGame({ name: 'Full', cls: 'mage', race: 'human' }); const P = G.S.player; P.level = 20;
+  while (!G.bagsFull()) P.bags.push({ item: G.copyItem('worn_dagger'), n: 1 });
+  const before = (P.bank || []).length, chat0 = G.S.chat.length, it = G.fittedGear(20, 2, 'mage');
+  ok(G.giveReward(it, 'Flawless clear') === 'bank' && (P.bank || []).length === before + 1, 'a reward with full bags goes to the bank');
+  ok(G.S.chat.slice(chat0).some((m) => /went to your bank/.test(m.text)), 'and chat says so');
+}
 console.log(`upgrades: ${n - bad}/${n} checks pass`);
 process.exit(bad ? 1 : 0);

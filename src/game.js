@@ -236,11 +236,8 @@
     const C = D.CLASSES[cls];
     if (it.slot === 'weapon') return C.weapons.includes(it.wtype);
     if (it.slot === 'ranged') return !!C.ranged;
-    if (it.atype) {
-      if (it.atype === 'cloth') return true;
-      if (it.atype === 'leather') return ['warrior', 'rogue', 'paladin', 'hunter', 'druid', 'shaman'].includes(cls);
-      if (it.atype === 'mail') return cls === 'warrior' || cls === 'paladin';
-    }
+    // armour up to the class's own type: cloth < leather < mail (v10.9: the old class list left out the bard's leather)
+    if (it.atype) { const R = { cloth: 0, leather: 1, mail: 2 }; return (R[it.atype] || 0) <= (R[C.armorType] || 0); }
     return D.GEAR_SLOTS.includes(it.slot);
   };
   const W = {
@@ -1004,6 +1001,28 @@
   G.abandon = function (qid) { delete G.S.player.quests[qid]; sys(`${D.QUESTS[qid].name} abandoned.`); emit('change'); };
   G.questXp = (L) => Math.round(L <= 5 ? 60 * L + 20 : (90 * L - 100) * 1.25); // v1.9.1: +25% from 6 so quests carry levelling, not grinding
   G.questMoney = (L) => Math.round(L * 30 + (L > 5 ? L * 25 : 0));
+  // what fits a class (issue #13): quest rewards and dungeon bonuses read the same table, class only (not role or talents)
+  G.CLASS_AFFIX = { warrior: 'of the Bear', rogue: 'of the Monkey', mage: 'of the Owl', priest: 'of the Whale', paladin: 'of the Bear', warlock: 'of the Eagle', hunter: 'of the Monkey', druid: 'of the Owl', shaman: 'of the Tiger', bard: 'of the Whale' };
+  G.classAffix = (cls) => D.AFFIXES.find((a) => a.name === G.CLASS_AFFIX[cls]) || null;
+  // a fitted piece: a slot the class can use, its armour type, one of its weapon types and its stat affix
+  G.fittedGear = function (L, q, cls) {
+    const C = D.CLASSES[cls], slots = D.GEAR_SLOTS.filter((sl) => sl !== 'offhand' && (sl !== 'ranged' || C.ranged));
+    const slot = pick(slots), aff = G.classAffix(cls);
+    const opts = Object.assign(slot === 'weapon' ? { wtype: pick(C.weapons) } : slot === 'ranged' ? {} : { atype: C.armorType }, aff ? { affix: aff } : {});
+    return G.genGear(slot, L, q, opts);
+  };
+  // a dungeon's boss blues this class can use; none, then a fitted blue
+  G.fittedBossBlue = function (Dg, L, cls) {
+    const blues = []; for (const pl of Dg.pulls) for (const k of pl.mobs) for (const id of (D.MOBS[k].loot || [])) if (!blues.includes(id) && D.ITEMS[id] && G.canUseItem(D.ITEMS[id], cls)) blues.push(id);
+    return blues.length ? G.copyItem(pick(blues)) : G.fittedGear(L, 3, cls);
+  };
+  // a reward is never lost: with full bags it goes to the bank, and chat says so (as an expired auction does)
+  G.giveReward = function (it, label) {
+    const P = G.S.player;
+    if (!(G.bagsFull() && !G.stackable(it)) && G.addItem(it, 1)) return 'bags';
+    P.bank = P.bank || []; P.bank.push({ item: it, n: 1 });
+    sys(`${label}: your bags were full, so the ${it.name} went to your bank.`); return 'bank';
+  };
   G.rewardItem = function (qid) {
     const Q = D.QUESTS[qid];
     if (!Q.reward.choice) return null;
@@ -1014,7 +1033,7 @@
     const key = 'rw_' + qid;
     if (!G.S.flags[key]) {
       const opts = fam.slot === 'weapon' ? { wtype: C.weapons[0] } : { atype: C.armorType };
-      const aff = fam.q >= 2 ? { affix: D.AFFIXES.find((a) => a.name === ({ warrior: 'of the Bear', rogue: 'of the Monkey', mage: 'of the Owl', priest: 'of the Whale', paladin: 'of the Bear', warlock: 'of the Eagle', hunter: 'of the Monkey', druid: 'of the Owl', shaman: 'of the Tiger' })[P.cls]) } : {};
+      const aff = fam.q >= 2 && G.classAffix(P.cls) ? { affix: G.classAffix(P.cls) } : {};
       G.S.flags[key] = G.genGear(fam.slot, fam.lvl, fam.q, Object.assign(opts, aff));
     }
     return G.S.flags[key];
@@ -1471,7 +1490,10 @@
   G.bagsFull = () => G.S.player.bags.length >= G.bagCap();
   G.profs = () => G.S.player.prof || (G.S.player.prof = {});
   G.hasProf = (id) => !!G.profs()[id];
-  G.primaryCount = () => Object.keys(G.profs()).filter((k) => !D.isSecondary(k)).length;
+  // the skills this build knows: a save from a newer build can hold one it does not (issue #17); it stays in the save,
+  // and every list skips it
+  G.knownProfIds = () => Object.keys(G.profs()).filter((k) => D.PROFESSIONS[k]);
+  G.primaryCount = () => G.knownProfIds().filter((k) => !D.isSecondary(k)).length;
   G.profRank = function (id) { const p = G.profs()[id]; return p ? D.PROF_RANKS.findIndex((r) => r.max === p.max) : -1; };
   G.nextRank = function (id) {
     const P = G.S.player, p = G.profs()[id], i = p ? G.profRank(id) + 1 : 0, R = D.PROF_RANKS[i];
@@ -2038,8 +2060,7 @@
       S.flags.rouletteDay = today();
       G.addMarks(15, 'daily Roulette');
       const A = D.ACTIVITIES[R.act], Dg = D.DUNGEONS[A.dungeon];
-      const blues = []; for (const pl of Dg.pulls) for (const k of pl.mobs) for (const id of (D.MOBS[k].loot || [])) if (!blues.includes(id)) blues.push(id);
-      if (blues.length && !G.bagsFull()) { const it = G.copyItem(pick(blues)); G.addItem(it, 1); loot(`Roulette bonus: ${B.link(it.name, it.q)}.`); }
+      { const it = G.fittedBossBlue(Dg, L, P.cls); G.giveReward(it, 'Roulette bonus'); loot(`Roulette bonus: ${B.link(it.name, it.q)}.`); } // fits your class, never lost (issue #13)
       P.money += L * 150; loot(`Roulette bonus: ${G.moneyText(L * 150)}.`);
     }
   }
@@ -3321,14 +3342,13 @@
     R.bonus = { secs: Math.round(secs), par: G.par(Dg), speed, flawless };
     if (speed) {
       // the speed chest: half the time a blue from this dungeon's bosses, otherwise a green
-      const blues = []; for (const pl of Dg.pulls) for (const k of pl.mobs) for (const id of (D.MOBS[k].loot || [])) if (!blues.includes(id)) blues.push(id);
-      const it = Math.random() < 0.5 && blues.length ? G.copyItem(pick(blues)) : G.genGear(pick(D.GEAR_SLOTS), L, 2);
-      G.addItem(it, 1); P.money += L * 150;
+      const it = Math.random() < 0.5 ? G.fittedBossBlue(Dg, L, P.cls) : G.fittedGear(L, 2, P.cls); // fits your class (issue #13)
+      G.giveReward(it, 'Speed bonus'); P.money += L * 150;
       loot(`Speed bonus (under ${fmtClock(G.par(Dg))}): ${B.link(it.name, it.q)} and ${G.moneyText(L * 150)}.`);
     }
     if (flawless) {
-      const it = G.genGear(pick(D.GEAR_SLOTS), L, 2);
-      G.addItem(it, 1); P.money += L * 200;
+      const it = G.fittedGear(L, 2, P.cls);
+      G.giveReward(it, 'Flawless clear'); P.money += L * 200;
       loot(`Flawless clear (no wipes): ${B.link(it.name, it.q)} and ${G.moneyText(L * 200)}.`);
     }
     if (!speed && !flawless) sys(`Cleared in ${fmtClock(secs)} (par ${fmtClock(G.par(Dg))}). No bonus this time.`);

@@ -423,5 +423,13 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
   const lonely = towns.filter((id) => G.placeFaction(id) === null && !Object.keys(side).every((n) => D.PLACES[id].npcs.includes(n)));
   ok(!lonely.length, 'a neutral town has both trainers: ' + lonely.join(', '));
 }
+// a save from a newer build (issue #17): a skill this build does not know stays in the save and is skipped everywhere
+{
+  G.newGame({ name: 'N', cls: 'warrior', race: 'human' }); const P = G.S.player; P.level = 20; P.money = 1e6;
+  P.prof = { mining: { skill: 80, max: 150, known: [] }, gemcutting_from_the_future: { skill: 40, max: 75, known: [] } };
+  ok(G.knownProfIds().join() === 'mining' && G.primaryCount() === 1, 'an unknown skill is skipped and does not take a profession slot');
+  G.trainProf('herbalism'); ok(!!G.profs().herbalism, 'a second profession can still be learned');
+  ok(!!P.prof.gemcutting_from_the_future, 'the unknown skill stays in the save');
+}
 console.log(fails ? `${fails} failures` : 'professions sim OK');
 process.exit(fails ? 1 : 0);

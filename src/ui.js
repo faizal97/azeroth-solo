@@ -2657,7 +2657,7 @@
         b.append(h('button', { class: 'btn wide alt', style: { marginTop: '8px' }, onclick: () => openWardrobe() }, 'Wardrobe'));
       } else if (ui.heroTab === 'abil') {
         b.append(h('button', { class: 'btn wide' + (tp.free ? '' : ' alt'), onclick: () => openTalents() }, P.level < D.TALENT_START ? `Talents (from level ${D.TALENT_START})` : tp.free ? `Talents · ${tp.free} point${tp.free > 1 ? 's' : ''} to spend` : `Talents · ${tp.spent} spent`));
-        b.append(h('button', { class: 'btn wide alt', onclick: () => openProfessions() }, Object.keys(G.profs()).length ? 'Professions · ' + Object.entries(G.profs()).map(([k, p]) => `${D.PROFESSIONS[k].name} ${p.skill}`).join(', ') : 'Professions (learn from a trainer in a city)'));
+        b.append(h('button', { class: 'btn wide alt', onclick: () => openProfessions() }, G.knownProfIds().length ? 'Professions · ' + G.knownProfIds().map((k) => `${D.PROFESSIONS[k].name} ${G.profs()[k].skill}`).join(', ') : 'Professions (learn from a trainer in a city)'));
         b.append(h('button', { class: 'btn wide alt', onclick: () => openBarEditor() }, 'Arrange action bar'));
         b.append(h('div', { class: 'sec-h' }, 'Abilities', h('small', null, 'learned automatically')));
         const abl = h('div', { class: 'list' });
@@ -2907,7 +2907,7 @@
   function openProfessions() {
     ui.profTab = ui.profTab || null;
     openSheet('profs', 'Professions', ' ', (b, title) => {
-      const P = G.S.player, profs = G.profs(), ids = Object.keys(profs);
+      const P = G.S.player, profs = G.profs(), ids = G.knownProfIds(); // a skill from a newer build is skipped (issue #17)
       title.querySelector('small').textContent = ids.length ? `${G.primaryCount()}/${D.PROF_MAX} · craft anywhere out of combat` : 'Learn up to two from a profession trainer';
       ids.sort((a, c) => (D.isSecondary(a) ? 1 : 0) - (D.isSecondary(c) ? 1 : 0)); // your two professions, then Cooking and Fishing
       if (!ids.length) { b.append(h('p', null, 'You have no professions yet. Profession trainers wait in every capital and in Warrick\'s Rise and Dustfort.')); return; }
