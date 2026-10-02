@@ -34,7 +34,7 @@
         level: 1, xp: 0, rested: 0, money: 0, hp: null, res: null, place: start, bind: start,
         equip: Object.assign({ weapon: G.copyItem(C.startWeapon), chest: G.copyItem(C.startChest) }, C.startRanged ? { ranged: G.copyItem(C.startRanged) } : {}),
         bags: [{ item: G.copyItem('hearthstone'), n: 1 }, { item: G.copyItem('tough_bread'), n: 4 }].concat(C.resource === 'mana' ? [{ item: G.copyItem('spring_water'), n: 4 }] : []),
-        race, pet: C.pets ? { type: 'imp', name: pick(D.PETS.imp.names), hp: null } : null,
+        race, pet: (C.pets || []).includes('imp') ? { type: 'imp', name: pick(D.PETS.imp.names), hp: null } : null, // only a class whose pets include the imp (#34: Hunters started with one); a Hunter tames at 10
         quests: {}, done: {}, auras: [], hearthAt: 0, guild: -1, kills: 0, deaths: 0, visited: { [start]: true }, played: 0,
       },
       world: {}, bots: B.makePopulation(260), chat: [], news: [], pending: [], group: null, queue: null, run: null, flags: {},
