@@ -45,10 +45,9 @@
       desc: () => `You deal ${n(D.EFFECTS.glass_heart.dmg * 100)}% more damage, and take ${n(D.EFFECTS.glass_heart.taken * 100)}% more.`,
     },
     // healing
-    brimming_cup: {
-      name: 'Brimming Cup', role: 'healing', icon: 'pw_shield', pct: 1, k: 2.5, c: 15, dur: 6, cost: 0.3, review: true, // sim: wins under spiky and steady damage alike, or neither (#22, for the game designer)
-      cap: (L, f) => n((D.EFFECTS.brimming_cup.k * L + D.EFFECTS.brimming_cup.c) * (f || 1)),
-      desc: (L, f) => { const F = D.EFFECTS.brimming_cup; return `${n(F.pct * 100)}% of your overhealing becomes a shield on the target for ${F.dur} sec (at most ${F.cap(L, f)}).`; },
+    lifeline: { // replaced Brimming Cup (#22): overhealing happens in every fight, so a shield from it won everywhere
+      name: 'Lifeline', role: 'healing', icon: 'flash_heal', below: 0.35, icd: 6, cost: 0.4,
+      desc: (L, f) => { const F = D.EFFECTS.lifeline; return `A direct heal on an ally below ${n(F.below * 100)}% health is a sure critical heal. At most once every ${F.icd} sec.`; },
     },
     wellspring: {
       name: 'Wellspring', role: 'healing', icon: 'innervate', refund: 0.8, cost: 0.35,

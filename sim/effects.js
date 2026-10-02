@@ -20,7 +20,7 @@ const SHAPE = {
   opening_cut: { slot: 'hands', atype: 'leather', st: ['agi', 'str'] }, kindled_edge: { slot: 'hands', atype: 'leather', st: ['agi', 'str'] },
   chase_the_next: { slot: 'feet', atype: 'leather', st: ['agi', 'str'] }, steady_fuse: { slot: 'wrist', atype: 'leather', st: 'main' },
   glass_heart: { slot: 'finger', st: 'main' },
-  echoing_mend: { slot: 'chest', atype: 'cloth', st: ['int', 'spi'] }, brimming_cup: { slot: 'legs', atype: 'cloth', st: ['sp', 'int'] }, wellspring: { slot: 'hands', atype: 'cloth', st: ['sp', 'int'] },
+  echoing_mend: { slot: 'chest', atype: 'cloth', st: ['int', 'spi'] }, lifeline: { slot: 'legs', atype: 'cloth', st: ['sp', 'int'] }, wellspring: { slot: 'hands', atype: 'cloth', st: ['sp', 'int'] },
   turning_guard: { slot: 'waist', atype: 'mail', st: ['sta', 'str'] }, spiteful_hide: { slot: 'chest', atype: 'mail', st: ['sta', 'str'] },
   stubborn_blood: { slot: 'finger', st: ['agi', 'str'] }, tithe_of_battle: { slot: 'back', st: 'main' },
 };
@@ -63,7 +63,9 @@ const CASES = {
   highcrit: (fx, L, i) => { const me = unit(fx.cls, 'dps', L, fx.pieces, i); me.auras.push({ id: 'test_crit', stats: { critPct: 25 }, until: 1e9 }); E.recalc(me, true); seed(i); const C = E.fight([me], [mob('defias_thug', L, { hp: 60, dmg: 0 })], { puller: me }); run(C, 180); return (C.tot && C.tot[me.uid] || {}).dmg || 0; }, // a build that crits often
   tankpack: (fx, L, i) => { const t = unit(fx.cls, 'tank', L, fx.pieces, i); seed(i); const C = E.fight([t], [0, 1, 2].map(() => mob('defias_thug', L, { hp: 4, dmg: 0.5 })), { puller: t }); run(C, 90); return (C.tot && C.tot[t.uid] || {}).dmg || 0; },
   spiky: (fx, L, i) => { const h = unit(fx.cls, 'healer', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1); seed(i); const C = E.fight([t, h], [mob('hogger', L, { hp: 200, dmg: 3.2 })], { puller: t }); run(C, 240); const r = C.tot && C.tot[h.uid] || {}, sh = ((C.fx || {})[h.uid] || {}); return (r.heal || 0) + Object.values(sh).reduce((a, e) => a + (e.kind === 'shield' ? e.amount : 0), 0); },
-  steady: (fx, L, i) => { const h = unit(fx.cls, 'healer', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1); seed(i); const C = E.fight([t, h], [0, 1, 2, 3].map(() => mob('defias_thug', L, { hp: 60, dmg: 0.9 })), { puller: t }); run(C, 240); const r = C.tot && C.tot[h.uid] || {}, sh = ((C.fx || {})[h.uid] || {}); return (r.heal || 0) + Object.values(sh).reduce((a, e) => a + (e.kind === 'shield' ? e.amount : 0), 0); },
+  // a calm fight a decent healer holds: with no effects the tank is below 35% under 2% of the time and never dies, at
+  // every level (at 0.9 a level-20 tank died in every fight, so 'steady' was a wipe; #22)
+  steady: (fx, L, i) => { const h = unit(fx.cls, 'healer', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1); seed(i); const C = E.fight([t, h], [0, 1, 2, 3].map(() => mob('defias_thug', L, { hp: 60, dmg: L <= 25 ? 0.4 : 0.9 })), { puller: t }); run(C, 240); const r = C.tot && C.tot[h.uid] || {}, sh = ((C.fx || {})[h.uid] || {}); return (r.heal || 0) + Object.values(sh).reduce((a, e) => a + (e.kind === 'shield' ? e.amount : 0), 0); },
   shortheal: (fx, L, i) => { const h = unit(fx.cls, 'healer', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1), d1 = unit('rogue', 'dps', L, [], i + 2); seed(i); const C = E.fight([t, h, d1], [mob('garr', L, { hp: 200, dmg: 1.6 })], { puller: t }); run(C, 60); return (C.tot && C.tot[h.uid] || {}).heal || 0; },
 };
 const PLAN = [
@@ -75,7 +77,7 @@ const PLAN = [
   { effect: 'chase_the_next', classes: ['rogue', 'warrior'], wins: ['trash'], loses: ['boss'] },
   { effect: 'steady_fuse', classes: ['mage', 'warrior'], wins: ['boss'], loses: ['highcrit'] },
   { effect: 'glass_heart', classes: ['rogue', 'warrior'], wins: ['healed'], loses: ['solo'] },
-  { effect: 'brimming_cup', classes: ['priest', 'druid'], wins: ['spiky'], loses: ['steady'] },
+  { effect: 'lifeline', classes: ['priest', 'druid'], wins: ['spiky'], loses: ['steady'] },
   { effect: 'wellspring', classes: ['priest', 'druid'], wins: ['groupwide'], loses: ['shortheal'] },
   { effect: 'spiteful_hide', classes: ['warrior', 'paladin'], wins: ['tankpack'], loses: ['casterboss'] },
   { effect: 'tithe_of_battle', classes: ['warlock'], wins: ['boss'], loses: ['boss'], losesClasses: ['mage'] },
@@ -103,7 +105,7 @@ const MIXES = [
   { name: 'Opening Cut + Stubborn Blood', cs: 'solo', cls: 'rogue', fx: ['opening_cut', 'stubborn_blood'] },
   { name: 'Opening Cut + Chase the Next + Glass Heart', cs: 'trash', cls: 'rogue', fx: ['opening_cut', 'chase_the_next', 'glass_heart'] },
   { name: 'Kindled Edge + Steady Fuse + Glass Heart', cs: 'boss', cls: 'warrior', fx: ['kindled_edge', 'steady_fuse', 'glass_heart'] },
-  { name: 'Echoing Mend + Brimming Cup + Wellspring', cs: 'groupwide', cls: 'priest', fx: ['echoing_mend', 'brimming_cup', 'wellspring'] },
+  { name: 'Echoing Mend + Lifeline + Wellspring', cs: 'groupwide', cls: 'priest', fx: ['echoing_mend', 'lifeline', 'wellspring'] },
 ];
 for (const M of MIXES) {
   if (ONLY && !M.fx.some((k) => ONLY.includes(k))) continue;

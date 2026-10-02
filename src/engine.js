@@ -464,8 +464,6 @@
     ev(C, { type: 'heal', src: src.uid, tgt: tgt.uid, amount: done, over: Math.round(amount) - done, crit: !!(o && o.crit), ab: o && o.ab, fx: o && o.effect ? 'effect' : null });
     tally(C, src, 'heal', done);
     if (o && o.effect) fxDone(C, src, o.effect, done, 'heal');
-    const over = Math.round(amount) - done, bc = over > 0 && !(o && o.effect) && fxOf(src, 'brimming_cup'), BC = bc && D.EFFECTS.brimming_cup; // overhealing into a shield (v10.10)
-    if (bc) { const old = tgt.auras.find((a) => a.id === 'brimming_cup'), add = over * BC.pct, cap = BC.cap(bc.lvl, bc.f), ab = Math.min(cap, ((old && old.absorb) || 0) + add); addAura(C, tgt, { id: 'brimming_cup', name: BC.name, icon: BC.icon, effect: 'brimming_cup', item: bc.item, desc: BC.desc(bc.lvl, bc.f), until: C.t + BC.dur, absorb: ab, src: src.uid }); }
     const ws = o && o.crit && o.ab && !o.tick && src && src.resType === 'mana' && fxOf(src, 'wellspring'), A0 = ws && D.ABILITIES[o.ab]; // a heal crit refunds mana (v10.10)
     if (A0) { const back = Math.min(src.maxRes - src.res, abCost(A0, src) * D.EFFECTS.wellspring.refund * ws.f); if (back > 0) { src.res += back; fxDone(C, src, 'wellspring', back, 'mana'); } }
     if (o && o.effect) { /* an effect's own heal does not echo */ }
@@ -517,6 +515,8 @@
 
   // Melee swing (auto-attack or weapon ability)
   // Steady Fuse (v10.10): every so many seconds in combat, the next hit is a sure crit
+  // Lifeline (v10.10): a direct heal on an ally below the line is a sure crit, on its own cooldown; only when it wasn't a crit anyway
+  function lifeline(C, u, w) { const F = C && fxOf(u, 'lifeline'), LF = D.EFFECTS.lifeline; if (!F || !w || w.hp >= w.maxHp * LF.below) return false; if (u.lifeAt != null && C.t - u.lifeAt < LF.icd) return false; u.lifeAt = C.t; fxDone(C, u, 'lifeline', 1, 'crits'); return true; }
   function fuse(C, u) { const F = C && fxOf(u, 'steady_fuse'); if (!F) return false; if (u.fuseAt == null) u.fuseAt = C.t; if (C.t - u.fuseAt < D.EFFECTS.steady_fuse.every) return false; u.fuseAt = C.t; fxDone(C, u, 'steady_fuse', 1, 'crits'); return true; }
   function meleeRoll(C, src, tgt) {
     const r = Math.random() * 100;
@@ -707,7 +707,7 @@
     }
     if (ab.heal) {
       for (const w of healWho) {
-        const crit = Math.random() * 100 < u.st.spellCrit;
+        const crit = Math.random() * 100 < u.st.spellCrit || lifeline(C, u, w);
         const amt = scaled(ab.heal.base, ab.heal.perLvl, L) + (ab.heal.coef || 0) * u.st.sp;
         heal(C, u, w, crit ? amt * 1.5 : amt, { crit, ab: abId });
       }
