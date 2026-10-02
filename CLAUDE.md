@@ -58,13 +58,13 @@ Smoke-test on the emulator (AVD `Medium_Phone_API_36.0`). Its software renderer 
 - Bugs (from a QA session, a player report or a sim) are issues labelled `bug`, with steps or the sim that shows it.
 - **Labels:** every issue gets one type and one status.
   - Type: `bug` (broken), `improvement` (make something that exists work or read better), `feature` (new for players), `balance` (numbers and tuning).
-  - Status: `status: discussion` (still being decided) → `status: ready` (decided, the developer can take it) → `status: in progress` → `status: in beta` (built, QA checks it on the beta) → closed (released, or decided against with a comment).
+  - Status: `status: discussion` (still being decided by Faizal or the game designer) → `status: ready` (decided, the developer can take it) → `status: in progress` → `status: in beta` (built, QA checks it on the beta) → closed (released, or decided against with a comment).
   - Move the status label as the issue moves; `thread` stays on parked dev work as well.
-  - **Whose turn:** exactly one `needs:` label. `needs: product` (a decision is waiting), `needs: developer` (build, fix or check), `needs: qa` (test it). Whoever finishes their part moves it to the next one: product decides → `needs: developer`; developer ships a beta → `needs: qa`; QA finds it broken → `needs: developer`, or it works → close it. Each session starts with `gh issue list --label "needs: <its role>"`.
+  - **Whose turn:** exactly one `needs:` label. `needs: game designer` (a design decision is waiting), `needs: developer` (build, fix or check), `needs: qa` (test it). Whoever finishes their part moves it to the next one: the game designer decides → `needs: developer`; developer ships a beta → `needs: qa`; QA finds it broken → `needs: developer`, or it works → close it. Each session starts with `gh issue list --label "needs: <its role>"`.
 - The repo is public: nothing private in an issue.
 
 **Roles (since 2026-10-02):** Faizal runs separate sessions, and they talk through these issues, not through each other's chat.
-- **Product** decides what gets built and in what order: `enhancement` or `thread` issues that say why, the agreed design in `docs/plans/`.
+- **Game designer** decides what gets built and how it should play, and in what order: `feature`, `improvement`, `balance` or `thread` issues that say why, the agreed design in `docs/plans/`.
 - **QA** plays the builds (beta page, emulator, phone) and files `bug` issues with steps, the build and what was expected; it checks fixes on the next beta and reopens what is still broken.
 - **Developer** builds and fixes: takes issues, writes `Fixes #N` in the commit that fixes one (the push to main closes it), runs the sims and the build, and ships betas when Faizal says so. When a beta ships, the developer comments on each issue it fixes with the build tag.
 - Every session still asks Faizal before pushing, posting or changing what players get.
