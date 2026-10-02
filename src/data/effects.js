@@ -55,7 +55,7 @@
     },
     // tanking
     spiteful_hide: {
-      name: 'Spiteful Hide', role: 'tank', icon: 'thorns', k: 0.12, c: 1, cost: 0.4,
+      name: 'Spiteful Hide', role: 'tank', icon: 'thorns', k: 0.12, c: 1, cost: 0.55,
       dmg: (L, f) => n((D.EFFECTS.spiteful_hide.k * L + D.EFFECTS.spiteful_hide.c) * (f || 1)),
       desc: (L, f) => `Enemies that hit you in melee take ${D.EFFECTS.spiteful_hide.dmg(L, f)} Nature damage.`,
     },

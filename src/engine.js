@@ -1121,6 +1121,12 @@
     }
 
     if (!u.legend && soloFight(C, u, en) && soloThink(C, u, soloFoe(en), b, has, try_)) return;
+    // alone against monsters only (no other player standing on your side, pets don't count; never a duel or brawl, which
+    // soloThink plays), a player heals themself when low,
+    // as soloThink does one on one: before this a soloing Priest, Druid or Paladin never did (#4, sim/lvpace.js)
+    if (!u.legend && u.role !== 'healer' && en.every((x) => !x.cls) && alive(friends(C, u)).filter((x) => x.kind !== 'pet').length === 1 && u.hp / u.maxHp < 0.2 + 0.3 * (b.skill || 0.5) && Math.random() < 0.4 + 0.6 * (b.skill || 0.5)) {
+      for (const id of soloKit(u.cls).heals) { const A = D.ABILITIES[id]; if (!has(id) || (A.hot && auraOf(u, A.hot.id)) || (A.shield && (auraOf(u, id) || auraOf(u, 'weakened_soul'))) || ((A.cd || 0) >= 60 && u.hp / u.maxHp > 0.25)) continue; if (try_(id, u)) return; } // a big cooldown waits until you are nearly down
+    }
     if (u.kiteUntil > C.t) return; // running to open the gap: a cast would only stop it
     if (u.role === 'healer') {
       const allies = alive(friends(C, u));
