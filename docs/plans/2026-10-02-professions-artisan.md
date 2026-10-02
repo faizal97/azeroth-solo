@@ -61,7 +61,7 @@ player wearing it keeps it. **Check:** a level-45 smith with 200 skill trains to
 50 ? 3 : 0], ['moonsilver', L >= 50 ? 1 : 0]]`, herb by zone level `[['cinderbloom', 3], ['gloomcap', L >= 50 ? 3 : 0],
 ['sunveil', L >= 53 ? 3 : 0], ['frostpetal', L >= 56 ? 3 : 0], ['rimeleaf', L < 50 ? 2 : 0]]`.
 
-**Check:** `D.nodeTable(52)` has duskiron and moonsilver; a level-55 beast skins into toughened leather; level-50
+**Check:** `D.nodeTable(52)` has duskiron and moonsilver; a level-55 beast skins into hardhide leather; level-50
 humanoids drop duskweave and no silk. Commit with Task 4's icons, never with a validate failure.
 
 ### Task 4: Fishing and cooking to 300
