@@ -52,6 +52,12 @@ cd app && JAVA_HOME=/opt/homebrew/opt/openjdk@17 flutter build apk --release
 
 Smoke-test on the emulator (AVD `Medium_Phone_API_36.0`). Its software renderer draws ghost and duplicate layers, which are not real bugs.
 
+## Open threads and bugs (GitHub issues, shared by every session)
+
+- Parked work, open questions and balance threads are GitHub issues labelled `thread`: `gh issue list --label thread`. Check them before planning, file anything you park there (with the numbers you have, facts apart from guesses), and close an issue with a comment saying what was decided.
+- Bugs (from a QA session, a player report or a sim) are issues labelled `bug`, with steps or the sim that shows it.
+- The repo is public: nothing private in an issue.
+
 ## Rules that matter
 
 - Saves: one per character under `azsolo.char.<id>` plus the index `azsolo.chars`. Keep old saves loading; migrate, never break them.
