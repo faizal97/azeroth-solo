@@ -397,7 +397,7 @@
     // talents: school and ability damage for the attacker, damage taken for the target
     if (src.char) { const sm = tmOf(src); amount *= 1 + ((sm.school[o.school || 'physical'] || 0) + (o.ab ? sm.abilDmg[o.ab] || 0 : 0)) / 100; }
     let ghExtra = 0; const ghS = !o.effect && fxOf(src, 'glass_heart'), ghT = fxOf(tgt, 'glass_heart'); // Glass Heart (v10.10)
-    if (ghS) { ghExtra = D.EFFECTS.glass_heart.dmg; amount *= 1 + ghExtra; } if (ghT) amount *= 1 + D.EFFECTS.glass_heart.taken;
+    if (ghS) { ghExtra = D.EFFECTS.glass_heart.dmg * ghS.f; amount *= 1 + ghExtra; } /* the bonus grows with upgrades, the extra damage taken doesn't (#37) */ if (ghT) amount *= 1 + D.EFFECTS.glass_heart.taken;
     if (tgt.char) { const tt = tmOf(tgt); if (tt.taken) amount *= 1 - tt.taken / 100; }
     let dmg = Math.max(1, Math.round(amount));
     if (o.school === 'physical' || !o.school) {
@@ -483,7 +483,7 @@
     const out = {};
     for (const s in (char && char.equip) || {}) {
       const it = char.equip[s], F = it && it.effect && D.EFFECTS && D.EFFECTS[it.effect]; if (!F) continue;
-      const L = it.lvl || 1, f = Math.min(1.5, it.fxScale || 1) /* G.FX_SCALE_CAP */; if (!out[it.effect] || out[it.effect].lvl * out[it.effect].f < L * f) out[it.effect] = { key: it.effect, lvl: L, f, item: it.name };
+      const L = it.lvl || 1, f = D.fxGrow ? D.fxGrow(it.fxScale) : Math.min(1.5, it.fxScale || 1); /* the effect's strength from its upgrade (#37) */ if (!out[it.effect] || out[it.effect].lvl * out[it.effect].f < L * f) out[it.effect] = { key: it.effect, lvl: L, f, item: it.name };
     }
     return out;
   };
@@ -516,8 +516,8 @@
   // Melee swing (auto-attack or weapon ability)
   // Steady Fuse (v10.10): every so many seconds in combat, the next hit is a sure crit
   // Lifeline (v10.10): a direct heal on an ally below the line is a sure crit, on its own cooldown; only when it wasn't a crit anyway
-  function lifeline(C, u, w) { const F = C && fxOf(u, 'lifeline'), LF = D.EFFECTS.lifeline; if (!F || !w || w.hp >= w.maxHp * LF.below) return false; if (u.lifeAt != null && C.t - u.lifeAt < LF.icd) return false; u.lifeAt = C.t; fxDone(C, u, 'lifeline', 1, 'crits'); return true; }
-  function fuse(C, u) { const F = C && fxOf(u, 'steady_fuse'); if (!F) return false; if (u.fuseAt == null) u.fuseAt = C.t; if (C.t - u.fuseAt < D.EFFECTS.steady_fuse.every) return false; u.fuseAt = C.t; fxDone(C, u, 'steady_fuse', 1, 'crits'); return true; }
+  function lifeline(C, u, w) { const F = C && fxOf(u, 'lifeline'), LF = D.EFFECTS.lifeline; if (!F || !w || w.hp >= w.maxHp * LF.below) return false; if (u.lifeAt != null && C.t - u.lifeAt < LF.icd / F.f) return false; /* an upgrade shortens the cooldown (#37) */ u.lifeAt = C.t; fxDone(C, u, 'lifeline', 1, 'crits'); return true; }
+  function fuse(C, u) { const F = C && fxOf(u, 'steady_fuse'); if (!F) return false; if (u.fuseAt == null) u.fuseAt = C.t; if (C.t - u.fuseAt < D.EFFECTS.steady_fuse.every / F.f) return false; /* an upgrade shortens the wait (#37) */ u.fuseAt = C.t; fxDone(C, u, 'steady_fuse', 1, 'crits'); return true; }
   function meleeRoll(C, src, tgt) {
     const r = Math.random() * 100;
     const miss = 5 + Math.max(0, levelDiff(src, tgt)) * 1;
@@ -1129,7 +1129,7 @@
       for (const id of soloKit(u.cls).heals) { const A = D.ABILITIES[id]; if (!has(id) || (A.hot && auraOf(u, A.hot.id)) || (A.shield && (auraOf(u, id) || auraOf(u, 'weakened_soul'))) || ((A.cd || 0) >= 60 && u.hp / u.maxHp > 0.25)) continue; if (try_(id, u)) return; } // a big cooldown waits until you are nearly down
     }
     if (u.kiteUntil > C.t) return; // running to open the gap: a cast would only stop it
-    if (u.role === 'healer') {
+    if (u.role === 'healer') { // b.healOnly (a sim setting, #37): a healer that only heals, no damage with spare mana
       const allies = alive(friends(C, u));
       const low = allies.slice().sort((a, b2) => a.hp / a.maxHp - b2.hp / b2.maxHp)[0];
       const thr = 0.5 + 0.3 * (b.skill || 0.5);
@@ -1151,7 +1151,7 @@
         if (tank && tank.hp / tank.maxHp < 0.85 && has('verse_of_mending') && !auraOf(tank, 'verse_of_mending') && try_('verse_of_mending', tank)) return;
         for (const s of ['marching_song', 'hearthsong', 'anthem_of_stone']) if (has(s) && !auraOf(u, s) && try_(s)) return;
         if (en.length >= 3 && has('lullaby') && Math.random() < 0.3 * (b.skill || 0.5) && try_('lullaby')) return;
-        if (u.res / u.maxRes > 0.7 && Math.random() < 0.4) { const f = focusTarget(C, u); if (f && has('dirge') && !auraOf(f, 'dirge') && try_('dirge', f)) return; if (f) try_('dissonant_note', f); }
+        if (!b.healOnly && u.res / u.maxRes > 0.7 && Math.random() < 0.4) { const f = focusTarget(C, u); if (f && has('dirge') && !auraOf(f, 'dirge') && try_('dirge', f)) return; if (f) try_('dissonant_note', f); }
         return;
       }
       if (low && low.hp / low.maxHp < thr && has('lesser_heal') && try_('lesser_heal', low)) return;
@@ -1160,13 +1160,13 @@
       if (low && low.hp / low.maxHp < thr && has('healing_wave') && try_('healing_wave', low)) return;
       if (u.cls === 'shaman') {
         if (tank && has('stoneskin_totem') && !auraOf(tank, 'stoneskin') && try_('stoneskin_totem')) return;
-        if (u.res / u.maxRes > 0.7 && Math.random() < 0.4) { const f = focusTarget(C, u); if (f) try_('lightning_bolt', f); }
+        if (!b.healOnly && u.res / u.maxRes > 0.7 && Math.random() < 0.4) { const f = focusTarget(C, u); if (f) try_('lightning_bolt', f); }
         return;
       }
       if (tank && tank.hp / tank.maxHp < 0.85 && has('rejuvenation') && !auraOf(tank, 'rejuvenation') && try_('rejuvenation', tank)) return;
       if (u.cls === 'druid') {
         if (has('mark_wild') && !auraOf(u, 'mark_wild') && try_('mark_wild')) return;
-        if (u.res / u.maxRes > 0.7 && Math.random() < 0.4) { const f = focusTarget(C, u); if (f && has('moonfire') && !auraOf(f, 'moonfire') && try_('moonfire', f)) return; if (f) try_('wrath', f); }
+        if (!b.healOnly && u.res / u.maxRes > 0.7 && Math.random() < 0.4) { const f = focusTarget(C, u); if (f && has('moonfire') && !auraOf(f, 'moonfire') && try_('moonfire', f)) return; if (f) try_('wrath', f); }
         return;
       }
       if (u.cls === 'paladin') {
@@ -1176,7 +1176,7 @@
       }
       if (tank && tank.hp / tank.maxHp < 0.9 && has('pw_shield') && !auraOf(tank, 'weakened_soul') && try_('pw_shield', tank)) return;
       if (tank && tank.hp / tank.maxHp < 0.8 && has('renew') && !auraOf(tank, 'renew') && try_('renew', tank)) return;
-      if (u.res / u.maxRes > 0.7 && Math.random() < 0.5) {
+      if (!b.healOnly && u.res / u.maxRes > 0.7 && Math.random() < 0.5) {
         const f = focusTarget(C, u);
         if (f && has('sw_pain') && !auraOf(f, 'sw_pain') && try_('sw_pain', f)) return;
         if (f && try_('smite', f)) return;

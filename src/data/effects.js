@@ -8,6 +8,8 @@
   const D = root.D;
   const n = (x) => Math.round(x);
   D.EFFECT_COST = 0.3; // the share of an item's stats an effect costs by default; an effect may set its own `cost` (sim/effects.js tunes them)
+  D.FX_GROW = 0.25; // an upgrade grows an effect by its scale to this power (#37): x1.26 at the ceiling -> x1.06; linear growth (1) or 0.5 made upgraded effects outgrow their price (sim/effects.js checks both stages)
+  D.fxGrow = (scale) => Math.pow(Math.min(1.5, scale || 1), D.FX_GROW); // the one way to turn an item's fxScale into its effect's strength: the engine and every tooltip use it
   D.EFFECT_COST_MAX = 0.6; // an effect item keeps at least 40% of its stat budget, so nothing on screen reads as a broken drop (#22; tools/validate.js holds it)
   D.effectCost = (k) => ((D.EFFECTS[k] && D.EFFECTS[k].cost) != null ? D.EFFECTS[k].cost : D.EFFECT_COST);
   D.EFFECTS = {
@@ -39,24 +41,24 @@
     },
     steady_fuse: {
       name: 'Steady Fuse', role: 'damage', icon: 'cold_blood', every: 45, cost: 0.6, // was every 30 at a 90% cost (#22: the 40% stat floor)
-      desc: () => `Every ${D.EFFECTS.steady_fuse.every} sec in combat, your next hit is a sure critical hit.`,
+      desc: (L, f) => `Every ${n(D.EFFECTS.steady_fuse.every / (f || 1))} sec in combat, your next hit is a sure critical hit.`, // an upgrade shortens the wait (#37)
     },
     glass_heart: {
       name: 'Glass Heart', role: 'damage', icon: 'blood_fury', dmg: 0.025, taken: 0.1, cost: 0, // no stat cost: the downside is the cost
-      desc: () => `You deal ${n(D.EFFECTS.glass_heart.dmg * 100)}% more damage, and take ${n(D.EFFECTS.glass_heart.taken * 100)}% more.`,
+      desc: (L, f) => `You deal ${Math.round(D.EFFECTS.glass_heart.dmg * (f || 1) * 1000) / 10}% more damage, and take ${n(D.EFFECTS.glass_heart.taken * 100)}% more.`, // an upgrade grows the bonus, never the downside (#37)
     },
     // healing
     lifeline: { // replaced Brimming Cup (#22): overhealing happens in every fight, so a shield from it won everywhere
       name: 'Lifeline', role: 'healing', icon: 'flash_heal', below: 0.35, icd: 15, cost: 0.45, // the game designer's 6 sec cooldown made a level-20 priest +20 points of survival; 15 sec is in the bars (#22)
-      desc: (L, f) => { const F = D.EFFECTS.lifeline; return `A direct heal on an ally below ${n(F.below * 100)}% health is a sure critical heal. At most once every ${F.icd} sec.`; },
+      desc: (L, f) => { const F = D.EFFECTS.lifeline; return `A direct heal on an ally below ${n(F.below * 100)}% health is a sure critical heal. At most once every ${n(F.icd / (f || 1))} sec.`; }, // an upgrade shortens the cooldown (#37)
     },
     wellspring: {
-      name: 'Wellspring', role: 'healing', icon: 'innervate', refund: 0.8, cost: 0.35,
+      name: 'Wellspring', role: 'healing', icon: 'innervate', refund: 0.9, /* 0.8 -> 0.9: it still won at full upgrade (#37) */ cost: 0.35,
       desc: (L, f) => `Your critical heals refund ${n(D.EFFECTS.wellspring.refund * (f || 1) * 100)}% of their mana cost.`,
     },
     // tanking
     spiteful_hide: {
-      name: 'Spiteful Hide', role: 'tank', icon: 'thorns', k: 0.12, c: 1, cost: 0.55,
+      name: 'Spiteful Hide', role: 'tank', icon: 'thorns', k: 0.12, c: 0, cost: 0.55, /* c 1 -> 0: at full upgrade a level-20 Paladin tank reached +10% (#37) */
       dmg: (L, f) => n((D.EFFECTS.spiteful_hide.k * L + D.EFFECTS.spiteful_hide.c) * (f || 1)),
       desc: (L, f) => `Enemies that hit you in melee take ${D.EFFECTS.spiteful_hide.dmg(L, f)} Nature damage.`,
     },

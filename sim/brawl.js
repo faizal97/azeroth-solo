@@ -46,7 +46,7 @@ for (const L of [35, 45, 60]) {
   report(r >= 0.22, `L${L}: about 1 in 3 is the aim (got ${Math.round(r * 100)}%)`);
 }
 // no class far behind: across all three levels
-for (const cls of CLASSES) { const m = (rate['r35' + cls] + rate['r45' + cls] + rate['r60' + cls]) / 3; check(m >= 0.7, `${cls} wins only ${m.toFixed(2)} rounds a brawl (at least 0.7)`); report(m >= 0.8, `${cls} wins ${m.toFixed(2)} rounds a brawl (the aim is 0.8)`); }
+for (const cls of CLASSES) { const m = (rate['r35' + cls] + rate['r45' + cls] + rate['r60' + cls]) / 3; if (D.CLASSES[cls].hidden) { console.log(`${cls} (hidden, not gated, #4): ${m.toFixed(2)} rounds a brawl`); continue; } check(m >= 0.7, `${cls} wins only ${m.toFixed(2)} rounds a brawl (at least 0.7)`); report(m >= 0.8, `${cls} wins ${m.toFixed(2)} rounds a brawl (the aim is 0.8)`); }
 // rewards: rounds pay, the chest once a day, the title
 {
   let br = null; for (let i = 0; i < 40 && !(br && br.champion); i++) br = brawl('warrior', 40, 0.85);

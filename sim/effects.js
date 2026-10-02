@@ -11,6 +11,7 @@ globalThis.localStorage = { getItem() { return null; }, setItem() {}, removeItem
 require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js');
 const { G, D, E } = globalThis;
 const N = +process.argv[2] || 200;
+if (process.env.FXGROW) D.FX_GROW = +process.env.FXGROW; // try the upgrade curve (#37)
 if (process.env.TUNE) { const T = JSON.parse(process.env.TUNE); for (const k in T) Object.assign(D.EFFECTS[k], T[k]); } // try numbers without editing the data
 let bad = 0; const ok = (c, m) => { if (!c) { bad++; console.log('FAIL ' + m); } };
 const pct = (a, b) => (b ? (a / b - 1) * 100 : 0);
@@ -27,16 +28,18 @@ const SHAPE = {
 // 'main': the stats the testing class uses, so the effect's cost is what that class really gives up
 const MAIN = (cls) => (['mage', 'warlock', 'priest', 'druid', 'shaman', 'bard'].includes(cls) ? ['int', 'sp'] : ['agi', 'str']);
 let curCls = null;
+let UPG = 1; // the upgrade stage being tested: 1 as dropped, FULL at the ceiling (#37)
 function piece(effect, L, withFx) {
   const P0 = SHAPE[effect], P = P0.st === 'main' ? Object.assign({}, P0, { st: MAIN(curCls) }) : P0, full = Math.round(L * 0.55 + 2) + 4, budget = withFx ? Math.round(full * (1 - D.effectCost(effect))) : full; // a dungeon blue's budget
   const stats = {}; let left = budget; P.st.forEach((k, i) => { const v = i === P.st.length - 1 ? left : Math.round(budget / P.st.length); stats[k] = v; left -= v; });
   const armor = P.slot === 'finger' || P.slot === 'back' ? (P.slot === 'back' ? Math.round(3 * 0.3 * (L + 2) * 0.9 * 1.22) : 0) : Math.round((D.SLOT_ARMOR[P.slot] || 3) * (P.atype ? D.GEAR_BASES[P.atype].arm : 0.3) * (L + 2) * 0.9 * 1.22);
-  return { id: effect + (withFx ? '_fx' : '_plain'), name: 'Test', slot: P.slot, atype: P.atype, q: 3, lvl: L, stats, armor, effect: withFx ? effect : undefined };
+  if (UPG !== 1) { for (const k in stats) stats[k] = Math.round(stats[k] * UPG); } // an upgraded pair (#37): both pieces' stats grow, and the effect with them
+  return { id: effect + (withFx ? '_fx' : '_plain'), name: 'Test', slot: P.slot, atype: P.atype, q: 3, lvl: L, stats, armor: Math.round(armor * UPG), effect: withFx ? effect : undefined, fxScale: withFx && UPG !== 1 ? UPG : undefined };
 }
 function unit(cls, role, L, pieces, i) {
   seed(7000 + i); const c = G.botChar({ name: cls + i, cls, race: 'human', level: L, skill: 0.8, role }); c.role = role;
   for (const it of pieces) c.equip[it.slot] = it; c.hp = null; c.res = null;
-  const u = E.charUnit(c, 'ally', 'bot', 0); u.bot = { skill: 0.8, react: 0.4 }; u.role = role; return u;
+  const u = E.charUnit(c, 'ally', 'bot', 0); u.bot = { skill: 0.8, react: 0.4, healOnly: role === 'healer' }; u.role = role; return u; // healers here only heal (game designer, #37): the cases measure healing, not spare-mana damage
 }
 const mob = (key, L, mult) => E.mobUnit(key, L, mult);
 let lastC = null; const run = (C, secs) => { lastC = C; while (!C.over && C.t < secs) { E.tick(C, 0.1); C.events.length = 0; } return C; };
@@ -44,12 +47,13 @@ let lastC = null; const run = (C, secs) => { lastC = C; while (!C.over && C.t < 
 // the hard healing fight's damage, searched so the plain item holds 7 in 10 (on its own seeds, not the measured ones)
 const HARD = {}, HOLD = 0.7;
 function hardDmg(cls, L) {
-  const k = cls + L; if (HARD[k] != null) return HARD[k];
+  const k = cls + L; if (HARD[k] != null) return HARD[k]; // searched once, as dropped: at full upgrade it's the same fight with better gear (#37)
+  const U0 = UPG; UPG = 1;
   let lo = 0.2, hi = 4; HARD[k] = 1;
   for (let step = 0; step < 9; step++) { const m = (lo + hi) / 2; HARD[k] = m; let held = 0; curCls = cls;
     for (let i = 0; i < 40; i++) held += CASES.hardheal({ cls, pieces: [piece('lifeline', L, false)] }, L, 50000 + i);
     if (held / 40 > HOLD) lo = m; else hi = m; }
-  return (HARD[k] = (lo + hi) / 2);
+  UPG = U0; return (HARD[k] = (lo + hi) / 2);
 }
 // cases scored in points of a rate (1 won / 0 lost), not in % of the plain item; and cases where dying is what they measure
 const POINTS = { hardheal: true }, DEATH_IS_THE_MEASURE = { meleeboss: true, casterboss: true, solo: true, hardheal: true };
@@ -108,41 +112,50 @@ const measure = (cs, cls, L, pieces) => { curCls = cls; let s = 0; for (let i = 
     ok(died <= 4, `the ${cs} case doesn't wipe: the plain item loses ${died} of 40 (${cls} ${L})`);
   } }
 }
+// every bar again at full upgrade (#37: a sidegrade must still be one once upgraded): the largest effect scale any
+// level-60 effect item reaches at its ceiling, with both pieces' stats grown the same
+const FULL = (() => { let m = 1; for (const id in D.ITEMS) { const it0 = D.ITEMS[id]; if (!it0.effect || (it0.lvl || 0) < D.UPGRADE.minLvl) continue; let x = G.copyItem(id), n = 0; while (G.upgradeInfo(x).room && n++ < 40) x = G.upgradedCopy(x, G.upgradeInfo(x).next); m = Math.max(m, Math.min(1.5, x.fxScale || 1)); } return Math.round(m * 100) / 100; })();
+const okTop = ok;
+for (const stage of [1, FULL]) {
+  UPG = stage; const STAGE = stage === 1 ? '' : `[at full upgrade, x${stage}] `;
+  console.log(stage === 1 ? '— as dropped —' : `— at full upgrade: stats and effect x${stage} —`);
+  const ok = (c, m) => okTop(c, STAGE + m);
 const all = [];
-for (const P of PLAN) {
-  if (ONLY && !ONLY.includes(P.effect)) continue;
-  const res = { wins: [], loses: [] };
-  for (const kind of ['wins', 'loses']) for (const cs of P[kind]) for (const cls of (kind === 'loses' && P.losesClasses) || P.classes) for (const L of [20, 40, 60]) {
-    curCls = cls; const plain = measure(cs, cls, L, [piece(P.effect, L, false)]); curCls = cls; const withFx = measure(cs, cls, L, [piece(P.effect, L, true)]), d = POINTS[cs] ? (withFx - plain) * 100 : pct(withFx, plain);
-    if (POINTS[cs]) ok(plain >= 0.6 && plain <= 0.8, `the ${cs} fight is hard: the plain item holds 6-8 in 10 (${cls} ${L}: ${(plain * 10).toFixed(1)} in 10)`);
-    res[kind].push({ cs, cls, L, d, pts: !!POINTS[cs] }); all.push({ effect: P.effect, cs, cls, L, d });
+  for (const P of PLAN) {
+    if (ONLY && !ONLY.includes(P.effect)) continue;
+    const res = { wins: [], loses: [] };
+    for (const kind of ['wins', 'loses']) for (const cs of P[kind]) for (const cls of (kind === 'loses' && P.losesClasses) || P.classes) for (const L of [20, 40, 60]) {
+      curCls = cls; const plain = measure(cs, cls, L, [piece(P.effect, L, false)]); curCls = cls; const withFx = measure(cs, cls, L, [piece(P.effect, L, true)]), d = POINTS[cs] ? (withFx - plain) * 100 : pct(withFx, plain);
+      if (POINTS[cs] && UPG === 1) ok(plain >= 0.6 && plain <= 0.8, `the ${cs} fight is hard: the plain item holds 6-8 in 10 (${cls} ${L}: ${(plain * 10).toFixed(1)} in 10)`);
+      res[kind].push({ cs, cls, L, d, pts: !!POINTS[cs] }); all.push({ effect: P.effect, cs, cls, L, d });
+    }
+    const pc = res.wins.concat(res.loses).filter((x) => !x.pts), pp = res.wins.concat(res.loses).filter((x) => x.pts), unit = (x) => (x.pts ? ' points' : '%');
+    const best = pc.length ? Math.max(...pc.map((x) => x.d)) : 0, win = Math.max(...res.wins.map((x) => x.d)), lose = Math.min(...res.loses.map((x) => x.d));
+    console.log(`${D.EFFECTS[P.effect].name.padEnd(15)} wins ${res.wins.map((x) => `${x.cs} ${x.cls} ${x.L}: ${x.d >= 0 ? '+' : ''}${x.d.toFixed(1)}${unit(x)}`).join(', ')}`);
+    console.log(`${''.padEnd(15)} loses ${res.loses.map((x) => `${x.cs} ${x.cls} ${x.L}: ${x.d >= 0 ? '+' : ''}${x.d.toFixed(1)}${unit(x)}`).join(', ')}`);
+    if (D.EFFECTS[P.effect].review) { console.log(`${''.padEnd(15)} (under review by the game designer: reported, not gated)`); continue; }
+    if (res.wins.some((x) => x.pts)) { const w = Math.max(...res.wins.map((x) => x.d)), p = Math.max(...pp.map((x) => x.d));
+      ok(w >= 5, `${P.effect} wins somewhere: at least +5 points of survival in a wins case (best ${w.toFixed(1)})`);
+      ok(p <= 15, `${P.effect} is not too strong: at most +15 points of survival (${p.toFixed(1)})`);
+    } else ok(win >= 2, `${P.effect} wins somewhere: at least +2% in a wins case (best ${win.toFixed(1)}%)`);
+    ok(lose <= -2, `${P.effect} loses somewhere: at least -2% in a loses case (worst ${lose.toFixed(1)}%)`);
+    ok(best <= 8, `${P.effect} is not too strong: at most +8% in its best case (${best.toFixed(1)}%)`);
   }
-  const pc = res.wins.concat(res.loses).filter((x) => !x.pts), pp = res.wins.concat(res.loses).filter((x) => x.pts), unit = (x) => (x.pts ? ' points' : '%');
-  const best = pc.length ? Math.max(...pc.map((x) => x.d)) : 0, win = Math.max(...res.wins.map((x) => x.d)), lose = Math.min(...res.loses.map((x) => x.d));
-  console.log(`${D.EFFECTS[P.effect].name.padEnd(15)} wins ${res.wins.map((x) => `${x.cs} ${x.cls} ${x.L}: ${x.d >= 0 ? '+' : ''}${x.d.toFixed(1)}${unit(x)}`).join(', ')}`);
-  console.log(`${''.padEnd(15)} loses ${res.loses.map((x) => `${x.cs} ${x.cls} ${x.L}: ${x.d >= 0 ? '+' : ''}${x.d.toFixed(1)}${unit(x)}`).join(', ')}`);
-  if (D.EFFECTS[P.effect].review) { console.log(`${''.padEnd(15)} (under review by the game designer: reported, not gated)`); continue; }
-  if (res.wins.some((x) => x.pts)) { const w = Math.max(...res.wins.map((x) => x.d)), p = Math.max(...pp.map((x) => x.d));
-    ok(w >= 5, `${P.effect} wins somewhere: at least +5 points of survival in a wins case (best ${w.toFixed(1)})`);
-    ok(p <= 15, `${P.effect} is not too strong: at most +15 points of survival (${p.toFixed(1)})`);
-  } else ok(win >= 2, `${P.effect} wins somewhere: at least +2% in a wins case (best ${win.toFixed(1)}%)`);
-  ok(lose <= -2, `${P.effect} loses somewhere: at least -2% in a loses case (worst ${lose.toFixed(1)}%)`);
-  ok(best <= 8, `${P.effect} is not too strong: at most +8% in its best case (${best.toFixed(1)}%)`);
-}
-// the ceiling holds: different effects worn together in the case that suits them stay within +10% of plain gear
-const MIXES = [
-  { name: 'Opening Cut + Stubborn Blood', cs: 'solo', cls: 'rogue', fx: ['opening_cut', 'stubborn_blood'] },
-  { name: 'Opening Cut + Chase the Next + Glass Heart', cs: 'trash', cls: 'rogue', fx: ['opening_cut', 'chase_the_next', 'glass_heart'] },
-  { name: 'Kindled Edge + Steady Fuse + Glass Heart', cs: 'boss', cls: 'warrior', fx: ['kindled_edge', 'steady_fuse', 'glass_heart'] },
-  { name: 'Echoing Mend + Lifeline + Wellspring', cs: 'groupwide', cls: 'priest', fx: ['echoing_mend', 'lifeline', 'wellspring'] },
-];
-for (const M of MIXES) {
-  if (ONLY && !M.fx.some((k) => ONLY.includes(k))) continue;
-  if (M.fx.some((k) => D.EFFECTS[k].review)) continue; // a mix with an effect under review waits for it
-  for (const L of [20, 40, 60]) {
-    curCls = M.cls; const plain = measure(M.cs, M.cls, L, M.fx.map((k) => piece(k, L, false))); curCls = M.cls; const mixed = measure(M.cs, M.cls, L, M.fx.map((k) => piece(k, L, true))), d = pct(mixed, plain);
-    console.log(`mixed (${M.name}), ${M.cs} ${M.cls} ${L}: ${d >= 0 ? '+' : ''}${d.toFixed(1)}%`);
-    ok(d <= 10, `the best mix of effects stays within +10% of plain gear (${M.name}, ${M.cs} ${M.cls} ${L}: ${d.toFixed(1)}%)`);
+  // the ceiling holds: different effects worn together in the case that suits them stay within +10% of plain gear
+  const MIXES = [
+    { name: 'Opening Cut + Stubborn Blood', cs: 'solo', cls: 'rogue', fx: ['opening_cut', 'stubborn_blood'] },
+    { name: 'Opening Cut + Chase the Next + Glass Heart', cs: 'trash', cls: 'rogue', fx: ['opening_cut', 'chase_the_next', 'glass_heart'] },
+    { name: 'Kindled Edge + Steady Fuse + Glass Heart', cs: 'boss', cls: 'warrior', fx: ['kindled_edge', 'steady_fuse', 'glass_heart'] },
+    { name: 'Echoing Mend + Lifeline + Wellspring', cs: 'groupwide', cls: 'priest', fx: ['echoing_mend', 'lifeline', 'wellspring'] },
+  ];
+  for (const M of MIXES) {
+    if (ONLY && !M.fx.some((k) => ONLY.includes(k))) continue;
+    if (M.fx.some((k) => D.EFFECTS[k].review)) continue; // a mix with an effect under review waits for it
+    for (const L of [20, 40, 60]) {
+      curCls = M.cls; const plain = measure(M.cs, M.cls, L, M.fx.map((k) => piece(k, L, false))); curCls = M.cls; const mixed = measure(M.cs, M.cls, L, M.fx.map((k) => piece(k, L, true))), d = pct(mixed, plain);
+      console.log(`mixed (${M.name}), ${M.cs} ${M.cls} ${L}: ${d >= 0 ? '+' : ''}${d.toFixed(1)}%`);
+      ok(d <= 10, `the best mix of effects stays within +10% of plain gear (${M.name}, ${M.cs} ${M.cls} ${L}: ${d.toFixed(1)}%)`);
+    }
   }
 }
 console.log(bad ? `${bad} failures` : 'effects sim OK');

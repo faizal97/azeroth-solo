@@ -1811,7 +1811,7 @@
       // an item effect (v10.10): its rule with real numbers at the item's level, "counts once", and what it did last run
       const F = G.effectOf(it);
       if (F) {
-        t.append(h('div', { class: 'eff' }, h('b', null, `Effect: ${F.name}. `), F.desc(it.lvl || 1, it.fxScale || 1)));
+        t.append(h('div', { class: 'eff' }, h('b', null, `Effect: ${F.name}. `), F.desc(it.lvl || 1, D.fxGrow(it.fxScale))));
         if (!who && Object.values(G.S.player.equip || {}).some((x) => x && x !== it && x.effect === it.effect)) t.append(h('div', { class: 'eff dim' }, `You already have ${F.name}. It counts once.`));
         const L = !who && (G.S.player.fxLast || {})[it.effect];
         if (L) t.append(h('div', { class: 'dim' }, lastRunText(L)));
@@ -2431,9 +2431,14 @@
     if (next.sp && next.sp > (it.sp || 0)) diff.push(`+${next.sp - (it.sp || 0)} spell power`);
     if (next.armor && next.armor > (it.armor || 0)) diff.push(`+${next.armor - (it.armor || 0)} armor`);
     if (next.dmg) diff.push(`+${(((next.dmg[0] + next.dmg[1]) - (it.dmg[0] + it.dmg[1])) / 2 / it.speed).toFixed(1)} damage per second`);
+    // an effect item (#36): its rule before and after, every number that grows shown as "46 → 48"
+    const F = G.effectOf(it), fxLine = F ? (() => { const a = F.desc(it.lvl || 1, D.fxGrow(it.fxScale)), b = F.desc(next.lvl || 1, D.fxGrow(next.fxScale)), re = /(\d+(?:\.\d+)?)/;
+      const pa = a.split(re), pb = b.split(re); if (pa.length !== pb.length || pa.some((x, i) => i % 2 === 0 && x !== pb[i])) return `${a} After: ${b}`;
+      return pa.map((x, i) => (i % 2 && x !== pb[i] ? `${x} → ${pb[i]}` : x)).join(''); })() : null;
     showDialog([h('h3', null, `Upgrade ${it.name}?`),
-      h('p', null, `From ${inf.pct}% to ${inf.nextPct}% of the ceiling: ${diff.join(', ') || 'a little stronger'}.`),
-      h('p', null, `Costs ${inf.cost} Mentor Marks. You have ${marks}. Its look and effects stay the same.`),
+      h('p', null, `From ${inf.pct}% to ${inf.nextPct}% of the ceiling: ${diff.join(', ') || (F ? 'the stats round to the same numbers' : 'a little stronger')}.`),
+      fxLine ? h('p', { class: 'eff' }, `Effect: ${F.name}. ${fxLine}`) : null,
+      h('p', null, `Costs ${inf.cost} Mentor Marks. You have ${marks}. Its look stays the same.`),
       h('div', { class: 'btn-row' }, h('button', { class: 'btn', disabled: marks < inf.cost, onclick: () => { closeDialog(); G.upgradeItem(where); if (ui.sheetFn) ui.sheetFn(); } }, 'Upgrade'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true);
   }
   const canUpgrade = (it) => G.upgradeInfo(it).room;
@@ -3487,7 +3492,7 @@
           else {
             rows.push(h('button', { class: 'ai-row', style: { textAlign: 'left', width: '100%' }, onclick: () => showDialog(itemTip(fit), true) }, h('span', null, 'Beat it in time'),
               h('b', null, `${odds} chance of `, h('span', { class: 'q' + fit.q }, fit.name))));
-            if (F) rows.push(h('div', { class: 'eff', style: { fontSize: '13px' } }, `Effect: ${F.name}. ${F.desc(fit.lvl || 1, fit.fxScale || 1)}`));
+            if (F) rows.push(h('div', { class: 'eff', style: { fontSize: '13px' } }, `Effect: ${F.name}. ${F.desc(fit.lvl || 1, D.fxGrow(fit.fxScale))}`));
             const own = D.ITEMS[D.TRIAL_FIND[act]], fromAct = Object.keys(D.TRIAL_FIND).find((a) => D.TRIAL_FIND[a] === fid), from = fromAct ? D.ACTIVITIES[fromAct].name : fit.name;
             const why = fid === D.TRIAL_FIND[act] ? null : !G.canUseItem(own) ? `Your class can't use this dungeon's own find (${own.name}), so a timed run here can bring this one instead` : `You have this dungeon's own find (${own.name}), so a timed run here can bring this one instead`;
             rows.push(h('div', { class: 'ai-note', style: { fontSize: '12px', margin: 0 } }, why ? `${why}: the find of ${from}.` : `This dungeon's own find.`));
@@ -3568,7 +3573,7 @@
       if (drops && drops.length) {
         b.append(h('div', { class: 'sec-h' }, 'Drops', h('small', null, `${drops.length <= 2 ? 'both drop' : `2 of ${drops.length} drop`} per kill · tap one`)));
         b.append(h('div', { class: 'list' }, ...drops.flatMap((id) => { const it = hard && G.hardBonusLeft(act, keys[0]) ? G.hardCopy(id) : G.copyItem(id), F = G.effectOf(it);
-          return [itemRow(it, 1, '', () => showDialog(itemTip(it), true)), F ? h('div', { class: 'eff', style: { fontSize: '12px', margin: '-2px 4px 6px' } }, `Effect: ${F.name}. ${F.desc(it.lvl || 1, it.fxScale || 1)}`) : null]; }))); // the Effect line, to plan before a run (#23)
+          return [itemRow(it, 1, '', () => showDialog(itemTip(it), true)), F ? h('div', { class: 'eff', style: { fontSize: '12px', margin: '-2px 4px 6px' } }, `Effect: ${F.name}. ${F.desc(it.lvl || 1, D.fxGrow(it.fxScale))}`) : null]; }))); // the Effect line, to plan before a run (#23)
       }
     });
   }
@@ -3891,7 +3896,7 @@
       h('button', { style: { padding: 0 }, onclick: () => inspectRoll(i) }, itemIcon(it, 'rollic')),
       h('div', null,
         h('div', { class: 'q' + it.q, style: { fontWeight: 800 } }, it.name + (open.length > 1 ? `  (+${open.length - 1} more)` : ''), gearTag(it)),
-        G.effectOf(it) ? h('div', { class: 'eff', style: { fontSize: '12px', lineHeight: 1.3 } }, `Effect: ${G.effectOf(it).name}. ${G.effectOf(it).desc(it.lvl || 1, it.fxScale || 1)}`) : null, // plan the roll without opening it (#23)
+        G.effectOf(it) ? h('div', { class: 'eff', style: { fontSize: '12px', lineHeight: 1.3 } }, `Effect: ${G.effectOf(it).name}. ${G.effectOf(it).desc(it.lvl || 1, D.fxGrow(it.fxScale))}`) : null, // plan the roll without opening it (#23)
         h('div', { class: 'bar' }, h('i', { 'data-roll': i, style: { width: '100%' } })),
         h('div', { class: 'btn-row', style: { marginTop: '6px' } },
           h('button', { class: needFirst(it) ? 'btn' : 'btn alt', onclick: () => { G.roll(i, 'need'); renderRolls(); } }, 'Need'),
