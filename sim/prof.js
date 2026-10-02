@@ -312,5 +312,15 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
   ok(!off.length, 'crafted gear has the drop curve\'s stat budget: ' + off.slice(0, 4).map(([k, it]) => `${k} ${sum(it)} vs ${budget(it.lvl, it.q)}`).join(', '));
   ok(sum(D.ITEMS.embersilver_breastplate) <= 28, 'the level-44 Expert rare is a level-44 blue, not a level-60 one (' + sum(D.ITEMS.embersilver_breastplate) + ')');
 }
+// Artisan (v10.9 beta 5): from level 45 with 200 skill, up to 300
+{
+  G.newGame({ name: 'A', cls: 'warrior', race: 'human' }); const P = G.S.player; P.money = 1e7; P.level = 45;
+  G.S.player.prof = { blacksmithing: { skill: 225, max: 225, known: [] } }; G.trainProf('blacksmithing');
+  ok(G.profs().blacksmithing.max === 300, 'a level-45 smith with 225 skill trains Artisan (300)');
+  G.newGame({ name: 'A2', cls: 'warrior', race: 'human' }); G.S.player.money = 1e7; G.S.player.level = 44;
+  G.S.player.prof = { blacksmithing: { skill: 225, max: 225, known: [] } }; G.trainProf('blacksmithing');
+  ok(G.profs().blacksmithing.max === 225, 'Artisan waits for level 45');
+  ok(D.TITLES.find((t) => t.id === 'artisan').name === 'Journeyman %s', 'the 150 title is Journeyman, so Artisan means 300');
+}
 console.log(fails ? `${fails} failures` : 'professions sim OK');
 process.exit(fails ? 1 : 0);

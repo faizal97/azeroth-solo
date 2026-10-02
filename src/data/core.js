@@ -567,7 +567,7 @@
     { id: 'gnomeregan', name: '%s, Liberator of Gearhollow', need: { clear: 'gnomeregan' }, how: 'Clear Gearhollow' },
     { id: 'razorfen', name: '%s the Thornbreaker', need: { clear: 'razorfen_kraul' }, how: 'Clear The Thorn Warrens' },
     { id: 'hunter_big', name: '%s the Big Game Hunter', need: { clear: 'bangalash' }, how: 'Defeat King Ghostpelt' },
-    { id: 'artisan', name: 'Artisan %s', need: { craft: 150 }, how: 'Reach 150 in a crafting profession' },
+    { id: 'artisan', name: 'Journeyman %s', need: { craft: 150 }, how: 'Reach 150 in a crafting profession' },
   ];
   // ---- mounts (v5.1): learn riding at 40 from a stable master in a capital, then buy a mount.
   // Riding makes every road 40% faster (boats, zeppelins, gryphons and trams keep their time).
