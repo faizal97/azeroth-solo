@@ -3269,7 +3269,7 @@
   }
   function cloudKids() {
     if (!CLOUD.available()) return [cloudNote(CLOUD.why === 'play' ? 'Cloud save needs Google Play services, which this phone does not have. Save codes (below) work everywhere.'
-      : UPD.inApp() ? 'Cloud save needs the newest version of the app. Save codes (below) work in the meantime.' : `Cloud save works on the game's own page, ${UPD.WEB}. Save codes (below) work everywhere. Characters on itch.io and on the game's own page are separate; a save code moves one.`)];
+      : UPD.inApp() ? 'Cloud save needs the newest version of the app. Save codes (below) work in the meantime.' : (CLOUD.webOk && CLOUD.webOk() ? `Cloud save works on the game's own page, ${UPD.WEB}. Save codes (below) work everywhere.` : 'Cloud save isn\'t available in this version of the game. Save codes (below) move your characters to another device or version.'))];
     CLOUD.prepare(); // load Google's script now, so a tap can open its window straight away
     const testing = CLOUD.TESTING ? cloudNote('Testing: only invited Google accounts can sign in for now.') : null;
     const refresh = () => { if (ui.sheetFn) ui.sheetFn(); };
