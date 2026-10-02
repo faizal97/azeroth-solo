@@ -194,6 +194,7 @@
     const t = now();
     const away = Math.max(0, t - S.lastSeen);
     const report = { away, rested: 0, news: [], dings: 0, online: 0 };
+    B.cleanNews(S); // news a newer server stored that this level can't be told yet (issue #18), on every load
     // a battleground (issue #30): a finished one closes on a reload or after time away; one still going ends after
     // 10 minutes away, with no Deserter and no Honor for the unfinished round (the same rule as a dungeon run)
     if (S.bg && !(G.fight && G.fight.kind === 'bg') && (S.bg.phase === 'done' || away > 600000)) {
@@ -224,7 +225,7 @@
         const mates = S.bots.filter((b) => b.guild === P.guild);
         if (mates.length) B.post(S, 'guild', pick(mates), pick(['wb!', 'welcome back', 'oh hey you are back', 'yo']));
       }
-      S.news = report.news.concat(S.news).slice(0, 40);
+      S.news = report.news.slice().sort((a, b) => b.t - a.t).concat(S.news).slice(0, 40); // newest first, as Social → News reads: a long absence drops its oldest lines, not the summary at its end (#18)
     } else {
       S.lastSim = t;
     }
