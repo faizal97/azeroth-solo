@@ -1,4 +1,5 @@
-// Professions (v3): three gathering skills and four crafts, skill 1–150 for now (Apprentice 75, Journeyman 150).
+// Professions (v3): three gathering skills and four crafts, skill 1–225 (Apprentice 75, Journeyman 150, Expert 225 since
+// v10.10; design docs/plans/2026-10-02-professions-design.md).
 // Loads after the zones: it adds trainers to the cities and hubs, and reads place levels to decide what grows where.
 // Rules live in game.js (G.prof*); this file is only data.
 (function (root) {
@@ -15,10 +16,11 @@
     tailoring: { name: 'Tailoring', icon: 'prof_tailoring', kind: 'craft', desc: 'Sew cloth armour and bags from the linen and wool that humanoids drop.' },
   };
   D.PROF_MAX = 2;
-  // Ranks are bought from a profession trainer. Expert (225) comes with the level-30 zones.
+  // Ranks are bought from a profession trainer.
   D.PROF_RANKS = [
     { name: 'Apprentice', max: 75, lvl: 5, skill: 0, cost: 100 },
     { name: 'Journeyman', max: 150, lvl: 10, skill: 50, cost: 5000 },
+    { name: 'Expert', max: 225, lvl: 30, skill: 125, cost: 25000 }, // v10.10: levels 25-45
   ];
   // Gathering: what each node needs, and the colour bands above that (orange, yellow, green, then grey).
   D.NODES = {
