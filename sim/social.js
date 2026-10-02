@@ -6,7 +6,8 @@ require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'
 const { G, D, B, SOC } = globalThis;
 // Reproducible (v10.1.1): a fixed evening (a Wednesday, when most simulated players are online) and seeded dice, so
 // the result never depends on the day it is run or on luck; a failure is a real change, not a bad roll.
-let t = new Date(2026, 8, 30, 18, 0, 0, 0).getTime(); Date.now = () => t;
+const RealDate = Date; let t = new RealDate(2026, 8, 30, 18, 0, 0, 0).getTime(); // the whole clock is the sim's: 'who is online' reads new Date() (issue #26)
+globalThis.Date = class extends RealDate { constructor(...a) { if (a.length) super(...a); else super(t); } static now() { return t; } };
 let bad = 0; const fail = (m) => { console.log('FAIL ' + m); bad++; };
 G.newGame({ name: 'T', cls: 'priest', race: 'human' }); const S = G.S, P = S.player;
 P.level = 22; S.flags.warModeAsked = true; S.flags.warMode = false; P.place = 'darkshire'; P.money = 50000;
@@ -28,10 +29,16 @@ if (force('help_kill')) {
   if (a) { if (!S.wparty) fail('helper did not join the party'); if (P.place === a.place) P.place = 'goldshire'; const via = Object.keys(D.PLACES).find((k) => k !== a.place && k !== P.place); P.place = via; for (let i = 0; i < 5; i++) { t += 1000; G.update(1); } if (!S.wparty) fail('party disbanded on the way to the request'); P.place = a.place; t += 1000; G.update(1); if (!S.wparty || S.wparty.meet) fail('party did not settle at the meeting place'); const m0 = P.money; for (let i = 0; i < a.n; i++) G.S && (G.on && null, SOC.onKill(a.mob)); if (a.state !== 'done' || P.money <= m0) fail('help_kill did not pay'); else console.log('help_kill ok:', x.m.text); }
 }
 if (force('lfg')) { const x = run('lfg'); if (S.bg) { console.log('lfg ok:', x.m.text, '→ battleground', S.bg.act, '(its own two teams, issue #15)'); S.bg = null; } else if (!S.run) fail('lfg did not start a run'); else { console.log('lfg ok:', x.m.text, '→ run', S.run.act); let g = 0; while (S.run && S.run.phase !== 'done' && g++ < 200000) { if (G.fight && G.pUnit && G.pUnit.kind === 'player') { G.pUnit.kind = 'bot'; G.pUnit.bot = { skill: 0.7, react: 0.5 }; G.pUnit.role = G.role(); } for (const r of (S.run.rolls || [])) if (!r.done && r.player && r.choice == null) { try { G.roll(S.run.rolls.indexOf(r), 'greed'); } catch (e) {} } if (S.run.phase === 'rest' && S.run.restUntil <= t) { try { G.runPull(); } catch (e) {} } G.update(0.1); t += 100; } console.log('  run finished:', S.run && S.run.phase); S.run = null; S.group = null; } }
+// a battleground from a chat request (issue #15): it starts the battleground with its two teams, not a dungeon run
+{ const bg = Object.keys(D.ACTIVITIES).find((k) => D.ACTIVITIES[k].bg && P.level >= D.ACTIVITIES[k].minLvl && P.level <= D.ACTIVITIES[k].maxLvl);
+  if (bg) { S.run = null; S.group = null; S.bg = null; const okj = G.joinChatGroup(bg, 'healer', {}); let threw = null; try { for (let i = 0; i < 20; i++) { t += 1000; G.update(1); } } catch (e) { threw = e; }
+    if (!okj || !S.bg || S.run || threw) fail(`a chat battleground request starts the battleground (${bg}: joined ${okj}, bg ${!!S.bg}, run ${!!S.run}${threw ? ', threw ' + threw.message : ''})`); else console.log('battleground from chat ok:', bg);
+    G.leaveBg && G.leaveBg(); S.bg = null; } }
 // guilds: apply to one you qualify for
 { const d = new Date(t); if (d.getHours() < 18) d.setHours(18, 0, 0, 0); else { d.setDate(d.getDate() + 1); d.setHours(18, 0, 0, 0); } t = d.getTime(); } // the guild tests run in a guild's busy evening
 const gs = SOC.myGuilds(); console.log('guilds:', gs.map((g) => `${g.name} (${g.style} ${g.min}+, ${g.members})`).join(' · '));
-const ok = gs.find((g) => P.level >= g.min); SOC.apply(ok.g); for (let i = 0; i < 90; i++) { t += 1000; G.update(1); }
+const busiest = (list) => list.slice().sort((a, b) => b.online - a.online || b.members - a.members)[0]; // a guild with members online at the sim's clock (issue #26)
+const ok = busiest(gs.filter((g) => P.level >= g.min)); SOC.apply(ok.g); for (let i = 0; i < 90; i++) { t += 1000; G.update(1); }
 if (P.guild !== ok.g) fail('application not accepted'); else console.log('applied and joined', ok.name);
 const low = gs.find((g) => P.level < g.min);
 // guild requests pay standing
@@ -68,7 +75,7 @@ SOC.leaveGuild(); if (P.guild !== -1) fail('leave guild');
   const fr = SOC.friends(); console.log('friends made:', fr.length, fr.slice(0, 3).map((f) => f.bot.name + ' x' + f.n).join(', '));
   if (!fr.length) fail('no friends remembered');
   // guild extras
-  G.joinGuild(SOC.myGuilds()[0].g); const gseen = {}; const w0 = SOC.week().got;
+  G.joinGuild(busiest(SOC.myGuilds()).g); const gseen = {}; const w0 = SOC.week().got;
   for (let i = 0; i < 3 * 3600; i++) { t += 1000; G.update(1); for (const m of S2.chat) if (m.act && m.act.guild && !m.g2) { m.g2 = 1; gseen[m.act.kind] = (gseen[m.act.kind] || 0) + 1; if (m.act.kind === 'g_donate') SOC.actions(m)[0].fn(); if (m.act.kind === 'g_event') SOC.actions(m)[0].fn(); } if (S2.run) { const d = { act: S2.run.act, soc: S2.run.soc }; S2.run = null; S2.group = null; SOC.onRunComplete(d); } if (G.fight) { G.fight = null; G.pUnit = null; } }
   for (let i = 0; i < 40; i++) SOC.onKill('skeletal_warrior');
   const wk = SOC.week(); console.log('guild requests in 3 h:', JSON.stringify(gseen), '· standing', P2.guildRep, '· week', wk.what, wk.got + '/' + wk.goal, '· motd:', SOC.motd(P2.guild));
