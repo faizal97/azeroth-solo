@@ -482,7 +482,7 @@
     const out = {};
     for (const s in (char && char.equip) || {}) {
       const it = char.equip[s], F = it && it.effect && D.EFFECTS && D.EFFECTS[it.effect]; if (!F) continue;
-      const L = it.lvl || 1, f = D.fxGrow ? D.fxGrow(it.fxScale) : Math.min(1.5, it.fxScale || 1); /* the effect's strength from its upgrade (#37) */ if (!out[it.effect] || out[it.effect].lvl * out[it.effect].f < L * f) out[it.effect] = { key: it.effect, lvl: L, f, item: it.name };
+      const L = it.lvl || 1, f = D.fxGrow ? D.fxGrow(it.fxScale, it.effect) : Math.min(1.5, it.fxScale || 1); /* the effect's strength from its upgrade (#37) */ if (!out[it.effect] || out[it.effect].lvl * out[it.effect].f < L * f) out[it.effect] = { key: it.effect, lvl: L, f, item: it.name };
     }
     return out;
   };

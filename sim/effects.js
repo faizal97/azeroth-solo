@@ -97,8 +97,8 @@ const PLAN = [
   { effect: 'chase_the_next', classes: ['rogue', 'warrior'], wins: ['trash'], loses: ['boss'] },
   { effect: 'steady_fuse', classes: ['mage', 'warrior'], wins: ['boss'], loses: ['highcrit'] },
   { effect: 'glass_heart', classes: ['rogue', 'warrior'], wins: ['healed'], loses: ['solo'] },
-  { effect: 'lifeline', classes: ['priest', 'druid'], wins: ['hardheal'], loses: ['groupwide'] }, // wins: survival, +5 to +15 points (game designer, #22),
-  { effect: 'wellspring', classes: ['priest', 'druid'], wins: ['groupwide'], loses: ['shortheal'] },
+  { effect: 'lifeline', classes: ['priest', 'druid'], wins: ['hardheal'], loses: ['groupwide'], provisional: '#40' }, // wins: survival, +5 to +15 points (game designer, #22),
+  { effect: 'wellspring', classes: ['priest', 'druid'], wins: ['groupwide'], loses: ['shortheal'], provisional: '#40' },
   { effect: 'spiteful_hide', classes: ['warrior', 'paladin'], wins: ['tankpack'], loses: ['casterboss'] },
   { effect: 'tithe_of_battle', classes: ['warlock'], wins: ['boss'], loses: ['boss'], losesClasses: ['mage'] },
 ];
@@ -136,12 +136,15 @@ const all = [];
     console.log(`${D.EFFECTS[P.effect].name.padEnd(15)} wins ${res.wins.map((x) => `${x.cs} ${x.cls} ${x.L}: ${x.d >= 0 ? '+' : ''}${x.d.toFixed(1)}${unit(x)}`).join(', ')}`);
     console.log(`${''.padEnd(15)} loses ${res.loses.map((x) => `${x.cs} ${x.cls} ${x.L}: ${x.d >= 0 ? '+' : ''}${x.d.toFixed(1)}${unit(x)}`).join(', ')}`);
     if (D.EFFECTS[P.effect].review) { console.log(`${''.padEnd(15)} (under review by the game designer: reported, not gated)`); continue; }
+    // an accepted exception (game designer, #37): healing effects measured by healing done can't show their trade with a
+    // healer that only heals; they ship as they are until #40 measures them by capacity. Their misses print, not fail
+    const bar = P.provisional ? (c, m) => { if (!c) console.log(`ACCEPTED (${P.provisional}, provisional) ${STAGE}${m}`); } : ok;
     if (res.wins.some((x) => x.pts)) { const w = Math.max(...res.wins.map((x) => x.d)), p = Math.max(...pp.map((x) => x.d));
-      ok(w >= 5, `${P.effect} wins somewhere: at least +5 points of survival in a wins case (best ${w.toFixed(1)})`);
-      ok(p <= 15, `${P.effect} is not too strong: at most +15 points of survival (${p.toFixed(1)})`);
-    } else ok(win >= 2, `${P.effect} wins somewhere: at least +2% in a wins case (best ${win.toFixed(1)}%)`);
-    ok(lose <= -2, `${P.effect} loses somewhere: at least -2% in a loses case (worst ${lose.toFixed(1)}%)`);
-    ok(best <= 8, `${P.effect} is not too strong: at most +8% in its best case (${best.toFixed(1)}%)`);
+      bar(w >= 5, `${P.effect} wins somewhere: at least +5 points of survival in a wins case (best ${w.toFixed(1)})`);
+      bar(p <= 15, `${P.effect} is not too strong: at most +15 points of survival (${p.toFixed(1)})`);
+    } else bar(win >= 2, `${P.effect} wins somewhere: at least +2% in a wins case (best ${win.toFixed(1)}%)`);
+    bar(lose <= -2, `${P.effect} loses somewhere: at least -2% in a loses case (worst ${lose.toFixed(1)}%)`);
+    bar(best <= 8, `${P.effect} is not too strong: at most +8% in its best case (${best.toFixed(1)}%)`);
   }
   // the ceiling holds: different effects worn together in the case that suits them stay within +10% of plain gear
   const MIXES = [
