@@ -44,6 +44,8 @@ if subprocess.run(['node', os.path.join(R, 'sim', 'prof.js')], stdout=subprocess
     sys.exit('build stopped: a profession rule or the Expert or Artisan pace is broken (node sim/prof.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'social.js')], stdout=subprocess.DEVNULL).returncode != 0:
     sys.exit('build stopped: a chat or guild rule is broken (node sim/social.js lists which)')
+if subprocess.run(['node', os.path.join(R, 'sim', 'auction.js')], stdout=subprocess.DEVNULL).returncode != 0:
+    sys.exit('build stopped: the auction house pays risk-free or a price button wins nowhere (node sim/auction.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'rares.js')], stdout=subprocess.DEVNULL).returncode != 0:
     sys.exit('build stopped: a rare is in a starting place or first in a Fight list it outlevels (node sim/rares.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'consumables.js')], stdout=subprocess.DEVNULL).returncode != 0:

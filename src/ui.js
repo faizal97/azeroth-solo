@@ -2742,7 +2742,9 @@
   function openBank() {
     openSheet('bank', 'Bank', `${G.BANK_SLOTS} slots · tap to move`, (b, title) => {
       const P = G.S.player; P.bank = P.bank || [];
-      title.querySelector('small').textContent = `${P.bank.length}/${G.BANK_SLOTS} in the bank · ${P.bags.length}/${G.bagCap()} in your bags · tap to move`;
+      const over = P.bank.length - G.BANK_SLOTS; // rewards and expired auctions are never lost: they may overfill the bank (issue #25)
+      title.querySelector('small').textContent = over > 0 ? `${P.bank.length} items in ${G.BANK_SLOTS} slots · ${P.bags.length}/${G.bagCap()} in your bags · tap to move` : `${P.bank.length}/${G.BANK_SLOTS} in the bank · ${P.bags.length}/${G.bagCap()} in your bags · tap to move`;
+      if (over > 0) b.append(h('p', { class: 'ai-note', style: { margin: '0 0 6px' } }, `${P.bank.length} items in ${G.BANK_SLOTS} slots: ${over} over from rewards. Take something out to deposit again.`));
       b.append(h('div', { class: 'sec-h' }, 'In the bank', h('small', null, 'tap to take')));
       const bank = h('div', { class: 'list' }); P.bank.forEach((x, i) => bank.append(itemRow(x.item, x.n, '↑', () => { G.bankWithdraw(i); ui.sheetFn(); })));
       if (!P.bank.length) bank.append(h('div', { class: 'people' }, 'Empty. Keep gear sets, quest leftovers and heirlooms here.'));
@@ -2765,8 +2767,10 @@
         b.append(h('p', { class: 'ai-note' }, 'Listings from other players on the realm. New ones arrive every half hour.'));
       } else if (ui.ahTab === 'sell') {
         P.bags.forEach((x, i) => { if (!G.ahTrade(x.item)) return; const v = G.ahValue(x.item) * x.n;
-          list.append(itemRow(x.item, x.n, G.moneyText(v), () => showDialog([h('h3', null, `Sell ${x.item.name}`), h('p', null, `Players usually pay about ${G.moneyText(v)}. Lower prices sell faster; much higher ones may not sell at all. The house takes 5%.`),
-            h('div', { class: 'btn-row' }, ...[0.8, 1, 1.3, 1.6].map((f) => h('button', { class: 'btn' + (f === 1 ? '' : ' alt'), onclick: () => { closeDialog(); G.ahPost(i, Math.round(v * f)); ui.sheetFn(); } }, G.moneyText(Math.round(v * f))))),
+          // each price shows its facts (issue #20): how likely it sells within a day, and the deposit; no button is picked for you
+          const dep = G.ahDeposit(x.item, x.n), odds = (f) => { const c = G.ahSellChance(f); return c >= 0.95 ? 'almost surely' : c <= 0.05 ? 'hardly ever' : `about ${Math.round(c * 10)} in 10`; };
+          list.append(itemRow(x.item, x.n, G.moneyText(v), () => showDialog([h('h3', null, `Sell ${x.item.name}`), h('p', null, `Players usually pay about ${G.moneyText(v)}. The higher the price, the less likely it sells within a day. The deposit of ${G.moneyText(dep)} comes back only if it sells; the house takes 5% of a sale.`),
+            h('div', { class: 'list' }, ...[0.8, 1, 1.3, 1.6].map((f) => h('button', { class: 'row', onclick: () => { closeDialog(); G.ahPost(i, Math.round(v * f)); ui.sheetFn(); } }, h('div', { class: 't' }, h('b', null, G.moneyText(Math.round(v * f))), h('small', null, `Sells within a day: ${odds(f)} · deposit ${G.moneyText(dep)}`))))),
             h('button', { class: 'btn alt wide', onclick: closeDialog }, 'Cancel')], true), `Vendor pays ${G.moneyText((x.item.sell || 0) * x.n)}`)); });
         if (!list.children.length) list.append(h('div', { class: 'people' }, 'Nothing in your bags to sell. Gear, trade goods, potions and bags can go up for auction.'));
       } else {
@@ -3931,10 +3935,13 @@
     ui.tipQueue = (ui.tipQueue || []).concat([id]);
     if (!ui.tipEl) nextTip();
   }
+  // One rule for every popup that interrupts (issue #24): it waits for a calm moment, with no fight, no run, no open sheet,
+  // dialog or cutscene, so it never takes a tap meant for something else. A new popup uses whenCalm and gets the rule.
+  const isCalm = () => !!G.S && !G.fight && !G.S.run && !G.paused && !ui.sheet && !ui.dialog && !(window.CS && CS.playing);
+  function whenCalm(fn) { if (!G.S) return; if (!isCalm()) return setTimeout(() => whenCalm(fn), 2000); fn(); }
   function nextTip() {
-    // a tip waits while a sheet, a dialog or a cutscene is open, so it never covers what you are tapping (issue #8)
     clearTimeout(ui.tipWait);
-    if ((ui.tipQueue || []).length && (ui.sheet || ui.dialog || (window.CS && CS.playing))) { ui.tipWait = setTimeout(nextTip, 1500); return; }
+    if ((ui.tipQueue || []).length && !isCalm()) { ui.tipWait = setTimeout(nextTip, 1500); return; } // a tip waits too (issues #8, #24)
     const id = (ui.tipQueue || []).shift(); if (!id) { ui.tipEl = null; return; }
     const close = () => { el.remove(); ui.tipEl = null; setTimeout(nextTip, 400); };
     const el = h('div', { class: 'tip-card' }, h('div', { class: 'tip-t' }, TIPS[id]),
@@ -4392,14 +4399,13 @@
     G.on('toast', (t) => toast(t));
     G.on('error', (t) => toast(t));
     G.on('pop', (q) => { renderNavDots(); showPop(q); });
-    const inviteWhenCalm = (d) => { if (!G.S) return; if (G.fight || G.S.run || G.paused || ui.dialog || (window.CS && CS.playing)) return setTimeout(() => inviteWhenCalm(d), 3000); showInvite(d); }; // never over a fight, a run, a dialog or a cutscene (issue #12)
-    G.on('invite', inviteWhenCalm);
+    G.on('invite', (d) => whenCalm(() => showInvite(d))); // the guild invitation (issues #12, #24)
     G.on('helpWanted', (r) => toast(`Help Wanted: a group in ${D.ACTIVITIES[r.act].name} needs a ${r.role === 'dps' ? 'damage dealer' : r.role}. See Social → Groups.`, true));
     // wait for a calm moment: no fight, no run, no other dialog, no cutscene
-    const introWhenCalm = () => { if (!G.S) return; if (G.fight || G.S.run || G.paused || document.querySelector('.dialog')) return setTimeout(introWhenCalm, 3000); showWarModeIntro(); };
-    G.on('warModeIntro', introWhenCalm);
+    G.on('warModeIntro', () => whenCalm(showWarModeIntro));
     G.on('intruder', (it) => { toast(`Enemy player nearby: ${it.name}`); snd('error', { gap: 0.4, vol: 0.5 }); renderAll(); });
-    G.on('partyInvite', (d) => { if (ui.dialog || (window.CS && CS.playing)) { G.declinePartyInvite(d.bot.id); return; } showPartyInvite(d); });
+    // a party invite waits for a calm moment too; by then the bot may have moved on, and then it lapses quietly (issue #24)
+    G.on('partyInvite', (d) => whenCalm(() => { const S = G.S; if (S.flags.pendingInvite !== d.bot.id || S.wparty || !B.onlineIn(S, S.player.place, new Date()).some((x) => x.id === d.bot.id)) { if (S.flags.pendingInvite === d.bot.id) S.flags.pendingInvite = null; return; } showPartyInvite(d); }));
     G.on('roll', () => renderRolls());
     G.on('questReady', (d) => {
       ui.flashQ = { qid: d && d.qid, at: Date.now() }; renderNavDots(); renderPanel();

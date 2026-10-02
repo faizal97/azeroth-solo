@@ -1405,7 +1405,7 @@
     const P = G.S.player, b = P.bags[idx]; if (!b) return;
     P.bank = P.bank || [];
     if (G.stackable(b.item)) { const st = P.bank.find((x) => x.item.id === b.item.id); if (st) { st.n += b.n; P.bags.splice(idx, 1); emit('change'); return; } }
-    if (P.bank.length >= BANK_SLOTS) return toast('Your bank is full.');
+    if (P.bank.length >= BANK_SLOTS) return toast(P.bank.length > BANK_SLOTS ? `Your bank holds ${P.bank.length - BANK_SLOTS} over from rewards. Take something out first.` : 'Your bank is full.');
     P.bank.push(b); P.bags.splice(idx, 1); emit('change');
   };
   G.bankWithdraw = function (idx) {
@@ -1451,36 +1451,45 @@
     emit('change');
   };
   // Your auctions sell over real time; the higher the price over market value, the longer it takes.
+  // Selling (issue #20): certain at the usual price or below, then less likely the higher you go, about none at twice it;
+  // a deposit of 5% of the usual price, back only if it sells. The posting dialog shows both.
+  G.AH_CURVE = { sure: 0.8, none: 1.9 }; // certain at or below `sure` times the usual price, then a straight line to none at `none`. Tuned by sim/auction.js: 'certain at 1.0x' made reposting at 1.0x risk-free (33g a day at 60); this keeps flipping under 10g a day at 60 and every price button the best at something
+  G.ahSellChance = (ratio) => { const c = G.AH_CURVE; return ratio <= c.sure ? 1 : Math.max(0, (c.none - ratio) / (c.none - c.sure)); };
+  G.ahDeposit = (it, n) => Math.max(1, Math.round(G.ahValue(it) * (n || 1) * 0.05));
   G.ahPost = function (idx, price) {
     const S = G.S, P = S.player, b = P.bags[idx]; if (!b) return;
     if (!G.ahTrade(b.item)) return toast('You can\'t auction that.');
     S.ah = S.ah || { listings: [], mine: [], next: 0 };
     if (S.ah.mine.length >= 8) return toast('You can have 8 auctions at a time.');
-    const v = G.ahValue(b.item) * b.n, ratio = price / v, t = now();
-    const hours = ratio <= 1.6 ? 0.3 * Math.pow(Math.max(0.3, ratio), 3) * rnd(0.6, 1.6) : null;
-    P.bags.splice(idx, 1);
-    S.ah.mine.push({ item: b.item, n: b.n, price, postedAt: t, sellAt: hours != null ? t + hours * 3600000 : null, expires: t + AH_LIFE });
-    sys(`You posted ${b.item.name} for ${G.moneyText(price)}.`);
+    const v = G.ahValue(b.item) * b.n, ratio = price / v, t = now(), dep = G.ahDeposit(b.item, b.n);
+    if (P.money < dep) return toast(`The deposit is ${G.moneyText(dep)}.`);
+    // a higher price is a real risk (issue #20): it may not sell within the day; when it does, it takes longer
+    const sells = Math.random() < G.ahSellChance(ratio);
+    const hours = sells ? Math.min(23.5, 0.3 * Math.pow(Math.max(0.3, ratio), 3) * rnd(0.6, 1.6)) : null;
+    P.money -= dep; P.bags.splice(idx, 1);
+    S.ah.mine.push({ item: b.item, n: b.n, price, deposit: dep, postedAt: t, sellAt: hours != null ? t + hours * 3600000 : null, expires: t + AH_LIFE });
+    sys(`You posted ${b.item.name} for ${G.moneyText(price)} (deposit ${G.moneyText(dep)}, back if it sells).`);
     emit('change');
   };
   G.ahCancel = function (i) {
     const S = G.S, a = S.ah.mine[i]; if (!a) return;
     if (G.bagsFull()) return toast('Inventory is full.');
-    S.ah.mine.splice(i, 1); G.addItem(a.item, a.n || 1); sys(`You cancelled your auction of ${a.item.name}.`); emit('change');
+    S.ah.mine.splice(i, 1); G.addItem(a.item, a.n || 1); sys(`You cancelled your auction of ${a.item.name}.${a.deposit ? ` The deposit of ${G.moneyText(a.deposit)} is kept by the house.` : ''}`); emit('change');
   };
   function ahTick() {
     const S = G.S; if (!S.ah || !S.ah.mine.length) return;
     const t = now(), P = S.player;
     for (const a of S.ah.mine.slice()) {
       if (a.sellAt && t >= a.sellAt) {
-        const got = Math.round(a.price * (1 - AH_CUT));
-        P.money += got; S.ah.mine = S.ah.mine.filter((x) => x !== a);
-        const buyer = pick(S.bots); loot(`Your auction of ${B.link(a.item.name, a.item.q)} sold to ${buyer.name} for ${G.moneyText(got)} (after the 5% cut).`);
+        const got = Math.round(a.price * (1 - AH_CUT)), dep = a.deposit || 0;
+        P.money += got + dep; S.ah.mine = S.ah.mine.filter((x) => x !== a);
+        const buyer = pick(S.bots); loot(`Your auction of ${B.link(a.item.name, a.item.q)} sold to ${buyer.name} for ${G.moneyText(got)} (after the 5% cut)${dep ? `, and your deposit of ${G.moneyText(dep)} is back` : ''}.`);
         emit('lootGain', { money: got });
       } else if (t >= a.expires) {
         S.ah.mine = S.ah.mine.filter((x) => x !== a);
-        if (!G.bagsFull()) { P.bags.push({ item: a.item, n: a.n || 1 }); sys(`Your auction of ${a.item.name} expired. It is back in your bags.`); }
-        else { P.bank = P.bank || []; P.bank.push({ item: a.item, n: a.n || 1 }); sys(`Your auction of ${a.item.name} expired. Your bags were full, so it went to your bank.`); }
+        const lost = a.deposit ? ` The deposit of ${G.moneyText(a.deposit)} is lost.` : '';
+        if (!G.bagsFull()) { P.bags.push({ item: a.item, n: a.n || 1 }); sys(`Your auction of ${a.item.name} expired. It is back in your bags.${lost}`); }
+        else { P.bank = P.bank || []; P.bank.push({ item: a.item, n: a.n || 1 }); sys(`Your auction of ${a.item.name} expired. Your bags were full, so it went to your bank.${lost}`); }
       }
     }
   }
