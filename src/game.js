@@ -124,6 +124,18 @@
       if (Array.isArray(S.chat)) S.chat = S.chat.filter((m) => m.act && m.act.state === 'open');
       S.flags.v10names = true;
     }
+    // a replaced item effect (#40: Lifeline became Lavish Mend): the owner keeps the item, which now carries the new
+    // effect and the stats the data gives it now; an upgraded item keeps the growth it bought. Any copy, anywhere in the save
+    if (D.EFFECT_RENAMED) {
+      const seen = new Set();
+      const walk = (o, depth) => {
+        if (!o || typeof o !== 'object' || depth > 8 || seen.has(o)) return; seen.add(o);
+        for (const k in o) { const x = o[k]; if (x && typeof x === 'object' && typeof x.id === 'string' && x.slot && D.EFFECT_RENAMED[x.effect] && D.ITEMS[x.id]) {
+          const grown = x.pw && x.base ? x.pw / Math.max(1, G.itemPoints(x.base)) : 1, fresh = G.copyItem(x.id);
+          o[k] = grown > 1.0001 ? G.upgradedCopy(fresh, G.itemPoints(fresh) * grown) : fresh; } else walk(x, depth + 1); }
+      };
+      walk(S, 0);
+    }
     // v9.8: the isle is closed until Veshmira dies; anyone who already reached it keeps access
     if (!S.flags.stormBroken) {
       const onIsle = Object.keys(S.player.visited || {}).concat(Object.keys(S.player.done), Object.keys(S.player.quests)).some((k) => (D.PLACES[k] && STORM_REGIONS.has(D.PLACES[k].region)) || /^(x_to_|tw_|sr_|ar_|tp_|tc_)/.test(k));

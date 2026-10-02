@@ -448,6 +448,7 @@
   }
 
   function heal(C, src, tgt, amount, o) {
+    if (src && o && o.ab && !o.effect) { const lm = fxOf(src, 'lavish_mend'); if (lm) amount *= 1 + D.EFFECTS.lavish_mend.heal * lm.f; } // Lavish Mend: a healing ability heals more (#40)
     if (tgt.dead) return 0;
     if (src && o && o.ab && amount > 0) proc(C, src, 'heal', o.ab); // talent reactions (v10.4)
     if (src && src.char) { const hm = tmOf(src); amount *= 1 + (hm.heal + (o && o.ab ? hm.abilHeal[o.ab] || 0 : 0)) / 100; }
@@ -516,8 +517,6 @@
 
   // Melee swing (auto-attack or weapon ability)
   // Steady Fuse (v10.10): every so many seconds in combat, the next hit is a sure crit
-  // Lifeline (v10.10): a direct heal on an ally below the line is a sure crit, on its own cooldown; only when it wasn't a crit anyway
-  function lifeline(C, u, w) { const F = C && fxOf(u, 'lifeline'), LF = D.EFFECTS.lifeline; if (!F || !w || w.hp >= w.maxHp * LF.below) return false; if (u.lifeAt != null && C.t - u.lifeAt < LF.icd / F.f) return false; /* an upgrade shortens the cooldown (#37) */ u.lifeAt = C.t; fired(C, u, 'lifeline'); fxDone(C, u, 'lifeline', 1, 'crits'); return true; }
   function fuse(C, u) { const F = C && fxOf(u, 'steady_fuse'); if (!F) return false; if (u.fuseAt == null) u.fuseAt = C.t; if (C.t - u.fuseAt < D.EFFECTS.steady_fuse.icd / F.f) return false; /* an upgrade shortens the wait (#37) */ u.fuseAt = C.t; fired(C, u, 'steady_fuse'); fxDone(C, u, 'steady_fuse', 1, 'crits'); return true; }
   function meleeRoll(C, src, tgt) {
     const r = Math.random() * 100;
@@ -579,7 +578,7 @@
   }
 
   // ------------------------------------------------------------- abilities
-  function abCost(ab, u) { if (ab.shapeshift && u.form) return 0; if (ab.id) { const la = litAura(u, ab.id); if (la && la.proc.free) return 0; } const base = (ab.cost || 0) + (ab.costPerLvl || 0) * ((u.level || E.levelOf(u)) - 1); const off = ab.id ? Math.min(90, abPct(tmOf(u).abilCost, ab.id)) : 0; return Math.round(base * (1 - off / 100)); }
+  function abCost(ab, u) { if (ab.shapeshift && u.form) return 0; if (ab.id) { const la = litAura(u, ab.id); if (la && la.proc.free) return 0; } const base = (ab.cost || 0) + (ab.costPerLvl || 0) * ((u.level || E.levelOf(u)) - 1); const off = ab.id ? Math.min(90, abPct(tmOf(u).abilCost, ab.id)) : 0; const lm = (ab.heal || ab.hot) && fxOf(u, 'lavish_mend') ? 1 + D.EFFECTS.lavish_mend.mana : 1; return Math.round(base * (1 - off / 100) * lm); } /* Lavish Mend: a healing spell costs more mana (#40) */
   E.abCost = abCost;
 
   function spellRoll(src, tgt, C) {
@@ -708,7 +707,7 @@
     }
     if (ab.heal) {
       for (const w of healWho) {
-        const crit = Math.random() * 100 < u.st.spellCrit || lifeline(C, u, w);
+        const crit = Math.random() * 100 < u.st.spellCrit;
         const amt = scaled(ab.heal.base, ab.heal.perLvl, L) + (ab.heal.coef || 0) * u.st.sp;
         heal(C, u, w, crit ? amt * 1.5 : amt, { crit, ab: abId });
       }

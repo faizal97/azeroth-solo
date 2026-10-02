@@ -7,6 +7,7 @@
 (function (root) {
   const D = root.D;
   const n = (x) => Math.round(x);
+  D.EFFECT_RENAMED = { lifeline: 'lavish_mend' }; // an effect that was replaced: saves move to its successor on load (#40)
   D.EFFECT_COST = 0.3; // the share of an item's stats an effect costs by default; an effect may set its own `cost` (sim/effects.js tunes them)
   D.effectCd = (k) => (D.EFFECTS[k] && D.EFFECTS[k].icd) || 0; // an effect's own cooldown: 8 sec or more gets a callout when it fires (#23), shorter ones only coloured numbers
   D.FX_GROW = 0.25; // an upgrade grows an effect by its scale to this power (#37): x1.26 at the ceiling -> x1.06; linear growth (1) or 0.5 made upgraded effects outgrow their price (sim/effects.js checks both stages)
@@ -23,7 +24,7 @@
     },
     // healing
     echoing_mend: {
-      name: 'Echoing Mend', role: 'healing', icon: 'chain_heal', chance: 0.35, pct: 0.35, cost: 0.3,
+      name: 'Echoing Mend', role: 'healing', icon: 'chain_heal', chance: 0.35, pct: 0.35, cost: 0.33, /* 0.3 -> 0.33, a starting candidate for #40 (capacity) */
       desc: (L, f) => `Your direct heals have a ${n(D.EFFECTS.echoing_mend.chance * 100)}% chance to echo: ${n(D.EFFECTS.echoing_mend.pct * (f || 1) * 100)}% of the heal also lands on the most hurt other ally.`,
     },
     // tanking
@@ -50,12 +51,12 @@
       desc: (L, f) => `You deal ${Math.round(D.EFFECTS.glass_heart.dmg * (f || 1) * 1000) / 10}% more damage, and take ${n(D.EFFECTS.glass_heart.taken * 100)}% more.`, // an upgrade grows the bonus, never the downside (#37)
     },
     // healing
-    lifeline: { // replaced Brimming Cup (#22): overhealing happens in every fight, so a shield from it won everywhere
-      name: 'Lifeline', role: 'healing', icon: 'flash_heal', below: 0.35, icd: 15, cost: 0.45, // the game designer's 6 sec cooldown made a level-20 priest +20 points of survival; 15 sec is in the bars (#22)
-      desc: (L, f) => { const F = D.EFFECTS.lifeline; return `A direct heal on an ally below ${n(F.below * 100)}% health is a sure critical heal. At most once every ${n(F.icd / (f || 1))} sec.`; }, // an upgrade shortens the cooldown (#37)
+    lavish_mend: { // replaced Lifeline (#40): Wellspring's mirror, the extra mana is its price (no stat cost, as Glass Heart's damage taken)
+      name: 'Lavish Mend', role: 'healing', icon: 'greater_heal', heal: 0.1, mana: 0.25, cost: 0,
+      desc: (L, f) => `Your heals are ${Math.round(D.EFFECTS.lavish_mend.heal * (f || 1) * 1000) / 10}% stronger, and cost ${n(D.EFFECTS.lavish_mend.mana * 100)}% more mana.`, // an upgrade grows the heal, never the mana cost
     },
     wellspring: {
-      name: 'Wellspring', role: 'healing', icon: 'innervate', refund: 0.9, /* 0.8 -> 0.9: it still won at full upgrade (#37) */ cost: 0.35,
+      name: 'Wellspring', role: 'healing', icon: 'innervate', refund: 1.0, cost: 0.45, /* a starting pair for #40 (capacity): refund 0.9 -> 1.0, cost 0.35 -> 0.45 */
       desc: (L, f) => `Your critical heals refund ${n(D.EFFECTS.wellspring.refund * (f || 1) * 100)}% of their mana cost.`,
     },
     // tanking
@@ -139,13 +140,13 @@
   fx('stewards_grace', 'majordomo_executus', "Cloak of the Steward's Grace", 'back', undefined, 'echoing_mend', ['int', 'spi'], 4);
   fx('molten_heart_leggings', 'ragnaros', 'Leggings of the Molten Heart', 'legs', 'leather', 'kindled_edge', ['agi', 'str'], 4);
   fx('first_wave_belt', 'commander_serathis', 'Belt of the First Wave', 'waist', 'leather', 'opening_cut', ['agi', 'str'], 4);
-  fx('twinned_tide_bracers', 'tide_twin_myrel', 'Twinned Tide Bracers', 'wrist', 'cloth', 'lifeline', ['int', 'spi'], 4);
+  fx('twinned_tide_bracers', 'tide_twin_myrel', 'Twinned Tide Bracers', 'wrist', 'cloth', 'lavish_mend', ['int', 'spi'], 4);
   fx('coralguard_legplates', 'coralheart_colossus', 'Coralguard Legplates', 'legs', 'mail', 'turning_guard', ['sta', 'agi'], 4);
   fx('brittle_crown_signet', 'prince_aeldran', 'Brittle Crown Signet', 'finger', undefined, 'glass_heart', ['agi', 'str'], 4);
   fx('returning_tide_gloves', 'nalveshra', 'Gloves of the Returning Tide', 'hands', 'leather', 'echoing_mend', ['int', 'spi'], 4);
   fx('broodguard_bracers', 'onyxia', 'Broodguard Bracers', 'wrist', 'leather', 'stubborn_blood', ['agi', 'sta'], 4);
   // world bosses (epic)
-  fx('hollow_choir_sabatons', 'hollow_colossus', 'Sabatons of the Hollow Choir', 'feet', 'mail', 'lifeline', ['int', 'spi'], 4);
+  fx('hollow_choir_sabatons', 'hollow_colossus', 'Sabatons of the Hollow Choir', 'feet', 'mail', 'lavish_mend', ['int', 'spi'], 4);
   fx('rimebound_cuffs', 'rimefather', 'Rimebound Cuffs', 'wrist', 'cloth', 'steady_fuse', ['int', 'sta'], 4);
   // Trial finds (#22, game designer 10:55): a Trial beaten in time has a 1 in 5 chance of that dungeon's effect item at
   // level 60 as a blue, never one you already own. A levelling dungeon's item is rebuilt at 60 (same effect, the budget of

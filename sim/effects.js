@@ -21,7 +21,7 @@ const SHAPE = {
   opening_cut: { slot: 'hands', atype: 'leather', st: ['agi', 'str'] }, kindled_edge: { slot: 'hands', atype: 'leather', st: ['agi', 'str'] },
   chase_the_next: { slot: 'feet', atype: 'leather', st: ['agi', 'str'] }, steady_fuse: { slot: 'wrist', atype: 'leather', st: 'main' },
   glass_heart: { slot: 'finger', st: 'main' },
-  echoing_mend: { slot: 'chest', atype: 'cloth', st: ['int', 'spi'] }, lifeline: { slot: 'legs', atype: 'cloth', st: ['sp', 'int'] }, wellspring: { slot: 'hands', atype: 'cloth', st: ['sp', 'int'] },
+  echoing_mend: { slot: 'chest', atype: 'cloth', st: ['int', 'spi'] }, lavish_mend: { slot: 'legs', atype: 'cloth', st: ['sp', 'int'] }, wellspring: { slot: 'hands', atype: 'cloth', st: ['sp', 'int'] },
   turning_guard: { slot: 'waist', atype: 'mail', st: ['sta', 'str'] }, spiteful_hide: { slot: 'chest', atype: 'mail', st: ['sta', 'str'] },
   stubborn_blood: { slot: 'finger', st: ['agi', 'str'] }, tithe_of_battle: { slot: 'back', st: 'main' },
 };
@@ -53,7 +53,7 @@ function hardDmg(cls, L) {
   // on the same fights the bars measure (40 other seeds steered it to 7 in 10 there and 8 in 10 here: survival flips
   // sharply with damage), so "the plain item holds 7 in 10" is true of the fights that count (#37)
   for (let step = 0; step < 10; step++) { const m = (lo + hi) / 2; HARD[k] = m; let held = 0; curCls = cls;
-    for (let i = 0; i < N; i++) held += CASES.hardheal({ cls, pieces: [piece('lifeline', L, false)] }, L, i);
+    for (let i = 0; i < N; i++) held += CASES.hardheal({ cls, pieces: [piece('lavish_mend', L, false)] }, L, i);
     if (held / N > HOLD) lo = m; else hi = m; }
   UPG = U0; HARD[k] = (lo + hi) / 2; if (process.env.DBG) console.log('hardDmg', k, HARD[k].toFixed(2)); return HARD[k];
 }
@@ -90,15 +90,15 @@ const CASES = {
 };
 const PLAN = [
   { effect: 'opening_cut', classes: ['rogue', 'warrior'], wins: ['trash'], loses: ['boss'] },
-  { effect: 'echoing_mend', classes: ['priest', 'druid'], wins: ['groupwide'], loses: ['tankonly'] },
+  { effect: 'echoing_mend', classes: ['priest', 'druid'], wins: ['groupwide'], loses: ['tankonly'], provisional: '#40, judged on sim/capacity.js' }, // healing done can't judge a healer's item (#40): capacity does
   { effect: 'turning_guard', classes: ['warrior', 'paladin'], wins: ['meleeboss'], loses: ['casterboss'] },
   { effect: 'stubborn_blood', classes: ['warrior', 'rogue'], wins: ['solo'], loses: ['healed'] },
   { effect: 'kindled_edge', classes: ['rogue', 'warrior'], wins: ['boss'], loses: ['shorttrash'] },
   { effect: 'chase_the_next', classes: ['rogue', 'warrior'], wins: ['trash'], loses: ['boss'] },
   { effect: 'steady_fuse', classes: ['mage', 'warrior'], wins: ['boss'], loses: ['highcrit'] },
   { effect: 'glass_heart', classes: ['rogue', 'warrior'], wins: ['healed'], loses: ['solo'] },
-  { effect: 'lifeline', classes: ['priest', 'druid'], wins: ['hardheal'], loses: ['groupwide'], provisional: '#40' }, // wins: survival, +5 to +15 points (game designer, #22),
-  { effect: 'wellspring', classes: ['priest', 'druid'], wins: ['groupwide'], loses: ['shortheal'], provisional: '#40' },
+  { effect: 'lavish_mend', classes: ['priest', 'druid'], wins: ['groupwide'], loses: ['tankonly'], provisional: '#40, judged on sim/capacity.js' }, // wins: survival, +5 to +15 points (game designer, #22),
+  { effect: 'wellspring', classes: ['priest', 'druid'], wins: ['groupwide'], loses: ['shortheal'], provisional: '#40, judged on sim/capacity.js' },
   { effect: 'spiteful_hide', classes: ['warrior', 'paladin'], wins: ['tankpack'], loses: ['casterboss'] },
   { effect: 'tithe_of_battle', classes: ['warlock'], wins: ['boss'], loses: ['boss'], losesClasses: ['mage'] },
 ];
@@ -151,7 +151,7 @@ const all = [];
     { name: 'Opening Cut + Stubborn Blood', cs: 'solo', cls: 'rogue', fx: ['opening_cut', 'stubborn_blood'] },
     { name: 'Opening Cut + Chase the Next + Glass Heart', cs: 'trash', cls: 'rogue', fx: ['opening_cut', 'chase_the_next', 'glass_heart'] },
     { name: 'Kindled Edge + Steady Fuse + Glass Heart', cs: 'boss', cls: 'warrior', fx: ['kindled_edge', 'steady_fuse', 'glass_heart'] },
-    { name: 'Echoing Mend + Lifeline + Wellspring', cs: 'groupwide', cls: 'priest', fx: ['echoing_mend', 'lifeline', 'wellspring'] },
+    { name: 'Echoing Mend + Lavish Mend + Wellspring', cs: 'groupwide', cls: 'priest', fx: ['echoing_mend', 'lavish_mend', 'wellspring'] },
   ];
   for (const M of MIXES) {
     if (ONLY && !M.fx.some((k) => ONLY.includes(k))) continue;
