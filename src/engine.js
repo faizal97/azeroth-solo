@@ -936,8 +936,9 @@
   const KIT = {};
   function kitOf(cls) {
     if (KIT[cls]) return KIT[cls];
-    const k = { defensive: [], burst: [], aoe: [], hits: [] };
+    const k = { defensive: [], burst: [], aoe: [], hits: [], openers: [] };
     for (const id of (D.CLASSES[cls] || { abilities: [] }).abilities) {
+      const A0 = D.ABILITIES[id]; if (A0 && A0.opener && A0.target === 'enemy') k.openers.push(id); // PvE openers too (issue #2)
       const A = D.ABILITIES[id]; if (!A || A.form || A.shapeshift || A.opener || A.finisher || A.taunt || A.needAura) continue;
       const st = (A.buff && A.buff.stats) || {}, offensive = st.sp || st.ap || st.haste || st.crit || st.str || st.agi || st.int;
       const def = A.target === 'self' && A.cd && ((A.buff && A.buff.immune) || A.heal || A.shield || (!offensive && (st.armor || st.dodge || st.taken)));
@@ -946,6 +947,7 @@
       else if (A.target === 'aoe' && A.dmg) k.aoe.push(id);
       else if (A.target === 'enemy' && A.dmg && A.cd && A.cd <= 30 && !A.stun) k.hits.push(id); // a stun breaks on damage: not a filler hit
     }
+    k.openers.sort((a, b) => (D.ABILITIES[b].stun ? 1 : 0) - (D.ABILITIES[a].stun ? 1 : 0) || D.ABILITIES[b].lvl - D.ABILITIES[a].lvl); // a stun first, then the newest
     return (KIT[cls] = k);
   }
   E.kitOf = kitOf;
@@ -1136,6 +1138,12 @@
       const sk = b.skill || 0.5, kit = kitOf(u.cls), tk = C.units[u.target] && !C.units[u.target].dead && C.units[u.target].side !== u.side ? C.units[u.target] : focusTarget(C, u);
       const use = sk * sk; // a casual player (0.35) reaches for the rest of the kit 1 time in 8, a strong one (0.8) 2 in 3
       if (u.hp / u.maxHp < 0.35) for (const id of kit.defensive) if (has(id) && Math.random() < sk && try_(id)) return;
+      // an opener (issue #2), under a player's rule (E.use: within 3 sec of first reaching melee, a target it has not hit);
+      // a damage-dealer waits until the tank has hit the target, and a stun opener is not wasted on a boss
+      if (u.role !== 'healer' && tk && kit.openers.length) {
+        const tank = alive(u.side === 'ally' ? C.allies : C.enemies).find((a) => a.role === 'tank' && a !== u);
+        if (u.role === 'tank' || !tank || (tk.hitBy && tk.hitBy[tank.uid])) for (const id of kit.openers) if (has(id) && !(D.ABILITIES[id].stun && tk.boss) && Math.random() < sk && try_(id, tk)) return;
+      }
       if (u.role !== 'healer' && en.some((e) => e.boss)) for (const id of kit.burst) if (has(id) && Math.random() < use * 0.5 && try_(id)) return; // big cooldowns on bosses
       const spread = C.opts.killOrder === 'spread'; // spread: area attacks from 2 enemies, and more often
       if ((en.length >= 3 || (spread && en.length >= 2)) && tk) for (const id of kit.aoe) if (has(id) && Math.random() < (spread ? Math.min(1, use * 1.6) : use) && try_(id, tk)) return;

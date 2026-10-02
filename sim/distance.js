@@ -44,6 +44,7 @@ const run = (C, s) => { for (let k = 0; k < s / 0.1 && !C.over; k++) E.tick(C, 0
 {
   const w = ch('warrior', 'ally'), t = mob('defias_thug', L); const C = E.fight([w], [t], {}); at(w, 0); at(t, 20); w.target = t.uid; t.target = w.uid;
   t.stunUntil = 99; // the target stands still
+  w.cds.charge = 999; // this check is about running, not Charge (bots open with it since issue #2)
   const hp0 = t.hp; E.tick(C, 0.1); check(t.hp === hp0, 'no swing from 20 m');
   run(C, 1); const d1 = E.dist(w, t); check(d1 > 11 && d1 < 15, `running closes about 7 m a second (${d1.toFixed(1)} m left after 1 s)`);
   run(C, 3); check(E.dist(w, t) <= DI.melee, 'it reaches melee range'); run(C, 3); check(t.hp < hp0, 'and then it hits');
@@ -93,13 +94,14 @@ const run = (C, s) => { for (let k = 0; k < s / 0.1 && !C.over; k++) E.tick(C, 0
   const w = ch('warrior', 'ally'), m = ch('mage', 'ally'), f = mob('defias_thug', L); const C = E.fight([w, m], [f], {}); at(w, 0); at(m, -10); at(f, 1, 0, 10); w.target = f.uid;
   w.res = 100; check(E.canUse(C, w, 'heroic_strike', f) === 'Out of range', 'a sword cannot reach a flyer 10 m up');
   m.res = m.maxRes; check(E.canUse(C, m, 'fireball', f) === null, 'a spell reaches it');
+  w.cds.charge = 999; // about standing still, not Charge (issue #2)
   const x0 = w.pos.x, t0 = w.pos.y; f.stunUntil = 99; f.auras.push({ id: 'r', until: 99, root: true }); run(C, 1); check(Math.abs(w.pos.x - x0) < 0.01 && Math.abs(w.pos.y - t0) < 0.01, 'a fighter right under a flyer stands still (no running back and forth)');
 }
 // 12. ranged monsters (stage 4): start behind their line, attack from range with their school, stand their ground
 {
   const w = ch('warrior', 'ally'), m = mob('frostmane_seer', 9); w.level = 9; const C = E.fight([w], [m], {});
   check(E.dist(w, m) > 15, `a caster monster starts behind its line (${E.dist(w, m).toFixed(1)} m)`);
-  w.stunUntil = 99; m.target = w.uid; const hp = w.hp, x = m.pos.x; let bolt = false; for (let k = 0; k < 60; k++) { E.tick(C, 0.1); for (const e of C.events) if (e.type === 'dmg' && e.src === m.uid && e.school === 'frost') bolt = true; C.events.length = 0; }
+  w.stunUntil = 99; w.cds.charge = 999; w.cds.every_man = 999; m.target = w.uid; const hp = w.hp, x = m.pos.x; let bolt = false; for (let k = 0; k < 60; k++) { E.tick(C, 0.1); for (const e of C.events) if (e.type === 'dmg' && e.src === m.uid && e.school === 'frost') bolt = true; C.events.length = 0; } // about the bolt, not Charge (issue #2)
   check(bolt && w.hp < hp, 'it hits from range with a frost bolt');
   check(Math.abs(m.pos.x - x) < 0.01, 'it stays where it is to cast, it does not walk in');
   const h = mob('frostmane_headhunter', L), w2 = ch('warrior', 'ally'); const C2 = E.fight([w2], [h], {}); w2.stunUntil = 99; h.target = w2.uid; let shot = false;
