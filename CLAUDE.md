@@ -60,6 +60,7 @@ Smoke-test on the emulator (AVD `Medium_Phone_API_36.0`). Its software renderer 
   - Type: `bug` (broken), `improvement` (make something that exists work or read better), `feature` (new for players), `balance` (numbers and tuning).
   - Status: `status: discussion` (still being decided) → `status: ready` (decided, the developer can take it) → `status: in progress` → `status: in beta` (built, QA checks it on the beta) → closed (released, or decided against with a comment).
   - Move the status label as the issue moves; `thread` stays on parked dev work as well.
+  - **Whose turn:** exactly one `needs:` label. `needs: product` (a decision is waiting), `needs: developer` (build, fix or check), `needs: qa` (test it). Whoever finishes their part moves it to the next one: product decides → `needs: developer`; developer ships a beta → `needs: qa`; QA finds it broken → `needs: developer`, or it works → close it. Each session starts with `gh issue list --label "needs: <its role>"`.
 - The repo is public: nothing private in an issue.
 
 **Roles (since 2026-10-02):** Faizal runs separate sessions, and they talk through these issues, not through each other's chat.
