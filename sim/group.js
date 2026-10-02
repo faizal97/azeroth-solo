@@ -2,12 +2,13 @@ globalThis.localStorage={getItem(){return null},setItem(){},removeItem(){}};
 require('../src/data.js');require('../src/engine.js');require('../src/bots.js');require('../src/game.js');
 const {D,E,B,G}=globalThis;
 G.newGame({name:'Sim',cls:'warrior'});
-function party(size,skillBase){
+// bots at the content's level (the Deadmines is 17-21; this sim once used level 10 and read as a 100% wipe at Rukko)
+function party(size,skillBase,level){
   const roles=size===3?['tank','healer','dps']:['tank','healer','dps','dps','dps'];
-  return roles.map((r,i)=>{const b=B.makeBot(9000+i,new Set(),{level:10});b.cls=r==='tank'?'warrior':r==='healer'?'priest':(['mage','rogue','mage'][i%3]);b.role=r;b.skill=skillBase+Math.random()*0.3;return G.botChar(b);});
+  return roles.map((r,i)=>{const b=B.makeBot(9000+i,new Set(),{level:level||10});b.cls=r==='tank'?'warrior':r==='healer'?'priest':(['mage','rogue','mage'][i%3]);b.role=r;b.skill=skillBase+Math.random()*0.3;return G.botChar(b);});
 }
-function runAct(pulls,mult,bossMult,size,skill){
-  const mem=party(size,skill); let wipes=0,time=0;
+function runAct(pulls,mult,bossMult,size,skill,level){
+  const mem=party(size,skill,level); let wipes=0,time=0;
   for(const pull of pulls){
     let cleared=false,tries=0;
     while(!cleared&&tries<6){ tries++;
@@ -24,7 +25,7 @@ function runAct(pulls,mult,bossMult,size,skill){
 }
 const DM=D.DUNGEONS.deadmines;
 const hogPulls=[{label:'g',mobs:['riverpaw_gnoll','riverpaw_gnoll']},{label:'Hogger',mobs:['hogger'],boss:true}];
-for(const [name,fn] of [['Deadmines',(s)=>runAct(DM.pulls,DM.trashMult,DM.bossMult,5,s)],['Hogger',(s)=>runAct(hogPulls,{hp:1,dmg:1},{hp:1,dmg:1},3,s)]]){
+for(const [name,fn] of [['Deadmines',(s)=>runAct(DM.pulls,DM.trashMult,DM.bossMult,5,s,17)],['Hogger',(s)=>runAct(hogPulls,{hp:1,dmg:1},{hp:1,dmg:1},3,s)]]){
   for(const skill of [0.25,0.5,0.7]){
     let n=60,fails=0,w=0,t=0; const failAt={};
     for(let i=0;i<n;i++){const r=fn(skill); if(r.fail){fails++;failAt[r.fail]=(failAt[r.fail]||0)+1;} w+=r.wipes;t+=r.time;}
@@ -32,4 +33,4 @@ for(const [name,fn] of [['Deadmines',(s)=>runAct(DM.pulls,DM.trashMult,DM.bossMu
   }
 }
 // per-boss wipe rates at mid skill
-for(const pull of DM.pulls.filter(p=>p.boss)){let wi=0;for(let i=0;i<80;i++){const r=runAct([pull],DM.trashMult,DM.bossMult,5,0.5);wi+=r.wipes;}console.log(pull.label,'wipes/attempt-run',(wi/80).toFixed(2));}
+for(const pull of DM.pulls.filter(p=>p.boss)){let wi=0;for(let i=0;i<80;i++){const r=runAct([pull],DM.trashMult,DM.bossMult,5,0.5,17);wi+=r.wipes;}console.log(pull.label,'wipes/attempt-run',(wi/80).toFixed(2));}

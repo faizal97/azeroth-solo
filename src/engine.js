@@ -733,7 +733,7 @@
     whirl: { every: 12, mult: 0.7, who: 'all' }, molten: { every: 10, mult: 1.4, who: 'random', school: 'fire' },
     cook: { every: 15, heal: 0.08 },
     arugal: { every: 12, mult: 0.9, who: 'random', school: 'shadow', adds: [[0.5, 'shadowfang_moonwalker', 1, -2]] },
-    kelris: { adds: [[0.5, null, 1, -2]] }, thredd: { adds: [[0.5, 'defias_insurgent', 2, -1]] }, vancleef: { adds: [[0.5, 'blackguard', 2, -3]] },
+    kelris: { adds: [[0.5, null, 1, -2]] }, thredd: { adds: [[0.5, 'defias_insurgent', 2, -1]] }, vancleef: { adds: [[0.5, 'blackguard', 1, -2]] },
     thermaplugg: { adds: [[0.66, 'gnomeregan_leper', 1, -2], [0.33, 'gnomeregan_leper', 1, -2]] },
     smite: { stunAt: [0.66, 0.33], stun: 2, stunOrc: 1.5, enrageAt: 0.5, enrage: 1.35 },
   };
