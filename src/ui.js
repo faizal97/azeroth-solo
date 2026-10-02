@@ -3462,6 +3462,11 @@
         row('Enemies', `Level ${D.LEVEL_CAP}, ${trialStrength(lvl)}`); row('Par time', clockText(T.par(Dg, om)) + (om.includes('hasty') ? ' (Hasty)' : ''));
         row('Beat par', `opens Trial ${lvl + 1} (Trial ${lvl + 2} if 20% faster)`); row('Pays', `${5 + lvl} Mentor Marks`);
         row('Your best here', best ? `Trial ${best.lvl}, ${best.timed ? 'in time' : 'over par'}` : 'Not tried yet');
+        const fid = D.TRIAL_FIND && D.TRIAL_FIND[act], fit = fid && D.ITEMS[fid] && G.copyItem(fid), F = fit && G.effectOf(fit);
+        if (fit) { const have = G.ownsItem(fid); // the Trial find (#22): the chance, the item and its Effect line, tappable
+          rows.push(h('button', { class: 'ai-row', style: { textAlign: 'left', width: '100%' }, onclick: () => showDialog(itemTip(fit), true) }, h('span', null, 'Beat it in time'),
+            h('b', null, have ? `You have the ${fit.name}: no Trial find here` : `1 in ${Math.round(1 / D.TRIAL_FIND_CHANCE)} chance of `, have ? null : h('span', { class: 'q' + fit.q }, fit.name))));
+          if (F && !have) rows.push(h('div', { class: 'eff', style: { fontSize: '13px' } }, `Effect: ${F.name}. ${F.desc(fit.lvl || 1, fit.fxScale || 1)}`)); }
       } else {
         const cx = (P.codex || {})[act];
         row('Level', A.minLvl === A.maxLvl ? String(A.minLvl) : `${A.minLvl}–${A.maxLvl}${P.level > A.maxLvl ? ` (you are synced to ${A.maxLvl})` : ''}`);

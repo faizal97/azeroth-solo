@@ -267,5 +267,24 @@ ok(Rec.history[0].picks.length === 8 && Rec.history[0].rank >= 1, 'the history k
   G.newGame({ name: 'Yr2', cls: 'mage', race: 'human' }); const id2 = G.S.id; G.save(); G.load(id2);
   ok((G.S.player.mounts || []).includes('trialsworn_year1'), 'another character has it when it loads');
 }
+// Trial finds (#22): every dungeon in the Trials has its effect item at level 60 as a blue; 1 in 5 on a timed clear,
+// never over par, never one you own (worn, in bags or in the bank)
+{
+  const elig = new Set([...T.eligible('alliance'), ...T.eligible('horde')]);
+  for (const a of elig) { const id = D.TRIAL_FIND[a], it = id && D.ITEMS[id]; ok(it && it.lvl === D.LEVEL_CAP && it.q === 3 && D.EFFECTS[it.effect], `${a} has a Trial find at level 60 (${id})`); }
+  G.newGame({ name: 'Tf', cls: 'rogue', race: 'human' }); G.S.player.level = 60;
+  const act = [...elig][0], fid = D.TRIAL_FIND[act], run = () => ({ act, trial: { lvl: 2, season: G.trials().season, bestHere: 0 } });
+  const R0 = Math.random, roll = (v, secs) => { Math.random = () => v; const R = run(); G.trialDone(R, secs, 200); Math.random = R0; return R; };
+  ok(!roll(0.5, 100).trialFind && !G.ownsItem(fid), 'no find on a roll above 1 in 5');
+  ok(!roll(0.1, 300).trialFind && !G.ownsItem(fid), 'no find over par');
+  ok(roll(0.1, 100).trialFind === fid && G.ownsItem(fid), 'a timed clear on a 1-in-5 roll gives the find');
+  ok(!roll(0.1, 100).trialFind && G.S.player.bags.filter((b) => b.item.id === fid).length === 1, 'never a duplicate while you have it in your bags');
+  const P = G.S.player, bi = P.bags.findIndex((b) => b.item.id === fid); P.bank = [P.bags.splice(bi, 1)[0]];
+  ok(!roll(0.1, 100).trialFind, 'never a duplicate while it is in your bank');
+  P.equip[D.ITEMS[fid].slot] = P.bank.pop().item;
+  ok(!roll(0.1, 100).trialFind, 'never a duplicate while you wear it');
+  let got = 0; for (let i = 0; i < 2000; i++) { delete P.equip[D.ITEMS[fid].slot]; P.bags = P.bags.filter((b) => b.item.id !== fid); P.bank = []; if (G.trialDone(run(), 100, 200) && G.ownsItem(fid)) got++; }
+  ok(got > 330 && got < 470, `about 1 in 5 timed clears gives the find (${got} of 2000)`);
+}
 console.log(`trials: ${n - bad}/${n} checks pass`);
 process.exit(bad ? 1 : 0);

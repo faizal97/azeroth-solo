@@ -71,19 +71,20 @@
     },
   };
 
-  // ---- the items: new ones (existing gear never changes under its owners), at the budget of their boss's other drops
+  // ---- the items: new ones (existing gear never changes under its owners), at the budget of items like them
   const QM = [0.8, 1, 1.1, 1.22, 1.35];
   const sum = (it) => Object.values(it.stats || {}).reduce((a, b) => a + b, 0);
   function effectItem(id, boss, o) {
     const M = D.MOBS[boss]; if (!M || !D.EFFECTS[o.effect]) return;
+    const noLoot = o.noLoot; o = Object.assign({}, o); delete o.noLoot;
     const it = Object.assign({ lvl: M.lvl[0], effect: o.effect }, o), L = it.lvl;
     it.q = it.q || 3; if (!it.atype) delete it.atype; // the fx() rows pass every key, so an unset one must not wipe a default
     // the budget of an item like it: same slot, armour or weapon type and quality, within 3 levels (gear sizes its stats
-    // by family, so a wrist is paid like a wrist, not like its boss's chest); no such item: the boss's other drops
+    // by family, so a wrist is paid like a wrist, not like its boss's chest)
     const fam = (x) => x.slot === it.slot && (x.wtype || x.atype || '') === (it.wtype || it.atype || '') && !x.sp && x.q === it.q;
     const like = Object.values(D.ITEMS).filter((x) => x && !x.effect && !x.heirloom && !x.lookOnly && x.stats && sum(x) > 0 && fam(x) && Math.abs((x.lvl || 1) - L) <= 3);
-    const sibs = like.length ? like : (M.loot || []).map((k) => D.ITEMS[k]).filter((x) => x && x.stats && sum(x) > 0);
-    const full = sibs.length ? sibs.reduce((a, x) => a + sum(x), 0) / sibs.length : L * 0.55 + 2;
+    // no such item: the game's own budget for the level and quality (random gear's, held to the hand-made items by sim/upgrades.js)
+    const full = like.length ? like.reduce((a, x) => a + sum(x), 0) / like.length : it.q >= 4 ? L * 0.64 + 2 : it.q === 3 ? L * 0.55 + 2 : L * 0.55 + 1;
     const budget = Math.max(1, n(full * (1 - D.effectCost(o.effect)))), ks = it.st; it.stats = {}; let left = budget;
     ks.forEach((k, i) => { const v = i === ks.length - 1 ? Math.max(1, left) : Math.max(1, n(budget / ks.length)); it.stats[k] = v; left -= v; });
     delete it.st;
@@ -96,7 +97,7 @@
     }
     it.sell = Math.max(1, n((L * L * 0.9 + 4) * [0.5, 1, 3, 7, 12][it.q]));
     D.item(id, it);
-    M.loot = (M.loot || []).concat([id]); // the same drop chance as its other blues
+    if (!noLoot) M.loot = (M.loot || []).concat([id]); // the same drop chance as its other blues
   }
   // beta 1 (§6 step 1): one effect per role, three levelling dungeon finals and two level-60 sources
   effectItem('cutpurse_gloves', 'vancleef', { name: "Cutpurse's Gloves", slot: 'hands', atype: 'leather', effect: 'opening_cut', st: ['agi', 'str'] });
@@ -106,7 +107,7 @@
   effectItem('fenheart_band', 'ashwing', { name: 'Fenheart Band', q: 4, slot: 'finger', effect: 'stubborn_blood', st: ['agi', 'str'] }); // it trades damage stats for staying alive
   // beta 2 (§6 step 2): every other source. Levelling finals spread the armour types and roles on the way to 60 (trash
   // effects early, boss effects late); raid bosses and world bosses drop epics (Hard: two upgrade steps up, the effect
-  // grows with them); Brimming Cup waits for the game designer (#22), so nothing drops it yet
+  // grows with them); Lifeline (which replaced Brimming Cup) on a cloth and a mail healer's piece
   const fx = (id, boss, name, slot, atype, effect, st, q) => effectItem(id, boss, { name, slot, atype, effect, st, q });
   // levelling dungeon finals (blue)
   fx('cinderwrapped_cuffs', 'bazzalan', 'Cinderwrapped Cuffs', 'wrist', 'cloth', 'stubborn_blood', ['int', 'sta']);
@@ -141,4 +142,17 @@
   // world bosses (epic)
   fx('hollow_choir_sabatons', 'hollow_colossus', 'Sabatons of the Hollow Choir', 'feet', 'mail', 'lifeline', ['int', 'spi'], 4);
   fx('rimebound_cuffs', 'rimefather', 'Rimebound Cuffs', 'wrist', 'cloth', 'steady_fuse', ['int', 'sta'], 4);
+  // Trial finds (#22, game designer 10:55): a Trial beaten in time has a 1 in 5 chance of that dungeon's effect item at
+  // level 60 as a blue, never one you already own. A levelling dungeon's item is rebuilt at 60 (same effect, the budget of
+  // a level-60 blue like it); a level-60 dungeon's is its own. Content-proof: a dungeon that joins the Trials brings its item.
+  D.TRIAL_FIND_CHANCE = 0.2; D.TRIAL_FIND = {};
+  for (const act in D.ACTIVITIES) {
+    const A = D.ACTIVITIES[act], Dg = A.dungeon && D.DUNGEONS[A.dungeon]; if (!Dg || A.worldBoss || (A.size || 5) > 5) continue;
+    const bs = Dg.pulls.filter((p) => p.boss), boss = bs.length && bs[bs.length - 1].mobs[0], M = boss && D.MOBS[boss];
+    const src = M && (M.loot || []).map((k) => D.ITEMS[k]).find((x) => x && x.effect && D.EFFECTS[x.effect]); if (!src) continue;
+    if (src.lvl >= D.LEVEL_CAP) { D.TRIAL_FIND[act] = src.id; continue; }
+    const id = src.id + '_trial', st = Object.keys(src.stats || {});
+    effectItem(id, boss, { name: src.name, q: 3, lvl: D.LEVEL_CAP, slot: src.slot, atype: src.atype, wtype: src.wtype, effect: src.effect, st: st.length ? st : ['sta'], noLoot: true, source: `Trials: ${A.name}, beaten in time` });
+    if (D.ITEMS[id]) D.TRIAL_FIND[act] = id;
+  }
 })(typeof window !== 'undefined' ? window : globalThis);

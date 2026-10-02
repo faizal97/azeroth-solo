@@ -373,6 +373,7 @@
     if (G.effectOf(it)) emit('effectItem', { item: it }); // the one-time card about effects (v10.10)
     return true;
   };
+  G.ownsItem = function (id) { const P = G.S.player; return Object.values(P.equip || {}).some((x) => x && x.id === id) || (P.bags || []).some((b) => b.item.id === id) || (P.bank || []).some((b) => b.item && b.item.id === id); }; // worn, in bags or in the bank
   G.countItem = function (id) { let n = 0; for (const b of G.S.player.bags) if (b.item.id === id) n += b.n; return n; };
   G.removeItem = function (id, n) {
     const P = G.S.player;
@@ -2807,6 +2808,9 @@
     if (lvl >= R.trial.bestHere) Rec.week.n++;
     if (Rec.week.n >= 4 && !Rec.week.paid) { Rec.week.paid = true; G.addMarks(25, 'this week\'s Trials goal'); }
     if (timed) { G.trialswornCheck(lvl); G.monthCloakCheck(lvl, R.trial.season); }
+    // a Trial find (#22): 1 in 5 on a timed clear, that dungeon's level-60 effect item, never one you already own
+    const fid = timed && D.TRIAL_FIND && D.TRIAL_FIND[act];
+    if (fid && D.ITEMS[fid] && !G.ownsItem(fid) && Math.random() < D.TRIAL_FIND_CHANCE) { const it = G.copyItem(fid); G.giveReward(it, 'Trial find'); loot(`Trial find: ${B.link(it.name, it.q)}, beaten in time.`); R.trialFind = fid; }
     const res = { lvl, timed, great, open: Rec.open[act] || 1, rating: G.trialRating() };
     sys(timed ? `Trial ${lvl} beaten in time${great ? ' by a wide margin' : ''}! Trial ${res.open} is open here. Rating ${res.rating}.` : `Trial ${lvl} cleared, but over par: your level here stays. Rating ${res.rating}.`);
     return (R.trialResult = res);
