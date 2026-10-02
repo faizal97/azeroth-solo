@@ -409,5 +409,19 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
   ok(looks().includes('legs:moonforged_legs'), 'crafting the Moonforged Legplates adds their look to the wardrobe');
   globalThis.localStorage = { getItem() { return null; }, setItem() {}, removeItem() {} };
 }
+// profession trainers (v10.9 beta 6, issue #7): both factions can train in their own or a neutral town in every level band
+// to 60, and a neutral town with a trainer has both
+{
+  const side = { crafts_alliance: 'alliance', crafts_horde: 'horde' }, towns = Object.keys(D.PLACES).filter((id) => (D.PLACES[id].npcs || []).some((n) => side[n]));
+  const usable = (npc, id) => (D.PLACES[id].npcs || []).includes(npc) && [null, side[npc]].includes(G.placeFaction(id));
+  for (const npc in side) for (let L = 20; L <= 60; L += 5) {
+    const here = towns.filter((id) => usable(npc, id) && D.PLACES[id].lvl && D.PLACES[id].lvl[0] <= L && D.PLACES[id].lvl[1] >= L - 4);
+    ok(here.length > 0, `${npc}: a trainer of your faction or a neutral one for levels ${L - 4}-${L}`);
+  }
+  const ownHigh = (npc) => towns.filter((id) => (D.PLACES[id].npcs || []).includes(npc) && G.placeFaction(id) === side[npc] && D.PLACES[id].lvl && D.PLACES[id].lvl[1] > 50);
+  ok(ownHigh('crafts_alliance').length === ownHigh('crafts_horde').length, `both factions train in as many of their own camps above level 50 (alliance ${ownHigh('crafts_alliance').join(',') || 'none'}; horde ${ownHigh('crafts_horde').join(',')})`);
+  const lonely = towns.filter((id) => G.placeFaction(id) === null && !Object.keys(side).every((n) => D.PLACES[id].npcs.includes(n)));
+  ok(!lonely.length, 'a neutral town has both trainers: ' + lonely.join(', '));
+}
 console.log(fails ? `${fails} failures` : 'professions sim OK');
 process.exit(fails ? 1 : 0);
