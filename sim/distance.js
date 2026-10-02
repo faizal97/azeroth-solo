@@ -105,7 +105,7 @@ const run = (C, s) => { for (let k = 0; k < s / 0.1 && !C.over; k++) E.tick(C, 0
   check(bolt && w.hp < hp, 'it hits from range with a frost bolt');
   check(Math.abs(m.pos.x - x) < 0.01, 'it stays where it is to cast, it does not walk in');
   const h = mob('frostmane_headhunter', L), w2 = ch('warrior', 'ally'); const C2 = E.fight([w2], [h], {}); w2.stunUntil = 99; h.target = w2.uid; let shot = false;
-  for (let k = 0; k < 60; k++) { E.tick(C2, 0.1); for (const e of C2.events) if (e.type === 'dmg' && e.src === h.uid && e.school === 'physical' && !e.melee) shot = true; C2.events.length = 0; }
+  for (let k = 0; k < 200 && !shot; k++) { E.tick(C2, 0.1); for (const e of C2.events) if (e.type === 'dmg' && e.src === h.uid && e.school === 'physical' && !e.melee) shot = true; C2.events.length = 0; } // 20 sec: in 6, about 1 run in 30 missed every throw
   check(shot, 'a spear thrower throws from range (physical, not a melee swing)');
   const t = mob('frostmane_troll', 9), w3 = ch('warrior', 'ally'); const C3 = E.fight([w3], [t], {}); check(E.dist(w3, t) <= DI.melee, 'a melee monster still starts in contact');
 }
