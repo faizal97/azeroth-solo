@@ -8,6 +8,7 @@
   const D = root.D;
   const n = (x) => Math.round(x);
   D.EFFECT_COST = 0.3; // the share of an item's stats an effect costs by default; an effect may set its own `cost` (sim/effects.js tunes them)
+  D.effectCd = (k) => (D.EFFECTS[k] && D.EFFECTS[k].icd) || 0; // an effect's own cooldown: 8 sec or more gets a callout when it fires (#23), shorter ones only coloured numbers
   D.FX_GROW = 0.25; // an upgrade grows an effect by its scale to this power (#37): x1.26 at the ceiling -> x1.06; linear growth (1) or 0.5 made upgraded effects outgrow their price (sim/effects.js checks both stages)
   D.fxGrow = (scale) => Math.pow(Math.min(1.5, scale || 1), D.FX_GROW); // the one way to turn an item's fxScale into its effect's strength: the engine and every tooltip use it
   D.EFFECT_COST_MAX = 0.6; // an effect item keeps at least 40% of its stat budget, so nothing on screen reads as a broken drop (#22; tools/validate.js holds it)
@@ -40,8 +41,8 @@
       desc: (L, f) => `Each kill gives you ${n(D.EFFECTS.chase_the_next.haste * (f || 1))}% haste for ${D.EFFECTS.chase_the_next.dur} sec.`,
     },
     steady_fuse: {
-      name: 'Steady Fuse', role: 'damage', icon: 'cold_blood', every: 45, cost: 0.6, // was every 30 at a 90% cost (#22: the 40% stat floor)
-      desc: (L, f) => `Every ${n(D.EFFECTS.steady_fuse.every / (f || 1))} sec in combat, your next hit is a sure critical hit.`, // an upgrade shortens the wait (#37)
+      name: 'Steady Fuse', role: 'damage', icon: 'cold_blood', icd: 45, cost: 0.6, // was every 30 at a 90% cost (#22: the 40% stat floor)
+      desc: (L, f) => `Every ${n(D.EFFECTS.steady_fuse.icd / (f || 1))} sec in combat, your next hit is a sure critical hit.`, // an upgrade shortens the wait (#37)
     },
     glass_heart: {
       name: 'Glass Heart', role: 'damage', icon: 'blood_fury', dmg: 0.025, taken: 0.1, cost: 0, // no stat cost: the downside is the cost

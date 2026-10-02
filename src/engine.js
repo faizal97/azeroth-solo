@@ -430,7 +430,7 @@
     }
     // cast pushback
     if (tgt.cast && !tgt.cast.channel && dmg > 0 && tgt.cast.pushed < 2) { tgt.cast.end += 0.35; tgt.cast.pushed++; }
-    ev(C, { type: 'dmg', src: src.uid, tgt: tgt.uid, amount: dmg, absorbed, crit: !!o.crit, school: o.school || 'physical', ab: o.ab || null, melee: !!o.melee, tick: !!o.tick, fx: o.fx || null }); // melee/tick/fx: hints for the combat effects (ui.js)
+    ev(C, { type: 'dmg', src: src.uid, tgt: tgt.uid, amount: dmg, absorbed, crit: !!o.crit, school: o.school || 'physical', ab: o.ab || null, melee: !!o.melee, tick: !!o.tick, fx: o.fx || null, effect: o.effect || null }); // melee/tick/fx: hints for the combat effects (ui.js)
     if (tgt.hp <= 0) kill(C, tgt, src);
     // item effects on this hit (v10.10)
     if (!o.effect) {
@@ -442,7 +442,6 @@
       if (sb && tgt.hp < tgt.maxHp * SB.below && fxReady(C, tgt, 'stubborn_blood', SB.icd)) {
         const per = (tgt.maxHp * SB.pct * sb.f) / SB.dur;
         addAura(C, tgt, { id: 'stubborn_blood', name: SB.name, icon: SB.icon, effect: 'stubborn_blood', item: sb.item, desc: SB.desc(sb.lvl, sb.f), until: C.t + SB.dur, hot: per, every: 1, next: C.t + 1, src: tgt.uid, ab: null });
-        ev(C, { type: 'proc', src: tgt.uid, key: 'stubborn_blood', effect: true });
       }
     }
     return dmg;
@@ -488,7 +487,9 @@
     return out;
   };
   const fxOf = (u, k) => (u && !u.dead && u.effects && u.effects[k]) || null;
-  const fxReady = (C, u, k, icd) => { u.fxAt = u.fxAt || {}; if (icd && C.t - (u.fxAt[k] != null ? u.fxAt[k] : -1e9) < icd) return false; u.fxAt[k] = C.t; return true; };
+  const fxReady = (C, u, k, icd) => { u.fxAt = u.fxAt || {}; if (icd && C.t - (u.fxAt[k] != null ? u.fxAt[k] : -1e9) < icd) return false; u.fxAt[k] = C.t; fired(C, u, k); return true; };
+  // an effect with a cooldown fired: the UI calls it out over the character when its cooldown is 8 sec or more (#23)
+  const fired = (C, u, k) => ev(C, { type: 'proc', src: u.uid, key: k, effect: true });
   // what each effect did in this fight, and each fighter's own totals, for the item card's "Last run" line
   function fxDone(C, u, k, amount, kind) { if (!(amount > 0)) return; const r = (C.fx = C.fx || {})[u.uid] = C.fx[u.uid] || {}; const e = r[k] = r[k] || { amount: 0, kind }; e.amount += amount; }
   function tally(C, u, kind, amount) { if (!u || !(amount > 0)) return; const r = (C.tot = C.tot || {})[u.uid] = C.tot[u.uid] || { dmg: 0, heal: 0, taken: 0 }; r[kind] += amount; }
@@ -516,8 +517,8 @@
   // Melee swing (auto-attack or weapon ability)
   // Steady Fuse (v10.10): every so many seconds in combat, the next hit is a sure crit
   // Lifeline (v10.10): a direct heal on an ally below the line is a sure crit, on its own cooldown; only when it wasn't a crit anyway
-  function lifeline(C, u, w) { const F = C && fxOf(u, 'lifeline'), LF = D.EFFECTS.lifeline; if (!F || !w || w.hp >= w.maxHp * LF.below) return false; if (u.lifeAt != null && C.t - u.lifeAt < LF.icd / F.f) return false; /* an upgrade shortens the cooldown (#37) */ u.lifeAt = C.t; fxDone(C, u, 'lifeline', 1, 'crits'); return true; }
-  function fuse(C, u) { const F = C && fxOf(u, 'steady_fuse'); if (!F) return false; if (u.fuseAt == null) u.fuseAt = C.t; if (C.t - u.fuseAt < D.EFFECTS.steady_fuse.every / F.f) return false; /* an upgrade shortens the wait (#37) */ u.fuseAt = C.t; fxDone(C, u, 'steady_fuse', 1, 'crits'); return true; }
+  function lifeline(C, u, w) { const F = C && fxOf(u, 'lifeline'), LF = D.EFFECTS.lifeline; if (!F || !w || w.hp >= w.maxHp * LF.below) return false; if (u.lifeAt != null && C.t - u.lifeAt < LF.icd / F.f) return false; /* an upgrade shortens the cooldown (#37) */ u.lifeAt = C.t; fired(C, u, 'lifeline'); fxDone(C, u, 'lifeline', 1, 'crits'); return true; }
+  function fuse(C, u) { const F = C && fxOf(u, 'steady_fuse'); if (!F) return false; if (u.fuseAt == null) u.fuseAt = C.t; if (C.t - u.fuseAt < D.EFFECTS.steady_fuse.icd / F.f) return false; /* an upgrade shortens the wait (#37) */ u.fuseAt = C.t; fired(C, u, 'steady_fuse'); fxDone(C, u, 'steady_fuse', 1, 'crits'); return true; }
   function meleeRoll(C, src, tgt) {
     const r = Math.random() * 100;
     const miss = 5 + Math.max(0, levelDiff(src, tgt)) * 1;

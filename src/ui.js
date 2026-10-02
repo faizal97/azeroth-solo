@@ -724,13 +724,15 @@
       if (e.type === 'dmg') {
         const school = e.school && e.school !== 'physical' ? e.school : '';
         const mine = src && src.kind === 'player';
-        if (onAlly || mine || C.allies.length === 1) fct(e.tgt, (e.crit ? '' : '') + e.amount + (e.absorbed ? ` (${e.absorbed} absorbed)` : ''), (e.crit ? 'crit ' : '') + (onAlly ? 'me ' : '') + school + (!mine && !onAlly ? ' small' : ''));
+        if (onAlly || mine || C.allies.length === 1) fct(e.tgt, (e.crit ? '' : '') + e.amount + (e.absorbed ? ` (${e.absorbed} absorbed)` : ''), (e.effect ? 'eff ' : '') + (e.crit ? 'crit ' : '') + (onAlly ? 'me ' : '') + school + (!mine && !onAlly ? ' small' : ''));
         flash(e.tgt, 'hit');
         if (src) flash(e.src, src.side === 'ally' ? 'lunge-r' : 'lunge-l', 280);
         // your critical hit on your target shakes its frame
         if (e.crit && mine && els.tf && els.tUid === e.tgt) { els.tf.classList.remove('shake'); void els.tf.offsetWidth; els.tf.classList.add('shake'); }
       } else if (e.type === 'heal' && e.amount > 0) {
-        fct(e.tgt, '+' + e.amount, 'heal' + (e.crit ? ' crit' : ''));
+        fct(e.tgt, '+' + e.amount, 'heal' + (e.crit ? ' crit' : '') + (e.fx === 'effect' ? ' eff' : '')); // an effect's heal in the effect colour (#23)
+      } else if (e.type === 'proc' && e.effect) { // an item effect fired (#23): a callout for one with a long cooldown, on you or your group
+        const F = D.EFFECTS && D.EFFECTS[e.key]; if (F && src && src.side === 'ally' && D.effectCd(e.key) >= 8) fct(e.src, F.name + '!', 'proc eff');
       } else if (e.type === 'proc' && src && src.kind === 'player') {
         const pr = ((D.PROCS || {})[src.cls] || []).find((x) => (x.aura || x.on[0]) === e.key);
         if (pr) { fct(e.src, pr.tell, 'proc'); reactionCard(pr); }
