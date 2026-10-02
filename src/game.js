@@ -706,11 +706,13 @@
       const opts = B.GUILDS.map((x, i) => i).filter((i) => B.GUILD_FACTION[i] === myF);
       const g = opts[rint(0, opts.length - 1)];
       const inviter = S.bots.find((b) => b.guild === g) || pick(S.bots);
-      B.post(S, 'whisper', inviter, pick(['hey, want to join our guild? chill ppl, we run dungeons', 'we are recruiting, want an invite?']));
-      emit('invite', { guild: g, guildName: B.GUILDS[g], from: inviter.name });
+      // the pitch is part of the invitation (issue #8: a whisper posted with it read as a pitch after you declined)
+      emit('invite', { guild: g, guildName: B.GUILDS[g], from: inviter.name, line: pick(['hey, want to join our guild? chill ppl, we run dungeons', 'we are recruiting, want an invite?']) });
     }
   }
   const questKeys = () => G.questMobs();
+  // a guild you said no to does not ask again (social.js skips it for recruiting whispers)
+  G.declineGuild = function (g) { const f = G.S.flags; f.declinedGuilds = (f.declinedGuilds || []).filter((x) => x !== g).concat([g]); G.save(); };
   G.joinGuild = function (g) {
     const S = G.S;
     S.player.guild = g;
@@ -1466,7 +1468,7 @@
   };
   G.trainProf = function (id) {
     const P = G.S.player, profs = G.profs(), R = G.nextRank(id);
-    if (!R) return toast('You know all a trainer can teach for now.');
+    if (!R) return toast(`You are already ${D.PROF_RANKS[D.PROF_RANKS.length - 1].name.startsWith('A') ? 'an' : 'a'} ${D.PROF_RANKS[D.PROF_RANKS.length - 1].name} in ${D.PROFESSIONS[id].name}, the highest rank.`);
     if (!profs[id] && !D.isSecondary(id) && G.primaryCount() >= D.PROF_MAX) return toast(`You can learn ${D.PROF_MAX} professions. Unlearn one first.`); // Cooking and Fishing use no slot
     if (P.level < R.lvl) return toast(`Requires level ${R.lvl}.`);
     if (profs[id] && profs[id].skill < R.skill) return toast(`Requires ${R.skill} skill in ${D.PROFESSIONS[id].name}.`);

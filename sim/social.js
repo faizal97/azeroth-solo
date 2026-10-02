@@ -75,5 +75,16 @@ SOC.leaveGuild(); if (P.guild !== -1) fail('leave guild');
   for (const k of ['g_donate', 'g_event']) if (!gseen[k]) fail('no ' + k);
   const talk = S2.chat.filter((m) => m.ch === 'guild' && !m.act && m.from).length; console.log('guild chatter lines:', talk);
 }
+// the early guild offer (issue #8): its pitch is in the invitation, not a whisper that reads as coming after a Decline;
+// a declined guild does not ask again in a recruiting whisper
+{
+  G.newGame({ name: 'O', cls: 'priest', race: 'human' }); const S2 = G.S; S2.flags.warModeAsked = true; S2.player.level = 8;
+  let inv = null; const off = G.on('invite', (d) => { inv = d; }); S2.flags.guildOfferAt = t - 1; S2.flags.guildOffer = false;
+  const before = S2.chat.filter((m) => m.ch === 'whisper').length; for (let i = 0; i < 5 && !inv; i++) { t += 1000; G.update(1); }
+  if (!inv || !inv.line) fail('the guild offer invitation carries its pitch');
+  if (S2.chat.filter((m) => m.ch === 'whisper' && /join our guild|want an invite/.test(m.text)).length) fail('the guild offer also whispers its pitch');
+  if (inv) { G.declineGuild(inv.guild); const gs = SOC.myGuilds().filter((x) => !(S2.flags.declinedGuilds || []).includes(x.g)); if (gs.some((x) => x.g === inv.guild)) fail('a declined guild is skipped by recruiting whispers'); }
+  if (typeof off === 'function') off();
+}
 console.log(bad ? `${bad} problem(s)` : 'social sim OK');
 process.exitCode = bad ? 1 : 0;

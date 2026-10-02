@@ -2861,7 +2861,7 @@
     const P = G.S.player, profs = G.profs(), n = G.primaryCount();
     const rowFor = (id, full) => {
       const Pd = D.PROFESSIONS[id], p = profs[id], R = G.nextRank(id);
-      const sub = p ? `${p.skill}/${p.max} · ` + (R ? (R.ok ? `${R.name} training: ${G.moneyText(R.cost)}` : P.level < R.lvl ? `${R.name} at level ${R.lvl}` : `${R.name} at skill ${R.skill}`) : 'fully trained for now')
+      const sub = p ? `${p.skill}/${p.max} · ` + (R ? (R.ok ? `${R.name} training: ${G.moneyText(R.cost)}` : P.level < R.lvl ? `${R.name} at level ${R.lvl}` : `${R.name} at skill ${R.skill}`) : `${(D.PROF_RANKS.find((r) => r.max === p.max) || {}).name || 'Fully trained'}, the highest rank`)
         : (full ? 'Unlearn a profession to learn this' : P.level < R.lvl ? `From level ${R.lvl}` : `${Pd.desc} Training: ${G.moneyText(R.cost)}.`);
       return h('button', { class: 'row', disabled: !R || !R.ok || (!p && full), onclick: () => { G.trainProf(id); ui.sheetFn(); } },
         h('div', { class: 'ic' }, img(art('icon', Pd.icon))),
@@ -3852,8 +3852,8 @@
       h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); closeSheet(); G.acceptPop(); renderAll(); } }, 'Enter'), h('button', { class: 'btn alt', onclick: () => { closeDialog(); G.declinePop(); renderAll(); } }, 'Decline'))]);
   }
   function showInvite(d) {
-    showDialog([h('h3', null, 'Guild invitation'), h('p', null, `${d.from} invites you to join <${d.guildName}>.`),
-      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { G.joinGuild(d.guild); closeDialog(); renderChat(); } }, 'Accept'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Decline'))]);
+    showDialog([h('h3', null, 'Guild invitation'), h('p', null, `${d.from} invites you to join <${d.guildName}>.`), d.line ? h('p', { class: 'ai-note' }, `"${d.line}"`) : null,
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { G.joinGuild(d.guild); closeDialog(); renderChat(); } }, 'Accept'), h('button', { class: 'btn alt', onclick: () => { G.declineGuild(d.guild); closeDialog(); } }, 'Decline'))]);
   }
   function playChapter(id) {
     const ch = window.CS && CS.byId(id);
@@ -3924,6 +3924,9 @@
     if (!ui.tipEl) nextTip();
   }
   function nextTip() {
+    // a tip waits while a sheet, a dialog or a cutscene is open, so it never covers what you are tapping (issue #8)
+    clearTimeout(ui.tipWait);
+    if ((ui.tipQueue || []).length && (ui.sheet || ui.dialog || (window.CS && CS.playing))) { ui.tipWait = setTimeout(nextTip, 1500); return; }
     const id = (ui.tipQueue || []).shift(); if (!id) { ui.tipEl = null; return; }
     const close = () => { el.remove(); ui.tipEl = null; setTimeout(nextTip, 400); };
     const el = h('div', { class: 'tip-card' }, h('div', { class: 'tip-t' }, TIPS[id]),

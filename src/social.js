@@ -316,7 +316,7 @@
       const q = whereQuestion(); if (!q) return;
       W(pick([`sorry to bother, where is ${q.name}?`, `hey do u know where ${q.name} is?`, `quick q: where do i find ${q.name}?`, `lost lol. which zone is ${q.name} in?`, `been looking for ${q.name} for ages, where is it?`, `ok i give up, where is ${q.name}?`, `hey, which way to ${q.name}?`]), Object.assign({ kind: 'where' }, q));
     } else if (kind === 'guild_invite') {
-      const gs = SOC.myGuilds().filter((x) => P.level >= x.min); if (!gs.length) return;
+      const no = G.S.flags.declinedGuilds || [], gs = SOC.myGuilds().filter((x) => P.level >= x.min && !no.includes(x.g)); if (!gs.length) return; // not a guild you declined
       const g = pick(gs); const inv = g.officer || b;
       state().invites = (state().invites || 0) + 1;
       post('whisper', inv, pick([`hey! want to join <${g.name}>? ${g.blurb.toLowerCase()}`, `we're recruiting for <${g.name}>, ${g.style} guild. want an invite?`, `saw you around, <${g.name}> could use someone like you. interested?`, `hey, <${g.name}> has a spot open. want in?`, `we're a ${g.style} guild, <${g.name}>. want an invite?`]), { kind: 'guild_invite', whisper: true, bot: inv.id, g: g.g });
