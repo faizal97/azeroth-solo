@@ -51,7 +51,7 @@ Numbers are left to the sim (scaled by item level). "Wins" and "loses" are what 
 |---|---|---|---|
 | Echoing Mend | A direct heal can echo: part of it also lands on the most hurt other ally | Group-wide damage, raids | Damage on the tank only |
 | Lavish Mend | Your heals are stronger and cost more mana. No stat cost: the extra mana is the price | No mana pressure (every heal is bigger) | A long, mana-limited fight (you run dry sooner) |
-| Wellspring | Your heal crits refund part of the mana cost | Long, mana-limited fights (Hard raids) | Short fights |
+| Tethered Mend | Each heal on the same ally in a row heals more (up to a cap); a heal on a different ally resets it and heals less. No stat cost | Damage on the tank only | Group-wide damage (switching targets keeps resetting it) |
 
 **Tanking and survival**
 
@@ -146,6 +146,7 @@ v10.10 starts after v10.9.0 ships. Each beta is playable on its own.
 
 ## Later (not in v10.10)
 
+- Wellspring (heal crits refund mana) was cut in beta.4 (#40): even at the 60% cost cap it lost only −1.8% with no mana pressure, and its refund can't change that case. A healer effect paid in stats can't lose enough; Tethered Mend, Echoing Mend's mirror, carries its price in what it does.
 - Lifeline (a heal below 35% is a sure crit) was cut in beta.4 (#40): measured by capacity it won only for a level-20 Priest as dropped, nowhere once upgraded, and steady damage was a gain for the Priest instead of its loss. Lavish Mend, Wellspring's mirror, replaced it.
 - Brimming Cup (overhealing becomes a shield) was cut in beta.2: overhealing happens in every fight, so it won everywhere at any cost that let it win at all (#22). It may return as a set bonus, where "always a little value" is fine.
 
