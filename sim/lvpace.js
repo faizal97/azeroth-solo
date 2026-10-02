@@ -12,6 +12,7 @@ const RealDate = Date; let t = new RealDate(2026, 9, 7, 19).getTime();
 globalThis.Date = class extends RealDate { constructor(...a) { if (a.length) super(...a); else super(t); } static now() { return t; } };
 if (process.env.DRINK) G.DRINK_SECS = +process.env.DRINK; // #4 levers, to compare: a drink's seconds, the solo self-heal line
 if (process.env.HEALAT) globalThis.E.SOLO_HEAL_AT = +process.env.HEALAT;
+if (process.env.PETDMG) globalThis.E.SOLO_PET_DMG = +process.env.PETDMG; // the Hunter's beast alone against monsters
 const BAND = 20; // game designer, #4: within ±20% of the class average (was ±15%), at most 2 deaths an hour
 const HOURS = +process.argv[2] || 4, LEVELS = (process.argv[3] || '10,25,40,55').split(',').map(Number);
 const CLASSES = Object.keys(D.CLASSES).filter((c) => !D.CLASSES[c].hidden); // players can't make a hidden class (the Bard)
