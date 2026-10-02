@@ -42,5 +42,18 @@ for (const L of [10, 20, 40, 60]) for (const strat of Object.keys(PICK)) { // 10
   console.log(`L${L} ${strat.padEnd(6)}: wins ${Math.round((w / N) * 100)}% · ${Math.round(secs / N)}s a game · ${(f / N).toFixed(1)} fights`);
 }
 for (const L of [10, 20, 40, 60]) if (res[L + 'smart'] - res[L + 'naive'] < 0.2) { bad++; console.log(`FAIL L${L}: the smart pick is not clearly better`); }
-console.log(bad ? `${bad} problem(s)` : 'battleground: the choice is real');
+// a battleground never outstays you (issue #30): a finished one doesn't block invites or groups, and closes on a reload;
+// one still going stays through a short break and ends after 10 minutes away, without a Deserter mark
+{
+  const chk = (c, msg) => { if (!c) { bad++; console.log('FAIL ' + msg); } };
+  play('smart', 'warrior', 20); const S = G.S;
+  chk(S.bg && S.bg.phase === 'done' && !G.bgBusy(), 'a finished battleground is not busy');
+  S.lastSeen = t - 1000; G.catchUp();
+  chk(!S.bg && S.chat.some((m) => /You left the Battle for Highmoor/.test(m.text)), 'a finished battleground closes on a reload, with a chat line');
+  G.newGame({ name: 'Bg', cls: 'mage', race: 'human' }); G.S.player.level = 20; G.S.flags.warModeAsked = true; G.queueFor('bg_highmoor'); G.acceptPop();
+  chk(G.S.bg && G.bgBusy(), 'a battleground in progress is busy');
+  G.S.lastSeen = t - 60000; G.catchUp(); chk(!!G.S.bg, 'a battleground in progress stays through a short break');
+  G.S.lastSeen = t - 660000; G.catchUp(); chk(!G.S.bg && !((G.S.flags.deserterUntil || 0) > t), 'after 10 minutes away it ends, with no Deserter mark');
+}
+console.log(bad ? `${bad} problem(s)` : 'battleground: the choice is real; it never outstays you');
 process.exitCode = bad ? 1 : 0;
