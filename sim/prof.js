@@ -365,5 +365,16 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
   const it = D.ITEMS.moonforged_breastplate, sum = Object.values(it.stats).reduce((a, b) => a + b, 0);
   ok(sum >= 33 && sum <= 37 && it.look && it.source, `the catch-up breastplate sits below level-60 dungeon blues (${sum} points) and carries its look and source`);
 }
+// flasks (v10.9 beta 5): take the elixir slot, last 2 hours, stay when you die
+{
+  G.newGame({ name: 'K', cls: 'warrior', race: 'human' }); const P = G.S.player; P.level = 60; G.S.flags.warModeAsked = true;
+  const drink = (id) => { G.addItem(G.copyItem(id), 1); G.useItem(P.bags.findIndex((b) => b.item.id === id)); };
+  const dieInAFight = () => { const pu = E.charUnit(P, 'ally', 'player', t), foe = Object.keys(D.MOBS).find((k) => !D.MOBS[k].boss); const C = E.fight([pu], [E.mobUnit(foe, 60)], {}); E.kill(C, pu); E.writeBack(C, pu, t); };
+  drink('elixir_might'); drink('flask_warpath');
+  const el = P.auras.filter((a) => a.id === 'elixir');
+  ok(el.length === 1 && el[0].name === 'Flask of the Warpath' && el[0].until - t > 7000e3, 'a flask replaces an elixir and lasts 2 hours');
+  dieInAFight(); ok(P.auras.some((a) => a.name === 'Flask of the Warpath'), 'the flask stays when you die');
+  drink('elixir_swiftness'); dieInAFight(); ok(!P.auras.some((a) => a.id === 'elixir'), 'an elixir does not stay when you die');
+}
 console.log(fails ? `${fails} failures` : 'professions sim OK');
 process.exit(fails ? 1 : 0);

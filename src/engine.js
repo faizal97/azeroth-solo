@@ -208,7 +208,7 @@
     const u = baseUnit({ side, kind, char, name: char.name, cls: char.cls, level: E.levelOf(char), resType: C.resource, role: char.role || C.role, race: char.race || (char.bot && char.bot.race) || 'human' });
     for (const a of (char.auras || [])) {
       const left = (a.until - nowMs) / 1000;
-      if (left > 0) u.auras.push({ id: a.id, until: left, stats: a.stats, src: null, persistent: true, seal: a.seal, sealSchool: a.sealSchool, thorns: a.thorns, name: a.name, icon: a.icon });
+      if (left > 0) u.auras.push({ id: a.id, until: left, stats: a.stats, src: null, persistent: true, seal: a.seal, sealSchool: a.sealSchool, thorns: a.thorns, name: a.name, icon: a.icon, keep: a.keep });
     }
     // cooldowns run on in real time between fights (epoch ms in char.cds; a fight's clock starts at 0)
     for (const id in (char.cds || {})) { const left = (char.cds[id] - nowMs) / 1000; if (left > 0) u.cds[id] = left; }
@@ -447,8 +447,9 @@
     return done;
   }
 
+  E.kill = (C, u, by) => kill(C, u, by);
   function kill(C, u, by) {
-    u.dead = true; u.hp = 0; u.cast = null; u.auras = [];
+    u.dead = true; u.hp = 0; u.cast = null; u.auras = u.auras.filter((a) => a.keep); // a flask stays through death (v10.9)
     ev(C, { type: 'die', uid: u.uid, by: by && by.uid });
     if (u.side === 'enemy' && u.focus && C.opts.omens && C.opts.omens.includes('vengeful')) { const rest = C.enemies.filter((x) => !x.dead && x !== u); for (const x of rest) x.vengeance = true; if (rest.length) ev(C, { type: 'emote', uid: rest[0].uid, text: 'The pull swears vengeance!' }); }
     if (u.side === 'enemy' && C.opts.omens && C.opts.omens.includes('volatile') && root.TRIALS) { const VO = root.TRIALS.OMENS.volatile; (C.blasts = C.blasts || []).push({ t: C.t + VO.delay, name: u.name }); ev(C, { type: 'emote', uid: u.uid, text: `${u.name} starts to glow...` }); }
@@ -1339,7 +1340,7 @@
     const cds = {};
     for (const id in u.cds) if (u.cds[id] > C.t) cds[id] = Math.round(nowMs + (u.cds[id] - C.t) * 1000);
     if (Object.keys(cds).length) ch.cds = cds; else delete ch.cds;
-    ch.auras = u.auras.filter((a) => a.persistent && a.until > C.t).map((a) => ({ id: a.id, stats: a.stats, until: nowMs + (a.until - C.t) * 1000, seal: a.seal, sealSchool: a.sealSchool, thorns: a.thorns, name: a.name, icon: a.icon }));
+    ch.auras = u.auras.filter((a) => a.persistent && a.until > C.t).map((a) => ({ id: a.id, stats: a.stats, until: nowMs + (a.until - C.t) * 1000, seal: a.seal, sealSchool: a.sealSchool, thorns: a.thorns, name: a.name, icon: a.icon, keep: a.keep }));
   };
 
   root.E = E;

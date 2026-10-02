@@ -1800,7 +1800,7 @@
     }
     if (it.slot === 'mat') t.append(h('div', { class: 'st' }, 'Trade Goods'));
     if (it.heal || it.mana) t.append(h('div', { class: 'gr' }, `Use: Restores ${it.heal ? it.heal[0] + ' to ' + it.heal[1] + ' health' : it.mana[0] + ' to ' + it.mana[1] + ' mana'}. Works in combat. 2 min cooldown shared by all potions.`));
-    if (it.buff) t.append(h('div', { class: 'gr' }, `Use: ${Object.entries(it.buff).map(([k, v]) => `+${v} ${statName[k] || k}`).join(', ')} for 1 hour. One elixir at a time.`));
+    if (it.buff) t.append(h('div', { class: 'gr' }, `Use: ${Object.entries(it.buff).map(([k, v]) => `+${v} ${statName[k] || k}`).join(', ')} for ${it.flask ? '2 hours. A flask stays when you die. It replaces an elixir (one at a time).' : '1 hour. One elixir or flask at a time.'}`));
     if (it.wdmg) t.append(h('div', { class: 'gr' }, `Use: Your weapon deals +${it.wdmg} damage for 30 min.`));
     if (it.slot === 'kit') t.append(h('div', { class: 'gr' }, `Use: Permanently adds ${it.kit} armor to your chest, legs, feet or hands gear (the first one without a kit this good).`));
     if (it.bag) t.append(h('div', { class: 'gr' }, `${it.bag} Slot Bag. Use: equip it to carry ${it.bag} more items (up to ${D.BAG_SLOTS} bags).`));

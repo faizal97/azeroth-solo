@@ -1722,8 +1722,9 @@
     if (G.fight) return toast('You are in combat.');
     if (it.slot === 'elixir') {
       P.auras = (P.auras || []).filter((a) => a.id !== 'elixir');
-      P.auras.push({ id: 'elixir', name: it.name, icon: it.icon, stats: Object.assign({}, it.buff), until: t + 3600000 });
-      G.removeItem(it.id, 1); sys(`You drink the ${it.name}. It lasts an hour.`);
+      // a flask (v10.9) is a stronger elixir: 2 hours, and it stays when you die
+      P.auras.push(Object.assign({ id: 'elixir', name: it.name, icon: it.icon, stats: Object.assign({}, it.buff), until: t + (it.flask ? 7200000 : 3600000) }, it.flask ? { keep: true } : {}));
+      G.removeItem(it.id, 1); sys(it.flask ? `You drink the ${it.name}. It lasts 2 hours and stays when you die.` : `You drink the ${it.name}. It lasts an hour.`);
     } else if (it.slot === 'stone') {
       if (!P.equip.weapon) return toast('You need a weapon.');
       P.auras = (P.auras || []).filter((a) => a.id !== 'sharpened');
