@@ -111,7 +111,7 @@ Every recipe uses the default bands `[s, s+25, s+37, s+50]`. Gear uses `gear()` 
 | lw_hardhide_boots | 235 | Hardhide Leather Boots (feet, 50, agi sta) | hardhide_leather 6, fine_thread 2 |
 | lw_hardhide_gloves | 250 | Hardhide Leather Gloves (hands, 52, agi sta) | hardhide_leather 6, fine_thread 2 |
 | lw_hardhide_belt | 260 | Hardhide Leather Belt (waist, 55, sta agi) | hardhide_leather 8, fine_thread 2 |
-| lw_wildrunner_tunic | 280 | Wildrunner Tunic (chest, 60, q 3, agi sta) **look** | hardhide_leather 14, moonsilver_bar 1 |
+| lw_wildrunner_tunic | 280 | Wildrunner Tunic (chest, 60, q 3, agi sta) **look** | hardhide_leather 14, fine_thread 3 |
 | lw_wildrunner_leggings | 285 | Wildrunner Leggings (legs, 60, q 3, agi sta) **look** | hardhide_leather 12, moonsilver_bar 1 |
 | lw_wildrunner_cloak (rare) | 290 | Wildrunner Cloak (back, 60, q 3, agi sta) **look** | hardhide_leather 10, frostpetal 2 |
 

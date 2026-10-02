@@ -347,6 +347,7 @@
   gear('moonforged_legplates', { name: 'Moonforged Legplates', slot: 'legs', atype: 'mail', q: 3, lvl: 60, st: ['sta', 'str'], look: ['legs', 'moonforged_legs'], source: crafted('blacksmithing', 285) });
   gear('moonforged_blade', { name: 'Moonforged Blade', slot: 'weapon', wtype: 'sword', q: 3, lvl: 60, st: ['str', 'agi'], look: ['weapon', 'moonforged_blade'], source: crafted('blacksmithing', 290) + ' (a rare recipe)' });
   gear('moonforged_warhammer', { name: 'Moonforged Warhammer', slot: 'weapon', wtype: 'mace', q: 3, lvl: 60, st: ['str', 'sta'], look: ['weapon', 'moonforged_hammer'], source: crafted('blacksmithing', 295) + ' (a rare recipe)' });
+  gear('thickhide_bracers', { name: 'Thickhide Bracers', slot: 'wrist', atype: 'leather', lvl: 46, st: ['agi', 'sta'] }); // from thick leather: a leatherworker at 225 has work before level-50 beasts
   gear('hardhide_boots', { name: 'Hardhide Boots', slot: 'feet', atype: 'leather', lvl: 50, st: ['agi', 'sta'] });
   gear('hardhide_gloves', { name: 'Hardhide Gloves', slot: 'hands', atype: 'leather', lvl: 52, st: ['agi', 'sta'] });
   gear('hardhide_belt', { name: 'Hardhide Belt', slot: 'waist', atype: 'leather', lvl: 55, st: ['sta', 'agi'] });
@@ -470,20 +471,21 @@
   rec('bs_moonforged_legplates', 'blacksmithing', 285, 'moonforged_legplates', { duskiron_bar: 14, moonsilver_bar: 2 });
   rec('bs_moonforged_blade', 'blacksmithing', 290, 'moonforged_blade', { moonsilver_bar: 4, duskiron_bar: 8 }, { rare: true });
   rec('bs_moonforged_hammer', 'blacksmithing', 295, 'moonforged_warhammer', { moonsilver_bar: 4, duskiron_bar: 8 }, { rare: true });
-  rec('lw_hardhide_kit', 'leatherworking', 225, 'hardhide_armor_kit', { hardhide_leather: 4, fine_thread: 1 });
+  rec('lw_thickhide_bracers', 'leatherworking', 225, 'thickhide_bracers', { thick_leather: 5, fine_thread: 1 });
+  rec('lw_hardhide_kit', 'leatherworking', 230, 'hardhide_armor_kit', { hardhide_leather: 4, fine_thread: 1 });
   rec('lw_hardhide_boots', 'leatherworking', 235, 'hardhide_boots', { hardhide_leather: 6, fine_thread: 2 });
   rec('lw_hardhide_gloves', 'leatherworking', 250, 'hardhide_gloves', { hardhide_leather: 6, fine_thread: 2 });
   rec('lw_hardhide_belt', 'leatherworking', 260, 'hardhide_belt', { hardhide_leather: 8, fine_thread: 2 });
-  rec('lw_wildrunner_tunic', 'leatherworking', 280, 'wildrunner_tunic', { hardhide_leather: 14, moonsilver_bar: 1 });
-  rec('lw_wildrunner_leggings', 'leatherworking', 285, 'wildrunner_leggings', { hardhide_leather: 12, moonsilver_bar: 1 });
+  rec('lw_wildrunner_tunic', 'leatherworking', 280, 'wildrunner_tunic', { hardhide_leather: 14, fine_thread: 3 });
+  rec('lw_wildrunner_leggings', 'leatherworking', 285, 'wildrunner_leggings', { hardhide_leather: 12, fine_thread: 3 });
   rec('lw_wildrunner_cloak', 'leatherworking', 290, 'wildrunner_cloak', { hardhide_leather: 10, frostpetal: 2 }, { rare: true });
-  rec('tl_duskweave_bolt', 'tailoring', 225, 'duskweave_bolt', { duskweave_cloth: 3 }, { sk: [225, 250, 262, 275] });
+  rec('tl_duskweave_bolt', 'tailoring', 225, 'duskweave_bolt', { duskweave_cloth: 2 }, { sk: [225, 250, 262, 275] });
   rec('tl_duskweave_gloves', 'tailoring', 235, 'duskweave_gloves', { duskweave_bolt: 2, fine_thread: 1 });
   rec('tl_duskweave_bag', 'tailoring', 240, 'duskweave_bag', { duskweave_bolt: 4, fine_thread: 2 });
-  rec('tl_duskweave_robe', 'tailoring', 250, 'duskweave_robe', { duskweave_bolt: 5, fine_thread: 2 });
-  rec('tl_duskweave_leggings', 'tailoring', 260, 'duskweave_leggings', { duskweave_bolt: 5, fine_thread: 2 });
-  rec('tl_starweave_robe', 'tailoring', 280, 'starweave_robe', { duskweave_bolt: 8, moonsilver_bar: 1 });
-  rec('tl_starweave_trousers', 'tailoring', 285, 'starweave_trousers', { duskweave_bolt: 7, moonsilver_bar: 1 });
+  rec('tl_duskweave_robe', 'tailoring', 250, 'duskweave_robe', { duskweave_bolt: 4, fine_thread: 2 });
+  rec('tl_duskweave_leggings', 'tailoring', 260, 'duskweave_leggings', { duskweave_bolt: 4, fine_thread: 2 });
+  rec('tl_starweave_robe', 'tailoring', 280, 'starweave_robe', { duskweave_bolt: 6, fine_thread: 3 });
+  rec('tl_starweave_trousers', 'tailoring', 285, 'starweave_trousers', { duskweave_bolt: 5, fine_thread: 3 });
   rec('tl_starweave_bag', 'tailoring', 295, 'starweave_bag', { duskweave_bolt: 8, moonsilver_bar: 1 }, { rare: true });
   rec('al_grand_healing', 'alchemy', 225, 'grand_healing_potion', { cinderbloom: 1, gloomcap: 1, sturdy_vial: 1 }); // the first Artisan recipe, so an alchemist at 225 has one
   rec('al_grand_mana', 'alchemy', 240, 'grand_mana_potion', { gloomcap: 1, sunveil: 1, sturdy_vial: 1 });

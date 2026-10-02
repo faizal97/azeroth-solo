@@ -143,11 +143,15 @@ G.newGame({ name: 'T', cls: 'warrior', race: 'human' });
 // the Expert pace: a character levelling 25 -> 45 with a gathering and a crafting profession, an hour of play in each of
 // four zone bands (gathering what is there, or skinning and looting what it kills), crafting from what it got and the
 // vendor's supplies, best colour first. It should reach about 225 in both by level 45, with no grinding.
-function expertPace(gather, craft) {
-  G.newGame({ name: 'X', cls: 'warrior', race: 'human' }); const S = G.S, P = S.player; P.money = 1e8; S.flags.warModeAsked = true; P.level = 25;
-  for (const pr of [gather, craft]) { G.trainProf(pr); G.profs()[pr].skill = 50; G.trainProf(pr); G.profs()[pr].skill = 150; }
+const EXPERT_BANDS = [[30, 'the_hushed_bank', 'dun_modr'], [31, 'lake_nazferiti', 'zuuldaia_ruins'], [34, 'balia_mah_ruins', 'venture_base_camp'], [36, 'highland_plains', 'drywhisker_gorge'], [38, 'thunderhowl_rise', 'stromgarde_keep'], [43, 'noxious_lair', 'lost_rigger_cove'], [45, 'frayfeather_highlands', 'zul_farrak_gate']];
+// the Artisan pace (v10.9 beta 5): 45 -> 60, an hour in each band (beasts for leather and nodes in the wild place, humanoids for cloth)
+const ARTISAN_BANDS = [[46, 'frayfeather_highlands', 'the_forgotten_coast'], [48, 'lower_wilds', 'the_forgotten_coast'], [51, 'terror_run', 'blackrock_stronghold'], [53, 'the_marshlands', 'blackrock_stronghold'], [55, 'the_marshlands', 'hearthglen'], [57, 'frostsaber_rock', 'hearthglen'], [59, 'frostwhisper_gorge', 'winterfall_village']];
+function expertPace(gather, craft, o) {
+  o = o || { from: 25, skill: 150, rank: [30, 225], bands: EXPERT_BANDS };
+  G.newGame({ name: 'X', cls: 'warrior', race: 'human' }); const S = G.S, P = S.player; P.money = 1e8; S.flags.warModeAsked = true; P.level = o.from;
+  for (const pr of [gather, craft]) { G.trainProf(pr); G.profs()[pr].skill = 50; G.trainProf(pr); G.profs()[pr].skill = 150; if (o.skill > 150) { P.level = Math.max(P.level, 30); G.trainProf(pr); G.profs()[pr].skill = o.skill; P.level = o.from; } }
   P.bagsEq = [0, 1, 2, 3].map(() => G.copyItem('woolen_bag')); // a levelling player carries bags, and sells what its professions do not use
-  const BANDS = [[30, 'the_hushed_bank', 'dun_modr'], [31, 'lake_nazferiti', 'zuuldaia_ruins'], [34, 'balia_mah_ruins', 'venture_base_camp'], [36, 'highland_plains', 'drywhisker_gorge'], [38, 'thunderhowl_rise', 'stromgarde_keep'], [43, 'noxious_lair', 'lost_rigger_cove'], [45, 'frayfeather_highlands', 'zul_farrak_gate']];
+  const BANDS = o.bands;
   const used = new Set(Object.values(D.RECIPES).filter((r) => r.prof === gather || r.prof === craft).flatMap((r) => Object.keys(r.mats).concat(r.makes)));
   const room = () => { P.bags = P.bags.filter((b) => b.item.slot === 'mat' ? used.has(b.item.id) : !D.GEAR_SLOTS.concat(['potion', 'elixir', 'stone', 'kit', 'bag']).includes(b.item.slot)); };
   // smelt ore into bars first, then the craft, then whatever else the gathering skill makes (steel from spare iron)
@@ -167,7 +171,7 @@ function expertPace(gather, craft) {
     }
   };
   for (const [L, wild, hum] of BANDS) {
-    P.level = L; if (L >= 30) for (const pr of [gather, craft]) if (G.profs()[pr].max < 225) G.trainProf(pr);
+    P.level = L; if (L >= o.rank[0]) for (const pr of [gather, craft]) if (G.profs()[pr].max < o.rank[1]) G.trainProf(pr);
     const t0 = t;
     if (gather === 'skinning' || craft === 'tailoring') { // an hour of fighting: beasts for leather, humanoids for cloth
       const want = (gather === 'skinning' ? [[wild, 'beast']] : []).concat(craft === 'tailoring' ? [[hum, 'humanoid']] : []);
@@ -194,6 +198,11 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
   const [gs, cs] = expertPace(g, c);
   console.log(`Expert pace, ${g} + ${c}: level 45 with ${g} ${gs}, ${c} ${cs}`);
   ok(gs >= 200 && cs >= 195, `${g} + ${c} reach Expert's top by level 45 (${gs}, ${cs})`);
+}
+for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['skinning', 'leatherworking'], ['skinning', 'tailoring']]) {
+  const [gs, cs] = expertPace(g, c, { from: 45, skill: 225, rank: [45, 300], bands: ARTISAN_BANDS });
+  console.log(`Artisan pace, ${g} + ${c}: level 60 with ${g} ${gs}, ${c} ${cs}`);
+  ok(gs >= 285 && cs >= 275, `${g} + ${c} reach about 300 by level 60 (${gs}, ${cs})`);
 }
 // quest marks (v10.9 fix): once a kill objective is done, its monster is no longer one your quests need
 {
