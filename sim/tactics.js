@@ -9,6 +9,8 @@ const RealDate = Date; let t = new RealDate(2026, 9, 7, 19).getTime();
 globalThis.Date = class extends RealDate { constructor(...a) { if (a.length) super(...a); else super(t); } static now() { return t; } };
 const N = +(process.env.N || 12), ACT = process.env.ACT || 'deadmines';
 if (process.env.RR) G.REST_REGEN = +process.env.RR;
+if (process.env.FAST_CHAIN) G.PACE.fast.chain = +process.env.FAST_CHAIN; // #33: fast's chance to chain the next trash pull
+if (process.env.FAST_BOSS) G.PACE.fast.bossHp = +process.env.FAST_BOSS; // #33: the health fast goes into a boss at
 const DG = D.DUNGEONS[D.ACTIVITIES[ACT].dungeon];
 if (process.env.TM) DG.trashMult = { hp: DG.trashMult.hp, dmg: +process.env.TM };
 if (process.env.BM) DG.bossMult = { hp: DG.bossMult.hp, dmg: +process.env.BM };
