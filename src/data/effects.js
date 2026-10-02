@@ -133,12 +133,12 @@
   fx('stewards_grace', 'majordomo_executus', "Cloak of the Steward's Grace", 'back', undefined, 'echoing_mend', ['int', 'spi'], 4);
   fx('molten_heart_leggings', 'ragnaros', 'Leggings of the Molten Heart', 'legs', 'leather', 'kindled_edge', ['agi', 'str'], 4);
   fx('first_wave_belt', 'commander_serathis', 'Belt of the First Wave', 'waist', 'leather', 'opening_cut', ['agi', 'str'], 4);
-  fx('twinned_tide_bracers', 'tide_twin_myrel', 'Twinned Tide Bracers', 'wrist', 'cloth', 'wellspring', ['int', 'spi'], 4);
+  fx('twinned_tide_bracers', 'tide_twin_myrel', 'Twinned Tide Bracers', 'wrist', 'cloth', 'lifeline', ['int', 'spi'], 4);
   fx('coralguard_legplates', 'coralheart_colossus', 'Coralguard Legplates', 'legs', 'mail', 'turning_guard', ['sta', 'agi'], 4);
   fx('brittle_crown_signet', 'prince_aeldran', 'Brittle Crown Signet', 'finger', undefined, 'glass_heart', ['agi', 'str'], 4);
   fx('returning_tide_gloves', 'nalveshra', 'Gloves of the Returning Tide', 'hands', 'leather', 'echoing_mend', ['int', 'spi'], 4);
   fx('broodguard_bracers', 'onyxia', 'Broodguard Bracers', 'wrist', 'leather', 'stubborn_blood', ['agi', 'sta'], 4);
   // world bosses (epic)
-  fx('hollow_choir_sabatons', 'hollow_colossus', 'Sabatons of the Hollow Choir', 'feet', 'mail', 'echoing_mend', ['int', 'spi'], 4);
+  fx('hollow_choir_sabatons', 'hollow_colossus', 'Sabatons of the Hollow Choir', 'feet', 'mail', 'lifeline', ['int', 'spi'], 4);
   fx('rimebound_cuffs', 'rimefather', 'Rimebound Cuffs', 'wrist', 'cloth', 'steady_fuse', ['int', 'sta'], 4);
 })(typeof window !== 'undefined' ? window : globalThis);
