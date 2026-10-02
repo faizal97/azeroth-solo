@@ -50,7 +50,7 @@ Numbers are left to the sim (scaled by item level). "Wins" and "loses" are what 
 | Effect | What it does | Wins | Loses |
 |---|---|---|---|
 | Echoing Mend | A direct heal can echo: part of it also lands on the most hurt other ally | Group-wide damage, raids | Damage on the tank only |
-| Brimming Cup | Overhealing becomes a short shield on the target (capped) | Spiky, bursty damage | Steady damage |
+| Lifeline | A heal on an ally below 35% health is a sure critical hit (at most once every 6 sec) | Spiky, bursty damage (allies dip low often) | Steady damage (nobody drops that low, so it rarely fires) |
 | Wellspring | Your heal crits refund part of the mana cost | Long, mana-limited fights (Hard raids) | Short fights |
 
 **Tanking and survival**
@@ -69,7 +69,7 @@ Numbers are left to the sim (scaled by item level). "Wins" and "loses" are what 
 
 - Every class and role has at least three effects that make sense for it.
 - Engine: the reaction hooks (`proc()` in `src/engine.js`: crit, hit, heal, tick, dodged) cover half the triggers. New:
-  a kill, taking a melee hit, low health, overhealing, a first hit on a target. Item effects are their own path, not
+  a kill, taking a melee hit, low health (yours, or the heal target's for Lifeline), a first hit on a target. Item effects are their own path, not
   entries in `D.PROCS` (which is per class).
 - All names are our own; `tools/ipcheck.js` checks them.
 
@@ -145,6 +145,8 @@ v10.10 starts after v10.9.0 ships. Each beta is playable on its own.
    sections catch up (they stop at 10.4).
 
 ## Later (not in v10.10)
+
+- Brimming Cup (overhealing becomes a shield) was cut in beta.2: overhealing happens in every fight, so it won everywhere at any cost that let it win at all (#22). It may return as a set bonus, where "always a little value" is fine.
 
 - Set bonuses (generic, by armour type, or per class).
 - Bots wearing effect items, and linking them in chat.
