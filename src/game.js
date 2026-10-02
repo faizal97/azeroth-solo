@@ -310,7 +310,8 @@
   // an item with an effect is judged by the fight, not by its stats: nothing automatic calls it better or worse
   G.effectOf = (it) => (it && it.effect && D.EFFECTS && D.EFFECTS[it.effect]) || null;
   // the Bags dot (issue #11): an upgrade landed since you last opened Bags, and one is still there (selling or wearing it clears it)
-  G.bagDot = () => { const P = G.S.player; return !!P.bagUpgrade && P.bags.some((b) => G.isUpgrade(b.item)); };
+  G.bagDot = () => { const P = G.S.player; return !!P.bagUpgrade && P.bags.some((b) => G.isUpgrade(b.item) || b.item.fxNew); };
+  G.seenBags = () => { const P = G.S.player; P.bagUpgrade = false; for (const b of P.bags) delete b.item.fxNew; }; // opening Bags: every new item is seen (#11, #23)
   G.isUpgrade = function (it) {
     const P = G.S.player;
     if (G.effectOf(it)) return false; // an effect item shows ◆ Effect instead (v10.10)
@@ -370,7 +371,7 @@
     P.bags.push({ item: it, n });
     if (G.collectLook) G.collectLook(it); // the wardrobe (v10.3)
     if (G.isUpgrade(it)) P.bagUpgrade = true; // the Bags button's dot until Bags is opened (v10.9, issue #11)
-    if (G.effectOf(it)) emit('effectItem', { item: it }); // the one-time card about effects (v10.10)
+    if (G.effectOf(it)) { emit('effectItem', { item: it }); if (G.canUseItem(it)) { it.fxNew = 1; P.bagUpgrade = true; } } // the one-time card; a new effect item you can use lights the dot like an upgrade (#23)
     return true;
   };
   G.ownsItem = function (id) { const P = G.S.player; return Object.values(P.equip || {}).some((x) => x && x.id === id) || (P.bags || []).some((b) => b.item.id === id) || (P.bank || []).some((b) => b.item && b.item.id === id); }; // worn, in bags or in the bank

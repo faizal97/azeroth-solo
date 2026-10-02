@@ -6,15 +6,20 @@ Realm of Loner is a single-player "fake MMO" set in Caldreth, a world of its own
 
 This document says where the game stands, how it is designed, and what comes next.
 
-## Where it stands (v10.1.1, with v10.2 in beta)
+## Where it stands (v10.9.0, with v10.10 in beta)
 
 - **Levels 1–60, both factions, eight races and nine classes** (any race any class), in the original world of Caldreth (since v10). About 25 zones, from the starting valleys to Icewold and the West Rotmoor.
 - **Every classic dungeon along the way,** from The Smoke Pit and the Smugglers' Deep to Cinderpeak Depths, The Blackcloister and Graymouth, each with a lore intro.
 - **The main story, The Black Ledger:** six chapters at levels 10–60, and short story scenes on key quests and levels in between (a story moment every 3–5 levels, for both factions).
 - **The classic endgame raids at 60:** Magma Throne, beneath Cinderpeak, and Veshmira's Lair in the new Saltmarsh. Veshmira's death opens the expansion.
+- **After 60, horizontal progression:** gear upgrades with Mentor Marks, the account-wide wardrobe, monthly Trials with Omens and a realm leaderboard, Hard raids, the featured raid, raid sets and three weekly world bosses.
+- **Battlegrounds:** the Battle for Highmoor, 5 against 5, from level 10.
+- **Professions up to 300,** with Fishing and Cooking, and distance in every fight.
+- **Drops with effects (v10.10, in beta):** 12 item effects on drops from every dungeon final, raid boss and world boss, and as Trial finds.
 - **An original expansion at 60, "The Drowned Crown":** two new zones, two dungeons and a 10-player raid.
 - **Legends:** hand-made story heroes (most created by the developer's friends) with their own questline, who later turn up in your runs now and then.
 - **A server that feels alive:** working chat, guilds, requests, trades, duels and rare sightings.
+- **Music for every place (v10.8):** every zone, town, capital, dungeon and raid has its own track.
 - **Real friends (v10.1.1):** add real players by friend code and see their characters, gear and online status live (Firebase). The base for co-op later.
 - **Cloud save:** an optional copy of your characters in your own Google Drive.
 - **The app updates itself.** New versions come from GitHub releases, with release notes, through the in-app updater. Public releases come in batches; test builds go to players who turn on Beta updates first (GitHub pre-releases, and the /beta/ web page).
@@ -50,9 +55,15 @@ This document says where the game stands, how it is designed, and what comes nex
 | 9.8 | Magma Throne and Veshmira's Lair; Saltmarsh |
 | 10.0 | The world becomes Caldreth: every name, story and piece of art is our own; the story becomes The Black Ledger |
 | 10.1 | Cloud save to your own Google Drive; the Bounty Board; Throw away; account sync; real Friends (10.1.1) |
-| 10.2 (beta) | Legends as story heroes (cameos, keepsakes); 25 story scenes; Widya, the second Legend, and the hidden Bard class |
-| 10.3 (in progress) | Gear upgrades: Mentor Marks raise level-60 blue and purple gear a step at a time to the ceiling (purples 100%, blues 92%); level-60 dungeon and raid clears pay Marks; the account-wide wardrobe (Hero → Wardrobe), with Legend keepsakes in its Back row |
-| 10.4 (beta) | Trials (monthly seasons from October 2026, a one-day Preseason, rating, a realm leaderboard); class reactions (one per class: an ability lights up, with a callout and a one-time card) and three useful buttons for every class by level 4 |
+| 10.2 | Legends as story heroes (cameos, keepsakes); 25 story scenes; Widya, the second Legend, and the hidden Bard class |
+| 10.3 | Gear upgrades: Mentor Marks raise level-60 blue and purple gear a step at a time to the ceiling (purples 100%, blues 92%); level-60 dungeon and raid clears pay Marks; the account-wide wardrobe (Hero → Wardrobe), with Legend keepsakes in its Back row |
+| 10.4 | Trials (monthly seasons from October 2026, a one-day Preseason, rating, a realm leaderboard); class reactions (one per class: an ability lights up, with a callout and a one-time card) and three useful buttons for every class by level 4 |
+| 10.5 | Omens (weekly Trial rules); briefings for every dungeon, raid, Wanted target and Trial; every buff and debuff explains itself |
+| 10.6 | Bromli Beerhammer, the third Legend; The Coinworks (40–44); two new Wanted targets; a tidier Journey tab |
+| 10.7 | The endgame update: Hard raids, the featured raid, raid sets, three world bosses, the Battle for Highmoor, the Trialsworn set |
+| 10.8 | Music for every zone, town, capital, dungeon and raid, and new sounds |
+| 10.9 | Professions to 300 (Expert and Artisan), Fishing and Cooking; distance in every fight; Rumhook Bay and the Bloodsand Brawl; a riskier auction house; What's new in the game |
+| 10.10 (beta) | Drops with effects: 12 effects, an effect item on every dungeon final, raid boss and world boss, Trial finds that fit your class, Mentor Mark upgrades that grow the effect; new par times and a fast pace that's a real trade |
 
 ## How the world works
 
@@ -143,15 +154,14 @@ At the level cap, power stops climbing; what you collect and what you can do kee
 
 Roughly in priority order:
 
-1. **Horizontal progression:** gear upgrades, then the account-wide wardrobe, then Trials, then Hard raids and the featured raid. The core of the after-60 loop.
-2. **World bosses and level-60 rares,** with trophies.
-3. **Battlegrounds,** with Honor ranks for looks and titles.
-4. **Rumhook Bay and the Bloodsand Arena event** in southern Vinewild.
-5. **Expert professions** (skill 225) with new materials.
-6. **Drops with unique effects** (procs and set bonuses).
-7. **Server events:** a Darkmoon Faire week, guild server-first races, and town defences in War Mode.
-8. **More Legends:** after Bromli Beerhammer (built in v10.6), the next one when a creator brings one.
-9. **Co-op with real friends,** built on Friends (sign-in, friend list, online status); the connection for live fights is decided when co-op is designed.
+Shipped from the earlier list: horizontal progression (10.3–10.7), world bosses (10.7), battlegrounds (10.7), Rumhook Bay and the Bloodsand Brawl (10.9), Expert and Artisan professions (10.9), and drops with effects (10.10, in beta).
+
+1. **Levelling pace by class:** every class levels along the quest path within ±20% of the others (issue #4).
+2. **Server events:** a Darkmoon Faire week, guild server-first races, and town defences in War Mode.
+3. **Level-60 rares with trophies,** and **Honor ranks** in battlegrounds for looks and titles.
+4. **Effect set bonuses** (a set of items that adds an effect; Brimming Cup may come back there).
+5. **More Legends:** after Bromli Beerhammer (built in v10.6), the next one when a creator brings one.
+6. **Co-op with real friends,** built on Friends (sign-in, friend list, online status); the connection for live fights is decided when co-op is designed.
 
 ## Open questions
 

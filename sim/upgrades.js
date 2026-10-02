@@ -83,6 +83,12 @@ ok(Math.ceil(15 / G.clearMarks('stratholme')) <= 5, 'a step takes at most 5 dung
   P.bagUpgrade = false; ok(!G.bagDot(), 'opening Bags clears it');
   G.addItem(G.copyItem(robe), 1); G.equip(P.bags.findIndex((b) => b.item.id === robe)); P.bags = P.bags.filter((b) => b.item.id !== robe);
   ok(!G.bagDot(), 'wearing the upgrade before opening Bags clears it');
+  // a new effect item lights it too, like an upgrade (#23); one your class can't use doesn't; opening Bags clears it
+  const cloth = Object.keys(D.ITEMS).find((id) => D.ITEMS[id].effect && D.ITEMS[id].atype === 'cloth' && (D.ITEMS[id].lvl || 1) <= P.level + 60);
+  const mail = Object.keys(D.ITEMS).find((id) => D.ITEMS[id].effect && D.ITEMS[id].atype === 'mail');
+  G.seenBags(); G.addItem(G.copyItem(mail), 1); ok(!G.bagDot(), `an effect item a mage can't wear (${mail}) does not light it`);
+  G.addItem(G.copyItem(cloth), 1); ok(G.bagDot(), `a new effect item (${cloth}) lights the Bags dot`);
+  G.seenBags(); ok(!G.bagDot() && !P.bags.some((b) => b.item.fxNew), 'opening Bags clears it, and the item is no longer new');
 }
 // dungeon bonus gear fits the class (v10.9, issue #13): 2,000 rolls per class for each bonus are all wearable, the made
 // pieces carry the class's affix; a reward with full bags goes to the bank with a chat line

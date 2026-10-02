@@ -2441,7 +2441,7 @@
       h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => { closeDialog(); go(); } }, 'Throw away'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Keep'))], true);
   }
   function openBags() {
-    ui.bagSel = null; ui.sellPick = null; G.S.player.bagUpgrade = false; renderNavDots(); // seen: the dot clears (issue #11)
+    ui.bagSel = null; ui.sellPick = null; G.seenBags(); renderNavDots(); // seen: the dot clears (issues #11, #23)
     openSheet('bags', 'Backpack', null, (b, t) => {
       const P = G.S.player;
       t.innerHTML = ''; t.append('Bags', h('small', { html: `${P.bags.length}/${G.bagCap()} · ` + moneyHtml(P.money) }));
@@ -2684,6 +2684,19 @@
             h('div', { class: 't' }, h('b', { class: it ? 'q' + it.q : '' }, it ? it.name : 'Empty'), h('small', null, D.SLOT_LABEL[slot])), h('div')));
         }
         b.append(gear);
+        // the Effects you wear (#23, design §3): each counts once, from its strongest copy; only shown when you wear one
+        const fx = E.itemEffects(P), keys = Object.keys(fx).filter((k) => D.EFFECTS[k]);
+        if (keys.length) {
+          b.append(h('div', { class: 'sec-h' }, 'Effects', h('small', null, keys.length === 1 ? '1 effect' : `${keys.length} effects`)));
+          const list = h('div', { class: 'list' }); // full-width rows: an effect's rule is a sentence, not a name
+          for (const k of keys) {
+            const F = D.EFFECTS[k], e = fx[k], on = D.GEAR_SLOTS.map((sl) => P.equip[sl]).filter((x) => x && x.effect === k), src = on.find((x) => x.name === e.item) || on[0];
+            list.append(h('button', { class: 'row', onclick: () => src && showDialog(itemTip(src), true) },
+              h('div', { class: 'ic' }, img(art('icon', F.icon))),
+              h('div', { class: 't' }, h('b', { class: 'eff' }, F.name), h('small', { style: { whiteSpace: 'normal' } }, F.desc(e.lvl, e.f)), h('small', { style: { whiteSpace: 'normal' } }, on.length > 1 ? `From ${e.item} · on ${on.length} items, it counts once` : `From ${e.item}`)), h('div', { class: 'r' }, h('span', { class: 'nav-arr' }, '›'))));
+          }
+          b.append(list);
+        }
         b.append(h('button', { class: 'btn wide alt', style: { marginTop: '8px' }, onclick: () => openWardrobe() }, 'Wardrobe'));
       } else if (ui.heroTab === 'abil') {
         b.append(h('button', { class: 'btn wide' + (tp.free ? '' : ' alt'), onclick: () => openTalents() }, P.level < D.TALENT_START ? `Talents (from level ${D.TALENT_START})` : tp.free ? `Talents · ${tp.free} point${tp.free > 1 ? 's' : ''} to spend` : `Talents · ${tp.spent} spent`));
@@ -3517,7 +3530,7 @@
         const bkeys = [...new Set(p.mobs.filter((m) => D.MOBS[m].boss || m === A.boss))];
         const unitOf = (key) => { const M = D.MOBS[key], u = E.mobUnit(key, mobLvl || (M.lvl ? M.lvl[1] : A.maxLvl), M.boss ? boss : trash); if (hard) u.hardX = G.hardExtra(act, key); else if (A.extra && A.extra[key]) u.hardX = A.extra[key]; return u; };
         const abil = bkeys.flatMap((key) => E.specialRows(unitOf(key))), nHard = abil.filter((r) => r.hard).length;
-        const summary = bkeys.length ? [abil.length ? `${abil.length} ${abil.length === 1 ? 'ability' : 'abilities'}` : 'no special abilities', nHard ? `${nHard} Hard` : '', drops.length ? `${drops.length} drops` : '', 'tap for details'].filter(Boolean).join(' · ') : null;
+        const summary = bkeys.length ? [abil.length ? `${abil.length} ${abil.length === 1 ? 'ability' : 'abilities'}` : 'no special abilities', nHard ? `${nHard} Hard` : '', drops.length ? `${drops.length} drops${drops.some((id) => D.ITEMS[id].effect) ? `, ${drops.filter((id) => D.ITEMS[id].effect).length} with an Effect` : ''}` : '', 'tap for details'].filter(Boolean).join(' · ') : null;
         list.append(h(bkeys.length ? 'button' : 'div', { class: 'row', onclick: bkeys.length ? () => openBossCard({ act, label: p.label || bm.name, keys: bkeys, unitOf, hard, drops }) : null }, h('div', { class: 'ic mob' }, img(mobArt(bk || p.mobs[0]))),
           h('div', { class: 't' }, h('b', null, p.label || D.MOBS[p.mobs[0]].name, bm ? h('span', { class: 'gf-kind k-raid', style: { marginLeft: '6px' } }, 'Boss') : null),
             ...lines.map((l) => h('small', { style: { whiteSpace: 'normal' } }, l)),
@@ -3548,7 +3561,8 @@
       if (hard && G.S.player) b.append(h('div', { class: 'ai-box', style: { marginTop: '8px' } }, h('div', { class: 'ai-row' }, h('span', null, 'Hard bonus this week'), h('b', null, G.hardBonusLeft(act, keys[0]) ? `${G.HARD_STEPS} upgrade steps up (not taken yet)` : 'taken: Normal items until Monday'))));
       if (drops && drops.length) {
         b.append(h('div', { class: 'sec-h' }, 'Drops', h('small', null, `${drops.length <= 2 ? 'both drop' : `2 of ${drops.length} drop`} per kill · tap one`)));
-        b.append(h('div', { class: 'list' }, ...drops.map((id) => { const it = hard && G.hardBonusLeft(act, keys[0]) ? G.hardCopy(id) : G.copyItem(id); return itemRow(it, 1, '', () => showDialog(itemTip(it), true)); })));
+        b.append(h('div', { class: 'list' }, ...drops.flatMap((id) => { const it = hard && G.hardBonusLeft(act, keys[0]) ? G.hardCopy(id) : G.copyItem(id), F = G.effectOf(it);
+          return [itemRow(it, 1, '', () => showDialog(itemTip(it), true)), F ? h('div', { class: 'eff', style: { fontSize: '12px', margin: '-2px 4px 6px' } }, `Effect: ${F.name}. ${F.desc(it.lvl || 1, it.fxScale || 1)}`) : null]; }))); // the Effect line, to plan before a run (#23)
       }
     });
   }
@@ -3871,6 +3885,7 @@
       h('button', { style: { padding: 0 }, onclick: () => inspectRoll(i) }, itemIcon(it, 'rollic')),
       h('div', null,
         h('div', { class: 'q' + it.q, style: { fontWeight: 800 } }, it.name + (open.length > 1 ? `  (+${open.length - 1} more)` : ''), gearTag(it)),
+        G.effectOf(it) ? h('div', { class: 'eff', style: { fontSize: '12px', lineHeight: 1.3 } }, `Effect: ${G.effectOf(it).name}. ${G.effectOf(it).desc(it.lvl || 1, it.fxScale || 1)}`) : null, // plan the roll without opening it (#23)
         h('div', { class: 'bar' }, h('i', { 'data-roll': i, style: { width: '100%' } })),
         h('div', { class: 'btn-row', style: { marginTop: '6px' } },
           h('button', { class: needFirst(it) ? 'btn' : 'btn alt', onclick: () => { G.roll(i, 'need'); renderRolls(); } }, 'Need'),
