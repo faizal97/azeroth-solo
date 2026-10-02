@@ -214,6 +214,7 @@
     // cooldowns run on in real time between fights (epoch ms in char.cds; a fight's clock starts at 0)
     for (const id in (char.cds || {})) { const left = (char.cds[id] - nowMs) / 1000; if (left > 0) u.cds[id] = left; }
     u.legend = char.legend || null;
+    u.effects = E.itemEffects(char); // item effects (v10.10)
     E.recalc(u, true);
     u.hp = char.hp == null ? u.maxHp : clamp(char.hp, 1, u.maxHp);
     u.maxRes = C.resource === 'mana' ? u.st.maxMana : 100;
@@ -403,12 +404,12 @@
       dmg = Math.max(1, Math.round(dmg * (1 - dr)));
     }
     let absorbed = 0;
-    const sh = auraOf(tgt, 'pw_shield');
-    if (sh && sh.absorb > 0) {
-      absorbed = Math.min(sh.absorb, dmg); sh.absorb -= absorbed; dmg -= absorbed;
-      if (sh.absorb <= 0) tgt.auras = tgt.auras.filter((a) => a !== sh);
+    for (const sh of tgt.auras.filter((a) => a.absorb > 0)) { // a priest's shield, or an effect's guard (v10.10)
+      if (dmg <= 0) break; const take = Math.min(sh.absorb, dmg); sh.absorb -= take; dmg -= take; absorbed += take;
+      if (sh.effect) fxDone(C, tgt, sh.effect, take, 'shield');
     }
-    tgt.hp -= dmg;
+    if (absorbed) tgt.auras = tgt.auras.filter((a) => !(a.absorb != null && a.absorb <= 0));
+    tgt.hp -= dmg; tally(C, src, 'dmg', dmg); tally(C, tgt, 'taken', dmg + absorbed); if (o.effect) fxDone(C, src, o.effect, dmg, 'damage');
     if (C.opts.omens && tgt.side === 'enemy' && !tgt.frenzy && tgt.hp > 0 && tgt.hp < tgt.maxHp * ((root.TRIALS && root.TRIALS.OMENS.frenzied) || { below: 0.3 }).below && C.opts.omens.includes('frenzied')) { tgt.frenzy = true; ev(C, { type: 'emote', uid: tgt.uid, text: `${tgt.name} goes into a frenzy!` }); }
     // threat
     if (tgt.side === 'enemy') {
@@ -429,6 +430,17 @@
     if (tgt.cast && !tgt.cast.channel && dmg > 0 && tgt.cast.pushed < 2) { tgt.cast.end += 0.35; tgt.cast.pushed++; }
     ev(C, { type: 'dmg', src: src.uid, tgt: tgt.uid, amount: dmg, absorbed, crit: !!o.crit, school: o.school || 'physical', ab: o.ab || null, melee: !!o.melee, tick: !!o.tick, fx: o.fx || null }); // melee/tick/fx: hints for the combat effects (ui.js)
     if (tgt.hp <= 0) kill(C, tgt, src);
+    // item effects on this hit (v10.10)
+    if (!o.effect) {
+      const oc = !o.tick && tgt.side !== src.side && fxOf(src, 'opening_cut'); // the first hit on each enemy
+      if (oc && !tgt.dead) { tgt.fxFirst = tgt.fxFirst || {}; if (!tgt.fxFirst[src.uid]) { tgt.fxFirst[src.uid] = 1; dealDamage(C, src, tgt, D.EFFECTS.opening_cut.bonus(oc.lvl), { school: o.school || 'physical', effect: 'opening_cut', fx: 'effect' }); } }
+      const sb = fxOf(tgt, 'stubborn_blood'), SB = sb && D.EFFECTS.stubborn_blood; // falling low heals you over time
+      if (sb && tgt.hp < tgt.maxHp * SB.below && fxReady(C, tgt, 'stubborn_blood', SB.icd)) {
+        const per = (tgt.maxHp * SB.pct) / SB.dur;
+        addAura(C, tgt, { id: 'stubborn_blood', name: SB.name, icon: SB.icon, effect: 'stubborn_blood', item: sb.item, desc: SB.desc(sb.lvl), until: C.t + SB.dur, hot: per, every: 1, next: C.t + 1, src: tgt.uid, ab: null });
+        ev(C, { type: 'proc', src: tgt.uid, key: 'stubborn_blood', effect: true });
+      }
+    }
     return dmg;
   }
 
@@ -445,10 +457,35 @@
       const per = (done * 0.5) / en.length;
       for (const e of en) e.threat[src.uid] = (e.threat[src.uid] || 0) + per;
     }
-    ev(C, { type: 'heal', src: src.uid, tgt: tgt.uid, amount: done, over: Math.round(amount) - done, crit: !!(o && o.crit), ab: o && o.ab });
+    ev(C, { type: 'heal', src: src.uid, tgt: tgt.uid, amount: done, over: Math.round(amount) - done, crit: !!(o && o.crit), ab: o && o.ab, fx: o && o.effect ? 'effect' : null });
+    tally(C, src, 'heal', done);
+    if (o && o.effect) fxDone(C, src, o.effect, done, 'heal');
+    else if (src && o && o.ab && !o.tick) { // Echoing Mend: a direct heal can also land on the most hurt other ally (v10.10)
+      const em = fxOf(src, 'echoing_mend'), EM = em && D.EFFECTS.echoing_mend;
+      if (em && Math.random() < EM.chance) {
+        const other = alive(src.side === 'ally' ? C.allies : C.enemies).filter((a) => a !== tgt && a.hp < a.maxHp).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
+        if (other) heal(C, src, other, amount * EM.pct, { effect: 'echoing_mend' });
+      }
+    }
     return done;
   }
 
+  // ---- item effects (v10.10, docs/plans/2026-10-02-item-effects-design.md): their own path, not D.PROCS (which is per
+  // class). The same effect counts once (the strongest copy); an unknown key is a plain item (the #17 lesson).
+  E.itemEffects = function (char) {
+    const out = {};
+    for (const s in (char && char.equip) || {}) {
+      const it = char.equip[s], F = it && it.effect && D.EFFECTS && D.EFFECTS[it.effect]; if (!F) continue;
+      const L = it.lvl || 1; if (!out[it.effect] || out[it.effect].lvl < L) out[it.effect] = { key: it.effect, lvl: L, item: it.name };
+    }
+    return out;
+  };
+  const fxOf = (u, k) => (u && !u.dead && u.effects && u.effects[k]) || null;
+  const fxReady = (C, u, k, icd) => { u.fxAt = u.fxAt || {}; if (icd && C.t - (u.fxAt[k] != null ? u.fxAt[k] : -1e9) < icd) return false; u.fxAt[k] = C.t; return true; };
+  // what each effect did in this fight, and each fighter's own totals, for the item card's "Last run" line
+  function fxDone(C, u, k, amount, kind) { if (!(amount > 0)) return; const r = (C.fx = C.fx || {})[u.uid] = C.fx[u.uid] || {}; const e = r[k] = r[k] || { amount: 0, kind }; e.amount += amount; }
+  function tally(C, u, kind, amount) { if (!u || !(amount > 0)) return; const r = (C.tot = C.tot || {})[u.uid] = C.tot[u.uid] || { dmg: 0, heal: 0, taken: 0 }; r[kind] += amount; }
+  E.fxDone = fxDone;
   E.kill = (C, u, by) => kill(C, u, by);
   function kill(C, u, by) {
     u.dead = true; u.hp = 0; u.cast = null; u.auras = u.auras.filter((a) => a.keep); // a flask stays through death (v10.9)
@@ -499,6 +536,11 @@
     if (res === 'miss' || res === 'dodge') {
       ev(C, { type: 'avoid', src: src.uid, tgt: tgt.uid, what: res, ab: o.ab || null });
       if (!o.ranged) { proc(C, src, 'avoided', o.ab); if (res === 'dodge') proc(C, tgt, 'dodged', o.ab); }
+      const tg = res === 'dodge' && !o.ranged && fxOf(tgt, 'turning_guard'), TG = tg && D.EFFECTS.turning_guard; // a dodge raises a guard (v10.10)
+      if (tg && fxReady(C, tgt, 'turning_guard', TG.icd)) {
+        tgt.auras = tgt.auras.filter((a) => a.id !== 'turning_guard');
+        addAura(C, tgt, { id: 'turning_guard', name: TG.name, icon: TG.icon, effect: 'turning_guard', item: tg.item, desc: TG.desc(tg.lvl), until: C.t + TG.dur, absorb: TG.absorb(tg.lvl) });
+      }
       if (tgt.side === 'enemy') tgt.threat[src.uid] = (tgt.threat[src.uid] || 0) + 1;
       return 0;
     }
@@ -1271,7 +1313,7 @@
           proc(C, src, 'tick', a.ab);
           if (u.dead) break;
         }
-        if (a.hot != null && a.next <= C.t + 1e-6) { a.next += a.every; heal(C, C.units[a.src] || u, u, a.hot, { ab: a.ab }); }
+        if (a.hot != null && a.next <= C.t + 1e-6) { a.next += a.every; heal(C, C.units[a.src] || u, u, a.hot, { ab: a.ab, tick: true, effect: a.effect }); }
         if (a.until <= C.t) { u.auras.splice(u.auras.indexOf(a), 1); if (a.stats) changed = true; }
       }
       if (u.dead) continue;

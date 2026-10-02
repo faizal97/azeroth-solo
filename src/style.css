@@ -763,3 +763,7 @@ svg.sym { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: 
 .cook-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--dim, #b8a88a); margin-bottom: 10px; }
 .cook-labels .gold { color: #ffd84a; } .cook-labels .red { color: #ff6a5a; }
 @media (prefers-reduced-motion: reduce) { .fishfx .bobber, .fishfx .bobber.dip, .fishfx .ripple { animation: none; } }
+
+/* item effects (v10.10): one colour for the Effect line, the ◆ mark and effect auras */
+.eff { color: #d39cff; }
+.slot .up.eff { color: #d39cff; }

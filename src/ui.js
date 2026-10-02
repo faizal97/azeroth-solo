@@ -160,6 +160,7 @@
     showDialog(h('div', { class: 'tooltip' },
       h('div', { class: 'nm', style: { color: a.debuff ? '#ff6a5a' : '#5fd46a' } }, img(abIcon(a.icon)), ' ', a.name, h('small', { class: 'dim' }, a.debuff ? '  debuff' : '  buff')),
       ...auraEffects(cur).map((t) => h('div', { style: { color: '#ffd100' } }, t)),
+      cur.raw && cur.raw.effect ? h('div', { class: 'eff' }, `${cur.raw.desc || ''}${cur.raw.item ? ` From your ${cur.raw.item}.` : ''}`) : null, // an item effect's aura (v10.10)
       h('div', { class: 'dim' }, left + (src ? ` From ${src.kind === 'player' ? 'you' : src.name}.` : ''))), true);
   }
   const fmtLeft = (s) => (s > 86400 ? '' : s >= 3600 ? Math.floor(s / 3600) + 'h' : s >= 60 ? Math.floor(s / 60) + 'm' : Math.ceil(s) + '');
@@ -1801,6 +1802,14 @@
       if (it.armor) t.append(h('div', { class: 'st' }, `${it.armor} Armor`));
       for (const k in (it.stats || {})) t.append(h('div', { class: 'st' }, `+${it.stats[k]} ${statName[k] || k}`));
       if (it.sp) t.append(h('div', { class: 'gr' }, `Equip: Increases damage and healing done by magical spells and effects by up to ${it.sp}.`));
+      // an item effect (v10.10): its rule with real numbers at the item's level, "counts once", and what it did last run
+      const F = G.effectOf(it);
+      if (F) {
+        t.append(h('div', { class: 'eff' }, h('b', null, `Effect: ${F.name}. `), F.desc(it.lvl || 1)));
+        if (!who && Object.values(G.S.player.equip || {}).some((x) => x && x !== it && x.effect === it.effect)) t.append(h('div', { class: 'eff dim' }, `You already have ${F.name}. It counts once.`));
+        const L = !who && (G.S.player.fxLast || {})[it.effect];
+        if (L) t.append(h('div', { class: 'dim' }, lastRunText(L)));
+      }
       if (it.lvl > 1) t.append(h('div', { class: it.lvl > P.level ? 'red' : 'st' }, `Requires Level ${it.lvl}`));
     }
     if (it.slot === 'mat') t.append(h('div', { class: 'st' }, 'Trade Goods'));
@@ -1855,7 +1864,8 @@
     }
     if (!any && cur) box.append(h('div', { class: 'dim' }, 'Same stats.'));
     const up = G.itemScore(it, P.cls) - G.itemScore(cur, P.cls);
-    box.append(h('div', { style: { fontWeight: 800, color: up > 0.01 ? '#2dff2d' : up < -0.01 ? '#ff5b4b' : '#b0b0b0' } }, up > 0.01 ? '▲ Upgrade for you' : up < -0.01 ? '▼ Downgrade for you' : 'About the same for you'));
+    if (G.effectOf(it) || G.effectOf(cur)) box.append(h('div', { class: 'eff', style: { fontWeight: 800 } }, '◆ Effect: whether it is better depends on the fight. Its Effect line says what it does, and what it did in your last run.')); // the game doesn't judge an effect by stats (v10.10)
+    else box.append(h('div', { style: { fontWeight: 800, color: up > 0.01 ? '#2dff2d' : up < -0.01 ? '#ff5b4b' : '#b0b0b0' } }, up > 0.01 ? '▲ Upgrade for you' : up < -0.01 ? '▼ Downgrade for you' : 'About the same for you'));
     if ((it.lvl || 1) > P.level) box.append(h('div', { class: 'red' }, `You can equip it at level ${it.lvl}.`));
     return box;
   }
@@ -1874,6 +1884,14 @@
     const why = blockReason(it);
     return h('div', { class: (cls || 'ic') + (why ? ' cant' : '') }, img(art('icon', it.icon)), why ? h('span', { class: 'why' }, why.kind === 'level' ? String(why.lvl) : '✕') : null);
   }
+  // "Last run: 1,240 damage, 6% of yours": the fact a player judges an effect by (there is no damage meter)
+  function lastRunText(L) {
+    const when = L.run ? 'Last run' : 'Last fight', n = (x) => Math.round(x).toLocaleString('en-US'), of = (a, b) => (b > 0 ? `, ${Math.max(0, Math.round((a / b) * 100))}% of yours` : '');
+    if (!L.amount) return `${when}: it didn't trigger.`;
+    if (L.kind === 'heal') return `${when}: ${n(L.amount)} healing${of(L.amount, L.heal)}.`;
+    if (L.kind === 'shield') return `${when}: ${n(L.amount)} damage absorbed${L.taken > 0 ? `, ${Math.round((L.amount / L.taken) * 100)}% of what hit you` : ''}.`;
+    return `${when}: ${n(L.amount)} damage${of(L.amount, L.dmg)}.`;
+  }
   // Short tag for lists: ▲ upgrade, or why you can't use it.
   // a roll's Need is the main button only for gear you can use, as the roll tip says "Need if you will use it"; Need stays
   // allowed on anything (bots play by the same rules), it is just shown plain (issue #14)
@@ -1883,6 +1901,7 @@
     if (!D.GEAR_SLOTS.includes(it.slot)) return null;
     if (!G.canUseItem(it)) return h('span', { style: { color: '#ff5b4b', fontWeight: 700, marginLeft: '6px' } }, "Can't use");
     if ((it.lvl || 1) > P.level) return h('span', { style: { color: '#ff5b4b', fontWeight: 700, marginLeft: '6px' } }, `Level ${it.lvl}`);
+    if (G.effectOf(it)) return h('span', { class: 'eff', style: { fontWeight: 900, marginLeft: '6px' } }, '◆ Effect'); // judged by the fight, not the stats (v10.10)
     if (G.isUpgrade(it)) return h('span', { style: { color: '#2dff2d', fontWeight: 900, marginLeft: '6px' } }, '▲ Upgrade');
     return null;
   }
@@ -2388,7 +2407,7 @@
       const it = b.item;
       const why = blockReason(it);
       g.append(h('button', { class: 'slot qb' + it.q + (ui.bagSel === i || (ui.sellPick && ui.sellPick.has(i)) ? ' sel' : '') + (why ? ' cant' : ''), onclick: () => onTap(i) },
-        img(art('icon', it.icon)), ui.sellPick && ui.sellPick.has(i) ? h('span', { class: 'pick' }, '✓') : null, b.n > 1 ? h('span', { class: 'cnt tnum' }, b.n) : null, !why && G.isUpgrade(it) ? h('span', { class: 'up' }, '▲') : null,
+        img(art('icon', it.icon)), ui.sellPick && ui.sellPick.has(i) ? h('span', { class: 'pick' }, '✓') : null, b.n > 1 ? h('span', { class: 'cnt tnum' }, b.n) : null, !why && G.isUpgrade(it) ? h('span', { class: 'up' }, '▲') : !why && G.effectOf(it) ? h('span', { class: 'up eff' }, '◆') : null,
         why ? h('span', { class: 'why' }, why.kind === 'level' ? String(why.lvl) : '✕') : null));
     }
     return g;
@@ -4403,6 +4422,8 @@
     G.on('helpWanted', (r) => toast(`Help Wanted: a group in ${D.ACTIVITIES[r.act].name} needs a ${r.role === 'dps' ? 'damage dealer' : r.role}. See Social → Groups.`, true));
     // wait for a calm moment: no fight, no run, no other dialog, no cutscene
     G.on('warModeIntro', () => whenCalm(showWarModeIntro));
+    G.on('effectItem', () => whenCalm(() => { const a = G.account(); if (a.effectCard) return; a.effectCard = 1; G.saveAccount(a); // once per device (v10.10)
+      showDialog([h('h3', null, 'Items with an Effect'), h('p', null, 'Some items have an Effect instead of part of their stats. Whether it beats a plain item depends on the fight: the item shows what it did in your last run. The same effect on two items counts once.'), h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: closeDialog }, 'Got it'))]); }));
     G.on('intruder', (it) => { toast(`Enemy player nearby: ${it.name}`); snd('error', { gap: 0.4, vol: 0.5 }); renderAll(); });
     // a party invite waits for a calm moment too; by then the bot may have moved on, and then it lapses quietly (issue #24)
     G.on('partyInvite', (d) => whenCalm(() => { const S = G.S; if (S.flags.pendingInvite !== d.bot.id || S.wparty || !B.onlineIn(S, S.player.place, new Date()).some((x) => x.id === d.bot.id)) { if (S.flags.pendingInvite === d.bot.id) S.flags.pendingInvite = null; return; } showPartyInvite(d); }));

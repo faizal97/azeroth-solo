@@ -289,10 +289,24 @@
     return Object.keys(g).length ? g : null;
   };
 
+  // ---- item effects (v10.10): what each worn effect did in your last run (a dungeon run, or the fight when out of one), for
+  // the item card's fact line. There is no damage meter, so this is how a player judges an effect.
+  function recordFx(C, pu) {
+    const S = G.S, P = S.player; if (!pu || !C) return;
+    const fx = (C.fx || {})[pu.uid] || {}, tot = (C.tot || {})[pu.uid] || { dmg: 0, heal: 0, taken: 0 };
+    const acc = S.run ? (S.run.fxAcc = S.run.fxAcc || { fx: {}, tot: { dmg: 0, heal: 0, taken: 0 } }) : { fx: {}, tot: { dmg: 0, heal: 0, taken: 0 } };
+    for (const k in tot) acc.tot[k] = (acc.tot[k] || 0) + (tot[k] || 0);
+    for (const k in fx) { const a = acc.fx[k] = acc.fx[k] || { amount: 0, kind: fx[k].kind }; a.amount += fx[k].amount; }
+    P.fxLast = P.fxLast || {};
+    for (const k in E.itemEffects(P)) { const a = acc.fx[k]; P.fxLast[k] = { amount: Math.round((a && a.amount) || 0), kind: (a && a.kind) || null, dmg: Math.round(acc.tot.dmg), heal: Math.round(acc.tot.heal), taken: Math.round(acc.tot.taken), run: !!S.run }; }
+  }
+  // an item with an effect is judged by the fight, not by its stats: nothing automatic calls it better or worse
+  G.effectOf = (it) => (it && it.effect && D.EFFECTS && D.EFFECTS[it.effect]) || null;
   // the Bags dot (issue #11): an upgrade landed since you last opened Bags, and one is still there (selling or wearing it clears it)
   G.bagDot = () => { const P = G.S.player; return !!P.bagUpgrade && P.bags.some((b) => G.isUpgrade(b.item)); };
   G.isUpgrade = function (it) {
     const P = G.S.player;
+    if (G.effectOf(it)) return false; // an effect item shows ◆ Effect instead (v10.10)
     if (!D.GEAR_SLOTS.includes(it.slot) || !G.canUseItem(it)) return false;
     return G.itemScore(it, P.cls) > G.itemScore(P.equip[it.slot], P.cls) + 0.01;
   };
@@ -349,6 +363,7 @@
     P.bags.push({ item: it, n });
     if (G.collectLook) G.collectLook(it); // the wardrobe (v10.3)
     if (G.isUpgrade(it)) P.bagUpgrade = true; // the Bags button's dot until Bags is opened (v10.9, issue #11)
+    if (G.effectOf(it)) emit('effectItem', { item: it }); // the one-time card about effects (v10.10)
     return true;
   };
   G.countItem = function (id) { let n = 0; for (const b of G.S.player.bags) if (b.item.id === id) n += b.n; return n; };
@@ -1298,7 +1313,7 @@
     if (Math.random() < (C.kind === 'pvp' ? 0.45 : 0.6)) {
       if (C.kind === 'pvp') { const f = G.S.flags; G.S.player.pvp = G.pvpStats(); G.S.player.pvp.escapes++; f.nextAmbush = now() + AMBUSH_GAP; }
       for (const e of C.enemies) { if (e.inst) { e.inst.state = 'alive'; } }
-      E.writeBack(C, G.pUnit, now());
+      recordFx(C, G.pUnit); E.writeBack(C, G.pUnit, now());
       petWriteBack(C);
       G.fight = null; G.pUnit = null;
       sys('You escaped.');
@@ -1354,7 +1369,7 @@
     const S = G.S, P = S.player;
     if (C.wanderer) { const Hd = D.LEGENDS[C.wanderer.key].hooded; B.post(S, 'say', { name: Hd.name, cls: 'paladin' }, pick(Hd.leave)); sys('The hooded knight walks off without giving a name.'); }
     const pu = G.pUnit;
-    E.writeBack(C, pu, now());
+    recordFx(C, pu); E.writeBack(C, pu, now());
     petWriteBack(C);
     for (const u of C.allies) if (u.memberRef) { E.writeBack(C, u, now()); if (u.dead) u.memberRef.hp = Math.round(u.maxHp * 0.5); }
     const size = S.wparty ? 1 + S.wparty.members.length : 1;
@@ -2176,7 +2191,7 @@
   };
   function endDuel(C) {
     const S = G.S, P = S.player, d = C.duel;
-    E.writeBack(C, G.pUnit, now()); petWriteBack(C);
+    recordFx(C, G.pUnit); E.writeBack(C, G.pUnit, now()); petWriteBack(C);
     const won = C.over === 'win';
     if (!won) P.hp = Math.max(1, Math.round(G.vitals().maxHp * 0.05));
     if (d.wager) { if (won) P.money += d.wager; else P.money = Math.max(0, P.money - d.wager); }
@@ -2228,7 +2243,7 @@
   }
   function endPvp(C) {
     const S = G.S, P = S.player, f = S.flags, info = C.pvp;
-    E.writeBack(C, G.pUnit, now());
+    recordFx(C, G.pUnit); E.writeBack(C, G.pUnit, now());
     petWriteBack(C);
     for (const u of C.allies) if (u.memberRef) { E.writeBack(C, u, now()); if (u.dead) u.memberRef.hp = Math.round(u.maxHp * 0.5); }
     P.pvp = G.pvpStats();
@@ -3110,7 +3125,7 @@
   function endRunFight(C) {
     const S = G.S, R = S.run;
     const pull = R.pulls[R.idx];
-    E.writeBack(C, G.pUnit, now());
+    recordFx(C, G.pUnit); E.writeBack(C, G.pUnit, now());
     petWriteBack(C);
     for (const u of C.allies) if (u.memberRef) E.writeBack(C, u, now());
     const result = C.over;

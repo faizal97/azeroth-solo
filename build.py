@@ -46,6 +46,8 @@ if subprocess.run(['node', os.path.join(R, 'sim', 'social.js')], stdout=subproce
     sys.exit('build stopped: a chat or guild rule is broken (node sim/social.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'auction.js')], stdout=subprocess.DEVNULL).returncode != 0:
     sys.exit('build stopped: the auction house pays risk-free or a price button wins nowhere (node sim/auction.js lists which)')
+if subprocess.run(['node', os.path.join(R, 'sim', 'effects.js')], stdout=subprocess.DEVNULL).returncode != 0:
+    sys.exit('build stopped: an item effect wins nowhere, loses nowhere or is too strong (node sim/effects.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'rares.js')], stdout=subprocess.DEVNULL).returncode != 0:
     sys.exit('build stopped: a rare is in a starting place or first in a Fight list it outlevels (node sim/rares.js lists which)')
 if subprocess.run(['node', os.path.join(R, 'sim', 'consumables.js')], stdout=subprocess.DEVNULL).returncode != 0:
