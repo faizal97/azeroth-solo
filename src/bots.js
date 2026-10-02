@@ -134,7 +134,7 @@
 
   // Advance the server by ms. Returns news items.
   B.advance = function (S, ms) {
-    const news = [];
+    const news = [], clears = {};
     const steps = Math.min(48, Math.max(1, Math.ceil(ms / 1800000)));
     const stepMs = ms / steps;
     for (let s = 0; s < steps; s++) {
@@ -152,15 +152,24 @@
           }
         }
       }
-      // dungeon clears by capped bots
+      // dungeon and raid clears (issue #18): any dungeon or raid in the data that enough bots are the level for, so a new
+      // one shows up with no change here; a server first per dungeon or raid, named after its last boss
       const capped = S.bots.filter((b) => b.level >= 10).length;
       if (capped >= 5 && Math.random() < Math.min(0.9, capped / 40) * (stepMs / 3600000)) {
-        const g = pick(GUILDS);
-        const first = !S.server.firstVC;
-        if (first) S.server.firstVC = g;
-        news.push({ t: when.getTime(), text: first ? `<${g}> is the first guild on ${D.REALM} to defeat Corvin Blackwell!` : `<${g}> cleared The Smugglers' Deep.`, big: first });
+        const fits = Object.keys(D.ACTIVITIES).filter((k) => { const A = D.ACTIVITIES[k]; if (!A.dungeon || A.worldBoss || A.needQuest || !D.DUNGEONS[A.dungeon]) return false;
+          return S.bots.filter((b) => b.level >= A.minLvl && b.level <= (A.maxLvl || D.LEVEL_CAP) + 5).length >= (A.size || 5); });
+        if (fits.length) {
+          const act = pick(fits), g = pick(GUILDS), F = S.server.firsts = S.server.firsts || {};
+          if (S.server.firstVC && !F.deadmines) F.deadmines = S.server.firstVC; // the one first older saves recorded
+          const first = !F[act]; if (first) F[act] = g;
+          const bosses = D.DUNGEONS[D.ACTIVITIES[act].dungeon].pulls.filter((p) => p.boss), last = bosses.length && D.MOBS[bosses[bosses.length - 1].mobs[0]];
+          if (first && last) news.push({ t: when.getTime(), text: `<${g}> is the first guild on ${D.REALM} to defeat ${last.name}!`, big: true });
+          else clears[g + '|' + act] = (clears[g + '|' + act] || 0) + 1;
+        }
       }
     }
+    // repeated clears read as one line each ("cleared The Smugglers' Deep ×3"), so a long absence isn't one sentence 40 times
+    for (const [k, n] of Object.entries(clears)) { const [g, act] = k.split('|'); news.push({ t: S.lastSim + ms, text: `<${g}> cleared ${D.ACTIVITIES[act].name}${n > 1 ? ` ×${n}` : ''}.` }); }
     // new players keep rolling alts, so the starting zone never empties
     const newbies = Math.floor((ms / 3600000) * 3);
     const used = new Set(S.bots.map((b) => b.name));
@@ -168,7 +177,7 @@
       const nb = B.assignGuild(B.makeBot(S.nextBotId++, used, { level: 1 }));
       S.bots.push(nb);
     }
-    if (newbies > 0) news.push({ t: S.lastSim + ms, text: `${Math.min(newbies, 40)} new adventurers arrived in Halden.` });
+    if (newbies > 0) news.push({ t: S.lastSim + ms, text: `${Math.min(newbies, 40)} new adventurers started out across Caldreth.` }); // every start, not only the Human one (issue #18)
     // keep the population bounded
     if (S.bots.length > 420) S.bots.splice(0, S.bots.length - 420);
     S.lastSim += ms;
@@ -248,7 +257,7 @@
   ];
   const GENERAL_HORDE = [
     () => 'how do i get to vazhrak', () => 'ok ok', () => "blood and dust!", () => 'for the krugar',
-    () => 'the the blooding grounds is so crowded lol', () => 'who keeps killing all the boars', () => 'bonewall inn is the best inn',
+    () => 'the blooding grounds is so crowded lol', () => 'who keeps killing all the boars', () => 'bonewall inn is the best inn',
     () => 'grask is the best high chief', () => 'hornwind mesa elevators scare me', () => 'gravenhold has a smell and i love it',
     () => 'dustfort is always under attack lol', () => 'scrublands chat is a way of life', () => "camp skarn boat is taking forever",
   ];
