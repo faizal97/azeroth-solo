@@ -1394,7 +1394,7 @@
     const myF = (D.RACES[P.race] || {}).faction || 'alliance';
     const sellers = S.bots.filter((b) => B.factionOf(b) === myF);
     // trade goods from gatherers around your level
-    const L0 = P.level, goods = ['copper_ore', 'copper_bar', 'rough_stone', 'peacebloom', 'silverleaf', 'light_leather', 'linen_cloth', 'linen_bolt'].concat(L0 >= 8 ? ['earthroot', 'mageroyal', 'minor_healing_potion'] : [], L0 >= 12 ? ['tin_ore', 'bronze_bar', 'briarthorn', 'wool_cloth', 'coarse_stone', 'lesser_healing_potion'] : [], L0 >= 16 ? ['silver_ore', 'bruiseweed', 'medium_leather', 'wool_bolt', 'healing_potion', 'linen_bag'] : [], L0 >= 26 ? ['iron_ore', 'iron_bar', 'ironthistle', 'redmantle', 'heavy_leather', 'silk_cloth', 'greater_healing_potion'] : [], L0 >= 36 ? ['embersilver_ore', 'stoutroot', 'dimleaf', 'goldspur', 'thick_leather', 'silk_bolt', 'mana_potion'] : []); // Expert goods from 26 (v10.9)
+    const L0 = P.level, goods = ['copper_ore', 'copper_bar', 'rough_stone', 'peacebloom', 'silverleaf', 'light_leather', 'linen_cloth', 'linen_bolt'].concat(L0 >= 8 ? ['earthroot', 'mageroyal', 'minor_healing_potion'] : [], L0 >= 12 ? ['tin_ore', 'bronze_bar', 'briarthorn', 'wool_cloth', 'coarse_stone', 'lesser_healing_potion'] : [], L0 >= 16 ? ['silver_ore', 'bruiseweed', 'medium_leather', 'wool_bolt', 'healing_potion', 'linen_bag'] : [], L0 >= 26 ? ['iron_ore', 'iron_bar', 'ironthistle', 'redmantle', 'heavy_leather', 'silk_cloth', 'greater_healing_potion'] : [], L0 >= 36 ? ['embersilver_ore', 'stoutroot', 'dimleaf', 'goldspur', 'thick_leather', 'silk_bolt', 'mana_potion'] : [], L0 >= 46 ? ['duskiron_ore', 'duskiron_bar', 'cinderbloom', 'gloomcap', 'hardhide_leather', 'duskweave_cloth', 'grand_healing_potion'] : [], L0 >= 55 ? ['sunveil', 'frostpetal', 'duskweave_bolt', 'grand_mana_potion', 'elixir_might'] : []); // Expert goods from 26, Artisan from 46 (v10.9)
     while (S.ah.listings.filter((l) => !D.GEAR_SLOTS.includes(l.item.slot)).length < 8) {
       const it = G.copyItem(pick(goods)), n = G.stackable(it) ? rint(1, 4) * 5 : 1;
       const price = Math.round(G.ahValue(it) * n * (0.8 + Math.random() * 0.6));
@@ -1556,7 +1556,7 @@
   }
   // a rare recipe for the level it drops at (v10.9): one whose item is within 8 levels, else the nearest ones
   function pickRare(level) {
-    const lv = (id) => D.ITEMS[D.RECIPES[D.ITEMS[id].teaches].makes].lvl || 1;
+    const lv = (id) => { const r = D.RECIPES[D.ITEMS[id].teaches], it = D.ITEMS[r.makes]; return it.slot === 'bag' ? Math.round(r.sk[0] / 5) : it.lvl || 1; }; // a bag is level 1 to wear: it drops at its recipe's skill / 5
     let near = D.RARE_RECIPES.filter((id) => Math.abs(lv(id) - level) <= 8);
     if (!near.length) { const best = Math.min(...D.RARE_RECIPES.map((id) => Math.abs(lv(id) - level))); near = D.RARE_RECIPES.filter((id) => Math.abs(lv(id) - level) === best); }
     return pick(near);

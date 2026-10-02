@@ -376,5 +376,13 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
   dieInAFight(); ok(P.auras.some((a) => a.name === 'Flask of the Warpath'), 'the flask stays when you die');
   drink('elixir_swiftness'); dieInAFight(); ok(!P.auras.some((a) => a.id === 'elixir'), 'an elixir does not stay when you die');
 }
+// Artisan rare recipes drop at 60 (v10.9 beta 5); a bag recipe drops at its skill's level, not at level 1
+{
+  const sk = (id) => D.RECIPES[D.ITEMS[id].teaches].sk[0];
+  const at60 = new Set(); for (let i = 0; i < 300; i++) at60.add(G.pickRare(60));
+  ok([...at60].every((id) => sk(id) >= 225) && at60.size >= 5, `level-60 bosses drop only Artisan rare recipes (${[...at60].join(', ')})`);
+  const low = new Set(); for (let i = 0; i < 300; i++) low.add(G.pickRare(5));
+  ok(![...low].some((id) => sk(id) >= 225), 'a level-5 monster never drops an Artisan recipe (the Starweave Bag)');
+}
 console.log(fails ? `${fails} failures` : 'professions sim OK');
 process.exit(fails ? 1 : 0);

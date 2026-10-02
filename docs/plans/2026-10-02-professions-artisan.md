@@ -152,7 +152,7 @@ after a death the flask is still there and an elixir is not. Commit.
 
 - `D.RARE_RECIPES` picks up the five new rares (blade, hammer, cloak, bag, flask; the feast too); `G.pickRare(60)`
   returns only Artisan rares, so level-60 dungeon bosses drop them.
-- The Trials speed chest (`game.js` ~3298) adds a 10% Artisan rare recipe roll.
+- Trials: no item chest exists (Trials pay Marks); Trial bosses roll recipes at the level cap like any boss, so they drop Artisan rares too. A rare bag recipe counts at its skill / 5 (bags are item level 1).
 - Auction goods: `L0 >= 46` adds duskiron_ore, duskiron_bar, cinderbloom, gloomcap, hardhide_leather, duskweave_cloth,
   grand_healing_potion; `L0 >= 55` adds sunveil, frostpetal, duskweave_bolt, grand_mana_potion, elixir_might.
 
