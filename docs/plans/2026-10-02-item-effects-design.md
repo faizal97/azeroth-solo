@@ -123,7 +123,7 @@ An effect that wins in every case or in none is a wrong effect, not wrong number
 - **Level 60:** one effect item per raid boss (Hard drops it two upgrade steps up, as today); one per world boss; one
   per final boss of the Sunken Archive and the Temple of Shal'zua; a chance at one in Trial chests, from that season's
   dungeons.
-- **Mentor Mark upgrades** work on effect items; the effect grows with each step, as stats do.
+- **Mentor Mark upgrades** work on effect items; the effect grows with each step, more slowly than the stats (#37: by the upgrade scale to the power `D.FX_GROW`, 0.25, so ×1.26 stats is ×1.06 effect). With linear growth an upgraded effect outgrew its price and stopped losing anywhere. `sim/effects.js` checks every bar both as dropped and at full upgrade.
 - **Bots** roll Need on effect items under the same "can use" rule (`src/game.js`, the roll choices). Bots don't wear
   effects in v10.10.
 - **Saves:** effect items are new, nothing to migrate. Every `D.EFFECTS` lookup is guarded: a build that doesn't know
