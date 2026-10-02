@@ -50,7 +50,7 @@
     hermits_beard: { name: "Hermit's Beard", prof: 'herbalism', skill: 185, item: 'hermits_beard', n: [1, 3] },
     rimeleaf: { name: 'Rimeleaf', prof: 'herbalism', skill: 195, item: 'rimeleaf', n: [1, 3] },
     // Artisan (v10.9): levels 45-60
-    duskiron: { name: 'Duskiron Deposit', prof: 'mining', skill: 230, item: 'duskiron_ore', n: [1, 2], extra: ['deepstone', 0.5] },
+    duskiron: { name: 'Duskiron Deposit', prof: 'mining', skill: 230, item: 'duskiron_ore', n: [2, 3], extra: ['deepstone', 0.5] }, // 2-3: Artisan smithing costs 6-12 bars a piece (issue #6)
     moonsilver: { name: 'Moonsilver Vein', prof: 'mining', skill: 260, item: 'moonsilver_ore', n: [1, 1], extra: ['deepstone', 0.3] },
     cinderbloom: { name: 'Cinderbloom', prof: 'herbalism', skill: 230, item: 'cinderbloom', n: [1, 3] },
     gloomcap: { name: 'Gloomcap', prof: 'herbalism', skill: 245, item: 'gloomcap', n: [1, 3] },
@@ -337,12 +337,15 @@
   gear('crimson_silk_robe', { name: 'Crimson Silk Robe', slot: 'chest', atype: 'cloth', lvl: 36, st: ['int', 'spi'] });
   gear('silk_sash', { name: 'Silk Sash', slot: 'waist', atype: 'cloth', lvl: 38, st: ['int', 'sta'] });
   gear('silk_leggings', { name: 'Silk Leggings', slot: 'legs', atype: 'cloth', lvl: 40, st: ['int', 'sta'] });
+  gear('silk_slippers', { name: 'Silk Slippers', slot: 'feet', atype: 'cloth', lvl: 42, st: ['int', 'spi'] }); // issue #6: tailoring had no trainer recipe between 195 and 225
+  gear('silk_bracers', { name: 'Silk Bracers', slot: 'wrist', atype: 'cloth', lvl: 43, st: ['int', 'sta'] });
   gear('embersilver_threaded_robe', { name: 'Embersilver-Threaded Robe', slot: 'chest', atype: 'cloth', q: 3, lvl: 44, st: ['int', 'spi'], sp: 14 });
   // Artisan (v10.9), levels 48-60. The level-60 blues are the catch-up pieces and carry a crafted look (only from crafting)
   const crafted = (prof, sk) => `Crafted: ${D.PROFESSIONS[prof].name} ${sk}`;
   gear('duskiron_sabatons', { name: 'Duskiron Sabatons', slot: 'feet', atype: 'mail', lvl: 48, st: ['str', 'sta'] });
   gear('duskiron_hauberk', { name: 'Duskiron Hauberk', slot: 'chest', atype: 'mail', lvl: 52, st: ['sta', 'str'] });
   gear('duskiron_greatsword', { name: 'Duskiron Greatsword', slot: 'weapon', wtype: 'sword', lvl: 54, st: ['str', 'sta'] });
+  gear('duskiron_bracers', { name: 'Duskiron Bracers', slot: 'wrist', atype: 'mail', lvl: 57, st: ['str', 'sta'] });
   gear('moonforged_breastplate', { name: 'Moonforged Breastplate', slot: 'chest', atype: 'mail', q: 3, lvl: 60, st: ['str', 'sta'], look: ['chest', 'moonforged_chest'], source: crafted('blacksmithing', 280) });
   gear('moonforged_legplates', { name: 'Moonforged Legplates', slot: 'legs', atype: 'mail', q: 3, lvl: 60, st: ['sta', 'str'], look: ['legs', 'moonforged_legs'], source: crafted('blacksmithing', 285) });
   gear('moonforged_blade', { name: 'Moonforged Blade', slot: 'weapon', wtype: 'sword', q: 3, lvl: 60, st: ['str', 'agi'], look: ['weapon', 'moonforged_blade'], source: crafted('blacksmithing', 290) + ' (a rare recipe)' });
@@ -452,23 +455,26 @@
   rec('lw_thick_kit', 'leatherworking', 200, 'thick_armor_kit', { thick_leather: 4, fine_thread: 1 });
   rec('lw_thick_pants', 'leatherworking', 205, 'thick_leather_pants', { thick_leather: 10, fine_thread: 3 });
   rec('lw_thick_jerkin', 'leatherworking', 215, 'thick_leather_jerkin', { thick_leather: 14, gold_bar: 1 }, { rare: true });
-  rec('tl_silk_bolt', 'tailoring', 150, 'silk_bolt', { silk_cloth: 3 }, { sk: [150, 175, 187, 200] });
+  rec('tl_silk_bolt', 'tailoring', 150, 'silk_bolt', { silk_cloth: 2 }, { sk: [150, 175, 187, 200] }); // 2 cloth, like duskweave: tailoring kept up with the other crafts (issue #6)
   rec('tl_silk_gloves', 'tailoring', 155, 'silk_gloves', { silk_bolt: 2, fine_thread: 1 });
   rec('tl_silk_bag', 'tailoring', 160, 'silk_bag', { silk_bolt: 4, fine_thread: 2 });
   rec('tl_silk_cloak', 'tailoring', 165, 'silk_cloak', { silk_bolt: 2, fine_thread: 1 });
   rec('tl_crimson_robe', 'tailoring', 180, 'crimson_silk_robe', { silk_bolt: 4, fine_thread: 3 });
   rec('tl_silk_sash', 'tailoring', 185, 'silk_sash', { silk_bolt: 2, fine_thread: 1 });
-  rec('tl_silk_leggings', 'tailoring', 195, 'silk_leggings', { silk_bolt: 4, fine_thread: 2 });
+  rec('tl_silk_leggings', 'tailoring', 195, 'silk_leggings', { silk_bolt: 3, fine_thread: 2 });
+  rec('tl_silk_slippers', 'tailoring', 205, 'silk_slippers', { silk_bolt: 2, fine_thread: 1 });
+  rec('tl_silk_bracers', 'tailoring', 210, 'silk_bracers', { silk_bolt: 2, fine_thread: 1 });
   rec('tl_ember_robe', 'tailoring', 215, 'embersilver_threaded_robe', { silk_bolt: 8, embersilver_bar: 2, fine_thread: 3 }, { rare: true });
   // ---- Artisan (v10.9): skill 225-295, levels 45-60
   rec('smelt_duskiron', 'mining', 225, 'duskiron_bar', { duskiron_ore: 1 });
   rec('smelt_moonsilver', 'mining', 260, 'moonsilver_bar', { moonsilver_ore: 1 }, { sk: [260, 275, 280, 285] });
-  rec('bs_deepstone_whetstone', 'blacksmithing', 225, 'deepstone_whetstone', { deepstone: 2 }, { sk: [225, 240, 252, 265] });
+  rec('bs_deepstone_whetstone', 'blacksmithing', 205, 'deepstone_whetstone', { deepstone: 2 }, { sk: [205, 225, 245, 265] }); // from 205: a smith arriving at 45 with 200-225 has work (issue #6)
   rec('bs_duskiron_sabatons', 'blacksmithing', 230, 'duskiron_sabatons', { duskiron_bar: 8, deepstone: 1 });
   rec('bs_duskiron_hauberk', 'blacksmithing', 250, 'duskiron_hauberk', { duskiron_bar: 12 });
-  rec('bs_duskiron_greatsword', 'blacksmithing', 260, 'duskiron_greatsword', { duskiron_bar: 10, deepstone: 2 });
-  rec('bs_moonforged_breastplate', 'blacksmithing', 280, 'moonforged_breastplate', { duskiron_bar: 16, moonsilver_bar: 2 });
-  rec('bs_moonforged_legplates', 'blacksmithing', 285, 'moonforged_legplates', { duskiron_bar: 14, moonsilver_bar: 2 });
+  rec('bs_duskiron_greatsword', 'blacksmithing', 260, 'duskiron_greatsword', { duskiron_bar: 8, deepstone: 2 });
+  rec('bs_duskiron_bracers', 'blacksmithing', 270, 'duskiron_bracers', { duskiron_bar: 6, deepstone: 1 }); // issue #6: a step between 260 and 280
+  rec('bs_moonforged_breastplate', 'blacksmithing', 280, 'moonforged_breastplate', { duskiron_bar: 12, moonsilver_bar: 1 });
+  rec('bs_moonforged_legplates', 'blacksmithing', 285, 'moonforged_legplates', { duskiron_bar: 11, moonsilver_bar: 1 });
   rec('bs_moonforged_blade', 'blacksmithing', 290, 'moonforged_blade', { moonsilver_bar: 4, duskiron_bar: 8 }, { rare: true });
   rec('bs_moonforged_hammer', 'blacksmithing', 295, 'moonforged_warhammer', { moonsilver_bar: 4, duskiron_bar: 8 }, { rare: true });
   rec('lw_thickhide_bracers', 'leatherworking', 225, 'thickhide_bracers', { thick_leather: 5, fine_thread: 1 });
@@ -479,13 +485,13 @@
   rec('lw_wildrunner_tunic', 'leatherworking', 280, 'wildrunner_tunic', { hardhide_leather: 14, fine_thread: 3 });
   rec('lw_wildrunner_leggings', 'leatherworking', 285, 'wildrunner_leggings', { hardhide_leather: 12, fine_thread: 3 });
   rec('lw_wildrunner_cloak', 'leatherworking', 290, 'wildrunner_cloak', { hardhide_leather: 10, frostpetal: 2 }, { rare: true });
-  rec('tl_duskweave_bolt', 'tailoring', 225, 'duskweave_bolt', { duskweave_cloth: 2 }, { sk: [225, 250, 262, 275] });
+  rec('tl_duskweave_bolt', 'tailoring', 200, 'duskweave_bolt', { duskweave_cloth: 2 }, { sk: [200, 225, 250, 275] }); // from 200, the trainer's requirement (issue #6)
   rec('tl_duskweave_gloves', 'tailoring', 235, 'duskweave_gloves', { duskweave_bolt: 2, fine_thread: 1 });
   rec('tl_duskweave_bag', 'tailoring', 240, 'duskweave_bag', { duskweave_bolt: 4, fine_thread: 2 });
-  rec('tl_duskweave_robe', 'tailoring', 250, 'duskweave_robe', { duskweave_bolt: 4, fine_thread: 2 });
-  rec('tl_duskweave_leggings', 'tailoring', 260, 'duskweave_leggings', { duskweave_bolt: 4, fine_thread: 2 });
-  rec('tl_starweave_robe', 'tailoring', 280, 'starweave_robe', { duskweave_bolt: 6, fine_thread: 3 });
-  rec('tl_starweave_trousers', 'tailoring', 285, 'starweave_trousers', { duskweave_bolt: 5, fine_thread: 3 });
+  rec('tl_duskweave_robe', 'tailoring', 250, 'duskweave_robe', { duskweave_bolt: 3, fine_thread: 2 });
+  rec('tl_duskweave_leggings', 'tailoring', 260, 'duskweave_leggings', { duskweave_bolt: 2, fine_thread: 2 });
+  rec('tl_starweave_robe', 'tailoring', 280, 'starweave_robe', { duskweave_bolt: 4, fine_thread: 3 });
+  rec('tl_starweave_trousers', 'tailoring', 285, 'starweave_trousers', { duskweave_bolt: 3, fine_thread: 3 });
   rec('tl_starweave_bag', 'tailoring', 295, 'starweave_bag', { duskweave_bolt: 8, moonsilver_bar: 1 }, { rare: true });
   rec('al_grand_healing', 'alchemy', 225, 'grand_healing_potion', { cinderbloom: 1, gloomcap: 1, sturdy_vial: 1 }); // the first Artisan recipe, so an alchemist at 225 has one
   rec('al_grand_mana', 'alchemy', 240, 'grand_mana_potion', { gloomcap: 1, sunveil: 1, sturdy_vial: 1 });

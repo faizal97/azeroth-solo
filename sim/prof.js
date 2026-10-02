@@ -161,7 +161,8 @@ function expertPace(gather, craft, o) {
     // and keeps a small stock of what the craft needs from the gathering skill (steel for a smith), grey or not
     const needs = new Set(Object.values(D.RECIPES).filter((r) => r.prof === craft).flatMap((r) => Object.keys(r.mats)));
     const stock = (r) => needs.has(r.makes) && G.countItem(r.makes) < 12;
-    const stages = [[gather, (r) => Object.keys(r.mats).some((m) => /_ore$/.test(m)), true]];
+    // and weaves all its cloth into bolts first (a craft's own materials), as a player does before picking a pattern (issue #6)
+    const stages = [[gather, (r) => Object.keys(r.mats).some((m) => /_ore$/.test(m)), true], [craft, (r) => D.ITEMS[r.makes].slot === 'mat', true]];
     for (let i = 0; i < 25; i++) stages.push([gather, stock, true], [craft, () => true, false]); // make, craft, again until nothing is left to make
     stages.push([gather, () => true, false]);
     for (const [pr, only, grey] of stages) for (let guard = 0; guard < 400; guard++) {
@@ -171,8 +172,8 @@ function expertPace(gather, craft, o) {
       if (!r) break; G.craft(r.id, 1); tick(3); room();
     }
   };
-  for (const [L, wild, hum] of BANDS) {
-    P.level = L; if (L >= o.rank[0]) for (const pr of [gather, craft]) if (G.profs()[pr].max < o.rank[1]) G.trainProf(pr);
+  const stage = (BANDS, rank) => { for (const [L, wild, hum] of BANDS) {
+    P.level = L; if (L >= rank[0]) for (const pr of [gather, craft]) if (G.profs()[pr].max < rank[1]) G.trainProf(pr);
     const t0 = t;
     if (gather === 'skinning' || craft === 'tailoring') { // an hour of fighting: beasts for leather, humanoids for cloth
       const want = (gather === 'skinning' ? [[wild, 'beast']] : []).concat(craft === 'tailoring' ? [[hum, 'humanoid']] : []);
@@ -192,18 +193,15 @@ function expertPace(gather, craft, o) {
     room(); craftAll();
     if (process.env.PDBG && craft === 'blacksmithing') { const p2 = G.profs()[craft]; console.log('   recipes', G.recipesFor(craft).filter((x) => x.sk[0] >= 150 || G.skillColor(p2.skill, x.sk) < 3).map((x) => `${x.id}:c${G.skillColor(p2.skill, x.sk)}:n${G.craftable(x.id)}`).join(' ')); }
     if (process.env.PDBG) console.log(`  L${L} ${gather} ${G.profs()[gather].skill} ${craft} ${G.profs()[craft].skill} · ${P.bags.filter((b) => b.item.slot === 'mat').map((b) => b.item.id + ' ' + b.n).join(', ')}`);
-  }
-  return [gather, craft].map((pr) => G.profs()[pr].skill);
+  } return [gather, craft].map((pr) => G.profs()[pr].skill); };
+  // the path a player plays (issue #6): Expert 25 -> 45, then the same character on to Artisan 45 -> 60
+  return [stage(EXPERT_BANDS, [30, 225]), stage(ARTISAN_BANDS, [45, 300])];
 }
 for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['skinning', 'leatherworking'], ['skinning', 'tailoring']]) {
-  const [gs, cs] = expertPace(g, c);
-  console.log(`Expert pace, ${g} + ${c}: level 45 with ${g} ${gs}, ${c} ${cs}`);
-  ok(gs >= 200 && cs >= 195, `${g} + ${c} reach Expert's top by level 45 (${gs}, ${cs})`);
-}
-for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['skinning', 'leatherworking'], ['skinning', 'tailoring']]) {
-  const [gs, cs] = expertPace(g, c, { from: 45, skill: 225, rank: [45, 300], bands: ARTISAN_BANDS });
-  console.log(`Artisan pace, ${g} + ${c}: level 60 with ${g} ${gs}, ${c} ${cs}`);
-  ok(gs >= 285 && cs >= 275, `${g} + ${c} reach about 300 by level 60 (${gs}, ${cs})`);
+  const [[gs, cs], [gs2, cs2]] = expertPace(g, c);
+  console.log(`Pace, ${g} + ${c}: level 45 with ${g} ${gs}, ${c} ${cs} · level 60 with ${g} ${gs2}, ${c} ${cs2}`);
+  ok(gs >= 200 && cs >= 200, `${g} + ${c} can train Artisan (200) on reaching level 45 (${gs}, ${cs})`);
+  ok(gs2 >= 290 && cs2 >= 290, `${g} + ${c} reach about 300 by level 60 (${gs2}, ${cs2})`); // issue #6: no grind after 60 for any craft
 }
 // quest marks (v10.9 fix): once a kill objective is done, its monster is no longer one your quests need
 {
@@ -363,7 +361,7 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
 {
   const art = Object.values(D.RECIPES).filter((r) => r.sk[0] >= 225);
   ok(art.every((r) => D.ITEMS[r.makes] && Object.keys(r.mats).every((m) => D.ITEMS[m])), 'every Artisan recipe makes and uses real items');
-  ok(['mining', 'blacksmithing', 'leatherworking', 'tailoring', 'alchemy', 'cooking'].every((p) => art.some((r) => r.prof === p && r.sk[0] === 225)), 'each craft has a recipe right at 225');
+  ok(['mining', 'blacksmithing', 'leatherworking', 'tailoring', 'alchemy', 'cooking'].every((p) => Object.values(D.RECIPES).some((r) => r.prof === p && r.sk[0] >= 200 && r.sk[0] <= 225 && D.ITEMS[r.makes] && (D.ITEMS[r.makes].lvl || 50) >= 45)), 'each craft has an Artisan recipe it can start by 225 (issue #6: from 200, the trainer\'s requirement)');
   ok(art.filter((r) => r.rare).length >= 6, 'at least six Artisan recipes are rare drops');
   G.newGame({ name: 'S', cls: 'warrior', race: 'human' }); const P = G.S.player; P.level = 60; P.money = 1e7; P.place = 'stormwind';
   P.bagsEq = [0, 1, 2, 3].map(() => G.copyItem('woolen_bag'));
