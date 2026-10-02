@@ -1934,13 +1934,14 @@
     if (!upRef) {
       const U = D.UPGRADE, avg = (a) => a.reduce((x, y) => x + y, 0) / a.length, lootOf = (dk) => { const s = new Set(); for (const p of D.DUNGEONS[dk].pulls) for (const m of p.mobs) for (const id of (D.MOBS[m].loot || [])) if (D.ITEMS[id]) s.add(id); return [...s].map((id) => D.ITEMS[id]); };
       const top = {}, best = {};
-      for (const x of lootOf(U.raid)) (top[upKey(x)] = top[upKey(x)] || []).push(G.itemPoints(x));
-      for (const dk in D.DUNGEONS) if (dk !== U.raid) for (const x of lootOf(dk)) if ((x.lvl || 0) >= U.minLvl && U.cap[x.q]) { const k = upKey(x); best[k] = Math.max(best[k] || 0, G.itemPoints(x)); }
+      for (const x of lootOf(U.raid)) if (!x.effect) (top[upKey(x)] = top[upKey(x)] || []).push(G.itemPoints(x)); // effect items pay stats for their effect: never a family's ceiling
+      for (const dk in D.DUNGEONS) if (dk !== U.raid) for (const x of lootOf(dk)) if (!x.effect && (x.lvl || 0) >= U.minLvl && U.cap[x.q]) { const k = upKey(x); best[k] = Math.max(best[k] || 0, G.itemPoints(x)); }
       const lead = avg(Object.keys(best).filter((k) => top[k] && best[k] > 0).map((k) => avg(top[k]) / best[k]));
       upRef = {}; for (const k in best) upRef[k] = top[k] ? avg(top[k]) : best[k] * lead; for (const k in top) upRef[k] = avg(top[k]);
       upRef['*lead'] = lead;
     }
-    return upRef[upKey(it)] || G.itemPoints(it.base || it) * upRef['*lead']; // a family seen nowhere: its own power, raised by the lead
+    const fx = it.effect && D.EFFECTS && D.EFFECTS[it.effect] ? 1 - D.effectCost(it.effect) : 1; // an effect item's ceiling pays the same share as its drop did
+    return upRef[upKey(it)] ? upRef[upKey(it)] * fx : G.itemPoints(it.base || it) * upRef['*lead']; // a family seen nowhere: its own power, raised by the lead
   };
   G.upgradeRef.reset = () => { upRef = null; }; // when D.UPGRADE.raid moves (sims)
   const upBase = (it) => it.base || { stats: Object.assign({}, it.stats), armor: it.armor, sp: it.sp, dmg: it.dmg && it.dmg.slice() };
@@ -1956,12 +1957,14 @@
     return { ok: true, room, pts, next, pct: pc(pts), nextPct: pc(next), capPct: Math.round(U.cap[it.q] * 100), cost: room ? Math.max(1, Math.round(((next - pts) / ref) * 100 * U.perPct)) : 0 };
   };
   // the item at a given power (stat points); its own power or less gives back the item as it dropped
+  G.FX_SCALE_CAP = 1.5;
   G.upgradedCopy = function (it, pw) {
     const b = upBase(it), p0 = G.itemPoints(b), inf = G.upgradeInfo(it), out = JSON.parse(JSON.stringify(it));
     const capPts = inf.ok ? D.UPGRADE.cap[it.q] * G.upgradeRef(it) : p0;
     pw = Math.min(pw, Math.max(capPts, it.pw || 0));
-    if (!inf.ok || pw <= p0 + 1e-9) { if (it.base) { Object.assign(out, JSON.parse(JSON.stringify(b))); delete out.base; delete out.pw; } return out; }
+    if (!inf.ok || pw <= p0 + 1e-9) { if (it.base) { Object.assign(out, JSON.parse(JSON.stringify(b))); delete out.base; delete out.pw; delete out.fxScale; } return out; }
     const f = pw / p0;
+    if (G.effectOf(it)) out.fxScale = Math.round(Math.min(G.FX_SCALE_CAP, f) * 100) / 100; // an item effect grows with each step, as the stats do (v10.10), up to the cap the engine uses
     out.base = JSON.parse(JSON.stringify(b)); out.pw = Math.round(pw * 100) / 100;
     out.stats = {}; for (const k in b.stats || {}) out.stats[k] = Math.round(b.stats[k] * f);
     if (b.sp) out.sp = Math.round(b.sp * f);

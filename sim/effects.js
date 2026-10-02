@@ -15,13 +15,23 @@ if (process.env.TUNE) { const T = JSON.parse(process.env.TUNE); for (const k in 
 let bad = 0; const ok = (c, m) => { if (!c) { bad++; console.log('FAIL ' + m); } };
 const pct = (a, b) => (b ? (a / b - 1) * 100 : 0);
 
-// a test piece at level L in the effect item's slot: plain (the full budget) or with the effect (it pays its effect's cost)
-const proto = { opening_cut: 'cutpurse_gloves', echoing_mend: 'ashen_mercy_robe', turning_guard: 'sandguard_girdle', stubborn_blood: 'fenheart_band' };
+// a test piece at level L in the effect's shape: plain (the full budget) or with the effect (it pays its effect's cost)
+const SHAPE = {
+  opening_cut: { slot: 'hands', atype: 'leather', st: ['agi', 'str'] }, kindled_edge: { slot: 'hands', atype: 'leather', st: ['agi', 'str'] },
+  chase_the_next: { slot: 'feet', atype: 'leather', st: ['agi', 'str'] }, steady_fuse: { slot: 'wrist', atype: 'leather', st: 'main' },
+  glass_heart: { slot: 'finger', st: 'main' },
+  echoing_mend: { slot: 'chest', atype: 'cloth', st: ['int', 'spi'] }, brimming_cup: { slot: 'legs', atype: 'cloth', st: ['sp', 'int'] }, wellspring: { slot: 'hands', atype: 'cloth', st: ['sp', 'int'] },
+  turning_guard: { slot: 'waist', atype: 'mail', st: ['sta', 'str'] }, spiteful_hide: { slot: 'chest', atype: 'mail', st: ['sta', 'str'] },
+  stubborn_blood: { slot: 'finger', st: ['agi', 'str'] }, tithe_of_battle: { slot: 'back', st: 'main' },
+};
+// 'main': the stats the testing class uses, so the effect's cost is what that class really gives up
+const MAIN = (cls) => (['mage', 'warlock', 'priest', 'druid', 'shaman', 'bard'].includes(cls) ? ['int', 'sp'] : ['agi', 'str']);
+let curCls = null;
 function piece(effect, L, withFx) {
-  const P = D.ITEMS[proto[effect]], full = Math.round(L * 0.55 + 2) + 4, budget = withFx ? Math.round(full * (1 - D.effectCost(effect))) : full; // a dungeon blue's budget
-  const keys = Object.keys(P.stats), stats = {}; let left = budget; keys.forEach((k, i) => { const v = i === keys.length - 1 ? left : Math.round(budget / keys.length); stats[k] = v; left -= v; });
-  const armor = P.slot === 'finger' ? 0 : Math.round((D.SLOT_ARMOR[P.slot] || 3) * (P.atype ? D.GEAR_BASES[P.atype].arm : 0.3) * (L + 2) * 0.9 * 1.22);
-  return Object.assign({}, P, { id: proto[effect] + (withFx ? '' : '_plain'), lvl: L, stats, armor, effect: withFx ? effect : undefined });
+  const P0 = SHAPE[effect], P = P0.st === 'main' ? Object.assign({}, P0, { st: MAIN(curCls) }) : P0, full = Math.round(L * 0.55 + 2) + 4, budget = withFx ? Math.round(full * (1 - D.effectCost(effect))) : full; // a dungeon blue's budget
+  const stats = {}; let left = budget; P.st.forEach((k, i) => { const v = i === P.st.length - 1 ? left : Math.round(budget / P.st.length); stats[k] = v; left -= v; });
+  const armor = P.slot === 'finger' || P.slot === 'back' ? (P.slot === 'back' ? Math.round(3 * 0.3 * (L + 2) * 0.9 * 1.22) : 0) : Math.round((D.SLOT_ARMOR[P.slot] || 3) * (P.atype ? D.GEAR_BASES[P.atype].arm : 0.3) * (L + 2) * 0.9 * 1.22);
+  return { id: effect + (withFx ? '_fx' : '_plain'), name: 'Test', slot: P.slot, atype: P.atype, q: 3, lvl: L, stats, armor, effect: withFx ? effect : undefined };
 }
 function unit(cls, role, L, pieces, i) {
   seed(7000 + i); const c = G.botChar({ name: cls + i, cls, race: 'human', level: L, skill: 0.8, role }); c.role = role;
@@ -47,35 +57,62 @@ const CASES = {
   // (solo: how long you last in a pull you can't win, the bad pull that a survival effect is for)
   solo: (fx, L, i) => { const me = unit(fx.cls, 'dps', L, fx.pieces, i); seed(i); const C = E.fight([me], [mob('defias_thug', L + 1, { hp: 50, dmg: 1.4 }), mob('defias_thug', L, { hp: 50, dmg: 1.4 })], { puller: me }); run(C, 240); return C.t; },
   healed: (fx, L, i) => { const me = unit(fx.cls, 'dps', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1), h = unit('priest', 'healer', L, [], i + 2); seed(i); const C = E.fight([t, me, h], [mob('garr', L, { hp: 30, dmg: 0.5 })], { puller: t }); run(C, 120); return (C.tot && C.tot[me.uid] || {}).dmg || 0; },
+
+  // more cases for part 2 (#22)
+  shorttrash: (fx, L, i) => { const me = unit(fx.cls, 'dps', L, fx.pieces, i); seed(i); const C = E.fight([me], [0, 1, 2].map(() => mob('defias_thug', L, { hp: 0.7, dmg: 0.35 })), { puller: me }); run(C, 120); const d = (C.tot && C.tot[me.uid] || {}).dmg || 0; return d / Math.max(1, C.t); }, // monsters that die before a burn finishes
+  highcrit: (fx, L, i) => { const me = unit(fx.cls, 'dps', L, fx.pieces, i); me.auras.push({ id: 'test_crit', stats: { critPct: 25 }, until: 1e9 }); E.recalc(me, true); seed(i); const C = E.fight([me], [mob('defias_thug', L, { hp: 60, dmg: 0 })], { puller: me }); run(C, 180); return (C.tot && C.tot[me.uid] || {}).dmg || 0; }, // a build that crits often
+  tankpack: (fx, L, i) => { const t = unit(fx.cls, 'tank', L, fx.pieces, i); seed(i); const C = E.fight([t], [0, 1, 2].map(() => mob('defias_thug', L, { hp: 4, dmg: 0.5 })), { puller: t }); run(C, 90); return (C.tot && C.tot[t.uid] || {}).dmg || 0; },
+  spiky: (fx, L, i) => { const h = unit(fx.cls, 'healer', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1); seed(i); const C = E.fight([t, h], [mob('hogger', L, { hp: 200, dmg: 3.2 })], { puller: t }); run(C, 240); const r = C.tot && C.tot[h.uid] || {}, sh = ((C.fx || {})[h.uid] || {}); return (r.heal || 0) + Object.values(sh).reduce((a, e) => a + (e.kind === 'shield' ? e.amount : 0), 0); },
+  steady: (fx, L, i) => { const h = unit(fx.cls, 'healer', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1); seed(i); const C = E.fight([t, h], [0, 1, 2, 3].map(() => mob('defias_thug', L, { hp: 60, dmg: 0.9 })), { puller: t }); run(C, 240); const r = C.tot && C.tot[h.uid] || {}, sh = ((C.fx || {})[h.uid] || {}); return (r.heal || 0) + Object.values(sh).reduce((a, e) => a + (e.kind === 'shield' ? e.amount : 0), 0); },
+  shortheal: (fx, L, i) => { const h = unit(fx.cls, 'healer', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1), d1 = unit('rogue', 'dps', L, [], i + 2); seed(i); const C = E.fight([t, h, d1], [mob('garr', L, { hp: 200, dmg: 1.6 })], { puller: t }); run(C, 60); return (C.tot && C.tot[h.uid] || {}).heal || 0; },
 };
 const PLAN = [
   { effect: 'opening_cut', classes: ['rogue', 'warrior'], wins: ['trash'], loses: ['boss'] },
   { effect: 'echoing_mend', classes: ['priest', 'druid'], wins: ['groupwide'], loses: ['tankonly'] },
   { effect: 'turning_guard', classes: ['warrior', 'paladin'], wins: ['meleeboss'], loses: ['casterboss'] },
   { effect: 'stubborn_blood', classes: ['warrior', 'rogue'], wins: ['solo'], loses: ['healed'] },
+  { effect: 'kindled_edge', classes: ['rogue', 'warrior'], wins: ['boss'], loses: ['shorttrash'] },
+  { effect: 'chase_the_next', classes: ['rogue', 'warrior'], wins: ['trash'], loses: ['boss'] },
+  { effect: 'steady_fuse', classes: ['mage', 'warrior'], wins: ['boss'], loses: ['highcrit'] },
+  { effect: 'glass_heart', classes: ['rogue', 'warrior'], wins: ['healed'], loses: ['solo'] },
+  { effect: 'brimming_cup', classes: ['priest', 'druid'], wins: ['spiky'], loses: ['steady'] },
+  { effect: 'wellspring', classes: ['priest', 'druid'], wins: ['groupwide'], loses: ['shortheal'] },
+  { effect: 'spiteful_hide', classes: ['warrior', 'paladin'], wins: ['tankpack'], loses: ['casterboss'] },
+  { effect: 'tithe_of_battle', classes: ['warlock'], wins: ['boss'], loses: ['boss'], losesClasses: ['mage'] },
 ];
-const measure = (cs, cls, L, pieces) => { let s = 0; for (let i = 0; i < N; i++) s += CASES[cs]({ cls, pieces }, L, i); return s / N; };
+const ONLY = process.env.ONLY ? process.env.ONLY.split(',') : null;
+const measure = (cs, cls, L, pieces) => { curCls = cls; let s = 0; for (let i = 0; i < N; i++) s += CASES[cs]({ cls, pieces }, L, i); return s / N; };
 const all = [];
 for (const P of PLAN) {
+  if (ONLY && !ONLY.includes(P.effect)) continue;
   const res = { wins: [], loses: [] };
-  for (const kind of ['wins', 'loses']) for (const cs of P[kind]) for (const cls of P.classes) for (const L of [20, 40, 60]) {
-    const plain = measure(cs, cls, L, [piece(P.effect, L, false)]), withFx = measure(cs, cls, L, [piece(P.effect, L, true)]), d = pct(withFx, plain);
+  for (const kind of ['wins', 'loses']) for (const cs of P[kind]) for (const cls of (kind === 'loses' && P.losesClasses) || P.classes) for (const L of [20, 40, 60]) {
+    curCls = cls; const plain = measure(cs, cls, L, [piece(P.effect, L, false)]); curCls = cls; const withFx = measure(cs, cls, L, [piece(P.effect, L, true)]), d = pct(withFx, plain);
     res[kind].push({ cs, cls, L, d }); all.push({ effect: P.effect, cs, cls, L, d });
   }
   const best = Math.max(...res.wins.map((x) => x.d), ...res.loses.map((x) => x.d)), win = Math.max(...res.wins.map((x) => x.d)), lose = Math.min(...res.loses.map((x) => x.d));
   console.log(`${D.EFFECTS[P.effect].name.padEnd(15)} wins ${res.wins.map((x) => `${x.cs} ${x.cls} ${x.L}: ${x.d >= 0 ? '+' : ''}${x.d.toFixed(1)}%`).join(', ')}`);
   console.log(`${''.padEnd(15)} loses ${res.loses.map((x) => `${x.cs} ${x.cls} ${x.L}: ${x.d >= 0 ? '+' : ''}${x.d.toFixed(1)}%`).join(', ')}`);
+  if (D.EFFECTS[P.effect].review) { console.log(`${''.padEnd(15)} (under review by the game designer: reported, not gated)`); continue; }
   ok(win >= 2, `${P.effect} wins somewhere: at least +2% in a wins case (best ${win.toFixed(1)}%)`);
   ok(lose <= -2, `${P.effect} loses somewhere: at least -2% in a loses case (worst ${lose.toFixed(1)}%)`);
   ok(best <= 8, `${P.effect} is not too strong: at most +8% in its best case (${best.toFixed(1)}%)`);
 }
-// the ceiling holds: two different effects in the case that suits both (a damage dealer levelling solo with Opening Cut and
-// Stubborn Blood) stay within +10% of plain gear
-for (const L of [20, 40, 60]) {
-  const plain = measure('solo', 'rogue', L, [piece('opening_cut', L, false), piece('stubborn_blood', L, false)]);
-  const mixed = measure('solo', 'rogue', L, [piece('opening_cut', L, true), piece('stubborn_blood', L, true)]), d = pct(mixed, plain);
-  console.log(`mixed (Opening Cut + Stubborn Blood), solo rogue ${L}: ${d >= 0 ? '+' : ''}${d.toFixed(1)}%`);
-  ok(d <= 10, `the best mix of effects stays within +10% of plain gear (solo rogue ${L}: ${d.toFixed(1)}%)`);
+// the ceiling holds: different effects worn together in the case that suits them stay within +10% of plain gear
+const MIXES = [
+  { name: 'Opening Cut + Stubborn Blood', cs: 'solo', cls: 'rogue', fx: ['opening_cut', 'stubborn_blood'] },
+  { name: 'Opening Cut + Chase the Next + Glass Heart', cs: 'trash', cls: 'rogue', fx: ['opening_cut', 'chase_the_next', 'glass_heart'] },
+  { name: 'Kindled Edge + Steady Fuse + Glass Heart', cs: 'boss', cls: 'warrior', fx: ['kindled_edge', 'steady_fuse', 'glass_heart'] },
+  { name: 'Echoing Mend + Brimming Cup + Wellspring', cs: 'groupwide', cls: 'priest', fx: ['echoing_mend', 'brimming_cup', 'wellspring'] },
+];
+for (const M of MIXES) {
+  if (ONLY && !M.fx.some((k) => ONLY.includes(k))) continue;
+  if (M.fx.some((k) => D.EFFECTS[k].review)) continue; // a mix with an effect under review waits for it
+  for (const L of [20, 40, 60]) {
+    curCls = M.cls; const plain = measure(M.cs, M.cls, L, M.fx.map((k) => piece(k, L, false))); curCls = M.cls; const mixed = measure(M.cs, M.cls, L, M.fx.map((k) => piece(k, L, true))), d = pct(mixed, plain);
+    console.log(`mixed (${M.name}), ${M.cs} ${M.cls} ${L}: ${d >= 0 ? '+' : ''}${d.toFixed(1)}%`);
+    ok(d <= 10, `the best mix of effects stays within +10% of plain gear (${M.name}, ${M.cs} ${M.cls} ${L}: ${d.toFixed(1)}%)`);
+  }
 }
 console.log(bad ? `${bad} failures` : 'effects sim OK');
 process.exit(bad ? 1 : 0);

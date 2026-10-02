@@ -1805,7 +1805,7 @@
       // an item effect (v10.10): its rule with real numbers at the item's level, "counts once", and what it did last run
       const F = G.effectOf(it);
       if (F) {
-        t.append(h('div', { class: 'eff' }, h('b', null, `Effect: ${F.name}. `), F.desc(it.lvl || 1)));
+        t.append(h('div', { class: 'eff' }, h('b', null, `Effect: ${F.name}. `), F.desc(it.lvl || 1, it.fxScale || 1)));
         if (!who && Object.values(G.S.player.equip || {}).some((x) => x && x !== it && x.effect === it.effect)) t.append(h('div', { class: 'eff dim' }, `You already have ${F.name}. It counts once.`));
         const L = !who && (G.S.player.fxLast || {})[it.effect];
         if (L) t.append(h('div', { class: 'dim' }, lastRunText(L)));
@@ -1890,6 +1890,10 @@
     if (!L.amount) return `${when}: it didn't trigger.`;
     if (L.kind === 'heal') return `${when}: ${n(L.amount)} healing${of(L.amount, L.heal)}.`;
     if (L.kind === 'shield') return `${when}: ${n(L.amount)} damage absorbed${L.taken > 0 ? `, ${Math.round((L.amount / L.taken) * 100)}% of what hit you` : ''}.`;
+    if (L.kind === 'mana') return `${when}: ${n(L.amount)} mana back.`;
+    if (L.kind === 'power') return `${when}: ${n(L.amount)} rage or energy back.`;
+    if (L.kind === 'kills') return `${when}: haste after ${n(L.amount)} kill${L.amount === 1 ? '' : 's'}.`;
+    if (L.kind === 'crits') return `${when}: ${n(L.amount)} sure critical hit${L.amount === 1 ? '' : 's'}.`;
     return `${when}: ${n(L.amount)} damage${of(L.amount, L.dmg)}.`;
   }
   // Short tag for lists: ▲ upgrade, or why you can't use it.

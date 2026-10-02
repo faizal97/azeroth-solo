@@ -82,8 +82,8 @@
     else if (char.cls === 'druid' && s.bear) ap = 3 * L + 2 * s.str - 20;
     else ap = s.str - 10;
     s.apTotal = Math.max(0, ap + s.ap);
-    s.crit = 5 + s.agi / 20 + TM.crit;
-    s.spellCrit = 5 + s.int / 60 + TM.spellCrit;
+    s.crit = 5 + s.agi / 20 + TM.crit + (s.critPct || 0); // critPct: a flat crit chance from a buff (v10.10)
+    s.spellCrit = 5 + s.int / 60 + TM.spellCrit + (s.critPct || 0);
     s.dodgeTotal = 5 + s.agi / 20 + s.dodge;
     let w = weapon || { dmg: [1, 2], speed: 2.0 };
     if (s.bear) { const dps = 2 + L * 0.8; w = { dmg: [dps * 2.5 * 0.8, dps * 2.5 * 1.2], speed: 2.5 }; }
@@ -396,6 +396,8 @@
     if (src.kind === 'pet' && C.units[src.owner] && C.units[src.owner].race === 'orc') amount *= 1.05;
     // talents: school and ability damage for the attacker, damage taken for the target
     if (src.char) { const sm = tmOf(src); amount *= 1 + ((sm.school[o.school || 'physical'] || 0) + (o.ab ? sm.abilDmg[o.ab] || 0 : 0)) / 100; }
+    let ghExtra = 0; const ghS = !o.effect && fxOf(src, 'glass_heart'), ghT = fxOf(tgt, 'glass_heart'); // Glass Heart (v10.10)
+    if (ghS) { ghExtra = D.EFFECTS.glass_heart.dmg; amount *= 1 + ghExtra; } if (ghT) amount *= 1 + D.EFFECTS.glass_heart.taken;
     if (tgt.char) { const tt = tmOf(tgt); if (tt.taken) amount *= 1 - tt.taken / 100; }
     let dmg = Math.max(1, Math.round(amount));
     if (o.school === 'physical' || !o.school) {
@@ -406,10 +408,10 @@
     let absorbed = 0;
     for (const sh of tgt.auras.filter((a) => a.absorb > 0)) { // a priest's shield, or an effect's guard (v10.10)
       if (dmg <= 0) break; const take = Math.min(sh.absorb, dmg); sh.absorb -= take; dmg -= take; absorbed += take;
-      if (sh.effect) fxDone(C, tgt, sh.effect, take, 'shield');
+      if (sh.effect) fxDone(C, (sh.src != null && C.units[sh.src]) || tgt, sh.effect, take, 'shield'); // credited to whoever's effect raised it
     }
     if (absorbed) tgt.auras = tgt.auras.filter((a) => !(a.absorb != null && a.absorb <= 0));
-    tgt.hp -= dmg; tally(C, src, 'dmg', dmg); tally(C, tgt, 'taken', dmg + absorbed); if (o.effect) fxDone(C, src, o.effect, dmg, 'damage');
+    tgt.hp -= dmg; tally(C, src, 'dmg', dmg); tally(C, tgt, 'taken', dmg + absorbed); if (o.effect) fxDone(C, src, o.effect, dmg, 'damage'); else if (ghExtra) fxDone(C, src, 'glass_heart', dmg * ghExtra / (1 + ghExtra), 'damage');
     if (C.opts.omens && tgt.side === 'enemy' && !tgt.frenzy && tgt.hp > 0 && tgt.hp < tgt.maxHp * ((root.TRIALS && root.TRIALS.OMENS.frenzied) || { below: 0.3 }).below && C.opts.omens.includes('frenzied')) { tgt.frenzy = true; ev(C, { type: 'emote', uid: tgt.uid, text: `${tgt.name} goes into a frenzy!` }); }
     // threat
     if (tgt.side === 'enemy') {
@@ -433,11 +435,13 @@
     // item effects on this hit (v10.10)
     if (!o.effect) {
       const oc = !o.tick && tgt.side !== src.side && fxOf(src, 'opening_cut'); // the first hit on each enemy
-      if (oc && !tgt.dead) { tgt.fxFirst = tgt.fxFirst || {}; if (!tgt.fxFirst[src.uid]) { tgt.fxFirst[src.uid] = 1; dealDamage(C, src, tgt, D.EFFECTS.opening_cut.bonus(oc.lvl), { school: o.school || 'physical', effect: 'opening_cut', fx: 'effect' }); } }
+      if (oc && !tgt.dead) { tgt.fxFirst = tgt.fxFirst || {}; if (!tgt.fxFirst[src.uid]) { tgt.fxFirst[src.uid] = 1; dealDamage(C, src, tgt, D.EFFECTS.opening_cut.bonus(oc.lvl, oc.f), { school: o.school || 'physical', effect: 'opening_cut', fx: 'effect' }); } }
+      const ke = o.crit && !o.tick && tgt.side !== src.side && !tgt.dead && fxOf(src, 'kindled_edge'), KE = ke && D.EFFECTS.kindled_edge; // a crit sets the target smouldering
+      if (ke) addAura(C, tgt, { id: 'kindled_edge', name: KE.name, icon: KE.icon, effect: 'kindled_edge', item: ke.item, desc: KE.desc(ke.lvl, ke.f), until: C.t + KE.dur, every: KE.every, next: C.t + KE.every, dot: KE.tick(ke.lvl, ke.f), school: 'fire', src: src.uid, ab: null });
       const sb = fxOf(tgt, 'stubborn_blood'), SB = sb && D.EFFECTS.stubborn_blood; // falling low heals you over time
       if (sb && tgt.hp < tgt.maxHp * SB.below && fxReady(C, tgt, 'stubborn_blood', SB.icd)) {
-        const per = (tgt.maxHp * SB.pct) / SB.dur;
-        addAura(C, tgt, { id: 'stubborn_blood', name: SB.name, icon: SB.icon, effect: 'stubborn_blood', item: sb.item, desc: SB.desc(sb.lvl), until: C.t + SB.dur, hot: per, every: 1, next: C.t + 1, src: tgt.uid, ab: null });
+        const per = (tgt.maxHp * SB.pct * sb.f) / SB.dur;
+        addAura(C, tgt, { id: 'stubborn_blood', name: SB.name, icon: SB.icon, effect: 'stubborn_blood', item: sb.item, desc: SB.desc(sb.lvl, sb.f), until: C.t + SB.dur, hot: per, every: 1, next: C.t + 1, src: tgt.uid, ab: null });
         ev(C, { type: 'proc', src: tgt.uid, key: 'stubborn_blood', effect: true });
       }
     }
@@ -460,11 +464,16 @@
     ev(C, { type: 'heal', src: src.uid, tgt: tgt.uid, amount: done, over: Math.round(amount) - done, crit: !!(o && o.crit), ab: o && o.ab, fx: o && o.effect ? 'effect' : null });
     tally(C, src, 'heal', done);
     if (o && o.effect) fxDone(C, src, o.effect, done, 'heal');
+    const over = Math.round(amount) - done, bc = over > 0 && !(o && o.effect) && fxOf(src, 'brimming_cup'), BC = bc && D.EFFECTS.brimming_cup; // overhealing into a shield (v10.10)
+    if (bc) { const old = tgt.auras.find((a) => a.id === 'brimming_cup'), add = over * BC.pct, cap = BC.cap(bc.lvl, bc.f), ab = Math.min(cap, ((old && old.absorb) || 0) + add); addAura(C, tgt, { id: 'brimming_cup', name: BC.name, icon: BC.icon, effect: 'brimming_cup', item: bc.item, desc: BC.desc(bc.lvl, bc.f), until: C.t + BC.dur, absorb: ab, src: src.uid }); }
+    const ws = o && o.crit && o.ab && !o.tick && src && src.resType === 'mana' && fxOf(src, 'wellspring'), A0 = ws && D.ABILITIES[o.ab]; // a heal crit refunds mana (v10.10)
+    if (A0) { const back = Math.min(src.maxRes - src.res, abCost(A0, src) * D.EFFECTS.wellspring.refund * ws.f); if (back > 0) { src.res += back; fxDone(C, src, 'wellspring', back, 'mana'); } }
+    if (o && o.effect) { /* an effect's own heal does not echo */ }
     else if (src && o && o.ab && !o.tick) { // Echoing Mend: a direct heal can also land on the most hurt other ally (v10.10)
       const em = fxOf(src, 'echoing_mend'), EM = em && D.EFFECTS.echoing_mend;
       if (em && Math.random() < EM.chance) {
         const other = alive(src.side === 'ally' ? C.allies : C.enemies).filter((a) => a !== tgt && a.hp < a.maxHp).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
-        if (other) heal(C, src, other, amount * EM.pct, { effect: 'echoing_mend' });
+        if (other) heal(C, src, other, amount * EM.pct * em.f, { effect: 'echoing_mend' });
       }
     }
     return done;
@@ -476,7 +485,7 @@
     const out = {};
     for (const s in (char && char.equip) || {}) {
       const it = char.equip[s], F = it && it.effect && D.EFFECTS && D.EFFECTS[it.effect]; if (!F) continue;
-      const L = it.lvl || 1; if (!out[it.effect] || out[it.effect].lvl < L) out[it.effect] = { key: it.effect, lvl: L, item: it.name };
+      const L = it.lvl || 1, f = Math.min(1.5, it.fxScale || 1) /* G.FX_SCALE_CAP */; if (!out[it.effect] || out[it.effect].lvl * out[it.effect].f < L * f) out[it.effect] = { key: it.effect, lvl: L, f, item: it.name };
     }
     return out;
   };
@@ -490,6 +499,8 @@
   function kill(C, u, by) {
     u.dead = true; u.hp = 0; u.cast = null; u.auras = u.auras.filter((a) => a.keep); // a flask stays through death (v10.9)
     ev(C, { type: 'die', uid: u.uid, by: by && by.uid });
+    const ch = by && by.side !== u.side && fxOf(by, 'chase_the_next'), CH = ch && D.EFFECTS.chase_the_next; // a kill gives haste (v10.10)
+    if (ch) { addAura(C, by, { id: 'chase_the_next', name: CH.name, icon: CH.icon, effect: 'chase_the_next', item: ch.item, desc: CH.desc(ch.lvl, ch.f), until: C.t + CH.dur, stats: { haste: CH.haste * ch.f } }); fxDone(C, by, 'chase_the_next', 1, 'kills'); }
     if (u.side === 'enemy' && u.focus && C.opts.omens && C.opts.omens.includes('vengeful')) { const rest = C.enemies.filter((x) => !x.dead && x !== u); for (const x of rest) x.vengeance = true; if (rest.length) ev(C, { type: 'emote', uid: rest[0].uid, text: 'The pull swears vengeance!' }); }
     if (u.side === 'enemy' && C.opts.omens && C.opts.omens.includes('volatile') && root.TRIALS) { const VO = root.TRIALS.OMENS.volatile; (C.blasts = C.blasts || []).push({ t: C.t + VO.delay, name: u.name }); ev(C, { type: 'emote', uid: u.uid, text: `${u.name} starts to glow...` }); }
     if (u.side === 'enemy' && C.opts.omens && C.opts.omens.includes('rallying')) { // Rallying: the rest of the pull heal and hit harder
@@ -505,6 +516,8 @@
   }
 
   // Melee swing (auto-attack or weapon ability)
+  // Steady Fuse (v10.10): every so many seconds in combat, the next hit is a sure crit
+  function fuse(C, u) { const F = C && fxOf(u, 'steady_fuse'); if (!F) return false; if (u.fuseAt == null) u.fuseAt = C.t; if (C.t - u.fuseAt < D.EFFECTS.steady_fuse.every) return false; u.fuseAt = C.t; fxDone(C, u, 'steady_fuse', 1, 'crits'); return true; }
   function meleeRoll(C, src, tgt) {
     const r = Math.random() * 100;
     const miss = 5 + Math.max(0, levelDiff(src, tgt)) * 1;
@@ -513,7 +526,7 @@
     if (r < miss) return 'miss';
     if (r < miss + dodge) return 'dodge';
     if (r < miss + dodge + crit) return 'crit';
-    return 'hit';
+    return fuse(C, src) ? 'crit' : 'hit';
   }
 
   function weaponDamage(u) {
@@ -539,7 +552,7 @@
       const tg = res === 'dodge' && !o.ranged && fxOf(tgt, 'turning_guard'), TG = tg && D.EFFECTS.turning_guard; // a dodge raises a guard (v10.10)
       if (tg && fxReady(C, tgt, 'turning_guard', TG.icd)) {
         tgt.auras = tgt.auras.filter((a) => a.id !== 'turning_guard');
-        addAura(C, tgt, { id: 'turning_guard', name: TG.name, icon: TG.icon, effect: 'turning_guard', item: tg.item, desc: TG.desc(tg.lvl), until: C.t + TG.dur, absorb: TG.absorb(tg.lvl) });
+        addAura(C, tgt, { id: 'turning_guard', name: TG.name, icon: TG.icon, effect: 'turning_guard', item: tg.item, desc: TG.desc(tg.lvl, tg.f), until: C.t + TG.dur, absorb: TG.absorb(tg.lvl, tg.f) });
       }
       if (tgt.side === 'enemy') tgt.threat[src.uid] = (tgt.threat[src.uid] || 0) + 1;
       return 0;
@@ -548,6 +561,8 @@
     if (src.kind === 'mob' && src.enrage) dmg *= src.enrage;
     if (res === 'crit') dmg *= 2;
     const done = dealDamage(C, src, tgt, dmg, { school: 'physical', crit: res === 'crit', ab: o.ab || (o.ranged ? 'auto_shot' : null), threat: o.threat, melee: !o.ranged });
+    const sh = !o.ranged && done > 0 && !src.dead && src.side !== tgt.side && fxOf(tgt, 'spiteful_hide'); // Spiteful Hide (v10.10)
+    if (sh) dealDamage(C, tgt, src, D.EFFECTS.spiteful_hide.dmg(sh.lvl, sh.f), { school: 'nature', effect: 'spiteful_hide', fx: 'effect' });
     proc(C, src, o.ranged ? (o.ab ? 'shot' : 'autoshot') : 'melee', o.ab);
     if (res === 'crit') proc(C, src, 'crit', o.ab);
     const seal = !flat(src) && !o.ranged && src.auras.find((a) => a.seal);
@@ -566,12 +581,12 @@
   function abCost(ab, u) { if (ab.shapeshift && u.form) return 0; if (ab.id) { const la = litAura(u, ab.id); if (la && la.proc.free) return 0; } const base = (ab.cost || 0) + (ab.costPerLvl || 0) * ((u.level || E.levelOf(u)) - 1); const off = ab.id ? Math.min(90, abPct(tmOf(u).abilCost, ab.id)) : 0; return Math.round(base * (1 - off / 100)); }
   E.abCost = abCost;
 
-  function spellRoll(src, tgt) {
+  function spellRoll(src, tgt, C) {
     const r = Math.random() * 100;
     const miss = 4 + Math.max(0, levelDiff(src, tgt)) * 1.5;
     if (r < miss) return 'miss';
     if (r < miss + src.st.spellCrit) return 'crit';
-    return 'hit';
+    return fuse(C, src) ? 'crit' : 'hit';
   }
 
   // Returns null if usable, else a short reason string.
@@ -660,7 +675,7 @@
           else { dealDamage(C, u, t, r === 'crit' ? d * 2 : d, { school: 'physical', crit: r === 'crit', ab: abId, melee: true }); proc(C, u, 'hit', abId); }
         } else {
           const phys = ab.dmg.school === 'physical';
-          const r = phys ? meleeRoll(C, u, t) : spellRoll(u, t);
+          const r = phys ? meleeRoll(C, u, t) : spellRoll(u, t, C);
           const base = scaled(ab.dmg.base, ab.dmg.perLvl, L) + (ab.dmg.coef || 0) * u.st.sp + (ab.dmg.rapCoef || 0) * (u.st.rap || 0);
           if (r === 'miss' || r === 'dodge') { ev(C, { type: 'avoid', src: u.uid, tgt: t.uid, what: r === 'miss' && !phys ? 'resist' : r, ab: abId }); continue; }
           const crit = r === 'crit';
@@ -1309,7 +1324,9 @@
         if (a.dot != null && a.next <= C.t + 1e-6) {
           a.next += a.every;
           const src = C.units[a.src] || u;
-          dealDamage(C, src, u, a.dot, { school: a.school, ab: a.ab, tick: true });
+          dealDamage(C, src, u, a.dot, { school: a.school, ab: a.ab, tick: true, effect: a.effect });
+          const tb = !a.effect && fxOf(src, 'tithe_of_battle'), TB = tb && D.EFFECTS.tithe_of_battle; // Tithe of Battle (v10.10)
+          if (tb && src.maxRes) { const g = src.resType === 'mana' ? src.maxRes * TB.mana * tb.f : (src.resType === 'rage' ? TB.rage : TB.energy) * tb.f, before = src.res; src.res = Math.min(src.maxRes, src.res + g); fxDone(C, src, 'tithe_of_battle', src.res - before, src.resType === 'mana' ? 'mana' : 'power'); }
           proc(C, src, 'tick', a.ab);
           if (u.dead) break;
         }
@@ -1332,7 +1349,7 @@
           if (due > cast.ticks) {
             if (cast.ticks === 0) { u.res -= abCost(ab, u); u.lastCastT = C.t; }
             cast.ticks++;
-            const r = spellRoll(u, tgt);
+            const r = spellRoll(u, tgt, C);
             const base = scaled(ab.dmg.base, ab.dmg.perLvl, u.level) + ab.dmg.coef * u.st.sp;
             if (r === 'miss') ev(C, { type: 'avoid', src: u.uid, tgt: tgt.uid, what: 'resist', ab: cast.ab });
             else dealDamage(C, u, tgt, r === 'crit' ? base * 1.5 : base, { school: ab.dmg.school, crit: r === 'crit', ab: cast.ab });
