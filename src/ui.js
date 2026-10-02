@@ -3783,9 +3783,9 @@
     G.pauseRolls(true);
     const pickIt = (c) => { closeDialog(); G.pauseRolls(false); G.roll(i, c); renderRolls(); };
     showDialog([itemTip(it), cur ? h('div', { class: 'sec-h' }, 'Currently equipped') : null, cur ? itemTip(cur) : null,
-      h('p', { class: 'ai-note', style: { margin: '6px 0' } }, 'The roll waits while you look.'),
-      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => pickIt('need') }, 'Need'), h('button', { class: 'btn alt', onclick: () => pickIt('greed') }, 'Greed'), h('button', { class: 'btn alt', onclick: () => pickIt('pass') }, 'Pass')),
-      h('div', { class: 'btn-row' }, h('button', { class: 'btn alt wide', onclick: () => { closeDialog(); G.pauseRolls(false); } }, 'Back'))], false);
+      h('div', { class: 'stick-foot' }, h('p', { class: 'ai-note', style: { margin: 0 } }, 'The roll waits while you look.'),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => pickIt('need') }, 'Need'), h('button', { class: 'btn alt', onclick: () => pickIt('greed') }, 'Greed'), h('button', { class: 'btn alt', onclick: () => pickIt('pass') }, 'Pass')),
+        h('div', { class: 'btn-row' }, h('button', { class: 'btn alt wide', onclick: () => { closeDialog(); G.pauseRolls(false); } }, 'Back')))], false);
   }
   function renderRolls() {
     if (ui.rollEl) { ui.rollEl.remove(); ui.rollEl = null; }

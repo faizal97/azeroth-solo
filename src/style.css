@@ -341,7 +341,9 @@ img { max-width: 100%; display: block; }
 .x { width: 40px; height: 40px; font: 700 22px/1 var(--body); color: var(--muted); }
 .sheet-b { overflow-y: auto; padding: 12px 16px 20px; display: grid; gap: 12px; align-content: start; overscroll-behavior: contain; }
 .dialog { position: absolute; inset: 0; z-index: 57; display: grid; place-items: center; background: rgba(0,0,0,.6); padding-inline: 16px; animation: fade .15s; }
-.dialog .card { width: 100%; max-width: 380px; background: var(--panel); border: 2px solid var(--edge-hi); border-radius: 4px; padding: 16px; display: grid; gap: 10px; box-shadow: 0 10px 40px #000; }
+.dialog .card { width: 100%; max-width: 380px; max-height: calc(100% - 32px); overflow-y: auto; overscroll-behavior: contain; background: var(--panel); border: 2px solid var(--edge-hi); border-radius: 4px; padding: 16px; display: grid; gap: 10px; box-shadow: 0 10px 40px #000; }
+/* a choice that must stay in reach however long the card above it is (loot roll inspect) */
+.dialog .card .stick-foot { position: sticky; bottom: -16px; margin: 0 -16px -16px; padding: 10px 16px 16px; background: var(--panel); border-top: 1px solid var(--edge); display: grid; gap: 8px; }
 .dialog h3 { margin: 0; font: 20px/1.15 var(--display); color: var(--gold); text-align: center; text-wrap: balance; }
 .dialog p { margin: 0; text-align: center; color: var(--text); }
 @keyframes up { from { transform: translateY(30%); opacity: .4; } }
