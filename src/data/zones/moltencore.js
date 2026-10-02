@@ -85,7 +85,7 @@
     objs: [{ type: 'collect', item: 'firelord_essence', n: 1 }], reward: { choice: ['fam_back_rare60'] } });
 
   Object.assign(D.DUNGEONS, {
-    molten_core: { name: 'The Magma Throne', raid: true, music: 'magma', minLvl: 60, par: 580, trialPar: 720, size: 10, trashMult: { hp: 3.3, dmg: 2.2 }, bossMult: { hp: 17, dmg: 7.2 }, pulls: [
+    molten_core: { name: 'The Magma Throne', raid: true, music: 'magma', minLvl: 60, par: 587, trialPar: 720, size: 10, trashMult: { hp: 3.3, dmg: 2.2 }, bossMult: { hp: 17, dmg: 7.2 }, pulls: [
       { scene: 'mc_caverns', label: 'The lava caverns', mobs: ['core_hound', 'core_hound', 'core_surger'] },
       { scene: 'mc_caverns', label: 'Molten giants', mobs: ['molten_giant', 'molten_giant'] },
       { scene: 'mc_caverns', label: 'Cinderhound', mobs: ['magmadar'], boss: true },

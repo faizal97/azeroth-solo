@@ -42,7 +42,7 @@
     objs: [{ type: 'collect', item: 'onyxia_head', n: 1 }], reward: { choice: ['fam_back_rare60'] } });
 
   Object.assign(D.DUNGEONS, {
-    onyxias_lair: { name: "Veshmira's Lair", raid: true, music: 'veshmira', minLvl: 60, par: 190, trialPar: 330, size: 10, trashMult: { hp: 5, dmg: 2.6 }, bossMult: { hp: 30, dmg: 9.4 }, pulls: [
+    onyxias_lair: { name: "Veshmira's Lair", raid: true, music: 'veshmira', minLvl: 60, par: 188, trialPar: 330, size: 10, trashMult: { hp: 5, dmg: 2.6 }, bossMult: { hp: 30, dmg: 9.4 }, pulls: [
       { scene: 'lair_tunnel', label: 'The entry tunnel', mobs: ['onyxian_warder', 'onyxian_warder'] },
       { scene: 'lair_tunnel', label: 'The warders', mobs: ['onyxian_warder', 'onyxian_warder', 'onyxian_whelp'] },
       { scene: 'lair_cavern', label: 'The whelp nests', mobs: ['onyxian_whelp', 'onyxian_whelp', 'onyxian_whelp', 'onyxian_whelp'] },
