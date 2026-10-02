@@ -558,6 +558,7 @@
     els.cast = h('div', { class: 'castbar', hidden: true }, h('i'), h('b'));
     sc.append(els.cast);
     sc.append(h('div', { class: 'online', id: 'online' }), speedChip());
+    if (G.S.player.fishing && ui.fishEl) sc.append(ui.fishEl); // fishing (v10.9) survives a scene rebuild
   }
   function markTargets() {
     const C = G.fight; if (!C || !G.pUnit) return;
@@ -995,6 +996,7 @@
         row.append(h('button', { class: 'chip gold', disabled: col < 0, onclick: () => G.gatherNode(nd.i) }, img(art('icon', nd.N.item)), ' ', `${D.PROFESSIONS[nd.N.prof].verb} ${nd.N.name}`, h('small', { style: { color: SKILL_COL[col + 1] } }, col < 0 ? `needs ${nd.N.skill}` : `skill ${p.skill}`))); }
       b.append(row);
     }
+    fishChip(b);
     if (!mobs.length) { b.append(h('div', { class: 'people' }, place.safe ? 'No creatures in town. See People for quests and vendors.' : 'Nothing to fight here right now.')); return; }
     const needKeys = questMobKeys();
     const grid = h('div', { class: 'mgrid', id: 'mob-list' });
@@ -2752,23 +2754,113 @@
       b.append(list);
     });
   }
+  // ---------- Fishing and Cooking minigames (v10.9). Playing well gives a bonus; Auto always gives the normal result.
+  const sfx = (n, v) => { if (window.SND) window.SND.play(n, { vol: v == null ? 0.8 : v }); };
+  const fishAutoPref = () => { try { return localStorage.getItem('azsolo.fishAuto') === '1'; } catch (e) { return false; } };
+  function fishChip(b) {
+    const P = G.S.player, tier = D.waterTier(P.place); if (!tier || !G.hasProf('fishing')) return;
+    const why = G.fishWhy(), p = G.profs().fishing, T = D.FISH[tier];
+    b.append(h('div', { class: 'chips' }, h('button', { class: 'chip gold', disabled: !!why, onclick: () => startFishing(fishAutoPref()) }, img(art('icon', 'prof_fishing')), ' Fish here',
+      h('small', null, why ? why.replace(/\.$/, '') : `skill ${p.skill} · ${T.common.map((c) => D.ITEMS[c[0]].name).join(', ')}`))));
+  }
+  function startFishing(auto) {
+    if (!G.fishStart(auto)) return;
+    sfx('splash');
+    if (!ui.fishEl) {
+      ui.fishEl = h('div', { class: 'fishfx' });
+      const down = (e) => { e.preventDefault(); ui.fishHold = true; const F = G.S.player.fishing; if (F && (F.phase === 'wait' || F.phase === 'bite')) G.fishTap(); };
+      const up = () => { ui.fishHold = false; };
+      ui.fishEl.addEventListener('pointerdown', down); ui.fishEl.addEventListener('pointerup', up); ui.fishEl.addEventListener('pointercancel', up); ui.fishEl.addEventListener('pointerleave', up);
+    }
+    ui.fishAuto = !!auto; ui.fishHold = false; ui.fishLast = performance.now(); ui.fishShown = null;
+    if (els.scene && !ui.fishEl.parentNode) els.scene.append(ui.fishEl);
+    if (!ui.fishRaf) ui.fishRaf = requestAnimationFrame(fishFrame);
+  }
+  function stopFishing() { G.fishStop(); if (ui.fishEl) ui.fishEl.remove(); ui.fishRaf = null; renderPanel(); }
+  function fishFrame(ts) {
+    const P = G.S && G.S.player, F = P && P.fishing;
+    if (!F || !ui.fishEl) { if (ui.fishEl) ui.fishEl.remove(); ui.fishRaf = null; return; }
+    const dt = Math.min(0.1, (ts - (ui.fishLast || ts)) / 1000); ui.fishLast = ts;
+    G.fishTick(); // every frame, so a bite is never missed between game ticks
+    if (G.S.player.fishing && G.S.player.fishing.phase === 'reel') G.fishReel(ui.fishHold, dt);
+    drawFish(P.fishing);
+    ui.fishRaf = requestAnimationFrame(fishFrame);
+  }
+  function drawFish(F) {
+    const el = ui.fishEl; if (!F) return;
+    const put = (...xs) => el.append(...xs.filter(Boolean)); // append() would print a null as text
+    const key = F.phase + (F.phase === 'done' ? F.result : '');
+    if (ui.fishShown !== key) {
+      ui.fishShown = key; el.innerHTML = ''; el.dataset.phase = F.phase;
+      const kind = F.fish.kind, fishName = D.ITEMS[F.fish.id].name;
+      if (F.phase === 'wait' || F.phase === 'bite') {
+        put(h('div', { class: 'fish-water' }, h('div', { class: 'bobber' + (F.phase === 'bite' ? ' dip' : '') }, h('i')), F.phase === 'bite' ? h('div', { class: 'ripple' }) : null),
+          h('div', { class: 'fish-msg' }, F.auto ? 'Auto: waiting for a bite' : F.phase === 'bite' ? 'Tap now!' : 'Tap when the bobber dips'));
+        if (F.phase === 'bite') sfx('bite');
+      } else if (F.phase === 'reel') {
+        put(h('div', { class: 'fish-msg' }, `${kind === 'rare' ? 'A rare catch' : 'A big one'} is fighting! Hold to slide the gold zone right, let go to let it slide back. Keep the fish inside`),
+          h('div', { class: 'reel' }, h('div', { class: 'reel-zone' }), h('div', { class: 'reel-fish' }, img(art('icon', F.fish.id)))), h('div', { class: 'reel-line' }, h('i')));
+        sfx('fishreel');
+      } else {
+        const it = F.caught && D.ITEMS[F.caught], use = it && Object.values(D.RECIPES).find((r) => r.prof === 'cooking' && r.mats[it.id]);
+        put(h('div', { class: 'fish-msg big' }, it ? h('span', null, 'You catch ', h('b', { class: 'q' + it.q }, it.name), kind !== 'common' ? h('small', null, kind === 'rare' ? ' · rare' : ' · big') : null) : F.result === 'early' ? 'Too soon: it swam off' : 'It got away'),
+          use ? h('div', { class: 'fish-sub' }, `Cooks into ${D.ITEMS[use.makes].name}`) : null);
+        if (it) sfx('catch');
+        setTimeout(() => { const P = G.S.player; if (!P.fishing || P.fishing.phase !== 'done' || P.fishing.at !== F.at) return; if (ui.fishAuto && !G.fishWhy() && !G.bagsFull()) G.fishStart(true); }, 1400);
+      }
+      const bar = h('div', { class: 'fish-btns' },
+        F.phase === 'done' && !ui.fishAuto ? h('button', { class: 'btn', onclick: (e) => { e.stopPropagation(); startFishing(false); } }, 'Cast again') : null,
+        h('button', { class: 'chip' + (ui.fishAuto ? ' gold' : ''), onclick: (e) => { e.stopPropagation(); ui.fishAuto = !ui.fishAuto; try { localStorage.setItem('azsolo.fishAuto', ui.fishAuto ? '1' : '0'); } catch (x) {} ui.fishShown = null; if (ui.fishAuto && G.S.player.fishing && G.S.player.fishing.phase === 'done') G.fishStart(true); } }, ui.fishAuto ? 'Auto: on' : 'Auto: off'),
+        h('button', { class: 'chip', onclick: (e) => { e.stopPropagation(); stopFishing(); } }, 'Reel in'));
+      bar.addEventListener('pointerdown', (e) => e.stopPropagation());
+      put(bar, h('div', { class: 'fish-note' }, 'Auto catches common fish only. Big and rare fish need you on the reel.'));
+    }
+    if (F.phase === 'reel') {
+      const r = F.reel, z = el.querySelector('.reel-zone'), f = el.querySelector('.reel-fish'), l = el.querySelector('.reel-line i');
+      if (z) { z.style.left = ((r.zone - r.w / 2) * 100).toFixed(1) + '%'; z.style.width = (r.w * 100).toFixed(1) + '%'; z.classList.toggle('on', Math.abs(r.fish - r.zone) <= r.w / 2); }
+      if (f) f.style.left = (r.fish * 100).toFixed(1) + '%';
+      if (l) l.style.width = (r.line * 100).toFixed(1) + '%';
+    }
+  }
+  G.on('fish', (e) => { if (e && e.phase === 'stop' && ui.fishEl) ui.fishEl.remove(); });
+  // the heat bar: the needle sweeps once from cold to burnt; stop it in the gold for a Perfect batch
+  function openCookBar(rid, count) {
+    const r = D.RECIPES[rid], z = G.cookZone(rid), it = D.ITEMS[r.makes], sweep = G.COOK_BAR.sweep;
+    const needle = h('div', { class: 'cook-needle' }), bar = h('div', { class: 'cook-bar' },
+      h('div', { class: 'cook-gold', style: { left: (z.gold[0] * 100) + '%', width: ((z.gold[1] - z.gold[0]) * 100) + '%' } }),
+      h('div', { class: 'cook-burnt', style: { left: (z.burnt * 100) + '%' } }), needle);
+    let start = null, done = false, raf = null, shown = 0; // shown: where the needle is on screen; the result is judged there
+    const finish = (q) => { if (done) return; done = true; cancelAnimationFrame(raf); sfx(q === 'burnt' ? 'burnt' : 'sizzle'); closeDialog(); closeSheet(); G.cook(rid, count, q);
+      toast(q === 'perfect' ? `Perfect! ${it.name}: one extra serving per five.` : q === 'burnt' ? `Burnt: one set of ingredients is lost.` : `${it.name}: a normal batch.`, true); };
+    const stop = () => { if (start == null) return; finish(G.cookResult(rid, shown)); };
+    const go = h('button', { class: 'btn wide', onclick: () => { if (start == null) { start = performance.now(); go.textContent = 'Take it off the heat!'; const step = () => { const pos = (performance.now() - start) / 1000 / sweep; shown = Math.min(1, pos); needle.style.left = (shown * 100).toFixed(1) + '%'; if (pos >= 1) return finish('burnt'); raf = requestAnimationFrame(step); }; raf = requestAnimationFrame(step); } else stop(); } }, 'Start cooking');
+    bar.addEventListener('pointerdown', () => { if (start != null) stop(); });
+    showDialog([h('h3', null, `${it.name}${count > 1 ? ' ×' + count : ''}`),
+      h('p', { class: 'ai-note' }, 'The needle sweeps from cold to burnt. Stop it in the gold for a Perfect batch (one extra serving per five, at least one); past the red end the first set burns. One round cooks the whole batch.'),
+      bar, h('div', { class: 'cook-labels' }, h('span', null, 'cold'), h('span', { class: 'gold' }, 'Perfect'), h('span', { class: 'red' }, 'burnt')),
+      go, h('div', { class: 'btn-row', style: { marginTop: '8px' } }, h('button', { class: 'btn alt', onclick: () => finish('normal') }, 'Auto (Normal)'), h('button', { class: 'btn alt', onclick: () => { done = true; cancelAnimationFrame(raf); closeDialog(); } }, 'Close'))], true);
+  }
   // ---------- professions (v3): trainer, then a sheet per profession with its recipes
   const SKILL_COL = ['#ff4040', '#ff8040', '#ffff00', '#40bf40', '#808080']; // too hard, orange, yellow, green, grey
   function profBar(p) { return h('div', { class: 'bar thin', style: { marginTop: '4px' } }, h('i', { style: { width: Math.round(p.skill / p.max * 100) + '%', background: '#4f9a4a' } })); }
   function trainerBlock(b) {
-    const P = G.S.player, profs = G.profs(), n = Object.keys(profs).length;
-    b.append(h('div', { class: 'sec-h' }, 'Professions', h('small', null, `${n}/${D.PROF_MAX} learned`)));
-    const list = h('div', { class: 'list' });
-    for (const id in D.PROFESSIONS) {
+    const P = G.S.player, profs = G.profs(), n = G.primaryCount();
+    const rowFor = (id, full) => {
       const Pd = D.PROFESSIONS[id], p = profs[id], R = G.nextRank(id);
       const sub = p ? `${p.skill}/${p.max} · ` + (R ? (R.ok ? `${R.name} training: ${G.moneyText(R.cost)}` : P.level < R.lvl ? `${R.name} at level ${R.lvl}` : `${R.name} at skill ${R.skill}`) : 'fully trained for now')
-        : (n >= D.PROF_MAX ? 'Unlearn a profession to learn this' : P.level < R.lvl ? `From level ${R.lvl}` : `${Pd.desc} Training: ${G.moneyText(R.cost)}.`);
-      list.append(h('button', { class: 'row', disabled: !R || !R.ok || (!p && n >= D.PROF_MAX), onclick: () => { G.trainProf(id); ui.sheetFn(); } },
+        : (full ? 'Unlearn a profession to learn this' : P.level < R.lvl ? `From level ${R.lvl}` : `${Pd.desc} Training: ${G.moneyText(R.cost)}.`);
+      return h('button', { class: 'row', disabled: !R || !R.ok || (!p && full), onclick: () => { G.trainProf(id); ui.sheetFn(); } },
         h('div', { class: 'ic' }, img(art('icon', Pd.icon))),
         h('div', { class: 't' }, h('b', { style: { color: p ? '#ffd100' : 'var(--text)' } }, Pd.name + (p ? ` (${D.PROF_RANKS[G.profRank(id)].name})` : '')), h('small', { style: { whiteSpace: 'normal' } }, sub)),
-        h('div', { class: 'r' }, R && R.ok && (p || n < D.PROF_MAX) ? 'Train' : '')));
-    }
-    b.append(list, h('p', { class: 'ai-note' }, 'Gatherers find ore and herbs in the Fight tab and on the scene. Skinning happens as you loot beasts. Craft from Hero → Professions. Mining pairs with Blacksmithing, Herbalism with Alchemy, Skinning with Leatherworking; Tailoring uses the cloth humanoids drop.'));
+        h('div', { class: 'r' }, R && R.ok && (p || !full) ? 'Train' : ''));
+    };
+    b.append(h('div', { class: 'sec-h' }, 'Professions', h('small', null, `${n}/${D.PROF_MAX} learned`)));
+    const list = h('div', { class: 'list' });
+    for (const id in D.PROFESSIONS) if (!D.isSecondary(id)) list.append(rowFor(id, n >= D.PROF_MAX));
+    // Cooking and Fishing (v10.9): on top of your two, for anyone
+    const sec = h('div', { class: 'list' });
+    for (const id in D.PROFESSIONS) if (D.isSecondary(id)) sec.append(rowFor(id, false));
+    b.append(list, h('div', { class: 'sec-h' }, 'Secondary skills', h('small', null, 'anyone can learn both')), sec, h('p', { class: 'ai-note' }, 'Gatherers find ore and herbs in the Fight tab and on the scene. Skinning happens as you loot beasts. Craft from Hero → Professions. Mining pairs with Blacksmithing, Herbalism with Alchemy, Skinning with Leatherworking; Tailoring uses the cloth humanoids drop.'));
   }
   function stableBlock(b) {
     const P = G.S.player;
@@ -2790,13 +2882,27 @@
     ui.profTab = ui.profTab || null;
     openSheet('profs', 'Professions', ' ', (b, title) => {
       const P = G.S.player, profs = G.profs(), ids = Object.keys(profs);
-      title.querySelector('small').textContent = ids.length ? `${ids.length}/${D.PROF_MAX} · craft anywhere out of combat` : 'Learn up to two from a profession trainer';
+      title.querySelector('small').textContent = ids.length ? `${G.primaryCount()}/${D.PROF_MAX} · craft anywhere out of combat` : 'Learn up to two from a profession trainer';
+      ids.sort((a, c) => (D.isSecondary(a) ? 1 : 0) - (D.isSecondary(c) ? 1 : 0)); // your two professions, then Cooking and Fishing
       if (!ids.length) { b.append(h('p', null, 'You have no professions yet. Profession trainers wait in every capital and in Warrick\'s Rise and Dustfort.')); return; }
       if (!ids.includes(ui.profTab)) ui.profTab = ids.find((k) => D.PROFESSIONS[k].kind === 'craft') || ids.find((k) => k === 'mining') || ids[0];
       b.append(h('div', { class: 'chips' }, ...ids.map((k) => h('button', { class: 'chip' + (k === ui.profTab ? ' gold' : ''), onclick: () => { ui.profTab = k; ui.sheetFn(); } }, img(art('icon', D.PROFESSIONS[k].icon)), ' ', D.PROFESSIONS[k].name, h('small', null, `${profs[k].skill}/${profs[k].max}`)))));
       const k = ui.profTab, Pd = D.PROFESSIONS[k], p = profs[k];
       b.append(h('div', { class: 'people' }, Pd.desc), profBar(p));
       const recipes = G.recipesFor(k);
+      if (k === 'fishing') { // what bites, by water: common fish by skill, then the big and rare ones that fight on the reel
+        const list = h('div', { class: 'list' });
+        for (const [tier, T] of Object.entries(D.FISH)) {
+          const lv = { 1: 'lakes and coasts to level 15', 2: 'waters of level 16–28', 3: 'waters of level 29–45' }[tier];
+          for (const [id, need, tag] of T.common.map((c) => [c[0], c[1], '']).concat([[T.big[0], T.big[1], 'big · on the reel'], [T.rare[0], T.rare[1], 'rare · on the reel']])) {
+            const col = G.skillColor(p.skill, [need, need + 25, need + 50, need + 100]);
+            list.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', id))), h('div', { class: 't' }, h('b', { style: { color: SKILL_COL[col + 1] } }, D.ITEMS[id].name), h('small', null, `Needs ${need} · ${lv}${tag ? ' · ' + tag : ''}`))));
+          }
+        }
+        b.append(h('div', { class: 'sec-h' }, 'What you can catch', h('small', null, 'orange always raises your skill, yellow often, green rarely, grey never')), list,
+          h('p', { class: 'ai-note' }, 'Fish wherever there is water: tap "Fish here" in the Fight tab. Auto keeps casting and lands common fish; big and rare fish need you on the reel.'));
+        return;
+      }
       if (k === 'herbalism' || k === 'skinning') {
         const rows = k === 'herbalism' ? Object.entries(D.NODES).filter(([, N]) => N.prof === 'herbalism').map(([key, N]) => [N.name, N.skill, G.nodeSk(N), N.item]) : [[1, 10], [15, 50], [20, 100], [25, 125], [30, 150], [35, 175], [40, 200], [45, 225]].filter(([, sk]) => sk <= p.max + 25).map(([l, sk]) => [`Beasts level ${l}`, sk, [sk, sk + 25, sk + 50, sk + 100], D.skinLeather(l)]);
         const list = h('div', { class: 'list' });
@@ -2810,7 +2916,7 @@
         const mk = D.ITEMS[r.makes], col = G.skillColor(p.skill, r.sk), can = G.craftable(r.id);
         const mats = Object.entries(r.mats).map(([m, n]) => `${D.ITEMS[m].name} ${G.countItem(m)}/${n}`).join(' · ');
         list.append(h('button', { class: 'row', onclick: () => showDialog([itemTip(G.copyItem(r.makes)), h('p', { class: 'ai-note' }, `Needs: ${mats}`),
-          col < 0 ? h('p', { class: 'red' }, `Requires ${Pd.name} ${r.sk[0]}.`) : h('div', { class: 'btn-row' }, h('button', { class: 'btn', disabled: can < 1, onclick: () => { closeDialog(); G.craft(r.id, 1); closeSheet(); } }, 'Create'), h('button', { class: 'btn alt', disabled: can < 2, onclick: () => { closeDialog(); G.craft(r.id, can); closeSheet(); } }, `Create all (${can})`), h('button', { class: 'btn alt', onclick: closeDialog }, 'Close'))], true) },
+          col < 0 ? h('p', { class: 'red' }, `Requires ${Pd.name} ${r.sk[0]}.`) : k === 'cooking' ? h('div', { class: 'btn-row' }, h('button', { class: 'btn', disabled: can < 1, onclick: () => { closeDialog(); openCookBar(r.id, 1); } }, 'Cook'), h('button', { class: 'btn alt', disabled: can < 2, onclick: () => { closeDialog(); openCookBar(r.id, can); } }, `Cook all (${can})`), h('button', { class: 'btn alt', onclick: closeDialog }, 'Close')) : h('div', { class: 'btn-row' }, h('button', { class: 'btn', disabled: can < 1, onclick: () => { closeDialog(); G.craft(r.id, 1); closeSheet(); } }, 'Create'), h('button', { class: 'btn alt', disabled: can < 2, onclick: () => { closeDialog(); G.craft(r.id, can); closeSheet(); } }, `Create all (${can})`), h('button', { class: 'btn alt', onclick: closeDialog }, 'Close'))], true) },
           h('div', { class: 'ic' }, itemIcon(mk)),
           h('div', { class: 't' }, h('b', { style: { color: SKILL_COL[col + 1] } }, mk.name + (r.n > 1 ? ` ×${r.n}` : '')), h('small', { style: { whiteSpace: 'normal' } }, col < 0 ? `Needs skill ${r.sk[0]}` : mats)),
           h('div', { class: 'r' }, can ? String(can) : '')));

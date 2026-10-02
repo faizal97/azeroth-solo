@@ -195,5 +195,96 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
   console.log(`Expert pace, ${g} + ${c}: level 45 with ${g} ${gs}, ${c} ${cs}`);
   ok(gs >= 200 && cs >= 195, `${g} + ${c} reach Expert's top by level 45 (${gs}, ${cs})`);
 }
+// ---- Fishing and Cooking (v10.9, docs/plans/2026-10-02-fishing-cooking.md)
+// secondary skills: on top of two professions
+{
+  G.newGame({ name: 'F', cls: 'warrior', race: 'human' }); const P = G.S.player; P.level = 10; P.money = 1e6;
+  G.trainProf('mining'); G.trainProf('herbalism'); G.trainProf('cooking'); G.trainProf('fishing');
+  ok(G.hasProf('cooking') && G.hasProf('fishing') && G.primaryCount() === 2, 'a miner-herbalist still learns Cooking and Fishing');
+  G.trainProf('skinning'); ok(!G.hasProf('skinning'), 'a third primary profession is still refused');
+}
+// waters and fish
+{
+  const bad = D.WATERS.filter((w) => !D.PLACES[w] || !D.waterTier(w)); ok(!bad.length, `every water is a place with a tier (${bad.join(',')})`);
+  const fish = Object.values(D.FISH).flatMap((T) => T.common.map((c) => c[0]).concat(T.big[0], T.rare[0])); ok(fish.every((f) => D.ITEMS[f]), 'every fish is an item');
+  ok([1, 2, 3].every((t) => D.WATERS.some((w) => D.waterTier(w) === t)), 'there is water to fish in every tier');
+}
+// the fishing loop: wait, bite, tap; the reel for big and rare fish; auto
+{
+  G.newGame({ name: 'F', cls: 'warrior', race: 'human' }); const P = G.S.player; P.level = 12; P.money = 1e6; G.S.flags.warModeAsked = true; P.place = 'crystal_lake';
+  P.bagsEq = [0, 1, 2, 3].map(() => G.copyItem('woolen_bag')); G.trainProf('fishing'); G.profs().fishing.skill = 60; G.profs().fishing.max = 75;
+  const cast = (play) => { if (!G.fishStart(play === 'auto')) return null; let g = 0; while (P.fishing && P.fishing.phase !== 'done' && g++ < 400) {
+    if (play === 'tap' && P.fishing.phase === 'bite') G.fishTap();
+    if (play === 'early' && P.fishing.phase === 'wait') G.fishTap();
+    if (P.fishing && P.fishing.phase === 'reel') { const r = P.fishing.reel; G.fishReel(r.fish > r.zone, 0.05); t += 50; continue; }
+    tick(0.1, 0.1); }
+    return P.fishing && P.fishing.phase === 'done' ? P.fishing : null; };
+  const kinds = { auto: {}, tap: {} }; let early = 0;
+  for (let i = 0; i < 200; i++) { const a = cast('auto'); if (a && a.caught) kinds.auto[a.fish.kind] = (kinds.auto[a.fish.kind] || 0) + 1; }
+  for (let i = 0; i < 200; i++) { const a = cast('tap'); if (a && a.caught) kinds.tap[a.fish.kind] = (kinds.tap[a.fish.kind] || 0) + 1; }
+  for (let i = 0; i < 20; i++) { const a = cast('early'); if (a && a.result === 'early') early++; }
+  P.bags = P.bags.filter((b) => b.item.slot !== 'mat');
+  console.log(`fishing at skill 60: auto ${JSON.stringify(kinds.auto)}, tapping and reeling ${JSON.stringify(kinds.tap)}`);
+  ok(!kinds.auto.big && !kinds.auto.rare && (kinds.auto.common || 0) > 150, 'Auto lands common fish only');
+  ok(kinds.tap.big > 10 && kinds.tap.rare > 2 && kinds.tap.common > 120, 'tapping on the bite lands commons, and a reel that follows the fish lands big and rare ones');
+  ok(early === 20, 'pulling before the bite loses the fish');
+  ok(G.profs().fishing.skill > 60, `catches raise the skill (${G.profs().fishing.skill})`);
+  P.place = 'lake_nazferiti'; ok(/Fishing 150/.test(G.fishWhy() || ''), `low skill cannot fish a tier-3 water (${G.fishWhy()})`);
+}
+// meat, cooking with a quality, Well Fed
+{
+  G.newGame({ name: 'C', cls: 'warrior', race: 'human' }); const P = G.S.player; P.level = 20; P.money = 1e6; G.S.flags.warModeAsked = true; P.place = 'stormwind';
+  P.bagsEq = [0, 1, 2, 3].map(() => G.copyItem('woolen_bag')); G.trainProf('cooking'); G.profs().cooking.skill = 50; G.trainProf('cooking'); G.profs().cooking.skill = 125;
+  const beast = Object.keys(D.MOBS).find((k) => D.MOBS[k].family === 'beast' && !D.MOBS[k].boss); let meat = 0; for (let i = 0; i < 200; i++) meat += G.rollLoot(beast, 20).items.filter((it) => it.id === 'tough_meat').length;
+  ok(meat > 40 && meat < 100, `a cook loots meat from beasts (${meat} tough meat from 200 level-20 beasts)`);
+  const batch = (q) => { P.bags = P.bags.filter((b) => !['ironjaw_catfish', 'catfish_gumbo', 'cooking_spices'].includes(b.item.id)); G.addItem(G.copyItem('ironjaw_catfish'), 10); G.addItem(G.copyItem('cooking_spices'), 10); G.cook('ck_catfish_gumbo', 10, q); tick(25); return G.countItem('catfish_gumbo'); };
+  const n = batch('normal'), pf = batch('perfect'), bt = batch('burnt');
+  ok(n === 10 && pf === 12 && bt === 9, `ten fish cook into 10 normally, 12 Perfect, 9 when burnt (${n}, ${pf}, ${bt})`);
+  ok(G.cookResult('ck_catfish_gumbo', 0.62) === 'perfect' && G.cookResult('ck_catfish_gumbo', 0.4) === 'normal' && G.cookResult('ck_catfish_gumbo', 0.9) === 'burnt' && G.cookResult('ck_catfish_gumbo', null) === 'burnt', 'the heat bar: gold is Perfect, the rest Normal, the burnt end Burnt');
+  // an average cook stops the needle within about a tenth of the bar of the middle of the gold
+  let perfect = 0; for (let i = 0; i < 1000; i++) { const g = () => (Math.random() + Math.random() + Math.random() - 1.5) * 0.17; if (G.cookResult('ck_catfish_gumbo', G.COOK_BAR.gold + g()) === 'perfect') perfect++; }
+  console.log(`an average cook at 125 skill on a 125 recipe: ${Math.round(perfect / 10)}% Perfect`);
+  ok(perfect > 200 && perfect < 450, 'about 1 in 3 Perfect for an average cook');
+  P.level = 30; G.consume('food'); ok((P.auras || []).some((a) => a.id === 'wellfed' && a.stats.sta === 6), 'a gumbo makes you Well Fed (+6 Stamina)');
+  G.addItem(G.copyItem('hunters_stew'), 1); P.eating = null; P.bags = P.bags.filter((b) => b.item.id !== 'catfish_gumbo'); G.consume('food');
+  ok(P.auras.filter((a) => a.id === 'wellfed').length === 1 && P.auras.find((a) => a.id === 'wellfed').stats.str === 5, 'a second meal replaces the first Well Fed');
+}
+// the Fishing and Cooking pace: a player fishing about ten minutes every few levels (tapping on the bite, and an average
+// hand on the reel), cooking what they catch and the meat of 30 beasts, with an average cook's heat bar. Both should reach
+// about 225 by level 45, Apprentice to Expert, with no grinding.
+{
+  G.newGame({ name: 'K', cls: 'warrior', race: 'human' }); const P = G.S.player; P.money = 1e8; G.S.flags.warModeAsked = true;
+  P.bagsEq = [0, 1, 2, 3].map(() => G.copyItem('woolen_bag'));
+  const BANDS = [[8, 'crystal_lake', 'crystal_lake'], [13, 'forgotten_pools', 'the_longshore'], [17, 'moonbrook', 'moonbrook'], [21, 'lake_everstill', 'cragpool_lake'],
+    [26, 'saltspray_glen', 'the_hushed_bank'], [31, 'lake_nazferiti', 'lake_nazferiti'], [36, 'saltpenny_wharf', 'highland_plains'], [41, 'waterspring_field', 'thunderhowl_rise'], [44, 'lost_rigger_cove', 'noxious_lair']];
+  const train = () => { for (const pr of ['fishing', 'cooking']) for (let k = 0; k < 3; k++) { const R = G.nextRank(pr); if (R && R.ok) G.trainProf(pr); } };
+  const keep = new Set(Object.values(D.RECIPES).filter((r) => r.prof === 'cooking').flatMap((r) => Object.keys(r.mats)));
+  for (const [L, water, wild] of BANDS) {
+    P.level = L; P.place = water; train();
+    const t0 = t;
+    while (t - t0 < 600e3) {
+      if (!G.fishStart(false)) { tick(5); continue; }
+      let g = 0, reelErr = 0; while (P.fishing && P.fishing.phase !== 'done' && g++ < 2000) {
+        if (P.fishing.phase === 'bite' && Math.random() < 0.92) G.fishTap(); // an average player sees most bites
+        if (P.fishing && P.fishing.phase === 'reel') { const r = P.fishing.reel; if (Math.random() < 0.08) reelErr = (Math.random() - 0.5) * 0.3; G.fishReel(r.fish + reelErr > r.zone, 0.05); t += 50; continue; }
+        tick(0.1, 0.1);
+      }
+      P.bags = P.bags.filter((b) => b.item.slot !== 'mat' || keep.has(b.item.id));
+    }
+    const pl = D.PLACES[wild], beasts = pl.mobs.map((m) => m[0]).filter((k) => D.MOBS[k] && D.MOBS[k].family === 'beast');
+    for (let k = 0; k < 30 && beasts.length; k++) for (const it of G.rollLoot(beasts[k % beasts.length], L).items) if (it.slot === 'mat') G.addItem(it, 1);
+    // cook: best colour first, an average hand on the heat bar
+    for (let guard = 0; guard < 300; guard++) {
+      const p = G.profs().cooking; if (G.countItem('cooking_spices') < 10) G.addItem(G.copyItem('cooking_spices'), 20);
+      const r = G.recipesFor('cooking').filter((x) => G.craftable(x.id) > 0 && G.skillColor(p.skill, x.sk) >= 0 && G.skillColor(p.skill, x.sk) < 3).sort((a, b) => G.skillColor(p.skill, a.sk) - G.skillColor(p.skill, b.sk) || b.sk[0] - a.sk[0])[0];
+      if (!r) break; const q = G.cookResult(r.id, G.COOK_BAR.gold + (Math.random() + Math.random() + Math.random() - 1.5) * 0.17);
+      G.cook(r.id, 1, q); tick(3); P.bags = P.bags.filter((b) => b.item.slot !== 'food');
+    }
+    if (process.env.PDBG) console.log(`  L${L} fishing ${G.profs().fishing.skill}/${G.profs().fishing.max} cooking ${G.profs().cooking.skill}/${G.profs().cooking.max}`);
+  }
+  const fs = G.profs().fishing.skill, cs = G.profs().cooking.skill;
+  console.log(`Fishing and Cooking pace: level 45 with fishing ${fs}, cooking ${cs}`);
+  ok(fs >= 200 && cs >= 195, `fishing and cooking reach Expert's top by level 45 (${fs}, ${cs})`);
+}
 console.log(fails ? `${fails} failures` : 'professions sim OK');
 process.exit(fails ? 1 : 0);

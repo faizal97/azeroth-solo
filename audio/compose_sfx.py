@@ -113,19 +113,65 @@ def sfx_capture():
     return mix([(horn(72, 0.16, 0.5), 0), (horn(79, 0.5, 0.55), 0.16), (bell(91, 0.9, 0.25), 0.16), (cg.kick(0.6), 0)], 0.95)
 
 
+# Fishing and Cooking (v10.9): splash (cast), bite (the bobber dips), reel (the fight starts), catch (a fish landed),
+# sizzle (into the pan), burnt (a fizzle)
+def sfx_splash():
+    t = t_(0.5); n = noise(0.5)
+    body = (lp(n, 1800) - lp(n, 300)) * np.exp(-t * 9) * 1.1
+    drops = sum(np.sin(2 * np.pi * f * t_(0.5)) * np.exp(-np.maximum(0, t - at) * 40) * (t >= at) * 0.12 for f, at in ((1400, 0.12), (1750, 0.2), (1250, 0.27)))
+    return body + drops
+
+
+def sfx_bite():
+    t = t_(0.22)
+    plop = np.sin(2 * np.pi * (520 * np.exp(-t * 14) + 180) * t) * np.exp(-t * 22) * 0.8
+    return plop + lp(noise(0.22), 2400) * np.exp(-t * 30) * 0.2
+
+
+def sfx_reel():
+    x = np.zeros(int(0.42 * SR))
+    for i in range(9):
+        tt = t_(0.035); c = np.sin(2 * np.pi * (2600 + 140 * (i % 3)) * tt) * np.exp(-tt * 120) + lp(noise(0.035), 5000) * np.exp(-tt * 200) * 0.4  # one ratchet click
+        a = int(i * 0.045 * SR); x[a:a + len(c)] += c[: len(x) - a] * 0.5
+    return x
+
+
+def sfx_catch():
+    return mix([(harp(72, 0.4, gain=0.5), 0), (harp(76, 0.4, gain=0.45), 0.08), (harp(79, 0.6, gain=0.45), 0.16), (bell(91, 0.7, 0.18), 0.2)], 0.9)
+
+
+def sfx_sizzle():
+    t = t_(0.9); n = noise(0.9)
+    hiss = (n - lp(n, 3200)) * (0.6 + 0.4 * np.sin(2 * np.pi * 7 * t)) * np.minimum(1, t * 12) * np.exp(-t * 2.2) * 0.9
+    pops = sum(lp(noise(0.9), 6000) * np.exp(-np.maximum(0, t - at) * 90) * (t >= at) * 0.35 for at in (0.1, 0.23, 0.41, 0.58))
+    return hiss + pops
+
+
+def sfx_burnt():
+    t = t_(0.7); n = noise(0.7)
+    fizz = (n - lp(n, 1500)) * np.exp(-t * 4) * 0.7
+    low = np.sin(2 * np.pi * (220 * np.exp(-t * 2) + 70) * t) * np.exp(-t * 5) * 0.45
+    return fizz + low
+
+
 SFX = {'tap': sfx_tap, 'open': sfx_open, 'close': sfx_close, 'equip': sfx_equip, 'chime': sfx_chime, 'arrive': sfx_arrive, 'roll': sfx_roll,
        'begin': sfx_begin, 'collect': sfx_collect, 'reaction': sfx_reaction, 'warn': sfx_warn, 'enrage': sfx_enrage, 'victory': sfx_victory,
-       'defeat': sfx_defeat, 'capture': sfx_capture}
+       'defeat': sfx_defeat, 'capture': sfx_capture,
+       'splash': sfx_splash, 'bite': sfx_bite, 'fishreel': sfx_reel, 'catch': sfx_catch, 'sizzle': sfx_sizzle, 'burnt': sfx_burnt}
 
 if __name__ == '__main__':
+    import sys
+    only = sys.argv[1:]  # name the effects to render (the rest stay exactly as approved); none = all
     reel = []
     for name, fn in SFX.items():
+        if only and name not in only: continue
         x = fn(); x = x / (np.abs(x).max() + 1e-9) * 0.7
         fade = min(len(x) // 4, int(0.02 * SR)); x[-fade:] *= np.linspace(1, 0, fade)
         p = os.path.join(cg.WAV, f'sfx_{name}.wav'); write_wav(p, x); enc(p, os.path.join(cg.OUT, f'sfx_{name}.m4a'), 96)
         reel += [np.stack([x, x], 1), np.zeros((int(0.7 * SR), 2))]
         print(name, round(len(x) / SR, 2), 's')
-    rp = os.path.join(cg.WAV, 'sfx_reel_v108.wav'); write_wav(rp, np.concatenate(reel))
+    tag = '-'.join(only) if only else 'all'
+    rp = os.path.join(cg.WAV, f'sfx_reel_{tag}.wav'); write_wav(rp, np.concatenate(reel))
     os.makedirs(os.path.join(cg.HERE, 'preview'), exist_ok=True)
-    enc(rp, os.path.join(cg.HERE, 'preview', 'new-sound-effects-reel.m4a'), 160)
-    print('reel order:', ', '.join(SFX))
+    enc(rp, os.path.join(cg.HERE, 'preview', f'sound-effects-reel-{tag}.m4a'), 160)
+    print('reel order:', ', '.join(only or SFX))

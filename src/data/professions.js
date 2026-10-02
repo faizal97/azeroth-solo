@@ -14,7 +14,11 @@
     alchemy: { name: 'Alchemy', icon: 'prof_alchemy', kind: 'craft', desc: 'Brew healing and mana potions, and elixirs that last an hour.' },
     leatherworking: { name: 'Leatherworking', icon: 'prof_leatherworking', kind: 'craft', desc: 'Stitch leather armour and armour kits that add armour to your gear for good.' },
     tailoring: { name: 'Tailoring', icon: 'prof_tailoring', kind: 'craft', desc: 'Sew cloth armour and bags from the linen and wool that humanoids drop.' },
+    // secondary skills (v10.9): anyone can learn both on top of their two professions
+    cooking: { name: 'Cooking', icon: 'prof_cooking', kind: 'secondary', desc: 'Cook fish and the meat beasts drop into food that restores more than shop food, and meals that leave you Well Fed.' },
+    fishing: { name: 'Fishing', icon: 'prof_fishing', kind: 'secondary', verb: 'Fish', desc: 'Fish at lakes, rivers, coasts and harbours. Tap when the bobber dips; big and rare fish fight on the reel.' },
   };
+  D.isSecondary = (id) => (D.PROFESSIONS[id] || {}).kind === 'secondary';
   D.PROF_MAX = 2;
   // Ranks are bought from a profession trainer.
   D.PROF_RANKS = [
@@ -110,6 +114,40 @@
   // Linen was vendor trash before v3. It is a tailoring material now (existing stacks keep working).
   D.ITEMS.linen_cloth.slot = 'mat'; D.ITEMS.linen_cloth.icon = 'linen_bolt';
 
+  // ---- fish and meat (v10.9): Cooking's ingredients
+  mat('silverfin_minnow', 'Silverfin Minnow', 'silverfin_minnow', 3);
+  mat('mudbelly_carp', 'Mudbelly Carp', 'mudbelly_carp', 6);
+  mat('whiskered_pike', 'Whiskered Pike', 'whiskered_pike', 20);
+  mat('glimmerscale', 'Glimmerscale', 'glimmerscale', 80, { q: 2 });
+  mat('speckled_trout', 'Speckled Trout', 'speckled_trout', 12);
+  mat('reedback_perch', 'Reedback Perch', 'reedback_perch', 18);
+  mat('ironjaw_catfish', 'Ironjaw Catfish', 'ironjaw_catfish', 45);
+  mat('lantern_eel', 'Lantern Eel', 'lantern_eel', 160, { q: 2 });
+  mat('saltfin_snapper', 'Saltfin Snapper', 'saltfin_snapper', 30);
+  mat('greyscale_cod', 'Greyscale Cod', 'greyscale_cod', 40);
+  mat('stormback_tuna', 'Stormback Tuna', 'stormback_tuna', 90);
+  mat('duskglass_ray', 'Duskglass Ray', 'duskglass_ray', 300, { q: 2 });
+  mat('lean_meat', 'Lean Meat', 'lean_meat', 4);
+  mat('tough_meat', 'Tough Meat', 'tough_meat', 12);
+  mat('thick_steak', 'Thick Steak', 'thick_steak', 30);
+  mat('cooking_spices', 'Cooking Spices', 'cooking_spices', 2, { cost: 15 });
+  // where you can fish: places with water, fishing at the place's level (tier 1: up to 15, 2: up to 28, 3: above)
+  D.WATERS = ['goldshire', 'crystal_lake', 'lake_alameth', 'echo_isles', 'the_longshore', 'gold_coast_quarry', 'moonbrook', 'forgotten_pools', 'stagnant_oasis',
+    'sludge_fen', 'lushwater_oasis', 'lakeshire', 'lake_everstill', 'cragpool_lake', 'mirkfallon_lake', 'the_hushed_bank', 'mystral_lake', 'menethil_harbor',
+    'bluegill_marsh', 'saltspray_glen', 'lake_nazferiti', 'waterspring_field', 'lost_rigger_cove', 'rumhook_bay', 'saltpenny_wharf', 'blackgull_cove',
+    'the_forgotten_coast', 'marshals_refuge', 'golakka_hot_springs', 'the_marshlands', 'lake_keltheril', 'theramore_isle', 'the_quagmire', 'scorched_fen',
+    'the_wyrmbog', 'brightwater_landing', 'saltmarsh_shallows', 'bloodtide_landing', 'coralbone_beach', 'tidecrown_gate'];
+  // what bites, by tier: common fish by the skill they need, one big and one rare that fight on the reel
+  D.FISH = {
+    1: { common: [['silverfin_minnow', 1], ['mudbelly_carp', 25]], big: ['whiskered_pike', 50], rare: ['glimmerscale', 60] },
+    2: { common: [['speckled_trout', 75], ['reedback_perch', 100]], big: ['ironjaw_catfish', 125], rare: ['lantern_eel', 135] },
+    3: { common: [['saltfin_snapper', 150], ['greyscale_cod', 175]], big: ['stormback_tuna', 200], rare: ['duskglass_ray', 210] },
+  };
+  D.waterTier = (place) => { const P = D.PLACES[place]; if (!P || !D.WATERS.includes(place)) return 0; const L = Math.round(((P.lvl || [1, 1])[0] + (P.lvl || [1, 1])[1]) / 2); return L <= 15 ? 1 : L <= 28 ? 2 : 3; };
+  D.FISH_CHANCE = { big: 0.15, rare: 0.05 }; // once your skill is up to them
+  // meat from beasts you loot when you know Cooking (35%)
+  D.beastMeat = (lvl) => (lvl >= 28 ? 'thick_steak' : lvl >= 15 ? 'tough_meat' : 'lean_meat');
+
   // ---- consumables
   // potion: instant, usable in combat, shared 2 min cooldown. elixir: 1 hour, one at a time. stone: weapon damage for 30 min.
   D.item('minor_healing_potion', { name: 'Minor Healing Potion', slot: 'potion', q: 1, lvl: 1, icon: 'potion_red', heal: [70, 90], sell: 10 });
@@ -146,6 +184,29 @@
   D.item('thick_armor_kit', { name: 'Thick Armor Kit', slot: 'kit', q: 1, lvl: 38, icon: 'armor_kit', kit: 32, sell: 120 });
   D.item('silk_bag', { name: 'Silk Bag', slot: 'bag', q: 1, lvl: 1, icon: 'bag_wool', bag: 10, sell: 400 });
   D.BAG_SLOTS = 4;
+  // ---- Cooking (v10.9): food restores 10% more than shop food of its level; a Well Fed meal also gives a small buff for
+  // 30 min (one at a time, beside an elixir)
+  const shopFood = Object.values(D.ITEMS).filter((i) => i.slot === 'food' && i.cost && i.restore).map((i) => [i.lvl || 1, i.restore]).sort((a, b) => a[0] - b[0]);
+  D.foodRestore = (L) => { let lo = shopFood[0], hi = shopFood[shopFood.length - 1]; for (const f of shopFood) { if (f[0] <= L) lo = f; if (f[0] >= L) { hi = f; break; } }
+    const v = hi[0] === lo[0] ? lo[1] : lo[1] + (hi[1] - lo[1]) * (L - lo[0]) / (hi[0] - lo[0]); return Math.round(v * 1.1); };
+  const dish = (id, name, lvl, wellFed, sell) => D.item(id, Object.assign({ name, slot: 'food', q: 1, lvl, icon: id, restore: D.foodRestore(lvl), sell }, wellFed ? { wellFed } : {}));
+  dish('grilled_minnow', 'Grilled Minnow', 5, null, 2);
+  dish('roast_lean_meat', 'Roast Lean Meat', 7, null, 3);
+  dish('carp_stew', 'Carp Stew', 10, null, 5);
+  dish('spiced_pike', 'Spiced Pike', 12, { sta: 3, spi: 3 }, 12);
+  dish('glimmerscale_supper', 'Glimmerscale Supper', 15, { str: 4, sta: 4 }, 40);
+  dish('pan_fried_trout', 'Pan-Fried Trout', 18, null, 8);
+  dish('meat_skewer', 'Meat Skewer', 20, null, 9);
+  dish('perch_chowder', 'Perch Chowder', 22, null, 12);
+  dish('hunters_stew', "Hunter's Stew", 22, { str: 5, sta: 5 }, 25);
+  dish('catfish_gumbo', 'Catfish Gumbo', 25, { sta: 6, spi: 6 }, 30);
+  dish('baked_lantern_eel', 'Baked Lantern Eel', 27, { int: 6, spi: 6 }, 70);
+  dish('saltfin_skewer', 'Saltfin Skewer', 30, null, 18);
+  dish('peppered_steak', 'Peppered Steak', 32, { str: 8, sta: 6 }, 40);
+  dish('smoked_cod', 'Smoked Cod', 37, null, 25);
+  dish('seafarers_stew', "Seafarer's Stew", 38, { agi: 8, sta: 6 }, 50);
+  dish('stormback_tuna_steak', 'Stormback Tuna Steak', 40, { sta: 8, spi: 8 }, 60);
+  dish('duskglass_feast', 'Duskglass Feast', 43, { int: 10, sta: 6 }, 150);
 
   // ---- crafted gear, on the same curve as random drops (G.genGear), with fixed stats
   const QM = [0.8, 1, 1.1, 1.22, 1.35];
@@ -325,8 +386,26 @@
   rec('tl_silk_sash', 'tailoring', 185, 'silk_sash', { silk_bolt: 2, fine_thread: 1 });
   rec('tl_silk_leggings', 'tailoring', 195, 'silk_leggings', { silk_bolt: 4, fine_thread: 2 });
   rec('tl_ember_robe', 'tailoring', 215, 'embersilver_threaded_robe', { silk_bolt: 8, embersilver_bar: 2, fine_thread: 3 }, { rare: true });
+  // cooking (v10.9): fish and meat, by tier
+  rec('ck_grilled_minnow', 'cooking', 1, 'grilled_minnow', { silverfin_minnow: 1 });
+  rec('ck_roast_lean_meat', 'cooking', 10, 'roast_lean_meat', { lean_meat: 1 });
+  rec('ck_carp_stew', 'cooking', 25, 'carp_stew', { mudbelly_carp: 1, cooking_spices: 1 });
+  rec('ck_spiced_pike', 'cooking', 50, 'spiced_pike', { whiskered_pike: 1, cooking_spices: 1 });
+  rec('ck_glimmerscale_supper', 'cooking', 60, 'glimmerscale_supper', { glimmerscale: 1, lean_meat: 1 });
+  rec('ck_pan_fried_trout', 'cooking', 75, 'pan_fried_trout', { speckled_trout: 1 });
+  rec('ck_meat_skewer', 'cooking', 90, 'meat_skewer', { tough_meat: 1 });
+  rec('ck_perch_chowder', 'cooking', 100, 'perch_chowder', { reedback_perch: 1, cooking_spices: 1 });
+  rec('ck_hunters_stew', 'cooking', 110, 'hunters_stew', { tough_meat: 2, cooking_spices: 1 });
+  rec('ck_catfish_gumbo', 'cooking', 125, 'catfish_gumbo', { ironjaw_catfish: 1, cooking_spices: 1 });
+  rec('ck_baked_lantern_eel', 'cooking', 135, 'baked_lantern_eel', { lantern_eel: 1, tough_meat: 1 });
+  rec('ck_saltfin_skewer', 'cooking', 150, 'saltfin_skewer', { saltfin_snapper: 1 });
+  rec('ck_peppered_steak', 'cooking', 165, 'peppered_steak', { thick_steak: 1, cooking_spices: 1 });
+  rec('ck_smoked_cod', 'cooking', 175, 'smoked_cod', { greyscale_cod: 1, cooking_spices: 1 });
+  rec('ck_seafarers_stew', 'cooking', 185, 'seafarers_stew', { greyscale_cod: 1, thick_steak: 1, cooking_spices: 1 });
+  rec('ck_tuna_steak', 'cooking', 200, 'stormback_tuna_steak', { stormback_tuna: 1, cooking_spices: 1 });
+  rec('ck_duskglass_feast', 'cooking', 210, 'duskglass_feast', { duskglass_ray: 1, thick_steak: 1 });
   // recipe items for the rare ones (dungeon bosses and named rares drop them)
-  const rname = { blacksmithing: 'Plans', alchemy: 'Recipe', leatherworking: 'Pattern', tailoring: 'Pattern' };
+  const rname = { blacksmithing: 'Plans', alchemy: 'Recipe', leatherworking: 'Pattern', tailoring: 'Pattern', cooking: 'Recipe' };
   D.RARE_RECIPES = [];
   for (const id in R) if (R[id].rare) {
     const r = R[id], mk = D.ITEMS[r.makes];

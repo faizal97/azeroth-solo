@@ -434,7 +434,7 @@
   G.vendorStock = function (npc) {
     const base = vendorBase(npc);
     const pl = D.PLACES[G.S.player.place];
-    if (pl && pl.vendor === npc) return base.concat(['empty_vial', 'coarse_thread', 'small_pouch', 'smithing_coal', 'fine_thread', 'sturdy_vial'].map(G.copyItem)); // Expert supplies (v10.9)
+    if (pl && pl.vendor === npc) return base.concat(['empty_vial', 'coarse_thread', 'small_pouch', 'smithing_coal', 'fine_thread', 'sturdy_vial', 'cooking_spices'].map(G.copyItem)); // Expert supplies (v10.9)
     return base;
   };
   function vendorBase(npc) {
@@ -848,7 +848,7 @@
     P.casting = { what: 'gather', label: `Collecting ${pl.gather.label}`, start: now(), end: now() + 3000 };
     emit('castBegin', { what: 'gather' }); emit('change');
   };
-  function stopActions() { const P = G.S.player; P.eating = null; P.drinking = null; P.casting = null; }
+  function stopActions() { const P = G.S.player; P.eating = null; P.drinking = null; P.casting = null; P.fishing = null; }
   G.consume = function (kind) {
     const S = G.S, P = S.player;
     if (G.fight) return toast('You can\'t do that while in combat.');
@@ -858,6 +858,11 @@
     G.removeItem(it.id, 1);
     P.casting = null;
     P[kind === 'food' ? 'eating' : 'drinking'] = { until: now() + 18000, per: it.restore / 18, name: it.name };
+    if (it.wellFed) { // a cooked meal (v10.9): Well Fed for 30 min, one at a time, beside an elixir
+      P.auras = (P.auras || []).filter((a) => a.id !== 'wellfed');
+      P.auras.push({ id: 'wellfed', name: 'Well Fed', icon: it.icon, stats: Object.assign({}, it.wellFed), until: now() + 1800000 });
+      sys(`You are Well Fed: ${Object.entries(it.wellFed).map(([k, v]) => `+${v} ${{ str: 'Strength', agi: 'Agility', sta: 'Stamina', int: 'Intellect', spi: 'Spirit' }[k] || k}`).join(', ')} for 30 min.`);
+    }
     emit('change');
   };
   G.bindHere = function () {
@@ -1456,6 +1461,7 @@
   G.bagsFull = () => G.S.player.bags.length >= G.bagCap();
   G.profs = () => G.S.player.prof || (G.S.player.prof = {});
   G.hasProf = (id) => !!G.profs()[id];
+  G.primaryCount = () => Object.keys(G.profs()).filter((k) => !D.isSecondary(k)).length;
   G.profRank = function (id) { const p = G.profs()[id]; return p ? D.PROF_RANKS.findIndex((r) => r.max === p.max) : -1; };
   G.nextRank = function (id) {
     const P = G.S.player, p = G.profs()[id], i = p ? G.profRank(id) + 1 : 0, R = D.PROF_RANKS[i];
@@ -1465,7 +1471,7 @@
   G.trainProf = function (id) {
     const P = G.S.player, profs = G.profs(), R = G.nextRank(id);
     if (!R) return toast('You know all a trainer can teach for now.');
-    if (!profs[id] && Object.keys(profs).length >= D.PROF_MAX) return toast(`You can learn ${D.PROF_MAX} professions. Unlearn one first.`);
+    if (!profs[id] && !D.isSecondary(id) && G.primaryCount() >= D.PROF_MAX) return toast(`You can learn ${D.PROF_MAX} professions. Unlearn one first.`); // Cooking and Fishing use no slot
     if (P.level < R.lvl) return toast(`Requires level ${R.lvl}.`);
     if (profs[id] && profs[id].skill < R.skill) return toast(`Requires ${R.skill} skill in ${D.PROFESSIONS[id].name}.`);
     if (P.money < R.cost) return toast(`You need ${G.moneyText(R.cost)}.`);
@@ -1548,6 +1554,7 @@
         skillUp('skinning', G.skillColor(p.skill, [need, need + 25, need + 50, need + 100]));
       } else if (!G.S.flags.skinWarn || now() - G.S.flags.skinWarn > 60000) { G.S.flags.skinWarn = now(); sys(`Requires Skinning ${need} to skin this.`); }
     }
+    if (M.family === 'beast' && G.profs().cooking && level >= 3 && Math.random() < 0.35) out.items.push(G.copyItem(D.beastMeat(level))); // meat for a cook (v10.9)
     if (M.family === 'humanoid' && level >= 14 && Math.random() < (level >= 28 ? 0.4 : level >= 18 ? 0.3 : 0.2)) out.items.push(G.copyItem(level >= 28 ? 'silk_cloth' : 'wool_cloth')); // silk from 28 (Expert)
     if (M.named && Math.random() < 0.2) out.items.push(G.copyItem(pickRare(level)));
   }
@@ -1581,14 +1588,107 @@
     const P = G.S.player, r = D.RECIPES[c.rid], p = G.profs()[r.prof];
     if (!p || G.craftable(c.rid) < 1) return;
     for (const m in r.mats) G.removeItem(m, r.mats[m]);
+    // cooking (v10.9): Burnt loses the first set of the batch; Perfect adds one serving per five (at least one)
+    c.made = (c.made || 0) + 1;
+    if (c.quality === 'burnt' && c.made === 1) {
+      sys(`You burn the ${D.ITEMS[r.makes].name}.`);
+      if (c.left > 1 && G.craftable(c.rid) > 0) P.casting = Object.assign({}, c, { left: c.left - 1, start: now(), end: now() + 1500 });
+      return;
+    }
+    const extra = c.quality === 'perfect' && ((c.batch || 1) < 5 ? c.made === 1 : c.made % 5 === 0) ? 1 : 0;
     const it = G.copyItem(r.makes);
     if (D.GEAR_SLOTS.includes(it.slot)) { it.id = r.makes; it.crafter = P.name; }
-    if (!G.addItem(it, r.n)) { for (const m in r.mats) G.addItem(G.copyItem(m), r.mats[m]); return; }
-    loot(`You create: ${B.link(it.name, it.q)}${r.n > 1 ? ' x' + r.n : ''}.`);
+    if (!G.addItem(it, r.n + extra)) { for (const m in r.mats) G.addItem(G.copyItem(m), r.mats[m]); return; }
+    loot(`You create: ${B.link(it.name, it.q)}${r.n + extra > 1 ? ' x' + (r.n + extra) : ''}${extra ? ' (Perfect)' : ''}.`);
     skillUp(r.prof, G.skillColor(p.skill, r.sk));
     G.S.stats = G.S.stats || {}; G.S.stats.crafted = (G.S.stats.crafted || 0) + 1;
     if (c.left > 1 && G.craftable(c.rid) > 0 && !G.bagsFull()) P.casting = Object.assign({}, c, { left: c.left - 1, start: now(), end: now() + 1500 });
   }
+  // --- cooking (v10.9): the heat bar. A needle sweeps from cold (0) to burnt (1); where you stop it decides the batch:
+  // the gold zone is Perfect, the rest Normal, the burnt end (and never stopping) Burnt. The gold zone is wider the
+  // further your skill is above the recipe's. Auto cooks Normal.
+  G.COOK_BAR = { sweep: 1.6, gold: 0.62, burnt: 0.86, width: [0.06, 0.15] };
+  G.cookZone = function (rid) {
+    const r = D.RECIPES[rid], p = G.profs().cooking, B_ = G.COOK_BAR, over = Math.max(0, (p ? p.skill : 0) - r.sk[0]);
+    const w = Math.min(B_.width[1], B_.width[0] + over / 600);
+    return { gold: [B_.gold - w / 2, B_.gold + w / 2], burnt: B_.burnt };
+  };
+  G.cookResult = (rid, pos) => { const z = G.cookZone(rid); return pos == null || pos >= z.burnt ? 'burnt' : pos >= z.gold[0] && pos <= z.gold[1] ? 'perfect' : 'normal'; };
+  G.cook = function (rid, count, quality) {
+    G.craft(rid, count); const P = G.S.player;
+    if (P.casting && P.casting.what === 'craft' && P.casting.rid === rid) Object.assign(P.casting, { quality: quality || 'normal', batch: P.casting.left });
+  };
+  // --- fishing (v10.9): cast, wait for the bite, tap; big and rare fish fight on the reel. DOM-free: the screen drives it
+  // with G.fishStart / G.fishTap / G.fishReel, the sims do the same. Auto lands a common fish and never a big or rare one.
+  G.FISH_TIME = { wait: [2, 8], window: { common: 0.9, big: 0.7, rare: 0.55 }, autoLand: 0.85 };
+  // the reel, in bar units (0..1) a second: your zone rises while you hold and falls when you let go; the line fills
+  // while the fish is in your zone and drains while it is out
+  G.FISH_REEL = { zone: { big: 0.3, rare: 0.22 }, rise: 1.5, fall: 1.3, fill: 0.42, drain: 0.32, speed: { big: 0.45, rare: 0.7 } };
+  G.fishWhy = function () {
+    const S = G.S, P = S.player, p = G.profs().fishing;
+    if (!p) return 'Learn Fishing from a profession trainer first.';
+    if (G.fight || S.run || S.bg || P.travel || P.ghostUntil) return "You can't fish right now.";
+    const tier = D.waterTier(P.place); if (!tier) return 'There is no water to fish here.';
+    const need = D.FISH[tier].common[0][1]; if (p.skill < need) return `You need Fishing ${need} to fish here.`;
+    return null;
+  };
+  function rollFish(tier, skill) {
+    const T = D.FISH[tier];
+    if (skill >= T.rare[1] && Math.random() < D.FISH_CHANCE.rare) return { id: T.rare[0], kind: 'rare', need: T.rare[1] };
+    if (skill >= T.big[1] && Math.random() < D.FISH_CHANCE.big) return { id: T.big[0], kind: 'big', need: T.big[1] };
+    const can = T.common.filter((c) => c[1] <= skill), c = pick(can);
+    return { id: c[0], kind: 'common', need: c[1] };
+  }
+  G.fishStart = function (auto) {
+    const why = G.fishWhy(); if (why) { toast(why); return false; }
+    if (G.bagsFull()) { toast('Inventory is full.'); return false; }
+    stopActions();
+    const P = G.S.player, f = rollFish(D.waterTier(P.place), G.profs().fishing.skill), t = now();
+    P.fishing = { phase: 'wait', start: t, biteAt: t + rnd(G.FISH_TIME.wait[0], G.FISH_TIME.wait[1]) * 1000, fish: f, auto: !!auto };
+    emit('fish', { phase: 'wait' }); return true;
+  };
+  function fishDone(result, id) {
+    const P = G.S.player, F = P.fishing; if (!F) return;
+    P.fishing = Object.assign({}, F, { phase: 'done', result, caught: id || null, at: now() });
+    if (id) {
+      G.addItem(G.copyItem(id), 1); loot(`You catch ${B.link(D.ITEMS[id].name, D.ITEMS[id].q)}.`);
+      const need = F.fish.need, p = G.profs().fishing; skillUp('fishing', G.skillColor(p.skill, [need, need + 25, need + 50, need + 100]));
+      emit('lootGain', { items: 1, got: [D.ITEMS[id]] });
+    } else sys(result === 'early' ? 'You pulled too soon. The fish swims off.' : 'It got away.');
+    emit('fish', { phase: 'done', result, id }); emit('change');
+  }
+  function fishTick() {
+    const P = G.S.player, F = P.fishing, t = now(); if (!F || F.phase === 'done') return;
+    if (F.phase === 'wait' && t >= F.biteAt) {
+      if (F.auto) { // auto: a common fish lands at the usual rate; a big or rare one is never hooked
+        const T = D.FISH[D.waterTier(P.place)], c = F.fish.kind === 'common' ? F.fish : (() => { const cc = pick(T.common.filter((x) => x[1] <= G.profs().fishing.skill)); return { id: cc[0], kind: 'common', need: cc[1] }; })();
+        P.fishing.fish = c; const land = Math.random() < G.FISH_TIME.autoLand; return fishDone(land ? 'caught' : 'lost', land ? c.id : null);
+      }
+      F.phase = 'bite'; F.biteEnd = t + G.FISH_TIME.window[F.fish.kind] * 1000; emit('fish', { phase: 'bite' });
+    } else if (F.phase === 'bite' && t > F.biteEnd) fishDone('lost');
+  }
+  G.fishTick = fishTick;
+  G.fishTap = function () {
+    const P = G.S.player, F = P.fishing; if (!F || F.auto) return;
+    if (F.phase === 'wait') return fishDone('early');
+    if (F.phase !== 'bite') return;
+    if (F.fish.kind === 'common') return fishDone('caught', F.fish.id);
+    const R = G.FISH_REEL; F.phase = 'reel'; F.reel = { zone: 0.5, w: R.zone[F.fish.kind], fish: 0.5, target: Math.random(), line: 0.3 };
+    emit('fish', { phase: 'reel' });
+  };
+  G.fishReel = function (hold, dt) {
+    const F = G.S.player.fishing; if (!F || F.phase !== 'reel') return null;
+    const R = G.FISH_REEL, r = F.reel, sp = R.speed[F.fish.kind];
+    r.zone = Math.max(r.w / 2, Math.min(1 - r.w / 2, r.zone + (hold ? R.rise : -R.fall) * dt));
+    if (Math.abs(r.fish - r.target) < 0.03) r.target = Math.random(); // the fish darts somewhere new
+    r.fish += Math.sign(r.target - r.fish) * Math.min(Math.abs(r.target - r.fish), sp * dt);
+    const inside = Math.abs(r.fish - r.zone) <= r.w / 2;
+    r.line = Math.max(0, Math.min(1, r.line + (inside ? R.fill : -R.drain) * dt));
+    if (r.line >= 1) fishDone('caught', F.fish.id); else if (r.line <= 0) fishDone('lost');
+    return inside;
+  };
+  G.fishStop = function () { const P = G.S.player; if (P.fishing && P.fishing.phase !== 'done') sys('You reel in your line.'); P.fishing = null; emit('fish', { phase: 'stop' }); };
+
   // --- using items: potions (combat too), elixirs, sharpening stones, armour kits, bags, recipes
   const POTION_CD = 120000;
   G.potionReady = () => (G.S.player.potionAt || 0) <= now();
@@ -3256,6 +3356,7 @@
     const fast = G.fight && G.speed > 1 ? G.speed : 1;
     if (fast > 1 && S.run && !S.run.finishedAt) S.run.fastSecs = (S.run.fastSecs || 0) + dt * (fast - 1);
     acc += dt * fast;
+    if (S.player.fishing) try { fishTick(); } catch (e) { console.error(e); } // fishing (v10.9)
     socAcc += dt; if (socAcc >= 1) { socAcc = 0; if (root.SOC) try { SOC.tick(); } catch (e) { console.error(e); } try { G.brawlTick(); } catch (e) { console.error(e); } }
     S.player.played = (S.player.played || 0) + dt;
     // combat at fixed 0.1s steps
