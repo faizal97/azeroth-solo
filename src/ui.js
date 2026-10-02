@@ -1459,6 +1459,9 @@
       bar.append(btn);
     }
   }
+  // taps still landing from a combo when the last enemy dies must not pull the next one
+  let fightEndAt = 0;
+  const PULL_GRACE = 1200;
   function pressAbility(id) {
     const S = G.S, P = S.player;
     if (id === 'eat') return G.consume('food');
@@ -1474,6 +1477,7 @@
     const ab = D.ABILITIES[id];
     if (ab.target === 'enemy') {
       if (S.run) return toast('Wait for the pull.');
+      if (performance.now() - fightEndAt < PULL_GRACE) return toast('Fight over. Wait a moment to pull the next one.');
       const keys = questMobKeys();
       const mobs = G.placeMobs().filter((m) => m.state === 'alive').sort((a, b) => (keys.has(b.key) ? 1 : 0) - (keys.has(a.key) ? 1 : 0));
       if (!mobs.length) return toast('No target nearby.');
@@ -4300,7 +4304,7 @@
     G.on('runUpdate', () => { if (G.S && G.S.run && G.S.run.phase === 'rest') tip('run'); });
     G.on('levelup', (d) => { if (d.level === 2) tip('level'); if (d.level === 8) tip('dungeon'); if (d.level === D.TALENT_START) tip('talents'); });
     G.on('chat', () => { if (G.S && G.S.chat.some((m) => m.act && m.act.state === 'open' && !m.act.accepted)) tip('request'); });
-    G.on('fightEnd', (d) => { renderAll(); if (d.result === 'lose' && !G.S.run) banner('You died'); });
+    G.on('fightEnd', (d) => { fightEndAt = performance.now(); renderAll(); if (d.result === 'lose' && !G.S.run) banner('You died'); });
     G.on('runUpdate', renderAll);
     G.on('runTick', () => {});
     // a chapter that waits on a quest (x1 waits for Veshmira) plays as soon as that quest is turned in
