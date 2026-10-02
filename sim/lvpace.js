@@ -4,7 +4,8 @@
 // the same level, with about 2 sec between pulls (loot, tap the next). Normal monsters only: a player levels on those, not
 // on the rare. Target (game designer, #4): every class within ±20% of the class average at 10, 25, 40 and 55, and at most 2 deaths an hour.
 //   node sim/lvpace.js [hours per class and level, default 4] [levels, default 10,25,40,55]
-{ let s = 0x5eed1e55 >>> 0; Math.random = () => { s = (s + 0x6D2B79F5) >>> 0; let x = s; x = Math.imul(x ^ (x >>> 15), x | 1); x ^= x + Math.imul(x ^ (x >>> 7), x | 61); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; }
+// SEED=n runs another fixed seed (default 0x5eed1e55, the numbers posted on #4), so a spread across seeds can be measured.
+{ let s = (process.env.SEED ? (0x5eed1e55 ^ Math.imul(+process.env.SEED, 0x9E3779B1)) : 0x5eed1e55) >>> 0; Math.random = () => { s = (s + 0x6D2B79F5) >>> 0; let x = s; x = Math.imul(x ^ (x >>> 15), x | 1); x ^= x + Math.imul(x ^ (x >>> 7), x | 61); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; }
 globalThis.localStorage = { getItem() { return null; }, setItem() {}, removeItem() {} };
 require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js');
 const { G, D } = globalThis;

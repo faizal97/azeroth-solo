@@ -6,25 +6,34 @@
 // at the level when no quest is open. Each class kills at its own measured pace: seconds per kill from sim/lvpace.js,
 // which already holds resting, deaths and the time between pulls.
 //   node sim/lvpace.js 6 > lv.txt; LVPACE=lv.txt node sim/questpace.js
+// Several seeds (sim/lvpace.js with SEED=n): files of one seed joined by ',', seeds by ';'. Each class then reads as the
+// mean over seeds, ± half the range between the lowest and highest seed. Deaths an hour on the path come from each
+// class's deaths per kill at the level (the game designer's bar: at most 2 an hour). ORDER=zoneflow takes the open
+// quests in sim/zoneflow.js's order (the data's order) instead of the nearest one, to check the path doesn't decide it.
+//   LVPACE='s0_L10.txt,s0_L25.txt;s1_L10.txt,s1_L25.txt' ORDER=zoneflow node sim/questpace.js
+{ let s = 0x5eed1e55 >>> 0; Math.random = () => { s = (s + 0x6D2B79F5) >>> 0; let x = s; x = Math.imul(x ^ (x >>> 15), x | 1); x ^= x + Math.imul(x ^ (x >>> 7), x | 61); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; }
 globalThis.localStorage = { getItem() { return null; }, setItem() {}, removeItem() {} };
 require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js');
 const { D, G } = globalThis;
 const fs = require('fs');
-const BAND = 20, TALK = 10, BANDS = [[10, 20], [25, 35], [40, 50], [50, 60]];
-// seconds per kill by class and level, from sim/lvpace.js output (one or more files, comma-separated)
-const pace = {}; // pace[cls][L] = seconds per kill (3600 / kills an hour)
-for (const f of (process.env.LVPACE || '').split(',').filter(Boolean)) {
-  let L = null;
-  for (const line of fs.readFileSync(f, 'utf8').split('\n')) {
-    const lv = line.match(/^level (\d+)/); if (lv) { L = +lv[1]; continue; }
-    const m = line.match(/^\s+(\w+)\s+\d+ XP\/h.*?· (\d+) kills/); if (m && L) (pace[m[1]] = pace[m[1]] || {})[L] = 3600 / +m[2];
+const BAND = 20, DEATHS = 2, TALK = 10, BANDS = [[10, 20], [25, 35], [40, 50], [50, 60]], ORDER = process.env.ORDER || 'nearest';
+// seconds and deaths per kill by seed, class and level, from sim/lvpace.js output
+const SEEDS = (process.env.LVPACE || '').split(';').filter(Boolean).map((files) => {
+  const pace = {}; // pace[cls][L] = { spk: seconds per kill (3600 / kills an hour), dpk: deaths per kill }
+  for (const f of files.split(',').filter(Boolean)) {
+    let L = null;
+    for (const line of fs.readFileSync(f, 'utf8').split('\n')) {
+      const lv = line.match(/^level (\d+)/); if (lv) { L = +lv[1]; continue; }
+      const m = line.match(/^\s+(\w+)\s+\d+ XP\/h.*?· (\d+) kills, ([\d.]+) deaths an hour/); if (m && L) (pace[m[1]] = pace[m[1]] || {})[L] = { spk: 3600 / +m[2], dpk: +m[3] / +m[2] };
+    }
   }
-}
-const CLASSES = Object.keys(pace);
+  return pace;
+});
+const CLASSES = SEEDS.length ? Object.keys(SEEDS[0]) : [];
 if (!CLASSES.length) { console.log('no lvpace input: LVPACE=<sim/lvpace.js output> node sim/questpace.js'); process.exit(1); }
-const secsPerKill = (cls, L) => { const t = pace[cls], ks = Object.keys(t).map(Number).sort((a, b) => a - b);
-  if (L <= ks[0]) return t[ks[0]]; if (L >= ks[ks.length - 1]) return t[ks[ks.length - 1]];
-  for (let i = 0; i < ks.length - 1; i++) if (L <= ks[i + 1]) { const f = (L - ks[i]) / (ks[i + 1] - ks[i]); return t[ks[i]] + f * (t[ks[i + 1]] - t[ks[i]]); } };
+const perKill = (pace, cls, L, key) => { const t = pace[cls], ks = Object.keys(t).map(Number).sort((a, b) => a - b);
+  if (L <= ks[0]) return t[ks[0]][key]; if (L >= ks[ks.length - 1]) return t[ks[ks.length - 1]][key];
+  for (let i = 0; i < ks.length - 1; i++) if (L <= ks[i + 1]) { const f = (L - ks[i]) / (ks[i + 1] - ks[i]); return t[ks[i]][key] + f * (t[ks[i + 1]][key] - t[ks[i]][key]); } };
 // where an NPC stands, and where a monster lives
 const npcAt = {}; for (const k in D.PLACES) for (const n of (D.PLACES[k].npcs || [])) if (!npcAt[n]) npcAt[n] = k;
 const mobAt = {}; for (const k in D.PLACES) for (const [m] of (D.PLACES[k].mobs || [])) (mobAt[m] = mobAt[m] || []).push(k);
@@ -42,7 +51,7 @@ function walk(race, from, to) {
     P.level = lvl;
     const avail = Object.keys(D.QUESTS).filter((q) => { const Q = D.QUESTS[q]; return !done.has(q) && !Q.group && !Q.dungeon && Q.lvl <= lvl + 1 && Q.lvl >= lvl - 4 && (Q.pre || []).every((p) => done.has(p) || D.QUESTS[p].lvl < from - 3) && (!Q.faction || Q.faction === fac) && npcAt[Q.giver]; });
     if (!avail.length) { kills[lvl] = (kills[lvl] || 0) + 1; gain(Math.round(G.xpForKill(lvl + 0.5, false))); continue; } // grind
-    const q = avail.map((k) => ({ k, d: route(cur, npcAt[D.QUESTS[k].giver]) })).sort((a, b) => a.d - b.d)[0].k, Q = D.QUESTS[q]; done.add(q);
+    const q = ORDER === 'zoneflow' ? avail[0] : avail.map((k) => ({ k, d: route(cur, npcAt[D.QUESTS[k].giver]) })).sort((a, b) => a.d - b.d)[0].k, Q = D.QUESTS[q]; done.add(q);
     const giver = npcAt[Q.giver], turnin = npcAt[Q.turnin] || giver; let n = 0, objAt = null;
     for (const o of Q.objs) {
       if (o.type === 'kill') { n += o.n; objAt = objAt || (mobAt[o.mob] || [])[0]; }
@@ -54,14 +63,23 @@ function walk(race, from, to) {
   }
   return { free: travel + talk, travel, kills };
 }
-let bad = 0;
-console.log('time to level through each band along the quest path (hours; both factions averaged), ±' + BAND + '% of the class average');
+let bad = 0, badD = 0;
+const pm = (x) => `${x >= 0 ? '+' : ''}${x.toFixed(0)}%`;
+console.log(`time to level through each band along the quest path (hours; both factions averaged; ${ORDER} quest order), ±${BAND}% of the class average, at most ${DEATHS} deaths an hour; ${SEEDS.length} seed${SEEDS.length > 1 ? 's' : ''} of sim/lvpace.js`);
 for (const [from, to] of BANDS) {
   const W = ['human', 'orc'].map((r) => walk(r, from, to));
-  const rows = CLASSES.map((cls) => { const h = W.map((w) => (w.free + Object.entries(w.kills).reduce((s, [L, n]) => s + n * secsPerKill(cls, +L), 0)) / 3600); return { cls, h: (h[0] + h[1]) / 2 }; });
-  const avg = rows.reduce((s, r) => s + r.h, 0) / rows.length, free = (W[0].free + W[1].free) / 2 / 3600, nk = W.map((w) => Object.values(w.kills).reduce((a, b) => a + b, 0));
+  // per seed: each class's hours and deaths, and its % against that seed's class average
+  const per = SEEDS.map((pace) => {
+    const rows = CLASSES.map((cls) => { const r = W.map((w) => { const ks = Object.entries(w.kills); const h = (w.free + ks.reduce((s, [L, n]) => s + n * perKill(pace, cls, +L, 'spk'), 0)) / 3600; return { h, d: ks.reduce((s, [L, n]) => s + n * perKill(pace, cls, +L, 'dpk'), 0) / h }; });
+      return { cls, h: (r[0].h + r[1].h) / 2, dph: (r[0].d + r[1].d) / 2 }; });
+    const avg = rows.reduce((s, r) => s + r.h, 0) / rows.length; for (const r of rows) r.pct = (r.h / avg - 1) * 100; return { rows, avg };
+  });
+  const free = (W[0].free + W[1].free) / 2 / 3600, nk = W.map((w) => Object.values(w.kills).reduce((a, b) => a + b, 0)), avg = per.reduce((s, p) => s + p.avg, 0) / per.length;
   console.log(`levels ${from}-${to}: class average ${avg.toFixed(1)} h (travel and talking ${free.toFixed(1)} h, ${Math.round((nk[0] + nk[1]) / 2)} kills)`);
-  for (const r of rows.sort((a, b) => a.h - b.h)) { const d = (r.h / avg - 1) * 100, out = Math.abs(d) > BAND; if (out) bad++; // faster first: less time is better
-    console.log(`  ${r.cls.padEnd(8)} ${r.h.toFixed(1).padStart(5)} h  ${d >= 0 ? '+' : ''}${d.toFixed(0)}% time${out ? '  outside ±' + BAND + '%' : ''}`); }
+  const rows = CLASSES.map((cls) => { const xs = per.map((p) => p.rows.find((r) => r.cls === cls)), ps = xs.map((x) => x.pct), ds = xs.map((x) => x.dph);
+    return { cls, h: xs.reduce((s, x) => s + x.h, 0) / xs.length, pct: ps.reduce((a, b) => a + b, 0) / ps.length, spread: (Math.max(...ps) - Math.min(...ps)) / 2, lo: Math.min(...ps), hi: Math.max(...ps), dph: ds.reduce((a, b) => a + b, 0) / ds.length, dmax: Math.max(...ds) }; });
+  for (const r of rows.sort((a, b) => a.h - b.h)) { const out = Math.abs(r.pct) > BAND, edge = !out && (Math.abs(r.lo) > BAND || Math.abs(r.hi) > BAND), dout = r.dph > DEATHS; if (out) bad++; if (dout) badD++; // faster first: less time is better
+    console.log(`  ${r.cls.padEnd(8)} ${r.h.toFixed(1).padStart(5)} h  ${pm(r.pct)} time${SEEDS.length > 1 ? ` ±${r.spread.toFixed(0)} (seeds ${pm(r.lo)} to ${pm(r.hi)})` : ''}${out ? '  outside ±' + BAND + '%' : edge ? '  inside, but a seed is outside' : ''} · ${r.dph.toFixed(1)} deaths an hour${SEEDS.length > 1 ? ` (worst seed ${r.dmax.toFixed(1)})` : ''}${dout ? '  over ' + DEATHS : ''}`); }
 }
 console.log(bad ? `${bad} class-bands outside ±${BAND}% (a report for the game designer)` : `every class within ±${BAND}% at every band`);
+console.log(badD ? `${badD} class-bands over ${DEATHS} deaths an hour` : `every class at most ${DEATHS} deaths an hour at every band`);
