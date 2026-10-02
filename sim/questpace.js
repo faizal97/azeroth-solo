@@ -10,13 +10,18 @@
 // mean over seeds, ± half the range between the lowest and highest seed. Deaths an hour on the path come from each
 // class's deaths per kill at the level (the game designer's bar: at most 2 an hour). ORDER=zoneflow takes the open
 // quests in sim/zoneflow.js's order (the data's order) instead of the nearest one, to check the path doesn't decide it.
+// The bar (game designer, #4, 2026-10-02): against the median class's time, not the average (Warrior and Hunter dragged
+// the average down). Slow side: at most +20% of the median. Fast side: a nerf only past 40% faster. Deaths: at most 2
+// an hour, the Mage 3. BAR=average gives the earlier report (±20% of the class average). A later file of a seed
+// overrides an earlier one per class and level, so a candidate run of one class (sim/lvpace.js with CLASSES=priest)
+// goes after that seed's base files.
 //   LVPACE='s0_L10.txt,s0_L25.txt;s1_L10.txt,s1_L25.txt' ORDER=zoneflow node sim/questpace.js
 { let s = 0x5eed1e55 >>> 0; Math.random = () => { s = (s + 0x6D2B79F5) >>> 0; let x = s; x = Math.imul(x ^ (x >>> 15), x | 1); x ^= x + Math.imul(x ^ (x >>> 7), x | 61); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; }
 globalThis.localStorage = { getItem() { return null; }, setItem() {}, removeItem() {} };
 require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js');
 const { D, G } = globalThis;
 const fs = require('fs');
-const BAND = 20, DEATHS = 2, TALK = 10, BANDS = [[10, 20], [25, 35], [40, 50], [50, 60]], ORDER = process.env.ORDER || 'nearest';
+const BAR = process.env.BAR || 'median', SLOW = 20, FAST = BAR === 'median' ? 40 : 20, DEATHS = 2, DEATHS_CLS = { mage: 3 }, TALK = 10, BANDS = [[10, 20], [25, 35], [40, 50], [50, 60]], ORDER = process.env.ORDER || 'nearest';
 // seconds and deaths per kill by seed, class and level, from sim/lvpace.js output
 const SEEDS = (process.env.LVPACE || '').split(';').filter(Boolean).map((files) => {
   const pace = {}; // pace[cls][L] = { spk: seconds per kill (3600 / kills an hour), dpk: deaths per kill }
@@ -65,21 +70,24 @@ function walk(race, from, to) {
 }
 let bad = 0, badD = 0;
 const pm = (x) => `${x >= 0 ? '+' : ''}${x.toFixed(0)}%`;
-console.log(`time to level through each band along the quest path (hours; both factions averaged; ${ORDER} quest order), ±${BAND}% of the class average, at most ${DEATHS} deaths an hour; ${SEEDS.length} seed${SEEDS.length > 1 ? 's' : ''} of sim/lvpace.js`);
+console.log(`time to level through each band along the quest path (hours; both factions averaged; ${ORDER} quest order), at most +${SLOW}% ${BAR === 'median' ? `of the median class (a nerf only past −${FAST}%)` : `/ −${FAST}% of the class average`}, at most ${DEATHS} deaths an hour (Mage 3); ${SEEDS.length} seed${SEEDS.length > 1 ? 's' : ''} of sim/lvpace.js`);
 for (const [from, to] of BANDS) {
   const W = ['human', 'orc'].map((r) => walk(r, from, to));
   // per seed: each class's hours and deaths, and its % against that seed's class average
   const per = SEEDS.map((pace) => {
     const rows = CLASSES.map((cls) => { const r = W.map((w) => { const ks = Object.entries(w.kills); const h = (w.free + ks.reduce((s, [L, n]) => s + n * perKill(pace, cls, +L, 'spk'), 0)) / 3600; return { h, d: ks.reduce((s, [L, n]) => s + n * perKill(pace, cls, +L, 'dpk'), 0) / h }; });
       return { cls, h: (r[0].h + r[1].h) / 2, dph: (r[0].d + r[1].d) / 2 }; });
-    const avg = rows.reduce((s, r) => s + r.h, 0) / rows.length; for (const r of rows) r.pct = (r.h / avg - 1) * 100; return { rows, avg };
+    const hs = rows.map((r) => r.h).sort((a, b) => a - b), mid = hs.length >> 1, avg = BAR === 'median' ? (hs.length % 2 ? hs[mid] : (hs[mid - 1] + hs[mid]) / 2) : hs.reduce((a, b) => a + b, 0) / hs.length;
+    for (const r of rows) r.pct = (r.h / avg - 1) * 100; return { rows, avg };
   });
   const free = (W[0].free + W[1].free) / 2 / 3600, nk = W.map((w) => Object.values(w.kills).reduce((a, b) => a + b, 0)), avg = per.reduce((s, p) => s + p.avg, 0) / per.length;
-  console.log(`levels ${from}-${to}: class average ${avg.toFixed(1)} h (travel and talking ${free.toFixed(1)} h, ${Math.round((nk[0] + nk[1]) / 2)} kills)`);
+  console.log(`levels ${from}-${to}: ${BAR === 'median' ? 'median class' : 'class average'} ${avg.toFixed(1)} h (travel and talking ${free.toFixed(1)} h, ${Math.round((nk[0] + nk[1]) / 2)} kills)`);
   const rows = CLASSES.map((cls) => { const xs = per.map((p) => p.rows.find((r) => r.cls === cls)), ps = xs.map((x) => x.pct), ds = xs.map((x) => x.dph);
     return { cls, h: xs.reduce((s, x) => s + x.h, 0) / xs.length, pct: ps.reduce((a, b) => a + b, 0) / ps.length, spread: (Math.max(...ps) - Math.min(...ps)) / 2, lo: Math.min(...ps), hi: Math.max(...ps), dph: ds.reduce((a, b) => a + b, 0) / ds.length, dmax: Math.max(...ds) }; });
-  for (const r of rows.sort((a, b) => a.h - b.h)) { const out = Math.abs(r.pct) > BAND, edge = !out && (Math.abs(r.lo) > BAND || Math.abs(r.hi) > BAND), dout = r.dph > DEATHS; if (out) bad++; if (dout) badD++; // faster first: less time is better
-    console.log(`  ${r.cls.padEnd(8)} ${r.h.toFixed(1).padStart(5)} h  ${pm(r.pct)} time${SEEDS.length > 1 ? ` ±${r.spread.toFixed(0)} (seeds ${pm(r.lo)} to ${pm(r.hi)})` : ''}${out ? '  outside ±' + BAND + '%' : edge ? '  inside, but a seed is outside' : ''} · ${r.dph.toFixed(1)} deaths an hour${SEEDS.length > 1 ? ` (worst seed ${r.dmax.toFixed(1)})` : ''}${dout ? '  over ' + DEATHS : ''}`); }
+  const fails = (p) => p > SLOW || p < -FAST;
+  for (const r of rows.sort((a, b) => a.h - b.h)) { const out = fails(r.pct), edge = !out && (fails(r.lo) || fails(r.hi)), dl = DEATHS_CLS[r.cls] || DEATHS, dout = r.dph > dl; if (out) bad++; if (dout) badD++; // faster first: less time is better
+    const why = r.pct > SLOW ? `  slow: over +${SLOW}%` : r.pct < -FAST ? `  fast: past −${FAST}%` : edge ? '  inside, but a seed is outside' : '';
+    console.log(`  ${r.cls.padEnd(8)} ${r.h.toFixed(1).padStart(5)} h  ${pm(r.pct)} time${SEEDS.length > 1 ? ` ±${r.spread.toFixed(0)} (seeds ${pm(r.lo)} to ${pm(r.hi)})` : ''}${why} · ${r.dph.toFixed(1)} deaths an hour${SEEDS.length > 1 ? ` (worst seed ${r.dmax.toFixed(1)})` : ''}${dout ? '  over ' + dl : ''}`); }
 }
-console.log(bad ? `${bad} class-bands outside ±${BAND}% (a report for the game designer)` : `every class within ±${BAND}% at every band`);
-console.log(badD ? `${badD} class-bands over ${DEATHS} deaths an hour` : `every class at most ${DEATHS} deaths an hour at every band`);
+console.log(bad ? `${bad} class-bands off the bar (a report for the game designer)` : `every class on the bar at every band`);
+console.log(badD ? `${badD} class-bands over their deaths an hour` : `every class at most ${DEATHS} deaths an hour (Mage 3) at every band`);

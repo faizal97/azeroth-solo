@@ -3,8 +3,8 @@
 // 0.8 rounds a brawl on average), while who ends up champion may lean by class (that is class identity). Pets wait
 // outside the pit. Rounds pay, the chest opens once a day, the schedule is right across midnight and time-zone changes.
 //   node sim/brawl.js [brawls per class, default 48, as the build runs it]
-// seeded (as sim/social.js): the same code gives the same brawls, so the balance gate passes or fails on the code, not on luck
-{ let s = 0x5eed1e55 >>> 0; Math.random = () => { s = (s + 0x6D2B79F5) >>> 0; let x = s; x = Math.imul(x ^ (x >>> 15), x | 1); x ^= x + Math.imul(x ^ (x >>> 7), x | 61); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; }
+// seeded (as sim/social.js): the same code gives the same brawls, so the balance gate passes or fails on the code, not on luck; SEED=n runs another fixed seed (unset: the build's), to measure the sample's wobble
+{ let s = (process.env.SEED ? (0x5eed1e55 ^ Math.imul(+process.env.SEED, 0x9E3779B1)) : 0x5eed1e55) >>> 0; Math.random = () => { s = (s + 0x6D2B79F5) >>> 0; let x = s; x = Math.imul(x ^ (x >>> 15), x | 1); x ^= x + Math.imul(x ^ (x >>> 7), x | 61); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; }
 globalThis.localStorage = (() => { const m = new Map(); return { getItem: (k) => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: (k) => m.delete(k) }; })();
 require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js');
 const { G, D } = globalThis;

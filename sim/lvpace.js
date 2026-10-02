@@ -17,6 +17,7 @@ if (process.env.PETDMG) globalThis.E.SOLO_PET_DMG = +process.env.PETDMG; // the 
 const BAND = 20; // game designer, #4: within ±20% of the class average (was ±15%), at most 2 deaths an hour
 const HOURS = +process.argv[2] || 4, LEVELS = (process.argv[3] || '10,25,40,55').split(',').map(Number);
 const CLASSES = Object.keys(D.CLASSES).filter((c) => !D.CLASSES[c].hidden); // players can't make a hidden class (the Bard)
+if (process.env.CLASSES) CLASSES.splice(0, CLASSES.length, ...process.env.CLASSES.split(',')); // e.g. CLASSES=priest for a candidate run of one class; its % then reads against that subset only
 const step = (secs) => { G.update(secs); t += secs * 1000; };
 // a wild place where this level fights: monsters around the level, no town
 const normal = (k) => D.MOBS[k] && !D.MOBS[k].named && !D.MOBS[k].elite && !D.MOBS[k].boss;
