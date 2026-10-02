@@ -322,5 +322,13 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
   ok(G.profs().blacksmithing.max === 225, 'Artisan waits for level 45');
   ok(D.TITLES.find((t) => t.id === 'artisan').name === 'Journeyman %s', 'the 150 title is Journeyman, so Artisan means 300');
 }
+// Artisan materials by level (v10.9 beta 5)
+{
+  const t52 = D.nodeTable(52), has = (tb, k) => tb.some(([id, w]) => id === k && w > 0);
+  ok(has(t52.ore, 'duskiron') && has(t52.ore, 'moonsilver') && has(t52.herb, 'gloomcap'), 'a level-52 place grows duskiron, moonsilver and gloomcap');
+  ok(!has(D.nodeTable(45).ore, 'duskiron') && has(D.nodeTable(57).herb, 'frostpetal'), 'duskiron starts above 45, frostpetal grows at 57');
+  ok(D.skinLeather(55) === 'hardhide_leather' && D.skinLeather(45) === 'thick_leather', 'a level-55 beast skins into hardhide');
+  ok(Object.values(D.NODES).every((N) => D.ITEMS[N.item] && (!N.extra || D.ITEMS[N.extra[0]])), 'every node gives a real item');
+}
 console.log(fails ? `${fails} failures` : 'professions sim OK');
 process.exit(fails ? 1 : 0);

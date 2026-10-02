@@ -1551,7 +1551,7 @@
       } else if (!G.S.flags.skinWarn || now() - G.S.flags.skinWarn > 60000) { G.S.flags.skinWarn = now(); sys(`Requires Skinning ${need} to skin this.`); }
     }
     if (M.family === 'beast' && G.profs().cooking && level >= 3 && Math.random() < 0.35) out.items.push(G.copyItem(D.beastMeat(level))); // meat for a cook (v10.9)
-    if (M.family === 'humanoid' && level >= 14 && Math.random() < (level >= 28 ? 0.4 : level >= 18 ? 0.3 : 0.2)) out.items.push(G.copyItem(level >= 28 ? 'silk_cloth' : 'wool_cloth')); // silk from 28 (Expert)
+    if (M.family === 'humanoid' && level >= 14 && Math.random() < (level >= 28 ? 0.4 : level >= 18 ? 0.3 : 0.2)) out.items.push(G.copyItem(level >= 45 ? 'duskweave_cloth' : level >= 28 ? 'silk_cloth' : 'wool_cloth')); // silk from 28 (Expert), duskweave from 45 (Artisan)
     if (M.named && Math.random() < 0.2) out.items.push(G.copyItem(pickRare(level)));
   }
   // a rare recipe for the level it drops at (v10.9): one whose item is within 8 levels, else the nearest ones

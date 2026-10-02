@@ -49,6 +49,13 @@
     goldspur: { name: 'Goldspur', prof: 'herbalism', skill: 170, item: 'goldspur', n: [1, 3] },
     hermits_beard: { name: "Hermit's Beard", prof: 'herbalism', skill: 185, item: 'hermits_beard', n: [1, 3] },
     rimeleaf: { name: 'Rimeleaf', prof: 'herbalism', skill: 195, item: 'rimeleaf', n: [1, 3] },
+    // Artisan (v10.9): levels 45-60
+    duskiron: { name: 'Duskiron Deposit', prof: 'mining', skill: 230, item: 'duskiron_ore', n: [1, 2], extra: ['deepstone', 0.5] },
+    moonsilver: { name: 'Moonsilver Vein', prof: 'mining', skill: 260, item: 'moonsilver_ore', n: [1, 1], extra: ['deepstone', 0.3] },
+    cinderbloom: { name: 'Cinderbloom', prof: 'herbalism', skill: 230, item: 'cinderbloom', n: [1, 3] },
+    gloomcap: { name: 'Gloomcap', prof: 'herbalism', skill: 245, item: 'gloomcap', n: [1, 3] },
+    sunveil: { name: 'Sunveil', prof: 'herbalism', skill: 260, item: 'sunveil', n: [1, 3] },
+    frostpetal: { name: 'Frostpetal', prof: 'herbalism', skill: 275, item: 'frostpetal', n: [1, 3] },
   };
   D.GATHER_BANDS = [25, 50, 100]; // skill below req+25 always gains, below +50 half the time, below +100 a quarter
   // Which nodes grow at a place, by the place's level. Weights; the game rolls one per spawn.
@@ -59,11 +66,13 @@
     // Expert (v10.9): iron from 26, gold from 30, embersilver from 35; the herbs by their skill
     if (L <= 30) return { ore: [['tin', 2], ['silver', 2], ['iron', L >= 26 ? 6 : 1]], herb: [['bruiseweed', 3], ['ironthistle', L >= 25 ? 4 : 0], ['redmantle', L >= 28 ? 3 : 0]] };
     if (L <= 38) return { ore: [['iron', 6], ['silver', 1], ['gold', L >= 30 ? 1 : 0], ['embersilver', L >= 35 ? 3 : 0]], herb: [['redmantle', 2], ['stoutroot', 4], ['dimleaf', L >= 32 ? 3 : 0], ['goldspur', L >= 35 ? 2 : 0]] };
-    return { ore: [['iron', 3], ['embersilver', 6], ['gold', 1]], herb: [['goldspur', 3], ['hermits_beard', 4], ['rimeleaf', L >= 40 ? 3 : 0], ['dimleaf', 1]] };
+    if (L <= 45) return { ore: [['iron', 3], ['embersilver', 6], ['gold', 1]], herb: [['goldspur', 3], ['hermits_beard', 4], ['rimeleaf', L >= 40 ? 3 : 0], ['dimleaf', 1]] };
+    // Artisan (v10.9): duskiron from 46, the moonsilver vein from 50; the herbs by their skill
+    return { ore: [['duskiron', 6], ['embersilver', L < 50 ? 3 : 0], ['moonsilver', L >= 50 ? 1 : 0]], herb: [['cinderbloom', 3], ['gloomcap', L >= 50 ? 3 : 0], ['sunveil', L >= 53 ? 3 : 0], ['frostpetal', L >= 56 ? 3 : 0], ['rimeleaf', L < 50 ? 2 : 0]] };
   };
   // Skinning needs skill by the beast's level, like the original game.
   D.skinSkill = (lvl) => (lvl <= 10 ? 1 : lvl <= 20 ? (lvl - 10) * 10 : lvl * 5);
-  D.skinLeather = (lvl) => (lvl >= 40 ? 'thick_leather' : lvl >= 28 ? 'heavy_leather' : lvl >= 20 ? 'medium_leather' : 'light_leather');
+  D.skinLeather = (lvl) => (lvl >= 50 ? 'hardhide_leather' : lvl >= 40 ? 'thick_leather' : lvl >= 28 ? 'heavy_leather' : lvl >= 20 ? 'medium_leather' : 'light_leather');
 
   // ---- materials (stack to 20; slot 'mat')
   const mat = (id, name, icon, sell, o) => D.item(id, Object.assign({ name, slot: 'mat', q: 1, icon, sell }, o));
@@ -112,6 +121,19 @@
   mat('smithing_coal', 'Smithing Coal', 'smithing_coal', 5, { cost: 25 });
   mat('fine_thread', 'Fine Thread', 'fine_thread', 8, { cost: 30 });
   mat('sturdy_vial', 'Sturdy Vial', 'sturdy_vial', 5, { cost: 20 });
+  // Artisan (v10.9): levels 45-60
+  mat('duskiron_ore', 'Duskiron Ore', 'duskiron_ore', 70);
+  mat('duskiron_bar', 'Duskiron Bar', 'duskiron_bar', 100);
+  mat('moonsilver_ore', 'Moonsilver Ore', 'moonsilver_ore', 250, { q: 2 });
+  mat('moonsilver_bar', 'Moonsilver Bar', 'moonsilver_bar', 330, { q: 2 });
+  mat('deepstone', 'Deepstone', 'deepstone', 25);
+  mat('cinderbloom', 'Cinderbloom', 'cinderbloom', 90);
+  mat('gloomcap', 'Gloomcap', 'gloomcap', 100);
+  mat('sunveil', 'Sunveil', 'sunveil', 115);
+  mat('frostpetal', 'Frostpetal', 'frostpetal', 130);
+  mat('hardhide_leather', 'Hardhide Leather', 'hardhide_leather', 100);
+  mat('duskweave_cloth', 'Duskweave Cloth', 'duskweave_cloth', 40);
+  mat('duskweave_bolt', 'Bolt of Duskweave', 'duskweave_bolt', 130);
   // Linen was vendor trash before v3. It is a tailoring material now (existing stacks keep working).
   D.ITEMS.linen_cloth.slot = 'mat'; D.ITEMS.linen_cloth.icon = 'linen_bolt';
 
