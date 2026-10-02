@@ -1947,9 +1947,16 @@
       const lead = avg(Object.keys(best).filter((k) => top[k] && best[k] > 0).map((k) => avg(top[k]) / best[k]));
       upRef = {}; for (const k in best) upRef[k] = top[k] ? avg(top[k]) : best[k] * lead; for (const k in top) upRef[k] = avg(top[k]);
       upRef['*lead'] = lead;
+      // where a plain level-57+ drop of each quality starts, as a share of its ceiling (the median), for effect items below
+      const share = {}; for (const dk in D.DUNGEONS) for (const x of lootOf(dk)) if (!x.effect && (x.lvl || 0) >= U.minLvl && U.cap[x.q] && upRef[upKey(x)]) (share[x.q] = share[x.q] || []).push(G.itemPoints(x) / upRef[upKey(x)]);
+      upRef['*start'] = {}; for (const q in share) { const a = share[q].sort((x, y) => x - y); upRef['*start'][q] = Math.min(U.cap[q] * 0.97, a[a.length >> 1]); }
     }
-    const fx = it.effect && D.EFFECTS && D.EFFECTS[it.effect] ? 1 - D.effectCost(it.effect) : 1; // an effect item's ceiling pays the same share as its drop did
-    return upRef[upKey(it)] ? upRef[upKey(it)] * fx : G.itemPoints(it.base || it) * upRef['*lead']; // a family seen nowhere: its own power, raised by the lead
+    const base = upRef[upKey(it)] || G.itemPoints(it.base || it) * upRef['*lead']; // a family seen nowhere: its own power, raised by the lead
+    if (!(it.effect && D.EFFECTS && D.EFFECTS[it.effect])) return base;
+    // an effect item's ceiling pays the same share as its drop did, and it is never below where its drop sits for a plain
+    // drop of its quality: a family with no plain item near it (Cinderhide Bracers started at 130%) still has room (#22)
+    const st = upRef['*start'][it.q] || 0.9;
+    return Math.max(base * (1 - D.effectCost(it.effect)), G.itemPoints(upBase(it)) / st);
   };
   G.upgradeRef.reset = () => { upRef = null; }; // when D.UPGRADE.raid moves (sims)
   const upBase = (it) => it.base || { stats: Object.assign({}, it.stats), armor: it.armor, sp: it.sp, dmg: it.dmg && it.dmg.slice() };
@@ -3144,7 +3151,7 @@
     }
     // a careless tank sometimes pulls the next pack too
     const tb = S.group.members.find((m) => m.role === 'tank' && !m.gone);
-    if (tb && !pull.boss && R.idx + 1 < R.pulls.length && !R.pulls[R.idx + 1].boss && Math.random() < ((R.pace || 'normal') === 'fast' ? 0.3 : 0.28 * (1 - tb.bot.skill) * PACE[R.pace || 'normal'].extra)) {
+    if (tb && !pull.boss && R.idx + 1 < R.pulls.length && !R.pulls[R.idx + 1].boss && Math.random() < (PACE[R.pace || 'normal'].chain != null ? PACE[R.pace || 'normal'].chain : 0.28 * (1 - tb.bot.skill) * PACE[R.pace || 'normal'].extra)) {
       G.fight.extraAt = { t: rnd(4, 8), mobs: R.pulls[R.idx + 1].mobs.slice(0, 1) };
     }
     R.phase = 'fight';
@@ -3350,7 +3357,8 @@
   G.REST_REGEN = 0.05; // share of health/mana regained per second while resting in a dungeon (tuned in sim/tactics.js)
   // hp / mana: what the bot tank waits for before the next pull (v10.4: normal and fast wait for the healer too, now that
   // loot rolls no longer hold the group)
-  const PACE = { careful: { rest: 1.6, hp: 0.95, mana: 0.9, bossHp: 0.95, extra: 0 }, normal: { rest: 1, hp: 0.5, mana: 0.45, bossHp: 0.8, extra: 1 }, fast: { rest: 0.35, hp: 0.3, mana: 0.25, bossHp: 0.6, extra: 2.2 } };
+  const PACE = { careful: { rest: 1.6, hp: 0.95, mana: 0.9, bossHp: 0.95, extra: 0 }, normal: { rest: 1, hp: 0.5, mana: 0.45, bossHp: 0.8, extra: 1 }, fast: { rest: 0.35, hp: 0.3, mana: 0.25, bossHp: 0.6, extra: 2.2, chain: 0.3 } };
+  G.PACE = PACE; // sims tune it (sim/tactics.js, #33)
   G.setPace = function (p) { const R = G.S.run; if (R && PACE[p]) { R.pace = p; sys(`Pull pace: ${p}.`); emit('runUpdate'); } };
   // Kill order (v10.4): one at a time (everyone on the marked target) or spread (each on a different enemy, more area attacks)
   G.setKillOrder = function (k) { const R = G.S.run; if (R && (k === 'focus' || k === 'spread')) { R.killOrder = k; if (G.fight && G.fight.kind === 'run') G.fight.opts.killOrder = k; sys(k === 'spread' ? 'Kill order: spread the damage.' : 'Kill order: one at a time.'); emit('runUpdate'); } };

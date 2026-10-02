@@ -144,6 +144,16 @@ if (D.TRIALSWORN_MONTHS) {
     for (const f of ['music', 'town']) { const m = tab[k] && tab[k][f]; if (m && !tracks[m]) err(`${kind} '${k}' plays ${f} '${m}', which is not composed (audio/compose_zones.py, compose_themes.py)`); }
   }
 }
+// item effects (#22): every effect item points at a known effect and keeps at least 40% of its stat budget, so no drop
+// reads as broken (an epic with +2 stats); an effect whose numbers need more is made weaker instead
+if (D.EFFECTS) {
+  const cap = D.EFFECT_COST_MAX || 0.6;
+  for (const k in D.EFFECTS) if (D.effectCost(k) > cap + 1e-9) err(`effect '${k}' costs ${Math.round(D.effectCost(k) * 100)}% of an item's stats; at most ${Math.round(cap * 100)}% (make its numbers weaker instead)`);
+  for (const id in D.ITEMS) { const it = D.ITEMS[id]; if (!it.effect) continue;
+    if (!D.EFFECTS[it.effect]) { err(`item '${id}' has an unknown effect '${it.effect}'`); continue; }
+    const pts = Object.values(it.stats || {}).reduce((a, b) => a + b, 0);
+    if (it.fxBudget && pts < Math.floor(it.fxBudget * (1 - cap))) err(`item '${id}' keeps ${pts} of ${it.fxBudget} stat points; an effect item keeps at least ${Math.round((1 - cap) * 100)}%`); }
+}
 const n = (t) => Object.keys(D[t]).length;
 console.log(`data: ${n('REGIONS')} zones, ${n('PLACES')} places, ${n('MOBS')} mobs, ${n('QUESTS')} quests, ${n('ITEMS')} items` + (warn.length ? ` · ${warn.length} warnings` : ''));
 if (process.argv.includes('-v')) warn.forEach((w) => console.log('  warn:', w));

@@ -8,11 +8,12 @@
   const D = root.D;
   const n = (x) => Math.round(x);
   D.EFFECT_COST = 0.3; // the share of an item's stats an effect costs by default; an effect may set its own `cost` (sim/effects.js tunes them)
+  D.EFFECT_COST_MAX = 0.6; // an effect item keeps at least 40% of its stat budget, so nothing on screen reads as a broken drop (#22; tools/validate.js holds it)
   D.effectCost = (k) => ((D.EFFECTS[k] && D.EFFECTS[k].cost) != null ? D.EFFECTS[k].cost : D.EFFECT_COST);
   D.EFFECTS = {
     // damage
     opening_cut: {
-      name: 'Opening Cut', role: 'damage', icon: 'ambush', k: 2.4, c: 4, cost: 0.75, // one slot's stats are a small share of a character: it pays most of them
+      name: 'Opening Cut', role: 'damage', icon: 'ambush', k: 2.0, c: 4, cost: 0.6, // was 2.4 at a 75% cost (#22: the 40% stat floor; 2.4 at 60% put the trash mix at +11%)
       bonus: (L, f) => n((D.EFFECTS.opening_cut.k * L + D.EFFECTS.opening_cut.c) * (f || 1)),
       desc: (L, f) => `Your first hit on each enemy deals ${D.EFFECTS.opening_cut.bonus(L, f)} extra damage.`,
     },
@@ -28,16 +29,16 @@
       desc: (L, f) => `When you dodge a melee attack, a guard absorbs the next ${D.EFFECTS.turning_guard.absorb(L, f)} damage within ${D.EFFECTS.turning_guard.dur} sec. At most once every ${D.EFFECTS.turning_guard.icd} sec.`,
     },
     kindled_edge: {
-      name: 'Kindled Edge', role: 'damage', icon: 'immolate', k: 0.8, c: 2, dur: 6, every: 2, cost: 0.9,
+      name: 'Kindled Edge', role: 'damage', icon: 'immolate', k: 0.5, c: 1, dur: 6, every: 2, cost: 0.6, // was 0.8/2 at a 90% cost (#22: the 40% stat floor)
       tick: (L, f) => n((D.EFFECTS.kindled_edge.k * L + D.EFFECTS.kindled_edge.c) * (f || 1)),
       desc: (L, f) => { const F = D.EFFECTS.kindled_edge; return `Your critical hits set the target smouldering: ${F.tick(L, f) * (F.dur / F.every)} Fire damage over ${F.dur} sec. A new crit refreshes it; it doesn't stack.`; },
     },
     chase_the_next: {
-      name: 'Chase the Next', role: 'damage', icon: 'sprint', haste: 22, dur: 10, cost: 0.75,
+      name: 'Chase the Next', role: 'damage', icon: 'sprint', haste: 22, dur: 10, cost: 0.6,
       desc: (L, f) => `Each kill gives you ${n(D.EFFECTS.chase_the_next.haste * (f || 1))}% haste for ${D.EFFECTS.chase_the_next.dur} sec.`,
     },
     steady_fuse: {
-      name: 'Steady Fuse', role: 'damage', icon: 'cold_blood', every: 30, cost: 0.9,
+      name: 'Steady Fuse', role: 'damage', icon: 'cold_blood', every: 45, cost: 0.6, // was every 30 at a 90% cost (#22: the 40% stat floor)
       desc: () => `Every ${D.EFFECTS.steady_fuse.every} sec in combat, your next hit is a sure critical hit.`,
     },
     glass_heart: {
@@ -85,7 +86,7 @@
     const like = Object.values(D.ITEMS).filter((x) => x && !x.effect && !x.heirloom && !x.lookOnly && x.stats && sum(x) > 0 && fam(x) && Math.abs((x.lvl || 1) - L) <= 3);
     // no such item: the game's own budget for the level and quality (random gear's, held to the hand-made items by sim/upgrades.js)
     const full = like.length ? like.reduce((a, x) => a + sum(x), 0) / like.length : it.q >= 4 ? L * 0.64 + 2 : it.q === 3 ? L * 0.55 + 2 : L * 0.55 + 1;
-    const budget = Math.max(1, n(full * (1 - D.effectCost(o.effect)))), ks = it.st; it.stats = {}; let left = budget;
+    const budget = Math.max(1, n(full * (1 - D.effectCost(o.effect)))), ks = it.st; it.stats = {}; let left = budget; it.fxBudget = n(full); // what a plain item like it carries (tools/validate.js checks the 40% floor)
     ks.forEach((k, i) => { const v = i === ks.length - 1 ? Math.max(1, left) : Math.max(1, n(budget / ks.length)); it.stats[k] = v; left -= v; });
     delete it.st;
     if (it.slot === 'weapon') {
