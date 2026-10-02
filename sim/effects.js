@@ -39,8 +39,20 @@ function unit(cls, role, L, pieces, i) {
   const u = E.charUnit(c, 'ally', 'bot', 0); u.bot = { skill: 0.8, react: 0.4 }; u.role = role; return u;
 }
 const mob = (key, L, mult) => E.mobUnit(key, L, mult);
-const run = (C, secs) => { while (!C.over && C.t < secs) { E.tick(C, 0.1); C.events.length = 0; } return C; };
+let lastC = null; const run = (C, secs) => { lastC = C; while (!C.over && C.t < secs) { E.tick(C, 0.1); C.events.length = 0; } return C; };
 
+// the hard healing fight's damage, searched so the plain item holds 7 in 10 (on its own seeds, not the measured ones)
+const HARD = {}, HOLD = 0.7;
+function hardDmg(cls, L) {
+  const k = cls + L; if (HARD[k] != null) return HARD[k];
+  let lo = 0.2, hi = 4; HARD[k] = 1;
+  for (let step = 0; step < 9; step++) { const m = (lo + hi) / 2; HARD[k] = m; let held = 0; curCls = cls;
+    for (let i = 0; i < 40; i++) held += CASES.hardheal({ cls, pieces: [piece('lifeline', L, false)] }, L, 50000 + i);
+    if (held / 40 > HOLD) lo = m; else hi = m; }
+  return (HARD[k] = (lo + hi) / 2);
+}
+// cases scored in points of a rate (1 won / 0 lost), not in % of the plain item; and cases where dying is what they measure
+const POINTS = { hardheal: true }, DEATH_IS_THE_MEASURE = { meleeboss: true, casterboss: true, solo: true, hardheal: true };
 // the cases: each returns one number per fight, higher is better
 const CASES = {
   // damage: a pack of three normal monsters (damage per second until they die) / a long boss (damage in 3 min, it hits nothing)
@@ -49,7 +61,9 @@ const CASES = {
   // healing: group-wide damage (a boss whose blast hits everyone) / damage on the tank only; healing done in 2 min
   // (a long fight with more damage than the healer's mana can cover: healing done is healing per mana)
   groupwide: (fx, L, i) => { const h = unit(fx.cls, 'healer', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1), d1 = unit('rogue', 'dps', L, [], i + 2), d2 = unit('mage', 'dps', L, [], i + 3); seed(i); const C = E.fight([t, h, d1, d2], [mob('garr', L, { hp: 200, dmg: 1.6 })], { puller: t }); run(C, 240); return (C.tot && C.tot[h.uid] || {}).heal || 0; },
-  tankonly: (fx, L, i) => { const h = unit(fx.cls, 'healer', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1), d1 = unit('rogue', 'dps', L, [], i + 2), d2 = unit('mage', 'dps', L, [], i + 3); seed(i); const C = E.fight([t, h, d1, d2], [mob('defias_thug', L, { hp: 200, dmg: 4 })], { puller: t }); run(C, 240); return (C.tot && C.tot[h.uid] || {}).heal || 0; },
+  // a busy healer who holds the tank: with no effects the tank never dies (at 4 he died in nearly every fight, so the
+  // case measured a wipe; #22)
+  tankonly: (fx, L, i) => { const h = unit(fx.cls, 'healer', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1), d1 = unit('rogue', 'dps', L, [], i + 2), d2 = unit('mage', 'dps', L, [], i + 3); seed(i); const C = E.fight([t, h, d1, d2], [mob('defias_thug', L, { hp: 200, dmg: L <= 25 ? 1.5 : 2.2 })], { puller: t }); run(C, 240); return (C.tot && C.tot[h.uid] || {}).heal || 0; },
   // tanking: how long a tank lasts alone against a melee boss / a caster boss
   meleeboss: (fx, L, i) => { const t = unit(fx.cls, 'tank', L, fx.pieces, i); seed(i); const C = E.fight([t], [mob('defias_thug', L, { hp: 200, dmg: 2.2 })], { puller: t }); run(C, 300); return C.t; },
   casterboss: (fx, L, i) => { const t = unit(fx.cls, 'tank', L, fx.pieces, i); seed(i); const C = E.fight([t], [mob('frostmane_seer', L, { hp: 200, dmg: 2.2 })], { puller: t }); run(C, 300); return C.t; },
@@ -61,11 +75,11 @@ const CASES = {
   // more cases for part 2 (#22)
   shorttrash: (fx, L, i) => { const me = unit(fx.cls, 'dps', L, fx.pieces, i); seed(i); const C = E.fight([me], [0, 1, 2].map(() => mob('defias_thug', L, { hp: 0.7, dmg: 0.35 })), { puller: me }); run(C, 120); const d = (C.tot && C.tot[me.uid] || {}).dmg || 0; return d / Math.max(1, C.t); }, // monsters that die before a burn finishes
   highcrit: (fx, L, i) => { const me = unit(fx.cls, 'dps', L, fx.pieces, i); me.auras.push({ id: 'test_crit', stats: { critPct: 25 }, until: 1e9 }); E.recalc(me, true); seed(i); const C = E.fight([me], [mob('defias_thug', L, { hp: 60, dmg: 0 })], { puller: me }); run(C, 180); return (C.tot && C.tot[me.uid] || {}).dmg || 0; }, // a build that crits often
-  tankpack: (fx, L, i) => { const t = unit(fx.cls, 'tank', L, fx.pieces, i); seed(i); const C = E.fight([t], [0, 1, 2].map(() => mob('defias_thug', L, { hp: 4, dmg: 0.5 })), { puller: t }); run(C, 90); return (C.tot && C.tot[t.uid] || {}).dmg || 0; },
-  spiky: (fx, L, i) => { const h = unit(fx.cls, 'healer', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1); seed(i); const C = E.fight([t, h], [mob('hogger', L, { hp: 200, dmg: 3.2 })], { puller: t }); run(C, 240); const r = C.tot && C.tot[h.uid] || {}, sh = ((C.fx || {})[h.uid] || {}); return (r.heal || 0) + Object.values(sh).reduce((a, e) => a + (e.kind === 'shield' ? e.amount : 0), 0); },
-  // a calm fight a decent healer holds: with no effects the tank is below 35% under 2% of the time and never dies, at
-  // every level (at 0.9 a level-20 tank died in every fight, so 'steady' was a wipe; #22)
-  steady: (fx, L, i) => { const h = unit(fx.cls, 'healer', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1); seed(i); const C = E.fight([t, h], [0, 1, 2, 3].map(() => mob('defias_thug', L, { hp: 60, dmg: L <= 25 ? 0.4 : 0.9 })), { puller: t }); run(C, 240); const r = C.tot && C.tot[h.uid] || {}, sh = ((C.fx || {})[h.uid] || {}); return (r.heal || 0) + Object.values(sh).reduce((a, e) => a + (e.kind === 'shield' ? e.amount : 0), 0); },
+  // a pack the tank holds alone (at 0.5 a level-20 or 40 Paladin died in every fight, and at 0.3 still 15 in 40; #22, #4)
+  tankpack: (fx, L, i) => { const t = unit(fx.cls, 'tank', L, fx.pieces, i); seed(i); const C = E.fight([t], [0, 1, 2].map(() => mob('defias_thug', L, { hp: 4, dmg: 0.25 })), { puller: t }); run(C, 90); return (C.tot && C.tot[t.uid] || {}).dmg || 0; },
+  // a hard fight the plain item holds about 7 times in 10 (the boss's damage is searched for each class and level, so it
+  // stays true whatever the balance does; #22): 1 if the tank is alive after 2 min, else 0 (scored in points, not %)
+  hardheal: (fx, L, i) => { const h = unit(fx.cls, 'healer', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1); seed(i); const C = E.fight([t, h], [mob('hogger', L, { hp: 200, dmg: hardDmg(fx.cls, L) })], { puller: t }); run(C, 120); return t.hp > 0 ? 1 : 0; },
   shortheal: (fx, L, i) => { const h = unit(fx.cls, 'healer', L, fx.pieces, i), t = unit('warrior', 'tank', L, [], i + 1), d1 = unit('rogue', 'dps', L, [], i + 2); seed(i); const C = E.fight([t, h, d1], [mob('garr', L, { hp: 200, dmg: 1.6 })], { puller: t }); run(C, 60); return (C.tot && C.tot[h.uid] || {}).heal || 0; },
 };
 const PLAN = [
@@ -77,26 +91,41 @@ const PLAN = [
   { effect: 'chase_the_next', classes: ['rogue', 'warrior'], wins: ['trash'], loses: ['boss'] },
   { effect: 'steady_fuse', classes: ['mage', 'warrior'], wins: ['boss'], loses: ['highcrit'] },
   { effect: 'glass_heart', classes: ['rogue', 'warrior'], wins: ['healed'], loses: ['solo'] },
-  { effect: 'lifeline', classes: ['priest', 'druid'], wins: ['spiky'], loses: ['steady'] },
+  { effect: 'lifeline', classes: ['priest', 'druid'], wins: ['hardheal'], loses: ['groupwide'] }, // wins: survival, +5 to +15 points (game designer, #22),
   { effect: 'wellspring', classes: ['priest', 'druid'], wins: ['groupwide'], loses: ['shortheal'] },
   { effect: 'spiteful_hide', classes: ['warrior', 'paladin'], wins: ['tankpack'], loses: ['casterboss'] },
   { effect: 'tithe_of_battle', classes: ['warlock'], wins: ['boss'], loses: ['boss'], losesClasses: ['mage'] },
 ];
 const ONLY = process.env.ONLY ? process.env.ONLY.split(',') : null;
 const measure = (cs, cls, L, pieces) => { curCls = cls; let s = 0; for (let i = 0; i < N; i++) s += CASES[cs]({ cls, pieces }, L, i); return s / N; };
+// the cases are what they say (game designer, #22): with the plain item, the tank (or the one player) dies in at most
+// 1 fight in 10, except where dying is what a case measures (how long you last, or the hard fight above)
+{
+  const seen = new Set();
+  for (const P of PLAN) { if (ONLY && !ONLY.includes(P.effect)) continue; for (const cs of P.wins.concat(P.loses)) for (const cls of P.classes.concat(P.losesClasses || [])) for (const L of [20, 40, 60]) {
+    const key = cs + cls + L; if (DEATH_IS_THE_MEASURE[cs] || seen.has(key)) continue; seen.add(key);
+    let died = 0; for (let i = 0; i < 40; i++) { curCls = cls; CASES[cs]({ cls, pieces: [piece(P.effect, L, false)] }, L, 60000 + i); if (lastC && lastC.allies[0].hp <= 0) died++; }
+    ok(died <= 4, `the ${cs} case doesn't wipe: the plain item loses ${died} of 40 (${cls} ${L})`);
+  } }
+}
 const all = [];
 for (const P of PLAN) {
   if (ONLY && !ONLY.includes(P.effect)) continue;
   const res = { wins: [], loses: [] };
   for (const kind of ['wins', 'loses']) for (const cs of P[kind]) for (const cls of (kind === 'loses' && P.losesClasses) || P.classes) for (const L of [20, 40, 60]) {
-    curCls = cls; const plain = measure(cs, cls, L, [piece(P.effect, L, false)]); curCls = cls; const withFx = measure(cs, cls, L, [piece(P.effect, L, true)]), d = pct(withFx, plain);
-    res[kind].push({ cs, cls, L, d }); all.push({ effect: P.effect, cs, cls, L, d });
+    curCls = cls; const plain = measure(cs, cls, L, [piece(P.effect, L, false)]); curCls = cls; const withFx = measure(cs, cls, L, [piece(P.effect, L, true)]), d = POINTS[cs] ? (withFx - plain) * 100 : pct(withFx, plain);
+    if (POINTS[cs]) ok(plain >= 0.6 && plain <= 0.8, `the ${cs} fight is hard: the plain item holds 6-8 in 10 (${cls} ${L}: ${(plain * 10).toFixed(1)} in 10)`);
+    res[kind].push({ cs, cls, L, d, pts: !!POINTS[cs] }); all.push({ effect: P.effect, cs, cls, L, d });
   }
-  const best = Math.max(...res.wins.map((x) => x.d), ...res.loses.map((x) => x.d)), win = Math.max(...res.wins.map((x) => x.d)), lose = Math.min(...res.loses.map((x) => x.d));
-  console.log(`${D.EFFECTS[P.effect].name.padEnd(15)} wins ${res.wins.map((x) => `${x.cs} ${x.cls} ${x.L}: ${x.d >= 0 ? '+' : ''}${x.d.toFixed(1)}%`).join(', ')}`);
-  console.log(`${''.padEnd(15)} loses ${res.loses.map((x) => `${x.cs} ${x.cls} ${x.L}: ${x.d >= 0 ? '+' : ''}${x.d.toFixed(1)}%`).join(', ')}`);
+  const pc = res.wins.concat(res.loses).filter((x) => !x.pts), pp = res.wins.concat(res.loses).filter((x) => x.pts), unit = (x) => (x.pts ? ' points' : '%');
+  const best = pc.length ? Math.max(...pc.map((x) => x.d)) : 0, win = Math.max(...res.wins.map((x) => x.d)), lose = Math.min(...res.loses.map((x) => x.d));
+  console.log(`${D.EFFECTS[P.effect].name.padEnd(15)} wins ${res.wins.map((x) => `${x.cs} ${x.cls} ${x.L}: ${x.d >= 0 ? '+' : ''}${x.d.toFixed(1)}${unit(x)}`).join(', ')}`);
+  console.log(`${''.padEnd(15)} loses ${res.loses.map((x) => `${x.cs} ${x.cls} ${x.L}: ${x.d >= 0 ? '+' : ''}${x.d.toFixed(1)}${unit(x)}`).join(', ')}`);
   if (D.EFFECTS[P.effect].review) { console.log(`${''.padEnd(15)} (under review by the game designer: reported, not gated)`); continue; }
-  ok(win >= 2, `${P.effect} wins somewhere: at least +2% in a wins case (best ${win.toFixed(1)}%)`);
+  if (res.wins.some((x) => x.pts)) { const w = Math.max(...res.wins.map((x) => x.d)), p = Math.max(...pp.map((x) => x.d));
+    ok(w >= 5, `${P.effect} wins somewhere: at least +5 points of survival in a wins case (best ${w.toFixed(1)})`);
+    ok(p <= 15, `${P.effect} is not too strong: at most +15 points of survival (${p.toFixed(1)})`);
+  } else ok(win >= 2, `${P.effect} wins somewhere: at least +2% in a wins case (best ${win.toFixed(1)}%)`);
   ok(lose <= -2, `${P.effect} loses somewhere: at least -2% in a loses case (worst ${lose.toFixed(1)}%)`);
   ok(best <= 8, `${P.effect} is not too strong: at most +8% in its best case (${best.toFixed(1)}%)`);
 }

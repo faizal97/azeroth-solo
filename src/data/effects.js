@@ -46,7 +46,7 @@
     },
     // healing
     lifeline: { // replaced Brimming Cup (#22): overhealing happens in every fight, so a shield from it won everywhere
-      name: 'Lifeline', role: 'healing', icon: 'flash_heal', below: 0.35, icd: 6, cost: 0.4,
+      name: 'Lifeline', role: 'healing', icon: 'flash_heal', below: 0.35, icd: 15, cost: 0.45, // the game designer's 6 sec cooldown made a level-20 priest +20 points of survival; 15 sec is in the bars (#22)
       desc: (L, f) => { const F = D.EFFECTS.lifeline; return `A direct heal on an ally below ${n(F.below * 100)}% health is a sure critical heal. At most once every ${F.icd} sec.`; },
     },
     wellspring: {
@@ -55,7 +55,7 @@
     },
     // tanking
     spiteful_hide: {
-      name: 'Spiteful Hide', role: 'tank', icon: 'thorns', k: 0.15, c: 1, cost: 0.4,
+      name: 'Spiteful Hide', role: 'tank', icon: 'thorns', k: 0.12, c: 1, cost: 0.4,
       dmg: (L, f) => n((D.EFFECTS.spiteful_hide.k * L + D.EFFECTS.spiteful_hide.c) * (f || 1)),
       desc: (L, f) => `Enemies that hit you in melee take ${D.EFFECTS.spiteful_hide.dmg(L, f)} Nature damage.`,
     },
