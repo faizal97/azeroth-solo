@@ -56,6 +56,10 @@ Smoke-test on the emulator (AVD `Medium_Phone_API_36.0`). Its software renderer 
 
 - Parked work, open questions and balance threads are GitHub issues labelled `thread`: `gh issue list --label thread`. Check them before planning, file anything you park there (with the numbers you have, facts apart from guesses), and close an issue with a comment saying what was decided.
 - Bugs (from a QA session, a player report or a sim) are issues labelled `bug`, with steps or the sim that shows it.
+- **Labels:** every issue gets one type and one status.
+  - Type: `bug` (broken), `improvement` (make something that exists work or read better), `feature` (new for players), `balance` (numbers and tuning).
+  - Status: `status: discussion` (still being decided) → `status: ready` (decided, the developer can take it) → `status: in progress` → `status: in beta` (built, QA checks it on the beta) → closed (released, or decided against with a comment).
+  - Move the status label as the issue moves; `thread` stays on parked dev work as well.
 - The repo is public: nothing private in an issue.
 
 **Roles (since 2026-10-02):** Faizal runs separate sessions, and they talk through these issues, not through each other's chat.
