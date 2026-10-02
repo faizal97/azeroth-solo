@@ -58,6 +58,12 @@ Smoke-test on the emulator (AVD `Medium_Phone_API_36.0`). Its software renderer 
 - Bugs (from a QA session, a player report or a sim) are issues labelled `bug`, with steps or the sim that shows it.
 - The repo is public: nothing private in an issue.
 
+**Roles (since 2026-10-02):** Faizal runs separate sessions, and they talk through these issues, not through each other's chat.
+- **Product** decides what gets built and in what order: `enhancement` or `thread` issues that say why, the agreed design in `docs/plans/`.
+- **QA** plays the builds (beta page, emulator, phone) and files `bug` issues with steps, the build and what was expected; it checks fixes on the next beta and reopens what is still broken.
+- **Developer** builds and fixes: takes issues, writes `Fixes #N` in the commit that fixes one (the push to main closes it), runs the sims and the build, and ships betas when Faizal says so. When a beta ships, the developer comments on each issue it fixes with the build tag.
+- Every session still asks Faizal before pushing, posting or changing what players get.
+
 ## Rules that matter
 
 - Saves: one per character under `azsolo.char.<id>` plus the index `azsolo.chars`. Keep old saves loading; migrate, never break them.
