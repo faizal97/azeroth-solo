@@ -70,9 +70,10 @@ for (const cls of ['warrior', 'paladin', 'druid']) {
 const dps = rows.filter((r) => !r.tank), avg = dps.reduce((a, r) => a + r.gain, 0) / dps.length;
 console.log(`average damage gain ${avg.toFixed(1)}% (want 3-7%), highest ${Math.max(...dps.map((r) => r.gain)).toFixed(1)}%`);
 ok(avg >= 3 && avg <= 7, `a full set of consumables gives 3-7% on average (${avg.toFixed(1)}%)`);
-// damage: no class above 8%. Tanks: effective health no more than 10% (a druid's bear form multiplies the armour that
-// kits add to gear by 2.8, and a bear has less health for Stamina to add to; warriors and paladins sit near 6%)
-for (const r of rows) ok(r.gain <= (r.tank ? 10 : 8), `${r.cls}: no more than ${r.tank ? 10 : 8}% (${r.gain.toFixed(1)}%)`);
+// damage: no class above 8%. Tanks: effective health no more than 18% (Faizal's call, 2026-10-02: survival, not damage,
+// and it comes from Stamina items players already have; a druid's bear form multiplies the armour kits add, and a bear
+// has less health for Stamina to add to, so druids sit highest)
+for (const r of rows) ok(r.gain <= (r.tank ? 18 : 8), `${r.cls}: no more than ${r.tank ? 18 : 8}% (${r.gain.toFixed(1)}%)`);
 for (const r of dps) ok(r.gain >= 1, `${r.cls}: the set does something (${r.gain.toFixed(1)}%)`);
 console.log(fails ? `${fails} failures` : 'consumables sim OK');
 process.exit(fails ? 1 : 0);
