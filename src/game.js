@@ -873,6 +873,7 @@
     emit('castBegin', { what: 'gather' }); emit('change');
   };
   function stopActions() { const P = G.S.player; P.eating = null; P.drinking = null; P.casting = null; P.fishing = null; }
+  G.EAT_SECS = 18; G.DRINK_SECS = 12; // a drink is quicker than a meal: casters' downtime while levelling (#4), the same mana back
   G.consume = function (kind) {
     const S = G.S, P = S.player;
     if (G.fight) return toast('You can\'t do that while in combat.');
@@ -881,7 +882,8 @@
     const it = b.item;
     G.removeItem(it.id, 1);
     P.casting = null;
-    P[kind === 'food' ? 'eating' : 'drinking'] = { until: now() + 18000, per: it.restore / 18, name: it.name };
+    const secs = kind === 'food' ? G.EAT_SECS : G.DRINK_SECS;
+    P[kind === 'food' ? 'eating' : 'drinking'] = { until: now() + secs * 1000, per: it.restore / secs, name: it.name };
     if (it.wellFed) { // a cooked meal (v10.9): Well Fed for 30 min, one at a time, beside an elixir
       P.auras = (P.auras || []).filter((a) => a.id !== 'wellfed');
       P.auras.push({ id: 'wellfed', name: 'Well Fed', icon: it.icon, stats: Object.assign({}, it.wellFed), until: now() + 1800000 });

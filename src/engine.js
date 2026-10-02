@@ -1044,6 +1044,7 @@
   const runSpeed = (C, x) => (x.auras.some((a) => a.root) || x.stunUntil > C.t ? 0 : moveSpeed(x));
   const SOLO_UP = { bard: ['marching_song', 'hearthsong', 'anthem_of_stone'], shaman: ['rockbiter_weapon', 'lightning_shield'] };
   const soloFoe = (en) => { const ch = en.filter((x) => x.kind !== 'pet'); return ch.length === 1 && ch[0].cls && !ch[0].boss ? ch[0] : null; }; // pets do not count
+  E.SOLO_HEAL_AT = 0.6; // a skilled bot alone against monsters heals itself below about 60% health, shield first (#4; 0.45 before)
   const soloFight = (C, u, en) => !!soloFoe(en) && alive(friends(C, u)).filter((x) => x.kind !== 'pet').length === 1;
   function soloThink(C, u, f, b, has, try_) {
     const sk = b.skill || 0.5, hp = u.hp / u.maxHp, roll = () => Math.random() < 0.4 + 0.6 * sk, k = soloKit(u.cls);
@@ -1124,7 +1125,7 @@
     // alone against monsters only (no other player standing on your side, pets don't count; never a duel or brawl, which
     // soloThink plays), a player heals themself when low,
     // as soloThink does one on one: before this a soloing Priest, Druid or Paladin never did (#4, sim/lvpace.js)
-    if (!u.legend && u.role !== 'healer' && en.every((x) => !x.cls) && alive(friends(C, u)).filter((x) => x.kind !== 'pet').length === 1 && u.hp / u.maxHp < 0.2 + 0.3 * (b.skill || 0.5) && Math.random() < 0.4 + 0.6 * (b.skill || 0.5)) {
+    if (!u.legend && u.role !== 'healer' && en.every((x) => !x.cls) && alive(friends(C, u)).filter((x) => x.kind !== 'pet').length === 1 && u.hp / u.maxHp < E.SOLO_HEAL_AT * (0.75 + 0.3125 * (b.skill || 0.5)) && Math.random() < 0.4 + 0.6 * (b.skill || 0.5)) {
       for (const id of soloKit(u.cls).heals) { const A = D.ABILITIES[id]; if (!has(id) || (A.hot && auraOf(u, A.hot.id)) || (A.shield && (auraOf(u, id) || auraOf(u, 'weakened_soul'))) || ((A.cd || 0) >= 60 && u.hp / u.maxHp > 0.25)) continue; if (try_(id, u)) return; } // a big cooldown waits until you are nearly down
     }
     if (u.kiteUntil > C.t) return; // running to open the gap: a cast would only stop it

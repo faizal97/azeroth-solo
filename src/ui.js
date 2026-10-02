@@ -1524,7 +1524,7 @@
   function abilityTip(id) {
     if (id === 'attack') return toast('Attack: turns auto-attack on or off.', true);
     if (id === 'potion') return toast('Potion: drinks your best healing potion (or a mana potion when your health is fine). Works in combat; 2 min cooldown.', true);
-    if (id === 'eat' || id === 'drink') return toast(id === 'eat' ? 'Eat: restores health over 18 sec.' : 'Drink: restores mana over 18 sec.', true);
+    if (id === 'eat' || id === 'drink') return toast(id === 'eat' ? `Eat: restores health over ${G.EAT_SECS} sec.` : `Drink: restores mana over ${G.DRINK_SECS} sec.`, true);
     const t = abilityText(id);
     showDialog(h('div', { class: 'tooltip' },
       h('div', { class: 'nm', style: { color: '#fff' } }, t.name),
@@ -1821,7 +1821,7 @@
     if (it.teaches) { const r = D.RECIPES[it.teaches], mk = D.ITEMS[r.makes]; t.append(h('div', { class: 'gr' }, `Use: Teaches you how to make ${mk.name}. Requires ${D.PROFESSIONS[r.prof].name} (${r.sk[0]}).`)); }
     if (it.kit && D.GEAR_SLOTS.includes(it.slot)) t.append(h('div', { class: 'gr' }, `Armor kit: +${it.kit} armor`));
     if (it.crafter) t.append(h('div', { class: 'dim' }, `<Made by ${it.crafter}>`));
-    if (it.restore) t.append(h('div', { class: 'gr' }, `Use: Restores ${it.restore} ${it.slot === 'food' ? 'health' : 'mana'} over 18 sec. Must remain seated while ${it.slot === 'food' ? 'eating' : 'drinking'}.`));
+    if (it.restore) t.append(h('div', { class: 'gr' }, `Use: Restores ${it.restore} ${it.slot === 'food' ? 'health' : 'mana'} over ${it.slot === 'food' ? G.EAT_SECS : G.DRINK_SECS} sec. Must remain seated while ${it.slot === 'food' ? 'eating' : 'drinking'}.`));
     if (it.desc) t.append(h('div', { class: 'gr' }, it.desc));
     const base = D.ITEMS[it.id] || {};
     const setId = it.set || base.set;
