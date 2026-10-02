@@ -530,6 +530,24 @@
     D.RARE_RECIPES.push('rc_' + id);
   }
 
+  // ---- Artisan collections (v10.9): reaching 300 in a skill gives its keepsake (a look for your back, for every character
+  // on the device; it never drops and has no stats) and its title
+  D.PROF_REWARDS = {
+    mining: { keepsake: 'deepdelvers_pick', name: "Deepdelver's Pick", title: '%s the Deepdelver', desc: 'A master miner\'s pick, worn on your back.' },
+    herbalism: { keepsake: 'herbwise_satchel', name: 'Herbwise Satchel', title: '%s the Herbwise', desc: 'A satchel that never quite closes over its herbs. Worn on your back.' },
+    skinning: { keepsake: 'hide_hunters_pelt', name: "Hide-Hunter's Pelt", title: '%s the Hide-Hunter', desc: 'The best pelt you ever took, worn over your shoulders.' },
+    blacksmithing: { keepsake: 'master_smiths_hammer', name: "Master Smith's Hammer", title: '%s the Master Smith', desc: 'The hammer of a master smith, worn on your back.' },
+    leatherworking: { keepsake: 'tanners_rolled_hides', name: "Tanner's Rolled Hides", title: '%s the Master Tanner', desc: 'A roll of your finest hides, strapped to your back.' },
+    tailoring: { keepsake: 'weavers_spindle', name: "Weaver's Spindle", title: '%s the Master Weaver', desc: 'A great spindle wound with your own thread. Worn on your back.' },
+    alchemy: { keepsake: 'alchemists_bandolier', name: "Alchemist's Bandolier", title: 'Master Alchemist %s', desc: 'A strap of glowing vials across your back.' },
+    cooking: { keepsake: 'chefs_stewpot', name: "Chef's Stewpot", title: '%s the Chef', desc: 'Your stewpot and ladle, strapped to your back. It still smells of supper.' },
+    fishing: { keepsake: 'anglers_rod', name: "Angler's Rod", title: '%s the Angler', desc: 'Your best fishing rod, carried on your back.' },
+  };
+  for (const [prof, R] of Object.entries(D.PROF_REWARDS)) {
+    D.item(R.keepsake, { name: R.name, slot: 'back', keepsake: prof, lookOnly: true, q: 4, lvl: 1, icon: R.keepsake, look: ['back', R.keepsake], noSell: true, sell: 0, desc: R.desc, source: `Reach 300 in ${D.PROFESSIONS[prof].name}` });
+    D.TITLES.push({ id: 'prof_' + prof, name: R.title, need: { prof }, how: `Reach 300 in ${D.PROFESSIONS[prof].name}` });
+  }
+
   // ---- trainers: one artisan per city and level-10 hub, per faction
   Object.assign(D.NPCS, {
     crafts_alliance: { name: 'Artisan Hollis', title: 'Profession Trainer' },

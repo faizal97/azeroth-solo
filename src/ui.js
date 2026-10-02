@@ -2892,6 +2892,17 @@
     }
     b.append(list, h('p', { class: 'ai-note' }, 'Boats, zeppelins, gryphons and the tram keep their own time.'));
   }
+  // Artisan collections (v10.9): what 300 in this skill gives, and the crafted looks, each saying where it comes from
+  function profCollections(k, p) {
+    const R = (D.PROF_REWARDS || {})[k]; if (!R) return null;
+    const looks = new Set(G.account().looks || []), done = p.skill >= 300, t = D.TITLES.find((x) => x.id === 'prof_' + k);
+    const crafted = Object.values(D.ITEMS).filter((it) => it.look && it.crafted && (it.source || '').startsWith(`Crafted: ${D.PROFESSIONS[k].name}`));
+    const have = crafted.filter((it) => looks.has(it.look[0] + ':' + it.look[1])).length;
+    const rows = [h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', R.keepsake))), h('div', { class: 't' }, h('b', { class: done ? 'q4' : '' }, R.name), h('small', null, done ? 'Earned: a look for your back, in the wardrobe' : `Keepsake: reach 300 (you have ${p.skill})`))),
+      h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', 'journal'))), h('div', { class: 't' }, h('b', { class: done ? 'q4' : '' }, G.titleName(t, G.S.player.name)), h('small', null, done ? 'Earned: wear it from Hero → Journey → Titles' : 'Title: reach 300')))];
+    if (crafted.length) rows.push(h('div', { class: 'row' }, h('div', { class: 'ic' }, itemIcon(crafted[0])), h('div', { class: 't' }, h('b', null, `Crafted looks: ${have} of ${crafted.length}`), h('small', { style: { whiteSpace: 'normal' } }, crafted.map((it) => `${it.name}${looks.has(it.look[0] + ':' + it.look[1]) ? ' ✓' : ''}`).join(' · ') + '. Only from crafting.'))));
+    return h('div', null, h('div', { class: 'sec-h' }, 'Collections', h('small', null, 'for every character on this device')), h('div', { class: 'list' }, ...rows));
+  }
   function openProfessions() {
     ui.profTab = ui.profTab || null;
     openSheet('profs', 'Professions', ' ', (b, title) => {
@@ -2902,12 +2913,13 @@
       if (!ids.includes(ui.profTab)) ui.profTab = ids.find((k) => D.PROFESSIONS[k].kind === 'craft') || ids.find((k) => k === 'mining') || ids[0];
       b.append(h('div', { class: 'chips' }, ...ids.map((k) => h('button', { class: 'chip' + (k === ui.profTab ? ' gold' : ''), onclick: () => { ui.profTab = k; ui.sheetFn(); } }, img(art('icon', D.PROFESSIONS[k].icon)), ' ', D.PROFESSIONS[k].name, h('small', null, `${profs[k].skill}/${profs[k].max}`)))));
       const k = ui.profTab, Pd = D.PROFESSIONS[k], p = profs[k];
-      b.append(h('div', { class: 'people' }, Pd.desc), profBar(p));
+      const rank = (D.PROF_RANKS.find((r) => r.max === p.max) || {}).name || '';
+      b.append(h('div', { class: 'people' }, Pd.desc), profBar(p), h('div', { class: 'ai-note', style: { margin: '2px 0 0' } }, `${p.skill} / ${p.max}${rank ? ' · ' + rank : ''}`), profCollections(k, p));
       const recipes = G.recipesFor(k);
       if (k === 'fishing') { // what bites, by water: common fish by skill, then the big and rare ones that fight on the reel
         const list = h('div', { class: 'list' });
         for (const [tier, T] of Object.entries(D.FISH)) {
-          const lv = { 1: 'lakes and coasts to level 15', 2: 'waters of level 16–28', 3: 'waters of level 29–45' }[tier];
+          const lv = { 1: 'lakes and coasts to level 15', 2: 'waters of level 16–28', 3: 'waters of level 29–45', 4: 'waters of level 46–60' }[tier];
           for (const [id, need, tag] of T.common.map((c) => [c[0], c[1], '']).concat([[T.big[0], T.big[1], 'big · on the reel'], [T.rare[0], T.rare[1], 'rare · on the reel']])) {
             const col = G.skillColor(p.skill, [need, need + 25, need + 50, need + 100]);
             list.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', id))), h('div', { class: 't' }, h('b', { style: { color: SKILL_COL[col + 1] } }, D.ITEMS[id].name), h('small', null, `Needs ${need} · ${lv}${tag ? ' · ' + tag : ''}`))));
@@ -2918,7 +2930,7 @@
         return;
       }
       if (k === 'herbalism' || k === 'skinning') {
-        const rows = k === 'herbalism' ? Object.entries(D.NODES).filter(([, N]) => N.prof === 'herbalism').map(([key, N]) => [N.name, N.skill, G.nodeSk(N), N.item]) : [[1, 10], [15, 50], [20, 100], [25, 125], [30, 150], [35, 175], [40, 200], [45, 225]].filter(([, sk]) => sk <= p.max + 25).map(([l, sk]) => [`Beasts level ${l}`, sk, [sk, sk + 25, sk + 50, sk + 100], D.skinLeather(l)]);
+        const rows = k === 'herbalism' ? Object.entries(D.NODES).filter(([, N]) => N.prof === 'herbalism').map(([key, N]) => [N.name, N.skill, G.nodeSk(N), N.item]) : [[1, 10], [15, 50], [20, 100], [25, 125], [30, 150], [35, 175], [40, 200], [45, 225], [50, 250], [55, 275], [60, 300]].filter(([, sk]) => sk <= p.max + 25).map(([l, sk]) => [`Beasts level ${l}`, sk, [sk, sk + 25, sk + 50, sk + 100], D.skinLeather(l)]);
         const list = h('div', { class: 'list' });
         for (const [name, need, sk, item] of rows) { const col = G.skillColor(p.skill, sk); list.append(h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', D.ITEMS[item].icon))), h('div', { class: 't' }, h('b', { style: { color: SKILL_COL[col + 1] } }, name), h('small', null, `Needs ${need} · gives ${D.ITEMS[item].name}`)), h('div', { class: 'r' }, '')));
         }

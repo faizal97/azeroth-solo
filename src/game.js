@@ -1486,7 +1486,14 @@
     p.skill++;
     sys(`Your skill in ${D.PROFESSIONS[id].name} has increased to ${p.skill}.`);
     if (p.skill === p.max && G.nextRank(id)) sys(`You have reached ${p.max} in ${D.PROFESSIONS[id].name}. Visit a profession trainer to go further.`);
+    if (p.skill >= 300) G.profReward(id);
   }
+  // 300 in a skill (v10.9): its keepsake joins the wardrobe's Back row for every character, and its title opens
+  G.profReward = function (id) {
+    const R = (D.PROF_REWARDS || {})[id]; if (!R || !G.collectLook(D.ITEMS[R.keepsake])) return false;
+    loot(`Artisan ${D.PROFESSIONS[id].name}: the ${B.link(R.name, 4)} joins your wardrobe (Back), and the title "${G.titleName(D.TITLES.find((t) => t.id === 'prof_' + id), G.S.player.name)}" is yours.`);
+    emit('change'); return true;
+  };
   G.nodeSk = (N) => [N.skill, N.skill + D.GATHER_BANDS[0], N.skill + D.GATHER_BANDS[1], N.skill + D.GATHER_BANDS[2]];
   // --- gathering nodes: up to 2 per wild place, one respawns every 75–120 s
   const nodePlace = (pl) => pl && !pl.safe && !pl.city && (pl.mobs || []).length > 0;
@@ -1930,6 +1937,7 @@
     if (n.clear) return !!(r.clears[n.clear] && r.clears[n.clear].clears);
     if (n.hard) return !!(r.clears[n.hard] && r.clears[n.hard].hard); // a whole raid cleared on Hard (v10.7)
     if (n.quest) return !!G.S.player.done[n.quest];
+    if (n.prof) return ((G.S.player.prof || {})[n.prof] || {}).skill >= 300; // Artisan (v10.9): 300 in that skill
     if (n.guildRank != null) return !!(root.SOC && SOC.rank() >= n.guildRank);
     if (n.trial) return ((G.S.player.trials || {}).bestEver || 0) >= n.trial; // Trials (v10.4): best level beaten in time
     if (n.trialRank) { const r = (G.S.player.trials || {}).bestRank; return !!r && r <= n.trialRank; } // a month's final realm rank

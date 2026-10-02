@@ -384,5 +384,20 @@ for (const [g, c] of [['mining', 'blacksmithing'], ['herbalism', 'alchemy'], ['s
   const low = new Set(); for (let i = 0; i < 300; i++) low.add(G.pickRare(5));
   ok(![...low].some((id) => sk(id) >= 225), 'a level-5 monster never drops an Artisan recipe (the Starweave Bag)');
 }
+// Artisan collections (v10.9 beta 5): 300 gives the skill's keepsake look and title; a crafted look piece joins the wardrobe
+{
+  const mem = new Map(); globalThis.localStorage = { getItem: (k) => (mem.has(k) ? mem.get(k) : null), setItem: (k, v) => mem.set(k, String(v)), removeItem: (k) => mem.delete(k) };
+  G.newGame({ name: 'M', cls: 'warrior', race: 'human' }); const P = G.S.player; P.level = 60; G.S.flags.warModeAsked = true; P.place = 'stormwind'; P.bagsEq = [0, 1, 2, 3].map(() => G.copyItem('woolen_bag'));
+  ok(Object.keys(D.PROF_REWARDS).length === 9 && Object.values(D.PROF_REWARDS).every((R) => D.ITEMS[R.keepsake] && D.ITEMS[R.keepsake].look), 'every skill has a keepsake look');
+  const title = D.TITLES.find((x) => x.id === 'prof_mining'), looks = () => G.account().looks || [];
+  P.prof = { mining: { skill: 299, max: 300, known: [] } }; ok(!G.titleUnlocked(title) && !looks().includes('back:deepdelvers_pick'), 'no keepsake or title at 299');
+  G.addItem(G.copyItem('duskiron_ore'), 20); for (let i = 0; i < 20 && G.profs().mining.skill < 300; i++) { G.craft('smelt_moonsilver', 0); G.profs().mining.skill = 300; G.profReward('mining'); }
+  ok(G.titleUnlocked(title) && looks().includes('back:deepdelvers_pick'), 'reaching 300 in Mining gives the Deepdelver title and the pick for your back');
+  ok(G.wardrobeOptions('back').some((o) => o.key === 'deepdelvers_pick'), 'the keepsake is in the wardrobe\'s Back row');
+  P.prof.blacksmithing = { skill: 285, max: 300, known: [] }; G.addItem(G.copyItem('duskiron_bar'), 14); G.addItem(G.copyItem('moonsilver_bar'), 2);
+  G.craft('bs_moonforged_legplates', 1); tick(10);
+  ok(looks().includes('legs:moonforged_legs'), 'crafting the Moonforged Legplates adds their look to the wardrobe');
+  globalThis.localStorage = { getItem() { return null; }, setItem() {}, removeItem() {} };
+}
 console.log(fails ? `${fails} failures` : 'professions sim OK');
 process.exit(fails ? 1 : 0);
