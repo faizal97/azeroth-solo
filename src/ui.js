@@ -164,19 +164,30 @@
   }
   const fmtLeft = (s) => (s > 86400 ? '' : s >= 3600 ? Math.floor(s / 3600) + 'h' : s >= 60 ? Math.floor(s / 60) + 'm' : Math.ceil(s) + '');
   // (re)build a strip only when the set of auras changes; otherwise just tick the timers
+  // one fixed line of buffs (v10.9): the row never wraps, so the frames never grow and push the screen down; what does not
+  // fit folds into a "+N" chip that lists them all
   function paintAuras(box, list, max) {
     if (!box) return;
-    list = list.slice(0, max || 10);
-    const key = list.map((a) => a.id).join(',');
+    const all = list.slice(0, max || 10), fit = box.clientWidth ? Math.max(1, Math.floor((box.clientWidth + 3) / 23)) : all.length;
+    const more = all.length > fit ? all.length - (fit - 1) : 0;
+    list = more ? all.slice(0, fit - 1) : all;
+    const key = list.map((a) => a.id).join(',') + (more ? '+' + more : '');
     if (box.dataset.k !== key) {
       box.dataset.k = key; box.innerHTML = '';
       for (const a of list) {
         const chip = h('span', { class: 'au ' + (a.debuff ? 'de' : 'bu'), onclick: (e) => { e.stopPropagation(); showAura(a, box); } }, img(abIcon(a.icon)), h('b', { class: 'tnum' }));
         box.append(chip);
       }
+      if (more) box.append(h('span', { class: 'au more', onclick: (e) => { e.stopPropagation(); auraListDialog(box); } }, h('i', null, '+' + more), h('b', null, '')));
     }
-    box._list = list;
+    box._list = list; box._all = all;
     list.forEach((a, i) => { const c = box.children[i]; if (!c) return; c.lastChild.textContent = fmtLeft(a.left); c.classList.toggle('soon', a.left < 3); });
+  }
+  function auraListDialog(box) {
+    const all = box._all || [];
+    showDialog([h('h3', null, 'Buffs and debuffs'), h('div', { class: 'list' }, ...all.map((a) => h('button', { class: 'row', onclick: () => { closeDialog(); showAura(a, box); } },
+      h('div', { class: 'ic' }, img(abIcon(a.icon))), h('div', { class: 't' }, h('b', { style: { color: a.debuff ? '#ff6a5a' : '#5fd46a' } }, a.name), h('small', null, (a.debuff ? 'debuff' : 'buff') + (a.left > 86400 ? '' : ` · ${fmtLeft(a.left)} left`)))))),
+      h('button', { class: 'btn wide', style: { marginTop: '8px' }, onclick: closeDialog }, 'Close')], true);
   }
   const img = (src, cls) => h('img', { src, class: cls, alt: '', draggable: 'false' });
 
@@ -2397,7 +2408,13 @@
     openSheet('bags', 'Backpack', null, (b, t) => {
       const P = G.S.player;
       t.innerHTML = ''; t.append('Bags', h('small', { html: `${P.bags.length}/${G.bagCap()} · ` + moneyHtml(P.money) }));
-      if ((P.bagsEq || []).length) b.append(h('div', { class: 'chips' }, ...(P.bagsEq || []).map((bg, i) => h('button', { class: 'chip', onclick: () => { G.unequipBag(i); ui.sheetFn(); } }, img(art('icon', bg.icon)), ' ', bg.name, h('small', null, `+${bg.bag} · tap to take off`)))));
+      // the bag bar (v10.9): your bags in one short row, empty slots shown; tap one to take it off
+      if ((P.bagsEq || []).length) {
+        const bar = h('div', { class: 'bagbar' });
+        for (let i = 0; i < D.BAG_SLOTS; i++) { const bg = (P.bagsEq || [])[i];
+          bar.append(bg ? h('button', { class: 'slot bagslot', 'aria-label': `${bg.name}, +${bg.bag} slots, tap to take off`, onclick: () => { G.unequipBag(i); ui.sheetFn(); } }, img(art('icon', bg.icon)), h('span', { class: 'cnt tnum' }, '+' + bg.bag)) : h('div', { class: 'slot bagslot empty' })); }
+        b.append(h('div', { class: 'bagbar-row' }, bar, h('small', null, 'Bags · tap one to take it off')));
+      }
       const vendorHereB = D.PLACES[P.place].vendor || D.PLACES[P.place].gearVendor;
       if (ui.sellPick && !vendorHereB) ui.sellPick = null;
       const sellable = (x) => x && !x.item.noSell && x.item.slot !== 'quest';

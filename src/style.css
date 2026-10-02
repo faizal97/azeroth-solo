@@ -59,6 +59,9 @@ img { max-width: 100%; display: block; }
 .bar.energy > i { background: linear-gradient(#fff08a, var(--energy) 55%, #a58d10); }
 .bar.xp > i.fill { background: var(--xp); }
 .buffs { display: flex; flex-wrap: wrap; gap: 3px; min-height: 0; margin-top: 2px; }
+/* the frames' buff rows keep one line, always the same height (v10.9): buffs coming and going never push the screen */
+.uf-body > .buffs { flex-wrap: nowrap; overflow: hidden; height: 33px; }
+.au.more i { width: 20px; height: 20px; display: grid; place-items: center; border: 1.5px solid var(--edge-hi); border-radius: 3px; box-sizing: border-box; font: 800 10px/1 var(--body); font-style: normal; color: var(--gold); background: #1a1209; }
 /* one buff/debuff: icon, green (buff) or red (debuff) border, seconds left underneath; flashes in the last 3 sec */
 .au { position: relative; width: 20px; display: inline-flex; flex-direction: column; align-items: center; cursor: pointer; }
 .au img { width: 20px; height: 20px; border: 1.5px solid #3fbf4f; border-radius: 3px; box-sizing: border-box; }
@@ -359,7 +362,13 @@ img { max-width: 100%; display: block; }
 .tooltip .dim { color: #b0b0b0; }
 .tooltip .red { color: #ff3b3b; }
 .tooltip .flex { display: flex; justify-content: space-between; gap: 12px; }
-.bags { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.bags { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 5px; }
+/* the bag bar (v10.9): four small slots in one row above the grid */
+.bagbar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.bagbar-row small { color: var(--muted); font-size: 11px; }
+.bagbar { display: grid; grid-template-columns: repeat(4, 34px); gap: 4px; }
+.slot.bagslot .cnt { font-size: 10px; right: 2px; }
+.slot.bagslot.empty { opacity: .45; }
 .slot { position: relative; aspect-ratio: 1; border-radius: 3px; background: #0c0906; border: 1px solid #000; box-shadow: 0 0 0 1px #3a2c18; overflow: hidden; }
 .slot img { width: 100%; height: 100%; }
 .slot .cnt { position: absolute; right: 3px; bottom: 1px; font: 800 13px var(--body); text-shadow: 0 1px 1px #000, 0 0 2px #000; }
