@@ -509,6 +509,10 @@
         G.S.bg.team.forEach((m, i) => { const pos = [{ l: 20, b: 14, w: 21 }, { l: 33, b: 22, w: 18 }, { l: 44, b: 10, w: 20 }, { l: 55, b: 20, w: 17 }][i];
           if (pos) sc.append(spriteEl(art('hero', looks(m)), pos, 'idle friend', h('div', { class: 'np' }, h('span', { class: 'cls-' + m.cls }, m.name.split('-')[0])))); });
       }
+      if (S.run && S.group) { // a dungeon run: your group stands with you between pulls too (issue #14)
+        S.group.members.filter((m) => !m.gone).forEach((m, i) => { const pos = [{ l: 20, b: 14, w: 21 }, { l: 33, b: 22, w: 18 }, { l: 44, b: 10, w: 20 }, { l: 55, b: 20, w: 17 }][i];
+          if (pos) sc.append(spriteEl(art('hero', looks(m)), pos, 'idle friend', h('div', { class: 'np' }, h('span', { class: 'cls-' + m.cls }, m.name.split('-')[0])))); });
+      }
       if (P.pet && P.pet.hp !== 0 && !S.run && !S.bg) sc.append(spriteEl(petArt(P.pet), P.pet.type === 'imp' ? { l: 24, b: 8, w: 13 } : { l: 22, b: 10, w: 20 }, 'idle' + (P.pet.type === 'beast' ? ' flip' : ''), h('div', { class: 'np', style: { fontSize: '10px' } }, h('span', { style: { color: '#9fd6ff' } }, P.pet.name))));
       if (!S.run && !S.bg) {
         // other players wandering about
@@ -1248,14 +1252,14 @@
       const b = R.bonus;
       p.append(h('div', { class: 'score done' },
         h('div', null, h('span', null, 'Cleared in '), h('b', { class: 'tnum' }, G.fmtClock(b.secs)), h('span', null, ` · par ${G.fmtClock(b.par)}`)),
-        h('div', null, h('span', { class: b.speed ? 'ok' : 'no' }, (b.speed ? '✓' : '✗') + ' Speed bonus'), h('span', { class: b.flawless ? 'ok' : 'no' }, (b.flawless ? '✓' : '✗') + ' Flawless')),
+        h('div', null, h('span', { class: b.speed ? 'ok' : 'no' }, (b.speed ? '✓' : '✗') + ' Speed bonus'), h('span', { class: b.flawless ? 'ok' : 'no' }, (b.flawless ? '✓' : '✗') + ' Flawless (no wipes)')), // one term, one rule, on every screen (issue #14)
         cx ? h('small', null, `Best ${G.fmtClock(cx.best)} · ${cx.clears} clears · ${cx.speed} speed · ${cx.flawless} flawless`) : null));
       return;
     }
     p.append(h('div', { class: 'score' },
       h('span', null, '⏱ ', h('b', { class: 'tnum', 'data-clock': '1' }, G.fmtClock(G.runClock())), ` / par ${G.fmtClock(R.trial ? window.TRIALS.par(Dg, R.omens) : G.par(Dg))}`),
       R.momentum ? h('span', { class: 'mom' }, `Momentum ×${R.momentum}`) : h('span', { class: 'dim' }, 'Pull within 5s to build Momentum'),
-      h('span', { class: R.wipes ? 'no' : 'ok' }, R.wipes ? '✗ Flawless' : '✓ No wipes')));
+      h('span', { class: R.wipes ? 'no' : 'ok' }, R.wipes ? '✗ Flawless (no wipes)' : '✓ Flawless (no wipes)')));
     if ((R.omens || []).length) p.append(h('div', { class: 'chips', style: { margin: '4px 0' } }, h('small', { class: 'dim', style: { alignSelf: 'center' } }, 'Omens:'), ...R.omens.map((k) => omenChip(k)))); // tap one for its rule
   }
   function tacticsBlock(p, R) {
@@ -1871,6 +1875,9 @@
     return h('div', { class: (cls || 'ic') + (why ? ' cant' : '') }, img(art('icon', it.icon)), why ? h('span', { class: 'why' }, why.kind === 'level' ? String(why.lvl) : '✕') : null);
   }
   // Short tag for lists: ▲ upgrade, or why you can't use it.
+  // a roll's Need is the main button only for gear you can use, as the roll tip says "Need if you will use it"; Need stays
+  // allowed on anything (bots play by the same rules), it is just shown plain (issue #14)
+  const needFirst = (it) => !D.GEAR_SLOTS.includes(it.slot) || G.canUseItem(it);
   function gearTag(it) {
     const P = G.S.player;
     if (!D.GEAR_SLOTS.includes(it.slot)) return null;
@@ -3608,7 +3615,7 @@
       if (ropts.length) b.append(h('div', { class: 'row gf-row gf-roulette' },
         h('div', { class: 'ic' }, img(art('icon', 'hearthstone'))),
         h('div', { class: 't' }, h('b', null, 'Dungeon Roulette', h('span', { class: 'gf-lvl' }, rr ? 'daily' : 'done today')),
-          h('small', null, `A random dungeon from ${ropts.length} you can reach: +15 Mentor Marks, a bonus blue and gold.`)),
+          h('small', null, `${ropts.length === 1 ? 'The one dungeon you can reach' : `A random dungeon from the ${ropts.length} you can reach`}: +15 Mentor Marks, a bonus blue and gold.`)), // issue #14
         h('button', { class: 'chip gold', disabled: !rr || !!S.queue, onclick: () => { closeSheet(); G.startRoulette(); renderAll(); } }, rr ? 'Go' : 'Tomorrow')));
       let mine = all.filter(atLevel).sort(byLevel);
       b.append(h('div', { class: 'sec-h' }, 'At your level', h('small', null, `level ${P.level}`)));
@@ -3810,7 +3817,7 @@
     const pickIt = (c) => { closeDialog(); G.pauseRolls(false); G.roll(i, c); renderRolls(); };
     showDialog([itemTip(it), cur ? h('div', { class: 'sec-h' }, 'Currently equipped') : null, cur ? itemTip(cur) : null,
       h('div', { class: 'stick-foot' }, h('p', { class: 'ai-note', style: { margin: 0 } }, 'The roll waits while you look.'),
-        h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: () => pickIt('need') }, 'Need'), h('button', { class: 'btn alt', onclick: () => pickIt('greed') }, 'Greed'), h('button', { class: 'btn alt', onclick: () => pickIt('pass') }, 'Pass')),
+        h('div', { class: 'btn-row' }, h('button', { class: needFirst(it) ? 'btn' : 'btn alt', onclick: () => pickIt('need') }, 'Need'), h('button', { class: needFirst(it) ? 'btn alt' : 'btn', onclick: () => pickIt('greed') }, 'Greed'), h('button', { class: 'btn alt', onclick: () => pickIt('pass') }, 'Pass')),
         h('div', { class: 'btn-row' }, h('button', { class: 'btn alt wide', onclick: () => { closeDialog(); G.pauseRolls(false); } }, 'Back')))], false);
   }
   function renderRolls() {
@@ -3828,8 +3835,8 @@
         h('div', { class: 'q' + it.q, style: { fontWeight: 800 } }, it.name + (open.length > 1 ? `  (+${open.length - 1} more)` : ''), gearTag(it)),
         h('div', { class: 'bar' }, h('i', { 'data-roll': i, style: { width: '100%' } })),
         h('div', { class: 'btn-row', style: { marginTop: '6px' } },
-          h('button', { class: 'btn', onclick: () => { G.roll(i, 'need'); renderRolls(); } }, 'Need'),
-          h('button', { class: 'btn alt', onclick: () => { G.roll(i, 'greed'); renderRolls(); } }, 'Greed'),
+          h('button', { class: needFirst(it) ? 'btn' : 'btn alt', onclick: () => { G.roll(i, 'need'); renderRolls(); } }, 'Need'),
+          h('button', { class: needFirst(it) ? 'btn alt' : 'btn', onclick: () => { G.roll(i, 'greed'); renderRolls(); } }, 'Greed'),
           h('button', { class: 'btn alt', onclick: () => { G.roll(i, 'pass'); renderRolls(); } }, 'Pass'))));
     els.bottom.append(ui.rollEl);
   }
