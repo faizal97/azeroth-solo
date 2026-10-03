@@ -36,6 +36,6 @@ nothing remembers that you beat it. A hunt, a sighting in chat, and a trophy on 
   each rare alone (non-elite) and with a world party of three (elite). Target: every class beats each non-elite alone
   at least 8 times in 10, and each elite with a world party of three at least 8 times in 10.
 - **How long is the hunt?** (Balance Analyst) A player who plays one hour a day at a random time: days until 10
-  trophies. Target: **about two to three weeks**, a goal, not a chore.
+  trophies. Target: **about two to three weeks**, a goal, not a chore. Measured (#43): a median of **10 days** (7–14 for the middle 80%, everyone by 21; 12 for a player who logs on at the same hour). Accepted: still a goal, and stretching it would only add waiting.
 - **The schedule is content-proof:** the windows are the same on two devices for the same date, and adding a rare
   doesn't shift any other rare's times (sim, the three cases none / one / many new).
