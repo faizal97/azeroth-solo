@@ -1,4 +1,4 @@
-// Graymouth (dungeon, levels 58–60, v8): the burned city where Arthas culled Wexmoor's people. The Order of the Pyre
+// Graymouth (dungeon, levels 58–60, v8): the burned city where the plague took Wexmoor's people. The Order of the Pyre
 // holds the living side, the Hollow Host the dead side under Baron Mortvale. Reached through Morrowglen, open to both factions.
 (function (root) {
   const D = root.D;

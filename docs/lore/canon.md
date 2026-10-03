@@ -163,6 +163,7 @@ several sharing a line separated by " / ".
 - **Briarmother** — the thorn spirit asleep under the southern Scrublands; the Thorn Warrens are her roots, and the spinehide call them holy
 - **Bone Mask** — the masked death cult in the Thorn Warrens, serving the Hollow Host; Mother Grisla has chosen it
 - **Ossarak / Black Ruin** — the black dragon who tore the world open long ago
+- **Haskar** — the old chief of Ossa, Tarro's father (#59)
 - **Veshmira** — the Ledger's creditor (named at 60)
 - **Meriel Thorne / Thorne** — the Mistress of Coin
 - **Kethriax** — Veshmira's eldest; who Lord Kethran Vale really is (revealed at 60)

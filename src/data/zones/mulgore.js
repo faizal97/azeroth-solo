@@ -53,7 +53,7 @@
     hawkwind: { name: 'Chief Tamo', title: 'Calf Hill Camp' },
     raincaller: { name: 'Imra of the Heartfires', title: 'Shaman' },
     moodan: { name: 'Hasu Grainkeeper', title: 'Baker' },
-    baine: { name: 'Tarro of Ossa', title: 'Son of Cairne' },
+    baine: { name: 'Tarro of Ossa', title: 'Son of Haskar' },
     kauth: { name: 'Innkeeper Mema', title: 'Innkeeper' },
     harken: { name: 'Harun of the Drums', title: 'Hunter' },
     mahnott: { name: 'Maho', title: 'Weaponsmith' },

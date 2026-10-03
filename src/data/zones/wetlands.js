@@ -33,7 +33,7 @@
     mosshide_gnoll: { name: 'Mudcoat Gnoll', lvl: [26, 27], family: 'humanoid', drops: [['gnoll_mane', 0.4], ['linen_cloth', 0.3]], qdrops: [['mosshide_ear', 0.55]], aggro: 'Mudcoat take your stuff!' },
     mosshide_mystic: { name: 'Mudcoat Mystic', ranged: 'nature', lvl: [27, 28], family: 'humanoid', drops: [['gnoll_mane', 0.35], ['linen_cloth', 0.3]], qdrops: [['mystic_rattle', 0.5], ['mosshide_ear', 0.3]], aggro: 'Bones say you die here!' },
     dark_iron_dwarf: { name: 'Slagborn Dwarf', lvl: [27, 28], family: 'humanoid', hpMult: 1.1, drops: [['thieves_coin', 0.45], ['linen_cloth', 0.3]], qdrops: [['dark_iron_ore', 0.55]], aggro: 'For Grimmark!' },
-    dark_iron_saboteur: { name: 'Slagborn Saboteur', lvl: [28, 29], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['blasting_powder', 0.5]], aggro: 'Boom goes the Bronzebeard!' },
+    dark_iron_saboteur: { name: 'Slagborn Saboteur', lvl: [28, 29], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['blasting_powder', 0.5]], aggro: 'Boom goes Keldrun!' },
     dragonmaw_grunt: { name: 'Wyrmchain Grunt', lvl: [28, 29], family: 'humanoid', hpMult: 1.15, drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['dragonmaw_insignia', 0.5]], aggro: 'The Wyrmchain take no prisoners!' },
     dragonmaw_shadowcaster: { name: 'Wyrmchain Shadowcaster', ranged: 'shadow', lvl: [29, 30], family: 'humanoid', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.35]], qdrops: [['shadowcaster_orders', 0.4], ['dragonmaw_insignia', 0.3]], aggro: 'Darkness take you!' },
     crimson_whelp: { name: 'Crimson Whelp', fly: 7, lvl: [28, 29], family: 'dragonkin', drops: [['ruined_pelt', 0.2]], qdrops: [['whelp_collar', 0.5]] },

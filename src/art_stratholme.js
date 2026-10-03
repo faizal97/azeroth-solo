@@ -1,4 +1,4 @@
-/* art_stratholme.js — Graymouth art for Realm of Loner (dungeon, levels 58-60: the burned city where Arthas culled
+/* art_stratholme.js — Graymouth art for Realm of Loner (dungeon, levels 58-60: the burned city where the plague took
  * Wexmoor's people; King's Square under a red sky, the Pyre Bastion, and the Hollow Host ziggurats by the slaughterhouse;
  * the Crimson Unmaking guardsmen and conjurors, skeletal guardians and bile spewers, and the bosses Nibbles the Cruel,
  * Archivist Penrose, Xazzarak, Baroness Vessaline, Bloatgut the Gorger and Baron Mortvale).

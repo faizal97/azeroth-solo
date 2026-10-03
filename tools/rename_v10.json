@@ -16696,5 +16696,293 @@
   "region": "",
   "status": "forbid",
   "new": null
+ },
+ "Cairne": {
+  "kind": "lore",
+  "region": "Mulgore",
+  "status": "rename",
+  "new": "Haskar"
+ },
+ "Cairne Bloodhoof": {
+  "kind": "lore",
+  "region": "Mulgore",
+  "status": "rename",
+  "new": "Haskar"
+ },
+ "Bronzebeard": {
+  "kind": "lore",
+  "region": "Dun Morogh",
+  "status": "rename",
+  "new": "Keldrun"
+ },
+ "Arthas": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Jaina": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Proudmoore": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Sylvanas": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Garrosh": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Hellscream": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Vol'jin": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Illidan": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Uther": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Tirion": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Fordring": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Malfurion": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Tyrande": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Cenarius": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Hakkar": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Kel'Thuzad": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Medivh": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Khadgar": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Gul'dan": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Grommash": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Saurfang": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Rexxar": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Magni": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Muradin": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Velen": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Durotan": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Doomhammer": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Neltharion": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Alexstrasza": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Ysera": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Nozdormu": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Malygos": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Kael'thas": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Sunstrider": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Lor'themar": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Alleria": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Turalyon": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Greymane": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Liadrin": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Zul'jin": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Rastakhan": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Bwonsamdi": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Hamuul": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Runetotem": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
+ },
+ "Magatha": {
+  "kind": "lore",
+  "region": "",
+  "status": "forbid",
+  "new": null
  }
 }
