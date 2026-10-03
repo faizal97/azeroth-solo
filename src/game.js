@@ -2932,14 +2932,14 @@
     sys(timed ? `Trial ${lvl} beaten in time${great ? ' by a wide margin' : ''}! Trial ${res.open} is open here. Rating ${res.rating}.` : `Trial ${lvl} cleared, but over par: your level here stays. Rating ${res.rating}.`);
     return (R.trialResult = res);
   };
-  // everything the group finder's row and briefing name for an activity: its name and description, pull labels,
-  // creatures and boss loot (#58: one text, so the list, the briefing and tools/lorekeeper.js judge the same words)
+  // everything the group finder's row and briefing name for an activity: its name and description, where it is, pull
+  // labels, creatures and boss loot (#58: one text, so the list, the briefing and tools/lorekeeper.js judge the same words)
   const actText = {}; // the data never changes while the game runs
   G.activityText = function (act) {
     if (actText[act] != null) return actText[act];
     const A = D.ACTIVITIES[act], Dg = A.dungeon && D.DUNGEONS[A.dungeon], pulls = (Dg && Dg.pulls) || A.pulls || [];
     const loot = pulls.filter((p) => p.boss).flatMap((p) => p.mobs.flatMap((m) => (D.MOBS[m] || {}).loot || [])).map((id) => (D.ITEMS[id] || {}).name);
-    return (actText[act] = [A.name, A.desc, ...pulls.map((p) => p.label), ...pulls.flatMap((p) => p.mobs.map((m) => (D.MOBS[m] || {}).name)), ...loot].filter(Boolean).join('. '));
+    return (actText[act] = [A.name, A.desc, A.where && D.PLACES[A.where] ? D.PLACES[A.where].name : null, ...pulls.map((p) => p.label), ...pulls.flatMap((p) => p.mobs.map((m) => (D.MOBS[m] || {}).name)), ...loot].filter(Boolean).join('. '));
   };
   G.activityBlock = function (act) {
     const S = G.S, P = S.player, A = D.ACTIVITIES[act];
