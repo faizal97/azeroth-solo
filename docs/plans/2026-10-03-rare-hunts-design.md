@@ -4,8 +4,8 @@ v10.10.0-beta.5. Roadmap item 3 ("level-60 rares with trophies"). Agreed 2026-10
 
 ## Why
 
-After 60 the game rewards collecting, not power (horizontal progression). The world has nine named rares at level
-58–60 and three world bosses, but a rare respawns every 150–300 seconds at a fixed place, so it isn't rare, and
+After 60 the game rewards collecting, not power (horizontal progression). The world has eight named rares at level
+58–60 with a home place and three world bosses, but a rare respawns every 150–300 seconds at a fixed place, so it isn't rare, and
 nothing remembers that you beat it. A hunt, a sighting in chat, and a trophy on your wall make them worth seeking out.
 
 ## 1. Rare hunts (level-60 rares only)
@@ -22,9 +22,9 @@ nothing remembers that you beat it. A hunt, a sighting in chat, and a trophy on 
 
 ## 2. Trophies
 
-- **One per level-60 rare and per world boss** (12 today), earned on the **first kill by any of your characters**:
+- **One per level-60 rare and per world boss** (11 today: 8 rares and 3 world bosses), earned on the **first kill by any of your characters**:
   account-wide, in the shared wardrobe's collections.
-- **Hero → Journey → Trophies:** one row per zone, then a grid (design mindset §2), with a bounded count ("4 of 12").
+- **Hero → Journey → Trophies:** one row per zone, then a grid (design mindset §2), with a bounded count ("4 of 11").
   A trophy shows **the creature's own art on a plaque** (no new art per rare, so it's content-proof), its name, where it
   lives, and who took it and when ("Taken by Faizal, 3 Oct"). One not yet earned shows its silhouette and its zone.
 - **A title at 10 trophies**, "the Big-Game Hunter". A fixed number, never "all", so new rares never move the goal.
