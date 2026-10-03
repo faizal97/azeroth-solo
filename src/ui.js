@@ -3492,7 +3492,7 @@
     for (const act of picks) {
       const A = D.ACTIVITIES[act], best = Rec.best[act], why = G.trialBlock(act), max = G.trialMax(act), queued = S.queue && S.queue.act === act && S.queue.trial;
       b.append(h('div', { class: 'row gf-row' + (why ? ' gf-locked' : '') + (queued ? ' gf-queued' : '') },
-        h('div', { class: 'ic mob' }, img(mobArt(A.boss || finalBoss(A) || 'vancleef'))),
+        actPic(A),
         h('div', { class: 't' }, h('b', null, A.name), h('small', null, why || (best ? `Best: Trial ${best.lvl}, ${best.timed ? 'in time' : 'over par'}` : 'Not tried yet'))),
         queued ? h('button', { class: 'chip', onclick: () => { G.leaveQueue(); ui.sheetFn(); } }, 'Leave')
           : h('button', { class: 'chip gold', style: { whiteSpace: 'nowrap' }, disabled: !!why || !!S.queue, onclick: () => openTrialBriefing(act) }, `Trial ${max}`)));
@@ -3700,7 +3700,7 @@
         : travel(x) ? h('button', { class: 'chip', disabled: !!S.queue, onclick: () => { closeSheet(); G.travelRoute(A.where); renderAll(); } }, 'Travel')
         : h('button', { class: 'chip gold', disabled: !!x.why || !!S.queue, onclick: () => { G.queueFor(x.k); ui.sheetFn(); } }, 'Queue');
       return h('div', { class: 'row gf-row tap' + (!doable(x) ? ' gf-locked' : '') + (queued ? ' gf-queued' : ''), onclick: (e) => { if (e.target.closest('button')) return; openBriefing(x.k, false); } }, // tap the row for its briefing (v10.4)
-        h('div', { class: 'ic mob' }, img(mobArt(A.boss || finalBoss(A) || 'vancleef'))),
+        actPic(A),
         h('div', { class: 't' }, h('b', null, A.name, h('span', { class: 'gf-lvl tnum' }, A.minLvl === A.maxLvl ? String(A.minLvl) : `${A.minLvl}–${A.maxLvl}`)),
           h('small', null, showKind ? h('span', { class: 'gf-kind k-' + kind }, KIND_LABEL[kind]) : null, x.k === G.featuredRaid() ? h('span', { class: 'gf-kind k-featured' }, 'Featured this week') : null, A.worldBoss ? h('span', { class: 'gf-kind k-featured' }, G.worldBossLooted(x.k) ? 'World boss · looted this week' : 'World boss this week') : null, note)),
         btn);
@@ -3714,7 +3714,7 @@
           const A = D.ACTIVITIES[r.act], Dg = D.DUNGEONS[A.dungeon];
           const marks = `${10 + (r.firstTimers ? 5 : 0) + (r.startIdx ? 3 : 0)}–${15 + (r.firstTimers ? 5 : 0) + (r.startIdx ? 3 : 0)} Marks`;
           b.append(h('div', { class: 'row hw gf-row' },
-            h('div', { class: 'ic mob' }, img(mobArt(A.boss || finalBoss(A) || 'vancleef'))),
+            actPic(A),
             h('div', { class: 't' }, h('b', null, `${A.name} needs a ${r.role === 'dps' ? 'damage dealer' : r.role}`),
               h('small', { style: { whiteSpace: 'normal' } }, `${r.posterName}: ${r.startIdx ? 'stuck on ' + Dg.pulls[r.startIdx].label : 'full run'}${r.firstTimers ? ' · first-timers' : ''} · ${marks} · ${Math.ceil((r.expires - Date.now()) / 60000)} min left`)),
             h('button', { class: 'chip gold', disabled: !!S.queue, onclick: () => { closeSheet(); G.joinHelpWanted(r.id); renderAll(); } }, 'Help')));
@@ -3749,6 +3749,14 @@
     }
   }
   // a dungeon's picture in the group finder is its last boss
+  // an activity's picture (#52): its own icon if it has one, else its boss's portrait, else the picture for its kind.
+  // Never another activity's boss: an activity added without a boss (a battleground, say) gets its kind's picture
+  const KIND_ICON = { pvp: 'battleground', raid: 'hearthstone', dungeon: 'hearthstone', wanted: 'sword' };
+  function actPic(A) {
+    if (A.icon) return h('div', { class: 'ic' }, img(art('icon', A.icon)));
+    const b = A.boss || finalBoss(A);
+    return b ? h('div', { class: 'ic mob' }, img(mobArt(b))) : h('div', { class: 'ic' }, img(art('icon', KIND_ICON[actKind(A)] || 'hearthstone')));
+  }
   function finalBoss(A) {
     const Dg = A.dungeon && D.DUNGEONS[A.dungeon]; if (!Dg) return null;
     const bosses = Dg.pulls.filter((p) => p.boss); const last = bosses[bosses.length - 1];

@@ -1,4 +1,4 @@
-/* art_icons13.js - Artisan-tier profession icons for Realm of Loner (42 keys for the level 45-60 tier: duskiron and
+/* art_icons13.js - Artisan-tier profession icons for Realm of Loner, plus the battleground activity icon (#52) (42 keys for the level 45-60 tier: duskiron and
  * moonsilver ore and bars, deepstone, four herbs, hardhide leather, duskweave cloth and bolt, four fish, a marbled haunch,
  * nine dishes, three flasks, a whetstone, an armour kit, two bags and the nine skill-300 profession keepsakes), plus 6
  * gathering nodes (ART.node: duskiron and moonsilver veins and the four herbs; 96x96, transparent, same style as the
@@ -840,6 +840,25 @@
       return item(c, flask(c, ['#c8c0ff', '#6a5ae8', '#241a7a'], '#3a2a8a',
         P('M-5,0 Q0,-4.8 5,0 Q0,4.8 -5,0 Z', '#f4f0ff', 1) + C(0, 0, 2.2, c.rg([[0, '#c8b8ff'], [1, '#5a4ae0']]), 0) + C(0, 0, 0.9, OL, 0) + C(-0.7, -0.8, 0.5, '#ffffff', 0)) +
         sparkle(52, 22, 2.6, '#ece8ff') + sparkle(11, 20, 2, '#d8d0ff'));
+    },
+    /* ---------- activities ---------- */
+    /* a battleground (#52): two crossed banner poles, a blue and a red swallowtail banner, gold finials, over trampled
+     * grass; for every activity of that kind (it never borrows a boss's face) */
+    battleground: function (c) {
+      var fin = c.lg(['#fff0b0', GOLD, '#7a5418'], 0.2, 0, 0.8, 1);
+      var pole = function (col) {
+        var cloth = 'M1.6,-22 L18,-19.6 L14.6,-15 L18,-10.4 L1.6,-9 Z';
+        return S2('M0,-23 L0,25', '#6a4424', 2.6) + S('M-0.7,-22 L-0.7,23', '#a8784a', 0.9, 0.7) +
+          P(cloth, c.lg([[0, lt(col, 0.25)], [0.55, col], [1, dk(col, 0.35)]], 0, 0, 1, 1), 2) +
+          S('M4.6,-20.6 L4.6,-10', dk(col, 0.4), 1.1, 0.7) + F('M3.6,-19.4 L12,-18.4 L3.6,-17 Z', '#ffffff', 0.2) +
+          P('M0,-29 L2.4,-23.6 L0,-22.4 L-2.4,-23.6 Z', fin, 1.3);
+      };
+      return iconWrap(c, ['#5a4a2a', '#1a140a'],
+        F('M4,53 Q32,46 60,53 L60,60 L4,60 Z', '#2e3a1a', 0.85) + S('M10,53 l1.5,-4 M17,51 l-1,-4 M47,51 l1.4,-4 M54,53 l-1.2,-3.6', '#5a7a2a', 1.2, 0.8) +
+        shadow(32, 56, 20, 3) +
+        G(pole('#2e62c4'), tr(32, 33, -34) + ' scale(-1,1)') +
+        G(pole('#c43a2a'), tr(32, 33, 34)) +
+        C(32, 33, 2.4, fin, 1.2));
     },
     /* ---------- crafted goods ---------- */
     /* a long spindle-shaped dark whetstone with a flat honed face, blue-violet specks and a leather loop */

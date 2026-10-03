@@ -25,9 +25,10 @@ const NEW = ['duskiron_ore', 'duskiron_bar', 'moonsilver_ore', 'moonsilver_bar',
   'ashgill_fillet', 'roast_haunch', 'herring_pie', 'smokehouse_stew', 'spiced_haunch', 'trail_skewer', 'marlin_steak', 'koi_banquet', 'long_table_feast',
   'flask_iron_wall', 'flask_warpath', 'flask_stillmind', 'deepstone_whetstone', 'hardhide_armor_kit', 'bag_duskweave', 'bag_starweave',
   'deepdelvers_pick', 'herbwise_satchel', 'hide_hunters_pelt', 'master_smiths_hammer', 'tanners_rolled_hides', 'weavers_spindle',
-  'alchemists_bandolier', 'chefs_stewpot', 'anglers_rod'];
+  'alchemists_bandolier', 'chefs_stewpot', 'anglers_rod', 'battleground'];
 // each new icon next to the 3 existing icons it is most likely to be confused with
 const COMPARE = [
+  ['battleground', 'sword', 'hearthstone', 'journal'],
   ['duskiron_ore', 'iron_ore', 'embersilver_ore', 'silver_ore'], ['duskiron_bar', 'iron_bar', 'steel_bar', 'silver_bar'],
   ['moonsilver_ore', 'silver_ore', 'tin_ore', 'embersilver_ore'], ['moonsilver_bar', 'silver_bar', 'steel_bar', 'embersilver_bar'],
   ['deepstone', 'heavy_stone', 'weightstone', 'coarse_stone'],
