@@ -240,6 +240,41 @@ const ok = (cond, what) => { if (cond) pass++; else { fail++; console.log('FAIL'
   await CLOUD.syncAccount(); use(web); await CLOUD.syncAccount();
   ok(!!(G.account().trophies || {}).old_brinescale && G.account().marks === 40, 'a trophy taken on the phone reaches the browser, and the browser keeps its marks');
 
+  // 16. Friends and cloud save in one Google window (#46). The browser: one token request for both scopes; Drive
+  // allowed turns cloud save on, Drive refused leaves it off with the usual message, a cancelled window turns on nothing.
+  // The token goes on to Friends either way (openid).
+  const webBoth = (outcome) => {
+    const win = { location: { origin: 'https://faizal97.github.io' }, localStorage: mem(), asked: [] }; win.window = win;
+    const DRIVE = 'https://www.googleapis.com/auth/drive.appdata';
+    win.google = { accounts: { oauth2: {
+      initTokenClient: (o) => ({ requestAccessToken: () => { win.asked.push(o.scope); setTimeout(() => {
+        if (outcome === 'cancel') return o.error_callback({ type: 'popup_closed' });
+        o.callback({ access_token: 'T', expires_in: 3600, granted: outcome === 'both' ? ['openid', DRIVE] : ['openid'] }); }, 0); } }),
+      hasGrantedAllScopes: (r, ...ss) => ss.every((x) => (r.granted || []).includes(x)) } } };
+    vm.runInNewContext(src, win); return win;
+  };
+  for (const [outcome, want] of [['both', 'on'], ['nodrive', 'denied'], ['cancel', 'cancelled']]) {
+    const W = webBoth(outcome); let r = null, threw = null;
+    try { r = await W.CLOUD.signInBoth(); } catch (e) { threw = e.code; }
+    const one = W.asked.length === 1 && W.asked[0] === 'openid https://www.googleapis.com/auth/drive.appdata';
+    if (want === 'on') ok(one && r.cloud === true && W.CLOUD.on() && r.friendsToken === 'T' && W.CLOUD.fresh(), 'browser, both allowed: one Google window for both, cloud save on, the token goes to Friends');
+    if (want === 'denied') ok(one && r.cloud.code === 'denied' && !W.CLOUD.on() && r.friendsToken === 'T', 'browser, Drive refused: Friends still gets its token, cloud save stays off with the usual message');
+    if (want === 'cancelled') ok(one && threw === 'cancelled' && !W.CLOUD.on(), 'browser, the window cancelled: nothing turns on');
+  }
+  // the app: one interactive bridge call asking for both; then cloud save asks Android quietly for Drive alone
+  for (const driveOk of [true, false]) {
+    const W = appWin(true, (q) => {
+      W.calls = (W.calls || []).concat([{ interactive: !!q.args.interactive, scopes: q.args.scopes || null }]);
+      if (q.args.interactive) return { id: q.id, ok: true, value: 'tok-both' };
+      return driveOk ? { id: q.id, ok: true, value: 'tok-drive' } : { id: q.id, ok: false, value: { code: 'auth', message: 'The Google sign-in has run out. Reconnect to carry on.' } };
+    });
+    await new Promise((r) => setTimeout(r, 5));
+    const r = await W.CLOUD.signInBoth(), calls = (W.calls || []), tap = calls.filter((c) => c.interactive);
+    const bothAsked = tap.length === 1 && JSON.stringify(tap[0].scopes) === JSON.stringify(['openid', 'https://www.googleapis.com/auth/drive.appdata']);
+    if (driveOk) ok(bothAsked && r.cloud === true && W.CLOUD.on() && r.friendsToken === null, 'app: one Google window for both, then cloud save on with a quiet Drive token (Friends asks Android quietly itself)');
+    else ok(bothAsked && r.cloud !== true && !W.CLOUD.on(), 'app, Drive not allowed: cloud save stays off');
+  }
+
   console.log(`cloudsync: ${pass}/${pass + fail} checks pass`);
   process.exit(fail ? 1 : 0);
 })().catch((e) => { console.error(e); process.exit(1); });

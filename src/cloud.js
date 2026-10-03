@@ -35,6 +35,20 @@
   CLOUD.setDriver = (d) => { driver = d; }; // the sim's fake Drive
   const drv = () => { if (!driver) throw err('auth', 'Not signed in to Google.'); return driver; };
   CLOUD.signIn = async function () { if (!auth) throw err('unavailable', 'Cloud save is not available here.'); await auth.token(true); patch({ on: true, lastError: null }); };
+  // Friends and cloud save in one Google window (#46): 'openid' for Friends and drive.appdata for cloud save, on the same
+  // client. Called synchronously from the tap. Throws if the window was cancelled (then neither switches on); otherwise
+  // cloud save is on if Drive was allowed ({ cloud: true }, or the usual error), and friendsToken (null in the app,
+  // where Friends asks Android quietly once allowed) is for Friends' own sign-in.
+  CLOUD.signInBoth = async function () {
+    if (!auth || !auth.both) throw err('unavailable', 'Cloud save is not available here.');
+    const r = await auth.both();
+    let cloud = true;
+    try {
+      if (r.drive === false) throw err('denied', 'Cloud save needs the Google Drive permission. Try again and allow it.');
+      await auth.token(false); patch({ on: true, lastError: null });
+    } catch (e) { cloud = e; }
+    return { cloud, friendsToken: r.openid === false ? null : r.token };
+  };
   CLOUD.signOut = async function () { patch({ on: false }); if (auth && auth.signOut) try { await auth.signOut(); } catch (e) { } }; // sync records stay, so signing in again carries on
 
   // ---- what the cloud holds
@@ -245,6 +259,22 @@
         if (!client) { await load(); init(); } // only when prepare() was not called in time: the browser may block this popup
         return new Promise((res, rej) => { pending = { res, rej }; client.requestAccessToken(CLOUD.on() ? { prompt: '' } : {}); });
       },
+      // both permissions in one window (#46): which ones the player allowed, and the token (kept for Drive if allowed)
+      both() {
+        if (!ready()) return Promise.reject(err('offline', 'Google sign-in is still loading. Try again in a moment.'));
+        return new Promise((res, rej) => {
+          const two = google.accounts.oauth2.initTokenClient({ client_id: CLOUD.WEB_CLIENT, scope: 'openid ' + CLOUD.SCOPE,
+            callback: (r) => {
+              if (r.error || !r.access_token) return rej(err('auth', 'Google did not sign you in. Try again.'));
+              const has = (s) => (google.accounts.oauth2.hasGrantedAllScopes ? google.accounts.oauth2.hasGrantedAllScopes(r, s) : true);
+              const drive = has(CLOUD.SCOPE);
+              if (drive) { tok = r.access_token; exp = Date.now() + (+r.expires_in || 3600) * 1000; }
+              res({ token: r.access_token, drive, openid: has('openid') });
+            },
+            error_callback: (e) => rej(err(e && e.type === 'popup_closed' ? 'cancelled' : 'auth', e && e.type === 'popup_failed_to_open' ? 'The browser blocked Google\'s sign-in window. Allow pop-ups for this page and try again.' : 'Google did not sign you in. Try again.')) });
+          two.requestAccessToken();
+        });
+      },
       expired() { tok = null; exp = 0; },
       signOut() { tok = null; exp = 0; }, // this device only: Google keeps the permission, so other devices stay signed in
     };
@@ -272,6 +302,8 @@
         exp = Date.now() + 40 * 60 * 1000; // Android's tokens last about an hour; ask again well before
         return tok;
       },
+      // both permissions in one window (#46); which were allowed shows when each side then asks Android quietly
+      async both() { await call('token', { interactive: true, scopes: ['openid', CLOUD.SCOPE] }); return { token: null, drive: null, openid: null }; },
       async expired(t) { tok = null; exp = 0; await call('clear', { token: t }).catch(() => {}); },
       signOut() { const t = tok; tok = null; exp = 0; if (t) call('clear', { token: t }).catch(() => {}); },
     };

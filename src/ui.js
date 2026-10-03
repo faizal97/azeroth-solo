@@ -3158,6 +3158,24 @@
       h('div', { class: 'btn-row' }, go, h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true);
     setTimeout(() => input.focus(), 50);
   }
+  // #46: turning Friends on with cloud save off (and cloud save possible here) offers cloud save too, once: "Friends
+  // only" is kept on this device's account and never asked again
+  const cloudOffer = () => !!(window.CLOUD && CLOUD.available() && !CLOUD.on() && !G.account().friendsOnly && !FRIENDS.state().pendingOn);
+  function openCloudOffer(friendsOn) {
+    const only = () => { closeDialog(); G.saveAccount(Object.assign(G.account(), { friendsOnly: true }));
+      friendsOn().catch((e) => { friendErr(e); ui.sheetFn(); }); }; // Friends' own window, from this tap
+    const both = () => { closeDialog();
+      CLOUD.signInBoth().then(async (r) => { // one Google window, opened from this tap
+        let fOk = true;
+        await friendsOn(r.friendsToken ? { token: r.friendsToken } : {}).catch((e) => { fOk = false; friendErr(e); ui.sheetFn(); });
+        if (r.cloud === true) await cloudSignedIn(() => ui.sheetFn(), fOk ? 'Friends and cloud save are on. Your characters are backed up.' : null).catch(cloudError);
+        else cloudError(r.cloud);
+      }).catch((e) => { friendErr(e); ui.sheetFn(); }); // cancelled or failed before either: both stay off
+    };
+    showDialog([h('h3', null, 'Also back up your characters?'),
+      h('p', null, 'Friends lets real friends see your characters. Cloud save is separate: it keeps a copy of your characters in your own Google Drive, so you can play them on another device or get them back if this one is lost. Both use your Google account.'),
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: both }, 'Turn on both'), h('button', { class: 'btn alt', onclick: only }, 'Friends only'))], true);
+  }
   function friendsTab(b) {
     if (!window.FRIENDS || !FRIENDS.available()) {
       b.append(friendNote(UPD.inApp() ? 'Friends needs the newest version of the app.' : `Friends works in the app and on the game's own page, ${UPD.WEB}.`));
@@ -3166,11 +3184,13 @@
     FRIENDS.prepare().catch(() => {}); // load ahead, so a tap can open Google's window straight away
     const code = ui.friendCode; // from a share link (#friend=…)
     if (!FRIENDS.on()) {
+      const friendsOn = (opts) => FRIENDS.turnOn(opts).then(() => { toast('Friends is on. Send your code to a friend.', true); friendsStart(); friendsShare(); ui.sheetFn(); if (ui.friendCode) { const c = ui.friendCode; ui.friendCode = null; friendAdd(c); } });
       const on = h('button', { class: 'btn', onclick: () => {
+        if (cloudOffer()) return openCloudOffer(friendsOn);
         on.disabled = true; on.textContent = 'Turning on…';
-        FRIENDS.turnOn().then(() => { toast('Friends is on. Send your code to a friend.', true); friendsStart(); friendsShare(); ui.sheetFn(); if (ui.friendCode) { const c = ui.friendCode; ui.friendCode = null; friendAdd(c); } })
-          .catch((e) => { friendErr(e); ui.sheetFn(); });
+        friendsOn().catch((e) => { friendErr(e); ui.sheetFn(); });
       } }, FRIENDS.state().pendingOn ? 'Connect Friends here' : 'Turn on Friends');
+      if (cloudOffer()) CLOUD.prepare(); // Google's script ready, so [Turn on both] can open its window from the tap
       b.append(h('div', { class: 'sec-h' }, 'Friends', h('small', null, 'real players')),
         h('p', null, 'Add the people you know by friend code, see their characters and gear, and see when they are playing.'),
         FRIENDS.state().pendingOn ? friendNote('You turned Friends on on another device. Connect here with one tap to see your friends on this one too.')
@@ -3337,14 +3357,14 @@
         h('button', { class: 'btn alt', onclick: () => { CLOUD.signOut(); toast('Signed out on this device. Your characters and their cloud copies stay.', true); refresh(); } }, 'Sign out')),
       cloudNote('Saves go only to a hidden folder in your own Google Drive that only this game can see. Backups also happen by themselves while you play.'), privacyLink('How cloud save handles your data')];
   }
-  function cloudSignIn(after) {
-    CLOUD.signIn().then(async () => {
-      const cl = await CLOUD.list();
-      await cloudBackupAll(null, true);
-      toast('Signed in. Your characters are backed up.', true);
-      if (after) after();
-      if (cl.some((c) => !G.readSave(c.id))) openRestore(after); // characters from another device: offer them straight away
-    }).catch(cloudError);
+  function cloudSignIn(after) { CLOUD.signIn().then(() => cloudSignedIn(after)).catch(cloudError); }
+  // once signed in: back everything up, and offer characters from another device straight away
+  async function cloudSignedIn(after, msg) {
+    const cl = await CLOUD.list();
+    await cloudBackupAll(null, true);
+    toast(msg || 'Signed in. Your characters are backed up.', true);
+    if (after) after();
+    if (cl.some((c) => !G.readSave(c.id))) openRestore(after);
   }
   // Back up now: every character; each conflict is asked about in turn
   async function cloudBackupAll(after, quiet) {

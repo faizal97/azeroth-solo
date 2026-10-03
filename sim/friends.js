@@ -249,6 +249,12 @@ const fails = async (p, code) => { try { await p; return false; } catch (e) { re
   t += 1000; await FRIENDS.remoteSwitch({ on: true, at: t });
   ok(!FRIENDS.on() && FRIENDS.state().pendingOn === t, 'a browser that cannot sign in quietly waits, and the tab offers one tap to connect');
 
+  // #46: Friends turned on from the one Google window that also turned on cloud save signs in with that window's token
+  const tokBe = backend('tia'), seen = []; const realSignIn = tokBe.signIn; tokBe.signIn = async (interactive, token) => { seen.push({ interactive, token }); return realSignIn(interactive, token); };
+  use({ name: 'tiaWeb', uid: 'tia', ls: mem(), be: tokBe });
+  await FRIENDS.turnOn({ token: 'T' });
+  ok(FRIENDS.on() && seen.length === 1 && seen[0].token === 'T' && seen[0].interactive === true, 'turned on with the shared window\'s token: Friends signs in with it (no second window)');
+
   stop(); bstop();
   console.log(`friends: ${pass}/${pass + fail} checks pass`);
   process.exit(fail ? 1 : 0);

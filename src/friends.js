@@ -120,7 +120,7 @@
   FRIENDS.turnOn = async function (opts) {
     opts = opts || {};
     const b = back();
-    await b.signIn(!opts.at);
+    await b.signIn(!opts.at, opts.token); // opts.token: Google's token from the one window that also turned on cloud save (#46)
     const me = b.uid();
     let code = read().code || null;
     if (!code) { const mine = await b.getProfile(me).catch(() => null); if (mine && mine.code) code = mine.code; } // made on another device
@@ -334,8 +334,9 @@
     return {
       prepare() { const p = load(); if (!inApp() && !EMU && !gisLoading) gisLoading = loadGis().then(initGis).catch(() => { gisLoading = null; }); return p; },
       signedIn: () => !!(fb && fb.A.currentUser),
-      async signIn(interactive) {
+      async signIn(interactive, token) {
         if (fb && fb.A.currentUser) return;
+        if (token) { await load(); if (!fb.A.currentUser) await fb.auth.signInWithCredential(fb.A, fb.auth.GoogleAuthProvider.credential(null, token)); return; }
         if (!interactive) {
           await load(); if (fb.A.currentUser) return;
           // the app can ask Google quietly once it has allowed the game before; a browser cannot without a tap
