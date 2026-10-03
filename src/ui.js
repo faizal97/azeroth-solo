@@ -1277,7 +1277,8 @@
     const paceFact = (k) => { const Q = G.PACE[k]; return `rests at least ${(6.5 * Q.rest).toFixed(1)} sec, then pulls once everyone has ${pct(Q.hp)} health and ${pct(Q.mana)} mana (${pct(Math.max(Q.hp, Q.bossHp))} of both before a boss) · ${Q.chain != null ? `pulls the next group too about 1 time in ${Math.round(1 / Q.chain)}` : Q.extra ? 'sometimes pulls the next group too, less with a skilled tank' : 'never pulls the next group too'}`; };
     p.append(...foldSec('run.tactics', 'Tactics', `Pace: ${PN[pace]}`,
       [h('div', { class: 'chips' }, chip('Careful', pace === 'careful', () => G.setPace('careful')), chip('Normal', pace === 'normal', () => G.setPace('normal')), chip('Fast', pace === 'fast', () => G.setPace('fast'))),
-        h('div', { class: 'list' }, ...['careful', 'normal', 'fast'].map((k) => h('div', { class: 'row' + (k === pace ? ' gold' : '') }, h('div', { class: 't' }, h('b', null, PN[k]), h('small', { style: { whiteSpace: 'normal' } }, paceFact(k))))))]));
+        // 'row nav': no icon, so the text takes the first column (a plain .row puts it in the 34 px icon column, one word wide)
+        h('div', { class: 'list' }, ...['careful', 'normal', 'fast'].map((k) => h('div', { class: 'row nav' + (k === pace ? ' gold' : '') }, h('div', { class: 't' }, h('b', null, PN[k]), h('small', { style: { whiteSpace: 'normal' } }, paceFact(k))))))]));
     const ko = R.killOrder || 'focus';
     if (false) p.append(...foldSec('run.killorder', 'Kill order', // hidden (v10.4): in the sims it changed almost nothing, and a choice that does not matter is not a choice ko === 'spread' ? 'Spread · each on a different enemy, more area attacks' : 'One at a time · everyone on the marked target',
       [h('div', { class: 'chips' }, chip('One at a time', ko === 'focus', () => G.setKillOrder('focus')), chip('Spread', ko === 'spread', () => G.setKillOrder('spread')))]));
