@@ -2158,7 +2158,7 @@
       const far = h('div', { class: 'chips' });
       for (const a in MAP) for (const c in D.PLACES[a].links) if (!MAP[c] && !G.enemyTown(a) && !G.enemyTown(c)) far.append(h('button', { class: 'chip gold', onclick: () => { if (cur === a) { G.travelTo(c); closeSheet(); } else toast(`Go to ${D.PLACES[a].name} first.`); } }, `${D.PLACES[a].name} → ${D.PLACES[c].name}`, h('small', null, `${D.PLACES[c].zone} · ` + ((D.PLACES[a].via || {})[c] || 'Road') + ' · ' + G.travelSecs(a, c) + 's')));
       b.append(m, h('div', { style: { color: 'var(--muted)', fontSize: '13px' } }, 'Gold: you are here. ! marks places your quests need, ? where a finished quest is handed in. Tap any place for the way there.'),
-        huntUpAt.size ? h('div', { style: { color: '#ff8a3a', fontSize: '13px', fontWeight: 700 } }, `◆ Rare hunt up now: ${[...huntUpAt].map(([pk, k]) => `${D.MOBS[k].name} at ${D.PLACES[pk].name}`).join(', ')}`) : null);
+        ...(huntUpAt.size ? [h('div', { style: { color: '#ff8a3a', fontSize: '13px', fontWeight: 700 } }, `◆ Rare hunt up now: ${[...huntUpAt].map(([pk, k]) => `${D.MOBS[k].name} at ${D.PLACES[pk].name}`).join(', ')}`)] : [])); // no line when none is up (#53: append(null) wrote "null")
       // roads out of this zone, under the map so they never push it down
       if (far.childNodes.length) b.append(h('div', { class: 'sec-h' }, 'Roads out of ' + D.REGIONS[region].name), far);
     });
