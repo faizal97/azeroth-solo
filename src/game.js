@@ -704,6 +704,16 @@
   // the first kill by any of your characters. Account-wide: G.account().trophies = { mob: { by, at } }. A look and a
   // collection only, no power; the title comes at a fixed number (G.TROPHY_TITLE), never "all", so new ones never move it
   G.TROPHY_TITLE = 10;
+  // a name this level may read (#54, the rule the news follows, #18): none of the bible's Reveals terms above the level
+  // (D.REVEALS, checked against docs/lore/canon.md by tools/lorekeeper.js). For every screen that names a place or a creature
+  G.nameable = (text, lvl) => !text || (D.REVEALS || []).every(([re, at]) => lvl >= at || !new RegExp(re, 'i').test(text));
+  // what a trophy's plaque says at this level: one you have taken keeps its names (your account already knows them);
+  // one you haven't hides a name its level may not read (tools/lorekeeper.js reads every plaque at every level)
+  G.trophyLabel = function (x, lvl, taken) {
+    const M = D.MOBS[x.key], P = D.PLACES[x.place], ok = (t) => taken || G.nameable(t, lvl), where = ok(P.zone) && ok(P.name);
+    // a hidden place takes its zone with it: the plaque goes in a "Beyond your level" row, not under its zone (game designer)
+    return { name: ok(M.name) ? M.name : 'Unknown', place: where ? P.name : 'A place beyond your level', zone: where ? P.zone : 'Beyond your level' };
+  };
   G.trophyList = () => G.huntRares().map((r) => ({ key: r.key, place: r.place, boss: false })).concat(G.worldBossActs().map((k) => ({ key: D.ACTIVITIES[k].boss, place: D.ACTIVITIES[k].where, boss: true })));
   G.trophies = () => G.account().trophies || {};
   G.trophyCount = () => { const t = G.trophies(); return G.trophyList().filter((x) => t[x.key]).length; };

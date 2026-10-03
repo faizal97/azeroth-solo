@@ -2675,16 +2675,16 @@
   // until it is taken), so a new rare or world boss needs no new art and the screen grows by rows, not by one long grid
   function openTrophies() {
     openSheet('trophies', 'Trophies', 'Shared by all your characters', (b, title) => {
-      const list = G.trophyList(), got = G.trophies(), T = D.TITLES.find((x) => x.id === 'biggame');
+      const list = G.trophyList(), got = G.trophies(), T = D.TITLES.find((x) => x.id === 'biggame'), L = G.S.player.level, lab = (x) => G.trophyLabel(x, L, !!got[x.key]);
       title.querySelector('small').textContent = `${G.trophyCount()} of ${list.length} taken · shared by all your characters`;
-      const zoneOf = (x) => D.PLACES[x.place].zone, zones = [...new Set(list.map(zoneOf))], box = h('div', { class: 'list' });
-      const plaque = (x) => { const M = D.MOBS[x.key], t = got[x.key];
-        return h('div', { class: 'plaque' + (t ? '' : ' not') }, h('div', { class: 'pq-art' }, img(mobArt(x.key))), h('b', null, M.name), h('small', null, D.PLACES[x.place].name + (x.boss ? ' · world boss' : '')),
+      const zoneOf = (x) => lab(x).zone, zones = [...new Set(list.map(zoneOf))].sort((a, b) => (a === 'Beyond your level') - (b === 'Beyond your level')), box = h('div', { class: 'list' }); // hidden places last
+      const plaque = (x) => { const t = got[x.key], l = lab(x);
+        return h('div', { class: 'plaque' + (t ? '' : ' not') }, h('div', { class: 'pq-art' }, img(mobArt(x.key))), h('b', null, l.name), h('small', null, l.place + (x.boss ? ' · world boss' : '')),
           h('small', { class: t ? 'pq-by' : '' }, t ? `Taken by ${t.by}, ${new Date(t.at).toLocaleDateString([], { day: 'numeric', month: 'short' })}` : 'Not yet')); };
       for (const z of zones) {
         const xs = list.filter((x) => zoneOf(x) === z), open = ui.trophyZone === z;
         box.append(h('button', { class: 'row nav', 'aria-expanded': String(open), onclick: () => { ui.trophyZone = open ? null : z; ui.sheetFn(); } },
-          h('div', { class: 't' }, h('b', null, z), h('small', null, xs.map((x) => D.MOBS[x.key].name).join(' · '))),
+          h('div', { class: 't' }, h('b', null, z), h('small', null, xs.map((x) => lab(x).name).join(' · '))),
           h('div', { class: 'r tnum' }, `${xs.filter((x) => got[x.key]).length} / ${xs.length}`, h('span', { class: 'nav-arr' }, open ? '▾' : '›'))));
         if (open) box.append(h('div', { class: 'trophies' }, ...xs.map(plaque)));
       }

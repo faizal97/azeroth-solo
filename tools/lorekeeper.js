@@ -13,7 +13,8 @@ globalThis.localStorage = { getItem() { return null; }, setItem() {} };
 globalThis.window = globalThis;
 require(path.join(ROOT, 'src/data.js'));
 require(path.join(ROOT, 'src/cutscene.js'));
-const D = globalThis.D, CS = globalThis.CS;
+for (const f of ['engine.js', 'bots.js', 'game.js']) require(path.join(ROOT, 'src', f)); // the game's own screens' words (trophies, #54)
+const D = globalThis.D, CS = globalThis.CS, G = globalThis.G;
 const STRICT = process.argv.includes('--strict'), LIST = process.argv.includes('--names');
 
 // ---------- the bible
@@ -68,6 +69,13 @@ const placeLvl = {};
 for (const [k, p] of Object.entries(D.PLACES)) for (const n of p.npcs || []) placeLvl[n] = Math.min(placeLvl[n] || 99, (p.lvl || [1])[0]);
 for (const [k, N] of Object.entries(D.NPCS)) { add(`npc ${k}`, placeLvl[k] || 1, N.name, { title: true }); add(`npc ${k}`, placeLvl[k] || 1, N.title, { title: true }); }
 for (const [k, A] of Object.entries(D.ACTIVITIES)) { add(`activity ${k}`, A.minLvl, A.name, { title: true }); add(`activity ${k}`, A.minLvl, A.desc); }
+// the Trophies screen is open at any level (#54): every plaque not yet taken, as G.trophyLabel words it, at level 1 and
+// just below each Reveals level (where a name may first be allowed)
+const plaqueText = (x, lvl, taken) => { const l = G.trophyLabel(x, lvl, taken); return `${l.zone}: ${l.name}, ${l.place}`; };
+const atLevels = [...new Set([1].concat(REVEALS.map((r) => r.lvl - 1)).filter((l) => l >= 1))];
+for (const x of G.trophyList()) for (const L of atLevels) add(`trophy ${x.key}`, L, plaqueText(x, L, false), { title: true });
+// the game's copy of the Reveals table (src/data/reveals.js, which G.nameable reads) must be the bible's
+const revealsDrift = (game) => JSON.stringify(game.map(([re, l]) => [re, +l])) !== JSON.stringify(REVEALS.map((r) => [r.re.source, r.lvl]));
 
 // --selftest: plant one mistake of each kind and make sure each is caught
 const SELF = process.argv.includes('--selftest');
@@ -78,11 +86,14 @@ if (SELF) {
   add('selftest typo', 20, 'The Blackwel gang is back, and Carow knows it.');
   add('selftest unknown', 20, 'Ask old Zorbulax about it.');
   add('selftest hood', 17, 'The stranger, Lyveus, wants a word.');
+  // a plaque worded without the level check (as if taken), and a game copy of Reveals that lost a row
+  const wi = G.trophyList().find((x) => x.key === 'warden_ithrael'); if (wi) add('selftest trophy', 1, plaqueText(wi, 1, true), { title: true });
 }
 // ---------- checks
 // words the game itself writes in lower case are plain English, so their capitalised form at a sentence start is not a name
 const lowerWords = new Set(); for (const t of texts) for (const w of t.text.split(/[^A-Za-z']+/)) if (w && /^[a-z]/.test(w)) lowerWords.add(w);
 const problems = [], warnings = [], unknown = new Map();
+if (revealsDrift(SELF ? D.REVEALS.slice(1) : D.REVEALS)) problems.push(`REVEALS  src/data/reveals.js differs from the bible's Reveals table: copy the bible's rows (term, level) into it`);
 const lev = (a, b) => { const m = a.length, n = b.length; const d = Array.from({ length: m + 1 }, (_, i) => [i]); for (let j = 1; j <= n; j++) d[0][j] = j; for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; };
 const knownList = [...known].filter((w) => w.length >= 5);
 const allowed = (r, src) => r.allow.some((a) => src === a || src.startsWith(a + ' ') || src.startsWith(a));
@@ -130,7 +141,7 @@ for (const [w, srcs] of unknown) {
 
 if (SELF) {
   const all = problems.concat(warnings).join('\n');
-  const want = [['spoiler', /SPOILER  selftest spoiler /], ['hale', /SPOILER  selftest spoiler2/], ['faction', /FACTION  selftest/], ['typo Blackwell', /"Blackwel".*did you mean "Blackwell"/], ['typo Carrow', /"Carow".*did you mean "Carrow"/], ['unknown name', /"Zorbulax"/], ['hooded stranger', /SPOILER  selftest hood/]];
+  const want = [['spoiler', /SPOILER  selftest spoiler /], ['trophy plaque', /SPOILER  selftest trophy /], ['reveals copy', /REVEALS  src\/data\/reveals\.js differs/], ['hale', /SPOILER  selftest spoiler2/], ['faction', /FACTION  selftest/], ['typo Blackwell', /"Blackwel".*did you mean "Blackwell"/], ['typo Carrow', /"Carow".*did you mean "Carrow"/], ['unknown name', /"Zorbulax"/], ['hooded stranger', /SPOILER  selftest hood/]];
   let bad = 0; for (const [k, re] of want) { const ok = re.test(all); if (!ok) bad++; console.log(`${ok ? 'caught' : 'MISSED'}  ${k}`); }
   process.exit(bad ? 1 : 0);
 }
