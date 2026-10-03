@@ -67,18 +67,22 @@ in `2026-10-03-v11-story-options.md`.
       Krugar pay in steel, then leads the strike on the counting-house. **His war council is where Tarro is overruled**
       (decision 8).
 
+11. **Chapter 2's standouts: Commander Ilara Starfeather (Accord) and Shadow Hunter Zul'kesh (Krugar).** Faizal,
+    2026-10-03 (via the Lead, his word: "yes"). The elves' oldest memory of Ossarak's scar against the trolls' memory of
+    the Drowning: the same night remembered by two enemies. **The full cast is set:** Chapter 1 Thorne and Grask,
+    Chapter 2 Starfeather and Zul'kesh, Chapter 3 Tamlin and Tarro.
+
 ## Agreed as a direction (still open to his refinement)
 
-11. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
-12. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
+12. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
+13. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
    years ago, and the Black Ruin's wound in the world).
 
 ## Still open (for Faizal)
 
-- **The Chapter 2 pair** (the cast draft below; Starfeather and Zul'kesh recommended).
-- Chapter 2's and 3's names, places and spines.
+- **The next three choices, in order** (drafted below): the chapter names, the new region, Ossarak and the Black Brood.
+- Chapter 2's and 3's spines.
 - The mega raid's exact size (20 or 25), its length, and what gates it (Chapter 3's raid first?).
-- How Ossarak relates to the Black Brood (canon doesn't say).
 - **When to start planning the next saga:** before Chapter 3's development starts, at the latest.
 - One release or two per chapter (story and dungeons, then the raid), as the Drowned Crown did.
 
@@ -102,7 +106,7 @@ where the old ones don't fit.
 **Clash:** Thorne's books show the Krugar's war chest paid for Accord walls; Grask's strike burns pages the Accord
 needed.
 
-### Chapter 2 (v12, the new region; the Drowning and Ossarak's first tearing)
+### Chapter 2 (v12, the new region; the Drowning and Ossarak's first tearing) (**decided: Starfeather and Zul'kesh**)
 
 | | Candidate | What makes them iconic here |
 |---|---|---|
@@ -134,6 +138,61 @@ Tarro**.
 
 **A fix needed either way:** Tarro's title is "Son of Cairne", a Warcraft name left from before v10 (design mindset
 §6), and the old chief needs a name of our own for Chapter 2's beat. Filed separately.
+
+## Next choices: a draft for Faizal (game designer, 2026-10-03), one at a time
+
+### Choice 1: the chapter names
+
+In the form "The Ruinfall Saga, Chapter N: <name>". All original, and none about money.
+
+- **Chapter 1 (v11):**
+  - **"The Ashen Coronation"** (recommended). It names the day the whole chapter turns on (Tamlin's coronation) and the
+    fire behind it (Kethriax and the Spire), and it sounds like the saga it starts, not only the Ledger story it ends.
+  - "The Heir of the Ledger" (the working name). Clear, but it's about the Ledger, and the saga goes on past it.
+  - "The Spire Opens". Plain, and true to the first scene.
+- **Chapter 2 (v12):**
+  - **"The First Wound"** (recommended). The chapter is about the night Ossarak first tore the world, and both peoples'
+    memories of it; it names that.
+  - "Where the World Broke". The same idea, longer.
+  - "The Sundered Reach" (if the region is concept A below, the chapter takes the land's name).
+- **Chapter 3 (v13):**
+  - **"Ruinfall"** (recommended). The saga's name is the finale's name: the Black Ruin falls, and "The Ruinfall Saga,
+    Chapter 3: Ruinfall" reads like an ending.
+  - "The Black Ruin". Names the enemy, not the event.
+  - "Two Heirs". Names Tamlin and Tarro's chapter; quieter.
+
+### Choice 2: the new region (Chapter 2)
+
+The Drowned Crown already raised an island from the sea (the Stormveil Isle), so the new land should not "rise from
+the sea" again.
+
+- **A. The Sundered Reach** (recommended). A piece of the world Ossarak tore loose in his first tearing, folded away
+  behind a wound in the sky ever since. **Why now:** Kethriax's death at the end of Chapter 1 was the last thing holding
+  the wound shut (the Ledger was serving his return), and the old scar Silverleaf was founded to watch opens like a
+  door. **The look:** broken land hanging over a void, rivers that fall upward, black glass plains, and the ruins of
+  Starborn and troll cities from before the Drowning, frozen at the moment the world tore. **Chapter 3:** with
+  Ossarak's return the Reach darkens and cracks, the same land changed. Each faction comes through its own breach (the
+  Accord through Silverleaf's scar in Kinloch, the Krugar through a second wound in Redmarch).
+- **B. The Far Shore.** A lost continent across the eastern sea, where Ossarak was driven when he was beaten: dragon
+  bones, storm highlands, the elves' and trolls' oldest colonies. **Why now:** with the storms gone, Admiral Vane's
+  charts finally reach it. A strong look, but it's another sea voyage after the Drowned Crown.
+- **C. The Deep Below.** A vast underworld opened when the Spire falls, down to Ossarak's prison. **Why now:**
+  Kethriax's death cracks the mountain. But it's fire and caves again, after Cinderpeak and the Magma Throne.
+
+### Choice 3: Ossarak and the Black Brood
+
+Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 12).
+
+- **A. The Brood was born from his blood** (recommended). When Ossarak was driven off, his blood fell on the mountains
+  and the first black dragons hatched from it. Every one of the Brood owes him its life: the **oldest debt**.
+  Veshmira's Ledger was her way of paying it, buying the world piece by piece (the Slagborn's digging, Vulcarn
+  waking) to open his way back. Kethriax pays the last of it with his death. **Why:** it turns Chapter 1's money story
+  inside out at the very end. The real debt was never gold but blood, so the Ledger closes on a twist, and the saga
+  after it has nothing to do with money, as Faizal asked.
+- **B. He is their sire.** Ossarak is the father of the Black Brood; Veshmira is his daughter and Kethriax his
+  grandson, and they served him as family. Clean and classic, but it's the usual dragon family tree.
+- **C. He is their god.** The Brood worship the Black Ruin they never saw, and Veshmira's Ledger was a temple's
+  treasury. Gives the Brood a faith, but makes Veshmira a priestess rather than the owner she was.
 
 ## Facts for when it's designed (not decisions)
 
