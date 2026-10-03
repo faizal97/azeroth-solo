@@ -28,8 +28,8 @@ in `2026-10-03-v11-story-options.md`.
 
 ## Agreed as a direction (still open to his refinement)
 
-4. **v11's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
-5. **v12 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
+6. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
+7. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
    years ago, and the Black Ruin's wound in the world).
 
 ## Still open (for Faizal)
