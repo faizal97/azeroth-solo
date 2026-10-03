@@ -36,15 +36,23 @@ in `2026-10-03-v11-story-options.md`.
    - **Chapter 3's pair are established characters** who appear in Chapters 1 and 2 without the spotlight, their story
      built across both, and step forward in Chapter 3.
 
+8. **Chapter 3's heroes: Prince Tamlin (Accord) and Tarro of Ossa (Krugar).** Faizal, 2026-10-03 (via the Lead, his
+   word: "yes"). Two heirs, enemies who meet as equals.
+   - **Tamlin:** crowned under threat in Chapter 1; sends the expedition in Chapter 2 (asks to go, is refused); leads
+     the Accord's host as **King Tamlin** in Chapter 3.
+   - **Tarro:** overruled at Grask's war council in Chapter 1; becomes chief of Ossa as Ossarak's taint reaches the
+     land in Chapter 2; leads the Krugar's host in Chapter 3.
+   - Their Chapter 1 beats go into v11's planning.
+
 ## Agreed as a direction (still open to his refinement)
 
-8. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
-9. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
+9. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
+10. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
    years ago, and the Black Ruin's wound in the world).
 
 ## Still open (for Faizal)
 
-- **The standout pairs** (the cast draft below).
+- **The standout pairs for Chapters 1 and 2** (the cast draft below; Thorne and Grask, then Starfeather and Zul'kesh, recommended).
 - Chapter 2's and 3's names, places and spines.
 - The mega raid's exact size (20 or 25), its length, and what gates it (Chapter 3's raid first?).
 - How Ossarak relates to the Black Brood (canon doesn't say).
@@ -83,7 +91,7 @@ needed.
 
 **Clash:** two old peoples remember the same night differently, and each says the other's memory is a lie.
 
-### Chapter 3 (v13, the same land, changed; Ossarak): the slow build
+### Chapter 3 (v13, the same land, changed; Ossarak): the slow build (**decided: Tamlin and Tarro**)
 
 | | Candidate | Chapter 1 beat | Chapter 2 beat | Chapter 3 payoff |
 |---|---|---|---|---|
