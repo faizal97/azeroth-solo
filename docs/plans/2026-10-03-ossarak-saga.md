@@ -12,9 +12,9 @@ in `2026-10-03-v11-story-options.md`.
 
 1. **The Ruinfall Saga: three expansions, one saga, ending with Ossarak, the Black Ruin.** Every expansion is a
    numbered, named chapter; devlogs use the form **"The Ruinfall Saga, Chapter 1: <name>"**.
-   - **Chapter 1, v11:** working name "The Heir of the Ledger" (direction A in the options doc).
-   - **Chapter 2, v12:** name to be decided.
-   - **Chapter 3, v13:** name to be decided.
+   - **Chapter 1, v11: "The Ashen Coronation"** (direction A in the options doc; was "The Heir of the Ledger").
+   - **Chapter 2, v12: "The First Wound".**
+   - **Chapter 3, v13: "Ruinfall".**
 2. **Raids.** Chapter 1: one raid. Chapter 2: one raid. Chapter 3: one raid **plus a mega raid: Ossarak.**
    - **The mega raid is 20 or 25 players, and long** (the exact size is decided later).
 3. **Not always about money.** In his words: "please we dont need to always evolve around debt or finance". Chapter 1
@@ -72,15 +72,19 @@ in `2026-10-03-v11-story-options.md`.
     the Drowning: the same night remembered by two enemies. **The full cast is set:** Chapter 1 Thorne and Grask,
     Chapter 2 Starfeather and Zul'kesh, Chapter 3 Tamlin and Tarro.
 
+12. **The chapter names.** Faizal, 2026-10-03 (via the Lead, his word: "yes"): **Chapter 1 "The Ashen Coronation"**
+    (replacing "The Heir of the Ledger"), **Chapter 2 "The First Wound"**, **Chapter 3 "Ruinfall"**. Devlogs read
+    "The Ruinfall Saga, Chapter N: <name>".
+
 ## Agreed as a direction (still open to his refinement)
 
-12. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
-13. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
+13. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
+14. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
    years ago, and the Black Ruin's wound in the world).
 
 ## Still open (for Faizal)
 
-- **The next three choices, in order** (drafted below): the chapter names, the new region, Ossarak and the Black Brood.
+- **The next two choices, in order** (drafted below): the new region, then Ossarak and the Black Brood.
 - Chapter 2's and 3's spines.
 - The mega raid's exact size (20 or 25), its length, and what gates it (Chapter 3's raid first?).
 - **When to start planning the next saga:** before Chapter 3's development starts, at the latest.
@@ -141,7 +145,7 @@ Tarro**.
 
 ## Next choices: a draft for Faizal (game designer, 2026-10-03), one at a time
 
-### Choice 1: the chapter names
+### Choice 1: the chapter names (**decided: The Ashen Coronation, The First Wound, Ruinfall**)
 
 In the form "The Ruinfall Saga, Chapter N: <name>". All original, and none about money.
 
@@ -154,7 +158,6 @@ In the form "The Ruinfall Saga, Chapter N: <name>". All original, and none about
   - **"The First Wound"** (recommended). The chapter is about the night Ossarak first tore the world, and both peoples'
     memories of it; it names that.
   - "Where the World Broke". The same idea, longer.
-  - "The Sundered Reach" (if the region is concept A below, the chapter takes the land's name).
 - **Chapter 3 (v13):**
   - **"Ruinfall"** (recommended). The saga's name is the finale's name: the Black Ruin falls, and "The Ruinfall Saga,
     Chapter 3: Ruinfall" reads like an ending.
@@ -166,7 +169,10 @@ In the form "The Ruinfall Saga, Chapter N: <name>". All original, and none about
 The Drowned Crown already raised an island from the sea (the Stormveil Isle), so the new land should not "rise from
 the sea" again.
 
-- **A. The Sundered Reach** (recommended). A piece of the world Ossarak tore loose in his first tearing, folded away
+- **A. A land torn loose** (recommended concept). **Its name:** "Sundered" sits close to Warcraft's "Sundering", so
+  not that. Options: **"The Unmoored Reach"** (recommended: land torn loose and adrift, and nothing like it elsewhere),
+  "The Torn Reach" (plainer), "Ruinfold" (ties it to the Black Ruin, but close to "Ruinfall"). `tools/ipcheck.js`
+  checks the pick. A piece of the world Ossarak tore loose in his first tearing, folded away
   behind a wound in the sky ever since. **Why now:** Kethriax's death at the end of Chapter 1 was the last thing holding
   the wound shut (the Ledger was serving his return), and the old scar Silverleaf was founded to watch opens like a
   door. **The look:** broken land hanging over a void, rivers that fall upward, black glass plains, and the ruins of
@@ -181,7 +187,7 @@ the sea" again.
 
 ### Choice 3: Ossarak and the Black Brood
 
-Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 12).
+Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 13).
 
 - **A. The Brood was born from his blood** (recommended). When Ossarak was driven off, his blood fell on the mountains
   and the first black dragons hatched from it. Every one of the Brood owes him its life: the **oldest debt**.
