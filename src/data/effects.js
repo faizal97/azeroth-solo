@@ -24,7 +24,7 @@
     },
     // healing
     echoing_mend: {
-      name: 'Echoing Mend', role: 'healing', icon: 'chain_heal', chance: 0.35, pct: 0.35, cost: 0.33, /* 0.3 -> 0.33, a starting candidate for #40 (capacity) */
+      name: 'Echoing Mend', role: 'healing', icon: 'chain_heal', chance: 0.35, pct: 0.35, cost: 0.38, /* 0.3 -> 0.33 -> 0.38: the smallest raise that loses -2% on capacity's tank-only case (#40; 0.35 and 0.37 round to the same item) */
       desc: (L, f) => `Your direct heals have a ${n(D.EFFECTS.echoing_mend.chance * 100)}% chance to echo: ${n(D.EFFECTS.echoing_mend.pct * (f || 1) * 100)}% of the heal also lands on the most hurt other ally.`,
     },
     // tanking
