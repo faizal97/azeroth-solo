@@ -92,20 +92,32 @@ in `2026-10-03-v11-story-options.md`.
     of Starborn and troll cities from before the Drowning. Chapter 3 happens in the same land, darkened and cracking
     as Ossarak returns.
 
+15. **Ossarak and the Black Brood: born from his blood.** Faizal, 2026-10-03 (via the Lead, his word: "yes"). When
+    Ossarak was driven off, his blood fell and the first black dragons hatched from it: every one of the Brood owes him
+    its life, **"the oldest debt"**. Veshmira's Ledger was her way of paying it, buying the world piece by piece to open
+    his way back. Kethriax's death pays the last of it, and that opens the wound in the sky to the Unmoored Reach.
+    - **This settles Kethriax's goal** (the options doc's open "pay or own"): he is paying, calling in every debt to
+      finish his mother's payment.
+    - **To canon.md when v11 is designed:** the Timeline (the Brood's birth from Ossarak's blood) and Names (the
+      Unmoored Reach, the oldest debt), with Reveals at **60** for the blood origin, the Ledger serving Ossarak, and the
+      Unmoored Reach, so nothing leaks before the chapter that tells it.
+
 ## Agreed as a direction (still open to his refinement)
 
-15. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
-16. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
+16. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
+17. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
    years ago, and the Black Ruin's wound in the world).
 
-## Still open (for Faizal)
+## Still open (for Faizal), in the order v11 needs them
 
-- **Ossarak and the Black Brood** (Choice 3, drafted below).
-- Chapter 2's and 3's spines.
-- The mega raid's exact size (20 or 25), its length, and what gates it (Chapter 3's raid first?).
-- **When to start planning the next saga:** before Chapter 3's development starts, at the latest.
-- **A Ruinfall Saga mark** tying the chapter logos together (suggested).
-- One release or two per chapter (story and dungeons, then the raid), as the Drowned Crown did.
+1. **Chapter 1: one release or two** (v11.0 with the story, the zone and the dungeons, then v11.1 with the Spire raid,
+   as the Drowned Crown did; or all at once). It decides how v11's betas are cut, so it comes first.
+2. **The Ruinfall Saga mark** (suggested): yes or no, before Chapter 1's logo is drawn, since the two should match.
+3. **Chapter 1's design** (the game designer writes it for his approval): the zone around the Spire, the two faction
+   dungeons, the Spire raid's bosses, the story beat by beat, the end cinematic teasing the Reach, the logo, and
+   canon's new Timeline, Names and Reveals.
+4. *Later, not needed for v11:* Chapter 2's and 3's raids and spines; the mega raid's exact size (20 or 25) and gate;
+   one or two releases for Chapters 2 and 3; and the next saga, planned before Chapter 3's development starts.
 
 ## The cast: a draft for Faizal (game designer, 2026-10-03)
 
@@ -202,9 +214,9 @@ the sea" again.
 - **C. The Deep Below.** A vast underworld opened when the Spire falls, down to Ossarak's prison. **Why now:**
   Kethriax's death cracks the mountain. But it's fire and caves again, after Cinderpeak and the Magma Throne.
 
-### Choice 3: Ossarak and the Black Brood
+### Choice 3: Ossarak and the Black Brood (**decided: A, born from his blood**)
 
-Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 15).
+Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 16).
 
 - **A. The Brood was born from his blood** (recommended). When Ossarak was driven off, his blood fell on the mountains
   and the first black dragons hatched from it. Every one of the Brood owes him its life: the **oldest debt**.
