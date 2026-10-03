@@ -4,6 +4,6 @@
 const Module = require('module'), load = Module._load;
 Module._load = function (req, parent, isMain) {
   const r = load.apply(this, arguments);
-  if (process.env.BOTFX != null && /src[\\/]game(\.js)?$/.test(req) && globalThis.G && globalThis.G.BOT_FX) globalThis.G.BOT_FX.at60 = +process.env.BOTFX;
+  if (process.env.BOTFX != null && process.env.BOTFX !== '' && /src[\\/]game(\.js)?$/.test(req) && globalThis.G && globalThis.G.BOT_FX) globalThis.G.BOT_FX.at60 = +process.env.BOTFX;
   return r;
 };
