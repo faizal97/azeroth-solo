@@ -51,7 +51,7 @@
 
   Object.assign(D.MOBS, {
     cabal_enforcer: { name: 'Cabal Enforcer', lvl: [59, 60], family: 'humanoid', sprite: 'syndicate_highwayman', hpMult: 1.1, drops: [['thieves_coin', 0.6], ['linen_cloth', 0.3]], aggro: 'The elf dies today. So do you.' },
-    lord_cassius_marrow: { name: 'Lord Cassius Marrow', lvl: [60, 60], family: 'humanoid', elite: true, named: true, hpMult: 5.5, dmgMult: 4.2, special: 'kelris', summon: 'cabal_enforcer', specialText: 'Lord Marrow calls for his blades!', drops: [['thieves_coin', 1]], qdrops: [['cassius_signet', 1]], loot: ['marrow_rapier', 'marrow_cloak', 'marrow_gloves'], aggro: 'You should have stayed dead, Cloveus.' },
+    lord_cassius_marrow: { name: 'Lord Cassius Marrow', lvl: [60, 60], family: 'humanoid', elite: true, named: true, hpMult: 5.5, dmgMult: 2.6, special: 'kelris', summon: 'cabal_enforcer', specialText: 'Lord Marrow calls for his blades!', drops: [['thieves_coin', 1]], qdrops: [['cassius_signet', 1]], loot: ['marrow_rapier', 'marrow_cloak', 'marrow_gloves'], aggro: 'You should have stayed dead, Cloveus.' },
   });
 
   Object.assign(D.PLACES, {
