@@ -85,15 +85,22 @@ in `2026-10-03-v11-story-options.md`.
     - **When:** Chapter 1's logo is part of v11's work; each later chapter's logo is part of its own.
     - **Suggested, not decided:** a Ruinfall Saga mark that ties the three logos together (the Lead's idea, for Faizal).
 
+14. **The new region: The Unmoored Reach.** Faizal, 2026-10-03 (via the Lead, his word: "yes"). A land Ossarak tore
+    loose in his first tearing, folded behind a wound in the sky ever since; the wound opens when Kethriax dies at the
+    end of Chapter 1. **The Accord's way in** is Silverleaf's scar in Kinloch; **the Krugar's** is a second wound in
+    Redmarch. **The look:** broken land hanging over a void, rivers that fall upward, black glass plains, and the ruins
+    of Starborn and troll cities from before the Drowning. Chapter 3 happens in the same land, darkened and cracking
+    as Ossarak returns.
+
 ## Agreed as a direction (still open to his refinement)
 
-14. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
-15. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
+15. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
+16. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
    years ago, and the Black Ruin's wound in the world).
 
 ## Still open (for Faizal)
 
-- **The next two choices, in order** (drafted below): the new region, then Ossarak and the Black Brood.
+- **Ossarak and the Black Brood** (Choice 3, drafted below).
 - Chapter 2's and 3's spines.
 - The mega raid's exact size (20 or 25), its length, and what gates it (Chapter 3's raid first?).
 - **When to start planning the next saga:** before Chapter 3's development starts, at the latest.
@@ -174,7 +181,7 @@ In the form "The Ruinfall Saga, Chapter N: <name>". All original, and none about
   - "The Black Ruin". Names the enemy, not the event.
   - "Two Heirs". Names Tamlin and Tarro's chapter; quieter.
 
-### Choice 2: the new region (Chapter 2)
+### Choice 2: the new region (Chapter 2) (**decided: The Unmoored Reach**)
 
 The Drowned Crown already raised an island from the sea (the Stormveil Isle), so the new land should not "rise from
 the sea" again.
@@ -197,7 +204,7 @@ the sea" again.
 
 ### Choice 3: Ossarak and the Black Brood
 
-Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 14).
+Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 15).
 
 - **A. The Brood was born from his blood** (recommended). When Ossarak was driven off, his blood fell on the mountains
   and the first black dragons hatched from it. Every one of the Brood owes him its life: the **oldest debt**.
