@@ -26,7 +26,7 @@
     scarlet_lightsworn: { name: 'Pyre Lightsworn', lvl: [57, 58], family: 'humanoid', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.35]], qdrops: [['lightsworn_writ', 0.45]], aggro: 'The Light judges you!' },
     rotting_behemoth: { name: 'Rotting Behemoth', lvl: [57, 58], family: 'undead', hpMult: 1.3, drops: [['rotting_flesh', 0.6]], qdrops: [['behemoth_bile', 0.5]] },
     foulmane: { name: 'Mangefang', lvl: [57, 57], family: 'undead', named: true, hpMult: 2.2, dmgMult: 1.35, drops: [['foulmane_ring', 0.35], ['rotting_flesh', 1]], qdrops: [['foulmane_heart', 1]] },
-    araj_the_summoner: { name: 'Vashti the Summoner', lvl: [58, 58], family: 'undead', elite: true, named: true, hpMult: 5.5, dmgMult: 2.6, special: 'kelris', summon: 'skeletal_executioner', specialText: 'Vashti summons his skeletal guard!', drops: [['thieves_coin', 1]], qdrops: [['araj_phylactery', 1]], loot: ['araj_staff', 'araj_plate', 'araj_cloak'], aggro: 'Your souls belong to the Hollow Host!' },
+    araj_the_summoner: { name: 'Vashti the Summoner', lvl: [58, 58], family: 'undead', elite: true, named: true, hpMult: 5.5, dmgMult: 4.8, special: 'kelris', summon: 'skeletal_executioner', specialText: 'Vashti summons his skeletal guard!', drops: [['thieves_coin', 1]], qdrops: [['araj_phylactery', 1]], loot: ['araj_staff', 'araj_plate', 'araj_cloak'], aggro: 'Your souls belong to the Hollow Host!' },
   });
 
   Object.assign(D.PLACES, {
