@@ -24,7 +24,7 @@ the Drowned Crown: a chapter, new places, dungeons, a raid, Legends, and collect
 **Older and bigger:**
 8. **Ossarak, the Black Ruin**, who "tore the world open", was driven off and never destroyed. Silverleaf Lodge was
    founded to watch his old scar. Canon never says how he relates to Veshmira's Black Brood.
-9. **The Krugar's own enemies:** the Hollow Host (the plague's risen dead, from Wexmoor), the Order of the Pyre, and
+9. **The Krugar's own enemies:** the Hollow Eye (orc warlocks after the old demon pacts), the Hollow Host (the plague's risen dead, from Wexmoor), the Order of the Pyre, and
    Graymouth's Grand Crusader, who "is not what he seems" (never said more). The Krugar's story has run "alongside"
    the Ledger's, never at the centre.
 
@@ -34,8 +34,9 @@ Rumhook Bay (deep in the Ledger's debt), the Blackgull pirates who rob the Ledge
 **Closed:** Veshmira (dead), Vulcarn (the Magma Throne), Aeldran and Nal'veshra (the Drowned Crown), Marrow (dead at
 60), Hale (free), Widya's lute, Bromli's ballad.
 
-Correction to the Lead's summary: canon names the Hollow Host, the Order of the Pyre and the Bone Mask cult, but not a
-"Hollow Eye"; that name appears only in the premise's list. It would need defining before any story uses it.
+The **Hollow Eye** isn't described in canon.md, but the Lore Journal defines it (`src/data/lore_places.js`): orc
+warlocks who want back the old demon pacts the Krugar gave up, holding their rites in the caves of the Smoke Pit and the
+Blooding Grounds (Varrok the Invoker). It belongs in canon.md's Names before any new story uses it.
 
 ## 2. Three directions
 
@@ -79,7 +80,7 @@ story. And it needs the most new art (a new region and a world-scale dragon).
 ### C. "The Pale Crusade" (the Krugar's turn)
 
 **The spine.** The Krugar's own thread at the centre: Graymouth's Grand Crusader is not what he seems, the Order of the
-Pyre and the Hollow Host are two halves of one plan, and it leads north into the heart of fallen Wexmoor. The Accord
+Pyre and the Hollow Host are two halves of one plan, and the Hollow Eye's warlocks are bargaining with the same dark, and it leads north into the heart of fallen Wexmoor. The Accord
 enters through the Lantern Watch at Greyfrost Camp.
 **For:** it evens out the factions (the Krugar finally lead), and it uses threads canon has seeded since the start.
 **Against:** it leaves the Ledger's ending hanging, and it's a different tone (undead and crusaders after a story
