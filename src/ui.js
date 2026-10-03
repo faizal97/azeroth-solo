@@ -332,11 +332,17 @@
       (els.tDist = h('span', { class: 'dst tnum', hidden: true })));
     tf.append(h('div', { class: 'uf-body' },
       h('div', { class: 'uf-name', style: { textAlign: 'right', color: isMob ? '#ff5b4b' : u.kind === 'pet' ? '#9fd6ff' : 'var(--c-' + u.cls + ')' } }, u.name, !isMob && u.kind !== 'pet' && u.char ? h('small', { class: 'rc' }, raceClass(u.char)) : null),
+      ...botFxLine(u),
       (els.tHp = barEl('hp')),
       (els.tCp = h('div', { class: 'cps' })),
       (els.tBuffs = h('div', { class: 'buffs tbuffs' }))), port);
   }
 
+  // a group member's effect item (#56): tap their frame and the target shows it, and tapping that opens the item
+  function botFxLine(u) {
+    if (!u || u.kind === 'mob' || !u.char || !u.char.bot) return [];
+    return Object.values(u.char.equip || {}).filter((it) => G.effectOf(it)).map((it) => h('button', { class: 'eff', style: { display: 'block', marginLeft: 'auto', padding: 0, background: 'none', border: 0, font: '700 11px var(--body)', textAlign: 'right' }, onclick: () => showDialog(itemTip(it, null, u.char), true) }, `◆ ${G.effectOf(it).name}: ${it.name}`));
+  }
   // ============================================================ scene
   const POS_ALLY = [{ l: 3, b: 4, w: 25 }, { l: 20, b: 16, w: 19 }, { l: 1, b: 29, w: 17 }, { l: 22, b: 33, w: 15 }, { l: 10, b: 43, w: 13 }];
   // raids (10 players plus pets): a denser formation, front line first

@@ -14,6 +14,7 @@ globalThis.localStorage = { getItem() { return null; }, setItem() {}, removeItem
 require('../src/data.js'); require('../src/engine.js'); require('../src/bots.js'); require('../src/game.js');
 const { G, D, E } = globalThis;
 const N = +process.argv[2] || 200;
+G.BOT_FX.at60 = 0; // the test pieces are the only effects here: no bot wears one of its own (#56)
 if (process.env.FXGROW) D.FX_GROW = +process.env.FXGROW; // try the upgrade curve (#37)
 if (process.env.TUNE) { const T = JSON.parse(process.env.TUNE); for (const k in T) Object.assign(D.EFFECTS[k], T[k]); } // try numbers without editing the data
 let bad = 0; const ok = (c, m) => { if (!c) { bad++; console.log('FAIL ' + m); } };

@@ -3012,6 +3012,21 @@
     b.level = clamp(Math.max(b.level, lvl - 1), 1, D.LEVEL_CAP);
     return b;
   }
+  // Bots wear effect items too (#56): from level 50 a bot sometimes wears one, about 1 in 4 at 60 with skill 0.8 (the game
+  // designer's guess for the sim), fewer lower down or with less skill; at most one, fitting its role. It is the item a
+  // player gets (its stats already pay for the effect), within 10 levels below the bot, in a slot the bot already fills
+  // (chest, legs, feet, hands), so it is a trade like yours, never an extra piece of gear
+  G.BOT_FX = { from: 50, at60: 0.25 };
+  const BOT_FX_ROLES = { healer: ['healing'], tank: ['tank', 'survival'], dps: ['damage', 'resource', 'survival'] };
+  G.botEffectItem = function (b) {
+    if (!(b.level >= G.BOT_FX.from)) return null;
+    const span = Math.max(1, D.LEVEL_CAP - G.BOT_FX.from), p = G.BOT_FX.at60 * (0.4 + 0.6 * Math.min(1, (b.level - G.BOT_FX.from) / span)) * Math.min(1.25, (b.skill == null ? 0.5 : b.skill) / 0.8);
+    if (!(p > 0) || Math.random() >= p) return null; // a chance of 0 rolls nothing, so a sim that turns it off keeps its random numbers
+    const C = D.CLASSES[b.cls], roles = BOT_FX_ROLES[b.role || C.role] || BOT_FX_ROLES.dps;
+    const ids = Object.keys(D.ITEMS).filter((id) => { const it = D.ITEMS[id], F = it.effect && D.EFFECTS[it.effect], L = it.lvl || 1;
+      return F && roles.includes(F.role) && ['chest', 'legs', 'feet', 'hands'].includes(it.slot) && (!it.atype || it.atype === C.armorType) && G.canUseItem(it, b.cls) && L <= b.level && L >= b.level - 10; });
+    return ids.length ? G.copyItem(pick(ids)) : null;
+  };
   G.botChar = function (b) {
     const C = D.CLASSES[b.cls];
     const q = b.skill > 0.72 ? (Math.random() < 0.4 ? 3 : 2) : b.skill > 0.4 ? 2 : 1;
@@ -3028,6 +3043,7 @@
       if (Math.random() < 0.35) equip.back = asLevel('cape_brotherhood', 'back', {});
     }
     for (const s of ['chest', 'legs', 'feet', 'hands']) equip[s] = G.genGear(s, b.level, s === 'chest' ? q : Math.max(1, q - 1), { atype: C.armorType });
+    { const fx = G.botEffectItem(b); if (fx) equip[fx.slot] = fx; } // sometimes an effect item, in place of one of those (#56)
     const talents = G.autoTalents(b.cls, b.role || (D.CLASSES[b.cls] || {}).role || 'dps', b.level, Math.abs(b.id || 0));
     return { name: b.name + (b.realm ? '-' + b.realm.replace(' ', '') : ''), cls: b.cls, race: b.race || 'human', level: b.level, equip, role: b.role, hp: null, res: null, auras: [], bot: b, talents };
   };
@@ -3148,6 +3164,11 @@
       pulls = A.pulls; hard = false;
     }
     S.run = { act, name, pulls, mult, bossMult, idx: 0, phase: 'rest', restUntil: now() + 6000, wipes: 0, rolls: [], returnTo: S.player.place, started: now(), hard: hard || undefined };
+    { // a bot shows off the effect item it wears (#56): a link to the real item, tappable like any other
+      const m = S.group.members.find((x) => !x.gone && x.bot && Object.values(x.equip || {}).some((it) => G.effectOf(it)));
+      if (m && Math.random() < 0.35) { const it = Object.values(m.equip).find((x) => G.effectOf(x)), L = B.link(it.name, it.q);
+        partySay(m, pick([`finally got ${L}!`, `${L} is carrying me lol`, `took me forever to get ${L}`, `${L} finally dropped for me last week`])); }
+    }
     if (trial) { // Trials (v10.4): enemies at the level cap, stronger with each Trial level
       const f = TR().factor(trial), sc = (m) => ({ hp: ((m && m.hp) || 1) * f, dmg: ((m && m.dmg) || 1) * f }), Rec = G.trials();
       const omens = TR().active(trial, new Date()), OMS = TR().OMENS, bm = sc(bossMult), tm = sc(mult); // Omens are fixed when the run starts
@@ -3308,7 +3329,8 @@
     const r = { item: it, until: now() + 25000, left: 25000, choices: {}, player: null, done: false }; // left: your time to decide, which stops during fights and while you inspect the item
     for (const m of S.group.members) {
       if (m.gone) continue;
-      const usable = G.canUseItem(it, m.cls) && (!it.atype || it.atype === D.CLASSES[m.cls].armorType || it.slot === 'back') && (it.slot !== 'weapon' || D.CLASSES[m.cls].weapons.includes(it.wtype));
+      const usable = G.canUseItem(it, m.cls) && (!it.atype || it.atype === D.CLASSES[m.cls].armorType || it.slot === 'back') && (it.slot !== 'weapon' || D.CLASSES[m.cls].weapons.includes(it.wtype))
+        && !(it.effect && Object.values(m.equip || {}).some((x) => x && x.effect === it.effect)); // an effect counts once (#56): no Need on one it already wears
       let c;
       if (m.bot.ninja) c = 'need';
       else if (usable && Math.random() < 0.85) c = 'need';
