@@ -44,10 +44,24 @@ in `2026-10-03-v11-story-options.md`.
      land in Chapter 2; leads the Krugar's host in Chapter 3.
    - Their Chapter 1 beats go into v11's planning.
 
+9. **Every chapter's final raid ends with a long cinematic that hypes the next.** In his words: "every expansion
+   after the final raid need to have long cinematic cutscene that hyping up the next expansion. v11 raid should end
+   with cutscene that hyping up v12. v12 also do the same for v13. by the time we working on v13 we should already
+   planning for the next saga (next 3 expansions). so the cutscene after the mega raid ossarak need to be the most hyped
+   cutscene for the next saga".
+   - **Chapter 1's Spire raid** ends with a cinematic teasing Chapter 2 (the new region surfacing, and the Chapter 2
+     pair's thread once they're chosen).
+   - **Chapter 2's final raid** ends with one teasing Chapter 3 (Ossarak's return).
+   - **The next saga (three more expansions) is planned while Chapter 3 is in development,** so the cinematic after the
+     Ossarak mega raid can be the biggest yet and tease it.
+   - Each cinematic is a `cutscene.js` chapter, so `art/promo/export_cutscene.sh` turns it into an MP4 trailer for the
+     devlog and Discord (the Player Team's job when a chapter ships). It plays only after the raid, so it may show what
+     the raid reveals; the lorekeeper's Reveals still apply to everything before it.
+
 ## Agreed as a direction (still open to his refinement)
 
-9. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
-10. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
+10. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
+11. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
    years ago, and the Black Ruin's wound in the world).
 
 ## Still open (for Faizal)
@@ -56,6 +70,7 @@ in `2026-10-03-v11-story-options.md`.
 - Chapter 2's and 3's names, places and spines.
 - The mega raid's exact size (20 or 25), its length, and what gates it (Chapter 3's raid first?).
 - How Ossarak relates to the Black Brood (canon doesn't say).
+- **When to start planning the next saga:** before Chapter 3's development starts, at the latest.
 - One release or two per chapter (story and dungeons, then the raid), as the Drowned Crown did.
 
 ## The cast: a draft for Faizal (game designer, 2026-10-03)
