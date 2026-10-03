@@ -95,7 +95,8 @@ The gap between v11.0 and v11.1 is for playing the story and gearing up, not lev
   burns it and writes the song of the day the hamlet stopped owing (saga thread 4, closed). Small, about her want.
 - **Bromli, a cameo at the coronation feast:** he's there for a ballad ("A coronation AND a dragon? Write fast.").
   One scene, and he joins as a cameo in group runs as now.
-- Lyveus: guarding the coronation is a natural place for him; Faizal's call, since Lyveus is saga material.
+- **Lyveus guards the coronation** (decision 18): in the Accord's dungeon he confronts the cabal's last member himself,
+  and his name is cleared before King Tamlin, closing his cabal arc. He stays free for later chapters.
 
 ## v11.1: the Spire raid and the teaser
 
@@ -151,5 +152,4 @@ music.
 ## Still open (for Faizal)
 
 1. **This draft:** approve or change (especially the two dungeons' ideas and the raid's shape).
-2. **Lyveus at the coronation:** yes or no.
-3. **Final names** for the two dungeons and the raid (working names above); the ipcheck and lorekeeper check them.
+2. **Final names** for the two dungeons and the raid (working names above); the ipcheck and lorekeeper check them.

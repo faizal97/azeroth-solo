@@ -116,10 +116,14 @@ in `2026-10-03-v11-story-options.md`.
     three chapter logos, the promo videos and the devlogs. A new saga later gets its own mark. It's drawn with Chapter
     1's logo in v11.0, with a contact sheet for his review.
 
+18. **Lyveus guards the coronation.** Faizal, 2026-10-03 (via the Lead, his word: "yes"). In the Accord's dungeon
+    Lyveus confronts the last of the cabal himself; his name is cleared before King Tamlin, closing his cabal arc. He
+    stays free for later chapters (for example the Reach opening over Silverleaf).
+
 ## Agreed as a direction (still open to his refinement)
 
-18. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
-19. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
+19. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
+20. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
    years ago, and the Black Ruin's wound in the world).
 
 ## Still open (for Faizal), in the order v11 needs them
@@ -227,7 +231,7 @@ the sea" again.
 
 ### Choice 3: Ossarak and the Black Brood (**decided: A, born from his blood**)
 
-Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 18).
+Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 19).
 
 - **A. The Brood was born from his blood** (recommended). When Ossarak was driven off, his blood fell on the mountains
   and the first black dragons hatched from it. Every one of the Brood owes him its life: the **oldest debt**.
