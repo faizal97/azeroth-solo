@@ -54,9 +54,10 @@ in `2026-10-03-v11-story-options.md`.
    - **Chapter 2's final raid** ends with one teasing Chapter 3 (Ossarak's return).
    - **The next saga (three more expansions) is planned while Chapter 3 is in development,** so the cinematic after the
      Ossarak mega raid can be the biggest yet and tease it.
-   - Each cinematic is a `cutscene.js` chapter, so `art/promo/export_cutscene.sh` turns it into an MP4 trailer for the
-     devlog and Discord (the Player Team's job when a chapter ships). It plays only after the raid, so it may show what
-     the raid reveals; the lorekeeper's Reveals still apply to everything before it.
+   - **The cinematics are in-game only.** In his words: "the cutscene just in game. for the devlog we will just having a
+     promo video for the expansion". They are not exported as trailers; **each expansion gets its own promo video** for
+     the devlog. A cinematic plays only after its raid, so it may show what the raid reveals; the lorekeeper's Reveals
+     still apply to everything before it.
 
 ## Agreed as a direction (still open to his refinement)
 
