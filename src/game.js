@@ -2979,8 +2979,11 @@
     if (b.level >= 10 && q === 3) {
       const wl = BOT_WEAPON_LOOKS[b.cls];
       const named = wl && wl.map((k) => Object.keys(D.ITEMS).find((id) => D.ITEMS[id].look && D.ITEMS[id].look[1] === k)).filter((id) => id && G.canUseItem(D.ITEMS[id], b.cls));
-      if (named && named.length && Math.random() < 0.6) equip.weapon = G.copyItem(pick(named));
-      if (Math.random() < 0.35) equip.back = G.copyItem('cape_brotherhood');
+      // a bot wears a named item's look, with the stats of gear at its own level and quality (#45: a level-60 bot carried
+      // a level-20 weapon's stats)
+      const asLevel = (id, slot, o) => { const it = G.copyItem(id), g = G.genGear(slot, b.level, q, o); for (const k of ['lvl', 'stats', 'armor', 'dmg', 'speed', 'sp', 'q']) { if (g[k] != null) it[k] = g[k]; else delete it[k]; } return it; };
+      if (named && named.length && Math.random() < 0.6) { const id = pick(named); equip.weapon = asLevel(id, 'weapon', { wtype: D.ITEMS[id].wtype }); }
+      if (Math.random() < 0.35) equip.back = asLevel('cape_brotherhood', 'back', {});
     }
     for (const s of ['chest', 'legs', 'feet', 'hands']) equip[s] = G.genGear(s, b.level, s === 'chest' ? q : Math.max(1, q - 1), { atype: C.armorType });
     const talents = G.autoTalents(b.cls, b.role || (D.CLASSES[b.cls] || {}).role || 'dps', b.level, Math.abs(b.id || 0));
