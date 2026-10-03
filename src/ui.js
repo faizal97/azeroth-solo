@@ -1801,6 +1801,7 @@
   function huntCard(r) {
     const M = D.MOBS[r.key], u = E.mobUnit(r.key, M.lvl[1]), t = Date.now(), seen = new Date(G.huntLastSeen(r.key, t)), k = (n) => (n >= 10000 ? (n / 1000).toFixed(1) + 'k' : String(Math.round(n)));
     showDialog([h('h3', null, M.name), h('p', null, `Level ${M.lvl[1]}${M.elite ? ' elite' : ''} · ${k(u.maxHp)} health · hits for ${k(u.dmg[0])}–${k(u.dmg[1])}`),
+      h('p', null, G.trophies()[r.key] ? `Trophy: taken by ${G.trophies()[r.key].by}` : 'Trophy: not yet'),
       h('p', null, `A rare hunt at ${D.PLACES[r.place].name}: it shows up once in each 6 hours and stays about 30 minutes, or until someone kills it. Last seen ${seen.toLocaleString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' })}.`),
       h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: closeDialog }, 'Got it'))], true);
   }
@@ -2621,6 +2622,7 @@
     if (LK.length) { const done = LK.filter((k) => G.legendUnlocked(k)).length, going = LK.filter((k) => !G.legendUnlocked(k) && legendStarted(k)).length; list.append(nav('Legends', going ? `${going} stor${going === 1 ? 'y' : 'ies'} in progress` : 'Characters with their own story, who then join your groups', `${done} / ${LK.length}`, () => openLegends())); }
     const tOwn = D.TITLES.filter(G.titleUnlocked).length, tNow = P.title && D.TITLES.find((t) => t.id === P.title);
     list.append(nav('Titles', tNow ? 'Wearing: ' + G.titleName(tNow, P.name) : 'No title worn', `${tOwn} / ${D.TITLES.length}`, () => openTitles()));
+    list.append(nav('Trophies', 'Level-60 rares and world bosses, shared by all your characters', `${G.trophyCount()} / ${G.trophyList().length}`, () => openTrophies()));
     if (G.WARDROBE_PLACES) { let got = 0, all = 0; for (const pl of G.WARDROBE_PLACES) { const w = G.wardrobeAll(pl); all += w.length; got += w.filter((o) => o.have).length; } list.append(nav('Looks', 'The wardrobe, shared by all your characters', `${got} / ${all}`, () => openWardrobe())); }
     list.append(nav('War Mode', P.level < 6 ? 'Enemy players show up from level 6' : `Honor ${G.pvpStats().honor}`, G.S.flags.warMode ? 'On' : 'Off', () => openWarMode()));
     b.append(h('div', { class: 'sec-h' }, 'Story and collections'), list);
@@ -2667,6 +2669,26 @@
       for (const t of own) list.append(row(G.titleName(t, P.name), t.how, P.title === t.id, () => { G.setTitle(t.id); ui.sheetFn(); }));
       b.append(list);
       if (rest.length) b.append(h('div', { class: 'sec-h' }, 'Still to earn', h('small', null, String(rest.length))), h('div', { class: 'list' }, ...rest.map((t) => row(G.titleName(t, P.name), t.how, false, null))));
+    });
+  }
+  // Trophies (#44): a row per zone, which opens to that zone's plaques. A plaque is the creature's own art (a silhouette
+  // until it is taken), so a new rare or world boss needs no new art and the screen grows by rows, not by one long grid
+  function openTrophies() {
+    openSheet('trophies', 'Trophies', 'Shared by all your characters', (b, title) => {
+      const list = G.trophyList(), got = G.trophies(), T = D.TITLES.find((x) => x.id === 'biggame');
+      title.querySelector('small').textContent = `${G.trophyCount()} of ${list.length} taken · shared by all your characters`;
+      const zoneOf = (x) => D.PLACES[x.place].zone, zones = [...new Set(list.map(zoneOf))], box = h('div', { class: 'list' });
+      const plaque = (x) => { const M = D.MOBS[x.key], t = got[x.key];
+        return h('div', { class: 'plaque' + (t ? '' : ' not') }, h('div', { class: 'pq-art' }, img(mobArt(x.key))), h('b', null, M.name), h('small', null, D.PLACES[x.place].name + (x.boss ? ' · world boss' : '')),
+          h('small', { class: t ? 'pq-by' : '' }, t ? `Taken by ${t.by}, ${new Date(t.at).toLocaleDateString([], { day: 'numeric', month: 'short' })}` : 'Not yet')); };
+      for (const z of zones) {
+        const xs = list.filter((x) => zoneOf(x) === z), open = ui.trophyZone === z;
+        box.append(h('button', { class: 'row nav', 'aria-expanded': String(open), onclick: () => { ui.trophyZone = open ? null : z; ui.sheetFn(); } },
+          h('div', { class: 't' }, h('b', null, z), h('small', null, xs.map((x) => D.MOBS[x.key].name).join(' · '))),
+          h('div', { class: 'r tnum' }, `${xs.filter((x) => got[x.key]).length} / ${xs.length}`, h('span', { class: 'nav-arr' }, open ? '▾' : '›'))));
+        if (open) box.append(h('div', { class: 'trophies' }, ...xs.map(plaque)));
+      }
+      b.append(box, h('p', { class: 'ai-note', style: { marginTop: '8px' } }, `A trophy is yours the first time any of your characters kills that rare or world boss. Level-60 rares show up once in each 6 hours (the map marks one that is up). At ${G.TROPHY_TITLE} trophies: the title "${T ? G.titleName(T, G.S.player.name) : ''}". Trophies give no power.`));
     });
   }
   function openWarMode() {

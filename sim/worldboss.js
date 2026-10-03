@@ -44,6 +44,7 @@ for (const act of acts) {
   console.log(`${act}: first fight done ${r1.done}, wipes ${r1.wipes}, rolls ${r1.rolls} (boss loot ${r1.bossRolls})`);
   check(r1.done && r1.wipes <= 2, `a level-60 group beats ${A.name} (${r1.wipes} wipes)`);
   check(m1 - m0 === G.WB_MARKS && G.worldBossLooted(act) && r1.bossRolls >= 2, `the first kill this week drops loot and ${G.WB_MARKS} Marks`);
+  check(!!(G.account().trophies || {})[A.boss] && G.trophyList().some((x) => x.key === A.boss && x.boss), `the kill takes ${D.MOBS[A.boss].name}'s trophy (#44)`);
   // the second kill: none of the boss's loot and no Marks (a trash mob on the way may still drop something of its own)
   const r2 = fight(); check(r2.done && G.account().marks === m1 && r2.bossRolls === 0, `the second kill this week drops none of the boss's loot (${r2.bossRolls} of its items rolled)`);
   t += 7 * 86400000; check(!G.worldBossLooted(act), 'loot is open again the next week');

@@ -232,6 +232,14 @@ const ok = (cond, what) => { if (cond) pass++; else { fail++; console.log('FAIL'
   ok(on1.friends.on === true && off2.friends.on === false && off2.friends.at === 9 && !('friends' in none), 'the Friends switch: the newest change wins, and no switch stays no switch');
   ok(CLOUD.mergeAccount({}, { friends: { on: true, at: 7 } }).friends.on === true, 'a device that never switched takes the other device\'s switch');
 
+  // 15. trophies (#44) ride in the account file: both devices' trophies combine, and each keeps its first taking
+  const tm = CLOUD.mergeAccount({ trophies: { scorchmaw: { by: 'Ana', at: 50 }, ashwing: { by: 'Ana', at: 9 } } }, { trophies: { scorchmaw: { by: 'Bo', at: 20 }, rakshiri: { by: 'Bo', at: 30 } } });
+  ok(tm.trophies.scorchmaw.by === 'Bo' && tm.trophies.ashwing.by === 'Ana' && tm.trophies.rakshiri.by === 'Bo' && Object.keys(tm.trophies).length === 3, 'trophies combine, and a trophy taken on both devices keeps the first taking');
+  ok(!('trophies' in CLOUD.mergeAccount({ marks: 1 }, { marks: 2 })), 'no trophies stay no trophies (an old account file loads as it was)');
+  use(phone); G.saveAccount(Object.assign(G.account(), { trophies: { old_brinescale: { by: 'Ana', at: 5 } } }));
+  await CLOUD.syncAccount(); use(web); await CLOUD.syncAccount();
+  ok(!!(G.account().trophies || {}).old_brinescale && G.account().marks === 40, 'a trophy taken on the phone reaches the browser, and the browser keeps its marks');
+
   console.log(`cloudsync: ${pass}/${pass + fail} checks pass`);
   process.exit(fail ? 1 : 0);
 })().catch((e) => { console.error(e); process.exit(1); });

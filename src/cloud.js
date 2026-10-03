@@ -143,14 +143,19 @@
     for (const k of LISTS) m[k] = union(a[k], b[k]);
     const fa = a.friends && a.friends.at ? a.friends : null, fb = b.friends && b.friends.at ? b.friends : null;
     if (fa || fb) m.friends = !fb || (fa && fa.at >= fb.at) ? fa : fb; else delete m.friends;
+    // trophies (#44): { mob: { by, at } }; each keeps its first taking, whichever device it was on
+    const ta = a.trophies || {}, tb = b.trophies || {}, tr = {};
+    for (const k of union(Object.keys(ta), Object.keys(tb))) tr[k] = !tb[k] || (ta[k] && (+ta[k].at || 0) <= (+tb[k].at || 0)) ? ta[k] : tb[k];
+    if (Object.keys(tr).length) m.trophies = tr; else delete m.trophies;
     return m;
   };
-  const same = (x, y) => JSON.stringify([+x.marks || 0, x.friends || null].concat(LISTS.map((k) => (x[k] || []).slice().sort()))) === JSON.stringify([+y.marks || 0, y.friends || null].concat(LISTS.map((k) => (y[k] || []).slice().sort())));
+  const markOf = (x) => JSON.stringify([+x.marks || 0, x.friends || null].concat(LISTS.map((k) => (x[k] || []).slice().sort()), [Object.keys(x.trophies || {}).sort().map((k) => k + '@' + (+x.trophies[k].at || 0))]));
+  const same = (x, y) => markOf(x) === markOf(y);
   const readList = (key, field) => { try { const v = JSON.parse(localStorage.getItem(key) || 'null'); return (field ? v && v[field] : v) || []; } catch (e) { return []; } };
   // everything the account file holds, as this device has it
   const localAccount = () => { const a = Object.assign({}, G.account(), { story: readList('azsolo.story'), lore: readList('azsolo.loreread'), tips: readList('azsolo.tips', 'seen') }); const f = root.FRIENDS && FRIENDS.switchInfo(); if (f) a.friends = f; return a; };
   function writeLocal(m) {
-    G.saveAccount(Object.assign(G.account(), { marks: m.marks, heirlooms: m.heirlooms, looks: m.looks })); // keeps the wardrobe's own flags
+    G.saveAccount(Object.assign(G.account(), { marks: m.marks, heirlooms: m.heirlooms, looks: m.looks }, m.trophies ? { trophies: m.trophies } : {})); // keeps the wardrobe's own flags
     try {
       localStorage.setItem('azsolo.story', JSON.stringify(m.story));
       localStorage.setItem('azsolo.loreread', JSON.stringify(m.lore));
@@ -161,7 +166,7 @@
     } catch (e) { }
     if (m.friends && root.FRIENDS) FRIENDS.remoteSwitch(m.friends); // Friends was switched on another device
   }
-  const accountMark = () => { const a = localAccount(); return JSON.stringify([+a.marks || 0, a.friends || null].concat(LISTS.map((k) => (a[k] || []).slice().sort()))); };
+  const accountMark = () => markOf(localAccount());
   CLOUD.syncAccount = async function (files) {
     if (!root.G || !G.account) return null;
     const f = (files || await drv().list()).find((x) => x.name === ACCOUNT_FILE) || null;

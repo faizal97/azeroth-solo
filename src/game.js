@@ -700,6 +700,22 @@
   G.huntNow = (key, t) => { const w = Math.floor(t / G.HUNT_WINDOW), start = G.huntStart(key, w); return { w, start, end: start + G.HUNT_UP }; };
   G.huntUp = (key, t) => { const h = G.huntNow(key, t), P = G.S && G.S.player; return t >= h.start && t < h.end && !(P && P.huntKilled && P.huntKilled[key] === h.w); };
   G.huntLastSeen = (key, t) => { const w = Math.floor(t / G.HUNT_WINDOW); const s = G.huntStart(key, w); return s <= t ? s : G.huntStart(key, w - 1); }; // the latest appearance at or before t (never the next one)
+  // Trophies (#44): one for each hunt rare and each world boss, read from the data (a new one joins with no list), taken on
+  // the first kill by any of your characters. Account-wide: G.account().trophies = { mob: { by, at } }. A look and a
+  // collection only, no power; the title comes at a fixed number (G.TROPHY_TITLE), never "all", so new ones never move it
+  G.TROPHY_TITLE = 10;
+  G.trophyList = () => G.huntRares().map((r) => ({ key: r.key, place: r.place, boss: false })).concat(G.worldBossActs().map((k) => ({ key: D.ACTIVITIES[k].boss, place: D.ACTIVITIES[k].where, boss: true })));
+  G.trophies = () => G.account().trophies || {};
+  G.trophyCount = () => { const t = G.trophies(); return G.trophyList().filter((x) => t[x.key]).length; };
+  G.takeTrophy = function (key) {
+    const list = G.trophyList(); if (!key || !list.some((x) => x.key === key)) return false;
+    const a = G.account(), t = a.trophies = a.trophies || {}; if (t[key]) return false;
+    t[key] = { by: G.S.player.name, at: now() }; G.saveAccount(a);
+    const n = G.trophyCount(), T = D.TITLES.find((x) => x.id === 'biggame');
+    loot(`Trophy: ${D.MOBS[key].name}, ${n} of ${list.length} (Hero → Journey → Trophies).`);
+    if (n === G.TROPHY_TITLE && T) loot(`${n} trophies: the title "${G.titleName(T, G.S.player.name)}" is yours (Hero → Journey → Titles).`);
+    return true;
+  };
   // chat "rare spotted" posts (v9.6): the named creature really is up
   G.spawnRare = function (place, key) { const W = placeState(place); const m = W.named[key]; if (m && m.state !== 'fight') { m.state = 'alive'; m.until = 0; m.level = D.MOBS[key].lvl[0]; } return !!m; };
   let MOBID = 1;
@@ -1419,7 +1435,7 @@
           const named = e.inst.id.startsWith('n_');
           e.inst.state = 'dead';
           e.inst.until = now() + (named ? D.PLACES[P.place].named[e.key] * 1000 : rnd(15, 28) * 1000);
-          if (named && G.isHunt(e.key)) { P.huntKilled = P.huntKilled || {}; P.huntKilled[e.key] = G.huntNow(e.key, now()).w; e.inst.state = 'away'; } // gone until its next window (#43)
+          if (named && G.isHunt(e.key)) { P.huntKilled = P.huntKilled || {}; P.huntKilled[e.key] = G.huntNow(e.key, now()).w; e.inst.state = 'away'; G.takeTrophy(e.key); } // gone until its next window (#43)
         }
         onKill(e.key);
         G.gainXp(Math.round(G.xpForKill(e.level, e.elite) * share), true);
@@ -2039,7 +2055,7 @@
     const P = G.S.player, cx = P.codex || {}; const pv = G.pvpStats();
     let flawless = 0, speed = 0; for (const k in cx) { flawless += cx[k].flawless || 0; speed += cx[k].speed || 0; }
     const craft = Math.max(0, ...Object.entries(P.prof || {}).filter(([k]) => D.PROFESSIONS[k] && D.PROFESSIONS[k].kind === 'craft').map(([, p]) => p.skill));
-    return { mentor: P.mentorRuns || 0, flawless, speed, honor: pv.honor, kills: pv.kills, clears: cx, craft, riding: P.riding ? 1 : 0, brawl: (P.brawl || {}).champs || 0 };
+    return { mentor: P.mentorRuns || 0, flawless, speed, honor: pv.honor, kills: pv.kills, clears: cx, craft, riding: P.riding ? 1 : 0, brawl: (P.brawl || {}).champs || 0, trophies: G.trophyCount() };
   };
   G.titleUnlocked = function (t) {
     const r = G.records(), n = t.need;
@@ -3225,6 +3241,7 @@
         // a world boss drops its loot once a week (and pays Mentor Marks that time); after that, nothing until Monday
         const wbA = D.ACTIVITIES[R.act].worldBoss, wbFirst = wbA && !G.worldBossLooted(R.act);
         if (wbA) { if (wbFirst) { const w = G.raidWeek(); (w.wb = w.wb || {})[R.act] = true; G.addMarks(G.WB_MARKS, 'this week\'s world boss'); } else sys(`${M.name}'s loot is taken this week: it drops again on Monday.`); }
+        if (wbA) G.takeTrophy(D.ACTIVITIES[R.act].boss); // first kill by any character (#44)
         const drops = wbA && !wbFirst ? [] : table.slice(0, 2).map(bonus ? G.hardCopy : G.copyItem);
         if (R.hard) { if (bonus) { G.raidWeek().got[R.act + ':' + pull.mobs[0]] = true; sys(`Hard bonus: ${M.name} drops loot ${G.HARD_STEPS} upgrade steps up (once a week).`); } else sys(`${M.name}'s Hard bonus is taken this week: Normal loot until Monday.`); }
         for (const it of drops) addRoll(it);
