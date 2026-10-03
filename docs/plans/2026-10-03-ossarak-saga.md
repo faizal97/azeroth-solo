@@ -106,7 +106,8 @@ in `2026-10-03-v11-story-options.md`.
     month gap. and presummably everyone already lvl 60 because they were on the current lvl 60 content".
     - **v11.0:** the story, the zone and the two faction dungeons. **v11.1:** the Spire raid and the cinematic that
       teases Chapter 2.
-    - **The gap between them is still open** (he isn't sure about a month).
+    - **The gap: about two weeks, as a soft target, not a commitment.** In his words: "yes probably but dont too rely
+      on it". v11.0 must stand on its own (see the Chapter 1 design).
     - **For the design:** Chapter 1 is level-60 content for players already at 60 (progression after 60 is
       horizontal), so the gap is for playing the story and gearing up in the faction dungeons before the raid, not for
       levelling. v11.0's dungeon rewards are sized for that.
@@ -119,12 +120,11 @@ in `2026-10-03-v11-story-options.md`.
 
 ## Still open (for Faizal), in the order v11 needs them
 
-1. **The gap between v11.0 and v11.1** (decision 16: two releases; he isn't sure about a month).
-2. **The Ruinfall Saga mark** (suggested): yes or no, before Chapter 1's logo is drawn, since the two should match.
-3. **Chapter 1's design** (the game designer writes it for his approval): the zone around the Spire, the two faction
+1. **The Ruinfall Saga mark** (suggested): yes or no, before Chapter 1's logo is drawn, since the two should match.
+2. **Chapter 1's design** (drafted in `2026-10-03-ch1-ashen-coronation-design.md`; the game designer wrote it for his approval): the zone around the Spire, the two faction
    dungeons, the Spire raid's bosses, the story beat by beat, the end cinematic teasing the Reach, the logo, and
    canon's new Timeline, Names and Reveals.
-4. *Later, not needed for v11:* Chapter 2's and 3's raids and spines; the mega raid's exact size (20 or 25) and gate;
+3. *Later, not needed for v11:* Chapter 2's and 3's raids and spines; the mega raid's exact size (20 or 25) and gate;
    one or two releases for Chapters 2 and 3; and the next saga, planned before Chapter 3's development starts.
 
 ## The cast: a draft for Faizal (game designer, 2026-10-03)

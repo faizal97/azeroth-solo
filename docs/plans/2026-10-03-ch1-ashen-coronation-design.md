@@ -17,6 +17,21 @@ from (decision 15). Kethriax's death pays the last of it, and the wound in the s
   and story; no new region.
 - **The Accord and the Krugar stay enemies** (decision 4): separate staging, a clash on Cinderpeak.
 
+## v11.0 stands on its own
+
+The gap to v11.1 is **about two weeks as a soft target, not a commitment** (Faizal: "yes probably but dont too rely on
+it"). So nothing in v11.0 depends on the raid shipping by a set date:
+- **The story is complete up to the raid's door.** v11.0 ends with a closing scene: the books are read, the coronation
+  survived, the Krugar have their notes back, and Kethriax has sealed himself at the top of the Spire. "He's waiting
+  for us." An ending with a door in it, not a cliffhanger mid-scene.
+- **The rewards make sense with or without the raid.** The dungeon blues are the best blues in the game but stay under
+  today's ceiling (about 97% of the Tidecrown Citadel), so nothing outgrows current content before the raid. When the
+  raid raises the ceiling, they settle at the blue cap of the new one. One week or four, they're worth the runs.
+- **No dates in the game or the notes:** the zone says the Spire's top is sealed, never "coming soon"; the What's new
+  notes don't promise a date.
+- **The dungeons join the Trials rotation and pay Marks** like every level-60 dungeon, so they keep their value after
+  the raid too.
+
 ## v11.0: the story, the zone, the two dungeons
 
 ### The zone: Cinderpeak, the Spire awake (level 60)
@@ -70,8 +85,8 @@ The gap between v11.0 and v11.1 is for playing the story and gearing up, not lev
 - **Mentor Marks** from both dungeons and the zone's quests, as level-60 dungeons pay today, so older gear can be
   upgraded toward the ceiling too.
 - **The bar for the raid:** a group in v11.0 dungeon gear can clear the Spire raid's first bosses on Normal (the
-  Balance Analyst measures it, below). That number also tells Faizal how long the gap needs to be (the open question in
-  decision 16): it's the time a typical player takes to reach that gear.
+  Balance Analyst measures it, below). That number is a check on the soft two-week gap: the time a typical player takes to
+  reach that gear.
 - No new currency: Marks and drops, as everything after 60 already uses.
 
 ### The Legends (filler, the game designer's part)
@@ -134,7 +149,6 @@ music.
 ## Still open (for Faizal)
 
 1. **This draft:** approve or change (especially the two dungeons' ideas and the raid's shape).
-2. **The gap between v11.0 and v11.1** (decision 16); the Analyst's gear-gap number informs it.
-3. **The Ruinfall Saga mark** (for the logo).
-4. **Lyveus at the coronation:** yes or no.
-5. **Final names** for the two dungeons and the raid (working names above); the ipcheck and lorekeeper check them.
+2. **The Ruinfall Saga mark** (for the logo).
+3. **Lyveus at the coronation:** yes or no.
+4. **Final names** for the two dungeons and the raid (working names above); the ipcheck and lorekeeper check them.
