@@ -116,6 +116,8 @@ Measured by role: damage, XP per hour, healing per mana, damage taken and deaths
 
 An effect that wins in every case or in none is a wrong effect, not wrong numbers (design mindset §4).
 
+**Standing rule for small misses (2026-10-03, #40/#45):** bars are judged on the 5-seed mean (a bar within ±1.0 of its line on seed 0 reruns on 5 seeds). A miss of **0.5 points or less** on that mean is fixed without asking: the Balance Analyst searches the smallest cost change within the 40% floor that passes every bar at both stages, and the developer sets it. A bigger miss, or no passing cost, comes back to the game designer.
+
 ## 5. Where items go
 
 - **Levelling dungeon finals (16):** one blue each, at the boss's level, with the same drop chance as its other blues.
