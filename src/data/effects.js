@@ -56,7 +56,7 @@
       desc: (L, f) => `Your heals are ${Math.round(D.EFFECTS.lavish_mend.heal * (f || 1) * 1000) / 10}% stronger, and cost ${n(D.EFFECTS.lavish_mend.mana * 100)}% more mana.`, // an upgrade grows the heal, never the mana cost
     },
     tethered_mend: { // replaced Wellspring (#40): Echoing Mend's mirror, who you heal is the trade; no stat cost, the reset is the price
-      name: 'Tethered Mend', role: 'healing', icon: 'renew', step: 0.06, max: 3, swap: 0.1, cost: 0,
+      name: 'Tethered Mend', role: 'healing', icon: 'renew', step: 0.05, max: 3, swap: 0.3, cost: 0, /* the game designer's pick from the capacity grid (#40): 0.06 / 0.1 never lost group-wide */
       desc: (L, f) => { const F = D.EFFECTS.tethered_mend, st = Math.round(F.step * (f || 1) * 1000) / 10; return `Each direct heal on the same ally in a row heals ${st}% more, up to ${Math.round(st * F.max * 10) / 10}%. A heal on a different ally heals ${n(F.swap * 100)}% less and starts over.`; }, // an upgrade grows the bonus, not the penalty
     },
     // tanking
