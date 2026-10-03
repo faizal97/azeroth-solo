@@ -14,7 +14,7 @@
   D.fxGrow = (scale, k) => Math.pow(Math.min(1.5, scale || 1), (D.EFFECTS[k] && D.EFFECTS[k].grow) || D.FX_GROW); // an effect may set its own curve (grow) // the one way to turn an item's fxScale into its effect's strength: the engine and every tooltip use it
   D.EFFECT_COST_MAX = 0.6; // an effect item keeps at least 40% of its stat budget, so nothing on screen reads as a broken drop (#22; tools/validate.js holds it)
   D.effectCost = (k) => ((D.EFFECTS[k] && D.EFFECTS[k].cost) != null ? D.EFFECTS[k].cost : D.EFFECT_COST);
-  const GROW_FUSE = 0.6; // Steady Fuse's interval shortens a little faster than the others grow, or it stopped winning once upgraded (#37)
+  const GROW_FUSE = 0.5; // Steady Fuse's interval shortens a little faster than the others grow, or it stopped winning once upgraded (#37); 0.5, not 0.6, so it still loses at full upgrade (#45)
   D.EFFECTS = {
     // damage
     opening_cut: {
