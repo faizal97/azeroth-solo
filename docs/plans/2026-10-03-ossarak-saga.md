@@ -76,10 +76,19 @@ in `2026-10-03-v11-story-options.md`.
     (replacing "The Heir of the Ledger"), **Chapter 2 "The First Wound"**, **Chapter 3 "Ruinfall"**. Devlogs read
     "The Ruinfall Saga, Chapter N: <name>".
 
+13. **Every chapter gets its own drawn logo.** In his words: "i need the expansion need to be drawn as well. so like a
+    expansion logo or something". One logo each for The Ashen Coronation, The First Wound and Ruinfall.
+    - **Where it shows:** that chapter's title screen or loading screen, the What's new card when the chapter ships, and
+      the chapter's promo video and devlog.
+    - **How it's made:** SVG in the game's art pipeline (like `art/logo/`, with a render script and a contact sheet).
+      Faizal reviews the sheet before it ships.
+    - **When:** Chapter 1's logo is part of v11's work; each later chapter's logo is part of its own.
+    - **Suggested, not decided:** a Ruinfall Saga mark that ties the three logos together (the Lead's idea, for Faizal).
+
 ## Agreed as a direction (still open to his refinement)
 
-13. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
-14. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
+14. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
+15. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
    years ago, and the Black Ruin's wound in the world).
 
 ## Still open (for Faizal)
@@ -88,6 +97,7 @@ in `2026-10-03-v11-story-options.md`.
 - Chapter 2's and 3's spines.
 - The mega raid's exact size (20 or 25), its length, and what gates it (Chapter 3's raid first?).
 - **When to start planning the next saga:** before Chapter 3's development starts, at the latest.
+- **A Ruinfall Saga mark** tying the chapter logos together (suggested).
 - One release or two per chapter (story and dungeons, then the raid), as the Drowned Crown did.
 
 ## The cast: a draft for Faizal (game designer, 2026-10-03)
@@ -187,7 +197,7 @@ the sea" again.
 
 ### Choice 3: Ossarak and the Black Brood
 
-Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 13).
+Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 14).
 
 - **A. The Brood was born from his blood** (recommended). When Ossarak was driven off, his blood fell on the mountains
   and the first black dragons hatched from it. Every one of the Brood owes him its life: the **oldest debt**.
