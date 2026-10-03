@@ -386,6 +386,29 @@
     if (G.effectOf(it)) { emit('effectItem', { item: it }); if (G.canUseItem(it)) { it.fxNew = 1; P.bagUpgrade = true; } } // the one-time card; a new effect item you can use lights the dot like an upgrade (#23)
     return true;
   };
+  // ---- the Effects codex (#55)
+  // where an item comes from, worded for a character of this level: a boss drop ("Drops from Gimble, The Smugglers' Deep")
+  // and any Trial that finds it; a source this level may not read says "A place beyond your level" (G.nameable, #54).
+  // tools/lorekeeper.js reads every effect item's sources through this at every Reveals level
+  G.effectSources = function (id, lvl) {
+    const it = D.ITEMS[id], out = [], say = (t) => out.push(G.nameable(t, lvl) ? t : 'A place beyond your level');
+    const trial = Object.keys(D.TRIAL_FIND || {}).filter((act) => D.TRIAL_FIND[act] === id && D.ACTIVITIES[act]);
+    if (it && it.source && /^Trials?:/.test(it.source)) { if (!trial.length) say(it.source); } // a Trial copy: its Trial find line says where
+    else if (it && it.source) say(`Drops from ${it.source}`);
+    // world bosses and named creatures out in the world (no dungeon stamped a source on their loot)
+    if (it && !it.source) for (const k in D.MOBS) { const M = D.MOBS[k]; if (!((M.loot || []).includes(id) || (M.drops || []).some((d) => d[0] === id))) continue;
+      const wb = Object.values(D.ACTIVITIES).find((A) => A.worldBoss && A.boss === k), home = wb ? wb.where : Object.keys(D.PLACES).find((pk) => (D.PLACES[pk].named || {})[k]);
+      say(`Drops from ${M.name}${wb ? ', a world boss' : ''}${home && D.PLACES[home] ? ` in ${D.PLACES[home].name}` : ''}`); }
+    for (const act of trial) say(`Trial find: ${D.ACTIVITIES[act].name}`);
+    return out.length ? [...new Set(out)] : ['Not found anywhere yet'];
+  };
+  // every effect item any of your characters holds (worn, in bags or in the bank), by item id: the codex is account-wide
+  G.ownedEffectItems = function () {
+    const out = {}, add = (P, who) => { if (!P) return; for (const x of [].concat(Object.values(P.equip || {}), (P.bags || []).map((b) => b && b.item), (P.bank || []).map((b) => b && b.item))) if (x && x.effect && D.EFFECTS[x.effect]) (out[x.id] = out[x.id] || []).push({ item: x, who }); };
+    if (G.S) add(G.S.player, G.S.player.name);
+    for (const c of G.characters()) if (!G.S || c.id !== G.S.id) { const sv = G.readSave(c.id); if (sv) add(sv.player, sv.player && sv.player.name); }
+    return out;
+  };
   G.ownsItem = function (id) { const P = G.S.player; return Object.values(P.equip || {}).some((x) => x && x.id === id) || (P.bags || []).some((b) => b.item.id === id) || (P.bank || []).some((b) => b.item && b.item.id === id); }; // worn, in bags or in the bank
   G.countItem = function (id) { let n = 0; for (const b of G.S.player.bags) if (b.item.id === id) n += b.n; return n; };
   G.removeItem = function (id, n) {

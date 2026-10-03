@@ -148,6 +148,7 @@ if (D.TRIALSWORN_MONTHS) {
 // reads as broken (an epic with +2 stats); an effect whose numbers need more is made weaker instead
 if (D.EFFECTS) {
   const cap = D.EFFECT_COST_MAX || 0.6;
+  for (const k in D.EFFECTS) if (!D.EFFECTS[k].fires || !D.EFFECTS[k].role) err(`effect '${k}' needs 'role' and 'fires' (when it acts, a plain fact for the Effects codex, #55)`);
   for (const k in D.EFFECTS) if (D.effectCost(k) > cap + 1e-9) err(`effect '${k}' costs ${Math.round(D.effectCost(k) * 100)}% of an item's stats; at most ${Math.round(cap * 100)}% (make its numbers weaker instead)`);
   for (const id in D.ITEMS) { const it = D.ITEMS[id]; if (!it.effect) continue;
     if (!D.EFFECTS[it.effect]) { err(`item '${id}' has an unknown effect '${it.effect}'`); continue; }

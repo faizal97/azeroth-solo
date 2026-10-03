@@ -2629,6 +2629,7 @@
     const tOwn = D.TITLES.filter(G.titleUnlocked).length, tNow = P.title && D.TITLES.find((t) => t.id === P.title);
     list.append(nav('Titles', tNow ? 'Wearing: ' + G.titleName(tNow, P.name) : 'No title worn', `${tOwn} / ${D.TITLES.length}`, () => openTitles()));
     list.append(nav('Trophies', 'Level-60 rares and world bosses, shared by all your characters', `${G.trophyCount()} / ${G.trophyList().length}`, () => openTrophies()));
+    { const own = effectsOwned(); list.append(nav('Effects', 'Every item effect: which you own, and where the rest drop', `${Object.keys(D.EFFECTS).filter((k) => own.has(k)).length} / ${Object.keys(D.EFFECTS).length}`, () => openEffects())); }
     if (G.WARDROBE_PLACES) { let got = 0, all = 0; for (const pl of G.WARDROBE_PLACES) { const w = G.wardrobeAll(pl); all += w.length; got += w.filter((o) => o.have).length; } list.append(nav('Looks', 'The wardrobe, shared by all your characters', `${got} / ${all}`, () => openWardrobe())); }
     list.append(nav('War Mode', P.level < 6 ? 'Enemy players show up from level 6' : `Honor ${G.pvpStats().honor}`, G.S.flags.warMode ? 'On' : 'Off', () => openWarMode()));
     b.append(h('div', { class: 'sec-h' }, 'Story and collections'), list);
@@ -2696,6 +2697,43 @@
       }
       b.append(box, h('p', { class: 'ai-note', style: { marginTop: '8px' } }, `A trophy is yours the first time any of your characters kills that rare or world boss. Level-60 rares show up once in each 6 hours (the map marks one that is up). At ${G.TROPHY_TITLE} trophies: the title "${T ? G.titleName(T, G.S.player.name) : ''}". Trophies give no power.`));
     });
+  }
+  // ---- the Effects codex (#55): every effect in D.EFFECTS (a new one adds a row), grouped by role, which ones any of your
+  // characters owns, and every item that carries it with where it comes from. Facts only, never advice; sources follow
+  // the lore bible's Reveals for your level (G.effectSources)
+  const FX_GROUP = { damage: 'Damage', healing: 'Healing', tank: 'Tanking and survival', survival: 'Tanking and survival', resource: 'Resource' };
+  const effectsOwned = () => { const o = G.ownedEffectItems(), set = new Set(); for (const id in o) set.add(D.ITEMS[id] ? D.ITEMS[id].effect : o[id][0].item.effect); return set; };
+  function openEffects() {
+    openSheet('effects', 'Effects', 'Shared by all your characters', (b, title) => {
+      const owned = G.ownedEffectItems(), have = effectsOwned(), keys = Object.keys(D.EFFECTS);
+      title.querySelector('small').textContent = `Effects you own: ${keys.filter((k) => have.has(k)).length} of ${keys.length} · shared by all your characters`;
+      const groups = [...new Set(keys.map((k) => FX_GROUP[D.EFFECTS[k].role] || 'Other'))];
+      for (const g of groups) {
+        const ks = keys.filter((k) => (FX_GROUP[D.EFFECTS[k].role] || 'Other') === g);
+        b.append(h('div', { class: 'sec-h' }, g, h('small', null, `${ks.filter((k) => have.has(k)).length} of ${ks.length} owned`)),
+          h('div', { class: 'list' }, ...ks.map((k) => { const F = D.EFFECTS[k];
+            return h('button', { class: 'row', onclick: () => openEffect(k, owned) }, h('div', { class: 'ic' }, img(art('icon', F.icon))),
+              h('div', { class: 't' }, h('b', { class: 'eff' }, F.name), h('small', { style: { whiteSpace: 'normal' } }, `When: ${F.fires}`)),
+              h('div', { class: 'r' }, have.has(k) ? h('span', { style: { color: '#5fd46a' } }, '✓ Owned') : 'Not yet')); })));
+      }
+      b.append(h('p', { class: 'ai-note', style: { marginTop: '8px' } }, 'An item effect is a rule an item adds, paid for with some of the item\'s stats. Tap one for its numbers and every item that carries it.'));
+    });
+  }
+  function openEffect(k, owned) {
+    const F = D.EFFECTS[k], L = G.S.player.level, ids = Object.keys(D.ITEMS).filter((id) => D.ITEMS[id].effect === k);
+    // its numbers: your best item with it, else a level-60 drop's
+    const mine = Object.values(owned).flat().map((o) => o.item).filter((it) => it.effect === k), score = (it) => (it.lvl || 1) * D.fxGrow(it.fxScale, k);
+    const best = mine.sort((a, c) => score(c) - score(a))[0], ref = best || G.copyItem(ids.filter((id) => (D.ITEMS[id].lvl || 1) >= D.LEVEL_CAP).sort()[0] || ids[0]);
+    const facts = [`When: ${F.fires}.`, F.cost > 0 ? `Its item gives up ${Math.round(D.effectCost(k) * 100)}% of the stats a plain item like it would have.` : 'Its item keeps all its stats: the price is in the rule itself.'];
+    const rows = ids.map((id) => { const it = D.ITEMS[id], o = owned[id];
+      return h('div', { class: 'row' }, h('div', { class: 'ic' }, img(art('icon', it.icon))),
+        h('div', { class: 't' }, h('b', { class: 'q' + it.q }, it.name, h('small', { class: 'tnum', style: { display: 'inline', marginLeft: '6px' } }, `level ${it.lvl || 1}`)), ...G.effectSources(id, L).map((t) => h('small', { style: { whiteSpace: 'normal' } }, t))),
+        h('div', { class: 'r' }, o ? h('span', { style: { color: '#5fd46a' } }, '✓ ' + [...new Set(o.map((x) => x.who))].join(', ')) : 'Not owned')); });
+    showDialog([h('h3', { class: 'eff' }, F.name), h('p', null, F.desc(ref.lvl || 1, D.fxGrow(ref.fxScale, k))),
+      h('p', { class: 'ai-note' }, best ? `At the numbers of your ${best.name}.` : 'At the numbers of a level-60 drop.'),
+      h('div', { class: 'ai-box' }, ...facts.map((t) => h('div', null, t))),
+      h('div', { class: 'sec-h' }, 'Items with it', h('small', null, `${ids.filter((id) => owned[id]).length} of ${ids.length} owned`)), h('div', { class: 'list' }, ...rows),
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: closeDialog }, 'Got it'))], true);
   }
   function openWarMode() {
     openSheet('warmode', 'War Mode', G.S.flags.warMode ? 'On · +10% experience and gold' : 'Off', (b, title) => {

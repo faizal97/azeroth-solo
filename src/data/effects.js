@@ -15,64 +15,65 @@
   D.EFFECT_COST_MAX = 0.6; // an effect item keeps at least 40% of its stat budget, so nothing on screen reads as a broken drop (#22; tools/validate.js holds it)
   D.effectCost = (k) => ((D.EFFECTS[k] && D.EFFECTS[k].cost) != null ? D.EFFECTS[k].cost : D.EFFECT_COST);
   const GROW_FUSE = 0.5; // Steady Fuse's interval shortens a little faster than the others grow, or it stopped winning once upgraded (#37); 0.5, not 0.6, so it still loses at full upgrade (#45)
+  // fires: when it acts, a plain fact the Effects codex shows after "When:" (#55); never advice ("good for levelling")
   D.EFFECTS = {
     // damage
     opening_cut: {
-      name: 'Opening Cut', role: 'damage', icon: 'ambush', k: 2.0, c: 4, cost: 0.6, // was 2.4 at a 75% cost (#22: the 40% stat floor; 2.4 at 60% put the trash mix at +11%)
+      name: 'Opening Cut', role: 'damage', fires: 'on your first hit on each enemy', icon: 'ambush', k: 2.0, c: 4, cost: 0.6, // was 2.4 at a 75% cost (#22: the 40% stat floor; 2.4 at 60% put the trash mix at +11%)
       bonus: (L, f) => n((D.EFFECTS.opening_cut.k * L + D.EFFECTS.opening_cut.c) * (f || 1)),
       desc: (L, f) => `Your first hit on each enemy deals ${D.EFFECTS.opening_cut.bonus(L, f)} extra damage.`,
     },
     // healing
     echoing_mend: {
-      name: 'Echoing Mend', role: 'healing', icon: 'chain_heal', chance: 0.35, pct: 0.35, cost: 0.38, /* 0.3 -> 0.33 -> 0.38: the smallest raise that loses -2% on capacity's tank-only case (#40; 0.35 and 0.37 round to the same item) */
+      name: 'Echoing Mend', role: 'healing', fires: 'on some of your direct heals (a chance on each)', icon: 'chain_heal', chance: 0.35, pct: 0.35, cost: 0.38, /* 0.3 -> 0.33 -> 0.38: the smallest raise that loses -2% on capacity's tank-only case (#40; 0.35 and 0.37 round to the same item) */
       desc: (L, f) => `Your direct heals have a ${n(D.EFFECTS.echoing_mend.chance * 100)}% chance to echo: ${n(D.EFFECTS.echoing_mend.pct * (f || 1) * 100)}% of the heal also lands on the most hurt other ally.`,
     },
     // tanking
     turning_guard: {
-      name: 'Turning Guard', role: 'tank', icon: 'shield_block', icd: 3, dur: 6, k: 0.7, c: 4, cost: 0.4,
+      name: 'Turning Guard', role: 'tank', fires: 'you dodge a melee attack', icon: 'shield_block', icd: 3, dur: 6, k: 0.7, c: 4, cost: 0.4,
       absorb: (L, f) => n((D.EFFECTS.turning_guard.k * L + D.EFFECTS.turning_guard.c) * (f || 1)),
       desc: (L, f) => `When you dodge a melee attack, a guard absorbs the next ${D.EFFECTS.turning_guard.absorb(L, f)} damage within ${D.EFFECTS.turning_guard.dur} sec. At most once every ${D.EFFECTS.turning_guard.icd} sec.`,
     },
     kindled_edge: {
-      name: 'Kindled Edge', role: 'damage', icon: 'immolate', k: 0.5, c: 1, dur: 6, every: 2, cost: 0.6, // was 0.8/2 at a 90% cost (#22: the 40% stat floor)
+      name: 'Kindled Edge', role: 'damage', fires: 'on your critical hits', icon: 'immolate', k: 0.5, c: 1, dur: 6, every: 2, cost: 0.6, // was 0.8/2 at a 90% cost (#22: the 40% stat floor)
       tick: (L, f) => n((D.EFFECTS.kindled_edge.k * L + D.EFFECTS.kindled_edge.c) * (f || 1)),
       desc: (L, f) => { const F = D.EFFECTS.kindled_edge; return `Your critical hits set the target smouldering: ${F.tick(L, f) * (F.dur / F.every)} Fire damage over ${F.dur} sec. A new crit refreshes it; it doesn't stack.`; },
     },
     chase_the_next: {
-      name: 'Chase the Next', role: 'damage', icon: 'sprint', haste: 22, dur: 10, cost: 0.6,
+      name: 'Chase the Next', role: 'damage', fires: 'on each kill', icon: 'sprint', haste: 22, dur: 10, cost: 0.6,
       desc: (L, f) => `Each kill gives you ${n(D.EFFECTS.chase_the_next.haste * (f || 1))}% haste for ${D.EFFECTS.chase_the_next.dur} sec.`,
     },
     steady_fuse: {
-      name: 'Steady Fuse', role: 'damage', icon: 'cold_blood', icd: 45, cost: 0.6, grow: GROW_FUSE, // was every 30 at a 90% cost (#22: the 40% stat floor)
+      name: 'Steady Fuse', role: 'damage', fires: 'on a timer while you are in combat', icon: 'cold_blood', icd: 45, cost: 0.6, grow: GROW_FUSE, // was every 30 at a 90% cost (#22: the 40% stat floor)
       desc: (L, f) => `Every ${n(D.EFFECTS.steady_fuse.icd / (f || 1))} sec in combat, your next hit is a sure critical hit.`, // an upgrade shortens the wait (#37)
     },
     glass_heart: {
-      name: 'Glass Heart', role: 'damage', icon: 'blood_fury', dmg: 0.025, taken: 0.1, cost: 0, // no stat cost: the downside is the cost
+      name: 'Glass Heart', role: 'damage', fires: 'always on', icon: 'blood_fury', dmg: 0.025, taken: 0.1, cost: 0, // no stat cost: the downside is the cost
       desc: (L, f) => `You deal ${Math.round(D.EFFECTS.glass_heart.dmg * (f || 1) * 1000) / 10}% more damage, and take ${n(D.EFFECTS.glass_heart.taken * 100)}% more.`, // an upgrade grows the bonus, never the downside (#37)
     },
     // healing
     lavish_mend: { // replaced Lifeline (#40): Wellspring's mirror, the extra mana is its price (no stat cost, as Glass Heart's damage taken)
-      name: 'Lavish Mend', role: 'healing', icon: 'greater_heal', heal: 0.1, mana: 0.25, cost: 0,
+      name: 'Lavish Mend', role: 'healing', fires: 'on every heal', icon: 'greater_heal', heal: 0.1, mana: 0.25, cost: 0,
       desc: (L, f) => `Your heals are ${Math.round(D.EFFECTS.lavish_mend.heal * (f || 1) * 1000) / 10}% stronger, and cost ${n(D.EFFECTS.lavish_mend.mana * 100)}% more mana.`, // an upgrade grows the heal, never the mana cost
     },
     tethered_mend: { // replaced Wellspring (#40): Echoing Mend's mirror, who you heal is the trade; no stat cost, the reset is the price
-      name: 'Tethered Mend', role: 'healing', icon: 'renew', step: 0.05, max: 3, swap: 0.3, cost: 0, /* the game designer's pick from the capacity grid (#40): 0.06 / 0.1 never lost group-wide */
+      name: 'Tethered Mend', role: 'healing', fires: 'on each direct heal', icon: 'renew', step: 0.05, max: 3, swap: 0.3, cost: 0, /* the game designer's pick from the capacity grid (#40): 0.06 / 0.1 never lost group-wide */
       desc: (L, f) => { const F = D.EFFECTS.tethered_mend, st = Math.round(F.step * (f || 1) * 1000) / 10; return `Each direct heal on the same ally in a row heals ${st}% more, up to ${Math.round(st * F.max * 10) / 10}%. A heal on a different ally heals ${n(F.swap * 100)}% less and starts over.`; }, // an upgrade grows the bonus, not the penalty
     },
     // tanking
     spiteful_hide: {
-      name: 'Spiteful Hide', role: 'tank', icon: 'thorns', k: 0.12, c: 0, cost: 0.55, /* c 1 -> 0: at full upgrade a level-20 Paladin tank reached +10% (#37) */
+      name: 'Spiteful Hide', role: 'tank', fires: 'an enemy hits you in melee', icon: 'thorns', k: 0.12, c: 0, cost: 0.55, /* c 1 -> 0: at full upgrade a level-20 Paladin tank reached +10% (#37) */
       dmg: (L, f) => n((D.EFFECTS.spiteful_hide.k * L + D.EFFECTS.spiteful_hide.c) * (f || 1)),
       desc: (L, f) => `Enemies that hit you in melee take ${D.EFFECTS.spiteful_hide.dmg(L, f)} Nature damage.`,
     },
     // resource
     tithe_of_battle: {
-      name: 'Tithe of Battle', role: 'resource', icon: 'life_tap', mana: 0.003, rage: 1, energy: 2, cost: 0.4,
+      name: 'Tithe of Battle', role: 'resource', fires: 'on each tick of your damage over time', icon: 'life_tap', mana: 0.003, rage: 1, energy: 2, cost: 0.4,
       desc: (L, f) => { const F = D.EFFECTS.tithe_of_battle, g = f || 1; return `Each tick of your damage over time restores ${(F.mana * g * 100).toFixed(1)}% of your mana, ${n(F.rage * g)} rage or ${n(F.energy * g)} energy.`; },
     },
     // survival
     stubborn_blood: {
-      name: 'Stubborn Blood', role: 'survival', icon: 'frenzied_regeneration', icd: 60, below: 0.3, pct: 0.06, dur: 6, cost: 0.5,
+      name: 'Stubborn Blood', role: 'survival', fires: 'you fall below a share of your health', icon: 'frenzied_regeneration', icd: 60, below: 0.3, pct: 0.06, dur: 6, cost: 0.5,
       desc: (L, f) => { const F = D.EFFECTS.stubborn_blood; return `Falling below ${n(F.below * 100)}% health heals you for ${n(F.pct * (f || 1) * 100)}% of your health over ${F.dur} sec. At most once every ${F.icd} sec.`; },
     },
   };
