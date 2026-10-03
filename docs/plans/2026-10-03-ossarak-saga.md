@@ -83,7 +83,7 @@ in `2026-10-03-v11-story-options.md`.
     - **How it's made:** SVG in the game's art pipeline (like `art/logo/`, with a render script and a contact sheet).
       Faizal reviews the sheet before it ships.
     - **When:** Chapter 1's logo is part of v11's work; each later chapter's logo is part of its own.
-    - **Suggested, not decided:** a Ruinfall Saga mark that ties the three logos together (the Lead's idea, for Faizal).
+    - **The Ruinfall Saga emblem** ties the three logos together (decision 17).
 
 14. **The new region: The Unmoored Reach.** Faizal, 2026-10-03 (via the Lead, his word: "yes"). A land Ossarak tore
     loose in his first tearing, folded behind a wound in the sky ever since; the wound opens when Kethriax dies at the
@@ -112,19 +112,22 @@ in `2026-10-03-v11-story-options.md`.
       horizontal), so the gap is for playing the story and gearing up in the faction dungeons before the raid, not for
       levelling. v11.0's dungeon rewards are sized for that.
 
+17. **One Ruinfall Saga emblem.** Faizal, 2026-10-03 (via the Lead): "yes add mark". Drawn once and carried on all
+    three chapter logos, the promo videos and the devlogs. A new saga later gets its own mark. It's drawn with Chapter
+    1's logo in v11.0, with a contact sheet for his review.
+
 ## Agreed as a direction (still open to his refinement)
 
-17. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
-18. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
+18. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
+19. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
    years ago, and the Black Ruin's wound in the world).
 
 ## Still open (for Faizal), in the order v11 needs them
 
-1. **The Ruinfall Saga mark** (suggested): yes or no, before Chapter 1's logo is drawn, since the two should match.
-2. **Chapter 1's design** (drafted in `2026-10-03-ch1-ashen-coronation-design.md`; the game designer wrote it for his approval): the zone around the Spire, the two faction
+1. **Chapter 1's design** (drafted in `2026-10-03-ch1-ashen-coronation-design.md`; the game designer wrote it for his approval): the zone around the Spire, the two faction
    dungeons, the Spire raid's bosses, the story beat by beat, the end cinematic teasing the Reach, the logo, and
    canon's new Timeline, Names and Reveals.
-3. *Later, not needed for v11:* Chapter 2's and 3's raids and spines; the mega raid's exact size (20 or 25) and gate;
+2. *Later, not needed for v11:* Chapter 2's and 3's raids and spines; the mega raid's exact size (20 or 25) and gate;
    one or two releases for Chapters 2 and 3; and the next saga, planned before Chapter 3's development starts.
 
 ## The cast: a draft for Faizal (game designer, 2026-10-03)
@@ -224,7 +227,7 @@ the sea" again.
 
 ### Choice 3: Ossarak and the Black Brood (**decided: A, born from his blood**)
 
-Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 17).
+Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 18).
 
 - **A. The Brood was born from his blood** (recommended). When Ossarak was driven off, his blood fell on the mountains
   and the first black dragons hatched from it. Every one of the Brood owes him its life: the **oldest debt**.

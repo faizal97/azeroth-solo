@@ -124,8 +124,10 @@ music.
   (the Unmoored Reach, the oldest debt, every new character and place), and the Reveals: **level 60** for the blood
   origin, the Ledger serving Ossarak, and the Unmoored Reach. Characters and places new to v11 are named only at 60.
   The lorekeeper checks it all.
-- **Logo:** "The Ashen Coronation", drawn in the art pipeline with a contact sheet for Faizal (decision 13), shown on
-  the chapter's loading screen and in What's new. It waits on the Ruinfall Saga mark answer (open).
+- **Logo and emblem (v11.0):** the **Ruinfall Saga emblem** (decision 17), drawn once and carried on every chapter's
+  logo, the promo videos and the devlogs, and **"The Ashen Coronation" logo** that carries it (decision 13). Both drawn
+  in the art pipeline with one contact sheet for Faizal's review, shown on the chapter's loading screen and in What's
+  new.
 - **Music** (ships only once Faizal's ears approve it): Cinderpeak at 60, the two dungeons, the coronation, the raid
   (a three-part theme like the other raids), and the teaser cinematic.
 
@@ -149,6 +151,5 @@ music.
 ## Still open (for Faizal)
 
 1. **This draft:** approve or change (especially the two dungeons' ideas and the raid's shape).
-2. **The Ruinfall Saga mark** (for the logo).
-3. **Lyveus at the coronation:** yes or no.
-4. **Final names** for the two dungeons and the raid (working names above); the ipcheck and lorekeeper check them.
+2. **Lyveus at the coronation:** yes or no.
+3. **Final names** for the two dungeons and the raid (working names above); the ipcheck and lorekeeper check them.
