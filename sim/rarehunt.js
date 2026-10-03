@@ -51,6 +51,8 @@ for (const key of RARES) {
   const M = D.MOBS[key], cells = [];
   for (const cls of CLASSES) { let w = 0, s = 0, d = 0, lo = 0; for (let i = 0; i < N; i++) { const r = fight(cls, key, 1000 * CLASSES.indexOf(cls) + i); w += r.win; s += r.secs; d += r.died; lo += r.low; } const rate = w / N; if (rate < TARGET) bad++; cells.push({ cls, rate, secs: s / N, died: d / N, low: lo / N }); }
   console.log(`${M.name} (${key}, level ${M.lvl[1]}, ${M.elite ? 'elite: world party of 3' : 'non-elite: alone'})`);
+  if (process.env.PARTYSTATS && M.elite) { const by = {}; for (const cls of CLASSES) for (let i = 0; i < N; i++) { const r = fight(cls, key, 1000 * CLASSES.indexOf(cls) + i); const roles = r.party.map((x) => x.split('/')[1]); const k = (roles.includes('healer') ? 'healer' : 'no healer') + ', ' + (roles.includes('tank') ? 'tank' : 'no tank'); const o = by[k] = by[k] || { n: 0, w: 0, lo: 0 }; o.n++; o.w += r.win; o.lo += r.low; }
+    console.log('  by party (all classes): ' + Object.entries(by).map(([k, o]) => `${k}: ${(o.n / (N * CLASSES.length) * 100).toFixed(0)}% of parties, ${(o.w / o.n * 100).toFixed(0)}% wins, lowest ${(o.lo / o.n * 100).toFixed(0)}%`).join(' · ')); }
   for (const c of cells) console.log(`  ${c.cls.padEnd(8)} ${(c.rate * 100).toFixed(0).padStart(3)}% wins · ${c.secs.toFixed(0)} s a fight · player died ${(c.died * 100).toFixed(0)}% · lowest health ${(c.low * 100).toFixed(0)}% on average${c.rate < TARGET ? '  under 8 in 10' : ''}`);
 }
 console.log(bad ? `${bad} class-rare pairs under 8 in 10` : 'every class beats every level-60 rare at least 8 in 10');
