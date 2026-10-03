@@ -102,16 +102,24 @@ in `2026-10-03-v11-story-options.md`.
       Unmoored Reach, the oldest debt), with Reveals at **60** for the blood origin, the Ledger serving Ossarak, and the
       Unmoored Reach, so nothing leaks before the chapter that tells it.
 
+16. **Chapter 1 ships in two releases.** Faizal, 2026-10-03 (via the Lead): "yes two releases but not sure about a
+    month gap. and presummably everyone already lvl 60 because they were on the current lvl 60 content".
+    - **v11.0:** the story, the zone and the two faction dungeons. **v11.1:** the Spire raid and the cinematic that
+      teases Chapter 2.
+    - **The gap between them is still open** (he isn't sure about a month).
+    - **For the design:** Chapter 1 is level-60 content for players already at 60 (progression after 60 is
+      horizontal), so the gap is for playing the story and gearing up in the faction dungeons before the raid, not for
+      levelling. v11.0's dungeon rewards are sized for that.
+
 ## Agreed as a direction (still open to his refinement)
 
-16. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
-17. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
+17. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
+18. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
    years ago, and the Black Ruin's wound in the world).
 
 ## Still open (for Faizal), in the order v11 needs them
 
-1. **Chapter 1: one release or two** (v11.0 with the story, the zone and the dungeons, then v11.1 with the Spire raid,
-   as the Drowned Crown did; or all at once). It decides how v11's betas are cut, so it comes first.
+1. **The gap between v11.0 and v11.1** (decision 16: two releases; he isn't sure about a month).
 2. **The Ruinfall Saga mark** (suggested): yes or no, before Chapter 1's logo is drawn, since the two should match.
 3. **Chapter 1's design** (the game designer writes it for his approval): the zone around the Spire, the two faction
    dungeons, the Spire raid's bosses, the story beat by beat, the end cinematic teasing the Reach, the logo, and
@@ -216,7 +224,7 @@ the sea" again.
 
 ### Choice 3: Ossarak and the Black Brood (**decided: A, born from his blood**)
 
-Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 16).
+Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 17).
 
 - **A. The Brood was born from his blood** (recommended). When Ossarak was driven off, his blood fell on the mountains
   and the first black dragons hatched from it. Every one of the Brood owes him its life: the **oldest debt**.
