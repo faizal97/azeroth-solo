@@ -9,7 +9,7 @@
 // Run: node tools/lorekeeper.js [--strict] [--names]   (--names prints every unknown name once, for adding to the bible)
 const fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..');
-globalThis.localStorage = { getItem() { return null; }, setItem() {} };
+globalThis.localStorage = { getItem() { return null; }, setItem() {}, removeItem() {} };
 globalThis.window = globalThis;
 require(path.join(ROOT, 'src/data.js'));
 require(path.join(ROOT, 'src/cutscene.js'));
@@ -39,6 +39,7 @@ for (const n of NAMES) addName(n);
 // v10: the new names in the rename map are real names too (until the bible is rewritten with them)
 try { for (const v of Object.values(JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/rename_v10.json'), 'utf8')))) addName(v.new); } catch (e) { }
 for (const n of ['Accord', 'Krugar', 'Caldreth', 'Kingsmere', 'Long', 'Regent', 'Mistress', 'Ledger', 'Rise', 'Hoods', 'Grand']) addName(n);
+for (const n of ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']) addName(n); // the calendar (monthly Trialsworn cloaks)
 // every-day English, so a capital at the start of a sentence is not a name
 const dict = new Set();
 try { for (const w of fs.readFileSync('/usr/share/dict/words', 'utf8').split('\n')) if (w && w[0] === w[0].toLowerCase()) dict.add(w); } catch (e) { }
@@ -76,6 +77,31 @@ const atLevels = [...new Set([1].concat(REVEALS.map((r) => r.lvl - 1)).filter((l
 for (const x of G.trophyList()) for (const L of atLevels) add(`trophy ${x.key}`, L, plaqueText(x, L, false), { title: true });
 // the Effects codex is open at any level too (#55): every effect item's name and sources, as G.effectSources words them
 for (const id of Object.keys(D.ITEMS).filter((i) => D.ITEMS[i].effect)) for (const L of atLevels) add(`effects codex ${id}`, L, G.effectSources(id, L).join('. '), { title: true });
+// #58: every list screen that names things, as a character of each faction would read it at each of those levels,
+// through the same code the screens use: Titles (G.titleLabel), the wardrobe's uncollected looks for every class
+// (G.wardrobeAll), and the group finder with its briefings (each activity G.activityBlock lists: its name, description,
+// pull labels, creatures and boss loot), assuming the worst case (every place reachable, any week's world boss out).
+// (Trophies and the Effects codex are above.) A legend's story fight is listed only on its quest (checked at its level)
+{
+  const reach = G.canReach, wb = G.worldBoss; let out = null;
+  G.canReach = () => true; G.worldBoss = () => out;
+  for (const race of ['human', 'orc']) {
+    G.newGame({ name: 'Sweep', cls: 'warrior', race }); const P = G.S.player;
+    for (const L of atLevels) {
+      P.level = L;
+      for (const t of D.TITLES) { const lb = G.titleLabel(t, L, false, 'Sweep'); add(`screen titles ${t.id} (${race})`, L, `${lb.name}. ${lb.how || ''}`, { title: true }); }
+      for (const cls of Object.keys(D.CLASSES)) { P.cls = cls;
+        for (const pl of G.WARDROBE_PLACES) for (const o of G.wardrobeAll(pl)) if (!o.have) add(`screen wardrobe ${pl} ${o.key}`, L, `${o.name}. ${o.source || ''}`, { title: true }); }
+      P.cls = 'warrior';
+      for (const [k, A] of Object.entries(D.ACTIVITIES)) {
+        if (A.needQuest) continue; out = A.worldBoss ? k : null;
+        if (G.activityBlock(k) === 'hidden') continue;
+        add(`screen group finder ${k}`, L, G.activityText(k), { title: true });
+      }
+    }
+  }
+  G.canReach = reach; G.worldBoss = wb;
+}
 // the game's copy of the Reveals table (src/data/reveals.js, which G.nameable reads) must be the bible's
 const revealsDrift = (game) => JSON.stringify(game.map(([re, l]) => [re, +l])) !== JSON.stringify(REVEALS.map((r) => [r.re.source, r.lvl]));
 
@@ -91,6 +117,7 @@ if (SELF) {
   // a plaque worded without the level check (as if taken), and a game copy of Reveals that lost a row
   const wi = G.trophyList().find((x) => x.key === 'warden_ithrael'); if (wi) add('selftest trophy', 1, plaqueText(wi, 1, true), { title: true });
   add('selftest codex', 1, G.effectSources('brittle_crown_signet', 60).join('. '), { title: true }); // a source worded for level 60, read at 1
+  { const t = D.TITLES.find((x) => x.id === 'tidecrown'); if (t) { const lb = G.titleLabel(t, 1, true, 'Sweep'); add('selftest titles', 1, `${lb.name}. ${lb.how}`, { title: true }); } } // as if earned
 }
 // ---------- checks
 // words the game itself writes in lower case are plain English, so their capitalised form at a sentence start is not a name
@@ -144,7 +171,7 @@ for (const [w, srcs] of unknown) {
 
 if (SELF) {
   const all = problems.concat(warnings).join('\n');
-  const want = [['spoiler', /SPOILER  selftest spoiler /], ['trophy plaque', /SPOILER  selftest trophy /], ['codex source', /SPOILER  selftest codex /], ['reveals copy', /REVEALS  src\/data\/reveals\.js differs/], ['hale', /SPOILER  selftest spoiler2/], ['faction', /FACTION  selftest/], ['typo Blackwell', /"Blackwel".*did you mean "Blackwell"/], ['typo Carrow', /"Carow".*did you mean "Carrow"/], ['unknown name', /"Zorbulax"/], ['hooded stranger', /SPOILER  selftest hood/]];
+  const want = [['spoiler', /SPOILER  selftest spoiler /], ['trophy plaque', /SPOILER  selftest trophy /], ['codex source', /SPOILER  selftest codex /], ['titles screen', /SPOILER  selftest titles /], ['reveals copy', /REVEALS  src\/data\/reveals\.js differs/], ['hale', /SPOILER  selftest spoiler2/], ['faction', /FACTION  selftest/], ['typo Blackwell', /"Blackwel".*did you mean "Blackwell"/], ['typo Carrow', /"Carow".*did you mean "Carrow"/], ['unknown name', /"Zorbulax"/], ['hooded stranger', /SPOILER  selftest hood/]];
   let bad = 0; for (const [k, re] of want) { const ok = re.test(all); if (!ok) bad++; console.log(`${ok ? 'caught' : 'MISSED'}  ${k}`); }
   process.exit(bad ? 1 : 0);
 }

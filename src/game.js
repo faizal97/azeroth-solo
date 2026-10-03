@@ -729,9 +729,21 @@
   G.TROPHY_TITLE = 10;
   // a name this level may read (#54, the rule the news follows, #18): none of the bible's Reveals terms above the level
   // (D.REVEALS, checked against docs/lore/canon.md by tools/lorekeeper.js). For every screen that names a place or a creature
-  G.nameable = (text, lvl) => !text || (D.REVEALS || []).every(([re, at]) => lvl >= at || !new RegExp(re, 'i').test(text));
+  let revealRe = null; // compiled once: screens and the group finder ask often
+  G.nameable = (text, lvl) => { if (!text) return true; revealRe = revealRe || (D.REVEALS || []).map(([re, at]) => [new RegExp(re, 'i'), at]); return revealRe.every(([re, at]) => lvl >= at || !re.test(text)); };
   // what a trophy's plaque says at this level: one you have taken keeps its names (your account already knows them);
   // one you haven't hides a name its level may not read (tools/lorekeeper.js reads every plaque at every level)
+  // a title as a list shows it at this level (#58): an unearned one whose name or requirement holds a term this level
+  // may not read is "A title from beyond your level", with no requirement; earned ones show as they are
+  G.titleLabel = function (t, lvl, earned, name) {
+    const nm = G.titleName(t, name || ''), ok = earned || (G.nameable(nm, lvl) && G.nameable(t.how, lvl));
+    return ok ? { name: G.titleName(t, name || ''), how: t.how } : { name: 'A title from beyond your level', how: null, hidden: true };
+  };
+  // a look the wardrobe lists, not yet collected, at this level (#58): its name and where it comes from, unless either
+  // names a secret this level may not read
+  G.lookLabel = function (name, source, lvl, have) {
+    return have || (G.nameable(name, lvl) && G.nameable(source || '', lvl)) ? { name, source } : { name: 'A look from beyond your level', source: null, hidden: true };
+  };
   G.trophyLabel = function (x, lvl, taken) {
     const M = D.MOBS[x.key], P = D.PLACES[x.place], ok = (t) => taken || G.nameable(t, lvl), where = ok(P.zone) && ok(P.name);
     // a hidden place takes its zone with it: the plaque goes in a "Beyond your level" row, not under its zone (game designer)
@@ -1997,8 +2009,8 @@
       const it = D.ITEMS[id], l = it.look; if (!l || l[0] !== place || seen.has(l[1]) || !G.canUseItem(it, P.cls)) continue;
       const tw = G.account().trialsworn || {}, mo = it.month != null ? root.TRIALS && root.TRIALS.name(it.month) : null;
       const src = mo && have.has(l[1]) ? ((tw.earned || []).includes(it.month) ? `Earned in ${mo}` : 'Bought with Mentor Marks') : mo && root.TRIALS && it.month < root.TRIALS.season(new Date()) ? `${it.source}, or ${G.MONTH_CLOAK_COST} Mentor Marks at the Mentor Quartermaster now` : it.source || null;
-      seen.add(l[1]); out.push({ key: l[1], name: it.name, icon: it.icon, q: it.q, lvl: it.lvl || 1, source: src, have: have.has(l[1]) });
-      if (G.hardLookIds().has(id)) out.push({ key: l[1] + '_hard', name: it.name + ' (Hard)', icon: it.icon, q: it.q, lvl: (it.lvl || 1) + 0.5, source: 'Drops on Hard', have: have.has(l[1] + '_hard') });
+      seen.add(l[1]); { const lb = G.lookLabel(it.name, src, P.level, have.has(l[1])); out.push({ key: l[1], name: lb.name, icon: it.icon, q: it.q, lvl: it.lvl || 1, source: lb.source, have: have.has(l[1]), hidden: lb.hidden }); }
+      if (G.hardLookIds().has(id)) { const hv = have.has(l[1] + '_hard'), lb = G.lookLabel(it.name + ' (Hard)', 'Drops on Hard', P.level, hv); out.push({ key: l[1] + '_hard', name: lb.name, icon: it.icon, q: it.q, lvl: (it.lvl || 1) + 0.5, source: lb.source, have: hv, hidden: lb.hidden }); }
     }
     out.sort((a, b) => a.lvl - b.lvl || a.name.localeCompare(b.name));
     for (const o of G.wardrobeOptions(place)) if (o.keepsake) out.push(Object.assign({ lvl: 60, have: true, source: 'A Legend\'s keepsake' }, o));
@@ -2920,6 +2932,15 @@
     sys(timed ? `Trial ${lvl} beaten in time${great ? ' by a wide margin' : ''}! Trial ${res.open} is open here. Rating ${res.rating}.` : `Trial ${lvl} cleared, but over par: your level here stays. Rating ${res.rating}.`);
     return (R.trialResult = res);
   };
+  // everything the group finder's row and briefing name for an activity: its name and description, pull labels,
+  // creatures and boss loot (#58: one text, so the list, the briefing and tools/lorekeeper.js judge the same words)
+  const actText = {}; // the data never changes while the game runs
+  G.activityText = function (act) {
+    if (actText[act] != null) return actText[act];
+    const A = D.ACTIVITIES[act], Dg = A.dungeon && D.DUNGEONS[A.dungeon], pulls = (Dg && Dg.pulls) || A.pulls || [];
+    const loot = pulls.filter((p) => p.boss).flatMap((p) => p.mobs.flatMap((m) => (D.MOBS[m] || {}).loot || [])).map((id) => (D.ITEMS[id] || {}).name);
+    return (actText[act] = [A.name, A.desc, ...pulls.map((p) => p.label), ...pulls.flatMap((p) => p.mobs.map((m) => (D.MOBS[m] || {}).name)), ...loot].filter(Boolean).join('. '));
+  };
   G.activityBlock = function (act) {
     const S = G.S, P = S.player, A = D.ACTIVITIES[act];
     const region = A.where && D.PLACES[A.where].region;
@@ -2927,6 +2948,7 @@
     if (A.where && !G.canReach(P.place, A.where)) return 'hidden';
     if (A.needQuest && !P.quests[A.needQuest]) return 'hidden'; // a legend's story fight shows only while you're on it
     if (A.worldBoss && G.worldBoss() !== act) return 'hidden'; // only this week's world boss is out
+    if (!G.nameable(G.activityText(act), P.level)) return 'hidden'; // its row or briefing would name a secret at this level (#58: "Veshmira's Lair", the Sunken Archive's boss)
     if (P.level < A.minLvl) return `Requires level ${A.minLvl}`;
     // at the level cap, dungeons and raids queue from anywhere and the group summons you (v10.7: travel is for the world,
     // not for the endgame); levelling characters and open-world Wanted targets still go there

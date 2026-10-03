@@ -2574,7 +2574,7 @@
       const got = all.filter((o) => o.have).length;
       b.append(h('div', { class: 'sec-h' }, 'Looks', h('small', null, `${got} of ${all.length} collected`)), g);
       const info = h('div', { style: { marginTop: '10px' } });
-      if (tried) info.append(h('b', { class: tried.have ? 'q' + tried.q : '' }, tried.name), h('div', { class: 'ai-note' }, tried.have ? (tried.source || 'In your collection') : `Not collected yet. ${tried.source ? 'Drops from ' + tried.source + '.' : 'Found somewhere in the world.'}`));
+      if (tried) info.append(h('b', { class: tried.have ? 'q' + tried.q : '' }, tried.name), h('div', { class: 'ai-note' }, tried.have ? (tried.source || 'In your collection') : `Not collected yet. ${tried.source ? 'Drops from ' + tried.source + '.' : tried.hidden ? 'It comes from beyond your level.' : 'Found somewhere in the world.'}`));
       const same = (P.wardrobe || {})[pl] === (t || undefined) || (!t && !(P.wardrobe || {})[pl]);
       info.append(h('div', { class: 'btn-row', style: { marginTop: '8px' } },
         h('button', { class: 'btn', disabled: same || (tried && !tried.have), onclick: () => { G.setWardrobe(pl, t || null); toast(t === 'hidden' ? `${WPLACE[pl]} hidden.` : tried ? `Showing ${tried.name}.` : 'Showing your gear.', true); ui.sheetFn(); } }, same ? 'Showing' : 'Show this')));
@@ -2675,7 +2675,7 @@
       const list = h('div', { class: 'list' }, row('No title', null, !P.title, () => { G.setTitle(null); ui.sheetFn(); }));
       for (const t of own) list.append(row(G.titleName(t, P.name), t.how, P.title === t.id, () => { G.setTitle(t.id); ui.sheetFn(); }));
       b.append(list);
-      if (rest.length) b.append(h('div', { class: 'sec-h' }, 'Still to earn', h('small', null, String(rest.length))), h('div', { class: 'list' }, ...rest.map((t) => row(G.titleName(t, P.name), t.how, false, null))));
+      if (rest.length) b.append(h('div', { class: 'sec-h' }, 'Still to earn', h('small', null, String(rest.length))), h('div', { class: 'list' }, ...rest.map((t) => { const lb = G.titleLabel(t, P.level, false, P.name); return row(lb.name, lb.how, false, null); })));
     });
   }
   // Trophies (#44): a row per zone, which opens to that zone's plaques. A plaque is the creature's own art (a silhouette
