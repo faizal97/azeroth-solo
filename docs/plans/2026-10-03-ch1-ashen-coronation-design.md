@@ -152,4 +152,13 @@ music.
 ## Still open (for Faizal)
 
 1. **This draft:** approve or change (especially the two dungeons' ideas and the raid's shape).
-2. **Final names** for the two dungeons and the raid (working names above); the ipcheck and lorekeeper check them.
+2. **Final names** for the two dungeons and the raid. Each option below passes the Warcraft name map
+   (`tools/rename_v10.json`, every full name checked) and the Reveals:
+   - **The Accord's dungeon:** **"The Ashen Court"** (recommended: the royal court on coronation day, and the one place
+     the chapter's "Ashen" repeats); "The Crowning Hall"; "Hall of the Oath".
+   - **The Krugar's dungeon:** **"The Saltpenny Vault"** (recommended: the house is already in canon, and it says
+     what's inside); "The Counting-House"; "Saltpenny's Strongroom".
+   - **The raid:** **"Cinderpeak Spire"** (recommended: canon has named the Ledger's vault this since level 30, so
+     players finally climb the place they've heard about for 30 levels); "The Spire Ascent"; "The Ashen Spire" (a
+     third "Ashen" is one too many). **Not "The Spire of Kethriax":** the group finder's "Coming up" list shows a
+     level-60 raid's name to lower levels (`src/ui.js`), and canon reveals Kethriax only at 60.
