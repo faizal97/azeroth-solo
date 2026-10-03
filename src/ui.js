@@ -238,8 +238,9 @@
   const richText = (t) => symHtml(esc(t).replace(/\[\[(\d)\|([^\]]+)\]\]/g, '<span class="q$1">[$2]</span>'));
 
   function toast(text, info) {
-    const t = h('div', { class: 'toast' + (info ? ' info' : '') }, text);
-    app.append(t); setTimeout(() => t.remove(), 1900);
+    const secs = Math.min(4.5, 1.8 + Math.max(0, String(text).length - 50) * 0.04); // a long toast stays long enough to read (#41)
+    const t = h('div', { class: 'toast' + (info ? ' info' : ''), style: { animationDuration: secs + 's' } }, text);
+    app.append(t); setTimeout(() => t.remove(), secs * 1000 + 100);
   }
 
   // ============================================================ layout
@@ -1787,6 +1788,8 @@
   }
   function closeDialog() { if (ui.dialog) ui.dialog.remove(); ui.dialog = null; if (ui.updPending) { const r = ui.updPending; setTimeout(() => { if (!ui.dialog && ui.updPending === r) offerUpdate(r); }, 600); } }
 
+  // an effect item's strength from its upgrades, as a percentage (#42): the same for every effect, one decimal so every step moves it
+  const fxPct = (it) => { const v = Math.round(D.fxGrow(it.fxScale, it.effect) * 1000) / 10; return (v % 1 ? v.toFixed(1) : String(v)) + '%'; };
   // ---------- item tooltip
   const statName = { str: 'Strength', agi: 'Agility', sta: 'Stamina', int: 'Intellect', spi: 'Spirit' };
   // who: another player's character ({ level, equip }), for a friend's gear: no "can you use it" or compare lines
@@ -1814,6 +1817,7 @@
       const F = G.effectOf(it);
       if (F) {
         t.append(h('div', { class: 'eff' }, h('b', null, `Effect: ${F.name}. `), F.desc(it.lvl || 1, D.fxGrow(it.fxScale, it.effect))));
+        t.append(h('div', { class: 'eff dim', style: { fontSize: '12px' } }, `Effect strength ${fxPct(it)}`)); // 100% as dropped, up with each upgrade step (#42)
         if (!who && Object.values(G.S.player.equip || {}).some((x) => x && x !== it && x.effect === it.effect)) t.append(h('div', { class: 'eff dim' }, `You already have ${F.name}. It counts once.`));
         const L = !who && (G.S.player.fxLast || {})[it.effect];
         if (L) t.append(h('div', { class: 'dim' }, lastRunText(L)));
@@ -2440,6 +2444,7 @@
     showDialog([h('h3', null, `Upgrade ${it.name}?`),
       h('p', null, `From ${inf.pct}% to ${inf.nextPct}% of the ceiling: ${diff.join(', ') || (F ? 'the stats round to the same numbers' : 'a little stronger')}.`),
       fxLine ? h('p', { class: 'eff' }, `Effect: ${F.name}. ${fxLine}`) : null,
+      F ? h('p', { class: 'eff', style: { margin: '-4px 0 0' } }, `Effect strength ${fxPct(it)} → ${fxPct(next)}`) : null, // one rule for every effect, so a growth the rounding hides still shows (#42)
       h('p', null, `Costs ${inf.cost} Mentor Marks. You have ${marks}. Its look stays the same.`),
       h('div', { class: 'btn-row' }, h('button', { class: 'btn', disabled: marks < inf.cost, onclick: () => { closeDialog(); G.upgradeItem(where); if (ui.sheetFn) ui.sheetFn(); } }, 'Upgrade'), h('button', { class: 'btn alt', onclick: closeDialog }, 'Cancel'))], true);
   }
