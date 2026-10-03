@@ -4,7 +4,10 @@
 // effect. Pass bars, written first (design mindset §5): wins >= +2% in a wins case, loses <= -2% in a loses case, at most
 // +8% in its best case, and the best mix of different effects in one case at most +10% over plain gear.
 //   node sim/effects.js [fights per case, default 200]
-let seedS = 0; const SEED = +process.env.SEED || 0; const seed = (n) => { seedS = (0x5eed1e55 ^ Math.imul(n + 1 + SEED * 100003, 0x9E3779B1)) >>> 0; }; // SEED=n: another fixed seed, to measure a bar's wobble (unset: the build's)
+// Two stages (game designer, #45): every bar runs on one seed; a bar within NEAR (1) point of its line runs its cells again
+// on SEEDS and is judged on the worst (or best) cell's mean, since one seed's wobble (up to about 0.9 points, the analyst on #45) is larger than that.
+// Those reruns print to stderr, so the build log shows which bars went to 5 seeds and their means.
+let seedS = 0; let SEED = +process.env.SEED || 0; const seed = (n) => { seedS = (0x5eed1e55 ^ Math.imul(n + 1 + SEED * 100003, 0x9E3779B1)) >>> 0; }; // SEED=n: another fixed seed, to measure a bar's wobble (unset: the build's)
 Math.random = () => { seedS = (seedS + 0x6D2B79F5) >>> 0; let x = seedS; x = Math.imul(x ^ (x >>> 15), x | 1); x ^= x + Math.imul(x ^ (x >>> 7), x | 61); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; };
 seed(0);
 globalThis.localStorage = { getItem() { return null; }, setItem() {}, removeItem() {} };
@@ -103,6 +106,16 @@ const PLAN = [
   { effect: 'tithe_of_battle', classes: ['warlock'], wins: ['boss'], loses: ['boss'], losesClasses: ['mage'] },
 ];
 const ONLY = process.env.ONLY ? process.env.ONLY.split(',') : null;
+const SEEDS = [0, 1, 2, 3, 4], NEAR = process.env.NEAR ? +process.env.NEAR : 1; let stageNow = ''; // NEAR=x tries another window // the balance analyst's five seeds (#45)
+// f measured on every seed in SEEDS, given its value on this run's seed: the mean
+const onSeeds = (v0, f) => { const keep = SEED, vs = [v0]; for (const sd of SEEDS) if (sd !== keep) { SEED = sd; vs.push(f()); } SEED = keep; return vs.reduce((a, b) => a + b, 0) / vs.length; };
+// a bar: met if v is at least (dir +1) or at most (dir -1) line; within NEAR of it, judged on recompute() instead
+const gate = (bar, v, line, dir, recompute, msg) => {
+  if (Math.abs(v - line) > NEAR) return bar(dir > 0 ? v >= line : v <= line, msg(v));
+  const m = recompute(), met = dir > 0 ? m >= line : m <= line;
+  console.error(`effects: ${stageNow}${msg(m)}: within ${NEAR} of the line on seed ${SEED} (${v.toFixed(2)}), so the mean of seeds ${SEEDS.join(', ')} is judged: ${m.toFixed(2)}, ${met ? 'met' : 'missed'}`);
+  bar(met, `${msg(m)} [mean of ${SEEDS.length} seeds; seed ${SEED} gave ${v.toFixed(2)}]`);
+};
 const measure = (cs, cls, L, pieces) => { curCls = cls; let s = 0; for (let i = 0; i < N; i++) s += CASES[cs]({ cls, pieces }, L, i); return s / N; };
 // the cases are what they say (game designer, #22): with the plain item, the tank (or the one player) dies in at most
 // 1 fight in 10, except where dying is what a case measures (how long you last, or the hard fight above)
@@ -119,7 +132,7 @@ const measure = (cs, cls, L, pieces) => { curCls = cls; let s = 0; for (let i = 
 const FULL = (() => { let m = 1; for (const id in D.ITEMS) { const it0 = D.ITEMS[id]; if (!it0.effect || (it0.lvl || 0) < D.UPGRADE.minLvl) continue; let x = G.copyItem(id), n = 0; while (G.upgradeInfo(x).room && n++ < 40) x = G.upgradedCopy(x, G.upgradeInfo(x).next); m = Math.max(m, Math.min(1.5, x.fxScale || 1)); } return Math.round(m * 100) / 100; })();
 const okTop = ok;
 for (const stage of [1, FULL]) {
-  UPG = stage; const STAGE = stage === 1 ? '' : `[at full upgrade, x${stage}] `;
+  UPG = stage; const STAGE = stage === 1 ? '' : `[at full upgrade, x${stage}] `; stageNow = STAGE;
   console.log(stage === 1 ? '— as dropped —' : `— at full upgrade: stats and effect x${stage} —`);
   const ok = (c, m) => okTop(c, STAGE + m);
 const all = [];
@@ -139,12 +152,16 @@ const all = [];
     // an accepted exception (game designer, #37): healing effects measured by healing done can't show their trade with a
     // healer that only heals; they ship as they are until #40 measures them by capacity. Their misses print, not fail
     const bar = P.provisional ? (c, m) => { if (!c) console.log(`ACCEPTED (${P.provisional}, provisional) ${STAGE}${m}`); } : ok;
+    // a cell's mean over SEEDS (measured once, shared by every bar that reruns it); a provisional bar never reruns, as it
+    // doesn't gate
+    const mean = (x) => (x.mean != null ? x.mean : (x.mean = onSeeds(x.d, () => { curCls = x.cls; const a = measure(x.cs, x.cls, x.L, [piece(P.effect, x.L, false)]); curCls = x.cls; const b = measure(x.cs, x.cls, x.L, [piece(P.effect, x.L, true)]); return x.pts ? (b - a) * 100 : pct(b, a); })));
+    const g = P.provisional ? (v, line, dir, re, msg) => bar(dir > 0 ? v >= line : v <= line, msg(v)) : (v, line, dir, re, msg) => gate(bar, v, line, dir, re, msg);
     if (res.wins.some((x) => x.pts)) { const w = Math.max(...res.wins.map((x) => x.d)), p = Math.max(...pp.map((x) => x.d));
-      bar(w >= 5, `${P.effect} wins somewhere: at least +5 points of survival in a wins case (best ${w.toFixed(1)})`);
-      bar(p <= 15, `${P.effect} is not too strong: at most +15 points of survival (${p.toFixed(1)})`);
-    } else bar(win >= 2, `${P.effect} wins somewhere: at least +2% in a wins case (best ${win.toFixed(1)}%)`);
-    bar(lose <= -2, `${P.effect} loses somewhere: at least -2% in a loses case (worst ${lose.toFixed(1)}%)`);
-    bar(best <= 8, `${P.effect} is not too strong: at most +8% in its best case (${best.toFixed(1)}%)`);
+      g(w, 5, 1, () => Math.max(...res.wins.map(mean)), (v) => `${P.effect} wins somewhere: at least +5 points of survival in a wins case (best ${v.toFixed(1)})`);
+      g(p, 15, -1, () => Math.max(...pp.map(mean)), (v) => `${P.effect} is not too strong: at most +15 points of survival (${v.toFixed(1)})`);
+    } else g(win, 2, 1, () => Math.max(...res.wins.map(mean)), (v) => `${P.effect} wins somewhere: at least +2% in a wins case (best ${v.toFixed(1)}%)`);
+    g(lose, -2, -1, () => Math.min(...res.loses.map(mean)), (v) => `${P.effect} loses somewhere: at least -2% in a loses case (worst ${v.toFixed(1)}%)`);
+    g(best, 8, -1, () => Math.max(...pc.map(mean)), (v) => `${P.effect} is not too strong: at most +8% in its best case (${v.toFixed(1)}%)`);
   }
   // the ceiling holds: different effects worn together in the case that suits them stay within +10% of plain gear
   const MIXES = [
@@ -159,7 +176,8 @@ const all = [];
     for (const L of [20, 40, 60]) {
       curCls = M.cls; const plain = measure(M.cs, M.cls, L, M.fx.map((k) => piece(k, L, false))); curCls = M.cls; const mixed = measure(M.cs, M.cls, L, M.fx.map((k) => piece(k, L, true))), d = pct(mixed, plain);
       console.log(`mixed (${M.name}), ${M.cs} ${M.cls} ${L}: ${d >= 0 ? '+' : ''}${d.toFixed(1)}%`);
-      ok(d <= 10, `the best mix of effects stays within +10% of plain gear (${M.name}, ${M.cs} ${M.cls} ${L}: ${d.toFixed(1)}%)`);
+      gate(ok, d, 10, -1, () => onSeeds(d, () => { curCls = M.cls; const a = measure(M.cs, M.cls, L, M.fx.map((k) => piece(k, L, false))); curCls = M.cls; return pct(measure(M.cs, M.cls, L, M.fx.map((k) => piece(k, L, true))), a); }),
+        (v) => `the best mix of effects stays within +10% of plain gear (${M.name}, ${M.cs} ${M.cls} ${L}: ${v.toFixed(1)}%)`);
     }
   }
 }
