@@ -24,7 +24,7 @@
     chillwind_chimaera: { name: 'Greyfrost Chimaera', lvl: [58, 59], family: 'beast', drops: [['light_leather', 0.3]], qdrops: [['chimaera_horn', 0.5]] },
     highborne_apparition: { name: 'Starborn Apparition', lvl: [58, 59], family: 'undead', drops: [['thieves_coin', 0.4]], qdrops: [['highborne_essence', 0.5]], aggro: 'Who disturbs the lake?' },
     cobalt_scalebane: { name: 'Cobalt Scalebane', lvl: [59, 60], family: 'dragonkin', hpMult: 1.2, drops: [['thieves_coin', 0.55]], qdrops: [['cobalt_scale', 0.5]], aggro: 'Crystalhall is forbidden to you!' },
-    grizzle_snowpaw: { name: 'Old Frostmuzzle', lvl: [59, 59], family: 'humanoid', named: true, hpMult: 2.2, dmgMult: 1.35, drops: [['snowpaw_band', 0.35], ['thieves_coin', 1]], qdrops: [['snowpaw_heart', 1]], aggro: 'Grizzle... crush!' },
+    grizzle_snowpaw: { name: 'Old Frostmuzzle', lvl: [59, 59], family: 'humanoid', named: true, hpMult: 2.2, dmgMult: 2.6, drops: [['snowpaw_band', 0.35], ['thieves_coin', 1]], qdrops: [['snowpaw_heart', 1]], aggro: 'Grizzle... crush!' },
     rakshiri: { name: "Whiteclaw", lvl: [60, 60], family: 'beast', elite: true, named: true, hpMult: 5.5, dmgMult: 2.6, special: 'whirl', specialText: "Whiteclaw tears into everyone near her!", drops: [['light_leather', 1]], qdrops: [['rakshiri_fang', 1]], loot: ['rakshiri_claws', 'rakshiri_hide', 'rakshiri_mantle'] },
   });
 

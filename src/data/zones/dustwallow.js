@@ -13,7 +13,7 @@
     brood_whelp: { name: 'Brood Whelp', fly: 7, lvl: [58, 59], family: 'dragonkin', drops: [['ruined_pelt', 0.2]] },
     brood_drakonid: { name: 'Brood Drakeborn', lvl: [59, 60], family: 'dragonkin', hpMult: 1.15, drops: [['thieves_coin', 0.5]], qdrops: [['drakonid_claw', 0.55]], aggro: 'The mother is hungry.' },
     brood_dragonspawn: { name: 'Brood Dragonspawn', lvl: [59, 60], family: 'dragonkin', hpMult: 1.25, drops: [['thieves_coin', 0.55]], qdrops: [['brood_scale', 0.5]], aggro: 'None of you leave the bog.' },
-    scorchmaw: { name: 'Scorchmaw', lvl: [60, 60], family: 'dragonkin', named: true, hpMult: 2.2, dmgMult: 1.35, drops: [['scorchmaw_band', 0.35], ['thieves_coin', 1]], qdrops: [['scorchmaw_fang', 1]] },
+    scorchmaw: { name: 'Scorchmaw', lvl: [60, 60], family: 'dragonkin', named: true, hpMult: 2.2, dmgMult: 2.6, drops: [['scorchmaw_band', 0.35], ['thieves_coin', 1]], qdrops: [['scorchmaw_fang', 1]] },
   });
 
   Object.assign(D.PLACES, {

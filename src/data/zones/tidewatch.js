@@ -22,7 +22,7 @@
     kelp_horror: { name: 'Kelp Horror', lvl: [59, 60], family: 'elemental', hpMult: 1.2, drops: [['trogg_stone', 0.2]], qdrops: [['living_kelp', 0.55]] },
     tidebound_sentinel: { name: 'Tidebound Warden', lvl: [60, 60], family: 'humanoid', hpMult: 1.1, drops: [['thieves_coin', 0.55], ['linen_cloth', 0.3]], qdrops: [['tidecrown_insignia', 0.5]], aggro: 'For the Tidecrown!' },
     tidebound_sorceress: { name: 'Tidebound Sorceress', ranged: 'frost', lvl: [60, 60], family: 'humanoid', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.4]], qdrops: [['drowned_tome', 0.45]], aggro: 'You breathe too loudly, surface-dweller.' },
-    old_brinescale: { name: 'Old Brinescale', lvl: [60, 60], family: 'beast', named: true, hpMult: 2.2, dmgMult: 1.35, drops: [['brinescale_band', 0.35], ['light_leather', 1]], qdrops: [['brinescale_heart', 1]] },
+    old_brinescale: { name: 'Old Brinescale', lvl: [60, 60], family: 'beast', named: true, hpMult: 2.2, dmgMult: 2.6, drops: [['brinescale_band', 0.35], ['light_leather', 1]], qdrops: [['brinescale_heart', 1]] },
     warden_ithrael: { name: 'Warden Ithrael', lvl: [60, 60], family: 'humanoid', elite: true, named: true, hpMult: 5.5, dmgMult: 2.6, special: 'molten', specialText: 'Warden Ithrael hurls a crashing wave!', drops: [['thieves_coin', 1]], qdrops: [['ithrael_seal', 1]], loot: ['ithrael_glaive', 'ithrael_robe', 'ithrael_plate'], aggro: 'No surface-dweller passes the Warden.' },
   });
 

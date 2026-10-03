@@ -22,7 +22,7 @@
     wavebreaker_hexer: { name: 'Wavebreaker Hexer', ranged: 'shadow', lvl: [60, 60], family: 'undead', drops: [['thieves_coin', 0.55], ['linen_cloth', 0.35]], qdrops: [['wavebreaker_fetish', 0.45]] },
     drowned_sailor: { name: 'Drowned Sailor', lvl: [59, 60], family: 'undead', drops: [['thieves_coin', 0.5], ['linen_cloth', 0.3]], qdrops: [['sailor_logbook', 0.5]] },
     grotto_siren: { name: 'Grotto Siren', lvl: [60, 60], family: 'humanoid', drops: [['thieves_coin', 0.5]], qdrops: [['siren_feather', 0.55]], aggro: 'Come closer, sailor...' },
-    captain_saltbones: { name: 'Captain Saltbones', lvl: [60, 60], family: 'undead', named: true, hpMult: 2.2, dmgMult: 1.35, drops: [['saltbones_cutlass', 0.35], ['thieves_coin', 1]], qdrops: [['saltbones_hat', 1]], aggro: 'Yarr, fresh crew!' },
+    captain_saltbones: { name: 'Captain Saltbones', lvl: [60, 60], family: 'undead', named: true, hpMult: 2.2, dmgMult: 2.6, drops: [['saltbones_cutlass', 0.35], ['thieves_coin', 1]], qdrops: [['saltbones_hat', 1]], aggro: 'Yarr, fresh crew!' },
     kragvesh_the_tidebeast: { name: "Krag'vesh the Tidebeast", lvl: [60, 60], family: 'giant', elite: true, named: true, hpMult: 5.5, dmgMult: 2.6, special: 'slam', specialText: "Krag'vesh slams the reef!", drops: [['thieves_coin', 1]], qdrops: [['kragvesh_tusk', 1]], loot: ['kragvesh_maul', 'kragvesh_leather', 'kragvesh_cloak'] },
   });
 

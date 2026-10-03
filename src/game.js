@@ -686,6 +686,20 @@
     for (const k in (P.named || {})) if (!W.named[k] && D.MOBS[k]) W.named[k] = { state: 'alive', until: 0, id: 'n_' + k, key: k, level: D.MOBS[k].lvl[0] };
     return W;
   }
+  // ---- rare hunts (v10.10.0-beta.5, #43; design docs/plans/2026-10-03-rare-hunts-design.md): a level-60 rare appears once
+  // in each 6-hour window (UTC) for 30 minutes or until killed. Its time is a pure function of its own key and the window
+  // (no stored state, so every device agrees, nothing drifts, and adding a rare moves no other); "last seen" is computed
+  // the same way. Only the window you killed it in is stored, per character.
+  G.HUNT_WINDOW = 6 * 3600e3; G.HUNT_UP = 30 * 60e3; G.HUNT_LVL = 58;
+  let huntList = null;
+  G.huntRares = () => huntList || (huntList = Object.keys(D.PLACES).flatMap((pk) => Object.keys(D.PLACES[pk].named || {}).filter((k) => D.MOBS[k] && D.MOBS[k].lvl[1] >= G.HUNT_LVL).map((k) => ({ key: k, place: pk }))));
+  G.isHunt = (key) => G.huntRares().some((r) => r.key === key);
+  const fnv = (str) => { let h = 0x811c9dc5; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h >>> 0; };
+  // when a rare appears in window w (ms since 1970, UTC): somewhere in the window, to the minute, leaving room for its 30 min
+  G.huntStart = (key, w) => w * G.HUNT_WINDOW + (fnv(key + ':' + w) % ((G.HUNT_WINDOW - G.HUNT_UP) / 60000)) * 60000;
+  G.huntNow = (key, t) => { const w = Math.floor(t / G.HUNT_WINDOW), start = G.huntStart(key, w); return { w, start, end: start + G.HUNT_UP }; };
+  G.huntUp = (key, t) => { const h = G.huntNow(key, t), P = G.S && G.S.player; return t >= h.start && t < h.end && !(P && P.huntKilled && P.huntKilled[key] === h.w); };
+  G.huntLastSeen = (key, t) => { const w = Math.floor(t / G.HUNT_WINDOW); const s = G.huntStart(key, w); return s <= t ? s : G.huntStart(key, w - 1); }; // the latest appearance at or before t (never the next one)
   // chat "rare spotted" posts (v9.6): the named creature really is up
   G.spawnRare = function (place, key) { const W = placeState(place); const m = W.named[key]; if (m && m.state !== 'fight') { m.state = 'alive'; m.until = 0; m.level = D.MOBS[key].lvl[0]; } return !!m; };
   let MOBID = 1;
@@ -705,7 +719,7 @@
     // a rare goes first only if it is at most 2 levels above you; a stronger one waits after the normal creatures, its
     // level still red on the card (v10.9, issue #10: a level-4 rare was the first thing a level-1 player tapped)
     const L = G.S.player.level;
-    for (const k in W.named) { const n = W.named[k]; if ((n.level || 1) <= L + 2) list.unshift(n); else list.push(n); }
+    for (const k in W.named) { const n = W.named[k]; if (G.isHunt(k) && n.state !== 'fight') { if (!G.huntUp(k, now())) continue; n.state = 'alive'; } if ((n.level || 1) <= L + 2) list.unshift(n); else list.push(n); } // a hunt rare only while it's up (#43)
     return list;
   };
 
@@ -720,6 +734,7 @@
     const all = W.mobs.concat(Object.values(W.named));
     for (const m of all) {
       if (m.state === 'fight') continue;
+      if (m.id.startsWith('n_') && G.isHunt(m.key)) { m.state = G.huntUp(m.key, t) ? 'alive' : 'away'; continue; } // the hunt's schedule, not a respawn timer; no bot takes it (#43)
       if (m.state === 'tapped' && t >= m.until) { m.state = 'dead'; m.until = t + (m.id.startsWith('n_') ? D.PLACES[id].named[m.key] * 1000 : rnd(15, 28) * 1000); }
       else if (m.state === 'dead' && t >= m.until) {
         if (m.id.startsWith('n_')) { m.state = 'alive'; m.level = D.MOBS[m.key].lvl[0]; }
@@ -1404,6 +1419,7 @@
           const named = e.inst.id.startsWith('n_');
           e.inst.state = 'dead';
           e.inst.until = now() + (named ? D.PLACES[P.place].named[e.key] * 1000 : rnd(15, 28) * 1000);
+          if (named && G.isHunt(e.key)) { P.huntKilled = P.huntKilled || {}; P.huntKilled[e.key] = G.huntNow(e.key, now()).w; e.inst.state = 'away'; } // gone until its next window (#43)
         }
         onKill(e.key);
         G.gainXp(Math.round(G.xpForKill(e.level, e.elite) * share), true);

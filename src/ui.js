@@ -1034,6 +1034,12 @@
         h('div', { class: 't' }, h('b', null, h('span', { style: { color: conColor(m.level) } }, (M.elite ? m.level + '+' : m.level) + ' '), M.name), h('small', { class: m.state === 'tapped' ? 'cls-' + m.byCls : '' }, (needKeys.has(m.key) ? '◆ ' : '') + st))));
     }
     b.append(grid);
+    // a rare hunt that isn't up here (#43): what it is and when it was last seen, never when it's next due
+    for (const r of (G.huntRares ? G.huntRares() : [])) if (r.place === G.S.player.place && !G.huntUp(r.key, Date.now())) {
+      const M = D.MOBS[r.key], ago = Date.now() - G.huntLastSeen(r.key, Date.now()), agoT = ago < 3600e3 ? `${Math.max(1, Math.round(ago / 60000))} min ago` : `${Math.round(ago / 3600e3)} h ago`;
+      b.append(h('button', { class: 'row', style: { marginTop: '6px', textAlign: 'left', width: '100%' }, onclick: () => huntCard(r) }, h('div', { class: 'ic mob' }, img(mobArt(r.key))),
+        h('div', { class: 't' }, h('b', null, `Rare hunt: ${M.name}`), h('small', null, `Not here now · last seen ${agoT}`)), h('div', { class: 'r' }, h('span', { class: 'nav-arr' }, '›'))));
+    }
   }
   function peopleTab(b, place) {
     const S = G.S, P = S.player;
@@ -1791,6 +1797,13 @@
 
   // an effect item's strength from its upgrades, as a percentage (#42): the same for every effect, one decimal so every step moves it
   const fxPct = (it) => { const v = Math.round(D.fxGrow(it.fxScale, it.effect) * 1000) / 10; return (v % 1 ? v.toFixed(1) : String(v)) + '%'; };
+  // a rare hunt's card (#43): the facts, as briefings give them, and when it was last seen
+  function huntCard(r) {
+    const M = D.MOBS[r.key], u = E.mobUnit(r.key, M.lvl[1]), t = Date.now(), seen = new Date(G.huntLastSeen(r.key, t)), k = (n) => (n >= 10000 ? (n / 1000).toFixed(1) + 'k' : String(Math.round(n)));
+    showDialog([h('h3', null, M.name), h('p', null, `Level ${M.lvl[1]}${M.elite ? ' elite' : ''} · ${k(u.maxHp)} health · hits for ${k(u.dmg[0])}–${k(u.dmg[1])}`),
+      h('p', null, `A rare hunt at ${D.PLACES[r.place].name}: it shows up once in each 6 hours and stays about 30 minutes, or until someone kills it. Last seen ${seen.toLocaleString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' })}.`),
+      h('div', { class: 'btn-row' }, h('button', { class: 'btn', onclick: closeDialog }, 'Got it'))], true);
+  }
   // ---------- item tooltip
   const statName = { str: 'Strength', agi: 'Agility', sta: 'Stamina', int: 'Intellect', spi: 'Spirit' };
   // who: another player's character ({ level, equip }), for a friend's gear: no "can you use it" or compare lines
@@ -2115,6 +2128,7 @@
         if (st === 'complete') { const npc = D.QUESTS[qid].turnin; for (const p in D.PLACES) if (D.PLACES[p].npcs.includes(npc)) { qPlaces.set(p, 'ready'); if (main) qMain.add(p); } continue; }
         for (const o of D.QUESTS[qid].objs) objPlaces(o).forEach((p) => { mark(p); if (main && qPlaces.get(p) === 'new') qMain.add(p); });
       }
+      const huntUpAt = new Map(); for (const r of (G.huntRares ? G.huntRares() : [])) if (MAP[r.place] && G.huntUp(r.key, Date.now())) huntUpAt.set(r.place, r.key); // a rare hunt that's up (#43)
       for (const p in MAP) {
         const [x, y] = MAP[p]; const pl = D.PLACES[p];
         const here = p === cur;
@@ -2123,6 +2137,7 @@
         nodes.push(`<g data-go="${p}" style="cursor:${adj ? 'pointer' : 'default'}">
           <circle cx="${x}" cy="${y}" r="${here ? 13 : 10}" fill="${here ? '#f0c75e' : G.enemyTown(p) ? '#8a2a22' : seenP ? '#6b8f3a' : '#3a4a2a'}" stroke="#1a1208" stroke-width="3"/>
           ${here ? `<circle cx="${x}" cy="${y}" r="19" fill="none" stroke="#f0c75e" stroke-width="2" opacity=".6"/>` : ''}
+          ${huntUpAt.has(p) ? `<polygon points="${x - 15},${y - 22} ${x - 9},${y - 28} ${x - 3},${y - 22} ${x - 9},${y - 16}" fill="#ff8a3a" stroke="#1a1208" stroke-width="2"/>` : ''}
           ${qPlaces.has(p) ? (qMain.has(p) ? `<image href="${qmarkSrc(qPlaces.get(p), true)}" x="${x + 5}" y="${y - 30}" width="20" height="24.5"/>` : `<image href="${qmarkSrc(qPlaces.get(p))}" x="${x + 7}" y="${y - 30}" width="15" height="24.5"/>`) : ''}
           <text x="${x}" y="${y + 26}" text-anchor="middle" font-family="Alegreya Sans, sans-serif" font-weight="800" font-size="13" fill="${adj || here ? '#f3e6c6' : '#a89a7a'}" stroke="#120c05" stroke-width="3" paint-order="stroke">${esc(pl.name)}</text>
           <text x="${x}" y="${y + 40}" text-anchor="middle" font-family="Alegreya Sans, sans-serif" font-weight="700" font-size="11" fill="${conColor(Math.round((pl.lvl[0] + pl.lvl[1]) / 2))}" stroke="#120c05" stroke-width="3" paint-order="stroke">${pl.safe ? 'Town' : pl.lvl[0] + '-' + pl.lvl[1]}</text>
@@ -2141,7 +2156,8 @@
       });
       const far = h('div', { class: 'chips' });
       for (const a in MAP) for (const c in D.PLACES[a].links) if (!MAP[c] && !G.enemyTown(a) && !G.enemyTown(c)) far.append(h('button', { class: 'chip gold', onclick: () => { if (cur === a) { G.travelTo(c); closeSheet(); } else toast(`Go to ${D.PLACES[a].name} first.`); } }, `${D.PLACES[a].name} → ${D.PLACES[c].name}`, h('small', null, `${D.PLACES[c].zone} · ` + ((D.PLACES[a].via || {})[c] || 'Road') + ' · ' + G.travelSecs(a, c) + 's')));
-      b.append(m, h('div', { style: { color: 'var(--muted)', fontSize: '13px' } }, 'Gold: you are here. ! marks places your quests need, ? where a finished quest is handed in. Tap any place for the way there.'));
+      b.append(m, h('div', { style: { color: 'var(--muted)', fontSize: '13px' } }, 'Gold: you are here. ! marks places your quests need, ? where a finished quest is handed in. Tap any place for the way there.'),
+        huntUpAt.size ? h('div', { style: { color: '#ff8a3a', fontSize: '13px', fontWeight: 700 } }, `◆ Rare hunt up now: ${[...huntUpAt].map(([pk, k]) => `${D.MOBS[k].name} at ${D.PLACES[pk].name}`).join(', ')}`) : null);
       // roads out of this zone, under the map so they never push it down
       if (far.childNodes.length) b.append(h('div', { class: 'sec-h' }, 'Roads out of ' + D.REGIONS[region].name), far);
     });

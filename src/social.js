@@ -201,7 +201,7 @@
   function rareTarget() {
     const P = G.S.player;
     const opts = [];
-    for (const k in D.PLACES) { const p = D.PLACES[k]; if (!p.named || !p.lvl || !G.canReach(P.place, k)) continue; for (const mob in p.named) { const M = D.MOBS[mob]; if (M.elite) continue; if (M.lvl[0] <= P.level + 2 && M.lvl[0] >= P.level - 6) opts.push({ place: k, mob }); } }
+    for (const k in D.PLACES) { const p = D.PLACES[k]; if (!p.named || !p.lvl || !G.canReach(P.place, k)) continue; for (const mob in p.named) { const M = D.MOBS[mob]; if (M.elite || (G.isHunt && G.isHunt(mob))) continue; if (M.lvl[0] <= P.level + 2 && M.lvl[0] >= P.level - 6) opts.push({ place: k, mob }); } }
     return opts.length ? pick(opts) : null;
   }
 
@@ -229,6 +229,7 @@
     if (P.level >= 4 && due('whisper', 130, 300) && !openActs((a) => a.whisper).length) makeWhisper();
     if (P.level >= 5 && due('trade', 240, 480)) makeTrade();
     if (P.level >= 8 && due('rare', 900, 1800)) makeRare();
+    huntSightings();
     if (P.guild < 0 && P.level >= 5 && due('recruit', 900, 1500)) makeRecruit();
     if (P.guild >= 0 && due('guildreq', 110, 240) && openActs((a) => a.guild).length < 2) makeGuildRequest();
     if (P.guild >= 0 && due('guildtalk', 90, 220)) guildTalk();
@@ -350,6 +351,19 @@
     const M = D.MOBS[r.mob], at = D.PLACES[r.place].name;
     G.spawnRare(r.place, r.mob);
     post('general', b, pick([`${M.name} is up at ${at}!`, `rare spotted: ${M.name}, ${at}, go go`, `just saw ${M.name} at ${at}, cant solo it lol`, `${M.name} at ${at} right now if anyone needs it`, `${M.name} spawned at ${at}!!`, `heads up, ${M.name} at ${at}`, `${M.name} up at ${at}, too tough for me`]), { kind: 'rare', bot: b.id, until: now() + 10 * 60000, ...r });
+  }
+  // a rare hunt's sighting (#43): when a level-60 rare's 30 minutes begin, a bot posts it in General, a real request with
+  // a way there (kind 'rare'), once per window; for level-60 characters (the rares and their places are level-60 content)
+  function huntSightings() {
+    const S = G.S, P = S.player, t = now(); if (!G.huntRares || P.level < D.LEVEL_CAP) return;
+    S.flags.huntPosted = S.flags.huntPosted || {};
+    for (const r of G.huntRares()) {
+      const h = G.huntNow(r.key, t); if (t < h.start || t >= h.end || S.flags.huntPosted[r.key] === h.w || !G.huntUp(r.key, t)) continue;
+      S.flags.huntPosted[r.key] = h.w; if (!G.canReach(P.place, r.place)) continue;
+      const b = pick(myBots()); if (!b) continue;
+      const M = D.MOBS[r.key], at = D.PLACES[r.place].name;
+      post('general', b, pick([`Rare sighting: ${M.name} at ${at}!`, `${M.name} is up at ${at}, rare hunt!`, `rare hunt: ${M.name} just showed up at ${at}`, `${M.name} spotted at ${at}, it won't stay long`]), { kind: 'rare', bot: b.id, until: h.end, mob: r.key, place: r.place });
+    }
   }
   function makeRecruit() {
     const gs = SOC.myGuilds().filter((x) => x.members > 0); if (!gs.length) return;
