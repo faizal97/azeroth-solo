@@ -120,15 +120,20 @@ in `2026-10-03-v11-story-options.md`.
     Lyveus confronts the last of the cabal himself; his name is cleared before King Tamlin, closing his cabal arc. He
     stays free for later chapters (for example the Reach opening over Silverleaf).
 
+19. **The Chapter 1 design is approved, and parked.** Faizal, 2026-10-03 (via the Lead): "yes approve for chapter 1.
+    we will not work on that until i asked to". `2026-10-03-ch1-ashen-coronation-design.md` is the approved design.
+    **No issues, milestones or art until he asks.** Still open for when he resumes it: the final names for the two
+    dungeons and the raid (options in the design doc).
+
 ## Agreed as a direction (still open to his refinement)
 
-19. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
-20. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
+20. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
+21. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
    years ago, and the Black Ruin's wound in the world).
 
 ## Still open (for Faizal), in the order v11 needs them
 
-1. **Chapter 1's design** (drafted in `2026-10-03-ch1-ashen-coronation-design.md`; the game designer wrote it for his approval): the zone around the Spire, the two faction
+1. **Chapter 1's final names** (when he resumes Chapter 1; the design is approved and parked, decision 19). Was: **Chapter 1's design** (`2026-10-03-ch1-ashen-coronation-design.md`; the game designer wrote it for his approval): the zone around the Spire, the two faction
    dungeons, the Spire raid's bosses, the story beat by beat, the end cinematic teasing the Reach, the logo, and
    canon's new Timeline, Names and Reveals.
 2. *Later, not needed for v11:* Chapter 2's and 3's raids and spines; the mega raid's exact size (20 or 25) and gate;
@@ -231,7 +236,7 @@ the sea" again.
 
 ### Choice 3: Ossarak and the Black Brood (**decided: A, born from his blood**)
 
-Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 19).
+Canon says nothing yet. It must fit "the Ledger served Ossarak's return" (direction 20).
 
 - **A. The Brood was born from his blood** (recommended). When Ossarak was driven off, his blood fell on the mountains
   and the first black dragons hatched from it. Every one of the Brood owes him its life: the **oldest debt**.

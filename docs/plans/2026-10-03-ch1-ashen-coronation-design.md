@@ -1,6 +1,7 @@
 # The Ruinfall Saga, Chapter 1: The Ashen Coronation (design draft)
 
-v11.0 and v11.1. **A draft for Faizal's approval;** nothing is filed until he approves it. The saga's decisions are in
+v11.0 and v11.1. **Approved by Faizal on 2026-10-03 and parked** ("yes approve for chapter 1. we will not work on
+that until i asked to", saga decision 19): no issues, milestones or art until he asks. The saga's decisions are in
 `2026-10-03-ossarak-saga.md` (numbers below refer to them). Drafted by the game designer, 2026-10-03.
 
 ## What Chapter 1 is
@@ -151,8 +152,7 @@ music.
 
 ## Still open (for Faizal)
 
-1. **This draft:** approve or change (especially the two dungeons' ideas and the raid's shape).
-2. **Final names** for the two dungeons and the raid. Each option below passes the Warcraft name map
+1. **Final names** for the two dungeons and the raid (when he resumes Chapter 1). Each option below passes the Warcraft name map
    (`tools/rename_v10.json`, every full name checked) and the Reveals:
    - **The Accord's dungeon:** **"The Ashen Court"** (recommended: the royal court on coronation day, and the one place
      the chapter's "Ashen" repeats); "The Crowning Hall"; "Hall of the Oath".
