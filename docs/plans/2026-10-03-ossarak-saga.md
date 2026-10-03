@@ -59,15 +59,23 @@ in `2026-10-03-v11-story-options.md`.
      the devlog. A cinematic plays only after its raid, so it may show what the raid reveals; the lorekeeper's Reveals
      still apply to everything before it.
 
+10. **Chapter 1's standouts: Lady Meriel Thorne (Accord) and High Chief Grask (Krugar).** Faizal, 2026-10-03 (via the
+    Lead, his word: "yes").
+    - **Thorne:** only she can read Kethriax's books, so the Accord has to rely on the villain who sold it. Her last
+      scene closes the Ledger.
+    - **Grask:** seen in person for the first time; Kethriax calls in the Krugar's war chest and Grask answers that the
+      Krugar pay in steel, then leads the strike on the counting-house. **His war council is where Tarro is overruled**
+      (decision 8).
+
 ## Agreed as a direction (still open to his refinement)
 
-10. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
-11. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
+11. **Chapter 1's ending reveals that the Ledger served Ossarak's return:** Veshmira and Kethriax were working toward it.
+12. **Chapter 2 can tie the ancient Drowning to Ossarak's first tearing of the world** (the Heartfire's bursting ten thousand
    years ago, and the Black Ruin's wound in the world).
 
 ## Still open (for Faizal)
 
-- **The standout pairs for Chapters 1 and 2** (the cast draft below; Thorne and Grask, then Starfeather and Zul'kesh, recommended).
+- **The Chapter 2 pair** (the cast draft below; Starfeather and Zul'kesh recommended).
 - Chapter 2's and 3's names, places and spines.
 - The mega raid's exact size (20 or 25), its length, and what gates it (Chapter 3's raid first?).
 - How Ossarak relates to the Black Brood (canon doesn't say).
@@ -80,7 +88,7 @@ The standouts stay on their own side. The Accord and the Krugar are enemies thro
 each other at least once in their chapter. Candidates from canon and the game's data first; a new character only
 where the old ones don't fit.
 
-### Chapter 1 (v11, the existing world; the Ledger's end)
+### Chapter 1 (v11, the existing world; the Ledger's end) (**decided: Thorne and Grask**)
 
 | | Candidate | What makes them iconic here |
 |---|---|---|
