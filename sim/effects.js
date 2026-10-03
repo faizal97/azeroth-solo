@@ -4,7 +4,7 @@
 // effect. Pass bars, written first (design mindset §5): wins >= +2% in a wins case, loses <= -2% in a loses case, at most
 // +8% in its best case, and the best mix of different effects in one case at most +10% over plain gear.
 //   node sim/effects.js [fights per case, default 200]
-let seedS = 0; const seed = (n) => { seedS = (0x5eed1e55 ^ Math.imul(n + 1, 0x9E3779B1)) >>> 0; };
+let seedS = 0; const SEED = +process.env.SEED || 0; const seed = (n) => { seedS = (0x5eed1e55 ^ Math.imul(n + 1 + SEED * 100003, 0x9E3779B1)) >>> 0; }; // SEED=n: another fixed seed, to measure a bar's wobble (unset: the build's)
 Math.random = () => { seedS = (seedS + 0x6D2B79F5) >>> 0; let x = seedS; x = Math.imul(x ^ (x >>> 15), x | 1); x ^= x + Math.imul(x ^ (x >>> 7), x | 61); return ((x ^ (x >>> 14)) >>> 0) / 4294967296; };
 seed(0);
 globalThis.localStorage = { getItem() { return null; }, setItem() {}, removeItem() {} };
